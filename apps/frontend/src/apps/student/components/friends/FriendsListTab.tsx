@@ -2,7 +2,9 @@ import { motion } from 'framer-motion';
 import { Search, Users, UserX, Star, Zap, Trophy } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { RankBadge } from '@shared/components/base/RankBadge';
+import { CosmeticAvatar } from '@shared/components/CosmeticAvatar';
 import type { Friend } from '@/features/gamification/social/types/friendsTypes';
+import type { EquippedItemsBatchMap } from '@/features/gamification/social/types/inventory.types';
 
 interface FriendsListTabProps {
   friends: Friend[];
@@ -13,6 +15,7 @@ interface FriendsListTabProps {
   onRemoveFriend: (userId: string) => void;
   onSwitchToSearch: () => void;
   formatLastActive: (date: Date) => string;
+  equippedMap?: EquippedItemsBatchMap | null;
 }
 
 export function FriendsListTab({
@@ -24,6 +27,7 @@ export function FriendsListTab({
   onRemoveFriend,
   onSwitchToSearch,
   formatLastActive,
+  equippedMap,
 }: FriendsListTabProps) {
   const filteredFriends = friends.filter((friend) => {
     const matchesSearch = friend.username.toLowerCase().includes(searchQuery.toLowerCase());
@@ -78,11 +82,13 @@ export function FriendsListTab({
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-detective-orange to-detective-gold">
-                          <span className="text-lg font-bold text-white">
-                            {friend.username.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
+                        <CosmeticAvatar
+                          userId={friend.userId}
+                          name={friend.username}
+                          fallbackAvatar={friend.avatar}
+                          equippedMap={equippedMap}
+                          size="md"
+                        />
                         {friend.isOnline && (
                           <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-green-500" />
                         )}

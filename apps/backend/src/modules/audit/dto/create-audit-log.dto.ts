@@ -3,7 +3,7 @@
  */
 
 import { IsString, IsOptional, IsEnum, IsObject, IsArray } from 'class-validator';
-import { ActorType, Severity, Status } from '../entities/audit-log.entity';
+import { ActorType, Severity, Status } from '../enums/audit-log.enums';
 
 export class CreateAuditLogDto {
   @IsOptional()

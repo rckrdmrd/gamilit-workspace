@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { RotateCw, Send, Book, CheckCircle2 } from 'lucide-react';
 import { WheelSpinner } from './WheelSpinner';
 import { CountdownTimer } from './CountdownTimer';
@@ -160,7 +161,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
   // RankUp modal
   const [showRankUpModal, setShowRankUpModal] = useState(false);
-  const [rankUpData, setRankUpData] = useState<any>(null);
+  const [rankUpData, setRankUpData] = useState<Record<string, unknown> | null>(null);
 
   // Refs
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -302,7 +303,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
   // Handle manual submit (before timer runs out)
   const handleManualSubmit = () => {
     if (characterCount < exercise.content.settings.minTextLength) {
-      alert(
+      toast.error(
         `Tu respuesta debe tener al menos ${exercise.content.settings.minTextLength} caracteres. Actualmente tienes ${characterCount}.`,
       );
       return;
@@ -336,7 +337,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
         timeSpent: totalTimeSpent,
       };
 
-      const response = await submitAsync(answers);
+      const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
       if (response.rankUp) {
         setRankUpData(response.rankUp);
@@ -361,7 +362,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
         mlCoinsEarned: response.rewards?.mlCoins || 0,
         showConfetti: response.isPerfect,
         isCorrect: response.score >= exercise.passing_score,
-        details: (response as any).details?.byFragment,
+        details: (response as { details?: { byFragment?: Record<string, unknown> } }).details?.byFragment,
       });
 
       setScore(response.score);
@@ -370,10 +371,6 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [RuedaInferencias] Submission successful:', {
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('Error submitting exercise:', error);
       setFeedback({
@@ -497,7 +494,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                       ? 'bg-green-500'
                       : idx === currentFragmentIndex
                         ? 'animate-pulse bg-blue-300'
-                        : 'bg-white bg-opacity-30'
+                        : 'bg-white/30'
                   }`}
                 />
               ))}

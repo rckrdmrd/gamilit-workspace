@@ -509,7 +509,7 @@ export class MissionsService {
     // CRITICAL FIX: Convert auth.users.id → profiles.id
     const profileId = await this.getProfileId(userId);
     const transactionCapableManager = this.missionsRepo.manager as {
-      transaction?: <T>(runInTransaction: (manager: any) => Promise<T>) => Promise<T>;
+      transaction?: <T>(runInTransaction: (manager: any) => Promise<T>) => Promise<T>; // eslint-disable-line @typescript-eslint/no-explicit-any
     };
 
     if (typeof transactionCapableManager.transaction !== 'function') {

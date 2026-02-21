@@ -18,7 +18,15 @@ export const NotificationBell: React.FC = () => {
       fetchUnreadCount();
     }, 30000);
 
-    return () => clearInterval(interval);
+    const handleUnreadUpdated = () => {
+      fetchUnreadCount();
+    };
+    window.addEventListener('gamilit:notifications:unread-updated', handleUnreadUpdated);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('gamilit:notifications:unread-updated', handleUnreadUpdated);
+    };
   }, [fetchUnreadCount]);
 
   return (

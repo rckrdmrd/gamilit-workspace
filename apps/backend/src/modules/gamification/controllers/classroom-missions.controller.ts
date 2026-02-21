@@ -404,7 +404,7 @@ export class ClassroomMissionsController {
   async updateClassroomMission(
   @Param('classroomId') classroomId: string,
     @Param('missionTemplateId') missionTemplateId: string,
-    @Body() updates: any,
+    @Body() updates: Record<string, unknown>,
   ) {
     return this.classroomMissionsService.updateClassroomMission(
       classroomId,

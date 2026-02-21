@@ -55,8 +55,6 @@ export function useSubmitProgress(options?: UseSubmitProgressOptions): UseSubmit
         setIsSubmitting(true);
         setError(null);
 
-        console.log('🚀 [useSubmitProgress] Submitting exercise:', exerciseId);
-
         // Call the progress API
         const response = await submitExercise(exerciseId, userId, answers);
 
@@ -64,7 +62,6 @@ export function useSubmitProgress(options?: UseSubmitProgressOptions): UseSubmit
 
         // Invalidate dashboard and modules cache to refresh progress data
         // This ensures the UI updates immediately after completing an exercise
-        console.log('🔄 [useSubmitProgress] Invalidating dashboard and modules cache...');
 
         // Invalidate all dashboard data (rank, progress, coins, achievements)
         await queryClient.invalidateQueries({
@@ -80,8 +77,6 @@ export function useSubmitProgress(options?: UseSubmitProgressOptions): UseSubmit
         await queryClient.invalidateQueries({
           queryKey: userModulesKeys.all,
         });
-
-        console.log('✅ [useSubmitProgress] Cache invalidated successfully');
 
         options?.onSuccess?.(response);
         return response;

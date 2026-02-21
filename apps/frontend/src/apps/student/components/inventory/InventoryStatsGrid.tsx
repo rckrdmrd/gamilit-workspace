@@ -1,17 +1,21 @@
 /**
  * InventoryStatsGrid - Stats overview cards for the inventory page.
  *
+ * Thin wrapper around the shared StatsCardGrid component.
+ *
  * @module apps/student/components/inventory/InventoryStatsGrid
  */
 
 import { Package, Coins, Zap, Check } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { StatsCardGrid } from '@shared/components/base/StatsCardGrid';
+import type { StatItem } from '@shared/components/base/StatsCardGrid';
 
 interface InventoryStatsGridProps {
   totalItems: number;
   totalValue: number;
   powerUpsCount: number;
   activeCount: number;
+  loading?: boolean;
 }
 
 export function InventoryStatsGrid({
@@ -19,8 +23,9 @@ export function InventoryStatsGrid({
   totalValue,
   powerUpsCount,
   activeCount,
+  loading,
 }: InventoryStatsGridProps) {
-  const stats = [
+  const stats: StatItem[] = [
     {
       icon: Package,
       iconBg: 'bg-purple-500/20',
@@ -51,26 +56,5 @@ export function InventoryStatsGrid({
     },
   ];
 
-  return (
-    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-      {stats.map((stat) => {
-        const Icon = stat.icon;
-        return (
-          <DetectiveCard key={stat.label} hoverable={false}>
-            <div className="flex items-center gap-3">
-              <div
-                className={`flex h-12 w-12 items-center justify-center rounded-full ${stat.iconBg}`}
-              >
-                <Icon className={`h-6 w-6 ${stat.iconColor}`} />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-detective-text">{stat.value}</p>
-                <p className="text-sm text-detective-text-secondary">{stat.label}</p>
-              </div>
-            </div>
-          </DetectiveCard>
-        );
-      })}
-    </div>
-  );
+  return <StatsCardGrid items={stats} columns={4} loading={loading} />;
 }

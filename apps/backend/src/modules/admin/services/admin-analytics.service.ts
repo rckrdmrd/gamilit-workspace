@@ -76,8 +76,10 @@ export class AdminAnalyticsService {
         intermediate_users: parseInt(row.intermediate_users, 10) || 0,
         advanced_users: parseInt(row.advanced_users, 10) || 0,
       };
-    } catch (error: any) {
-      this.logger.error(`Failed to get analytics overview: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to get analytics overview: ${message}`, stack);
       throw new InternalServerErrorException('Failed to retrieve analytics overview');
     }
   }
@@ -119,7 +121,7 @@ export class AdminAnalyticsService {
 
       const results = await this.dataSource.query(sqlQuery, params);
 
-      const bySegment: EngagementBySegmentDto[] = results.map((row: any) => ({
+      const bySegment: EngagementBySegmentDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         user_segment: row.user_segment,
         users_count: parseInt(row.users_count, 10) || 0,
         avg_engagement_score: parseFloat(row.avg_engagement_score) || 0,
@@ -130,8 +132,10 @@ export class AdminAnalyticsService {
       }));
 
       return { by_segment: bySegment };
-    } catch (error: any) {
-      this.logger.error(`Failed to get engagement analytics: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to get engagement analytics: ${message}`, stack);
       throw new InternalServerErrorException('Failed to retrieve engagement analytics');
     }
   }
@@ -188,19 +192,19 @@ export class AdminAnalyticsService {
         this.dataSource.query(levelsQuery),
       ]);
 
-      const xpDistribution: XpDistributionDto[] = xpResults.map((row: any) => ({
+      const xpDistribution: XpDistributionDto[] = xpResults.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         xp_range: row.xp_range,
         users_count: parseInt(row.users_count, 10) || 0,
       }));
 
-      const ranksDistribution: RankDistributionDto[] = ranksResults.map((row: any) => ({
+      const ranksDistribution: RankDistributionDto[] = ranksResults.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         current_rank: row.current_rank,
         users_count: parseInt(row.users_count, 10) || 0,
         avg_xp: parseFloat(row.avg_xp) || 0,
         avg_exercises: parseFloat(row.avg_exercises) || 0,
       }));
 
-      const levelsDistribution: LevelDistributionDto[] = levelsResults.map((row: any) => ({
+      const levelsDistribution: LevelDistributionDto[] = levelsResults.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         current_level: parseInt(row.current_level, 10) || 1,
         users_count: parseInt(row.users_count, 10) || 0,
       }));
@@ -210,8 +214,10 @@ export class AdminAnalyticsService {
         ranks_distribution: ranksDistribution,
         levels_distribution: levelsDistribution,
       };
-    } catch (error: any) {
-      this.logger.error(`Failed to get gamification analytics: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to get gamification analytics: ${message}`, stack);
       throw new InternalServerErrorException('Failed to retrieve gamification analytics');
     }
   }
@@ -241,7 +247,7 @@ export class AdminAnalyticsService {
 
       const results = await this.dataSource.query(sqlQuery);
 
-      const timeline: DailyActivityDto[] = results.map((row: any) => ({
+      const timeline: DailyActivityDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         activity_date: row.activity_date,
         unique_users: parseInt(row.unique_users, 10) || 0,
         total_activities: parseInt(row.total_activities, 10) || 0,
@@ -251,8 +257,10 @@ export class AdminAnalyticsService {
       }));
 
       return { timeline };
-    } catch (error: any) {
-      this.logger.error(`Failed to get activity timeline: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to get activity timeline: ${message}`, stack);
       throw new InternalServerErrorException('Failed to retrieve activity timeline');
     }
   }
@@ -304,7 +312,7 @@ export class AdminAnalyticsService {
 
       const results = await this.dataSource.query(sqlQuery, params);
 
-      const users: TopUserDto[] = results.map((row: any) => ({
+      const users: TopUserDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         user_id: row.user_id,
         display_name: row.display_name,
         email: row.email,
@@ -318,8 +326,10 @@ export class AdminAnalyticsService {
       }));
 
       return { metric, users };
-    } catch (error: any) {
-      this.logger.error(`Failed to get top users: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to get top users: ${message}`, stack);
       throw new InternalServerErrorException('Failed to retrieve top users');
     }
   }
@@ -362,7 +372,7 @@ export class AdminAnalyticsService {
 
       const results = await this.dataSource.query(sqlQuery);
 
-      const cohorts: CohortRetentionDto[] = results.map((row: any) => ({
+      const cohorts: CohortRetentionDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         cohort_month: row.cohort_month,
         cohort_size: parseInt(row.cohort_size, 10) || 0,
         retained_users: parseInt(row.retained_users, 10) || 0,
@@ -370,8 +380,10 @@ export class AdminAnalyticsService {
       }));
 
       return { cohorts };
-    } catch (error: any) {
-      this.logger.error(`Failed to get retention analytics: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to get retention analytics: ${message}`, stack);
       throw new InternalServerErrorException('Failed to retrieve retention analytics');
     }
   }
@@ -395,8 +407,10 @@ export class AdminAnalyticsService {
         default:
           throw new Error(`Unknown export type: ${type}`);
       }
-    } catch (error: any) {
-      this.logger.error(`Failed to export analytics: ${error?.message}`, error?.stack);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to export analytics: ${message}`, stack);
       throw new InternalServerErrorException('Failed to export analytics data');
     }
   }
@@ -478,7 +492,7 @@ export class AdminAnalyticsService {
       'Last Activity At',
     ];
 
-    const rows = results.map((row: any) => [
+    const rows = results.map((row: any) => [ // eslint-disable-line @typescript-eslint/no-explicit-any
       row.user_id,
       row.display_name,
       row.email,
@@ -575,8 +589,8 @@ export class AdminAnalyticsService {
    * Generate CSV string from headers and rows
    * @private
    */
-  private generateCsv(headers: string[], rows: any[][]): string {
-    const escapeCsvValue = (value: any): string => {
+  private generateCsv(headers: string[], rows: unknown[][]): string {
+    const escapeCsvValue = (value: unknown): string => {
       if (value === null || value === undefined) {
         return '';
       }

@@ -119,7 +119,7 @@ describe('Architecture: Naming Conventions', () => {
       '%s should export a class ending in Service',
       (_name, filePath) => {
         const content = fs.readFileSync(filePath, 'utf-8');
-        expect(content).toMatch(/export\s+class\s+\w+Service/);
+        expect(content).toMatch(/export\s+(abstract\s+)?class\s+\w+Service/);
       },
     );
   });

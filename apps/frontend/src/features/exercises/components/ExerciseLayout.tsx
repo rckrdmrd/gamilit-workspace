@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import { AnimatePresence } from 'framer-motion';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ExercisePageHeader } from '@/apps/student/components/exercise/ExercisePageHeader';
@@ -109,23 +108,21 @@ export const ExerciseLayout: React.FC = () => {
       </div>
 
       {/* Feedback Modal */}
-      <AnimatePresence>
-        {feedback && showFeedback && (
-          <FeedbackModal
-            isOpen={showFeedback}
-            feedback={feedback}
-            onClose={() => {
-              setShowFeedback(false);
-              if (feedback.type === 'success') {
-                navigateBack();
-              }
-            }}
-            onRetry={() => {
-              setShowFeedback(false);
-            }}
-          />
-        )}
-      </AnimatePresence>
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          feedback={feedback}
+          onClose={() => {
+            setShowFeedback(false);
+            if (feedback.type === 'success' || feedback.pendingReview) {
+              navigateBack();
+            }
+          }}
+          onRetry={() => {
+            setShowFeedback(false);
+          }}
+        />
+      )}
     </div>
   );
 };

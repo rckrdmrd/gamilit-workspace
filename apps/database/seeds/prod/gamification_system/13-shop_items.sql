@@ -81,7 +81,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'avatar',
-            'asset_url', '/assets/avatars/detective-gold.png',
+            'asset_url', '/assets/avatars/detective-gold.svg',
             'animated', false
         ),
         jsonb_build_object(
@@ -107,7 +107,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'profile_frame',
-            'asset_url', '/assets/frames/expert-reader.png',
+            'asset_url', '/assets/frames/expert-reader.svg',
             'border_color', '#8B5CF6'
         ),
         jsonb_build_object(
@@ -132,7 +132,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'profile_background',
-            'asset_url', '/assets/backgrounds/magic-library.gif',
+            'asset_url', '/assets/backgrounds/magic-library.svg',
             'animated', true
         ),
         jsonb_build_object(),
@@ -155,7 +155,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'avatar',
-            'asset_url', '/assets/avatars/wise-owl.png',
+            'asset_url', '/assets/avatars/wise-owl.svg',
             'animated', false
         ),
         jsonb_build_object(
@@ -180,7 +180,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'profile_frame',
-            'asset_url', '/assets/frames/stars.png',
+            'asset_url', '/assets/frames/stars.svg',
             'border_color', '#FFD700'
         ),
         jsonb_build_object(
@@ -259,7 +259,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'badge',
-            'asset_url', '/assets/badges/detective-elite.png',
+            'asset_url', '/assets/badges/detective-elite.svg',
             'animated', true
         ),
         jsonb_build_object(),
@@ -307,7 +307,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'badge',
-            'asset_url', '/assets/badges/first-achievement.png',
+            'asset_url', '/assets/badges/first-achievement.svg',
             'animated', false
         ),
         jsonb_build_object(
@@ -337,7 +337,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'guild_banner',
-            'asset_url', '/assets/guild/golden-banner.png',
+            'asset_url', '/assets/guild/golden-banner.svg',
             'animated', true
         ),
         jsonb_build_object(
@@ -363,7 +363,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'guild_emblem',
-            'asset_url', '/assets/guild/dragon-emblem.png',
+            'asset_url', '/assets/guild/dragon-emblem.svg',
             'animated', false
         ),
         jsonb_build_object(),
@@ -386,7 +386,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'guild_shield',
-            'asset_url', '/assets/guild/knowledge-shield.png',
+            'asset_url', '/assets/guild/knowledge-shield.svg',
             'animated', false
         ),
         jsonb_build_object(),
@@ -409,7 +409,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'guild_banner',
-            'asset_url', '/assets/guild/basic-banner.png',
+            'asset_url', '/assets/guild/basic-banner.svg',
             'animated', false
         ),
         jsonb_build_object(
@@ -464,7 +464,7 @@ BEGIN
         false,
         jsonb_build_object(
             'type', 'sticker',
-            'asset_url', '/assets/stickers/celebration.gif',
+            'asset_url', '/assets/stickers/celebration.svg',
             'animated', true
         ),
         jsonb_build_object(),

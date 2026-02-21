@@ -18,13 +18,11 @@
  * @version 1.0.0
  * @since Phase 5 - Exercise System Restructuring
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React from 'react';
 import type { ExerciseMechanicProps } from '../types/exercise-mechanic.types';
 
 interface MechanicCompatWrapperProps extends ExerciseMechanicProps {
-  Component: React.ComponentType<any>;
+  Component: React.ComponentType<Record<string, unknown>>;
   onExit?: () => void;
 }
 

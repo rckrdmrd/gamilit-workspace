@@ -48,7 +48,6 @@ export const initializeFirebase = (): FirebaseApp | null => {
   if (!app) {
     try {
       app = initializeApp(firebaseConfig);
-      console.log('[Firebase] Initialized successfully');
     } catch (error) {
       console.error('[Firebase] Initialization error:', error);
       return null;
@@ -91,7 +90,6 @@ export const requestPushPermission = async (): Promise<string | null> => {
     const permission = await Notification.requestPermission();
 
     if (permission !== 'granted') {
-      console.log('[Firebase] Notification permission denied');
       return null;
     }
 
@@ -103,7 +101,6 @@ export const requestPushPermission = async (): Promise<string | null> => {
 
     // Get token
     const token = await getToken(messagingInstance, { vapidKey: VAPID_KEY });
-    console.log('[Firebase] FCM Token obtained');
 
     return token;
   } catch (error) {
@@ -122,7 +119,6 @@ export const onForegroundMessage = (callback: (payload: MessagePayload) => void)
   }
 
   const unsubscribe = onMessage(messagingInstance, (payload) => {
-    console.log('[Firebase] Foreground message received:', payload);
     callback(payload);
   });
 

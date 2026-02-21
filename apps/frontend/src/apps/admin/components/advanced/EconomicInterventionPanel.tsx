@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import {
   Coins,
   TrendingUp,
@@ -78,74 +80,89 @@ export const EconomicInterventionPanel: React.FC = () => {
   const [showAddCoins, setShowAddCoins] = useState(false);
   const [coinsAmount, setCoinsAmount] = useState(0);
   const [targetUser, setTargetUser] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
-  const handleAddCoins = async () => {
+  const openConfirm = useCallback((message: string, action: () => void) => {
+    setConfirmMessage(message);
+    setPendingAction(() => action);
+    setShowConfirm(true);
+  }, []);
+
+  const handleConfirm = useCallback(() => {
+    if (pendingAction) pendingAction();
+    setShowConfirm(false);
+    setPendingAction(null);
+    setConfirmMessage('');
+  }, [pendingAction]);
+
+  const handleCancelConfirm = useCallback(() => {
+    setShowConfirm(false);
+    setPendingAction(null);
+    setConfirmMessage('');
+  }, []);
+
+  const handleAddCoins = () => {
     if (!targetUser || coinsAmount <= 0) {
-      alert('Please enter a valid user ID and amount');
+      toast.error('Please enter a valid user ID and amount');
       return;
     }
 
-    if (
-      !confirm(
-        `Add ${coinsAmount} coins to user ${targetUser}? This will be logged in audit trail.`,
-      )
-    )
-      return;
-
-    try {
-      // API call would go here
-      console.log('Adding coins:', { targetUser, coinsAmount });
-      alert('Coins added successfully!');
-      setShowAddCoins(false);
-      setCoinsAmount(0);
-      setTargetUser('');
-    } catch (error) {
-      console.error('Failed to add coins:', error);
-      alert('Failed to add coins');
-    }
+    openConfirm(
+      `Add ${coinsAmount} coins to user ${targetUser}? This will be logged in audit trail.`,
+      async () => {
+        try {
+          // FUTURE: Implement add coins API call
+          toast.success('Coins added successfully!');
+          setShowAddCoins(false);
+          setCoinsAmount(0);
+          setTargetUser('');
+        } catch (error) {
+          console.error('Failed to add coins:', error);
+          toast.error('Failed to add coins');
+        }
+      },
+    );
   };
 
-  const handleRemoveCoins = async () => {
+  const handleRemoveCoins = () => {
     if (!targetUser || coinsAmount <= 0) {
-      alert('Please enter a valid user ID and amount');
+      toast.error('Please enter a valid user ID and amount');
       return;
     }
 
-    if (
-      !confirm(
-        `Remove ${coinsAmount} coins from user ${targetUser}? This will be logged in audit trail.`,
-      )
-    )
-      return;
-
-    try {
-      console.log('Removing coins:', { targetUser, coinsAmount });
-      alert('Coins removed successfully!');
-      setShowAddCoins(false);
-      setCoinsAmount(0);
-      setTargetUser('');
-    } catch (error) {
-      console.error('Failed to remove coins:', error);
-      alert('Failed to remove coins');
-    }
+    openConfirm(
+      `Remove ${coinsAmount} coins from user ${targetUser}? This will be logged in audit trail.`,
+      async () => {
+        try {
+          // FUTURE: Implement remove coins API call
+          toast.success('Coins removed successfully!');
+          setShowAddCoins(false);
+          setCoinsAmount(0);
+          setTargetUser('');
+        } catch (error) {
+          console.error('Failed to remove coins:', error);
+          toast.error('Failed to remove coins');
+        }
+      },
+    );
   };
 
-  const handleAdjustRates = async () => {
-    if (
-      !confirm(
-        `Adjust earning rate to ${earningRate}% and spending cost to ${spendingCost}%? This affects all users immediately.`,
-      )
-    )
-      return;
-
-    try {
-      console.log('Adjusting rates:', { earningRate, spendingCost });
-      alert('Rates adjusted successfully!');
-      setAdjustingRates(false);
-    } catch (error) {
-      console.error('Failed to adjust rates:', error);
-      alert('Failed to adjust rates');
-    }
+  const handleAdjustRates = () => {
+    openConfirm(
+      `Adjust earning rate to ${earningRate}% and spending cost to ${spendingCost}%? This affects all users immediately.`,
+      async () => {
+        try {
+          // FUTURE: Implement rate adjustment API call
+          toast.success('Rates adjusted successfully!');
+          setAdjustingRates(false);
+        } catch (error) {
+          console.error('Failed to adjust rates:', error);
+          toast.error('Failed to adjust rates');
+        }
+      },
+    );
   };
 
   const handleToggleEvent = (id: string) => {
@@ -179,6 +196,8 @@ export const EconomicInterventionPanel: React.FC = () => {
             variant="primary"
             icon={<DollarSign className="h-4 w-4" />}
             onClick={() => setShowAddCoins(!showAddCoins)}
+            disabled
+            title="Proximamente"
           >
             Manage Coins
           </DetectiveButton>
@@ -186,6 +205,8 @@ export const EconomicInterventionPanel: React.FC = () => {
             variant="blue"
             icon={<Settings className="h-4 w-4" />}
             onClick={() => setAdjustingRates(!adjustingRates)}
+            disabled
+            title="Proximamente"
           >
             Adjust Rates
           </DetectiveButton>
@@ -296,6 +317,8 @@ export const EconomicInterventionPanel: React.FC = () => {
               variant="green"
               icon={<DollarSign className="h-4 w-4" />}
               onClick={handleAddCoins}
+              disabled
+              title="Proximamente"
             >
               Add Coins
             </DetectiveButton>
@@ -304,6 +327,8 @@ export const EconomicInterventionPanel: React.FC = () => {
               icon={<TrendingDown className="h-4 w-4" />}
               onClick={handleRemoveCoins}
               className="bg-red-500 hover:bg-red-600"
+              disabled
+              title="Proximamente"
             >
               Remove Coins
             </DetectiveButton>
@@ -387,7 +412,7 @@ export const EconomicInterventionPanel: React.FC = () => {
           </div>
 
           <div className="flex gap-2">
-            <DetectiveButton variant="green" onClick={handleAdjustRates}>
+            <DetectiveButton variant="green" onClick={handleAdjustRates} disabled title="Proximamente">
               Apply Changes
             </DetectiveButton>
             <DetectiveButton variant="primary" onClick={() => setAdjustingRates(false)}>
@@ -518,6 +543,18 @@ export const EconomicInterventionPanel: React.FC = () => {
           </div>
         </DetectiveCard>
       </div>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={handleCancelConfirm}
+        onConfirm={handleConfirm}
+        title="Confirmar accion economica"
+        message={confirmMessage}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+        variant="warning"
+      />
     </div>
   );
 };

@@ -45,7 +45,7 @@ domains:
     hooks:
       - useTeacherClassrooms
       - useClassroomStudents
-      - useStudentProgress
+      - useAnalytics  # useStudentProgress removido en Teacher Portal Audit 2026-02-20
       - useRealTimeMonitoring
 
   assignments:

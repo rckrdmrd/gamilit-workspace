@@ -90,7 +90,7 @@ export class NotificationsController {
   /**
    * Mapea Notification entity a NotificationResponseDto
    */
-  private mapToResponseDto(notification: any): NotificationResponseDto {
+  private mapToResponseDto(notification: any): NotificationResponseDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     return {
       id: notification.id,
       userId: notification.userId,

@@ -30,8 +30,8 @@ interface StreaksMissionsSectionProps {
 
 export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSectionProps) {
   const handleClaimReward = (missionId: string) => {
-    console.log('Claiming reward for mission:', missionId);
     // TODO: Implement claim reward API call
+    void missionId;
   };
 
   const getMissionProgress = (mission: Mission) => {
@@ -68,7 +68,7 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="rounded-xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 via-red-50 to-orange-50 p-6 shadow-lg"
+            className="rounded-xl border-2 border-detective-orange/40 bg-gradient-to-br from-orange-50 via-detective-bg to-orange-50 p-6 shadow-lg"
           >
             <div className="mb-4 flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-semibold text-detective-text">
@@ -116,20 +116,20 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.4 + index * 0.05 }}
                     className={`flex aspect-square items-center justify-center rounded-lg ${
-                      isActive ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-400'
+                      isActive ? 'bg-orange-500 text-white' : 'bg-detective-bg-secondary text-detective-text-secondary'
                     }`}
                   >
                     {isActive ? (
                       <Flame className="h-4 w-4" fill="currentColor" />
                     ) : (
-                      <div className="h-2 w-2 rounded-full bg-gray-400" />
+                      <div className="h-2 w-2 rounded-full bg-detective-text-secondary" />
                     )}
                   </motion.div>
                 );
               })}
             </div>
 
-            <div className="mt-4 border-t border-orange-200 pt-4">
+            <div className="mt-4 border-t border-detective-orange/20 pt-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-detective-text-secondary">Última actividad:</span>
                 <span className="font-semibold text-detective-text">
@@ -147,7 +147,7 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
+            className="rounded-xl border border-detective-border-medium bg-white p-6 shadow-md"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -179,9 +179,9 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3"
+                className="mt-4 rounded-lg border border-detective-gold/30 bg-detective-gold/10 p-3"
               >
-                <p className="flex items-center gap-2 text-sm font-medium text-yellow-800">
+                <p className="flex items-center gap-2 text-sm font-medium text-detective-gold">
                   <Gift className="h-4 w-4" />
                   ¡Récord personal! Sigue así para superar tu mejor marca.
                 </p>
@@ -195,7 +195,7 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
+          className="rounded-xl border border-detective-border-medium bg-white p-6 shadow-md"
         >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="flex items-center gap-2 font-semibold text-detective-text">
@@ -229,10 +229,10 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                   transition={{ delay: 0.3 + index * 0.1 }}
                   className={`rounded-lg border-2 p-4 transition-all ${
                     isCompleted && !isClaimed
-                      ? 'border-green-300 bg-green-50 shadow-md'
+                      ? 'border-detective-success/40 bg-detective-success/10 shadow-md'
                       : isClaimed
-                        ? 'border-gray-200 bg-gray-50 opacity-60'
-                        : 'border-gray-200 bg-white'
+                        ? 'border-detective-border-medium bg-detective-bg-secondary opacity-60'
+                        : 'border-detective-border-medium bg-white'
                   }`}
                 >
                   <div className="mb-3 flex items-start gap-3">
@@ -268,7 +268,7 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                                   {current}/{target}
                                 </span>
                               </div>
-                              <div className="mb-3 h-2 overflow-hidden rounded-full bg-gray-200">
+                              <div className="mb-3 h-2 overflow-hidden rounded-full bg-detective-bg-secondary">
                                 <motion.div
                                   className={`h-full ${
                                     isCompleted
@@ -309,18 +309,18 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                           onClick={() => handleClaimReward(mission.id)}
                           disabled={true}
                           title="Próximamente"
-                          className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-4 py-2 font-semibold text-gray-500 opacity-60 shadow-sm transition-all"
+                          className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-detective-bg-secondary px-4 py-2 font-semibold text-detective-text-secondary opacity-60 shadow-sm transition-all"
                         >
                           <Gift className="h-4 w-4" />
                           Reclamar Recompensa
-                          <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 text-xs">
+                          <span className="ml-2 rounded bg-detective-bg px-2 py-0.5 text-xs">
                             Próximamente
                           </span>
                         </motion.button>
                       )}
 
                       {isClaimed && (
-                        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center justify-center gap-2 text-sm text-detective-text-secondary">
                           <Check className="h-4 w-4" />
                           <span>Recompensa reclamada</span>
                         </div>

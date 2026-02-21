@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger, Optional, Inject } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Achievement, UserAchievement, UserStats } from '../entities';
 import { GrantAchievementDto } from '../dto';
+import { NotificationService } from '../../notifications/services/notification.service';
+import { WebSocketService } from '../../websocket/websocket.service';
 
 /**
  * Interfaces para tipos de condiciones de achievements (alineadas con seeds)
@@ -118,6 +120,13 @@ export class AchievementsService {
     private readonly userStatsRepo: Repository<UserStats>,
     @InjectDataSource('gamification')
     private readonly dataSource: DataSource,
+    // F5-A: Notification pipeline for achievement events
+    @Optional()
+    @Inject(NotificationService)
+    private readonly notificationService?: NotificationService,
+    @Optional()
+    @Inject(WebSocketService)
+    private readonly webSocketService?: WebSocketService,
   ) {}
 
   /**
@@ -125,40 +134,37 @@ export class AchievementsService {
    * RF-GAM-001: Maximum 5 achievements per minute
    *
    * @param userId - ID del usuario
-   * @returns true si está dentro del límite, false si excede
-   * @throws BadRequestException si excede el rate limit
+   * @returns true if under rate limit, false if rate limited
    */
-  private checkRateLimit(userId: string): void {
+  private checkRateLimit(userId: string): boolean {
     const now = Date.now();
     const entry = this.rateLimitCache.get(userId);
 
     if (!entry) {
       // Primera vez - crear entrada
       this.rateLimitCache.set(userId, { count: 1, windowStart: now });
-      return;
+      return true;
     }
 
     // Verificar si la ventana expiró
     if (now - entry.windowStart >= this.RATE_LIMIT_WINDOW_MS) {
       // Resetear ventana
       this.rateLimitCache.set(userId, { count: 1, windowStart: now });
-      return;
+      return true;
     }
 
     // Dentro de la ventana - verificar límite
     if (entry.count >= this.RATE_LIMIT_MAX) {
-      const remainingMs = this.RATE_LIMIT_WINDOW_MS - (now - entry.windowStart);
-      const remainingSec = Math.ceil(remainingMs / 1000);
-      this.logger.warn(`[RATE_LIMIT] User ${userId} exceeded achievement rate limit (${this.RATE_LIMIT_MAX}/min)`);
-      throw new BadRequestException(
-        `Rate limit exceeded. Maximum ${this.RATE_LIMIT_MAX} achievements per minute. ` +
-        `Please wait ${remainingSec} seconds.`
+      this.logger.warn(
+        `Rate limit reached for user ${userId}. Queuing achievement grant.`,
       );
+      return false;
     }
 
     // Incrementar contador
     entry.count++;
     this.rateLimitCache.set(userId, entry);
+    return true;
   }
 
   /**
@@ -282,8 +288,13 @@ export class AchievementsService {
   ): Promise<UserAchievement> {
     // Rate limit check solo cuando se completa un logro
     // (no aplica a actualizaciones de progreso)
-    if (grantDto.is_completed) {
-      this.checkRateLimit(userId);
+    if (grantDto.is_completed && !this.checkRateLimit(userId)) {
+      // Rate limited — return existing record without granting
+      const existing = await this.userAchievementRepo.findOne({
+        where: { user_id: userId, achievement_id: grantDto.achievement_id },
+      });
+      if (existing) return existing;
+      // If no existing record, fall through to create one without completion
     }
 
     // Validar que el achievement existe
@@ -337,7 +348,14 @@ export class AchievementsService {
       userAchievement.completed_at = new Date();
     }
 
-    return this.userAchievementRepo.save(userAchievement);
+    const saved = await this.userAchievementRepo.save(userAchievement);
+
+    // F5-A: Send notification and WebSocket event when achievement is newly completed
+    if (saved.is_completed && saved.completed_at) {
+      await this.notifyAchievementUnlocked(userId, grantDto.achievement_id, saved);
+    }
+
+    return saved;
   }
 
   /**
@@ -387,6 +405,127 @@ export class AchievementsService {
   }
 
   /**
+   * Updates achievement progress based on specific activity types.
+   * Called after exercise completion to incrementally track progress.
+   *
+   * @param userId - Profile ID
+   * @param activityType - Type of activity: 'exercise_completion' | 'streak' | 'module_completion' | 'perfect_score'
+   * @param activityData - Additional data about the activity
+   */
+  async updateIncrementalProgress(
+    userId: string,
+    activityType: string,
+    activityData: Record<string, any> = {},
+  ): Promise<UserAchievement[]> {
+    const updatedAchievements: UserAchievement[] = [];
+
+    try {
+      // Get all user's non-completed achievements with their definitions
+      const inProgressAchievements = await this.userAchievementRepo.find({
+        where: { user_id: userId, is_completed: false },
+        relations: ['achievement'],
+      });
+
+      for (const ua of inProgressAchievements) {
+        if (!ua.achievement || !ua.achievement.is_active) continue;
+
+        const conditions = ua.achievement.conditions as any;
+        if (!conditions?.type) continue;
+
+        let shouldIncrement = false;
+
+        switch (activityType) {
+          case 'exercise_completion':
+            // Achievements that track exercise count
+            if (conditions.type === 'exercise_completion' || conditions.type === 'progress') {
+              shouldIncrement = true;
+            }
+            // Module-specific exercise achievements
+            if (conditions.type === 'module_first_exercise' && activityData.moduleId) {
+              const reqModule = conditions.requirements?.module_id;
+              if (!reqModule || reqModule === activityData.moduleId) {
+                shouldIncrement = true;
+              }
+            }
+            // Exercise type specific
+            if (conditions.type === 'exercise_score' && activityData.exerciseType) {
+              const reqType = conditions.requirements?.exercise_type;
+              if (reqType === activityData.exerciseType) {
+                shouldIncrement = true;
+              }
+            }
+            break;
+
+          case 'perfect_score':
+            if (conditions.type === 'perfect_score' || conditions.type === 'score') {
+              shouldIncrement = true;
+            }
+            break;
+
+          case 'streak':
+            if (conditions.type === 'streak') {
+              // For streaks, set progress to current streak value instead of incrementing
+              const currentStreak = activityData.currentStreak || 0;
+              if (currentStreak > ua.progress) {
+                const wasCompletedStreak = ua.is_completed;
+                ua.progress = currentStreak;
+                ua.completion_percentage = Math.min(
+                  100,
+                  parseFloat(((currentStreak / ua.max_progress) * 100).toFixed(2)),
+                );
+                if (ua.progress >= ua.max_progress) {
+                  ua.is_completed = true;
+                  ua.completed_at = new Date();
+                }
+                const saved = await this.userAchievementRepo.save(ua);
+                updatedAchievements.push(saved);
+
+                // F5-A: Notify when streak achievement is newly completed
+                if (!wasCompletedStreak && saved.is_completed && ua.achievement) {
+                  await this.notifyAchievementUnlocked(userId, ua.achievement.id, saved);
+                }
+              }
+              continue; // Skip normal increment
+            }
+            break;
+
+          case 'module_completion':
+            if (conditions.type === 'module_completion' || conditions.type === 'all_modules_completion') {
+              shouldIncrement = true;
+            }
+            break;
+        }
+
+        if (shouldIncrement) {
+          ua.progress = Math.min(ua.progress + 1, ua.max_progress);
+          ua.completion_percentage = Math.min(
+            100,
+            parseFloat(((ua.progress / ua.max_progress) * 100).toFixed(2)),
+          );
+
+          const wasCompleted = ua.is_completed;
+          if (ua.progress >= ua.max_progress) {
+            ua.is_completed = true;
+            ua.completed_at = new Date();
+          }
+
+          const saved = await this.userAchievementRepo.save(ua);
+          updatedAchievements.push(saved);
+
+          // F5-A: Notify when achievement is newly completed via incremental progress
+          if (!wasCompleted && saved.is_completed && ua.achievement) {
+            await this.notifyAchievementUnlocked(userId, ua.achievement.id, saved);
+          }
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Failed to update incremental progress for user ${userId}`, error);
+    }
+
+    return updatedAchievements;
+  }
+
+  /**
    * Detecta y otorga logros automáticamente basado en estadísticas del usuario
    * Lógica de auto-detection según condiciones
    */
@@ -433,7 +572,13 @@ export class AchievementsService {
         grantDto.progress_data = { auto_detected: true, detected_at: new Date().toISOString() };
 
         const granted = await this.grantAchievement(userId, grantDto);
-        grantedAchievements.push(granted);
+
+        // F1-A: Re-fetch with achievement relation for WebSocket payloads
+        const withRelation = await this.userAchievementRepo.findOne({
+          where: { id: granted.id },
+          relations: ['achievement'],
+        });
+        grantedAchievements.push(withRelation || granted);
       }
     }
 
@@ -821,6 +966,71 @@ export class AchievementsService {
     const targetIndex = RANKS.indexOf(targetRank);
 
     return currentIndex >= targetIndex;
+  }
+
+  /**
+   * F5-A: Send notification and WebSocket event when an achievement is unlocked
+   *
+   * @param userId - Profile ID
+   * @param achievementId - Achievement definition ID
+   * @param userAchievement - The user_achievement record that was just completed
+   */
+  private async notifyAchievementUnlocked(
+    userId: string,
+    achievementId: string,
+    _userAchievement: UserAchievement,
+  ): Promise<void> {
+    try {
+      // Fetch achievement definition for name/description/icon
+      const achievement = await this.achievementRepo.findOne({
+        where: { id: achievementId },
+      });
+
+      if (!achievement) return;
+
+      const achievementDesc = achievement.description || achievement.name;
+
+      // Emit WebSocket event for real-time UI toast
+      if (this.webSocketService) {
+        this.webSocketService.emitAchievementUnlocked(userId, {
+          achievementId: achievement.id,
+          title: achievement.name,
+          description: achievementDesc,
+          icon: achievement.icon || 'trophy',
+        });
+      }
+
+      // Create in-app notification (persisted in DB)
+      if (this.notificationService) {
+        await this.notificationService.create(
+          {
+            userId,
+            type: 'achievement_unlocked',
+            title: `\u00a1Logro Desbloqueado: ${achievement.name}!`,
+            message: achievementDesc,
+            data: {
+              achievementId: achievement.id,
+              icon: achievement.icon,
+              category: achievement.category,
+              xpReward: (achievement.rewards as any)?.xp || achievement.points_value || 0,
+              coinsReward: (achievement.rewards as any)?.ml_coins || achievement.ml_coins_reward || 0,
+            },
+            priority: achievement.rarity === 'legendary' ? 'high' : 'normal',
+            channels: ['in_app'],
+          },
+          { skipRateLimit: true },
+        );
+      }
+
+      this.logger.log(
+        `F5-A: Achievement notification sent for "${achievement.name}" to user ${userId}`,
+      );
+    } catch (err) {
+      this.logger.warn(
+        `F5-A: Failed to send achievement notification for user ${userId}`,
+        err instanceof Error ? err.stack : String(err),
+      );
+    }
   }
 
   /**

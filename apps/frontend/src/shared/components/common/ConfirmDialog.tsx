@@ -67,24 +67,24 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-
+      ariaLabelledBy="confirm-dialog-title"
       showCloseButton={false}
       closeOnOverlayClick={!loading}
       closeOnEscape={!loading}
     >
-      <div className="text-center">
+      <div className="text-center" role="alertdialog" aria-labelledby="confirm-dialog-title" aria-describedby="confirm-dialog-message">
         {/* Icon */}
         <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${config.iconBg}`}>
-          <Icon className={`h-6 w-6 ${config.iconColor}`} />
+          <Icon className={`h-6 w-6 ${config.iconColor}`} aria-hidden="true" />
         </div>
 
         {/* Title */}
-        <h3 className="mt-4 text-lg font-medium text-gray-900">
+        <h3 id="confirm-dialog-title" className="mt-4 text-lg font-medium text-gray-900">
           {config.title}
         </h3>
 
         {/* Message */}
-        <p className="mt-2 text-sm text-gray-500">
+        <p id="confirm-dialog-message" className="mt-2 text-sm text-gray-500">
           {message}
         </p>
 

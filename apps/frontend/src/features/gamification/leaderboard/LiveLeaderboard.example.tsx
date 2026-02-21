@@ -1,5 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * LiveLeaderboard Usage Examples
  *
@@ -233,8 +232,8 @@ export const MobileLeaderboardExample: React.FC = () => {
 export const AnalyticsLeaderboardExample: React.FC = () => {
   const handleUserClick = (userId: string) => {
     // Track analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'leaderboard_user_click', {
+    if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+      (window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', 'leaderboard_user_click', {
         user_id: userId,
         timestamp: new Date().toISOString(),
       });

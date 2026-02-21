@@ -10,8 +10,6 @@
  * @author Frontend-Developer Agent
  * @date 2025-11-24
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useMemo } from 'react';
 import {
   PieChart,
@@ -26,8 +24,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, Activity, Award, TrendingUp } from 'lucide-react';
+import { Users, Activity, Award, TrendingUp, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import type { AnalyticsOverview, DailyActivity, TopUser } from '@/services/api/adminTypes';
 
 // Chart colors
@@ -50,7 +50,7 @@ function StatCard({
 }: {
   title: string;
   value: string | number;
-  icon: any;
+  icon: React.ElementType;
   color: string;
 }) {
   return (
@@ -67,6 +67,36 @@ function StatCard({
     </DetectiveCard>
   );
 }
+
+/** Column definitions for Top Users table */
+const topUserColumns: Column<TopUser & { rank: number }>[] = [
+  { key: 'rank', label: '#' },
+  {
+    key: 'display_name',
+    label: 'Usuario',
+    render: (row) => <span className="font-medium">{row.display_name}</span>,
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    render: (row) => <span className="text-sm text-detective-text-secondary">{row.email}</span>,
+  },
+  {
+    key: 'total_xp',
+    label: 'XP',
+    render: (row) => row.total_xp.toLocaleString('es-ES'),
+  },
+  { key: 'exercises_completed', label: 'Ejercicios' },
+  {
+    key: 'current_rank',
+    label: 'Rango',
+    render: (row) => (
+      <span className="rounded-full bg-detective-orange/20 px-3 py-1 text-sm text-detective-orange">
+        {row.current_rank}
+      </span>
+    ),
+  },
+];
 
 /**
  * OverviewTab Component
@@ -102,9 +132,11 @@ export function OverviewTab({ overview, activityTimeline, topUsers }: OverviewTa
 
   if (!overview) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-detective-text-secondary">No hay datos disponibles</p>
-      </div>
+      <EmptyState
+        icon={BarChart3}
+        title="No hay datos disponibles"
+        description="Los datos de analisis apareceran cuando haya actividad en el sistema"
+      />
     );
   }
 
@@ -151,8 +183,8 @@ export function OverviewTab({ overview, activityTimeline, topUsers }: OverviewTa
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry: any) =>
-                    `${entry.name}: ${((entry.percent || 0) * 100).toFixed(0)}%`
+                  label={({ name, percent }: { name?: string; percent?: number }) =>
+                    `${name || ''}: ${((percent || 0) * 100).toFixed(0)}%`
                   }
                   outerRadius={100}
                   fill="#8884d8"
@@ -166,9 +198,11 @@ export function OverviewTab({ overview, activityTimeline, topUsers }: OverviewTa
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex h-[300px] items-center justify-center text-detective-text-secondary">
-              No hay datos de segmentos
-            </div>
+            <EmptyState
+              icon={PieChartIcon}
+              title="No hay datos de segmentos"
+              className="h-[300px]"
+            />
           )}
         </DetectiveCard>
 
@@ -240,9 +274,11 @@ export function OverviewTab({ overview, activityTimeline, topUsers }: OverviewTa
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-detective-text-secondary">
-            No hay datos de actividad
-          </div>
+          <EmptyState
+            icon={Activity}
+            title="No hay datos de actividad"
+            className="h-[300px]"
+          />
         )}
       </DetectiveCard>
 
@@ -250,59 +286,17 @@ export function OverviewTab({ overview, activityTimeline, topUsers }: OverviewTa
       <DetectiveCard className="p-6">
         <h3 className="mb-4 text-xl font-bold text-detective-text">Top 10 Usuarios</h3>
         {topUsers.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-detective-border border-b">
-                  <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                    #
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                    Usuario
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                    XP
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                    Ejercicios
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                    Rango
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {topUsers.map((user, index) => (
-                  <tr
-                    key={user.user_id}
-                    className="border-detective-border border-b transition-colors hover:bg-detective-bg-secondary"
-                  >
-                    <td className="px-4 py-3 text-detective-text">{index + 1}</td>
-                    <td className="px-4 py-3 font-medium text-detective-text">
-                      {user.display_name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-detective-text-secondary">
-                      {user.email}
-                    </td>
-                    <td className="px-4 py-3 text-detective-text">{formatNumber(user.total_xp)}</td>
-                    <td className="px-4 py-3 text-detective-text">{user.exercises_completed}</td>
-                    <td className="px-4 py-3">
-                      <span className="rounded-full bg-detective-orange/20 px-3 py-1 text-sm text-detective-orange">
-                        {user.current_rank}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable<TopUser & { rank: number }>
+            data={topUsers.map((u, i) => ({ ...u, rank: i + 1 }))}
+            columns={topUserColumns}
+            striped={false}
+            emptyMessage="No hay datos de usuarios"
+          />
         ) : (
-          <div className="py-8 text-center text-detective-text-secondary">
-            No hay datos de usuarios
-          </div>
+          <EmptyState
+            icon={Users}
+            title="No hay datos de usuarios"
+          />
         )}
       </DetectiveCard>
     </div>

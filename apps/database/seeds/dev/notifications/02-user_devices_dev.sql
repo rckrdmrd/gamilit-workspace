@@ -4,6 +4,7 @@
 -- Descripcion: Dispositivos de prueba para testing de push notifications
 -- Relacionado: EXT-003 (Notificaciones Multi-Canal)
 -- Fecha: 2026-01-04
+-- Updated: 2026-02-21 (Replaced placeholder UUIDs with gen_random_uuid())
 -- =====================================================
 --
 -- IMPORTANTE:
@@ -46,7 +47,7 @@ INSERT INTO notifications.user_devices (
 -- ADMIN: 2 dispositivos (web + mobile)
 -- =====================================================
 (
-    '11111111-1111-1111-1111-111111111111'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'),
     'web',
     'dev_token_admin_web_chrome_' || encode(gen_random_bytes(32), 'hex'),
@@ -57,7 +58,7 @@ INSERT INTO notifications.user_devices (
     gamilit.now_mexico() - INTERVAL '30 days'
 ),
 (
-    '11111111-1111-1111-1111-222222222222'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'),
     'mobile',
     'dev_token_admin_mobile_android_' || encode(gen_random_bytes(32), 'hex'),
@@ -72,7 +73,7 @@ INSERT INTO notifications.user_devices (
 -- TEACHER: 3 dispositivos (web, mobile, desktop)
 -- =====================================================
 (
-    '22222222-2222-2222-2222-111111111111'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
     'web',
     'dev_token_teacher_web_firefox_' || encode(gen_random_bytes(32), 'hex'),
@@ -83,7 +84,7 @@ INSERT INTO notifications.user_devices (
     gamilit.now_mexico() - INTERVAL '15 days'
 ),
 (
-    '22222222-2222-2222-2222-222222222222'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
     'mobile',
     'dev_token_teacher_mobile_ios_' || encode(gen_random_bytes(32), 'hex'),
@@ -94,7 +95,7 @@ INSERT INTO notifications.user_devices (
     gamilit.now_mexico() - INTERVAL '45 days'
 ),
 (
-    '22222222-2222-2222-2222-333333333333'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
     'desktop',
     'dev_token_teacher_desktop_macos_' || encode(gen_random_bytes(32), 'hex'),
@@ -109,7 +110,7 @@ INSERT INTO notifications.user_devices (
 -- STUDENT: 2 dispositivos (web + mobile)
 -- =====================================================
 (
-    '33333333-3333-3333-3333-111111111111'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'student@gamilit.com'),
     'web',
     'dev_token_student_web_chrome_' || encode(gen_random_bytes(32), 'hex'),
@@ -120,7 +121,7 @@ INSERT INTO notifications.user_devices (
     gamilit.now_mexico() - INTERVAL '7 days'
 ),
 (
-    '33333333-3333-3333-3333-222222222222'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'student@gamilit.com'),
     'mobile',
     'dev_token_student_mobile_android_' || encode(gen_random_bytes(32), 'hex'),

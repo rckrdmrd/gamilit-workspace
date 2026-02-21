@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useExercises, Exercise } from '../../hooks/useContentManagement';
@@ -44,7 +45,7 @@ export const ExerciseContentEditor: React.FC = () => {
       setEditingExercise(null);
     } catch (error) {
       console.error('Failed to save exercise:', error);
-      alert('Failed to save exercise');
+      toast.error('Error al guardar el ejercicio');
     }
   };
 
@@ -54,7 +55,7 @@ export const ExerciseContentEditor: React.FC = () => {
       setShowDeleteConfirm(null);
     } catch (error) {
       console.error('Failed to delete exercise:', error);
-      alert('Failed to delete exercise');
+      toast.error('Error al eliminar el ejercicio');
     }
   };
 
@@ -63,7 +64,7 @@ export const ExerciseContentEditor: React.FC = () => {
       await duplicateExercise(id);
     } catch (error) {
       console.error('Failed to duplicate exercise:', error);
-      alert('Failed to duplicate exercise');
+      toast.error('Error al duplicar el ejercicio');
     }
   };
 

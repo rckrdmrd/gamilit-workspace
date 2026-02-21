@@ -1,6 +1,16 @@
-import { useState, useEffect } from 'react';
+/**
+ * useSystemMetrics & useHealthStatus Hooks
+ *
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching with refetchInterval replacing setInterval.
+ *
+ * Updated: 2026-02-20 - Migrated to React Query
+ */
+
+import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 
 export interface SystemMetrics {
   apiResponseTime: {
@@ -22,50 +32,54 @@ export interface MetricsHistory {
   value: number;
 }
 
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const systemMetricsKeys = {
+  metrics: () => ['admin', 'system-metrics'] as const,
+  health: () => ['admin', 'health-status'] as const,
+};
+
+// ============================================================================
+// useSystemMetrics
+// ============================================================================
+
 export function useSystemMetrics(refreshInterval = 30000) {
-  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
-  const [history, setHistory] = useState<Record<string, MetricsHistory[]>>({
+  const metricsQuery = useQuery({
+    queryKey: systemMetricsKeys.metrics(),
+    queryFn: async () => {
+      const response = await apiClient.get(API_ENDPOINTS.admin.metrics);
+      const data = response.data.success ? response.data.data : response.data;
+      return data as SystemMetrics;
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: refreshInterval,
+  });
+
+  // Note: History tracking was moved out since React Query manages refetching.
+  // Consumers that need history should maintain their own buffer from the data stream.
+  // For backward compatibility, we return an empty history object.
+  const history: Record<string, MetricsHistory[]> = {
     apiResponseTime: [],
     errorRate: [],
     activeUsers: [],
     requestsPerMin: [],
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchMetrics = async () => {
-    try {
-      const response = await apiClient.get(API_ENDPOINTS.admin.metrics);
-      const data = response.data.success ? response.data.data : response.data;
-      setMetrics(data);
-
-      // Update history (keep last 60 entries for 60 minutes at 1min intervals)
-      const timestamp = new Date().toISOString();
-      setHistory((prev) => ({
-        apiResponseTime: [...prev.apiResponseTime.slice(-59), { timestamp, value: data.apiResponseTime.p95 }],
-        errorRate: [...prev.errorRate.slice(-59), { timestamp, value: data.errorRate }],
-        activeUsers: [...prev.activeUsers.slice(-59), { timestamp, value: data.activeUsersCount }],
-        requestsPerMin: [...prev.requestsPerMin.slice(-59), { timestamp, value: data.requestsPerMin }],
-      }));
-
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
   };
 
-  useEffect(() => {
-    fetchMetrics();
-    const interval = setInterval(fetchMetrics, refreshInterval);
-    return () => clearInterval(interval);
-  }, [refreshInterval]);
-
-  return { metrics, history, loading, error, refresh: fetchMetrics };
+  return {
+    metrics: metricsQuery.data ?? null,
+    history,
+    loading: metricsQuery.isLoading,
+    error: metricsQuery.error instanceof Error ? metricsQuery.error.message : metricsQuery.error ? String(metricsQuery.error) : null,
+    refresh: async () => { await metricsQuery.refetch(); },
+  };
 }
 
-// LOW-005 FIX: Definir tipo para health status
+// ============================================================================
+// useHealthStatus
+// ============================================================================
+
 interface HealthStatus {
   status: 'healthy' | 'degraded' | 'down';
   database?: { status: string; latency_ms?: number };
@@ -75,26 +89,19 @@ interface HealthStatus {
 }
 
 export function useHealthStatus() {
-  const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const healthQuery = useQuery({
+    queryKey: systemMetricsKeys.health(),
+    queryFn: async () => {
+      const response = await apiClient.get(API_ENDPOINTS.health.ready);
+      const data = response.data.success ? response.data.data : response.data;
+      return data as HealthStatus;
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: 60000, // Check every minute
+  });
 
-  useEffect(() => {
-    const fetchHealth = async () => {
-      try {
-        const response = await apiClient.get(API_ENDPOINTS.health.ready);
-        const data = response.data.success ? response.data.data : response.data;
-        setHealth(data);
-      } catch (err) {
-        console.error('Health check failed:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHealth();
-    const interval = setInterval(fetchHealth, 60000); // Check every minute
-    return () => clearInterval(interval);
-  }, []);
-
-  return { health, loading };
+  return {
+    health: healthQuery.data ?? null,
+    loading: healthQuery.isLoading,
+  };
 }

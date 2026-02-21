@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -27,6 +27,8 @@ import {
  */
 @Injectable()
 export class AdminQueryBuilder {
+  private readonly logger = new Logger(AdminQueryBuilder.name);
+
   constructor(
     @InjectDataSource('auth')
     private readonly authConnection: DataSource,
@@ -58,7 +60,7 @@ export class AdminQueryBuilder {
         [limit],
       );
 
-      const data: ModerationQueueItemDto[] = results.map((row: any) => ({
+      const data: ModerationQueueItemDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: row.id,
         content_type: row.content_type,
         content_id: row.content_id,
@@ -85,7 +87,7 @@ export class AdminQueryBuilder {
         limit,
       };
     } catch (error) {
-      console.error('Error fetching moderation queue:', error);
+      this.logger.error(`Error fetching moderation queue: ${error instanceof Error ? error.message : error}`);
       // Return empty queue if table doesn't exist
       return {
         data: [],
@@ -128,7 +130,7 @@ export class AdminQueryBuilder {
         [limit],
       );
 
-      const data: ClassroomOverviewDto[] = results.map((row: any) => ({
+      const data: ClassroomOverviewDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         classroom_id: row.classroom_id,
         classroom_name: row.classroom_name,
         classroom_description: row.classroom_description,
@@ -163,7 +165,7 @@ export class AdminQueryBuilder {
         limit,
       };
     } catch (error) {
-      console.error('Error fetching classroom overview:', error);
+      this.logger.error(`Error fetching classroom overview: ${error instanceof Error ? error.message : error}`);
       // Return empty list if view doesn't exist
       return {
         data: [],
@@ -209,7 +211,7 @@ export class AdminQueryBuilder {
         [limit],
       );
 
-      const data: AssignmentSubmissionStatsDto[] = results.map((row: any) => ({
+      const data: AssignmentSubmissionStatsDto[] = results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         assignment_id: row.assignment_id,
         assignment_title: row.assignment_title,
         assignment_type: row.assignment_type,
@@ -249,7 +251,7 @@ export class AdminQueryBuilder {
         limit,
       };
     } catch (error) {
-      console.error('Error fetching assignment submission stats:', error);
+      this.logger.error(`Error fetching assignment submission stats: ${error instanceof Error ? error.message : error}`);
       // Return empty list if view doesn't exist
       return {
         data: [],
@@ -363,11 +365,11 @@ export class AdminQueryBuilder {
       }
 
       // Build labels and data for chart
-      const labels = activityData.map((row: any) => row.period || '');
-      const data = activityData.map((row: any) => parseInt(row.active_users || '0', 10));
+      const labels = activityData.map((row: any) => row.period || ''); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const data = activityData.map((row: any) => parseInt(row.active_users || '0', 10)); // eslint-disable-line @typescript-eslint/no-explicit-any
 
       // Build detailed table data
-      const tableData: UserActivityDataPointDto[] = activityData.map((row: any) => ({
+      const tableData: UserActivityDataPointDto[] = activityData.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         date: row.period,
         activeUsers: parseInt(row.active_users || '0', 10),
         newRegistrations: parseInt(row.new_registrations || '0', 10),
@@ -381,7 +383,7 @@ export class AdminQueryBuilder {
         tableData,
       };
     } catch (error) {
-      console.error('Error fetching user activity analytics:', error);
+      this.logger.error(`Error fetching user activity analytics: ${error instanceof Error ? error.message : error}`);
       // Return empty data on error
       return {
         labels: [],

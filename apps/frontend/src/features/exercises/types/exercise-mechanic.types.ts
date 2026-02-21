@@ -95,11 +95,17 @@ export interface ExerciseMechanicMeta {
 
 /**
  * A single entry in the Exercise Registry.
+ *
+ * Note: loader and adapter use permissive types because exercise mechanics
+ * have heterogeneous prop types and the adapter functions from exerciseAdapter.ts
+ * accept ExerciseData and return mechanic-specific shapes.
  */
 export interface ExerciseRegistryEntry {
   /** Lazy loader for the mechanic component */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loader: () => Promise<{ default: React.ComponentType<any> }>;
   /** Adapter function that transforms raw API data to the mechanic's expected format */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: (exercise: any) => any;
   /** Metadata about the mechanic */
   meta: ExerciseMechanicMeta;

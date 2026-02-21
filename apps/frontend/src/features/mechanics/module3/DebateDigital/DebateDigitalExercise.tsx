@@ -10,6 +10,7 @@ import type { DebateMessage, DebateDigitalAnswers } from './debateDigitalTypes';
 import { calculateTimeBonus } from '@/shared/utils/scoring';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
@@ -18,8 +19,7 @@ interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onProgressUpdate?: (data: any) => void;
+  onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<{
@@ -153,8 +153,8 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
         argumentStrength: response.argumentScore,
       };
       setMessages((prev) => [...prev, aiMsg]);
-    } catch (error) {
-      console.error('Error:', error);
+    } catch (_error) {
+      // Error handled silently
     } finally {
       setAiTyping(false);
     }
@@ -163,8 +163,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
   const handleComplete = async () => {
     // ✅ FIX COR-010: Validar que se seleccionó una posición antes de completar
     if (userPosition === 'neutral') {
-      console.warn('[DebateDigital] Cannot complete without selecting a position');
-      return; // El mensaje de advertencia ya se muestra en UI (línea 315-319)
+      return; // El mensaje de advertencia ya se muestra en UI
     }
 
     // Validate minimum participation
@@ -176,7 +175,6 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
 
     // Validate user authentication
     if (!user?.id) {
-      console.error('[DebateDigital] User not authenticated');
       setShowFeedback(true);
       return;
     }
@@ -194,22 +192,17 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       };
 
       // Submit to backend
-      const response = await submitAsync(answers);
+      const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
       // CORRECCION-001: Verificar si requiere revision manual del maestro
       if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
         setIsPendingReview(true);
         setBackendScore(null); // No mostrar score aun
-        setBackendFeedback('Tu ejercicio ha sido enviado para revision del maestro. Recibiras tus recompensas cuando sea evaluado.');
+        setBackendFeedback(MANUAL_REVIEW_PENDING_SHORT_MESSAGE);
         setBackendRewards(null); // No mostrar rewards prematuramente
 
         // Sync pero sin mostrar rewards
         await syncAndInvalidate();
-
-        console.log('📝 [DebateDigital] Submission pending review:', {
-          status: response.status,
-          requiresManualReview: response.requiresManualReview,
-        });
 
         setShowFeedback(true);
         return;
@@ -227,11 +220,6 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [DebateDigital] Submission successful:', {
-        score: response.score,
-        rewards: response.rewards,
-      });
-
       // Show feedback with backend response
       setShowFeedback(true);
 
@@ -241,7 +229,6 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
         onComplete(response.score, finalTimeSpent);
       }
     } catch (error) {
-      console.error('[DebateDigital] Submission error:', error);
       // Reset backend data on error
       setBackendScore(null);
       setBackendFeedback(null);

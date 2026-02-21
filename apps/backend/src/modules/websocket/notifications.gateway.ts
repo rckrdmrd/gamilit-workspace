@@ -241,7 +241,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
    * Emit notification to specific user
    * If user is offline and message persistence is enabled, store the message
    */
-  async emitToUser(userId: string, event: SocketEvent, data: any, persistIfOffline = true): Promise<void> {
+  async emitToUser(userId: string, event: SocketEvent, data: Record<string, unknown>, persistIfOffline = true): Promise<void> {
     const room = `user:${userId}`;
     const timestamp = new Date().toISOString();
     const payload = {
@@ -267,7 +267,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   /**
    * Emit notification to multiple users
    */
-  async emitToUsers(userIds: string[], event: SocketEvent, data: any, persistIfOffline = true): Promise<void> {
+  async emitToUsers(userIds: string[], event: SocketEvent, data: Record<string, unknown>, persistIfOffline = true): Promise<void> {
     await Promise.all(
       userIds.map((userId) => this.emitToUser(userId, event, data, persistIfOffline)),
     );
@@ -277,7 +277,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   /**
    * Broadcast to all connected users
    */
-  broadcast(event: SocketEvent, data: any) {
+  broadcast(event: SocketEvent, data: Record<string, unknown>) {
     this.server.emit(event, {
       ...data,
       timestamp: new Date().toISOString(),

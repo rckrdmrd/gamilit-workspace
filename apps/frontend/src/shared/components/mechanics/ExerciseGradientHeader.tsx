@@ -37,7 +37,7 @@ export const ExerciseGradientHeader: React.FC<ExerciseGradientHeaderProps> = ({
           {icon && <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 p-2 backdrop-blur-sm">{icon}</div>}
           <div>
             <h2 className={cn('text-2xl font-bold text-white', titleClassName)}>{title}</h2>
-            {description && <p className={cn('mt-1 text-blue-50 opacity-90', descriptionClassName)}>{description}</p>}
+            {description && <p className={cn('mt-1 text-white/95', descriptionClassName)}>{description}</p>}
           </div>
         </div>
         {actions && <div className="flex flex-wrap gap-3">{actions}</div>}

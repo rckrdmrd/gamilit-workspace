@@ -28,7 +28,7 @@ Validar que el sistema gamilit **funciona de extremo a extremo** tras completar 
 1. **Recrear la base de datos** desde DDL puro (18 schemas, 169 tablas)
 2. **Compilar y levantar** backend (NestJS) y frontend (Vite/React)
 3. **Verificar los 4 portales** (Student, Teacher, Admin, Parent)
-4. **Probar 22 modulos backend** via API smoke tests
+4. **Probar 23 modulos backend** via API smoke tests
 5. **Ejecutar flujos end-to-end**: registro, ejercicios, gamificacion
 6. **Auditar coherencia** DB↔Backend↔Frontend
 7. **Documentar hallazgos** con severidades y plan de correccion

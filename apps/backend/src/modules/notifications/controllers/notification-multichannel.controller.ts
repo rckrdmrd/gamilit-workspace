@@ -238,7 +238,7 @@ export class NotificationMultiChannelController {
   /**
    * Maps Notification entity to NotificationResponseDto
    */
-  private mapToResponseDto(notification: any): NotificationResponseDto {
+  private mapToResponseDto(notification: any): NotificationResponseDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     return {
       id: notification.id,
       userId: notification.userId,

@@ -3,7 +3,7 @@ name: Deploy to Production
 on:
   push:
     branches:
-      - main
+      - master
     tags:
       - 'v*'
   workflow_dispatch:
@@ -18,7 +18,7 @@ on:
           - production
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   # Job 1: Pre-deployment checks
@@ -30,28 +30,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify Sprint 2 optimizations
+      - name: Verify project structure
         run: |
-          echo "## 🎯 Sprint 2 Optimizations Verification" >> $GITHUB_STEP_SUMMARY
+          echo "## Pre-deployment Verification" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ Day 1: Code Quality & Linting" >> $GITHUB_STEP_SUMMARY
-          echo "- ESLint strict mode configured" >> $GITHUB_STEP_SUMMARY
-          echo "- 204 'any' types documented" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ Day 2: Performance Optimization" >> $GITHUB_STEP_SUMMARY
-          echo "- Bundle size reduced 44% (645KB → 364KB)" >> $GITHUB_STEP_SUMMARY
-          echo "- Main gzipped reduced 48%" >> $GITHUB_STEP_SUMMARY
-          echo "- 6 vendor chunks for caching" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ Day 3: E2E Testing & Backend Caching" >> $GITHUB_STEP_SUMMARY
-          echo "- Backend caching: -87% to -94% DB load" >> $GITHUB_STEP_SUMMARY
-          echo "- Playwright E2E: 40+ scenarios (12 active)" >> $GITHUB_STEP_SUMMARY
-          echo "- Response time: 150-250ms → 5-15ms" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ Day 4: Documentation & Type Safety" >> $GITHUB_STEP_SUMMARY
-          echo "- API Documentation: 97% coverage" >> $GITHUB_STEP_SUMMARY
-          echo "- TypeScript analysis: 1,368 errors documented" >> $GITHUB_STEP_SUMMARY
-          echo "- Storybook: Basic setup complete" >> $GITHUB_STEP_SUMMARY
+          echo "### Project Structure" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: $(find apps/frontend/src -name '*.tsx' -o -name '*.ts' | wc -l) source files" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: $(find apps/backend/src -name '*.ts' | wc -l) source files" >> $GITHUB_STEP_SUMMARY
+          echo "- Database: $(find apps/database/ddl -name '*.sql' | wc -l) DDL files" >> $GITHUB_STEP_SUMMARY
 
       - name: Check version tag
         if: startsWith(github.ref, 'refs/tags/')
@@ -74,7 +60,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: apps/frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         working-directory: apps/frontend
@@ -131,8 +117,7 @@ jobs:
 
       - name: Build for production
         working-directory: apps/backend
-        run: npm run build || echo "⚠️ Build with known TypeScript errors"
-        continue-on-error: true
+        run: npm run build
 
       - name: Upload backend artifacts
         uses: actions/upload-artifact@v4
@@ -179,7 +164,7 @@ jobs:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: [build-frontend, build-backend, prepare-database-migration]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment:
       name: staging
       url: https://staging.gamilit.com
@@ -307,8 +292,6 @@ jobs:
           echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Sprint 2 Optimizations Deployed:" >> $GITHUB_STEP_SUMMARY
-          echo "- ⚡ Bundle size -44%" >> $GITHUB_STEP_SUMMARY
-          echo "- 🚀 Backend caching -87% DB load" >> $GITHUB_STEP_SUMMARY
-          echo "- 📚 API docs 97% coverage" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧪 E2E tests 40+ scenarios" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Info:" >> $GITHUB_STEP_SUMMARY
+          echo "- Node.js: v20" >> $GITHUB_STEP_SUMMARY
+          echo "- Stack: NestJS 11 + React 19 + PostgreSQL 15" >> $GITHUB_STEP_SUMMARY

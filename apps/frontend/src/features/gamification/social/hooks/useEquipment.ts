@@ -100,3 +100,7 @@ export const useEquipment = () => {
     refresh: equippedQuery.refetch,
   };
 };
+
+// Re-export centralized visual extraction hook
+export { useEquippedVisuals } from './useEquippedVisuals';
+export type { EquippedVisuals } from './useEquippedVisuals';

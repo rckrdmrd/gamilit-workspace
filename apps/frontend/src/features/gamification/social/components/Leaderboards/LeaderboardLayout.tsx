@@ -7,16 +7,20 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { LeaderboardEntry } from './LeaderboardEntry';
 import type { LeaderboardEntry as Entry } from '../../types/leaderboardsTypes';
+import type { EquippedItemsBatchMap } from '../../types/inventory.types';
+import { CosmeticAvatar } from '@shared/components/CosmeticAvatar';
 
 interface LeaderboardLayoutProps {
   entries: Entry[];
   showTopThree?: boolean;
   highlightUser?: boolean;
+  equippedMap?: EquippedItemsBatchMap | null;
 }
 
 export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
   entries,
   showTopThree = true,
+  equippedMap,
 }) => {
   const topThree = showTopThree ? entries.slice(0, 3) : [];
   const remaining = showTopThree ? entries.slice(3) : entries;
@@ -35,13 +39,13 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
               className="flex flex-col items-center pt-8"
             >
               <div className="relative mb-4">
-                <img
-                  src={topThree[1].avatar}
-                  alt={topThree[1].username}
-                  className="h-20 w-20 rounded-full border-4 border-gray-400 object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[1].username)}&background=9ca3af&color=fff`;
-                  }}
+                <CosmeticAvatar
+                  userId={topThree[1].userId}
+                  name={topThree[1].username}
+                  fallbackAvatar={topThree[1].avatar}
+                  equippedMap={equippedMap}
+                  size="lg"
+                  className="border-4 border-gray-400"
                 />
                 <div className="absolute -bottom-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gray-300 to-gray-500 text-lg font-bold text-white shadow-lg">
                   2
@@ -77,13 +81,13 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
                     =Q
                   </motion.div>
                 </div>
-                <img
-                  src={topThree[0].avatar}
-                  alt={topThree[0].username}
-                  className="h-24 w-24 rounded-full border-4 border-yellow-400 object-cover shadow-xl"
-                  onError={(e) => {
-                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[0].username)}&background=fbbf24&color=fff`;
-                  }}
+                <CosmeticAvatar
+                  userId={topThree[0].userId}
+                  name={topThree[0].username}
+                  fallbackAvatar={topThree[0].avatar}
+                  equippedMap={equippedMap}
+                  size="lg"
+                  className="border-4 border-yellow-400 shadow-xl"
                 />
                 <div className="absolute -bottom-2 -right-2 flex h-12 w-12 animate-gold-shine items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-xl font-bold text-white shadow-xl">
                   1
@@ -110,13 +114,13 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
               className="flex flex-col items-center pt-12"
             >
               <div className="relative mb-4">
-                <img
-                  src={topThree[2].avatar}
-                  alt={topThree[2].username}
-                  className="h-20 w-20 rounded-full border-4 border-orange-400 object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[2].username)}&background=fb923c&color=fff`;
-                  }}
+                <CosmeticAvatar
+                  userId={topThree[2].userId}
+                  name={topThree[2].username}
+                  fallbackAvatar={topThree[2].avatar}
+                  equippedMap={equippedMap}
+                  size="lg"
+                  className="border-4 border-orange-400"
                 />
                 <div className="absolute -bottom-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-orange-600 text-lg font-bold text-white shadow-lg">
                   3
@@ -139,7 +143,7 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
       {/* Remaining Entries */}
       <div className="space-y-2">
         {remaining.map((entry, index) => (
-          <LeaderboardEntry key={entry.userId} entry={entry} index={index} />
+          <LeaderboardEntry key={entry.userId} entry={entry} index={index} equippedMap={equippedMap} />
         ))}
       </div>
     </div>

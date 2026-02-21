@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/app/providers/AuthContext';
 import { Users, UserPlus, Search, Activity } from 'lucide-react';
+import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
 
 // Components
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { FriendsStatsGrid } from '../components/friends/FriendsStatsGrid';
 import { FriendsListTab } from '../components/friends/FriendsListTab';
 import { FriendRequestsTab } from '../components/friends/FriendRequestsTab';
@@ -13,7 +13,7 @@ import { FriendActivitiesTab } from '../components/friends/FriendActivitiesTab';
 
 // Hooks
 import { useFriends } from '@/features/gamification/social/hooks/useFriends';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useBatchEquipment } from '@/features/gamification/social/hooks/useBatchEquipment';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -52,20 +52,30 @@ export default function FriendsPage() {
     filteredRecommendations,
   } = useFriends();
 
+  // Batch fetch equipped cosmetics for all friends
+  const friendUserIds = friends.map((f) => f.userId).filter(Boolean);
+  const { equippedMap } = useBatchEquipment(friendUserIds);
+
   const [activeTab, setActiveTab] = useState<TabType>('friends');
   const [friendsSearchQuery, setFriendsSearchQuery] = useState('');
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
-
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
+  const [confirmRemove, setConfirmRemove] = useState<{ open: boolean; userId: string | null }>({
+    open: false,
+    userId: null,
+  });
 
   const pendingRequests = getPendingRequests();
 
-  const handleRemoveFriend = async (userId: string) => {
-    if (confirm('Are you sure you want to remove this friend?')) {
-      await removeFriend(userId);
+  const handleRemoveFriend = useCallback((userId: string) => {
+    setConfirmRemove({ open: true, userId });
+  }, []);
+
+  const handleConfirmRemove = useCallback(async () => {
+    if (confirmRemove.userId) {
+      await removeFriend(confirmRemove.userId);
     }
-  };
+    setConfirmRemove({ open: false, userId: null });
+  }, [confirmRemove.userId, removeFriend]);
 
   const tabs = [
     { id: 'friends' as TabType, label: 'My Friends', icon: Users, count: friends.length },
@@ -75,13 +85,7 @@ export default function FriendsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader
-        user={user ?? undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       <main className="detective-container py-8">
         <div className="mb-8">
           <h1 className="mb-2 flex items-center gap-3 text-4xl font-bold text-detective-text">
@@ -101,13 +105,15 @@ export default function FriendsPage() {
         />
 
         {/* Tabs */}
-        <div className="mb-6 flex items-center gap-2 overflow-x-auto">
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto" role="tablist" aria-label="Secciones de amigos">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <motion.button
                 key={tab.id}
+                role="tab"
+                aria-selected={isActive}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id)}
@@ -136,6 +142,7 @@ export default function FriendsPage() {
         </div>
 
         {/* Tab Content */}
+        <div role="tabpanel" aria-live="polite">
         <AnimatePresence mode="wait">
           {activeTab === 'friends' && (
             <FriendsListTab
@@ -147,6 +154,7 @@ export default function FriendsPage() {
               onRemoveFriend={handleRemoveFriend}
               onSwitchToSearch={() => setActiveTab('search')}
               formatLastActive={formatLastActive}
+              equippedMap={equippedMap}
             />
           )}
 
@@ -176,7 +184,19 @@ export default function FriendsPage() {
             />
           )}
         </AnimatePresence>
+        </div>
+
+        <ConfirmDialog
+          isOpen={confirmRemove.open}
+          onClose={() => setConfirmRemove({ open: false, userId: null })}
+          onConfirm={handleConfirmRemove}
+          title="Eliminar amigo"
+          message="¿Estás seguro de que deseas eliminar a este amigo? Esta acción no se puede deshacer."
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          variant="danger"
+        />
       </main>
-    </div>
+    </StudentPageShell>
   );
 }

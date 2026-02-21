@@ -162,6 +162,12 @@ const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> 
  * - Loading skeleton rows
  * - Sticky header
  * - Empty state
+ *
+ * FUTURE: Evaluate migration to DataTable — currently not feasible because
+ * this component uses a dual desktop-table/mobile-card responsive layout,
+ * per-row conditional background colors (top-3 gold, current-user orange),
+ * skeleton loading rows, and heavily customized cell rendering (medals,
+ * avatars, rank badges). These exceed DataTable's column `render` scope.
  */
 export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   entries,
@@ -315,7 +321,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                       className={cn(
                         'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold',
                         getRankColor(entry.currentRank),
-                        'bg-opacity-10',
+                        'bg-current/10',
                       )}
                     >
                       <Crown className="mr-1 h-3 w-3" />

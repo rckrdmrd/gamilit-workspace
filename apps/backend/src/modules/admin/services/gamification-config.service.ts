@@ -472,7 +472,7 @@ export class GamificationConfigService {
       const category = parts[1]; // gamification.{category}.{key}
       const key = parts[2];
 
-      let value: any = setting.setting_value;
+      let value: any = setting.setting_value; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       // Parse value based on type
       if (setting.value_type === 'number') {
@@ -510,7 +510,7 @@ export class GamificationConfigService {
 
     for (const setting of settings) {
       if (setting.default_value) {
-        let value: any = setting.default_value;
+        let value: any = setting.default_value; // eslint-disable-line @typescript-eslint/no-explicit-any
 
         // Parse value based on type
         if (setting.value_type === 'number') {
@@ -672,7 +672,7 @@ export class GamificationConfigService {
     await this.ensureDefaultSettings();
 
     // Build where clause
-    const where: any = { setting_category: 'gamification' };
+    const where: any = { setting_category: 'gamification' }; // eslint-disable-line @typescript-eslint/no-explicit-any
     if (query.category) {
       where.setting_subcategory = query.category;
     }
@@ -810,7 +810,7 @@ export class GamificationConfigService {
       `);
 
       // Parse perks JSONB to array
-      const ranksWithParsedPerks = ranks.map((rank: any) => ({
+      const ranksWithParsedPerks = ranks.map((rank: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: rank.id,
         name: rank.name,
         level: rank.level,
@@ -822,7 +822,7 @@ export class GamificationConfigService {
         color: rank.color,
         icon: rank.icon,
         description: rank.description || `Rank nivel ${rank.level}`,
-        perks: Array.isArray(rank.perks) ? rank.perks : (typeof rank.perks === 'string' ? JSON.parse(rank.perks) : []),
+        perks: Array.isArray(rank.perks) ? rank.perks : (typeof rank.perks === 'string' ? (() => { try { return JSON.parse(rank.perks); } catch { return []; } })() : []),
         isActive: rank.isActive,
         order: rank.order,
       }));

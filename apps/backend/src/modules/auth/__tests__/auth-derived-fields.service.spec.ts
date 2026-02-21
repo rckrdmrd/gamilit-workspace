@@ -6,6 +6,7 @@ import { AuthService } from '../services/auth.service';
 import { User, Profile, Tenant, UserSession, AuthAttempt } from '../entities';
 import { UserStats, UserRank, UserAchievement, Achievement, MLCoinsTransaction } from '../../gamification/entities';
 import { ExerciseSubmission } from '../../progress/entities';
+import { InventoryService } from '../../gamification/services/inventory.service';
 import { GamilityRoleEnum } from '@shared/constants';
 
 describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
@@ -74,6 +75,15 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
     save: jest.fn(),
   };
 
+  // Gamification services
+  const mockInventoryService = {
+    initializeUserInventory: jest.fn(),
+    getEquippedItems: jest.fn(),
+    getEquippedItemsMap: jest.fn().mockResolvedValue({}),
+    equipItem: jest.fn(),
+    unequipItem: jest.fn(),
+  };
+
   const mockJwtService = {
     sign: jest.fn(),
     verify: jest.fn(),
@@ -126,6 +136,10 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
         {
           provide: getRepositoryToken(ExerciseSubmission, 'progress'),
           useValue: mockExerciseSubmissionRepository,
+        },
+        {
+          provide: InventoryService,
+          useValue: mockInventoryService,
         },
         {
           provide: JwtService,
@@ -394,14 +408,15 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       expect(result.id).toBe(mockUser.id);
       expect(result.email).toBe(mockUser.email);
       expect(result.role).toBe(GamilityRoleEnum.ADMIN_TEACHER);
-      expect(result.email_confirmed_at).toEqual(mockUser.email_confirmed_at);
+      // P0-005: Date fields are serialized to ISO strings by toUserResponse
+      expect(result.email_confirmed_at).toBe(mockUser.email_confirmed_at.toISOString());
       expect(result.phone).toBe('+52123456789');
-      expect(result.phone_confirmed_at).toEqual(mockUser.phone_confirmed_at);
+      expect(result.phone_confirmed_at).toBe(mockUser.phone_confirmed_at.toISOString());
       expect(result.is_super_admin).toBe(false);
-      expect(result.last_sign_in_at).toEqual(mockUser.last_sign_in_at);
+      expect(result.last_sign_in_at).toBe(mockUser.last_sign_in_at.toISOString());
       expect(result.raw_user_meta_data).toEqual(mockUser.raw_user_meta_data);
-      expect(result.created_at).toEqual(mockUser.created_at);
-      expect(result.updated_at).toEqual(mockUser.updated_at);
+      expect(result.created_at).toBe(mockUser.created_at.toISOString());
+      expect(result.updated_at).toBe(mockUser.updated_at.toISOString());
       // Derived fields
       expect(result.emailVerified).toBe(true);
       expect(result.isActive).toBe(true);

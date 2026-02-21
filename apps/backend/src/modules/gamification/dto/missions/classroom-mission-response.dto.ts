@@ -166,7 +166,7 @@ export class ClassroomMissionResponseDto {
    * Factory method to create response DTO from entity
    * Calculates total_rewards from base_rewards + bonuses
    */
-  static fromEntity(entity: any): ClassroomMissionResponseDto {
+  static fromEntity(entity: any): ClassroomMissionResponseDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     const totalMlCoins = (entity.base_rewards?.ml_coins || 0) + (entity.bonus_coins || 0);
     const totalXp = (entity.base_rewards?.xp || 0) + (entity.bonus_xp || 0);
 

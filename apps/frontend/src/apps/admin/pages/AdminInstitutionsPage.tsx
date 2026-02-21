@@ -40,7 +40,7 @@ export default function AdminInstitutionsPage() {
 
         {/* Error Message */}
         {inst.error && (
-          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
+          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500" role="alert">
             <p className="font-semibold">Error:</p>
             <p>{inst.error}</p>
           </div>
@@ -48,13 +48,13 @@ export default function AdminInstitutionsPage() {
 
         {/* FIX-2025-01-07 P0: Operation feedback messages */}
         {inst.operationError && (
-          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-400 animate-fade-in">
-            <p className="font-semibold">Error de operación:</p>
+          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-400 animate-fade-in" role="alert">
+            <p className="font-semibold">Error de operacion:</p>
             <p>{inst.operationError}</p>
           </div>
         )}
         {inst.operationSuccess && (
-          <div className="mb-6 rounded-lg border border-green-500/50 bg-green-500/20 p-4 text-green-400 animate-fade-in">
+          <div className="mb-6 rounded-lg border border-green-500/50 bg-green-500/20 p-4 text-green-400 animate-fade-in" aria-live="polite">
             <p>{inst.operationSuccess}</p>
           </div>
         )}
@@ -63,6 +63,7 @@ export default function AdminInstitutionsPage() {
         <InstitutionFilters onFilter={inst.handleFilterChange} onReset={inst.handleResetFilters} />
 
         {/* Institutions Table */}
+        <div role="region" aria-label="Tabla de organizaciones" aria-live="polite">
         <InstitutionsTable
           institutions={inst.filteredOrganizations}
           loading={inst.loading && !inst.organizations.length}
@@ -70,6 +71,7 @@ export default function AdminInstitutionsPage() {
           onEdit={inst.handleEditInstitution}
           onManageFeatures={inst.handleManageFeatures}
         />
+        </div>
       </div>
 
       {/* Institution Detail Modal (MEDIO-001: Now uses real stats from API) */}

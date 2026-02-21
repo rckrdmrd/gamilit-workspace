@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MissionTypeEnum, MissionStatusEnum, MissionObjective, MissionRewards } from '../../entities/mission.entity';
+import { MissionTypeEnum, MissionStatusEnum, MissionObjective, MissionRewards } from '../../enums/mission.enums';
 
 /**
  * Mission Response DTO

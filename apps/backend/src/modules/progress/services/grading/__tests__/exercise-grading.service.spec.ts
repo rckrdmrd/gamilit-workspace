@@ -12,14 +12,13 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-// EntityManager imported but not currently used in tests
+import { getRepositoryToken, getEntityManagerToken } from '@nestjs/typeorm';
 import { NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ExerciseGradingService } from '../exercise-grading.service';
 import { Exercise } from '@/modules/educational/entities';
 import { ExerciseSubmission } from '../../../entities';
-import { createMockRepository, createMockEntityManager } from '@/__mocks__/repositories.mock';
-import { TestDataFactory } from '@/__mocks__/services.mock';
+import { createMockRepository } from '@/__mocks__/repositories.mock';
+import { createMockEntityManager, TestDataFactory } from '@/__mocks__/services.mock';
 
 describe('ExerciseGradingService', () => {
   let service: ExerciseGradingService;
@@ -49,7 +48,7 @@ describe('ExerciseGradingService', () => {
         ExerciseGradingService,
         { provide: getRepositoryToken(Exercise, 'educational'), useValue: exerciseRepo },
         { provide: getRepositoryToken(ExerciseSubmission, 'progress'), useValue: submissionRepo },
-        { provide: 'progress_EntityManager', useValue: entityManager },
+        { provide: getEntityManagerToken('progress'), useValue: entityManager },
       ],
     }).compile();
 
@@ -183,7 +182,8 @@ describe('ExerciseGradingService', () => {
     };
 
     beforeEach(() => {
-      submissionRepo.findOne.mockResolvedValue(mockSubmission as any);
+      // Return a fresh copy to avoid mutation from previous tests
+      submissionRepo.findOne.mockResolvedValue({ ...mockSubmission } as any);
       submissionRepo.save.mockImplementation((data) => Promise.resolve(data as any));
     });
 

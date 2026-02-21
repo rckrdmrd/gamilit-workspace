@@ -2,8 +2,8 @@
 
 > Contrato canonico para `metadata` JSONB de items visuales en `gamification_system.shop_items`.
 
-**Fecha:** 2026-02-17  
-**Version:** 1.1.0  
+**Fecha:** 2026-02-21
+**Version:** 2.0.0
 **Contexto:** Integracion Tienda Visual (`shop_items.metadata` + `user_equipped_items`).  
 **Referencias:** `docs/20-architecture/gamificacion/ANALISIS-RECURSOS-VISUALES.md`, `docs/20-architecture/gamificacion/DISENO-SISTEMA-EQUIPAMIENTO.md`.
 
@@ -53,7 +53,7 @@ No define precios, stock ni reglas de negocio comerciales.
 {
   "type": "profile_frame",
   "render_mode": "image",
-  "asset_url": "/assets/frames/dragon-gold.png",
+  "asset_url": "/assets/frames/dragon-gold.svg",
   "position": "overlay",
   "z_index": 10,
   "fallback": {
@@ -109,6 +109,73 @@ Reglas:
 Reglas:
 - `colors.primary`, `colors.secondary` y `colors.accent` obligatorios.
 - Valores deben cumplir formato HEX (`#RRGGBB`).
+
+### 3.4 `avatar`
+
+```json
+{
+  "type": "avatar",
+  "asset_url": "/assets/avatars/kukulkan.svg",
+  "animated": false,
+  "animation": null,
+  "glow_color": null,
+  "fallback": { "render_mode": "icon", "css_class": "text-slate-400" }
+}
+```
+
+### 3.5 `profile_background`
+
+```json
+{
+  "type": "profile_background",
+  "asset_url": "/assets/backgrounds/maya-temple.svg",
+  "animated": false,
+  "fallback": { "render_mode": "css", "css_class": "bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600" }
+}
+```
+
+### 3.6 `badge`
+
+```json
+{
+  "type": "badge",
+  "asset_url": "/assets/badges/maya-citadel.svg",
+  "animated": false,
+  "fallback": { "render_mode": "icon", "css_class": "text-amber-500" }
+}
+```
+
+### 3.7 `title`
+
+```json
+{
+  "type": "title",
+  "display_text": "Halach Uinic",
+  "color": "#FFD700",
+  "fallback": { "css_class": "font-semibold text-amber-500" }
+}
+```
+
+### 3.8 `sticker_pack`
+
+```json
+{
+  "type": "sticker_pack",
+  "sticker_count": 15,
+  "theme": "nacom_warrior"
+}
+```
+
+### 3.9 `chat_effect`
+
+```json
+{
+  "type": "chat_effect",
+  "effect_name": "jade_sparkle",
+  "duration_seconds": 5,
+  "color": "#00A86B"
+}
+```
 
 ---
 
@@ -179,6 +246,24 @@ Reglas:
 2. No poner claves visuales nuevas en `effect_data`.
 3. En seeds legacy se permite lectura de visual desde `effect_data` solo durante transicion.
 4. Toda nueva variante debe quedar en `metadata` y respetar este estandar.
+
+### 6.2 Runtime Merge (`mergeVisualConfig`)
+
+El backend aplica `mergeVisualConfig()` al leer items equipados y compras. Esta funcion copia las siguientes claves visuales desde `effect_data` hacia `metadata` en tiempo de ejecucion:
+
+```
+type, asset_url, border_color, display_text, color,
+css_class, render_mode, animated, animation, glow_color
+```
+
+**Archivo fuente:** `apps/backend/src/modules/gamification/utils/visual-config.util.ts`
+
+**Aplicado en:**
+- `InventoryService.getEquippedItems()` — cada item equipado
+- `InventoryService.getEquippedItemsMapBatch()` — batch para leaderboards
+- `ShopService.getUserPurchases()` — compras con item cargado
+
+> **Importante:** El frontend SOLO debe leer de `metadata` para rendering. Nunca debe acceder a `effect_data` directamente.
 
 ---
 

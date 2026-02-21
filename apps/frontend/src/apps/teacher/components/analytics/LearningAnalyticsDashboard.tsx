@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BarChart3, TrendingUp, Clock, Target } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -110,9 +109,9 @@ export function LearningAnalyticsDashboard({ classroomId }: LearningAnalyticsDas
       <DetectiveCard>
         <h3 className="mb-4 text-lg font-bold text-detective-text">Ejercicios Más Utilizados</h3>
         <div className="space-y-3">
-          {(learningAnalytics?.most_used_exercises || []).map((exercise: any, index: number) => {
+          {(learningAnalytics?.most_used_exercises || []).map((exercise: { exercise_name: string; usage_count: number }, index: number) => {
             const maxUsage = Math.max(
-              ...(learningAnalytics?.most_used_exercises || []).map((e: any) => e.usage_count),
+              ...(learningAnalytics?.most_used_exercises || []).map((e: { usage_count: number }) => e.usage_count),
               1,
             );
             const percentage = (exercise.usage_count / maxUsage) * 100;

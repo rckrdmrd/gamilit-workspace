@@ -14,15 +14,15 @@
 
 ## Descripcion
 
-Implementacion completa del backend NestJS 11 para la plataforma educativa gamilit. Abarca 22 modulos que cubren la infraestructura core (auth JWT+Passport+RBAC, users, tenants con RLS), el contenido educativo (modules con 5 niveles de comprension, exercises con 23 evaluadores, content, classrooms, students), el sistema de gamificacion maya (gamification con XP/rangos/ML Coins, leaderboard, missions, store, achievements, social), y el soporte para los 4 portales (teachers, parents, analytics, reports). Incluye el exercise engine con patron Strategy+Factory, el gamification engine con eventos en tiempo real via Socket.IO, y documentacion Swagger/OpenAPI para los 899 endpoints.
+Implementacion completa del backend NestJS 11 para la plataforma educativa gamilit. Abarca 23 modulos que cubren la infraestructura core (auth JWT+Passport+RBAC, users, tenants con RLS), el contenido educativo (modules con 5 niveles de comprension, exercises con 23 evaluadores, content, classrooms, students), el sistema de gamificacion maya (gamification con XP/rangos/ML Coins, leaderboard, missions, store, achievements, social), y el soporte para los 4 portales (teachers, parents, analytics, reports). Incluye el exercise engine con patron Strategy+Factory, el gamification engine con eventos en tiempo real via Socket.IO, y documentacion Swagger/OpenAPI para los 905 endpoints.
 
 ## Alcance
 
-- 22 modulos NestJS implementados: auth, users, tenants, core, health, settings, notifications, modules, exercises, content, classrooms, students, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports
-- 152 entities TypeORM sincronizadas con DDL (82.5% coherencia)
+- 23 modulos NestJS implementados: auth, users, tenants, core, health, settings, notifications, modules, exercises, content, classrooms, students, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports
+- 155 entity files (156 classes) TypeORM sincronizadas con DDL (82.5% coherencia)
 - 399 DTOs con validacion class-validator y class-transformer
-- 170 services con logica de negocio completa
-- 107 controllers con 899 endpoints REST documentados en Swagger
+- 173 services con logica de negocio completa
+- 108 controllers con 905 endpoints REST documentados en Swagger
 - 15 guards (auth, roles, tenant isolation, rate limiting)
 - 18 decorators custom (current-user, roles, tenant, public)
 - Exercise engine con 23 evaluadores (Strategy+Factory pattern)
@@ -33,9 +33,9 @@ Implementacion completa del backend NestJS 11 para la plataforma educativa gamil
 
 | Capa | Componentes |
 |------|-------------|
-| Database | 152 entities TypeORM mapeadas a 169 tablas DDL |
-| Backend | 22 modulos, 170 services, 107 controllers, 899 endpoints, 15 guards, 18 decorators, 3 Socket.IO namespaces |
-| Frontend | Contratos API definidos para 4 portales (52 API services) |
+| Database | 155 entity files (156 classes) TypeORM mapeadas a 169 tablas DDL |
+| Backend | 23 modulos, 173 services, 108 controllers, 905 endpoints, 15 guards, 18 decorators, 3 Socket.IO namespaces |
+| Frontend | Contratos API definidos para 4 portales (67 API services) |
 | DevOps | Health checks (/health, /ready, /live) |
 
 ## Dependencias
@@ -49,8 +49,8 @@ Implementacion completa del backend NestJS 11 para la plataforma educativa gamil
 
 ## Definition of Done
 
-- [ ] 22 modulos implementados con build exitoso (npm run build && npm run lint)
-- [ ] 899 endpoints documentados en Swagger/OpenAPI
+- [ ] 23 modulos implementados con build exitoso (npm run build && npm run lint)
+- [ ] 905 endpoints documentados en Swagger/OpenAPI
 - [ ] Exercise engine funcional con los 23 evaluadores probados
 - [ ] Documentacion actualizada
 - [ ] Inventarios sincronizados

@@ -10,6 +10,8 @@
 
 Modela el proceso docente de cola pendiente -> evaluacion con rubrica -> completado -> entrega de recompensas al estudiante.
 
+Al completar la revision, backend genera notificacion in-app para estudiante con `notificationType=exercise_feedback` y datos de recompensas.
+
 ## Diagrama Mermaid
 
 ```mermaid
@@ -44,6 +46,7 @@ sequenceDiagram
 - `apps/backend/src/modules/teacher/controllers/manual-review.controller.ts`
 - `apps/backend/src/modules/teacher/services/manual-review.service.ts`
 - `apps/backend/src/modules/progress/services/exercise-submission.service.ts`
+- `apps/backend/src/modules/notifications/services/notification.service.ts`
 
 ### Datos
 - `progress_tracking.manual_reviews`

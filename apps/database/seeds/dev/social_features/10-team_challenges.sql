@@ -94,16 +94,15 @@ BEGIN
     WHERE challenge_type = 'multiplayer' AND status IN ('open', 'in_progress')
     LIMIT 1;
 
-    -- Create UUIDs for challenges if peer_challenges don't exist
-    IF v_challenge_tournament IS NULL THEN
-        v_challenge_tournament := '61111111-1111-1111-1111-111111111006'::uuid;
+    -- Skip if no peer_challenges exist (required FK dependency)
+    IF v_challenge_tournament IS NULL AND v_challenge_leaderboard IS NULL AND v_challenge_multiplayer IS NULL THEN
+        RAISE NOTICE 'No peer challenges found. Run 08-peer_challenges.sql first. Skipping.';
+        RETURN;
     END IF;
-    IF v_challenge_leaderboard IS NULL THEN
-        v_challenge_leaderboard := '61111111-1111-1111-1111-111111111010'::uuid;
-    END IF;
-    IF v_challenge_multiplayer IS NULL THEN
-        v_challenge_multiplayer := '61111111-1111-1111-1111-111111111002'::uuid;
-    END IF;
+    -- Fallback to any available challenge
+    IF v_challenge_tournament IS NULL THEN v_challenge_tournament := COALESCE(v_challenge_leaderboard, v_challenge_multiplayer); END IF;
+    IF v_challenge_leaderboard IS NULL THEN v_challenge_leaderboard := COALESCE(v_challenge_tournament, v_challenge_multiplayer); END IF;
+    IF v_challenge_multiplayer IS NULL THEN v_challenge_multiplayer := COALESCE(v_challenge_tournament, v_challenge_leaderboard); END IF;
 
     -- =====================================================
     -- INSERT TEAM CHALLENGES
@@ -120,7 +119,7 @@ BEGIN
 
     -- Team Challenge 1: Los Científicos - Active tournament
     (
-        '71111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_team_cientificos,
         v_challenge_tournament,
         'active',
@@ -131,7 +130,7 @@ BEGIN
 
     -- Team Challenge 2: Exploradores Digitales - In progress leaderboard
     (
-        '71111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_team_exploradores,
         v_challenge_leaderboard,
         'in_progress',
@@ -142,7 +141,7 @@ BEGIN
 
     -- Team Challenge 3: Pioneros Técnicos - Completed challenge
     (
-        '71111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_team_pioneros,
         v_challenge_multiplayer,
         'completed',
@@ -153,7 +152,7 @@ BEGIN
 
     -- Team Challenge 4: Innovadores STEAM - In progress tournament
     (
-        '71111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_team_innovadores,
         v_challenge_tournament,
         'in_progress',
@@ -164,7 +163,7 @@ BEGIN
 
     -- Team Challenge 5: Los Científicos - Completed leaderboard (monthly)
     (
-        '71111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_team_cientificos,
         v_challenge_leaderboard,
         'completed',
@@ -175,7 +174,7 @@ BEGIN
 
     -- Team Challenge 6: Exploradores - Failed challenge
     (
-        '71111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_team_exploradores,
         v_challenge_multiplayer,
         'failed',
@@ -186,7 +185,7 @@ BEGIN
 
     -- Team Challenge 7: Pioneros - Active new challenge
     (
-        '71111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_team_pioneros,
         v_challenge_leaderboard,
         'active',

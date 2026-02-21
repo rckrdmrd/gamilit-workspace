@@ -193,8 +193,10 @@ enum BlockType {
 ```typescript
 enum SharePermission {
   VIEW = 'view',
-  DOWNLOAD = 'download'
+  DOWNLOAD = 'download',
+  EDIT = 'edit',
 }
+// DDL canonical: CHECK (permission_level IN ('view', 'download', 'edit'))
 ```
 
 ### ScheduleStatus
@@ -202,8 +204,9 @@ enum SharePermission {
 enum ScheduleStatus {
   ACTIVE = 'active',
   PAUSED = 'paused',
-  EXPIRED = 'expired'
+  COMPLETED = 'completed',
 }
+// DDL canonical: CHECK (status IN ('active', 'paused', 'completed'))
 ```
 
 ---

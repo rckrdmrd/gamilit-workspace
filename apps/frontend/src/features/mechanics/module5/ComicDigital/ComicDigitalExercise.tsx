@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Image, Type, MessageSquare, Download, Send, Loader2, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -71,7 +72,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
         setFeedback({
           type: 'info',
           title: 'Cómic Enviado',
-          message: 'Tu cómic digital ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -92,11 +93,11 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
       });
       setShowFeedback(true);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);

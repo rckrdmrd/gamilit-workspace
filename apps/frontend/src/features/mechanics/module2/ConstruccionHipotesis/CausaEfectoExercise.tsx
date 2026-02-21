@@ -30,7 +30,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   const [dragOverCause, setDragOverCause] = useState<string | null>(null);
   const [_isSubmitting, setIsSubmitting] = useState(false);
   const [showRankUpModal, setShowRankUpModal] = useState(false);
-  const [rankUpData, setRankUpData] = useState<any>(null);
+  const [rankUpData, setRankUpData] = useState<Record<string, unknown> | null>(null);
 
   const { causes, consequences } = exercise.content;
 
@@ -69,10 +69,6 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
         answers: { causes: userAnswers },
       });
 
-      console.log('📊 [CausaEfecto] Progress update sent:', {
-        totalMatches,
-        totalConsequences: consequences.length,
-      });
     }
   }, [matches, startTime, onProgressUpdate, consequences.length]);
 
@@ -210,11 +206,6 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [CausaEfecto] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [CausaEfecto] Submission error:', error);
       setFeedback({
@@ -336,8 +327,9 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                               {!validated && (
                                 <button
                                   onClick={() => handleRemoveConsequence(cause.id, cId)}
-                                  className="text-detective-danger opacity-0 transition-opacity hover:text-red-800 group-hover:opacity-100"
+                                  className="opacity-70 hover:opacity-100 text-red-400 hover:text-red-600 transition-all"
                                   title="Quitar"
+                                  aria-label="Eliminar consecuencia"
                                 >
                                   ✕
                                 </button>
@@ -387,7 +379,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                       onDragEnd={handleDragEnd}
                       className={`cursor-move rounded-lg border-2 p-4 transition-all ${
                         isDragging
-                          ? 'scale-95 opacity-50'
+                          ? 'scale-105 shadow-lg ring-2 ring-detective-orange'
                           : 'border-detective-border bg-white hover:border-orange-400 hover:shadow-md'
                       } ${validated ? 'cursor-not-allowed' : ''}`}
                     >

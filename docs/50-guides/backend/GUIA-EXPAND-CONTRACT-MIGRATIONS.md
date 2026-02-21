@@ -36,8 +36,8 @@ El patron Expand/Contract (tambien conocido como Parallel Change) es una tecnica
 - **169 tablas** con datos en produccion que no pueden perderse
 - **418 politicas RLS** que dependen de nombres de columnas y tablas
 - **67 triggers** que referencian columnas especificas
-- **298 foreign keys** que crean dependencias entre schemas
-- **152 entities TypeORM** que deben reflejar el schema exacto
+- **299 foreign keys** que crean dependencias entre schemas
+- **155 entities (156 classes) TypeORM** que deben reflejar el schema exacto
 - **Deploy con PM2** (fork mode) — hay un breve periodo donde codigo viejo y nuevo coexisten
 
 ### Compatible con DDL-first workflow

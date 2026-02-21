@@ -4,8 +4,9 @@
  * @module apps/student/components/shop/PurchaseModal
  */
 
-import { Coins, Loader } from 'lucide-react';
+import { Coins } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
+import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ShopIcon } from './ShopIcon';
 import { getRarityGradient } from '@shared/utils/rarityColors';
 import { cn } from '@shared/utils/cn';
@@ -34,7 +35,7 @@ export function PurchaseModal({
   const balanceAfter = userBalance - item.price;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Confirm Purchase">
+    <Modal isOpen={isOpen} onClose={onClose} title="Confirmar Compra">
       <div className="space-y-4">
         <div className="flex items-center gap-4 rounded-lg bg-detective-bg p-4">
           <div
@@ -54,14 +55,14 @@ export function PurchaseModal({
         {/* Price Summary */}
         <div className="space-y-2 rounded-lg bg-detective-bg p-4">
           <div className="flex items-center justify-between">
-            <span className="text-detective-text">Price:</span>
+            <span className="text-detective-text">Precio:</span>
             <span className="flex items-center gap-1 font-bold text-detective-text">
               <Coins className="h-4 w-4 text-detective-gold" />
               {item.price}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-detective-text">Current Balance:</span>
+            <span className="text-detective-text">Saldo actual:</span>
             <span className="flex items-center gap-1 font-bold text-detective-text">
               <Coins className="h-4 w-4 text-detective-gold" />
               {userBalance}
@@ -69,7 +70,7 @@ export function PurchaseModal({
           </div>
           <hr className="border-detective-bg" />
           <div className="flex items-center justify-between">
-            <span className="font-bold text-detective-text">Balance After:</span>
+            <span className="font-bold text-detective-text">Saldo después:</span>
             <span
               className={cn(
                 'flex items-center gap-1 font-bold',
@@ -84,37 +85,30 @@ export function PurchaseModal({
 
         {!canAfford && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-            Insufficient ML Coins. Complete more exercises to earn coins!
+            ML Coins insuficientes. ¡Completa más ejercicios para ganar monedas!
           </div>
         )}
 
         <div className="flex gap-3 pt-4">
-          <button
+          <DetectiveButton
+            variant="secondary"
+            size="md"
             onClick={onClose}
             disabled={isPurchasing}
-            className="flex-1 rounded-lg bg-gray-200 px-4 py-2 font-medium text-detective-text transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-1"
           >
-            Cancel
-          </button>
-          <button
+            Cancelar
+          </DetectiveButton>
+          <DetectiveButton
+            variant="primary"
+            size="md"
             onClick={onConfirm}
             disabled={!canAfford || isPurchasing}
-            className={cn(
-              'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-all',
-              canAfford && !isPurchasing
-                ? 'btn-detective'
-                : 'cursor-not-allowed bg-gray-300 text-gray-500',
-            )}
+            loading={isPurchasing}
+            className="flex-1"
           >
-            {isPurchasing ? (
-              <>
-                <Loader className="h-4 w-4 animate-spin" />
-                Purchasing...
-              </>
-            ) : (
-              'Purchase'
-            )}
-          </button>
+            {isPurchasing ? 'Comprando...' : 'Confirmar Compra'}
+          </DetectiveButton>
         </div>
       </div>
     </Modal>

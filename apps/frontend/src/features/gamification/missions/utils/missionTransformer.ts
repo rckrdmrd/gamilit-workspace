@@ -28,6 +28,8 @@ export interface MissionFromAPI {
     current: number;
     description?: string;
     modules_visited?: string[];
+    required_exercise_type?: string;
+    required_module?: number;
   }>;
   rewards: {
     ml_coins?: number;

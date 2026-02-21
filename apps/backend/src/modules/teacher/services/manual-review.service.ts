@@ -7,14 +7,15 @@ import { CreateReviewDto, UpdateReviewDto } from '../dto/create-review.dto';
 import { ExerciseSubmissionService } from '@modules/progress/services/exercise-submission.service';
 // FIX GAP-LOW-001: Import AuditService for event tracking
 import { AuditService } from '@modules/audit/services/audit.service';
-import { Severity, Status } from '@modules/audit/entities/audit-log.entity';
+import { Severity, Status } from '@modules/audit/enums/audit-log.enums';
 // CORR-009: Import NotificationService for review_completed event
 import { NotificationService } from '@modules/notifications/services/notification.service';
 // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Import Profile and Exercise for data enrichment
 import { Profile } from '@modules/auth/entities/profile.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
 // FIX TASK-2026-01-18-008: Import ExerciseTypeRubric for rubric data
-import { ExerciseTypeRubric, RubricCriteria } from '@modules/educational/entities/exercise-type-rubric.entity';
+import { ExerciseTypeRubric } from '@modules/educational/entities/exercise-type-rubric.entity';
+import { RubricCriteria } from '@modules/educational/enums/exercise-type-rubric.types';
 
 /**
  * Filtros opcionales para reviews pendientes
@@ -341,7 +342,7 @@ export class ManualReviewService {
         return { reviews: [], total: 0, page, limit, totalPages: 0 };
       }
 
-      const submissionIds = pendingFromView.map((p: any) => p.submission_id);
+      const submissionIds = pendingFromView.map((p: any) => p.submission_id); // eslint-disable-line @typescript-eslint/no-explicit-any
       const total = submissionIds.length;
 
       // Apply pagination to submissionIds
@@ -838,7 +839,7 @@ export class ManualReviewService {
 
     if (!hasAdvancedFilters) {
       // Simple path: TypeORM find (original behavior)
-      const whereClause: any = { reviewerId: teacherId };
+      const whereClause: any = { reviewerId: teacherId }; // eslint-disable-line @typescript-eslint/no-explicit-any
       if (normalizedFilters.status) {
         whereClause.status = normalizedFilters.status;
       }
@@ -1036,7 +1037,7 @@ export class ManualReviewService {
 
     // Formatear respuesta
     return {
-      modules: modules.map((m: any) => ({
+      modules: modules.map((m: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: m.id,
         name: m.name,
         number: parseInt(m.number, 10),

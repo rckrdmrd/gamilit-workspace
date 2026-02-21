@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Teams API Integration
  *
@@ -508,9 +507,9 @@ export async function addTeamXP(teamId: string, xp: number): Promise<Team> {
  * const stats = await teamsAPI.getTeamStats('team-id');
  * ```
  */
-export async function getTeamStats(teamId: string): Promise<any> {
+export async function getTeamStats(teamId: string): Promise<Record<string, unknown>> {
   try {
-    const response = await apiClient.get<any>(`/social/teams/${teamId}/stats`);
+    const response = await apiClient.get<Record<string, unknown>>(`/social/teams/${teamId}/stats`);
     return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch team stats');

@@ -11,7 +11,7 @@ prerrequisitos:
 
 ## Introduccion
 
-Como QA en el proyecto gamilit, tu rol es asegurar la calidad de una plataforma educativa gamificada basada en cultura maya. El proyecto tiene 22 modulos, 4 portales (estudiante, maestro, administrador, padres), 833 tests passing y un objetivo de 80% de cobertura. Se usa Jest para backend/frontend y la piramide de pruebas (70% unit, 20% integration, 10% E2E).
+Como QA en el proyecto gamilit, tu rol es asegurar la calidad de una plataforma educativa gamificada basada en cultura maya. El proyecto tiene 23 modulos, 4 portales (estudiante, maestro, administrador, padres), 833 tests passing y un objetivo de 80% de cobertura. Se usa Jest para backend/frontend y la piramide de pruebas (70% unit, 20% integration, 10% E2E).
 
 ---
 
@@ -59,7 +59,7 @@ Lee estos documentos en orden para entender el contexto de QA:
 
 ## Contexto del Proyecto
 
-### Modulos a Probar (22 modulos)
+### Modulos a Probar (23 modulos)
 
 | Categoria | Modulos | Estado |
 |-----------|---------|--------|
@@ -223,7 +223,7 @@ Antes de aprobar un PR, verificar:
 - [ ] Puedo ejecutar `npm run test` exitosamente (833 tests)
 - [ ] Puedo ejecutar `npm run test:cov` y ver reportes de cobertura
 - [ ] Tengo acceso a GitHub para ver PRs y checks
-- [ ] Conozco los 4 portales y 22 modulos del proyecto
+- [ ] Conozco los 4 portales y 23 modulos del proyecto
 - [ ] Revise los requerimientos funcionales en docs/10-requirements/
 - [ ] Identifique gaps de cobertura en al menos un modulo
 - [ ] Entiendo el flujo DDL -> Entity -> Endpoints -> Frontend -> Tests

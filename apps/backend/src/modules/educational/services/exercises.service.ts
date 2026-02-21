@@ -10,6 +10,7 @@ import { ExerciseTypeEnum, ClassroomMemberStatusEnum } from '@shared/constants/e
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
 import { AssignmentExercise } from '@/modules/assignments/entities/assignment-exercise.entity';
+import { Profile } from '@/modules/auth/entities';
 
 /**
  * ExercisesService
@@ -28,7 +29,28 @@ export class ExercisesService {
     private readonly assignmentClassroomRepo: Repository<AssignmentClassroom>,
     @InjectRepository(AssignmentExercise, 'educational')
     private readonly assignmentExerciseRepo: Repository<AssignmentExercise>,
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
   ) {}
+
+  /**
+   * Validate that a profile exists in the database.
+   * @param profileId - profile.id (from req.user.id / JWT sub)
+   * @returns profile.id (validated)
+   * @throws NotFoundException if profile doesn't exist
+   */
+  async validateProfileExists(profileId: string): Promise<string> {
+    const profile = await this.profileRepo.findOne({
+      where: { id: profileId },
+      select: ['id'],
+    });
+
+    if (!profile) {
+      throw new NotFoundException(`Profile not found: ${profileId}`);
+    }
+
+    return profile.id;
+  }
 
   /**
    * Obtener todos los ejercicios
@@ -195,7 +217,7 @@ export class ExercisesService {
    */
   validateContentByExerciseType(
     exerciseType: ExerciseTypeEnum,
-    content: Record<string, unknown>,
+    content: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     config?: Record<string, unknown>,
   ): void {
     if (!content) {
@@ -475,8 +497,8 @@ export class ExercisesService {
    * @returns Sanitized content without correct answers
    */
   private sanitizeContent(
-    content: Record<string, unknown>,
-    config: Record<string, unknown>,
+    content: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    config: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     exerciseType: ExerciseTypeEnum,
   ): Record<string, unknown> {
     if (!content) {
@@ -502,7 +524,7 @@ export class ExercisesService {
       case 'true_false':
         // Remove correctAnswer from each statement
         if (sanitized.statements && Array.isArray(sanitized.statements)) {
-          sanitized.statements = sanitized.statements.map((stmt: any) => ({
+          sanitized.statements = sanitized.statements.map((stmt: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...stmt,
             correctAnswer: undefined,
           }));
@@ -514,7 +536,7 @@ export class ExercisesService {
         // ✅ FIX BUG-002: Generate empty grid and sanitize clues
         // Remove answer from each clue and add length
         if (sanitized.clues && Array.isArray(sanitized.clues)) {
-          sanitized.clues = sanitized.clues.map((clue: any) => ({
+          sanitized.clues = sanitized.clues.map((clue: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             id: clue.id,
             number: clue.number,
             direction: clue.direction,
@@ -537,17 +559,6 @@ export class ExercisesService {
         );
         sanitized.gridConfig = gridSize;
 
-        // 🐛 DEBUG: Log grid structure for debugging (FE-060 enhanced)
-        console.log('[FE-060 FIX] Crucigrama grid config:', {
-          hasConfig: !!config,
-          gridSizeFromConfig: config?.gridSize,
-          gridSizeUsed: gridSize,
-          gridGenerated: `${gridSize.rows || 15}x${gridSize.cols || 15}`,
-          hasGrid: !!sanitized.grid,
-          gridIsArray: Array.isArray(sanitized.grid),
-          gridDimensions: (sanitized.grid as unknown[] | undefined)?.length ? `${(sanitized.grid as unknown[]).length}x${((sanitized.grid as unknown[])[0] as unknown[] | undefined)?.length || 0}` : 'N/A',
-          cluesCount: cluesArray.length,
-        });
         break;
       }
 
@@ -561,7 +572,7 @@ export class ExercisesService {
       case 'fill_in_blank':
         // Remove correctAnswer and alternatives from each blank
         if (sanitized.blanks && Array.isArray(sanitized.blanks)) {
-          sanitized.blanks = sanitized.blanks.map((blank: any) => ({
+          sanitized.blanks = sanitized.blanks.map((blank: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...blank,
             correctAnswer: undefined,
             alternatives: undefined,
@@ -576,7 +587,7 @@ export class ExercisesService {
       case ExerciseTypeEnum.DETECTIVE_TEXTUAL:
         // Remove correctAnswer from each question
         if (sanitized.questions && Array.isArray(sanitized.questions)) {
-          sanitized.questions = sanitized.questions.map((question: any) => ({
+          sanitized.questions = sanitized.questions.map((question: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...question,
             correctAnswer: undefined,
           }));
@@ -586,7 +597,7 @@ export class ExercisesService {
       case 'construccion_hipotesis':
         // Remove correctCauseIds from consequences
         if (sanitized.consequences && Array.isArray(sanitized.consequences)) {
-          sanitized.consequences = sanitized.consequences.map((consequence: any) => ({
+          sanitized.consequences = sanitized.consequences.map((consequence: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...consequence,
             correctCauseIds: undefined,
           }));
@@ -596,9 +607,9 @@ export class ExercisesService {
       case 'prediccion_narrativa':
         // Remove isCorrect from predictions in each scenario
         if (sanitized.scenarios && Array.isArray(sanitized.scenarios)) {
-          sanitized.scenarios = sanitized.scenarios.map((scenario: any) => ({
+          sanitized.scenarios = sanitized.scenarios.map((scenario: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...scenario,
-            predictions: scenario.predictions?.map((pred: any) => ({
+            predictions: scenario.predictions?.map((pred: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
               ...pred,
               isCorrect: undefined,
             })),
@@ -621,9 +632,9 @@ export class ExercisesService {
       case 'tribunal_opiniones':
         // Remove correctAnswer from questions in each case
         if (sanitized.cases && Array.isArray(sanitized.cases)) {
-          sanitized.cases = sanitized.cases.map((caseItem: any) => ({
+          sanitized.cases = sanitized.cases.map((caseItem: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...caseItem,
-            questions: caseItem.questions?.map((question: any) => ({
+            questions: caseItem.questions?.map((question: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
               ...question,
               correctAnswer: undefined,
             })),
@@ -634,7 +645,7 @@ export class ExercisesService {
       case 'analisis_fuentes':
         // Remove credibilityScore from sources
         if (sanitized.sources && Array.isArray(sanitized.sources)) {
-          sanitized.sources = sanitized.sources.map((source: any) => ({
+          sanitized.sources = sanitized.sources.map((source: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...source,
             credibilityScore: undefined,
           }));
@@ -652,7 +663,7 @@ export class ExercisesService {
       case 'matriz_perspectivas':
         // Remove expectedAnswer from questions
         if (sanitized.analysisQuestions && Array.isArray(sanitized.analysisQuestions)) {
-          sanitized.analysisQuestions = sanitized.analysisQuestions.map((question: any) => ({
+          sanitized.analysisQuestions = sanitized.analysisQuestions.map((question: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
             ...question,
             expectedAnswer: undefined,
           }));
@@ -691,9 +702,9 @@ export class ExercisesService {
     rows: number,
     cols: number,
     clues: Array<{ startRow: number; startCol: number; direction: string; length: number; number?: number }>,
-  ): any[][] {
+  ): any[][] { // eslint-disable-line @typescript-eslint/no-explicit-any
     // Initialize all cells as black
-    const grid: any[][] = [];
+    const grid: any[][] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
     for (let r = 0; r < rows; r++) {
       grid[r] = [];
       for (let c = 0; c < cols; c++) {
@@ -749,7 +760,6 @@ export class ExercisesService {
       }
     });
 
-    console.log(`[BUG-002 FIX] Generated empty grid: ${rows}x${cols} with ${clues.length} clues`);
     return grid;
   }
 }

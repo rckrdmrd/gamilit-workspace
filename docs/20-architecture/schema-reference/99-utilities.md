@@ -128,4 +128,4 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 ---
 
 *GAMILIT - Schema Reference Utilities*
-*169 tablas | 18 schemas | 227 RLS policies | 42 ENUMs | PostgreSQL 15*
+*172 tablas | 18 schemas | 237 RLS policies (DDL) | 42 ENUMs | PostgreSQL 15*

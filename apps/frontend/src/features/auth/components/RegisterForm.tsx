@@ -14,8 +14,6 @@
  *
  * @requires react-hook-form, zod, @hookform/resolvers
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -127,7 +125,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       // Prepare registration data for API
       // Backend only expects: email, password, first_name (optional), last_name (optional)
-      const registrationData: any = {
+      const registrationData = {
         email: data.email,
         password: data.password,
         // Split full_name into first_name and last_name if provided
@@ -138,7 +136,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       };
 
       // Attempt registration
-      await registerUser(registrationData);
+      await registerUser(registrationData as any);
 
       // Call success callback if provided
       if (onSuccess) {

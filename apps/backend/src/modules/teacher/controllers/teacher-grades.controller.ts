@@ -75,11 +75,11 @@ export class TeacherGradesController {
   })
   async getGrades(@Query() query: GetGradesQueryDto) {
     // Map GetGradesQueryDto to GetSubmissionsQueryDto
-    const submissionsQuery: any = {
+    const submissionsQuery: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
       assignment_id: query.assignment_id,
       classroom_id: query.classroom_id,
       student_id: query.student_id,
-      status: query.status as any,
+      status: query.status as any, // eslint-disable-line @typescript-eslint/no-explicit-any
       sort_by: query.sort_by,
       page: query.page,
       limit: query.limit,
@@ -89,7 +89,7 @@ export class TeacherGradesController {
     const result = await this.gradingService.getSubmissions(submissionsQuery);
 
     // Transform submissions to grade format
-    const grades = result.submissions.map((submission: any) =>
+    const grades = result.submissions.map((submission: any) => // eslint-disable-line @typescript-eslint/no-explicit-any
       this.mapSubmissionToGrade(submission),
     );
 
@@ -156,6 +156,7 @@ export class TeacherGradesController {
   /**
    * Maps a submission entity to a GradeResponseDto
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapSubmissionToGrade(submission: any): GradeResponseDto {
     return {
       id: submission.id,
@@ -179,7 +180,7 @@ export class TeacherGradesController {
    * Maps a submission entity to a detailed GradeDetailResponseDto
    */
   private mapSubmissionToDetailedGrade(
-    submission: any,
+    submission: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): GradeDetailResponseDto {
     return {
       id: submission.id,

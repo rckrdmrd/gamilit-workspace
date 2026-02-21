@@ -108,6 +108,12 @@ CREATE INDEX IF NOT EXISTS idx_scheduled_reports_status
   ON social_features.scheduled_reports(status)
   WHERE status = 'active';
 
+-- Composite index for CRON job query: WHERE status = 'active' AND next_run_at <= NOW()
+-- AUDIT-B4-01: Optimizes hourly scheduled report execution check
+CREATE INDEX IF NOT EXISTS idx_scheduled_reports_cron_due
+  ON social_features.scheduled_reports(status, next_run_at)
+  WHERE status = 'active';
+
 -- RLS (Row Level Security)
 ALTER TABLE social_features.scheduled_reports ENABLE ROW LEVEL SECURITY;
 

@@ -16,8 +16,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Filter, X, Calendar, CheckCircle, XCircle, School, Search, BookOpen } from 'lucide-react';
 import { useClassrooms } from '@apps/teacher/hooks/useClassrooms';
-import { apiClient } from '@services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { getModules } from '@services/api/educationalAPI';
 import type { GetAttemptsQuery } from '@services/api/teacher';
 import toast from 'react-hot-toast';
 
@@ -99,8 +98,8 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
   useEffect(() => {
     const fetchModules = async () => {
       try {
-        const response = await apiClient.get<ModuleListItem[]>(API_ENDPOINTS.educational.modules);
-        setModules(response.data || []);
+        const data = await getModules();
+        setModules(data || []);
       } catch (_error) {
         // Show user feedback when modules fail to load
         toast.error('No se pudieron cargar los módulos. Intenta recargar la página.', {

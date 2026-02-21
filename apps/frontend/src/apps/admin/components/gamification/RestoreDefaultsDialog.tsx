@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import toast from 'react-hot-toast';
 import { X, AlertTriangle, Users, Settings } from 'lucide-react';
 import type { Parameter } from '@/services/api/schemas/adminSchemas';
 
@@ -38,25 +40,6 @@ export function RestoreDefaultsDialog({
     }
   }, [isOpen]);
 
-  // Close modal on Esc key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
 
   // Check if confirmation text is correct (case-sensitive)
@@ -74,7 +57,7 @@ export function RestoreDefaultsDialog({
       onClose();
     } catch (error) {
       console.error('Error restoring defaults:', error);
-      alert('Error al restaurar valores por defecto. Por favor, intente nuevamente.');
+      toast.error('Error al restaurar valores por defecto. Por favor, intente nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -85,13 +68,8 @@ export function RestoreDefaultsDialog({
   const remainingCount = Math.max(0, parameters.length - 6);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="dialog-title"
-      >
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="lg" className="bg-transparent shadow-none p-0">
+      <div className="-mx-6 -my-4">
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -231,6 +209,6 @@ export function RestoreDefaultsDialog({
           )}
         </DetectiveCard>
       </div>
-    </div>
+    </Modal>
   );
 }

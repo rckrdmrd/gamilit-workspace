@@ -15,7 +15,6 @@ export function migrateLocalStorage(): void {
     // Migrate 'access_token' to 'auth-token'
     const oldAccessToken = localStorage.getItem('access_token');
     if (oldAccessToken && !localStorage.getItem('auth-token')) {
-      console.log('[LocalStorage Migration] Migrating access_token → auth-token');
       localStorage.setItem('auth-token', oldAccessToken);
       localStorage.removeItem('access_token');
     }
@@ -23,14 +22,13 @@ export function migrateLocalStorage(): void {
     // Migrate 'refresh_token' to 'refresh-token'
     const oldRefreshToken = localStorage.getItem('refresh_token');
     if (oldRefreshToken && !localStorage.getItem('refresh-token')) {
-      console.log('[LocalStorage Migration] Migrating refresh_token → refresh-token');
       localStorage.setItem('refresh-token', oldRefreshToken);
       localStorage.removeItem('refresh_token');
     }
 
-    console.log('[LocalStorage Migration] Migration completed');
-  } catch (error) {
-    console.error('[LocalStorage Migration] Error during migration:', error);
+    // Migration completed
+  } catch (_error) {
+    // Handled by caller
   }
 }
 

@@ -1408,7 +1408,7 @@ describe('OrderService Integration', () => {
 
 Validar automaticamente que las reglas arquitectonicas del proyecto se mantienen conforme el codebase crece. Estos tests actuan como guardianes de la arquitectura, detectando violaciones de las convenciones establecidas antes de que lleguen a produccion.
 
-En gamilit, con 22 modulos, 152 entities, 107 controllers y 170 services, es esencial automatizar la validacion de dependencias entre capas para prevenir acoplamiento indebido.
+En gamilit, con 23 modulos, 155 entities (156 classes), 108 controllers y 173 services, es esencial automatizar la validacion de dependencias entre capas para prevenir acoplamiento indebido.
 
 ### 10.2 Herramientas
 
@@ -1431,7 +1431,7 @@ REGLA 2: Entities NO dependen de Controllers
   Entities son clases puras de datos, sin logica de presentacion
   Razon: Entities pertenecen a la capa de dominio
 
-REGLA 3: Sin dependencias circulares entre los 22 modulos
+REGLA 3: Sin dependencias circulares entre los 23 modulos
   Modulo A → Modulo B → Modulo A = PROHIBIDO
   Razon: Acoplamiento inmanejable a escala
 

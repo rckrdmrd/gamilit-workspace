@@ -1,7 +1,7 @@
 # Flujo Student - Compra Inventario Equipar
 
-**Version:** 1.0.0  
-**Fecha:** 2026-02-17  
+**Version:** 1.1.0  
+**Fecha:** 2026-02-21  
 **Estado:** Activo  
 **Tipo:** Compuesto (integra FL-STU-03 + FL-STU-19)
 
@@ -47,6 +47,8 @@ sequenceDiagram
     SVC->>DB: UPSERT user_equipped_items por (user_id,category_id)
     InvAPI-->>FE: Item equipado
     FE-->>U: Item aplicado en perfil
+
+    Note over U,FE: Equipar disponible desde InventoryPage y ProfileInventoryTab
 ```
 
 ---
@@ -95,8 +97,10 @@ stateDiagram-v2
 ## Trazabilidad
 
 ### Frontend
-- `apps/frontend/src/apps/student/pages/ShopPage.tsx` (Thin Shell, 235 lines post-refactor v10.0.0)
-- `apps/frontend/src/apps/student/pages/InventoryPage.tsx` (Thin Shell, 258 lines post-refactor v10.0.0)
+- `apps/frontend/src/apps/student/pages/ShopPage.tsx` (Thin Shell, 266 lines)
+- `apps/frontend/src/apps/student/pages/InventoryPage.tsx` (Thin Shell, 251 lines)
+- `apps/frontend/src/apps/student/components/profile/ProfileInventoryTab.tsx` (equip/unequip desde perfil, v1.1.0)
+- `apps/frontend/src/apps/student/components/shop/ShopItemCard.tsx` (compra con botones visibles, v1.1.0)
 - `apps/frontend/src/features/gamification/social/hooks/useEquipment.ts` (equip/unequip React Query)
 - `apps/frontend/src/features/gamification/social/hooks/useInventoryData.ts` (inventory data React Query)
 - `apps/frontend/src/features/gamification/economy/hooks/useShopData.ts` (shop items React Query)

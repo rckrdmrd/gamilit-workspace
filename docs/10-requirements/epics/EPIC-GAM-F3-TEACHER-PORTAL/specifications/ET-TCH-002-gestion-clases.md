@@ -73,7 +73,7 @@ Sistema de gestion completa de classrooms y estudiantes que permite a los maestr
 | `useClassrooms` | `apps/frontend/src/apps/teacher/hooks/useClassrooms.ts` | Hook para CRUD de classrooms |
 | `useClassroomData` | `apps/frontend/src/apps/teacher/hooks/useClassroomData.ts` | Hook para datos de classroom |
 | `useClassroomRealtime` | `apps/frontend/src/apps/teacher/hooks/useClassroomRealtime.ts` | Hook para datos en tiempo real |
-| `useStudentProgress` | `apps/frontend/src/apps/teacher/hooks/useStudentProgress.ts` | Hook para progreso de estudiantes |
+| ~~`useStudentProgress`~~ | ~~`apps/frontend/src/apps/teacher/hooks/useStudentProgress.ts`~~ | **Removed** (eliminado en Teacher Portal Audit 2026-02-20) — funcionalidad integrada en `useAnalytics` y `studentProgressApi` |
 
 ### API Frontend
 

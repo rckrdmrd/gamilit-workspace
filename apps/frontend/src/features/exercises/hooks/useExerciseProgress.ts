@@ -7,8 +7,6 @@
  * @version 1.0.0
  * @since Phase 2 - Exercise System Restructuring
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { saveExerciseProgress } from '@/services/api/educationalAPI';
 import { useExerciseAutoSave } from '@/apps/student/hooks/useExerciseAutoSave';
@@ -28,14 +26,14 @@ export interface ExerciseProgress {
 
 export interface ProgressUpdate {
   progress: Partial<ExerciseProgress>;
-  answers: any;
+  answers: unknown;
 }
 
 export interface UseExerciseProgressReturn {
   /** Current progress state */
   progress: ExerciseProgress;
   /** User's actual answers (format varies by mechanic) */
-  userAnswers: any;
+  userAnswers: unknown;
   /** Whether there are unsaved changes */
   hasUnsavedChanges: boolean;
   /** Auto-save status */
@@ -68,7 +66,7 @@ export function useExerciseProgress(exerciseId: string | undefined): UseExercise
     timeSpent: 0,
   });
 
-  const [userAnswers, setUserAnswers] = useState<any>(null);
+  const [userAnswers, setUserAnswers] = useState<unknown>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const startTimeRef = useRef(new Date());
 

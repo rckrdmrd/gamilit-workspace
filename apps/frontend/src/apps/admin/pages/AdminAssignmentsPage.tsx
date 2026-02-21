@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { AdminPageShell } from '../components/shared';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { Pagination } from '@shared/components/Pagination';
 import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import {
   useAssignments,
@@ -232,27 +233,14 @@ export default function AdminAssignmentsPage() {
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-between border-t border-gray-700 pt-4">
-              <div className="text-sm text-detective-text-secondary">
-                Página {pagination.page} de {pagination.totalPages}
-              </div>
-              <div className="flex gap-2">
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1 || isLoadingAssignments}
-                >
-                  Anterior
-                </DetectiveButton>
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === pagination.totalPages || isLoadingAssignments}
-                >
-                  Siguiente
-                </DetectiveButton>
-              </div>
-            </div>
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              loading={isLoadingAssignments}
+              variant="simple"
+              className="mt-4"
+            />
           )}
         </DetectiveCard>
       </div>

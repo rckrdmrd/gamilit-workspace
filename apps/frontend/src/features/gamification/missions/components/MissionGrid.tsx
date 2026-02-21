@@ -23,6 +23,7 @@ interface MissionGridProps {
   onStartMission?: (missionId: string) => void;
   onClaimReward?: (missionId: string) => void;
   onTrackMission?: (missionId: string) => void;
+  onGoToExercise?: (missionId: string) => void;
   isTracked?: (missionId: string) => boolean;
   emptyMessage?: string;
 }
@@ -34,6 +35,7 @@ export function MissionGrid({
   onStartMission,
   onClaimReward,
   onTrackMission,
+  onGoToExercise,
   isTracked,
   emptyMessage = 'No hay misiones disponibles',
 }: MissionGridProps) {
@@ -78,6 +80,7 @@ export function MissionGrid({
               onStart={onStartMission}
               onClaim={onClaimReward}
               onTrack={onTrackMission}
+              onGoToExercise={onGoToExercise}
               isTracked={isTracked?.(mission.id)}
             />
           </motion.div>

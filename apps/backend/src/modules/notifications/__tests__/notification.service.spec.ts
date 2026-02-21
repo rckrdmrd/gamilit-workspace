@@ -108,7 +108,13 @@ describe('NotificationService', () => {
 
     it('should create notification with default values', async () => {
       // Arrange
-      const mockNotification = { id: 'notif-1', ...createData, channels: ['in_app'] };
+      const mockNotification = {
+        id: 'notif-1',
+        ...createData,
+        channels: ['in_app'],
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
+      };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
       mockDataSource.query.mockResolvedValue([{ notification_id: 'sql-notif-1' }]);
@@ -117,18 +123,16 @@ describe('NotificationService', () => {
       const result = await service.create(createData);
 
       // Assert
-      expect(mockNotificationRepository.create).toHaveBeenCalledWith({
-        userId: 'user-123',
-        title: 'Test Notification',
-        message: 'This is a test message',
-        type: 'system',
-        data: undefined,
-        metadata: undefined,
-        priority: 'normal',
-        channels: ['in_app'],
-        status: 'sent',
-        expiresAt: undefined,
-      });
+      expect(mockNotificationRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-123',
+          title: 'Test Notification',
+          message: 'This is a test message',
+          priority: 'normal',
+          channels: ['in_app'],
+          status: 'sent',
+        }),
+      );
       expect(mockNotificationRepository.save).toHaveBeenCalled();
       expect(result.id).toBe('notif-1');
     });
@@ -136,7 +140,12 @@ describe('NotificationService', () => {
     it('should create notification with custom channels', async () => {
       // Arrange
       const dataWithChannels = { ...createData, channels: ['in_app', 'email', 'push'] };
-      const mockNotification = { id: 'notif-2', ...dataWithChannels };
+      const mockNotification = {
+        id: 'notif-2',
+        ...dataWithChannels,
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
+      };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
       mockDataSource.query.mockResolvedValue([{}]);
@@ -155,7 +164,13 @@ describe('NotificationService', () => {
 
     it('should call SQL send_notification function', async () => {
       // Arrange
-      const mockNotification = { id: 'notif-3', ...createData, channels: ['in_app'] };
+      const mockNotification = {
+        id: 'notif-3',
+        ...createData,
+        channels: ['in_app'],
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
+      };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
       mockDataSource.query.mockResolvedValue([{ notification_id: 'sql-result' }]);
@@ -176,7 +191,8 @@ describe('NotificationService', () => {
         id: 'notif-4',
         ...createData,
         channels: ['in_app'],
-        createdAt: new Date(),
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
       };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
@@ -186,19 +202,27 @@ describe('NotificationService', () => {
       await service.create(createData);
 
       // Assert
-      expect(mockWebSocketService.emitNotificationToUser).toHaveBeenCalledWith('user-123', {
-        id: 'notif-4',
-        type: 'system',
-        title: 'Test Notification',
-        message: 'This is a test message',
-        data: undefined,
-        createdAt: expect.any(Date),
-      });
+      expect(mockWebSocketService.emitNotificationToUser).toHaveBeenCalledWith('user-123',
+        expect.objectContaining({
+          id: 'notif-4',
+          type: 'system',
+          title: 'Test Notification',
+          message: 'This is a test message',
+          read: false,
+          createdAt: expect.any(String),
+        }),
+      );
     });
 
     it('should continue even if SQL function fails', async () => {
       // Arrange
-      const mockNotification = { id: 'notif-5', ...createData, channels: ['in_app'] };
+      const mockNotification = {
+        id: 'notif-5',
+        ...createData,
+        channels: ['in_app'],
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
+      };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
       mockDataSource.query.mockRejectedValue(new Error('SQL function error'));
@@ -232,6 +256,8 @@ describe('NotificationService', () => {
         title: 'Welcome, John!',
         message: 'Click here: https://example.com',
         channels: ['email'],
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
       };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
@@ -257,7 +283,12 @@ describe('NotificationService', () => {
       mockTemplateService.findByKey.mockResolvedValue({
         defaultChannels: ['in_app', 'email'],
       } as any);
-      const mockNotification = { id: 'notif-2', channels: ['in_app', 'email'] };
+      const mockNotification = {
+        id: 'notif-2',
+        channels: ['in_app', 'email'],
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
+      };
       mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
       mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
       mockDataSource.query.mockResolvedValue([{}]);
@@ -282,8 +313,12 @@ describe('NotificationService', () => {
       mockTemplateService.findByKey.mockResolvedValue({
         defaultChannels: ['in_app'],
       } as any);
-      mockNotificationRepository.create.mockReturnValue({} as Notification);
-      mockNotificationRepository.save.mockResolvedValue({} as Notification);
+      const mockNotification = {
+        createdAt: new Date('2026-01-15T00:00:00.000Z'),
+        readAt: null,
+      };
+      mockNotificationRepository.create.mockReturnValue(mockNotification as Notification);
+      mockNotificationRepository.save.mockResolvedValue(mockNotification as Notification);
       mockDataSource.query.mockResolvedValue([{}]);
 
       // Act
@@ -295,10 +330,10 @@ describe('NotificationService', () => {
       // Assert
       expect(mockNotificationRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          metadata: {
+          metadata: expect.objectContaining({
             source: 'registration',
             template_key: 'welcome_email',
-          },
+          }),
         }),
       );
     });

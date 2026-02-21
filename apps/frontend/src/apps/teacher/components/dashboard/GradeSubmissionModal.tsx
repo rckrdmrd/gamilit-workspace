@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, Loader, Award, FileText, Calendar } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import type { DashboardSubmission, GradeSubmissionData } from '../../types';
 
 interface GradeSubmissionModalProps {
@@ -46,6 +47,8 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Note: ESC key, scroll lock, and focus trap are handled by Modal component
 
   const handleClose = () => {
     if (!isSubmitting) {
@@ -111,28 +114,16 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
   if (!submission) return null;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-          />
-
-          {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-              className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      animated
+      size="4xl"
+      showCloseButton={false}
+      overlayClassName="bg-black/50 backdrop-blur-sm p-4"
+      className="max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
+      contentClassName="custom"
+    >
               {/* Header */}
               <div className="flex items-center justify-between bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-5">
                 <div className="flex items-center gap-3">
@@ -140,7 +131,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                     <Award className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Grade Submission</h2>
+                    <h2 id="grade-submission-title" className="text-2xl font-bold text-white">Grade Submission</h2>
                     <p className="text-sm text-purple-100">
                       {submission.studentName} - {submission.assignmentTitle}
                     </p>
@@ -342,10 +333,6 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </div>
-        </>
-      )}
-    </AnimatePresence>
+    </Modal>
   );
 };

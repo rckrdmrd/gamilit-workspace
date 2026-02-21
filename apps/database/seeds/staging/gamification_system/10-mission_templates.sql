@@ -361,7 +361,147 @@ ON CONFLICT (id) DO UPDATE SET
     updated_at = gamilit.now_mexico();
 
 -- =====================================================
--- VERIFICACIÓN
+-- SPECIAL MISSIONS: Exercise-Linked
+-- =====================================================
+
+-- Idempotency: Skip if special missions already exist
+DO $ BEGIN
+    IF EXISTS (SELECT 1 FROM gamification_system.mission_templates WHERE name = 'Maestro del Crucigrama' LIMIT 1) THEN
+        RAISE NOTICE 'Special mission templates already exist, skipping';
+        RETURN;
+    END IF;
+END $;
+
+-- 1. Maestro del Crucigrama
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Maestro del Crucigrama',
+    'Completa 3 crucigramas con una puntuacion de 90% o mas.',
+    'special', 'exercise_challenge', 'complete_exercise_type', 3,
+    200, 50, 'hard', true, 3,
+    1, 'crucigrama', '🧩', '#FF6B35',
+    '{"min_score": 90, "description_long": "Demuestra tu dominio de las palabras completando crucigramas con alta precision."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 2. Detective de Inferencias
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Detective de Inferencias',
+    'Completa 5 ejercicios de detective textual para agudizar tu mente deductiva.',
+    'special', 'exercise_challenge', 'complete_exercise_type', 5,
+    250, 60, 'hard', true, 3,
+    2, 'detective_textual', '🔍', '#4A90D9',
+    '{"description_long": "Usa tus habilidades deductivas para desentranar los misterios de cada texto."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 3. Explorador del Modulo 3
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Explorador del Modulo 3',
+    'Completa todos los ejercicios disponibles del Modulo 3: Lectura Critica.',
+    'special', 'module_challenge', 'complete_module', 1,
+    500, 150, 'epic', true, 4,
+    3, NULL, '🗺️', '#2ECC71',
+    '{"description_long": "Conquista cada desafio del modulo de Lectura Critica y demuestra tu pensamiento analitico."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 4. Velocista de Lectura
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Velocista de Lectura',
+    'Completa 3 ejercicios del Modulo 1 en menos de 2 minutos cada uno.',
+    'special', 'speed_challenge', 'complete_exercise_type', 3,
+    175, 40, 'hard', true, 3,
+    1, NULL, '⚡', '#F39C12',
+    '{"max_time_seconds": 120, "description_long": "La velocidad y la comprension van de la mano. Demuestra que puedes leer rapido y bien."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 5. Mente Analitica
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Mente Analitica',
+    'Obtiene 100% en 2 ejercicios de analisis de memes.',
+    'special', 'exercise_challenge', 'complete_exercise_type', 2,
+    300, 75, 'epic', true, 4,
+    4, 'analisis_memes', '🧠', '#9B59B6',
+    '{"min_score": 100, "description_long": "Analiza memes con ojo critico y demuestra que puedes descifrar cualquier mensaje multimedia."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 6. Constructor de Hipotesis
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Constructor de Hipotesis',
+    'Completa 3 ejercicios de causa y efecto para fortalecer tu razonamiento.',
+    'special', 'exercise_challenge', 'complete_exercise_type', 3,
+    200, 50, 'hard', true, 3,
+    2, 'causa_efecto', '🔬', '#E74C3C',
+    '{"description_long": "Conecta causas con efectos y construye hipotesis solidas como un verdadero cientifico."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 7. Explorador Multimedia
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Explorador Multimedia',
+    'Completa 1 video carta y 1 infografia interactiva del Modulo 5.',
+    'special', 'multi_exercise', 'complete_exercise_type', 2,
+    225, 55, 'hard', true, 3,
+    5, NULL, '🎬', '#1ABC9C',
+    '{"required_types": ["video_carta", "infografia_interactiva"], "description_long": "Explora el mundo multimedia y demuestra tu creatividad con diferentes formatos."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- 8. Desafio Maya Supremo
+INSERT INTO gamification_system.mission_templates (
+    id, name, description, type, category, target_type, target_value,
+    xp_reward, ml_coins_reward, difficulty, is_active, priority,
+    required_module, required_exercise_type, icon, color, metadata
+) VALUES (
+    gen_random_uuid(),
+    'Desafio Maya Supremo',
+    'Completa 1 ejercicio perfecto (100%, sin pistas) de cada uno de los 5 modulos.',
+    'special', 'ultimate_challenge', 'complete_exercise_type', 5,
+    1000, 300, 'epic', true, 5,
+    NULL, NULL, '👑', '#FFD700',
+    '{"per_module_perfect": true, "min_score": 100, "max_hints": 0, "description_long": "El desafio supremo: demuestra maestria perfecta en cada modulo educativo. Solo los verdaderos Halach Uinic lo logran."}'::jsonb
+)
+ON CONFLICT DO NOTHING;
+
+-- =====================================================
+-- VERIFICACION
 -- =====================================================
 DO $$
 DECLARE
@@ -375,10 +515,11 @@ BEGIN
     RAISE NOTICE 'Daily missions: %', (SELECT COUNT(*) FROM gamification_system.mission_templates WHERE type = 'daily');
     RAISE NOTICE 'Weekly missions: %', (SELECT COUNT(*) FROM gamification_system.mission_templates WHERE type = 'weekly');
     RAISE NOTICE 'Special missions: %', (SELECT COUNT(*) FROM gamification_system.mission_templates WHERE type = 'special');
+    RAISE NOTICE 'Exercise-linked missions: %', (SELECT COUNT(*) FROM gamification_system.mission_templates WHERE required_exercise_type IS NOT NULL);
 
-    IF v_count < 12 THEN
-        RAISE WARNING '⚠️ Se esperaban al menos 12 mission_templates';
+    IF v_count < 20 THEN
+        RAISE WARNING 'Se esperaban al menos 20 mission_templates (12 base + 8 exercise-linked)';
     ELSE
-        RAISE NOTICE '✅ Seed de mission_templates completado exitosamente';
+        RAISE NOTICE 'Seed de mission_templates completado exitosamente';
     END IF;
 END $$;

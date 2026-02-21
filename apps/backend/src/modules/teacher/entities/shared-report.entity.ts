@@ -23,6 +23,7 @@ import { TeacherReport } from './teacher-report.entity';
 export enum SharePermission {
   VIEW = 'view',
   DOWNLOAD = 'download',
+  EDIT = 'edit',
 }
 
 /**
@@ -45,10 +46,11 @@ export class SharedReport {
   @Column({ name: 'tenant_id', type: 'uuid' })
     tenantId!: string;
 
+  // FIX AUDIT-B2: DDL uses VARCHAR(20) with CHECK constraint, not PostgreSQL ENUM type
   @Column({
     name: 'permission_level',
-    type: 'enum',
-    enum: SharePermission,
+    type: 'varchar',
+    length: 20,
     default: SharePermission.VIEW,
   })
     permission!: SharePermission;

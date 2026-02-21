@@ -24,7 +24,7 @@ Implementar multi-tenancy mediante **Row-Level Security (RLS)** de PostgreSQL 15
 
 ### Arquitectura:
 1. **Todas las tablas multi-tenant** tienen columna `tenant_id UUID NOT NULL`
-2. **227 DDL source / 404 runtime RLS policies** aplicadas (SELECT, INSERT, UPDATE, DELETE por tabla)
+2. **231 DDL source / 471 runtime RLS policies** aplicadas (SELECT, INSERT, UPDATE, DELETE por tabla)
 3. **Tenant context** se establece via `SET app.current_tenant_id` al inicio de cada request
 4. **NestJS middleware** establece el tenant context basado en el JWT del usuario
 5. **Tablas globales** (definiciones, catalogos) NO tienen RLS
@@ -55,7 +55,7 @@ CREATE POLICY "tenant_isolation" ON schema.table
 - **Transparente para el ORM:** TypeORM queries funcionan normal, RLS filtra
 - **Performance:** PostgreSQL optimiza RLS policies (no degradacion significativa)
 - **Compliance:** Cumple requisitos de privacidad de datos de menores
-- **227 DDL source / 404 runtime policies:** Cobertura completa de todas las tablas multi-tenant
+- **231 DDL source / 471 runtime policies:** Cobertura completa de todas las tablas multi-tenant
 
 ### Negativas
 - **Complejidad DDL:** Cada tabla nueva requiere policies
@@ -91,7 +91,7 @@ CREATE POLICY "tenant_isolation" ON schema.table
 
 | Metrica | Valor |
 |---------|-------|
-| Total RLS policies | 227 DDL source / 404 runtime |
+| Total RLS policies | 231 DDL source / 471 runtime |
 | Tablas con RLS | ~120 |
 | Tablas sin RLS (global) | ~51 |
 | Performance overhead | < 2% (medido) |

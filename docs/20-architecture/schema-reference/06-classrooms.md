@@ -1,4 +1,4 @@
-# Schema 6: classrooms (7 tablas, 28 RLS policies)
+# Schema 6: classrooms (8 tablas, 28 RLS policies)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
 
@@ -122,6 +122,59 @@ Entregas de asignaciones.
 | updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
 
 **Entity:** `AssignmentSubmission`
+
+---
+
+### educational_content.assignment_students
+Relacion M2M: asignaciones asignadas a estudiantes individuales. Incluye submission tracking, grading, rubric scores, attempt tracking y late penalties.
+
+| Columna | Tipo | Nullable | Default | Descripcion |
+|---------|------|----------|---------|-------------|
+| id | UUID | NOT NULL | gen_random_uuid() | PK |
+| assignment_id | UUID | NOT NULL | - | FK educational_content.assignments |
+| student_id | UUID | NOT NULL | - | FK auth_management.profiles |
+| assigned_at | TIMESTAMPTZ | NULL | gamilit.now_mexico() | Fecha de asignacion |
+| submitted_at | TIMESTAMPTZ | NULL | NULL | Fecha de entrega |
+| submission_data | JSONB | NULL | '{}' | Datos de la entrega |
+| submission_url | TEXT | NULL | NULL | URL de entrega |
+| submission_files | JSONB | NULL | '[]' | Archivos adjuntos |
+| score | DECIMAL(5,2) | NULL | NULL | Puntaje obtenido (0 a max_score) |
+| max_score | DECIMAL(5,2) | NULL | NULL | Puntaje maximo |
+| percentage | DECIMAL(5,2) | NULL | NULL | Porcentaje auto-calculado |
+| feedback | TEXT | NULL | NULL | Retroalimentacion del maestro |
+| graded_by | UUID | NULL | NULL | FK auth_management.profiles |
+| graded_at | TIMESTAMPTZ | NULL | NULL | Fecha de calificacion |
+| status | VARCHAR(50) | NULL | 'assigned' | Estado (CHECK constraint) |
+| attempt_number | INTEGER | NULL | 1 | Intento actual |
+| max_attempts | INTEGER | NULL | 1 | Intentos permitidos |
+| is_late | BOOLEAN | NULL | FALSE | Entrega tardia (auto-detectado) |
+| late_penalty_applied | DECIMAL(5,2) | NULL | 0 | Penalizacion aplicada |
+| rubric_scores | JSONB | NULL | '{}' | Scores por criterio de rubrica |
+| teacher_notes | TEXT | NULL | NULL | Notas del maestro |
+| flagged_for_review | BOOLEAN | NULL | FALSE | Requiere revision especial |
+| flag_reason | TEXT | NULL | NULL | Razon de la bandera |
+| updated_at | TIMESTAMPTZ | NULL | gamilit.now_mexico() | - |
+
+**CHECK constraints:**
+- `assignment_students_score_valid` -- score >= 0 AND score <= max_score
+- `assignment_students_percentage_valid` -- percentage >= 0 AND percentage <= 100
+- `assignment_students_attempt_positive` -- attempt_number > 0 AND attempt_number <= max_attempts
+- `assignment_students_status_valid` -- status IN ('assigned', 'in_progress', 'submitted', 'graded', 'returned', 'late', 'excused')
+
+**Indices:** 8 + UNIQUE(assignment_id, student_id)
+- `idx_assignment_students_assignment_id`, `idx_assignment_students_student_id`, `idx_assignment_students_status`
+- `idx_assignment_students_submitted_ungraded` WHERE status = 'submitted'
+- `idx_assignment_students_flagged` WHERE flagged_for_review = TRUE
+- `idx_assignment_students_grading_queue` WHERE status IN ('submitted', 'in_progress')
+- `idx_assignment_students_student_history` (student_id, submitted_at DESC)
+- `idx_assignment_students_graded_by` WHERE status = 'graded'
+
+**Trigger:** `trg_assignment_students_updated_at` -- auto-updates updated_at, auto-calculates percentage, auto-detects late submission
+
+**Entity:** `AssignmentStudent` (`assignments/entities/assignment-student.entity.ts`)
+**DDL:** `educational_content/tables/07-assignment_students.sql`
+
+> **Nota:** Esta tabla reside en `educational_content`, no en `social_features`. Se documenta aqui por su relacion directa con assignments.
 
 ---
 

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { GitBranch, History, RotateCcw, User, Calendar } from 'lucide-react';
 
 interface Version {
@@ -10,7 +12,7 @@ interface Version {
   author: string;
   changes: string;
   changesSummary: { added: number; modified: number; deleted: number };
-  content: any;
+  content: Record<string, unknown>;
 }
 
 export const ContentVersionControl: React.FC = () => {
@@ -47,19 +49,23 @@ export const ContentVersionControl: React.FC = () => {
 
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
   const [compareVersion, setCompareVersion] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const handleRestore = async (versionId: string) => {
-    if (!confirm('Restore to this version? Current changes will be saved as a new version.'))
-      return;
-
-    try {
-      // API call to restore version
-      console.log('Restoring version:', versionId);
-      alert('Version restored successfully!');
-    } catch (error) {
-      console.error('Restore failed:', error);
-      alert('Restore failed');
-    }
+    setConfirmMessage('Restore to this version? Current changes will be saved as a new version.');
+    setPendingAction(() => async () => {
+      try {
+        // TODO: Implement version restore API call
+        void versionId;
+        toast.success('Version restored successfully!');
+      } catch (error) {
+        console.error('Restore failed:', error);
+        toast.error('Restore failed');
+      }
+    });
+    setShowConfirm(true);
   };
 
   const selectedVersionData = versions.find((v) => v.id === selectedVersion);
@@ -151,7 +157,8 @@ export const ContentVersionControl: React.FC = () => {
                     variant="blue"
                     icon={<RotateCcw className="h-4 w-4" />}
                     onClick={() => handleRestore(selectedVersionData.id)}
-                    disabled={versions[0].id === selectedVersionData.id}
+                    disabled
+                    title="Proximamente"
                   >
                     Restore
                   </DetectiveButton>
@@ -272,6 +279,17 @@ export const ContentVersionControl: React.FC = () => {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => {
+          pendingAction?.();
+          setShowConfirm(false);
+        }}
+        title="Confirmar accion"
+        message={confirmMessage}
+      />
     </div>
   );
 };

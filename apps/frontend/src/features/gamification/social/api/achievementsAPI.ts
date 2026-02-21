@@ -348,11 +348,6 @@ export const checkAchievements = async (
   _currentValue: number,
 ): Promise<BackendAchievement[]> => {
   // Backend auto-detection handles this. Re-fetch user achievements to get latest.
-  console.warn(
-    '[achievementsAPI] checkAchievements: Achievement detection is automatic. ' +
-    'Refreshing user achievements instead.'
-  );
-
   try {
     // Refresh achievements to get any newly unlocked ones
     const achievements = await getUserAchievements(userId);

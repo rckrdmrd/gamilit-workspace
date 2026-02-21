@@ -60,11 +60,6 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
         answers: { events: userOrder },
       });
 
-      console.log('📊 [Timeline] Progress update sent:', {
-        currentStage,
-        totalStages,
-        isVerified: showFeedback,
-      });
     }
   }, [events, hintsUsed, showFeedback, onProgressUpdate, startTime]);
 
@@ -107,11 +102,6 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [Timeline] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [Timeline] Submission error:', error);
       setFeedback({

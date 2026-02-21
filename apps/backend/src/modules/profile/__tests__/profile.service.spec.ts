@@ -63,7 +63,7 @@ describe('ProfileService', () => {
       // Assert
       expect(result).toEqual(mockProfile);
       expect(mockProfileRepo.findOne).toHaveBeenCalledWith({
-        where: { user_id: 'user-456' },
+        where: { id: 'user-456' },
       });
     });
 

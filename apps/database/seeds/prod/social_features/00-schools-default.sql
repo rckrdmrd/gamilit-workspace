@@ -15,7 +15,7 @@
 -- 2. El classroom default apunta a esta institución
 -- 3. Los administradores gestionan usuarios desde aquí
 --
--- UUID FIJO: 99999999-9999-9999-9999-999999999999
+-- ID: gen_random_uuid() (generated at insert time)
 -- CÓDIGO: GAMILIT-DEFAULT
 --
 -- IMPORTANTE: Esta institución NO debe eliminarse nunca.
@@ -86,7 +86,7 @@ INSERT INTO social_features.schools (
     created_at,
     updated_at
 ) VALUES (
-    '99999999-9999-9999-9999-999999999999'::uuid,  -- UUID fija para sistema
+    gen_random_uuid(),                              -- UUID generada dinámicamente
     v_tenant_id,
     'GAMILIT - Institución General',
     'GAMILIT-DEFAULT',

@@ -1,7 +1,8 @@
 # Diseño Técnico: Sistema de Equipamiento de Items (Skins)
 
-**Fecha:** 2026-02-18
-**Estado:** Parcialmente Implementado (DDL+Backend+Header; Perfil pendiente)
+**Fecha:** 2026-02-21
+**Version:** 2.0.0
+**Estado:** Implementado (DDL+Backend+Frontend+Seeds+Assets)
 **Feature:** Personalización de Avatar
 
 ---
@@ -137,11 +138,22 @@ Se recomienda separar la lógica de "Uso" (Inventory) de la lógica de "Compra" 
 
 **Métodos Clave:**
 *   `getEquippedItems(userId: string): Promise<UserEquippedItem[]>`
-*   `equipItem(userId: string, itemId: string): Promise<UserEquippedItem>`
+*   `equipItem(userId: string, dto: EquipItemDto): Promise<UserEquippedItem>` donde `EquipItemDto = { item_id: string }`
     *   Valida `user_purchases` (ownership).
     *   Obtiene `category_id` del item.
     *   Ejecuta `repository.upsert` basado en `(user_id, category_id)`.
 *   `unequipItem(userId: string, itemId: string): Promise<void>`
+
+#### `mergeVisualConfig(item)` (Utility)
+Copia claves visuales (`type`, `asset_url`, `border_color`, `display_text`, `color`, `animated`, `animation`, `glow_color`, etc.) desde `effect_data` hacia `metadata` en tiempo de lectura. Esto permite que el frontend lea exclusivamente de `metadata`.
+
+Archivo: `apps/backend/src/modules/gamification/utils/visual-config.util.ts`
+
+#### `getEquippedItemsMap(userId: string): Promise<Record<string, any>>`
+Retorna mapa `{ categoryName: { itemId, name, assetUrl, type, data } }` para un usuario. Usado por Auth Service para perfil rapido.
+
+#### `getEquippedItemsMapBatch(userIds: string[]): Promise<Record<...>>`
+Misma estructura pero para multiples usuarios. Usado por leaderboards y listas de amigos. Max 50 IDs por request.
 
 #### Flujo técnico mínimo (Backend)
 

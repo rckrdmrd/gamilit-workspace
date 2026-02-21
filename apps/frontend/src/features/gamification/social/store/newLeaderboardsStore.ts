@@ -85,7 +85,7 @@ export const useNewLeaderboardsStore = create<NewLeaderboardsState>((set, get) =
     try {
       const data = await getXPLeaderboard(limit, offset);
       set({
-        xpLeaderboard: data as XPLeaderboardEntry[],
+        xpLeaderboard: data as unknown as XPLeaderboardEntry[],
         isLoading: false,
         lastUpdated: new Date()
       });
@@ -102,7 +102,7 @@ export const useNewLeaderboardsStore = create<NewLeaderboardsState>((set, get) =
     try {
       const data = await getCoinsLeaderboard(limit, offset);
       set({
-        coinsLeaderboard: data as CoinsLeaderboardEntry[],
+        coinsLeaderboard: data as unknown as CoinsLeaderboardEntry[],
         isLoading: false,
         lastUpdated: new Date()
       });
@@ -119,7 +119,7 @@ export const useNewLeaderboardsStore = create<NewLeaderboardsState>((set, get) =
     try {
       const data = await getStreaksLeaderboard(limit, offset);
       set({
-        streaksLeaderboard: data as StreakLeaderboardEntry[],
+        streaksLeaderboard: data as unknown as StreakLeaderboardEntry[],
         isLoading: false,
         lastUpdated: new Date()
       });
@@ -136,7 +136,7 @@ export const useNewLeaderboardsStore = create<NewLeaderboardsState>((set, get) =
     try {
       const data = await getGlobalLeaderboard(limit, offset);
       set({
-        globalLeaderboard: data as GlobalLeaderboardEntry[],
+        globalLeaderboard: data as unknown as GlobalLeaderboardEntry[],
         isLoading: false,
         lastUpdated: new Date()
       });

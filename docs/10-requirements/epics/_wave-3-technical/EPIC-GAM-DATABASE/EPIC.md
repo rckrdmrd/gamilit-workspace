@@ -20,10 +20,10 @@ Implementacion completa del esquema de base de datos PostgreSQL 15 para la plata
 
 - 18 schemas creados con todas sus tablas (auth, users, tenants, modules, exercises, content, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports, notifications, settings)
 - 169 tablas con DDL completo (CREATE TABLE, constraints, defaults, comments)
-- 207 RLS policies para multi-tenancy seguro
+- 231 RLS policies para multi-tenancy seguro
 - 183 funciones (DDL) (calculo XP, evaluacion ejercicios, ranking, estadisticas)
 - 67 triggers (auto-update timestamps, gamification events, notification dispatch)
-- 40 ENUMs sincronizados entre DDL y backend
+- 42 ENUMs sincronizados entre DDL y backend
 - 13 views + 7 materialized views (leaderboards, estadisticas agregadas)
 - 299 foreign keys con integridad referencial
 - Seeds de datos de prueba para desarrollo
@@ -32,7 +32,7 @@ Implementacion completa del esquema de base de datos PostgreSQL 15 para la plata
 
 | Capa | Componentes |
 |------|-------------|
-| Database | 18 schemas, 169 tablas, 207 RLS, 183 funciones (DDL), 67 triggers, 40 ENUMs, 13 views, 7 MVs, 299 FKs |
+| Database | 18 schemas, 169 tablas, 231 RLS, 183 funciones (DDL), 67 triggers, 42 ENUMs, 13 views, 7 MVs, 299 FKs |
 | Backend | TypeORM entities (152) deben sincronizar con DDL |
 | Frontend | N/A (indirectamente via API) |
 | DevOps | Script unified-recreate-db.sh para recreacion automatizada en WSL |
@@ -49,7 +49,7 @@ Implementacion completa del esquema de base de datos PostgreSQL 15 para la plata
 ## Definition of Done
 
 - [ ] 169 tablas creadas en 18 schemas con DDL completo y sin errores de ejecucion
-- [ ] 207 RLS policies aplicadas y verificadas con multi-tenant queries
+- [ ] 231 RLS policies aplicadas y verificadas con multi-tenant queries
 - [ ] Seeds de datos ejecutados exitosamente en WSL con unified-recreate-db.sh
 - [ ] Documentacion actualizada
 - [ ] Inventarios sincronizados

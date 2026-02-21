@@ -77,12 +77,12 @@ export default function AdminSettingsPage() {
         <AdminTabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} variant="underline" />
 
         {/* Tab Content */}
-        <div className="transition-all duration-200">{renderTabContent()}</div>
+        <div className="transition-all duration-200" role="region" aria-label={`Configuracion: ${TABS.find(t => t.id === activeTab)?.label ?? activeTab}`}>{renderTabContent()}</div>
 
         {/* Info Footer */}
         <DetectiveCard className="border-detective-orange/30 bg-detective-orange/10">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-detective-orange" />
+          <div className="flex items-start gap-3" role="note">
+            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-detective-orange" aria-hidden="true" />
             <div>
               <h3 className="text-sm font-medium text-detective-text">
                 Cambios en la Configuración

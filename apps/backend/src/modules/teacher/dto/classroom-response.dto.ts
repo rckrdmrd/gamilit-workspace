@@ -94,7 +94,7 @@ export class TeacherClassroomResponseDto {
     description: 'Horario de clases',
     example: [{ day: 'lunes', start_time: '08:00', end_time: '10:00' }],
   })
-    schedule?: any[];
+    schedule?: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   @ApiProperty({
     description: 'Aula activa',

@@ -9,6 +9,7 @@
  */
 
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { Settings, Award, Star, TrendingUp } from 'lucide-react';
 import type { GamificationStats, GamificationParameter } from '@/types/admin/gamification.types';
 
@@ -82,14 +83,15 @@ export function StatsTab({ stats, parameters, isLoading }: StatsTabProps) {
             })}
           </div>
         ) : (
-          <div className="py-8 text-center text-detective-text-secondary">
-            <p className="text-lg">No hay datos de parametros disponibles</p>
-            <p className="mt-2 text-sm">
-              {isLoading
+          <EmptyState
+            icon={Settings}
+            title="No hay datos de parametros disponibles"
+            description={
+              isLoading
                 ? 'Cargando...'
-                : 'Los datos apareceran aqui cuando esten disponibles'}
-            </p>
-          </div>
+                : 'Los datos apareceran aqui cuando esten disponibles'
+            }
+          />
         )}
       </DetectiveCard>
     </div>

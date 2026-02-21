@@ -2,8 +2,6 @@
  * Progress Types
  * Type definitions for Progress Module API responses
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Progress Status Enum
  */
@@ -262,7 +260,7 @@ export interface ModuleProgress {
    * Personalized learning path (JSONB array)
    * Adaptive system generates custom exercise sequence
    */
-  learning_path: any[];
+  learning_path: unknown[];
 
   /**
    * Performance analytics (JSONB)

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="mcStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#90A4AE"/>
+      <stop offset="50%" stop-color="#78909C"/>
+      <stop offset="100%" stop-color="#546E7A"/>
+    </linearGradient>
+    <linearGradient id="mcTeal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#26A69A"/>
+      <stop offset="100%" stop-color="#00796B"/>
+    </linearGradient>
+    <linearGradient id="mcShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B0BEC5"/>
+      <stop offset="40%" stop-color="#78909C"/>
+      <stop offset="100%" stop-color="#455A64"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield shape -->
+  <path d="M64 8 L112 28 L112 68 Q112 100, 64 120 Q16 100, 16 68 L16 28 Z" fill="url(#mcShield)"/>
+  <path d="M64 8 L112 28 L112 68 Q112 100, 64 120 Q16 100, 16 68 L16 28 Z" fill="none" stroke="#37474F" stroke-width="3"/>
+  <!-- Inner shield border -->
+  <path d="M64 16 L104 32 L104 66 Q104 94, 64 112 Q24 94, 24 66 L24 32 Z" fill="none" stroke="#26A69A" stroke-width="2"/>
+  <!-- Stepped pyramid on shield -->
+  <g fill="url(#mcTeal)">
+    <!-- Base step -->
+    <rect x="38" y="82" width="52" height="8" rx="1"/>
+    <!-- Second step -->
+    <rect x="44" y="74" width="40" height="8" rx="1"/>
+    <!-- Third step -->
+    <rect x="50" y="66" width="28" height="8" rx="1"/>
+    <!-- Fourth step -->
+    <rect x="54" y="58" width="20" height="8" rx="1"/>
+    <!-- Temple top -->
+    <rect x="58" y="50" width="12" height="8" rx="1"/>
+  </g>
+  <!-- Step lines -->
+  <g fill="none" stroke="#004D40" stroke-width="0.8" opacity="0.5">
+    <line x1="38" y1="86" x2="90" y2="86"/>
+    <line x1="44" y1="78" x2="84" y2="78"/>
+    <line x1="50" y1="70" x2="78" y2="70"/>
+    <line x1="54" y1="62" x2="74" y2="62"/>
+  </g>
+  <!-- Temple doorway -->
+  <rect x="61" y="52" width="6" height="6" fill="#263238"/>
+  <!-- Decorative elements - Maya cross pattern -->
+  <g fill="#26A69A" opacity="0.6">
+    <rect x="60" y="36" width="8" height="3" rx="0.5"/>
+    <rect x="62" y="33" width="4" height="9" rx="0.5"/>
+  </g>
+  <!-- Corner citadel towers -->
+  <rect x="26" y="34" width="6" height="12" fill="#546E7A" stroke="#37474F" stroke-width="0.8"/>
+  <rect x="25" y="32" width="8" height="3" fill="#78909C"/>
+  <rect x="96" y="34" width="6" height="12" fill="#546E7A" stroke="#37474F" stroke-width="0.8"/>
+  <rect x="95" y="32" width="8" height="3" fill="#78909C"/>
+  <!-- Shield highlight -->
+  <path d="M64 16 L40 26 L40 50 Q50 30, 64 16" fill="#B0BEC5" opacity="0.2"/>
+  <!-- Bottom banner -->
+  <path d="M40 96 L64 104 L88 96 L84 100 L64 108 L44 100 Z" fill="#26A69A" opacity="0.5"/>
+</svg>

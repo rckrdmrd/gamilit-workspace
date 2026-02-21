@@ -36,13 +36,11 @@ import {
 } from 'lucide-react';
 
 // Components
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 
 // Store & Hooks
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
-import { useAuth } from '@/app/providers/AuthContext';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -81,9 +79,6 @@ const notificationLabels: Record<string, string> = {
 type StatusFilter = 'all' | 'unread' | 'read';
 
 export default function NotificationsPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
-
   // WebSocket connection for real-time notifications
   const { isConnected: _isConnected } = useWebSocket();
 
@@ -188,39 +183,30 @@ export default function NotificationsPage() {
   const getNotificationColor = (type: string) => {
     switch (type) {
       case 'achievement_unlocked':
-        return 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400';
+        return 'bg-yellow-500/20 text-yellow-400';
       case 'rank_promoted':
-        return 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400';
+        return 'bg-purple-500/20 text-purple-400';
       case 'mission_completed':
-        return 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400';
+        return 'bg-green-500/20 text-green-400';
       case 'mission_expired':
-        return 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400';
+        return 'bg-red-500/20 text-red-400';
       case 'friend_request':
       case 'friend_accepted':
-        return 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400';
+        return 'bg-blue-500/20 text-blue-400';
       case 'assignment_created':
       case 'assignment_graded':
-        return 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400';
+        return 'bg-orange-500/20 text-orange-400';
       case 'coins_received':
-        return 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400';
+        return 'bg-amber-500/20 text-amber-400';
       case 'module_unlocked':
-        return 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400';
+        return 'bg-indigo-500/20 text-indigo-400';
       default:
-        return 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400';
+        return 'bg-detective-surface-elevated text-detective-text-secondary';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Header */}
-      <GamifiedHeader
-        user={user || undefined}
-        gamificationData={gamificationData}
-        onLogout={async () => {
-          await logout();
-        }}
-      />
-
+    <StudentPageShell>
       {/* Main Content */}
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
@@ -234,10 +220,10 @@ export default function NotificationsPage() {
               <Bell className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-detective-text">
                 Centro de Notificaciones
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-detective-text-secondary">
                 {unreadCount > 0
                   ? `${unreadCount} notificación${unreadCount > 1 ? 'es' : ''} sin leer`
                   : 'Todas las notificaciones leídas'}
@@ -252,7 +238,7 @@ export default function NotificationsPage() {
               whileTap={{ scale: 0.95 }}
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 rounded-lg bg-detective-surface px-3 py-2 text-sm font-medium text-detective-text-secondary shadow-sm transition-colors hover:bg-detective-surface-elevated"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">Actualizar</span>
@@ -272,7 +258,7 @@ export default function NotificationsPage() {
 
             <Link
               to="/settings/notifications"
-              className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 rounded-lg bg-detective-surface px-3 py-2 text-sm font-medium text-detective-text-secondary shadow-sm transition-colors hover:bg-detective-surface-elevated"
             >
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Preferencias</span>
@@ -285,7 +271,7 @@ export default function NotificationsPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-6 rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800"
+          className="mb-6 rounded-xl bg-detective-surface p-4 shadow-sm"
         >
           {/* Status Tabs */}
           <div className="flex flex-wrap items-center gap-2">
@@ -295,7 +281,7 @@ export default function NotificationsPage() {
                 'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
                 statusFilter === 'all'
                   ? 'bg-detective-orange text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+                  : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg',
               )}
             >
               Todas
@@ -306,7 +292,7 @@ export default function NotificationsPage() {
                 'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
                 statusFilter === 'unread'
                   ? 'bg-detective-orange text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+                  : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg',
               )}
             >
               No leídas {unreadCount > 0 && `(${unreadCount})`}
@@ -317,7 +303,7 @@ export default function NotificationsPage() {
                 'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
                 statusFilter === 'read'
                   ? 'bg-detective-orange text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+                  : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg',
               )}
             >
               Leídas
@@ -327,7 +313,7 @@ export default function NotificationsPage() {
             <div className="relative ml-auto">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                className="flex items-center gap-2 rounded-lg bg-detective-bg-secondary px-4 py-2 text-sm font-medium text-detective-text-secondary transition-colors hover:bg-detective-bg"
               >
                 <Filter className="h-4 w-4" />
                 <span>
@@ -343,7 +329,7 @@ export default function NotificationsPage() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 z-10 mt-2 w-56 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800"
+                    className="absolute right-0 z-10 mt-2 w-56 rounded-lg bg-detective-surface shadow-lg ring-1 ring-black/5"
                   >
                     <div className="py-1">
                       <button
@@ -355,7 +341,7 @@ export default function NotificationsPage() {
                           'flex w-full items-center gap-2 px-4 py-2 text-sm',
                           typeFilter === 'all'
                             ? 'bg-detective-orange/10 text-detective-orange'
-                            : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700',
+                            : 'text-detective-text-secondary hover:bg-detective-surface-elevated',
                         )}
                       >
                         <Bell className="h-4 w-4" />
@@ -374,7 +360,7 @@ export default function NotificationsPage() {
                               'flex w-full items-center gap-2 px-4 py-2 text-sm',
                               typeFilter === type
                                 ? 'bg-detective-orange/10 text-detective-orange'
-                                : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700',
+                                : 'text-detective-text-secondary hover:bg-detective-surface-elevated',
                             )}
                           >
                             <Icon className="h-4 w-4" />
@@ -395,7 +381,7 @@ export default function NotificationsPage() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            className="mb-6 rounded-lg border-2 border-red-500/30 bg-red-500/10 p-4 text-red-400"
           >
             <div className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
@@ -422,13 +408,13 @@ export default function NotificationsPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col items-center justify-center rounded-xl bg-white py-12 text-center shadow-sm dark:bg-gray-800"
+                  className="flex flex-col items-center justify-center rounded-xl bg-detective-surface py-12 text-center shadow-sm"
                 >
-                  <Bell className="mb-4 h-16 w-16 text-gray-300 dark:text-gray-600" />
-                  <h3 className="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
+                  <Bell className="mb-4 h-16 w-16 text-detective-text-secondary/40" />
+                  <h3 className="mb-2 text-lg font-semibold text-detective-text">
                     No hay notificaciones
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-detective-text-secondary">
                     {statusFilter === 'unread'
                       ? '¡Excelente! No tienes notificaciones sin leer'
                       : 'Las notificaciones aparecerán aquí'}
@@ -447,7 +433,7 @@ export default function NotificationsPage() {
                       exit={{ opacity: 0, x: -100 }}
                       transition={{ delay: index * 0.05 }}
                       className={cn(
-                        'group relative flex items-start gap-4 rounded-xl bg-white p-4 shadow-sm transition-all hover:shadow-md dark:bg-gray-800',
+                        'group relative flex items-start gap-4 rounded-xl bg-detective-surface p-4 shadow-sm transition-all hover:shadow-md',
                         notification.status === 'unread' && 'border-l-4 border-detective-orange',
                       )}
                     >
@@ -464,8 +450,8 @@ export default function NotificationsPage() {
                               className={cn(
                                 'text-sm font-semibold',
                                 notification.status === 'unread'
-                                  ? 'text-gray-900 dark:text-white'
-                                  : 'text-gray-700 dark:text-gray-300',
+                                  ? 'text-detective-text'
+                                  : 'text-detective-text-secondary',
                               )}
                             >
                               {notification.title}
@@ -474,8 +460,8 @@ export default function NotificationsPage() {
                               className={cn(
                                 'mt-1 text-sm',
                                 notification.status === 'unread'
-                                  ? 'text-gray-700 dark:text-gray-300'
-                                  : 'text-gray-500 dark:text-gray-400',
+                                  ? 'text-detective-text-secondary'
+                                  : 'text-detective-text-secondary/70',
                               )}
                             >
                               {notification.message}
@@ -487,7 +473,7 @@ export default function NotificationsPage() {
                             {notification.status === 'unread' && (
                               <button
                                 onClick={() => handleMarkAsRead(notification.id)}
-                                className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-green-600 dark:hover:bg-gray-700"
+                                className="rounded-lg p-2 text-detective-text-secondary transition-colors hover:bg-detective-surface-elevated hover:text-green-400"
                                 title="Marcar como leída"
                               >
                                 <Check className="h-4 w-4" />
@@ -495,7 +481,7 @@ export default function NotificationsPage() {
                             )}
                             <button
                               onClick={() => handleDelete(notification.id)}
-                              className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-700"
+                              className="rounded-lg p-2 text-detective-text-secondary transition-colors hover:bg-detective-surface-elevated hover:text-red-400"
                               title="Eliminar"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -504,9 +490,9 @@ export default function NotificationsPage() {
                         </div>
 
                         {/* Metadata */}
-                        <div className="mt-2 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="mt-2 flex items-center gap-3 text-xs text-detective-text-secondary">
                           <span>{formatDate(notification.createdAt)}</span>
-                          <span className="rounded-full bg-gray-100 px-2 py-0.5 dark:bg-gray-700">
+                          <span className="rounded-full bg-detective-bg-secondary px-2 py-0.5">
                             {notificationLabels[notification.type] || notification.type}
                           </span>
                           {notification.status === 'unread' && (
@@ -528,6 +514,6 @@ export default function NotificationsPage() {
 
       {/* Bottom Spacing */}
       <div className="h-16" />
-    </div>
+    </StudentPageShell>
   );
 }

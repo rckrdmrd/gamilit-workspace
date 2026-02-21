@@ -318,8 +318,8 @@ export class ReportContentAggregatorService {
       );
 
       return {
-        unlocked: unlockedResult.map((r: any) => r.name),
-        inProgress: inProgressResult.map((r: any) => ({
+        unlocked: unlockedResult.map((r: any) => r.name), // eslint-disable-line @typescript-eslint/no-explicit-any
+        inProgress: inProgressResult.map((r: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
           name: r.name,
           progress: parseFloat(r.progress),
         })),
@@ -385,7 +385,7 @@ export class ReportContentAggregatorService {
         [studentId, startDate, endDate],
       );
 
-      return result.map((r: any) => ({
+      return result.map((r: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         type: r.type,
         avgScore: parseFloat(r.avg_score),
         count: parseInt(r.count, 10),
@@ -436,7 +436,7 @@ export class ReportContentAggregatorService {
       return {
         completed: parseInt(completedResult[0]?.completed || '0', 10),
         started: detailsResult.length,
-        details: detailsResult.map((r: any) => ({
+        details: detailsResult.map((r: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
           name: r.name,
           progress: parseFloat(r.progress),
         })),

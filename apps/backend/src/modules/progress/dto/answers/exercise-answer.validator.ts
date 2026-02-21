@@ -218,50 +218,20 @@ export class ExerciseAnswerValidator {
     return messages;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async validate(exerciseType: string, answers: any): Promise<void> {
-    // CORR-010 DEBUG: Log completo para diagnosticar problema de statementId vacío
-    console.log('[CORR-010 DEBUG] Validating answers:', {
-      exerciseType,
-      answersKeys: Object.keys(answers || {}),
-      answersStructure: JSON.stringify(answers, null, 2).substring(0, 1000),
-    });
-
-    // CORR-010: Log específico para tribunal_opiniones
+    // Sanitize tribunal_opiniones evaluations to ensure statementIds are never empty
     if (exerciseType === 'tribunal_opiniones' && answers?.evaluations) {
-      console.log('[CORR-010 DEBUG] Tribunal evaluations BEFORE sanitization:',
-        JSON.stringify(answers.evaluations.map((e: any, i: number) => ({
-          index: i,
-          statementId: e.statementId,
-          hasStatementId: !!e.statementId,
-          typeOfStatementId: typeof e.statementId,
-          classification: e.classification,
-          verdict: e.verdict,
-        })), null, 2)
-      );
-
-      // CORR-010 FIX: Sanitizar evaluaciones antes de validar
-      // Esto es una solución de seguridad para garantizar que los IDs nunca estén vacíos
-      answers.evaluations = answers.evaluations.map((e: any, idx: number) => {
+      answers.evaluations = answers.evaluations.map((e: any, idx: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const sanitizedStatementId = e.statementId && typeof e.statementId === 'string' && e.statementId.trim() !== ''
           ? e.statementId
           : `stmt-${idx + 1}`;
-
-        if (!e.statementId || e.statementId !== sanitizedStatementId) {
-          console.warn(`[CORR-010 BACKEND] Sanitizing missing/invalid statementId at index ${idx}: "${e.statementId}" -> "${sanitizedStatementId}"`);
-        }
 
         return {
           ...e,
           statementId: sanitizedStatementId,
         };
       });
-
-      console.log('[CORR-010 DEBUG] Tribunal evaluations AFTER sanitization:',
-        JSON.stringify(answers.evaluations.map((e: any, i: number) => ({
-          index: i,
-          statementId: e.statementId,
-        })), null, 2)
-      );
     }
 
     // Get the appropriate DTO class
@@ -269,56 +239,25 @@ export class ExerciseAnswerValidator {
 
     // Transform plain object to DTO instance
     const dto = plainToInstance(DtoClass, answers, {
-      // CORR-010: Asegurar que las propiedades se copien correctamente
       enableImplicitConversion: true,
       exposeDefaultValues: true,
     });
 
-    // CORR-010: Log después de la transformación
-    if (exerciseType === 'tribunal_opiniones' && (dto as any)?.evaluations) {
-      console.log('[CORR-010 DEBUG] Tribunal evaluations AFTER transform:',
-        JSON.stringify((dto as any).evaluations.map((e: any, i: number) => ({
-          index: i,
-          statementId: e.statementId,
-          hasStatementId: !!e.statementId,
-          typeOfStatementId: typeof e.statementId,
-        })), null, 2)
-      );
-
-      // CORR-010 FIX v5: Post-transform sanitization
-      // This is the DEFINITIVE fix - sanitize AFTER plainToInstance
-      // to ensure class-transformer quirks don't lose our statementIds
-      (dto as any).evaluations = (dto as any).evaluations.map((e: any, idx: number) => {
+    // Post-transform sanitization for tribunal_opiniones to handle class-transformer quirks
+    if (exerciseType === 'tribunal_opiniones' && (dto as any)?.evaluations) { // eslint-disable-line @typescript-eslint/no-explicit-any
+      (dto as any).evaluations = (dto as any).evaluations.map((e: any, idx: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         if (!e.statementId || (typeof e.statementId === 'string' && e.statementId.trim() === '')) {
-          const fallbackId = `stmt-${idx + 1}`;
-          console.warn(`[CORR-010 BACKEND v5] Post-transform fix: Setting statementId at index ${idx} to "${fallbackId}"`);
-          e.statementId = fallbackId;
+          e.statementId = `stmt-${idx + 1}`;
         }
         return e;
       });
-
-      console.log('[CORR-010 DEBUG] Tribunal evaluations AFTER POST-TRANSFORM sanitization:',
-        JSON.stringify((dto as any).evaluations.map((e: any, i: number) => ({
-          index: i,
-          statementId: e.statementId,
-        })), null, 2)
-      );
     }
 
     // Validate
     const errors: ValidationError[] = await validate(dto);
 
     if (errors.length > 0) {
-      // Format error messages including nested errors
       const messages = this.extractErrorMessages(errors);
-
-      // FE-061: Log detailed error information
-      console.error('[FE-061 DEBUG] Validation errors:', {
-        exerciseType,
-        errorCount: errors.length,
-        messages,
-        rawErrors: JSON.stringify(errors, null, 2),
-      });
 
       throw new BadRequestException(
         `Validation failed for exercise type '${exerciseType}': ${messages.join('; ')}`,
@@ -334,7 +273,8 @@ export class ExerciseAnswerValidator {
    * @returns Validated DTO instance
    * @throws BadRequestException if validation fails
    */
-  static async validateAndTransform(exerciseType: string, answers: any): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async validateAndTransform(exerciseType: string, answers: any): Promise<unknown> {
     await this.validate(exerciseType, answers);
     const DtoClass = this.getDtoForType(exerciseType);
     return plainToInstance(DtoClass, answers);

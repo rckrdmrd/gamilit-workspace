@@ -21,13 +21,66 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, Activity, Flame } from 'lucide-react';
+import { Users, Activity, Flame, BarChart3 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import type { EngagementAnalytics } from '@/services/api/adminTypes';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
+import type { EngagementAnalytics, EngagementBySegment } from '@/services/api/adminTypes';
 
 interface EngagementTabProps {
   engagement: EngagementAnalytics | null;
 }
+
+/** Column definitions for Engagement Segment table */
+const engagementColumns: Column<EngagementBySegment>[] = [
+  {
+    key: 'user_segment',
+    label: 'Segmento',
+    render: (row) => <span className="font-medium">{row.user_segment}</span>,
+  },
+  {
+    key: 'users_count',
+    label: 'Usuarios',
+    render: (row) => row.users_count.toLocaleString('es-ES'),
+  },
+  {
+    key: 'avg_engagement_score',
+    label: 'Engagement',
+    render: (row) => (
+      <span
+        className={`rounded-full px-3 py-1 text-sm ${
+          row.avg_engagement_score >= 70
+            ? 'bg-green-500/20 text-green-400'
+            : row.avg_engagement_score >= 40
+              ? 'bg-yellow-500/20 text-yellow-400'
+              : 'bg-red-500/20 text-red-400'
+        }`}
+      >
+        {row.avg_engagement_score.toFixed(1)}%
+      </span>
+    ),
+  },
+  {
+    key: 'avg_exercises_completed',
+    label: 'Ejercicios Prom.',
+    render: (row) => row.avg_exercises_completed.toFixed(1),
+  },
+  {
+    key: 'avg_streak',
+    label: 'Racha Prom.',
+    render: (row) => row.avg_streak.toFixed(1),
+  },
+  {
+    key: 'active_last_7d',
+    label: 'Activos 7d',
+    render: (row) => row.active_last_7d.toLocaleString('es-ES'),
+  },
+  {
+    key: 'active_last_30d',
+    label: 'Activos 30d',
+    render: (row) => row.active_last_30d.toLocaleString('es-ES'),
+  },
+];
 
 /**
  * EngagementTab Component
@@ -60,9 +113,11 @@ export function EngagementTab({ engagement }: EngagementTabProps) {
 
   if (!engagement) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-detective-text-secondary">No hay datos de engagement disponibles</p>
-      </div>
+      <EmptyState
+        icon={BarChart3}
+        title="No hay datos de engagement disponibles"
+        description="Los datos de engagement apareceran cuando haya actividad en el sistema"
+      />
     );
   }
 
@@ -138,82 +193,23 @@ export function EngagementTab({ engagement }: EngagementTabProps) {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-[350px] items-center justify-center text-detective-text-secondary">
-            No hay datos de engagement
-          </div>
+          <EmptyState
+            icon={Activity}
+            title="No hay datos de engagement"
+            className="h-[350px]"
+          />
         )}
       </DetectiveCard>
 
       {/* Detailed Table */}
       <DetectiveCard className="p-6">
         <h3 className="mb-4 text-xl font-bold text-detective-text">Desglose por Segmento</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-detective-border border-b">
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Segmento
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Usuarios
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Engagement
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Ejercicios Prom.
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Racha Prom.
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Activos 7d
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Activos 30d
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {engagement.by_segment.map((segment) => (
-                <tr
-                  key={segment.user_segment}
-                  className="border-detective-border border-b transition-colors hover:bg-detective-bg-secondary"
-                >
-                  <td className="px-4 py-3 font-medium text-detective-text">
-                    {segment.user_segment}
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">
-                    {segment.users_count.toLocaleString('es-ES')}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-sm ${
-                        segment.avg_engagement_score >= 70
-                          ? 'bg-green-500/20 text-green-400'
-                          : segment.avg_engagement_score >= 40
-                            ? 'bg-yellow-500/20 text-yellow-400'
-                            : 'bg-red-500/20 text-red-400'
-                      }`}
-                    >
-                      {segment.avg_engagement_score.toFixed(1)}%
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">
-                    {segment.avg_exercises_completed.toFixed(1)}
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">{segment.avg_streak.toFixed(1)}</td>
-                  <td className="px-4 py-3 text-detective-text">
-                    {segment.active_last_7d.toLocaleString('es-ES')}
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">
-                    {segment.active_last_30d.toLocaleString('es-ES')}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable<EngagementBySegment>
+          data={engagement.by_segment}
+          columns={engagementColumns}
+          striped={false}
+          emptyMessage="No hay datos de engagement por segmento"
+        />
       </DetectiveCard>
     </div>
   );

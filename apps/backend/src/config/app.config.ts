@@ -23,7 +23,7 @@ export default registerAs('app', () => ({
 
   // Session
   session: {
-    secret: process.env.SESSION_SECRET || 'session-secret-change-in-production',
+    secret: process.env.SESSION_SECRET || 'dev-only-session-secret-not-for-production',
     maxAge: parseInt(process.env.SESSION_MAX_AGE || String(24 * 60 * 60 * 1000), 10), // 24 hours
   },
 

@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { X, Users, TrendingUp, TrendingDown, Coins, Star, Info, Loader2 } from 'lucide-react';
 import type { ImpactPreview } from '@/types/admin/gamification.types';
 
@@ -29,25 +30,6 @@ export function PreviewImpactDialog({
   isLoading = false,
   onConfirm,
 }: PreviewImpactDialogProps) {
-  // Close modal on Esc key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
 
   /**
@@ -61,13 +43,8 @@ export function PreviewImpactDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div
-        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="dialog-title"
-      >
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="xl" className="bg-transparent shadow-none p-0">
+      <div className="-mx-6 -my-4">
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -307,18 +284,14 @@ export function PreviewImpactDialog({
 
           {/* No Data State */}
           {!isLoading && !impactData && (
-            <div className="py-12 text-center">
-              <Info className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary opacity-50" />
-              <p className="mb-2 text-lg font-semibold text-detective-text">
-                No hay datos de impacto disponibles
-              </p>
-              <p className="text-sm text-detective-text-secondary">
-                Seleccione un parámetro para previsualizar su impacto
-              </p>
-            </div>
+            <EmptyState
+              icon={Info}
+              title="No hay datos de impacto disponibles"
+              description="Seleccione un parametro para previsualizar su impacto"
+            />
           )}
         </DetectiveCard>
       </div>
-    </div>
+    </Modal>
   );
 }

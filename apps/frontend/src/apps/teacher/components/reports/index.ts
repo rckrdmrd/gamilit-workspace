@@ -6,3 +6,7 @@ export { ScheduledReportsTab } from './ScheduledReportsTab';
 export type { ScheduledReportsTabProps } from './ScheduledReportsTab';
 export { SharedReportsTab } from './SharedReportsTab';
 export type { SharedReportsTabProps } from './SharedReportsTab';
+export { ReportsStatsCards } from './ReportsStatsCards';
+export type { ReportsStatsCardsProps } from './ReportsStatsCards';
+export { ReportsFilterBar } from './ReportsFilterBar';
+export type { ReportsFilterBarProps } from './ReportsFilterBar';

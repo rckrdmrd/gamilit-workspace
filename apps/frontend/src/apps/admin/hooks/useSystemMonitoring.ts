@@ -3,12 +3,33 @@
  *
  * Specialized hook for real-time system monitoring.
  * Focuses on health checks, performance metrics, and alert management.
+ *
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching. Uses refetchInterval to replace manual setInterval.
+ *
+ * Updated: 2026-02-20 - Migrated to React Query
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type { SystemHealth, SystemAlert } from '../types';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const monitoringKeys = {
+  all: ['admin', 'system-monitoring'] as const,
+  health: () => ['admin', 'system-monitoring', 'health'] as const,
+  alerts: () => ['admin', 'system-monitoring', 'alerts'] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseSystemMonitoringResult {
   // Health data
@@ -44,38 +65,31 @@ interface HealthSnapshot {
 
 const HEALTH_CHECK_INTERVAL = 10000; // 10 seconds
 const ALERT_CHECK_INTERVAL = 5000; // 5 seconds
-const MAX_HISTORY_LENGTH = 60; // Keep 10 minutes of history at 10s intervals
+const MAX_HISTORY_LENGTH = 60;
+
+// ============================================================================
+// Hook
+// ============================================================================
 
 export function useSystemMonitoring(): UseSystemMonitoringResult {
-  // State
-  const [health, setHealth] = useState<SystemHealth | null>(null);
+  const queryClient = useQueryClient();
+
   const [healthHistory, setHealthHistory] = useState<HealthSnapshot[]>([]);
-  const [activeAlerts, setActiveAlerts] = useState<SystemAlert[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isMonitoring, setIsMonitoring] = useState(false);
-
-  // Refs
-  const healthIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const alertIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [isMonitoring, setIsMonitoring] = useState(true); // auto-start
 
   // ============================================================================
-  // API CALLS
+  // QUERIES
   // ============================================================================
 
-  /**
-   * Fetch current system health
-   */
-  const fetchHealth = useCallback(async (): Promise<void> => {
-    try {
+  const healthQuery = useQuery({
+    queryKey: monitoringKeys.health(),
+    queryFn: async () => {
       const response = await apiClient.get<{ success: boolean; data: SystemHealth }>(
         '/admin/health',
       );
       const data = response.data.success
         ? response.data.data
         : (response.data as unknown as SystemHealth);
-
-      setHealth(data);
 
       // Add to history
       const snapshot: HealthSnapshot = {
@@ -89,22 +103,18 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
 
       setHealthHistory((prev) => {
         const updated = [...prev, snapshot];
-        // Keep only last MAX_HISTORY_LENGTH items
         return updated.slice(-MAX_HISTORY_LENGTH);
       });
 
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch health:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch health');
-    }
-  }, []);
+      return data;
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: isMonitoring ? HEALTH_CHECK_INTERVAL : false,
+  });
 
-  /**
-   * Fetch active alerts
-   */
-  const fetchAlerts = useCallback(async (): Promise<void> => {
-    try {
+  const alertsQuery = useQuery({
+    queryKey: monitoringKeys.alerts(),
+    queryFn: async () => {
       const response = await apiClient.get<{ success: boolean; data: SystemAlert[] }>(
         API_ENDPOINTS.admin.alerts,
         { params: { dismissed: false, limit: 50 } },
@@ -113,186 +123,100 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
         ? response.data.data
         : (response.data as unknown as SystemAlert[]);
 
-      // Parse and sort alerts
       const alerts = data
         .map((alert) => ({
           ...alert,
           timestamp: new Date(alert.timestamp),
         }))
         .sort((a, b) => {
-          // Sort by severity (critical > high > medium > low) then by timestamp (newest first)
           const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
           const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
           return severityDiff !== 0 ? severityDiff : b.timestamp.getTime() - a.timestamp.getTime();
         });
 
-      setActiveAlerts(alerts);
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch alerts:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch alerts');
-    }
-  }, []);
+      return alerts;
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: isMonitoring ? ALERT_CHECK_INTERVAL : false,
+  });
 
   // ============================================================================
-  // PUBLIC ACTIONS
+  // MUTATIONS
   // ============================================================================
 
-  /**
-   * Start monitoring
-   */
-  const startMonitoring = useCallback((): void => {
-    if (isMonitoring) return;
+  const acknowledgeMutation = useMutation({
+    mutationFn: (alertId: string) =>
+      apiClient.patch(API_ENDPOINTS.admin.alertActions.suppress(alertId)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: monitoringKeys.alerts() });
+    },
+  });
 
-    setIsMonitoring(true);
-
-    // Initial fetch
-    fetchHealth();
-    fetchAlerts();
-
-    // Set up intervals
-    healthIntervalRef.current = setInterval(fetchHealth, HEALTH_CHECK_INTERVAL);
-    alertIntervalRef.current = setInterval(fetchAlerts, ALERT_CHECK_INTERVAL);
-  }, [isMonitoring, fetchHealth, fetchAlerts]);
-
-  /**
-   * Stop monitoring
-   */
-  const stopMonitoring = useCallback((): void => {
-    setIsMonitoring(false);
-
-    // Clear intervals
-    if (healthIntervalRef.current) {
-      clearInterval(healthIntervalRef.current);
-      healthIntervalRef.current = undefined;
-    }
-    if (alertIntervalRef.current) {
-      clearInterval(alertIntervalRef.current);
-      alertIntervalRef.current = undefined;
-    }
-  }, []);
-
-  /**
-   * Manually refresh health
-   */
-  const refreshHealth = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    try {
-      await Promise.all([fetchHealth(), fetchAlerts()]);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchHealth, fetchAlerts]);
-
-  /**
-   * Acknowledge/dismiss an alert
-   */
-  const acknowledgeAlert = useCallback(async (alertId: string): Promise<void> => {
-    try {
-      // Optimistic update
-      setActiveAlerts((prev) =>
-        prev.map((alert) => (alert.id === alertId ? { ...alert, dismissed: true } : alert)),
-      );
-
-      await apiClient.patch(API_ENDPOINTS.admin.alertActions.suppress(alertId));
-
-      // Remove from active alerts after animation
-      setTimeout(() => {
-        setActiveAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
-      }, 300);
-    } catch (err) {
-      console.error('Failed to acknowledge alert:', err);
-      // Revert optimistic update
-      setActiveAlerts((prev) =>
-        prev.map((alert) => (alert.id === alertId ? { ...alert, dismissed: false } : alert)),
-      );
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Clear all alerts
-   */
-  const clearAllAlerts = useCallback(async (): Promise<void> => {
-    try {
-      // Optimistic update - store previous for potential revert
-      setActiveAlerts([]);
-
-      // NOTE: No bulk dismiss endpoint exists in backend.
-      // Suppress alerts individually instead.
+  const clearAllMutation = useMutation({
+    mutationFn: async (alerts: SystemAlert[]) => {
       await Promise.all(
-        activeAlerts.map((alert) =>
+        alerts.map((alert) =>
           apiClient.patch(API_ENDPOINTS.admin.alertActions.suppress(alert.id)),
         ),
       );
-    } catch (err) {
-      console.error('Failed to clear all alerts:', err);
-      // Revert on error
-      fetchAlerts();
-      throw err;
-    }
-  }, [activeAlerts, fetchAlerts]);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: monitoringKeys.alerts() });
+    },
+  });
 
   // ============================================================================
-  // EFFECTS
+  // DERIVED DATA
   // ============================================================================
 
-  /**
-   * Initial load
-   */
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true);
-      try {
-        await Promise.all([fetchHealth(), fetchAlerts()]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /**
-   * Auto-start monitoring
-   */
-  useEffect(() => {
-    startMonitoring();
-
-    return () => {
-      stopMonitoring();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ============================================================================
-  // COMPUTED VALUES
-  // ============================================================================
-
+  const activeAlerts = alertsQuery.data ?? [];
   const alertCount = activeAlerts.length;
   const criticalAlertCount = activeAlerts.filter((a) => a.severity === 'high').length;
+
+  const loading = healthQuery.isLoading && alertsQuery.isLoading;
+  const firstError = healthQuery.error ?? alertsQuery.error;
+  const error = firstError instanceof Error ? firstError.message : firstError ? String(firstError) : null;
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const startMonitoring = useCallback((): void => {
+    setIsMonitoring(true);
+  }, []);
+
+  const stopMonitoring = useCallback((): void => {
+    setIsMonitoring(false);
+  }, []);
+
+  const refreshHealth = useCallback(async (): Promise<void> => {
+    await Promise.all([healthQuery.refetch(), alertsQuery.refetch()]);
+  }, [healthQuery, alertsQuery]);
+
+  const acknowledgeAlert = useCallback(
+    async (alertId: string): Promise<void> => {
+      await acknowledgeMutation.mutateAsync(alertId);
+    },
+    [acknowledgeMutation],
+  );
+
+  const clearAllAlerts = useCallback(async (): Promise<void> => {
+    await clearAllMutation.mutateAsync(activeAlerts);
+  }, [clearAllMutation, activeAlerts]);
 
   // ============================================================================
   // RETURN
   // ============================================================================
 
   return {
-    // Health data
-    health,
+    health: healthQuery.data ?? null,
     healthHistory,
-
-    // Alerts
     activeAlerts,
     alertCount,
     criticalAlertCount,
-
-    // State
     loading,
     error,
     isMonitoring,
-
-    // Actions
     startMonitoring,
     stopMonitoring,
     refreshHealth,

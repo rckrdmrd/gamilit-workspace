@@ -9,8 +9,6 @@
  * @version 1.0.0
  * @since Phase 2 - Exercise System Restructuring
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useEffect, useMemo } from 'react';
 import {
   getExercise,
@@ -39,7 +37,7 @@ export interface ExerciseData {
   estimatedTime: number;
   completed: boolean;
   moduleTitle?: string;
-  mechanicData?: any;
+  mechanicData?: Record<string, unknown>;
   is_active?: boolean;
 }
 
@@ -52,8 +50,9 @@ export interface PedagogicalGuide {
 
 export interface UseExerciseDataReturn {
   exercise: ExerciseData | null;
-  adaptedExercise: any;
+  adaptedExercise: Record<string, unknown> | null;
   mechanicEntry: ExerciseRegistryEntry | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MechanicComponent: React.ComponentType<any> | null;
   isLoading: boolean;
   error: string | null;
@@ -68,6 +67,7 @@ export interface UseExerciseDataReturn {
 
 export function useExerciseData(exerciseId: string | undefined): UseExerciseDataReturn {
   const [exercise, setExercise] = useState<ExerciseData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [MechanicComponent, setMechanicComponent] = useState<React.ComponentType<any> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,15 +92,17 @@ export function useExerciseData(exerciseId: string | undefined): UseExerciseData
         if (cancelled) return;
 
         // Map API response to ExerciseData format
+        // Cast to allow access to aliased/dynamic fields from backend
+        const exerciseRecord = exerciseData as unknown as Record<string, unknown>;
         const exerciseType =
           exerciseData.type ||
           exerciseData.exercise_type ||
-          (exerciseData as any).exerciseType ||
+          (exerciseRecord).exerciseType ||
           'crucigrama_cientifico';
 
         const mappedExercise: ExerciseData = {
           id: exerciseData.id,
-          module_id: exerciseData.module_id || (exerciseData as any).moduleId,
+          module_id: exerciseData.module_id || exerciseRecord.moduleId as string,
           title: exerciseData.title,
           type: exerciseType,
           description: exerciseData.description || '',
@@ -111,7 +113,7 @@ export function useExerciseData(exerciseId: string | undefined): UseExerciseData
             (exerciseData.estimated_time_minutes ? exerciseData.estimated_time_minutes * 60 : 900),
           completed: exerciseData.completed || false,
           moduleTitle: undefined,
-          mechanicData: exerciseData,
+          mechanicData: exerciseRecord as Record<string, unknown>,
           is_active: exerciseData.is_active,
         };
 
@@ -122,7 +124,11 @@ export function useExerciseData(exerciseId: string | undefined): UseExerciseData
           const exerciseHints = await getExerciseHints(exerciseId);
           if (!cancelled && Array.isArray(exerciseHints)) {
             setHints(
-              exerciseHints.map((h: any) => (typeof h === 'string' ? h : h.text || String(h))),
+              exerciseHints.map((h: unknown) => {
+                if (typeof h === 'string') return h;
+                const hint = h as { text?: string };
+                return hint.text || String(h);
+              }),
             );
           }
         } catch {
@@ -210,10 +216,10 @@ export function useExerciseData(exerciseId: string | undefined): UseExerciseData
   const pedagogicalGuide = useMemo<PedagogicalGuide>(() => {
     if (!exercise?.mechanicData) return {};
     return {
-      objective: exercise.mechanicData.objective,
-      how_to_solve: exercise.mechanicData.how_to_solve,
-      recommended_strategy: exercise.mechanicData.recommended_strategy,
-      pedagogical_notes: exercise.mechanicData.pedagogical_notes,
+      objective: exercise.mechanicData.objective as string | undefined,
+      how_to_solve: exercise.mechanicData.how_to_solve as string | undefined,
+      recommended_strategy: exercise.mechanicData.recommended_strategy as string | undefined,
+      pedagogical_notes: exercise.mechanicData.pedagogical_notes as string | undefined,
     };
   }, [exercise]);
 

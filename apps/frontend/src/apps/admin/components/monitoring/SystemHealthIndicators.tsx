@@ -239,7 +239,7 @@ export const SystemHealthIndicators: React.FC = () => {
         <h3 className="text-detective-subtitle mb-4">Recent Incidents</h3>
         <div className="space-y-3">
           {incidents.length > 0 ? (
-            incidents.map((incident: any, index: number) => (
+            incidents.map((incident: { title: string; timestamp?: string; description: string; severity?: string; status?: string; resolved?: boolean; duration?: string }, index: number) => (
               <div key={index} className="rounded-lg bg-detective-bg-secondary p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-detective-base font-semibold">{incident.title}</span>

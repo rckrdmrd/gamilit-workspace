@@ -45,6 +45,9 @@ function transformApiItems(
     const hasStock = item.stock === null || item.stock === undefined || item.stock > 0;
     const isPurchasable = isAvailable && hasStock && !isOwned;
 
+    // Preserve all visual metadata from API (merged by backend's mergeVisualConfig)
+    const rawMetadata = (item.metadata ?? {}) as Record<string, unknown>;
+
     return {
       id: item.id,
       name: item.name,
@@ -57,10 +60,11 @@ function transformApiItems(
       isOwned,
       isPurchasable,
       metadata: {
+        ...rawMetadata,
         effectDescription:
           typeof item.effect_data?.description === 'string'
             ? item.effect_data.description
-            : undefined,
+            : (rawMetadata.effectDescription as string | undefined),
         duration: item.duration_days,
         stackable: !item.is_consumable,
         tradeable: false,

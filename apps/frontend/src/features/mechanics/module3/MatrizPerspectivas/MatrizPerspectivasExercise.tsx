@@ -5,6 +5,7 @@ import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
@@ -21,8 +22,7 @@ interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onProgressUpdate?: (data: any) => void;
+  onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<{
@@ -35,11 +35,6 @@ interface ExerciseState {
   perspectives: PerspectiveGeneration[];
   currentScore: number;
   perspectivesGenerated: boolean;
-}
-
-// Answer format for backend submission
-interface MatrizPerspectivasAnswers {
-  questions: Record<string, string>; // { "q1": "respuesta", "q2": "respuesta", "q3": "respuesta" }
 }
 
 export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
@@ -89,8 +84,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
         saveProgress();
         setSaveStatus('saved');
         setTimeout(() => setSaveStatus('idle'), 2000);
-      } catch (error) {
-        console.error('[MatrizPerspectivas] Error saving progress:', error);
+      } catch (_error) {
         setSaveStatus('error');
       }
     }, 30000);
@@ -153,8 +147,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       setPerspectives(persp);
       const newScore = 50; // Base score for generating perspectives
       setCurrentScore(newScore);
-    } catch (error) {
-      console.error('[MatrizPerspectivas] Error generating perspectives:', error);
+    } catch (_error) {
       setFeedback({
         type: 'error',
         title: 'Error al Generar',
@@ -196,14 +189,14 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
     try {
       const response = await submitAsync({
         questions: answers,
-      } as MatrizPerspectivasAnswers);
+      } as unknown as Record<string, unknown>);
 
       // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
       if (response.status === 'pending_review' || response.requiresManualReview) {
         const pendingFeedback: FeedbackData = {
           type: 'info',
           title: 'Enviado para Revisión',
-          message: response.message || 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          message: response.message || MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -212,7 +205,6 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
         setShowFeedback(true);
         await syncAndInvalidate();
 
-        console.log('📤 [MatrizPerspectivas] Submission sent for manual review');
         return;
       }
 
@@ -244,12 +236,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [MatrizPerspectivas] Submission successful:', {
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('[MatrizPerspectivas] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

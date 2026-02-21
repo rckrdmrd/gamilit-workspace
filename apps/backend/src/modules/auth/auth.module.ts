@@ -86,7 +86,7 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService): JwtModuleOptions => ({
-        secret: configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
+        secret: configService.get<string>('JWT_SECRET') || 'dev-only-jwt-secret-not-for-production',
         signOptions: {
           expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '15m',
         } as JwtModuleOptions['signOptions'],

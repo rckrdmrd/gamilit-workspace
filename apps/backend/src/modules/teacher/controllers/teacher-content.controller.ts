@@ -17,6 +17,7 @@ import {
   Query,
   UseGuards,
   Request,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -44,6 +45,15 @@ import {
   TeacherContentVisibility,
   TeacherContentDifficulty,
 } from '../dto/teacher-content.dto';
+import {
+  SearchSharedResourcesDto,
+  ResourceRatingDto,
+  AddCommentDto,
+  SharedResourceResponseDto,
+  PaginatedSharedResourcesResponseDto,
+  PaginatedCommentsResponseDto,
+  ResourceCommentResponseDto,
+} from '../dto/shared-resource.dto';
 
 /**
  * Controller para gestión de contenido educativo personalizado
@@ -54,6 +64,12 @@ import {
  *
  * Endpoints:
  * - GET /teacher/content - Listar contenido del teacher
+ * - GET /teacher/content/resources - Browse shared resources
+ * - GET /teacher/content/resources/:id - Get shared resource details
+ * - GET /teacher/content/resources/:id/comments - Get resource comments
+ * - POST /teacher/content/resources/:id/rate - Rate a resource
+ * - POST /teacher/content/resources/:id/comments - Add a comment
+ * - POST /teacher/content/resources/:id/download - Record download
  * - GET /teacher/content/:id - Obtener detalle de contenido
  * - POST /teacher/content - Crear nuevo contenido
  * - PUT /teacher/content/:id - Actualizar contenido existente
@@ -123,6 +139,173 @@ export class TeacherContentController {
     return this.contentService.findAll(teacherId, query);
   }
 
+  // ============================================================================
+  // SHARED RESOURCES — Browse, Rate, Comment, Download
+  // NOTE: These routes use 'resources' prefix and MUST be defined BEFORE ':id'
+  //       to prevent NestJS from matching "resources" as a UUID param.
+  // ============================================================================
+
+  /**
+   * Browse shared resources (published content with school/public visibility)
+   *
+   * @route GET /api/v1/teacher/content/resources
+   * @param query Search and filter parameters
+   * @param req Request with authenticated user
+   * @returns Paginated list of shared resources
+   */
+  @Get('resources')
+  @ApiOperation({
+    summary: 'Browse shared resources',
+    description:
+      'Returns a paginated list of published educational resources shared with school/public visibility. Includes ratings, download counts, and comment counts.',
+  })
+  @ApiQuery({ name: 'type', required: false, type: String })
+  @ApiQuery({ name: 'category', required: false, type: String })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'sort_by', required: false, type: String })
+  @ApiQuery({ name: 'sort_order', required: false, type: String })
+  @ApiResponse({ status: 200, description: 'Shared resources retrieved successfully', type: PaginatedSharedResourcesResponseDto })
+  async getSharedResources(
+    @Query() query: SearchSharedResourcesDto,
+      @Request() req: AuthRequest,
+  ): Promise<PaginatedSharedResourcesResponseDto> {
+    const teacherId = req.user!.id;
+    return this.contentService.getSharedResources(teacherId, query);
+  }
+
+  /**
+   * Get a single shared resource with full details
+   *
+   * @route GET /api/v1/teacher/content/resources/:id
+   * @param id Resource UUID
+   * @param req Request with authenticated user
+   * @returns Shared resource details
+   */
+  @Get('resources/:id')
+  @ApiOperation({
+    summary: 'Get shared resource details',
+    description: 'Returns detailed information about a specific shared resource, including rating, download count, and comment count.',
+  })
+  @ApiParam({ name: 'id', description: 'Resource UUID' })
+  @ApiResponse({ status: 200, description: 'Resource details retrieved successfully', type: SharedResourceResponseDto })
+  @ApiResponse({ status: 404, description: 'Resource not found' })
+  async getSharedResourceDetail(
+    @Param('id', ParseUUIDPipe) id: string,
+      @Request() req: AuthRequest,
+  ): Promise<SharedResourceResponseDto> {
+    const teacherId = req.user!.id;
+    return this.contentService.getSharedResourceDetail(id, teacherId);
+  }
+
+  /**
+   * Rate a shared resource (upsert)
+   *
+   * @route POST /api/v1/teacher/content/resources/:id/rate
+   * @param id Resource UUID
+   * @param dto Rating data
+   * @param req Request with authenticated user
+   * @returns Updated rating info
+   */
+  @Post('resources/:id/rate')
+  @ApiOperation({
+    summary: 'Rate a shared resource',
+    description: 'Adds or updates a rating (1-5) for a shared resource. Each teacher can rate a resource only once.',
+  })
+  @ApiParam({ name: 'id', description: 'Resource UUID' })
+  @ApiResponse({ status: 201, description: 'Rating saved successfully' })
+  @ApiResponse({ status: 404, description: 'Resource not found' })
+  async rateResource(
+    @Param('id', ParseUUIDPipe) id: string,
+      @Body() dto: ResourceRatingDto,
+      @Request() req: AuthRequest,
+  ): Promise<{ rating: number; ratings_count: number }> {
+    const teacherId = req.user!.id;
+    return this.contentService.rateResource(id, teacherId, dto);
+  }
+
+  /**
+   * Get paginated comments for a resource
+   *
+   * @route GET /api/v1/teacher/content/resources/:id/comments
+   * @param id Resource UUID
+   * @param page Page number
+   * @param limit Items per page
+   * @returns Paginated comments
+   */
+  @Get('resources/:id/comments')
+  @ApiOperation({
+    summary: 'Get resource comments',
+    description: 'Returns paginated comments for a shared resource.',
+  })
+  @ApiParam({ name: 'id', description: 'Resource UUID' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Comments retrieved successfully', type: PaginatedCommentsResponseDto })
+  @ApiResponse({ status: 404, description: 'Resource not found' })
+  async getResourceComments(
+    @Param('id', ParseUUIDPipe) id: string,
+      @Query('page') page?: number,
+      @Query('limit') limit?: number,
+  ): Promise<PaginatedCommentsResponseDto> {
+    return this.contentService.getResourceComments(id, page || 1, limit || 20);
+  }
+
+  /**
+   * Add a comment to a resource
+   *
+   * @route POST /api/v1/teacher/content/resources/:id/comments
+   * @param id Resource UUID
+   * @param dto Comment data
+   * @param req Request with authenticated user
+   * @returns Created comment
+   */
+  @Post('resources/:id/comments')
+  @ApiOperation({
+    summary: 'Add a comment to a resource',
+    description: 'Adds a new comment to a shared resource.',
+  })
+  @ApiParam({ name: 'id', description: 'Resource UUID' })
+  @ApiResponse({ status: 201, description: 'Comment added successfully', type: ResourceCommentResponseDto })
+  @ApiResponse({ status: 404, description: 'Resource not found' })
+  async addComment(
+    @Param('id', ParseUUIDPipe) id: string,
+      @Body() dto: AddCommentDto,
+      @Request() req: AuthRequest,
+  ): Promise<ResourceCommentResponseDto> {
+    const teacherId = req.user!.id;
+    return this.contentService.addComment(id, teacherId, dto);
+  }
+
+  /**
+   * Record a download of a resource
+   *
+   * @route POST /api/v1/teacher/content/resources/:id/download
+   * @param id Resource UUID
+   * @param req Request with authenticated user
+   * @returns Download count
+   */
+  @Post('resources/:id/download')
+  @ApiOperation({
+    summary: 'Record resource download',
+    description: 'Tracks that the authenticated teacher downloaded a shared resource.',
+  })
+  @ApiParam({ name: 'id', description: 'Resource UUID' })
+  @ApiResponse({ status: 201, description: 'Download recorded successfully' })
+  @ApiResponse({ status: 404, description: 'Resource not found' })
+  async recordDownload(
+    @Param('id', ParseUUIDPipe) id: string,
+      @Request() req: AuthRequest,
+  ): Promise<{ success: boolean; downloads: number }> {
+    const teacherId = req.user!.id;
+    return this.contentService.recordDownload(id, teacherId);
+  }
+
+  // ============================================================================
+  // CONTENT DETAIL BY ID
+  // ============================================================================
+
   /**
    * Obtiene un contenido específico por ID
    *
@@ -155,7 +338,7 @@ export class TeacherContentController {
     status: 403,
     description: 'Forbidden - Teacher is not the owner of this content',
   })
-  async findOne(@Param('id') id: string, @Request() req: AuthRequest): Promise<TeacherContentResponseDto> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string, @Request() req: AuthRequest): Promise<TeacherContentResponseDto> {
     const teacherId = req.user!.id;
     return this.contentService.findOne(id, teacherId);
   }
@@ -245,7 +428,7 @@ export class TeacherContentController {
     description: 'Bad request - Invalid data',
   })
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
       @Body() dto: UpdateTeacherContentDto,
       @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
@@ -295,7 +478,7 @@ export class TeacherContentController {
     description: 'Forbidden - Teacher is not the owner of this content',
   })
   async delete(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
       @Request() req: AuthRequest,
   ): Promise<{ success: boolean; message: string }> {
     const teacherId = req.user!.id;
@@ -340,7 +523,7 @@ export class TeacherContentController {
     description: 'Forbidden - Teacher is not the owner of this content',
   })
   async clone(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
       @Body() dto: CloneTeacherContentDto,
       @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
@@ -389,7 +572,7 @@ export class TeacherContentController {
     description: 'Bad request - Content is already published',
   })
   async publish(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
       @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
     const teacherId = req.user!.id;

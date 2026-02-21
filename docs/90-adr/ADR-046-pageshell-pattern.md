@@ -96,7 +96,7 @@ const TeacherDashboard = lazy(() => import('./apps/teacher/pages/TeacherDashboar
 
 ### Deprecacion del HOC
 
-The `withTeacherLayout` HOC is marked as `@deprecated` in its JSDoc comment and will be removed once all pages have migrated to `TeacherPageShell`. No new pages should use it.
+The `withTeacherLayout` HOC was removed in the Teacher Portal Audit (2026-02-20). All 19 pages now use `TeacherPageShell`. The file `withTeacherLayout.tsx` no longer exists in the codebase.
 
 ---
 
@@ -161,7 +161,7 @@ The `withTeacherLayout` HOC is marked as `@deprecated` in its JSDoc comment and 
 
 1. **Migration effort:** All 19 Teacher pages required updating from HOC to PageShell (one-time cost, completed).
 2. **Repeated import:** Every page must `import { TeacherPageShell }` and wrap its content. This is minimal boilerplate (~3 lines per page).
-3. **Temporary coexistence:** During migration, some pages use PageShell while `withTeacherLayout` still exists as deprecated code.
+3. ~~**Temporary coexistence:**~~ Migration completed and `withTeacherLayout` was removed (Teacher Portal Audit 2026-02-20). No coexistence period remains.
 
 ---
 
@@ -182,7 +182,7 @@ The `withTeacherLayout` HOC is marked as `@deprecated` in its JSDoc comment and 
 - `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` -- Admin PageShell implementation
 - `apps/frontend/src/apps/teacher/components/shared/TeacherPageShell.tsx` -- Teacher PageShell implementation
 - `apps/frontend/src/apps/student/components/shared/StudentPageShell.tsx` -- Student PageShell implementation
-- `apps/frontend/src/apps/teacher/components/withTeacherLayout.tsx` -- Deprecated HOC (marked @deprecated)
+- ~~`apps/frontend/src/apps/teacher/components/withTeacherLayout.tsx`~~ -- **Removed** (eliminado en Teacher Portal Audit 2026-02-20). Migration to TeacherPageShell completed for all 19 pages.
 - [ADR-030: Convencion de Nombres de Paginas](./ADR-030-convencion-nombres-paginas.md)
 
 ---

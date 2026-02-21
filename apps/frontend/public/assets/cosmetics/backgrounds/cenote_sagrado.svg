@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B2EBF2"/><stop offset="100%" stop-color="#80DEEA"/>
+    </linearGradient>
+    <radialGradient id="w" cx="50%" cy="60%" r="45%">
+      <stop offset="0%" stop-color="#006064"/><stop offset="50%" stop-color="#00838F"/><stop offset="100%" stop-color="#004D40"/>
+    </radialGradient>
+    <radialGradient id="d" cx="50%" cy="80%" r="40%">
+      <stop offset="0%" stop-color="#002626"/><stop offset="100%" stop-color="#004D40" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5D4037"/><stop offset="100%" stop-color="#3E2723"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="50" fill="url(#sk)"/>
+  <!-- Cliff walls -->
+  <path d="M0 0L0 128 15 128 15 95Q18 80 22 70Q28 55 35 48L38 30 20 20 0 0Z" fill="url(#c)"/>
+  <path d="M128 0L128 128 113 128 113 95Q110 80 106 70Q100 55 93 48L90 30 108 20 128 0Z" fill="url(#c)"/>
+  <!-- Cliff texture -->
+  <g stroke="#3E2723" stroke-width=".8" opacity=".4">
+    <line x1="5" y1="30" x2="30" y2="35"/><line x1="3" y1="50" x2="20" y2="55"/>
+    <line x1="123" y1="30" x2="98" y2="35"/><line x1="125" y1="50" x2="108" y2="55"/>
+  </g>
+  <!-- Vegetation -->
+  <g fill="#2E7D32" opacity=".8">
+    <path d="M30 25Q28 22 32 18L36 20 34 26Z"/>
+    <path d="M38 30Q35 26 40 22L42 28Z"/>
+    <path d="M98 25Q100 22 96 18L92 20 94 26Z"/>
+    <path d="M90 30Q93 26 88 22L86 28Z"/>
+  </g>
+  <!-- Hanging vines -->
+  <g stroke="#1B5E20" stroke-width="1.5" fill="none" opacity=".6">
+    <path d="M35 42Q32 52 34 62Q36 70 33 78"/>
+    <path d="M93 42Q96 52 94 62Q92 70 95 78"/>
+  </g>
+  <!-- Water surface -->
+  <ellipse cx="64" cy="52" rx="42" ry="8" fill="#00ACC1" opacity=".6"/>
+  <!-- Water body -->
+  <path d="M22 52Q22 50 64 44Q106 50 106 52L113 95 113 128 15 128 15 95Z" fill="url(#w)"/>
+  <!-- Surface reflections -->
+  <ellipse cx="55" cy="50" rx="12" ry="2" fill="#B2EBF2" opacity=".15"/>
+  <!-- Ripples -->
+  <g fill="none" stroke="#80DEEA" stroke-width=".5" opacity=".3">
+    <ellipse cx="64" cy="55" rx="35" ry="5"/>
+    <ellipse cx="64" cy="62" rx="28" ry="4"/>
+    <ellipse cx="64" cy="68" rx="22" ry="3"/>
+  </g>
+  <!-- Deep water -->
+  <ellipse cx="64" cy="95" rx="40" ry="25" fill="url(#d)" opacity=".6"/>
+  <!-- Light rays -->
+  <g stroke="#80DEEA" stroke-width="1" opacity=".1">
+    <line x1="55" y1="55" x2="48" y2="110"/>
+    <line x1="64" y1="52" x2="64" y2="115"/>
+    <line x1="73" y1="55" x2="80" y2="110"/>
+  </g>
+  <!-- Sparkles -->
+  <g fill="#FFF" opacity=".5">
+    <circle cx="55" cy="49" r="1"/><circle cx="70" cy="47" r=".8"/>
+    <circle cx="60" cy="51" r=".6"/><circle cx="78" cy="50" r=".7"/>
+  </g>
+  <!-- Ground -->
+  <rect x="0" y="95" width="128" height="33" fill="#0D0705" opacity=".3"/>
+</svg>

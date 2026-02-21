@@ -77,7 +77,7 @@ BEGIN
     -- Active Mission: Current week challenge
     -- ================================================================================
     (
-        '22222222-2222-2222-2222-222222222001'::uuid,
+        gen_random_uuid(),
         mission1_id,
         classroom_id,
         teacher_id,
@@ -93,7 +93,7 @@ BEGIN
     -- Upcoming Mission: Next week challenge
     -- ================================================================================
     (
-        '22222222-2222-2222-2222-222222222002'::uuid,
+        gen_random_uuid(),
         mission2_id,
         classroom_id,
         teacher_id,
@@ -109,7 +109,7 @@ BEGIN
     -- Past Mission: Completed last week
     -- ================================================================================
     (
-        '22222222-2222-2222-2222-222222222003'::uuid,
+        gen_random_uuid(),
         mission3_id,
         classroom_id,
         teacher_id,

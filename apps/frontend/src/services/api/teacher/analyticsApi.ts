@@ -89,6 +89,22 @@ export interface StudentInsights {
   recommendations: string[];
 }
 
+/**
+ * Assignment Analytics Response
+ * AUDIT-C3-B6: Analytics for a specific assignment
+ */
+export interface AssignmentAnalytics {
+  assignment_id: string;
+  submission_rate: number;
+  average_score: number;
+  grading_status: {
+    graded: number;
+    pending: number;
+    total: number;
+  };
+  score_distribution: Array<{ range: string; count: number }>;
+}
+
 // ============================================================================
 // ECONOMY ANALYTICS TYPES (GAP-ST-005)
 // ============================================================================
@@ -287,105 +303,10 @@ class AnalyticsAPI {
     }
   }
 
-  /**
-   * Generate custom report
-   *
-   * Generates a custom report based on the provided configuration.
-   * The report can be of type progress, evaluation, intervention, or custom.
-   * Supports multiple formats: PDF, Excel, CSV.
-   *
-   * Returns a report object with status. If status is 'completed', the file_url
-   * field will contain the download link. Reports expire after a certain period.
-   *
-   * @param config - Report configuration (type, title, filters, format, options)
-   * @returns Promise<Report> Generated report metadata
-   * @throws Error if request fails
-   *
-   * @example
-   * ```typescript
-   * // Generate progress report for classroom
-   * const report = await analyticsApi.generateReport({
-   *   type: 'progress',
-   *   title: 'Classroom Progress Report - January 2025',
-   *   classroom_id: 'classroom-123',
-   *   start_date: '2025-01-01',
-   *   end_date: '2025-01-31',
-   *   format: 'pdf',
-   *   include_charts: true,
-   *   include_recommendations: true
-   * });
-   *
-   * if (report.status === 'completed') {
-   *   console.log(`Download: ${report.file_url}`);
-   * } else {
-   *   console.log(`Report generating... (ID: ${report.id})`);
-   * }
-   *
-   * // Generate intervention report for specific students
-   * const interventionReport = await analyticsApi.generateReport({
-   *   type: 'intervention',
-   *   title: 'At-Risk Students Report',
-   *   student_ids: ['student-1', 'student-2', 'student-3'],
-   *   start_date: '2025-01-01',
-   *   end_date: '2025-01-31',
-   *   format: 'excel',
-   *   include_recommendations: true
-   * });
-   * ```
-   */
-  async generateReport(config: GenerateReportsDto): Promise<Report> {
-    try {
-      const { data } = await apiClient.post<Report>(
-        API_ENDPOINTS.teacher.generateReport,
-        config,
-      );
-      return data;
-    } catch (error) {
-      console.error('[AnalyticsAPI] Error generating report:', error);
-      throw error;
-    }
-  }
+  // AUDIT-C4-DUP3: generateReport() REMOVED — was broken (backend returns binary, not JSON).
+  // Use reportsApi.generateReport() instead.
 
-  /**
-   * Get report status
-   *
-   * Checks the status of a previously generated report.
-   * Useful for polling when report generation is asynchronous.
-   *
-   * @param reportId - ID of the report
-   * @returns Promise<Report> Report metadata with current status
-   * @throws Error if request fails
-   *
-   * @example
-   * ```typescript
-   * const report = await analyticsApi.generateReport({ ... });
-   *
-   * // Poll for completion
-   * const checkStatus = async () => {
-   *   const status = await analyticsApi.getReportStatus(report.id);
-   *   if (status.status === 'completed') {
-   *     console.log(`Report ready: ${status.file_url}`);
-   *   } else if (status.status === 'failed') {
-   *     console.error('Report generation failed');
-   *   } else {
-   *     setTimeout(checkStatus, 2000); // Check again in 2s
-   *   }
-   * };
-   *
-   * checkStatus();
-   * ```
-   */
-  async getReportStatus(reportId: string): Promise<Report> {
-    try {
-      const { data } = await apiClient.get<Report>(
-        API_ENDPOINTS.teacher.reportStatus(reportId),
-      );
-      return data;
-    } catch (error) {
-      console.error('[AnalyticsAPI] Error fetching report status:', error);
-      throw error;
-    }
-  }
+  // AUDIT-C4-DUP4: getReportStatus() REMOVED — moved to reportsApi.getReportStatus().
 
   /**
    * Get comprehensive insights for an individual student
@@ -427,6 +348,26 @@ class AnalyticsAPI {
       return data;
     } catch (error) {
       console.error('[AnalyticsAPI] Error fetching student insights:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get analytics for a specific assignment
+   *
+   * AUDIT-C3-B6: Added to wire backend GET /teacher/analytics/assignment/:id
+   *
+   * @param assignmentId - ID of the assignment to analyze
+   * @returns Promise<AssignmentAnalytics> Assignment analytics data
+   */
+  async getAssignmentAnalytics(assignmentId: string): Promise<AssignmentAnalytics> {
+    try {
+      const { data } = await apiClient.get<AssignmentAnalytics>(
+        API_ENDPOINTS.teacher.assignmentAnalytics(assignmentId),
+      );
+      return data;
+    } catch (error) {
+      console.error('[AnalyticsAPI] Error fetching assignment analytics:', error);
       throw error;
     }
   }

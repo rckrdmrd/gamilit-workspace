@@ -22,15 +22,10 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
-import {
-  ParentAccount,
-  NotificationFrequency,
-  ReportFormat,
-} from '@/modules/auth/entities/parent-account.entity';
-import {
-  ParentStudentLink,
-  LinkStatus,
-} from '@/modules/auth/entities/parent-student-link.entity';
+import { ParentAccount } from '@/modules/auth/entities/parent-account.entity';
+import { NotificationFrequency, ReportFormat } from '@/modules/parents/enums/parent-account.enums';
+import { ParentStudentLink } from '@/modules/auth/entities/parent-student-link.entity';
+import { LinkStatus } from '@/modules/parents/enums/parent-student-link.enums';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { User } from '@/modules/auth/entities/user.entity';
 import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
@@ -447,7 +442,7 @@ export class ParentAuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: '15m',
-      secret: this.configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
+      secret: this.configService.get<string>('JWT_SECRET') || 'dev-only-jwt-secret-not-for-production',
     });
 
     const refreshToken = this.jwtService.sign(payload, {

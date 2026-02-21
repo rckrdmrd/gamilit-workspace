@@ -650,7 +650,7 @@ export class ClassroomsController {
   })
   async updateSchedule(
   @Param('id') id: string,
-    @Body() body: { schedule: any[] },
+    @Body() body: { schedule: Record<string, unknown>[] },
   ) {
     return this.classroomsService.updateSchedule(id, body.schedule);
   }

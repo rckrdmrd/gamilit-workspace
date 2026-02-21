@@ -25,6 +25,7 @@ import {
   Target,
   User,
 } from 'lucide-react';
+import { Pagination } from '@shared/components/Pagination';
 import type { LeaderboardEntry } from '../../types/leaderboardsTypes';
 import { RankChangeIndicator } from './RankChangeIndicator';
 
@@ -345,68 +346,15 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="border-t border-gray-200 bg-detective-bg px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-detective-text-secondary">
-                Mostrando {startIndex + 1} - {Math.min(endIndex, sortedEntries.length)} de{' '}
-                {sortedEntries.length}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="rounded-lg bg-white px-4 py-2 font-semibold text-detective-text transition-colors hover:bg-detective-orange hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-detective-text"
-                >
-                  Anterior
-                </motion.button>
-
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <motion.button
-                        key={pageNum}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={cn(
-                          'h-10 w-10 rounded-lg font-bold transition-colors',
-                          currentPage === pageNum
-                            ? 'bg-detective-orange text-white'
-                            : 'bg-white text-detective-text hover:bg-detective-bg',
-                        )}
-                      >
-                        {pageNum}
-                      </motion.button>
-                    );
-                  })}
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="rounded-lg bg-white px-4 py-2 font-semibold text-detective-text transition-colors hover:bg-detective-orange hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-detective-text"
-                >
-                  Siguiente
-                </motion.button>
-              </div>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={sortedEntries.length}
+            pageSize={itemsPerPage}
+            variant="full"
+            className="border-gray-200 bg-detective-bg"
+          />
         )}
       </div>
     </div>

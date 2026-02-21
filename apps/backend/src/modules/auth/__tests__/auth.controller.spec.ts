@@ -24,6 +24,7 @@ describe('AuthController', () => {
     logout: jest.fn(),
     refreshToken: jest.fn(),
     validateUser: jest.fn(),
+    getFullProfile: jest.fn(),
   };
 
   const mockSessionService = {
@@ -443,49 +444,52 @@ describe('AuthController', () => {
   });
 
   describe('GET /auth/profile', () => {
+    // E7-FIX: Controller now uses req.user.user_id (auth.users.id) for getFullProfile
     const mockRequest = {
       user: {
-        id: 'user-1',
+        id: 'profile-1',
+        user_id: 'user-1',
       },
     };
 
-    const mockUser = {
-      id: 'user-1',
+    const mockProfileResponse: UserResponseDto = {
+      id: 'profile-1',
       email: 'test@example.com',
       role: GamilityRoleEnum.STUDENT,
-      encrypted_password: 'hashed_password',
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: new Date().toISOString() as any,
+      updated_at: new Date().toISOString() as any,
+      raw_user_meta_data: {},
+      equipped_items: {},
     };
 
     it('should return user profile successfully', async () => {
       // Arrange
-      mockAuthService.validateUser.mockResolvedValue(mockUser);
+      mockAuthService.getFullProfile.mockResolvedValue(mockProfileResponse);
 
       // Act
       const result = await controller.getProfile(mockRequest);
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.id).toBe('user-1');
+      expect(result.id).toBe('profile-1');
       expect(result.email).toBe('test@example.com');
-      expect(mockAuthService.validateUser).toHaveBeenCalledWith('user-1');
+      expect(mockAuthService.getFullProfile).toHaveBeenCalledWith('user-1');
     });
 
     it('should extract userId from JWT token', async () => {
       // Arrange
-      mockAuthService.validateUser.mockResolvedValue(mockUser);
+      mockAuthService.getFullProfile.mockResolvedValue(mockProfileResponse);
 
       // Act
       await controller.getProfile(mockRequest);
 
       // Assert
-      expect(mockAuthService.validateUser).toHaveBeenCalledWith(mockRequest.user.id);
+      expect(mockAuthService.getFullProfile).toHaveBeenCalledWith(mockRequest.user.user_id);
     });
 
     it('should not include password in response', async () => {
       // Arrange
-      mockAuthService.validateUser.mockResolvedValue(mockUser);
+      mockAuthService.getFullProfile.mockResolvedValue(mockProfileResponse);
 
       // Act
       const result = await controller.getProfile(mockRequest);
@@ -497,7 +501,9 @@ describe('AuthController', () => {
 
     it('should throw UnauthorizedException if user not found', async () => {
       // Arrange
-      mockAuthService.validateUser.mockResolvedValue(null);
+      mockAuthService.getFullProfile.mockRejectedValue(
+        new UnauthorizedException('Usuario no encontrado'),
+      );
 
       // Act & Assert
       await expect(controller.getProfile(mockRequest)).rejects.toThrow(UnauthorizedException);
@@ -506,7 +512,7 @@ describe('AuthController', () => {
 
     it('should return user with all safe fields', async () => {
       // Arrange
-      mockAuthService.validateUser.mockResolvedValue(mockUser);
+      mockAuthService.getFullProfile.mockResolvedValue(mockProfileResponse);
 
       // Act
       const result = await controller.getProfile(mockRequest);

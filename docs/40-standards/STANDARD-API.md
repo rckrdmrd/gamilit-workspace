@@ -77,6 +77,8 @@ export function StudentList() {
 
 ```tsx
 // ✅ CORRECTO
+// Nota: useStudentProgress fue removido (Teacher Portal Audit 2026-02-20).
+// Este ejemplo ilustra el patron React Query con nombre generico.
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useStudentProgress(studentId: string) {
@@ -189,7 +191,7 @@ export function useDeleteStudent() {
 | API function (POST) | `create` + Entity | `createClassroom()` |
 | API function (PUT/PATCH) | `update` + Entity | `updateProfile()` |
 | API function (DELETE) | `delete` + Entity | `deleteAssignment()` |
-| Query hook | `use` + Entity | `useStudents()`, `useStudentProgress()` |
+| Query hook | `use` + Entity | `useStudents()`, `useAnalytics()` |
 | Mutation hook | `use` + Action + Entity | `useCreateClassroom()`, `useDeleteStudent()` |
 | Query key factory | entityKeys | `studentKeys`, `classroomKeys` |
 

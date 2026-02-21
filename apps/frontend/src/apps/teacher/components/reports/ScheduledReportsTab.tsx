@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { StatusBadge } from '@shared/components/base/StatusBadge';
@@ -75,7 +76,7 @@ export interface ScheduledReportsTabProps {
 }
 
 export function ScheduledReportsTab({ classrooms }: ScheduledReportsTabProps) {
-  const handleError = useApiError();
+  const { handleError } = useApiError();
   const {
     scheduledReports,
     loading,
@@ -555,9 +556,9 @@ export function ScheduledReportsTab({ classrooms }: ScheduledReportsTabProps) {
       )}
 
       {/* Delete confirmation modal */}
-      {deleteConfirm.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <DetectiveCard className="mx-4 max-w-md">
+      <Modal isOpen={deleteConfirm.show} onClose={() => setDeleteConfirm({ show: false, id: null, name: '' })} showCloseButton={false} size="sm" className="bg-transparent shadow-none p-0">
+        <div className="-mx-6 -my-4">
+          <DetectiveCard className="max-w-md">
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-detective-text">Confirmar Eliminación</h3>
               <p className="text-sm text-detective-text-secondary">
@@ -593,7 +594,7 @@ export function ScheduledReportsTab({ classrooms }: ScheduledReportsTabProps) {
             </div>
           </DetectiveCard>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

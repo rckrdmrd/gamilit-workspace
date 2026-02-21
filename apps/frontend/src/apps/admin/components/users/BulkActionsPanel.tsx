@@ -25,6 +25,7 @@ import {
   AlertTriangle,
   Users,
 } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import type { SystemUser } from '../../types';
 
 /**
@@ -104,103 +105,90 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   ];
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onCancel}
-            className="fixed inset-0 bg-black/50 z-50"
-          />
-
-          {/* Modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden">
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                      <AlertTriangle className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-                  </div>
-                  <button
-                    onClick={onCancel}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
-                    disabled={loading}
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="px-6 py-4">
-                <p className="text-gray-700 text-sm leading-relaxed">{message}</p>
-
-                {/* Role Selection */}
-                {requiresRole && onRoleChange && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nuevo Rol
-                    </label>
-                    <select
-                      value={selectedRole}
-                      onChange={(e) => onRoleChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                      disabled={loading}
-                    >
-                      {roleOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-3">
-                <button
-                  onClick={onCancel}
-                  disabled={loading}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={onConfirm}
-                  disabled={loading}
-                  className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${confirmColor}`}
-                >
-                  {loading ? (
-                    <span className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      Procesando...
-                    </span>
-                  ) : (
-                    confirmLabel
-                  )}
-                </button>
-              </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel}
+      animated
+      size="md"
+      showCloseButton={false}
+      overlayClassName="bg-black/60 backdrop-blur-[2px]"
+      className="overflow-hidden rounded-lg shadow-xl"
+      contentClassName="custom"
+      ariaLabelledBy="bulk-actions-title"
+    >
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+            <h3 id="bulk-actions-title" className="text-lg font-semibold text-gray-900">{title}</h3>
+          </div>
+          <button
+            onClick={onCancel}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            disabled={loading}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 py-4">
+        <p className="text-gray-700 text-sm leading-relaxed">{message}</p>
+
+        {/* Role Selection */}
+        {requiresRole && onRoleChange && (
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nuevo Rol
+            </label>
+            <select
+              value={selectedRole}
+              onChange={(e) => onRoleChange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              disabled={loading}
+            >
+              {roleOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-3">
+        <button
+          onClick={onCancel}
+          disabled={loading}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={onConfirm}
+          disabled={loading}
+          className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${confirmColor}`}
+        >
+          {loading ? (
+            <span className="flex items-center">
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Procesando...
+            </span>
+          ) : (
+            confirmLabel
+          )}
+        </button>
+      </div>
+    </Modal>
   );
 };
 
@@ -396,7 +384,7 @@ export const BulkActionsPanel: React.FC<BulkActionsPanelProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/20 z-40 pointer-events-none"
+              className="fixed inset-0 z-40 bg-black/45"
             />
 
             {/* Panel */}

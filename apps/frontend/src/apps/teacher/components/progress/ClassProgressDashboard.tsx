@@ -8,8 +8,8 @@ import { ModuleCompletionCard } from './ModuleCompletionCard';
 import { StudentProgressList } from './StudentProgressList';
 import { StudentDetailModal } from '../monitoring/StudentDetailModal';
 import { useClassroomData } from '../../hooks/useClassroomData';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { reportsApi } from '@/services/api/teacher/reportsApi';
+import type { GenerateReportDto } from '@/services/api/teacher/reportsApi';
 import type { StudentMonitoring } from '../../types';
 
 interface ClassProgressDashboardProps {
@@ -22,17 +22,14 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
 
   const handleExport = async (format: 'pdf' | 'excel') => {
     try {
-      const response = await apiClient.post(
-        API_ENDPOINTS.teacher.reports.generate,
-        {
-          type: 'progress',
-          classroom_id: classroomId,
-          format,
-        },
-        { responseType: 'blob' },
-      );
+      const dto: GenerateReportDto = {
+        type: 'progress',
+        classroom_id: classroomId,
+        format,
+      };
 
-      const blob = response.data;
+      const result = await reportsApi.generateReport(dto);
+      const blob = result.blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -154,7 +151,7 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
       {laggingStudentsCount > 0 && (
         <DetectiveCard hoverable={false}>
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-yellow-500 bg-opacity-10 p-3">
+            <div className="rounded-lg bg-yellow-500/10 p-3">
               <Users className="h-6 w-6 text-yellow-500" />
             </div>
             <div>

@@ -5,8 +5,9 @@
  */
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Star, Award, RefreshCw, AlertCircle, Check } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { useRanksStore } from '../store/ranksStore';
 import { getPrestigeBonusByLevel } from '../mockData/ranksMockData';
 import { PrestigeStarIcon } from './MayaIconography';
@@ -192,71 +193,65 @@ export const PrestigeSystem: React.FC<PrestigeSystemProps> = ({ className = '' }
       </div>
 
       {/* Confirmation Modal */}
-      <AnimatePresence>
-        {showConfirmModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-            onClick={() => setShowConfirmModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6"
+      <Modal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        animated
+        size="md"
+        showCloseButton={false}
+        overlayClassName="bg-black/60 backdrop-blur-sm"
+        className="rounded-2xl"
+        contentClassName="custom"
+        ariaLabelledBy="prestige-confirm-title"
+      >
+        <div className="space-y-4 p-6">
+          <div className="text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+              <AlertCircle className="h-8 w-8 text-amber-600" />
+            </div>
+            <h3 id="prestige-confirm-title" className="mb-2 text-2xl font-bold text-detective-text">
+              Confirmar Prestige?
+            </h3>
+            <p className="text-detective-text-secondary">
+              Tu progreso actual se reiniciara al rango NACOM nivel 1, pero mantendras todos los
+              bonuses permanentes.
+            </p>
+          </div>
+
+          <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <div className="font-semibold text-detective-text">Lo que mantendras:</div>
+            <ul className="space-y-1 text-sm">
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600" />
+                <span>Bonus de multiplicador permanente</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600" />
+                <span>Racha de actividad actual</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600" />
+                <span>Cosmeticos y caracteristicas desbloqueadas</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowConfirmModal(false)}
+              className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
             >
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
-                  <AlertCircle className="h-8 w-8 text-amber-600" />
-                </div>
-                <h3 className="mb-2 text-2xl font-bold text-detective-text">
-                  ¿Confirmar Prestige?
-                </h3>
-                <p className="text-detective-text-secondary">
-                  Tu progreso actual se reiniciará al rango NACOM nivel 1, pero mantendrás todos los
-                  bonuses permanentes.
-                </p>
-              </div>
-
-              <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
-                <div className="font-semibold text-detective-text">Lo que mantendrás:</div>
-                <ul className="space-y-1 text-sm">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-600" />
-                    <span>Bonus de multiplicador permanente</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-600" />
-                    <span>Racha de actividad actual</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-600" />
-                    <span>Cosméticos y características desbloqueadas</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowConfirmModal(false)}
-                  className="flex-1 rounded-lg border-2 border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handlePrestige}
-                  className="flex-1 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-3 font-semibold text-white transition-all hover:shadow-lg"
-                >
-                  Confirmar
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              Cancelar
+            </button>
+            <button
+              onClick={handlePrestige}
+              className="flex-1 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-3 font-semibold text-white transition-all hover:shadow-lg"
+            >
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

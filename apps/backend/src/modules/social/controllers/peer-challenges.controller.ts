@@ -68,7 +68,7 @@ export class PeerChallengesController {
     description: 'Datos inválidos',
   })
   async create(@Body() dto: CreatePeerChallengeDto) {
-    const data: any = { ...dto };
+    const data: Record<string, unknown> = { ...dto };
 
     // Convert date strings to Date objects
     if (dto.start_time) {
@@ -267,7 +267,7 @@ export class PeerChallengesController {
     @Query('userId') userId: string,
     @Body() dto: UpdatePeerChallengeDto,
   ) {
-    const data: any = { ...dto };
+    const data: Record<string, unknown> = { ...dto };
 
     // Convert date strings to Date objects
     if (dto.start_time) {

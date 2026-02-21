@@ -22,6 +22,9 @@
 --   - Agregado INSERT en user_preferences (defaults)
 --   - Agregado INSERT en ml_coins_transactions (welcome bonus audit)
 --   - Agregado INSERT en teacher_reports para admin_teacher
+-- Updated: 2026-02-20 - F1-B: Added user_achievements initialization
+--   - Inserts achievement progress rows for all active achievements on new user creation
+--   - Wrapped in own BEGIN...EXCEPTION block so failure doesn't block user creation
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamilit.initialize_user_stats()
@@ -140,6 +143,41 @@ BEGIN
         WHERE NOT EXISTS (
             SELECT 1 FROM gamification_system.user_ranks WHERE user_id = NEW.id
         );
+
+        -- ========================================
+        -- 5. INITIALIZE ACHIEVEMENT PROGRESS
+        -- ========================================
+        BEGIN
+          INSERT INTO gamification_system.user_achievements (
+            user_id, achievement_id, progress, max_progress, is_completed, completion_percentage
+          )
+          SELECT
+            NEW.id,
+            a.id,
+            0,
+            CASE
+              WHEN a.conditions->'requirements'->>'exercises_completed' IS NOT NULL
+                THEN (a.conditions->'requirements'->>'exercises_completed')::int
+              WHEN a.conditions->'requirements'->>'streak_days' IS NOT NULL
+                THEN (a.conditions->'requirements'->>'streak_days')::int
+              WHEN a.conditions->'requirements'->>'perfect_scores' IS NOT NULL
+                THEN (a.conditions->'requirements'->>'perfect_scores')::int
+              WHEN a.conditions->'requirements'->>'modules_completed' IS NOT NULL
+                THEN (a.conditions->'requirements'->>'modules_completed')::int
+              WHEN a.conditions->'requirements'->>'count' IS NOT NULL
+                THEN (a.conditions->'requirements'->>'count')::int
+              ELSE 1
+            END,
+            false,
+            0.00
+          FROM gamification_system.achievements a
+          WHERE a.is_active = true
+          ON CONFLICT (user_id, achievement_id) DO NOTHING;
+
+          RAISE NOTICE '[initialize_user_stats] Achievement progress initialized for user %', NEW.id;
+        EXCEPTION WHEN OTHERS THEN
+          RAISE WARNING '[initialize_user_stats] Non-blocking: achievements init failed for %: %', NEW.id, SQLERRM;
+        END;
 
         -- BUG FIX #1: Initialize module progress for all active modules
         -- CRITICAL: New users must see available modules immediately

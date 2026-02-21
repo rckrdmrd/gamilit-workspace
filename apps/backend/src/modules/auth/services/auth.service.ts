@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -54,6 +54,8 @@ interface UserStatistics {
  */
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User, 'auth')
     private readonly userRepository: Repository<User>,
@@ -169,7 +171,7 @@ export class AuthService {
     if (!userStatsCreated) {
       // Log el problema pero NO bloquear el registro
       // El trigger debería haber registrado el error en pending_user_initialization
-      console.warn(
+      this.logger.warn(
         `[P0-003] Gamification initialization may have failed for profile ${profile.id}. ` +
         `Check audit_logging.pending_user_initialization for details.`
       );

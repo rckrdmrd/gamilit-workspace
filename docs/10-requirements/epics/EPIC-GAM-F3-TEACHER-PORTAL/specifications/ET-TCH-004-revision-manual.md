@@ -67,16 +67,16 @@ Sistema de revision manual y calificacion que permite a los maestros:
 
 | Hook | Path | Descripcion |
 |------|------|-------------|
-| `useGrading` | `apps/frontend/src/apps/teacher/hooks/useGrading.ts` | Hook para calificacion |
-| `useManualReviews` | `apps/frontend/src/apps/teacher/hooks/useManualReviews.ts` | Hook para revisiones manuales |
+| `useManualReviews` | `apps/frontend/src/apps/teacher/hooks/useManualReviews.ts` | Hook para calificacion y revisiones manuales (replaced former `useGrading`) |
+| ~~`useGrading`~~ | ~~`apps/frontend/src/apps/teacher/hooks/useGrading.ts`~~ | **Removed** — merged into `useManualReviews` |
 | `useManualReviewConfig` | `apps/frontend/src/apps/teacher/hooks/useManualReviewConfig.ts` | Hook para configuracion de revision |
 
 ### API Frontend
 
 | API | Path | Descripcion |
 |-----|------|-------------|
-| `gradingApi` | `apps/frontend/src/services/api/teacher/gradingApi.ts` | API de calificacion |
-| `manualReviewApi` | `apps/frontend/src/services/api/teacher/manualReviewApi.ts` | API de revision manual |
+| `manualReviewApi` | `apps/frontend/src/shared/api/manualReviewApi.ts` | API de calificacion y revision manual (replaced former `gradingApi`) |
+| ~~`gradingApi`~~ | ~~`apps/frontend/src/services/api/teacher/gradingApi.ts`~~ | **Removed** — merged into `manualReviewApi` |
 
 ---
 

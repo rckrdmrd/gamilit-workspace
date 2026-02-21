@@ -330,7 +330,7 @@ export class StudentProgressService {
 
     // Build query conditions
     // FIX CORR-001: Use profile.id (PK) instead of profile.user_id
-    const whereConditions: any = {
+    const whereConditions: Record<string, unknown> = {
       user_id: profile.id,
     };
 

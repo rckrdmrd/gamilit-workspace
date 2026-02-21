@@ -14,11 +14,11 @@
 
 ## Descripcion
 
-Implementacion de la estrategia de testing completa para la plataforma educativa gamilit. Incluye tests unitarios con Jest para los 22 modulos del backend (exercise evaluators, gamification engine, auth/RBAC, multi-tenancy RLS), tests unitarios con Vitest para los 4 portales del frontend (componentes de ejercicio, mecanicas de gamificacion, state management), tests de integracion para flujos criticos (ejercicio completado -> XP otorgado -> rango actualizado -> leaderboard recalculado), y planificacion de E2E tests. El objetivo es alcanzar 80% de cobertura global con 833+ tests pasando.
+Implementacion de la estrategia de testing completa para la plataforma educativa gamilit. Incluye tests unitarios con Jest para los 23 modulos del backend (exercise evaluators, gamification engine, auth/RBAC, multi-tenancy RLS), tests unitarios con Vitest para los 4 portales del frontend (componentes de ejercicio, mecanicas de gamificacion, state management), tests de integracion para flujos criticos (ejercicio completado -> XP otorgado -> rango actualizado -> leaderboard recalculado), y planificacion de E2E tests. El objetivo es alcanzar 80% de cobertura global con 833+ tests pasando.
 
 ## Alcance
 
-- Unit tests backend (Jest): ~620 tests cubriendo 22 modulos NestJS
+- Unit tests backend (Jest): ~620 tests cubriendo 23 modulos NestJS
 - Unit tests frontend (Vitest): ~213 tests cubriendo componentes, hooks y stores
 - Integration tests: ~70 tests para flujos criticos cross-module
 - Tests de exercise engine: 23 evaluadores con casos de borde
@@ -31,8 +31,8 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 | Capa | Componentes |
 |------|-------------|
 | Database | Seeds de datos de prueba, fixtures para testing |
-| Backend | Jest tests para 22 modulos, 170 services, 107 controllers |
-| Frontend | Vitest tests para 475 componentes, 102 hooks, 14 stores |
+| Backend | Jest tests para 23 modulos, 173 services, 108 controllers |
+| Frontend | Vitest tests para 580 componentes, 123 hooks, 13 stores |
 | DevOps | Jest/Vitest configuration, coverage reporting |
 
 ## Dependencias

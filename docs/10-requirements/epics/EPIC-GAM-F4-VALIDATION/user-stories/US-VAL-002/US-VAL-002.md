@@ -33,7 +33,7 @@ Exactamente 18 schemas y 169 tablas
 299 FKs validadas, 0 referencias huerfanas
 
 ### CA-03: RLS Policies
-207 RLS policies activas y funcionando
+231 RLS policies activas y funcionando
 
 ### CA-04: Triggers
 4 triggers disparan correctamente en cascada (INSERT profile → 15 inserts automaticos)
@@ -42,7 +42,7 @@ Exactamente 18 schemas y 169 tablas
 0 orphan records, conteos correctos
 
 ### CA-06: Enums
-40 ENUMs DDL coinciden con entities TypeScript, 0 mismatches
+42 ENUMs DDL coinciden con entities TypeScript, 0 mismatches
 
 ## Tasks
 

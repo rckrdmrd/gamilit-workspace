@@ -70,10 +70,6 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
         answers: { responses: answers },
       });
 
-      console.log('📊 [ComprensiónAuditiva] Progress update sent:', {
-        answeredCount,
-        totalQuestions: questions.length,
-      });
     }
   }, [answers, hintsUsed, onProgressUpdate, questions.length, startTime]);
 
@@ -132,13 +128,7 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
 
       await syncAndInvalidate();
 
-      console.log('✅ [ComprensiónAuditiva] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('❌ [ComprensiónAuditiva] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

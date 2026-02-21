@@ -5,35 +5,8 @@
  * Covers friend requests, acceptance/rejection, blocking, and queries.
  */
 
-// Mock enums BEFORE any imports
-jest.mock('@shared/constants/enums.constants', () => ({
-  FriendshipStatusEnum: {
-    PENDING: 'pending',
-    ACCEPTED: 'accepted',
-    REJECTED: 'rejected',
-    BLOCKED: 'blocked',
-  },
-  EnrollmentMethodEnum: {
-    TEACHER_INVITE: 'teacher_invite',
-    SELF_ENROLL: 'self_enroll',
-    CODE: 'code',
-  },
-  ClassroomMemberStatusEnum: {
-    ACTIVE: 'active',
-    INACTIVE: 'inactive',
-    WITHDRAWN: 'withdrawn',   // FIX-2026-01-19: Corrected enum value
-    COMPLETED: 'completed',   // FIX-2026-01-19: Corrected enum value
-  },
-  TeamChallengeStatusEnum: {
-    ACTIVE: 'active',
-    COMPLETED: 'completed',
-    CANCELLED: 'cancelled',
-  },
-  TeamMemberRoleEnum: {
-    LEADER: 'leader',
-    MEMBER: 'member',
-  },
-}));
+// Use actual enums — no need to mock them since they're simple value objects
+// jest.requireActual ensures all enums are available (avoids whack-a-mole with missing enums)
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';

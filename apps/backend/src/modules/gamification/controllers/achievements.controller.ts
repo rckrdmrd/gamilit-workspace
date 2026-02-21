@@ -612,7 +612,7 @@ export class AchievementsController {
   async updateAchievementStatus(
     @Param('id', ParseUUIDPipe) id: string,
       @Body() dto: UpdateAchievementStatusDto,
-  ): Promise<{ success: boolean; achievement: any }> {
+  ): Promise<{ success: boolean; achievement: any }> { // eslint-disable-line @typescript-eslint/no-explicit-any
     const achievement = await this.achievementsService.updateAchievementStatus(
       id,
       dto.is_active,

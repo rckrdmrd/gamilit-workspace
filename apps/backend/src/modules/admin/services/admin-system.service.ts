@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual, DataSource } from 'typeorm';
 import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
@@ -67,6 +67,8 @@ import {
  */
 @Injectable()
 export class AdminSystemService {
+  private readonly logger = new Logger(AdminSystemService.name);
+
   constructor(
     @InjectDataSource('auth')
     private readonly authConnection: DataSource,
@@ -253,7 +255,7 @@ export class AdminSystemService {
       return Math.round(avgTime);
     } catch (error) {
       // Fallback to default if table doesn't exist or query fails
-      console.error('[AdminSystemService] Error calculating response time:', error);
+      this.logger.error(`Error calculating response time: ${error instanceof Error ? error.message : error}`);
       return 125;
     }
   }
@@ -930,7 +932,7 @@ export class AdminSystemService {
       };
     } catch (error) {
       // If table doesn't exist or other error, return empty result
-      console.error('[AdminSystemService] Error fetching system logs:', error);
+      this.logger.error(`Error fetching system logs: ${error instanceof Error ? error.message : error}`);
       return {
         data: [],
         total: 0,
@@ -950,7 +952,7 @@ export class AdminSystemService {
    */
   private async updateOrCreateSetting(
     key: string,
-    value: any,
+    value: unknown,
     adminId: string,
   ): Promise<void> {
     const existingSetting = await this.systemSettingRepo.findOne({
@@ -996,7 +998,7 @@ export class AdminSystemService {
   /**
    * Parse value from SystemSetting based on value_type
    */
-  private parseValue(setting: SystemSetting): any {
+  private parseValue(setting: SystemSetting): unknown {
     const value = setting.setting_value || setting.default_value;
     if (!value) return null;
 
@@ -1025,7 +1027,7 @@ export class AdminSystemService {
   /**
    * Detect value type
    */
-  private detectValueType(value: any): 'string' | 'number' | 'boolean' | 'json' | 'array' {
+  private detectValueType(value: unknown): 'string' | 'number' | 'boolean' | 'json' | 'array' {
     if (typeof value === 'boolean') return 'boolean';
     if (typeof value === 'number') return 'number';
     if (Array.isArray(value)) return 'array';
@@ -1036,7 +1038,7 @@ export class AdminSystemService {
   /**
    * Serialize value to string
    */
-  private serializeValue(value: any, valueType: string): string {
+  private serializeValue(value: unknown, valueType: string): string {
     if (valueType === 'json' || valueType === 'array') {
       return JSON.stringify(value);
     }

@@ -17,7 +17,7 @@ import {
   Length,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { AssignmentType } from '../entities/assignment.entity';
+import { AssignmentType } from '../enums/assignment.enums';
 
 export class PatchAssignmentDto {
   @ApiPropertyOptional({

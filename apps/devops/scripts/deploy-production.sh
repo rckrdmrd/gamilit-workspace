@@ -48,6 +48,7 @@ SKIP_TESTS=false
 DRY_RUN=false
 ROLLBACK_FILE=""
 CURRENT_BACKUP=""
+CURRENT_FULL_BACKUP=""
 DATABASE_URL=""
 
 # ============================================================================
@@ -100,12 +101,13 @@ Ejemplos:
 Proceso de Deploy:
   1. Validar prerequisitos
   2. Ejecutar tests (opcional)
-  3. Crear backup de datos criticos
+  3. Crear backup (full pg_dump + selectivo por tablas)
   4. Ejecutar migraciones de BD
-  5. Build de aplicaciones
-  6. Deploy con PM2/Docker
+  5. Build de aplicaciones (ANTES de detener servicios)
+  6. Deploy con PM2 reload (zero-downtime)
   7. Health checks
-  8. Rollback automatico si falla
+  8. Validacion post-deploy de BD (tablas, funciones, schemas)
+  9. Rollback automatico si falla
 
 Datos respaldados automaticamente:
   - Usuarios y perfiles
@@ -226,7 +228,8 @@ run_tests() {
     if npm test -- --passWithNoTests 2>/dev/null; then
         print_success "Tests de backend pasados"
     else
-        print_warning "Tests de backend fallaron (continuando con advertencia)"
+        print_error "Tests de backend fallaron"
+        return 1
     fi
 
     # Frontend tests
@@ -235,7 +238,8 @@ run_tests() {
     if npm run test:run 2>/dev/null; then
         print_success "Tests de frontend pasados"
     else
-        print_warning "Tests de frontend fallaron (continuando con advertencia)"
+        print_error "Tests de frontend fallaron"
+        return 1
     fi
 
     echo ""
@@ -258,23 +262,58 @@ create_backup() {
         return 0
     fi
 
-    print_step "Ejecutando backup de produccion..."
+    # ALT-13: Full pg_dump backup (custom format, includes schema + data)
+    # This is the primary recovery mechanism — the selective backup below is supplementary
+    mkdir -p "$BACKUP_DIR"
+    local full_dump_file="${BACKUP_DIR}/full_backup_$(date +%Y%m%d_%H%M%S).dump"
+
+    print_step "Ejecutando full pg_dump backup..."
+    if pg_dump -U "${DB_USER:-gamilit_user}" \
+               -h "${DB_HOST:-localhost}" \
+               -p "${DB_PORT:-5432}" \
+               -d "${DB_NAME:-gamilit_platform}" \
+               -F c \
+               -f "$full_dump_file" 2>/dev/null; then
+        local dump_size=$(du -h "$full_dump_file" | cut -f1)
+        print_success "Full backup creado: $(basename $full_dump_file) ($dump_size)"
+        CURRENT_FULL_BACKUP="$full_dump_file"
+    else
+        print_error "Full pg_dump backup fallo"
+        print_warning "Intentando backup selectivo como alternativa..."
+    fi
+
+    # ALT-13: Retention cleanup — keep last 5 full backups, remove older ones
+    print_step "Limpiando backups antiguos (retencion: 5 mas recientes)..."
+    local old_dumps
+    old_dumps=$(ls -t "${BACKUP_DIR}"/full_backup_*.dump 2>/dev/null | tail -n +6)
+    if [ -n "$old_dumps" ]; then
+        local removed_count=0
+        while IFS= read -r old_dump; do
+            rm -f "$old_dump"
+            removed_count=$((removed_count + 1))
+        done <<< "$old_dumps"
+        print_success "Eliminados $removed_count backups antiguos"
+    else
+        print_success "No hay backups antiguos que limpiar"
+    fi
+
+    # Selective table-level backup (supplementary — for granular restore)
+    print_step "Ejecutando backup selectivo de tablas criticas..."
     local backup_script="${SCRIPT_DIR}/backup-production-data.sh"
 
     if [ ! -f "$backup_script" ]; then
-        print_error "Script de backup no encontrado: $backup_script"
-        exit 1
+        print_warning "Script de backup selectivo no encontrado: $backup_script"
+    else
+        chmod +x "$backup_script"
+        bash "$backup_script" --db-url "$DATABASE_URL"
     fi
-
-    chmod +x "$backup_script"
-    bash "$backup_script" --db-url "$DATABASE_URL"
 
     # Guardar nombre del backup para posible rollback
     CURRENT_BACKUP=$(ls -t "${BACKUP_DIR}"/*.tar.gz 2>/dev/null | head -1)
     if [ -n "$CURRENT_BACKUP" ]; then
-        print_success "Backup creado: $(basename $CURRENT_BACKUP)"
+        print_success "Backup selectivo creado: $(basename $CURRENT_BACKUP)"
     else
-        print_warning "No se encontro archivo de backup"
+        print_warning "No se encontro archivo de backup selectivo"
     fi
 
     echo ""
@@ -394,18 +433,25 @@ deploy_application() {
         exit 1
     fi
 
-    # Stop servicios actuales
-    print_step "Deteniendo servicios actuales..."
-    pm2 stop all 2>/dev/null || true
-
-    # Iniciar con nueva version
-    print_step "Iniciando nueva version..."
-    pm2 startOrRestart ecosystem.config.js --env production
+    # ALT-12: Use pm2 reload for zero-downtime deployment
+    # Build already completed in PASO 5 — no service interruption during build phase
+    # pm2 reload gracefully restarts processes one-by-one (zero-downtime)
+    # Falls back to startOrRestart if processes are not yet running
+    print_step "Recargando servicios con zero-downtime..."
+    if pm2 id gamilit-backend > /dev/null 2>&1 || pm2 id gamilit-frontend > /dev/null 2>&1; then
+        # Processes exist — use reload for graceful restart (zero-downtime)
+        print_step "Procesos existentes detectados — usando pm2 reload (zero-downtime)..."
+        pm2 reload ecosystem.config.js --env production
+    else
+        # First deploy or processes not found — use startOrRestart
+        print_step "Primera ejecucion — usando pm2 startOrRestart..."
+        pm2 startOrRestart ecosystem.config.js --env production
+    fi
 
     # Guardar configuracion
     pm2 save
 
-    print_success "Aplicacion desplegada"
+    print_success "Aplicacion desplegada (zero-downtime)"
     echo ""
 }
 
@@ -431,7 +477,7 @@ health_checks() {
     # Backend health check
     print_step "Verificando backend..."
     while [ $retry -lt $max_retries ]; do
-        if curl -s "http://localhost:${backend_port}/api/health" > /dev/null 2>&1; then
+        if curl -s "http://localhost:${backend_port}/api/v1/health" > /dev/null 2>&1; then
             print_success "Backend respondiendo en puerto $backend_port"
             break
         fi
@@ -455,6 +501,106 @@ health_checks() {
     # Mostrar status de PM2
     echo ""
     pm2 status
+    echo ""
+}
+
+# ============================================================================
+# PASO 8: POST-DEPLOY DATABASE VALIDATION (ALT-14)
+# ============================================================================
+
+validate_database() {
+    print_header "PASO 8: VALIDACION POST-DEPLOY DE BASE DE DATOS"
+
+    if [ "$DRY_RUN" = true ]; then
+        print_success "[DRY-RUN] Validacion de BD omitida"
+        return 0
+    fi
+
+    # ALT-14: Thresholds based on current known counts (2026-02-20)
+    # Tables: 169 (DDL source), Functions: 183 (DDL) / 249 (runtime), Seeds: 88
+    local MIN_TABLES=169
+    local MIN_FUNCTIONS=158
+    local MIN_SEEDS=88
+    local validation_errors=0
+
+    # Count tables across all schemas
+    print_step "Verificando conteo de tablas (minimo: ${MIN_TABLES})..."
+    local table_count
+    table_count=$(psql "$DATABASE_URL" -t -A -c \
+        "SELECT COUNT(*) FROM information_schema.tables
+         WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+           AND table_type = 'BASE TABLE';" 2>/dev/null || echo "0")
+    table_count=$(echo "$table_count" | tr -d '[:space:]')
+
+    if [ "$table_count" -ge "$MIN_TABLES" ] 2>/dev/null; then
+        print_success "Tablas: $table_count (>= $MIN_TABLES)"
+    else
+        print_error "Tablas: $table_count (esperado >= $MIN_TABLES)"
+        validation_errors=$((validation_errors + 1))
+    fi
+
+    # Count functions
+    print_step "Verificando conteo de funciones (minimo: ${MIN_FUNCTIONS})..."
+    local function_count
+    function_count=$(psql "$DATABASE_URL" -t -A -c \
+        "SELECT COUNT(*) FROM information_schema.routines
+         WHERE routine_schema NOT IN ('pg_catalog', 'information_schema')
+           AND routine_type = 'FUNCTION';" 2>/dev/null || echo "0")
+    function_count=$(echo "$function_count" | tr -d '[:space:]')
+
+    if [ "$function_count" -ge "$MIN_FUNCTIONS" ] 2>/dev/null; then
+        print_success "Funciones: $function_count (>= $MIN_FUNCTIONS)"
+    else
+        print_error "Funciones: $function_count (esperado >= $MIN_FUNCTIONS)"
+        validation_errors=$((validation_errors + 1))
+    fi
+
+    # Verify core schemas exist
+    print_step "Verificando schemas core..."
+    local core_schemas=("auth" "auth_management" "educational_content" "gamification_system" "progress_tracking" "social_features" "gamilit")
+    local missing_schemas=0
+    for schema in "${core_schemas[@]}"; do
+        local exists
+        exists=$(psql "$DATABASE_URL" -t -A -c \
+            "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = '$schema';" 2>/dev/null || echo "0")
+        exists=$(echo "$exists" | tr -d '[:space:]')
+        if [ "$exists" -eq 0 ] 2>/dev/null; then
+            print_error "  Schema faltante: $schema"
+            missing_schemas=$((missing_schemas + 1))
+        fi
+    done
+
+    if [ "$missing_schemas" -eq 0 ]; then
+        print_success "Todos los schemas core presentes (${#core_schemas[@]}/${#core_schemas[@]})"
+    else
+        print_error "$missing_schemas schemas faltantes"
+        validation_errors=$((validation_errors + 1))
+    fi
+
+    # Verify essential data exists (users, profiles)
+    print_step "Verificando datos esenciales..."
+    local user_count
+    user_count=$(psql "$DATABASE_URL" -t -A -c \
+        "SELECT COUNT(*) FROM auth.users;" 2>/dev/null || echo "0")
+    user_count=$(echo "$user_count" | tr -d '[:space:]')
+
+    if [ "$user_count" -gt 0 ] 2>/dev/null; then
+        print_success "Usuarios en BD: $user_count"
+    else
+        print_error "No se encontraron usuarios en auth.users"
+        validation_errors=$((validation_errors + 1))
+    fi
+
+    # Summary
+    echo ""
+    if [ "$validation_errors" -gt 0 ]; then
+        print_error "Validacion de BD: $validation_errors problemas encontrados"
+        print_warning "Revisar logs y considerar rollback si los datos son criticos"
+        return 1
+    else
+        print_success "Validacion de BD completada: todos los checks pasaron"
+    fi
+
     echo ""
 }
 
@@ -513,10 +659,13 @@ show_summary() {
     echo -e "  ${GREEN}✓${NC} API Docs: http://localhost:${backend_port}/api/v1/docs"
     echo ""
 
-    if [ -n "$CURRENT_BACKUP" ]; then
-        echo -e "${CYAN}Backup creado:${NC} $(basename $CURRENT_BACKUP)"
-        echo ""
+    if [ -n "$CURRENT_FULL_BACKUP" ]; then
+        echo -e "${CYAN}Full backup:${NC} $(basename $CURRENT_FULL_BACKUP)"
     fi
+    if [ -n "$CURRENT_BACKUP" ]; then
+        echo -e "${CYAN}Backup selectivo:${NC} $(basename $CURRENT_BACKUP)"
+    fi
+    echo ""
 
     echo -e "${CYAN}Comandos utiles:${NC}"
     echo -e "  pm2 status              # Ver status"
@@ -601,9 +750,10 @@ main() {
     run_tests
     create_backup
     run_migrations
-    build_applications
-    deploy_application
+    build_applications      # ALT-12: Build completes BEFORE any service interruption
+    deploy_application      # ALT-12: Uses pm2 reload (zero-downtime) after build
     health_checks
+    validate_database       # ALT-14: Post-deploy DB validation with thresholds
     show_summary
 }
 

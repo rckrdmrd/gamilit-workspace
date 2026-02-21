@@ -17,6 +17,9 @@ DECLARE
     student1_id UUID;
     student2_id UUID;
     student3_id UUID;
+    v_beginner_path_id UUID;
+    v_intermediate_path_id UUID;
+    v_advanced_path_id UUID;
 BEGIN
     -- Get demo student IDs
     SELECT id INTO student1_id
@@ -36,6 +39,24 @@ BEGIN
         RETURN;
     END IF;
 
+    -- Resolve learning path IDs by name (dynamically generated in 04-learning-paths.sql)
+    SELECT id INTO v_beginner_path_id
+    FROM progress_tracking.learning_paths
+    WHERE name = 'Viaje de Lectura para Principiantes' LIMIT 1;
+
+    SELECT id INTO v_intermediate_path_id
+    FROM progress_tracking.learning_paths
+    WHERE name = 'Dominio de Lectura Intermedia' LIMIT 1;
+
+    SELECT id INTO v_advanced_path_id
+    FROM progress_tracking.learning_paths
+    WHERE name = 'Pensamiento Critico Avanzado' LIMIT 1;
+
+    IF v_beginner_path_id IS NULL OR v_intermediate_path_id IS NULL OR v_advanced_path_id IS NULL THEN
+        RAISE NOTICE 'Learning paths not found. Run 04-learning-paths.sql first. Skipping.';
+        RETURN;
+    END IF;
+
     RAISE NOTICE 'Creating user learning path assignments...';
 
     INSERT INTO progress_tracking.user_learning_paths (
@@ -50,7 +71,7 @@ BEGIN
     -- Beginner path - Completed
     (
         student1_id,
-        '11111111-1111-1111-1111-111111111001'::uuid, -- Beginner path
+        v_beginner_path_id,
         NOW() - INTERVAL '20 days',
         NOW() - INTERVAL '18 days',
         NOW() - INTERVAL '5 days',
@@ -63,7 +84,7 @@ BEGIN
     -- Intermediate path - In Progress
     (
         student1_id,
-        '11111111-1111-1111-1111-111111111002'::uuid, -- Intermediate path
+        v_intermediate_path_id,
         NOW() - INTERVAL '4 days',
         NOW() - INTERVAL '3 days',
         NULL,
@@ -80,7 +101,7 @@ BEGIN
     -- Beginner path - Completed
     (
         student2_id,
-        '11111111-1111-1111-1111-111111111001'::uuid,
+        v_beginner_path_id,
         NOW() - INTERVAL '30 days',
         NOW() - INTERVAL '28 days',
         NOW() - INTERVAL '10 days',
@@ -93,7 +114,7 @@ BEGIN
     -- Advanced path - In Progress (just started)
     (
         student2_id,
-        '11111111-1111-1111-1111-111111111003'::uuid, -- Advanced path
+        v_advanced_path_id,
         NOW() - INTERVAL '3 days',
         NOW() - INTERVAL '2 days',
         NULL,
@@ -110,7 +131,7 @@ BEGIN
     -- Beginner path - In Progress (struggling)
     (
         student3_id,
-        '11111111-1111-1111-1111-111111111001'::uuid,
+        v_beginner_path_id,
         NOW() - INTERVAL '15 days',
         NOW() - INTERVAL '12 days',
         NULL,

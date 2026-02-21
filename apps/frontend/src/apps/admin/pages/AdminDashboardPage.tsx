@@ -46,19 +46,23 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <DetectiveCard>
-            <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
-              <p className="font-semibold">Error al cargar dashboard:</p>
-              <p>{error}</p>
-            </div>
-          </DetectiveCard>
-        )}
+        <div aria-live="polite">
+          {error && (
+            <DetectiveCard>
+              <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500" role="alert">
+                <p className="font-semibold">Error al cargar dashboard:</p>
+                <p>{error}</p>
+              </div>
+            </DetectiveCard>
+          )}
+        </div>
 
         {/* Loading State */}
         {loading && !metrics ? (
-          <div className="py-12 text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
+          <div className="py-12 text-center" aria-live="polite">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange" role="status">
+              <span className="sr-only">Cargando datos del dashboard</span>
+            </div>
             <p className="mt-4 text-detective-text-secondary">Cargando datos del dashboard...</p>
           </div>
         ) : (
@@ -67,7 +71,7 @@ export default function AdminDashboardPage() {
 
         {/* System Health + Alerts */}
         {!loading && (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2" role="region" aria-label="Salud del sistema y alertas">
             <SystemHealthCard
               systemHealth={systemHealth}
               activeSessions={metrics?.activeSessions}

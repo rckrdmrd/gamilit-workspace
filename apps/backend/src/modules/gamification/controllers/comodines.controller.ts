@@ -554,7 +554,7 @@ export class ComodinesController {
   /**
    * Helper: Format inventory response
    */
-  private formatInventoryResponse(inventory: any): InventoryResponseDto {
+  private formatInventoryResponse(inventory: any): InventoryResponseDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     return {
       id: inventory.id,
       user_id: inventory.user_id,

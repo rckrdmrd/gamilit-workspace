@@ -53,24 +53,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
   // Handle logout with navigation - SYNCS BOTH auth systems
   const handleLogout = () => {
-    console.log('🚪 [handleLogout] Starting IMMEDIATE logout...');
-
     // STEP 1: Clear ALL localStorage IMMEDIATELY (nuclear option)
-    console.log('🚪 [handleLogout] Clearing ALL localStorage...');
     const keysToRemove = ['auth-token', 'refresh-token', 'auth-storage', 'is_logging_out'];
 
     // Clear specific keys
     keysToRemove.forEach((key) => {
       localStorage.removeItem(key);
-      console.log(`🚪 [handleLogout] Removed: ${key}`);
     });
 
     // STEP 2: Set logout flag AFTER clearing (so it's the only thing left)
     localStorage.setItem('is_logging_out', 'true');
-    console.log('🚪 [handleLogout] Set is_logging_out flag');
 
     // STEP 3: Clear auth state in memory IMMEDIATELY (synchronous)
-    console.log('🚪 [handleLogout] Clearing in-memory state...');
 
     // Clear authStore using direct setState
     useAuthStore.setState({
@@ -84,11 +78,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     });
 
     // STEP 4: Force immediate redirect (no async, no waiting)
-    console.log('🚪 [handleLogout] FORCING redirect to /login NOW...');
-
     // Use setTimeout with 0ms to ensure localStorage operations complete
     setTimeout(() => {
-      console.log('🚪 [handleLogout] Executing redirect...');
       window.location.replace('/login');
     }, 0);
   };

@@ -8,8 +8,6 @@
  * - Guilds
  * - Friends
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
@@ -362,7 +360,29 @@ export const getLeaderboard = async (
         endpoint = '/gamification/leaderboard/global';
     }
 
-    const { data } = await apiClient.get<ApiResponse<any>>(endpoint, {
+    interface BackendLeaderboardResponse {
+      entries?: BackendLeaderboardEntry[];
+      data?: BackendLeaderboardEntry[];
+    }
+
+    interface BackendLeaderboardEntry {
+      rank?: number;
+      userId?: string;
+      user_id?: string;
+      username?: string;
+      display_name?: string;
+      avatar?: string;
+      avatar_url?: string;
+      currentRank?: string;
+      current_rank?: string;
+      rankBadge?: string;
+      totalXP?: number;
+      total_xp?: number;
+      score?: number;
+      ml_coins?: number;
+    }
+
+    const { data } = await apiClient.get<ApiResponse<BackendLeaderboardResponse>>(endpoint, {
       params: { limit, timePeriod: period },
     });
 
@@ -378,9 +398,10 @@ export const getLeaderboard = async (
 
     // Transform backend response to LeaderboardEntry format
     // FIX: CORR-006 - After apiClient interceptor unwraps, entries are at data.entries
-    const entries = (data as { entries?: any[] }).entries ?? data.data ?? [];
-    return entries.map((entry: any, index: number) => {
-      const entryUserId = entry.userId || entry.user_id;
+    const responseData = data as unknown as BackendLeaderboardResponse & { data?: BackendLeaderboardEntry[] };
+    const entries = responseData.entries ?? responseData.data ?? [];
+    return entries.map((entry: BackendLeaderboardEntry, index: number) => {
+      const entryUserId = entry.userId || entry.user_id || '';
       return {
         rank: entry.rank || index + 1,
         userId: entryUserId,
@@ -479,6 +500,11 @@ export const getClassroomLeaderboard = async (classroomId: string): Promise<Lead
 // SPRINT 2 - NEW LEADERBOARDS API (Materialized Views)
 // ============================================================================
 
+/** Entry from materialized view leaderboard endpoints */
+interface MaterializedViewEntry {
+  [key: string]: unknown;
+}
+
 /**
  * Get XP Leaderboard (from materialized view)
  *
@@ -486,14 +512,14 @@ export const getClassroomLeaderboard = async (classroomId: string): Promise<Lead
  * @param offset - Offset for pagination (default 0)
  * @returns XP leaderboard entries
  */
-export const getXPLeaderboard = async (limit: number = 100, offset: number = 0): Promise<any[]> => {
+export const getXPLeaderboard = async (limit: number = 100, offset: number = 0): Promise<MaterializedViewEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.leaderboards.xp, {
+    const { data } = await apiClient.get<ApiResponse<MaterializedViewEntry[]>>(API_ENDPOINTS.leaderboards.xp, {
       params: { limit, offset },
     });
 
@@ -515,14 +541,14 @@ export const getXPLeaderboard = async (limit: number = 100, offset: number = 0):
 export const getCoinsLeaderboard = async (
   limit: number = 100,
   offset: number = 0,
-): Promise<any[]> => {
+): Promise<MaterializedViewEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.leaderboards.coins, {
+    const { data } = await apiClient.get<ApiResponse<MaterializedViewEntry[]>>(API_ENDPOINTS.leaderboards.coins, {
       params: { limit, offset },
     });
 
@@ -544,14 +570,14 @@ export const getCoinsLeaderboard = async (
 export const getStreaksLeaderboard = async (
   limit: number = 100,
   offset: number = 0,
-): Promise<any[]> => {
+): Promise<MaterializedViewEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.leaderboards.streaks, {
+    const { data } = await apiClient.get<ApiResponse<MaterializedViewEntry[]>>(API_ENDPOINTS.leaderboards.streaks, {
       params: { limit, offset },
     });
 
@@ -573,14 +599,14 @@ export const getStreaksLeaderboard = async (
 export const getGlobalLeaderboard = async (
   limit: number = 100,
   offset: number = 0,
-): Promise<any[]> => {
+): Promise<MaterializedViewEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(
+    const { data } = await apiClient.get<ApiResponse<MaterializedViewEntry[]>>(
       API_ENDPOINTS.leaderboards.globalView,
       { params: { limit, offset } },
     );

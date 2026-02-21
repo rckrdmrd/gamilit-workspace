@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
@@ -42,6 +42,8 @@ import { AdminQueryBuilder } from './query-builders/admin.query-builder';
  */
 @Injectable()
 export class AdminDashboardService {
+  private readonly logger = new Logger(AdminDashboardService.name);
+
   constructor(
     @InjectDataSource('auth')
     private readonly authConnection: DataSource,
@@ -263,7 +265,7 @@ export class AdminDashboardService {
 
       return alerts;
     } catch (error) {
-      console.error('Error fetching alerts:', error);
+      this.logger.error(`Error fetching alerts: ${error instanceof Error ? error.message : error}`);
       // Return at least one system alert on error
       return [{
         id: crypto.randomUUID(),

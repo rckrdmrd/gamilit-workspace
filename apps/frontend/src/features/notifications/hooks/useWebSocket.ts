@@ -33,15 +33,24 @@ function isTokenValid(token: string): boolean {
 
 // Notification types from backend WebSocket (may differ from API types)
 type WebSocketNotificationType =
+  | 'achievement'
+  | 'mission'
+  | 'assignment'
+  | 'social'
+  | 'system'
+  | 'gamification'
   | 'achievement_unlocked'
   | 'rank_up'
   | 'rank_promoted'
   | 'streak_milestone'
   | 'coins_earned'
+  | 'ml_coins_earned'
   | 'xp_earned'
   | 'module_completed'
   | 'new_assignment'
   | 'exercise_feedback'
+  | 'mission_rewards_claimed'
+  | 'shop_purchase'
   | 'system_announcement';
 
 export interface WebSocketNotification {
@@ -80,29 +89,22 @@ export function useWebSocket(): UseWebSocketReturn {
    */
   const connect = useCallback(async () => {
     if (socketRef.current?.connected) {
-      console.log('✅ WebSocket already connected');
       return;
     }
 
     if (!user?.id) {
-      console.log('⚠️ No user ID available, skipping WebSocket connection');
       return;
     }
-
-    console.log('🔌 Connecting to WebSocket server:', WEBSOCKET_URL);
 
     // Get authentication token
     let token = getAuthToken();
 
     if (!token) {
-      console.log('ℹ️ No authentication token available, skipping WebSocket connection');
       return;
     }
 
     // Validate token before connecting - attempt refresh if expired
     if (!isTokenValid(token)) {
-      console.log('⚠️ Token expired, attempting to refresh...');
-
       try {
         // Attempt to refresh the token
         const { refreshSession } = useAuthStore.getState();
@@ -112,14 +114,10 @@ export function useWebSocket(): UseWebSocketReturn {
         token = getAuthToken();
 
         if (!token || !isTokenValid(token)) {
-          console.log('ℹ️ Token refresh failed. Please login to enable real-time notifications.');
           return;
         }
-
-        console.log('✅ Token refreshed successfully');
-      } catch (error) {
-        console.error('❌ Token refresh error:', error);
-        console.log('ℹ️ Please login to enable real-time notifications.');
+      } catch (_error) {
+        // Connection error handled silently
         return;
       }
     }
@@ -141,51 +139,49 @@ export function useWebSocket(): UseWebSocketReturn {
 
     // Connection events
     socket.on('connect', () => {
-      console.log('✅ WebSocket connected:', socket.id);
       isConnectedRef.current = true;
     });
 
     socket.on('authenticated', (_data: unknown) => {
-      console.log('✅ WebSocket authenticated');
+      // Connection authenticated successfully
     });
 
-    socket.on('disconnect', (reason: string) => {
-      console.log('❌ WebSocket disconnected:', reason);
+    socket.on('disconnect', (_reason: string) => {
       isConnectedRef.current = false;
     });
 
-    socket.on('connect_error', (error: Error) => {
-      // Only log if it's not an authentication error (which is expected when not logged in)
-      if (!error.message.includes('Authentication') && !error.message.includes('authentication')) {
-        console.error('❌ WebSocket connection error:', error);
-      } else {
-        console.log(
-          'ℹ️ WebSocket authentication required. Please login to enable real-time notifications.',
-        );
-      }
+    socket.on('connect_error', (_error: Error) => {
+      // Connection error handled silently
       isConnectedRef.current = false;
     });
 
-    socket.on('error', (error: unknown) => {
-      console.error('❌ WebSocket error:', error);
+    socket.on('error', (_error: unknown) => {
+      // Connection error handled silently
     });
 
     // Listen for new notifications
     socket.on('new_notification', (data: WebSocketNotification) => {
-      console.log('📨 New notification received via WebSocket:', data);
-
       // Map WebSocket notification type to system notification type (aligned with DDL EXT-003)
       const mapNotificationType = (wsType: WebSocketNotificationType): string => {
         const typeMap: Record<WebSocketNotificationType, string> = {
+          achievement: 'achievement',
+          mission: 'mission',
+          assignment: 'assignment',
+          social: 'social',
+          system: 'system',
+          gamification: 'gamification',
           achievement_unlocked: 'achievement_unlocked',
           rank_up: 'rank_promoted',
           rank_promoted: 'rank_promoted',
           streak_milestone: 'streak_milestone',
           coins_earned: 'coins_received',
+          ml_coins_earned: 'coins_received',
           xp_earned: 'xp_earned',
           module_completed: 'module_completed',
           new_assignment: 'new_assignment',
           exercise_feedback: 'exercise_feedback',
+          mission_rewards_claimed: 'mission_rewards_claimed',
+          shop_purchase: 'shop_purchase',
           system_announcement: 'system_announcement',
         };
         const mapped = typeMap[wsType];
@@ -211,6 +207,11 @@ export function useWebSocket(): UseWebSocketReturn {
       // Add to notifications store (automatically increments unreadCount)
       addNotification(notification);
 
+      // Exercise review feedback can trigger delayed rewards UI in student pages.
+      if (notification.type === 'exercise_feedback') {
+        window.dispatchEvent(new CustomEvent('gamilit:exercise:feedback', { detail: notification }));
+      }
+
       // Show browser notification if permission granted
       showBrowserNotification(data.notification);
     });
@@ -218,21 +219,55 @@ export function useWebSocket(): UseWebSocketReturn {
     // Listen for notification read events
 
     socket.on('notification_read', (_data: { notificationId: string; timestamp: string }) => {
-      console.log('✅ Notification marked as read');
+      // Notification read acknowledgment received
     });
 
     // Listen for notification deleted events
 
     socket.on('notification_deleted', (_data: { notificationId: string; timestamp: string }) => {
-      console.log('🗑️ Notification deleted');
+      // Notification deletion acknowledgment received
     });
 
     // Listen for unread count updates
 
     socket.on('unread_count_updated', (_data: { count: number; timestamp: string }) => {
-      console.log('🔢 Unread count updated');
       // The store will be updated via fetchUnreadCount
       fetchUnreadCount();
+      window.dispatchEvent(new CustomEvent('gamilit:notifications:unread-updated'));
+    });
+
+    // ---------------------------------------------------------------
+    // Gamification events — dispatched as custom DOM events so the
+    // GamificationOverlay (useGamificationEvents hook) can react
+    // without coupling to the socket instance.
+    // ---------------------------------------------------------------
+
+    socket.on('xp:gained', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:xp:gained', { detail: data }));
+    });
+
+    socket.on('mlcoins:earned', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:mlcoins:earned', { detail: data }));
+    });
+
+    socket.on('balance:updated', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:balance:updated', { detail: data }));
+    });
+
+    socket.on('achievement:unlocked', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:achievement:unlocked', { detail: data }));
+    });
+
+    socket.on('rank:updated', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:rank:updated', { detail: data }));
+    });
+
+    socket.on('mission:completed', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:mission:completed', { detail: data }));
+    });
+
+    socket.on('mission:progress', (data: unknown) => {
+      window.dispatchEvent(new CustomEvent('gamilit:mission:progress', { detail: data }));
     });
 
     socketRef.current = socket;
@@ -243,7 +278,6 @@ export function useWebSocket(): UseWebSocketReturn {
    */
   const disconnect = useCallback(() => {
     if (socketRef.current) {
-      console.log('🔌 Disconnecting WebSocket...');
       socketRef.current.disconnect();
       socketRef.current = null;
       isConnectedRef.current = false;
@@ -307,8 +341,6 @@ export function useWebSocket(): UseWebSocketReturn {
 
     if (user?.id && token && isMounted) {
       connect();
-    } else if (!user?.id || !token) {
-      console.log('⚠️ Skipping WebSocket connection: User not authenticated or token missing');
     }
 
     return () => {
@@ -329,7 +361,6 @@ export function useWebSocket(): UseWebSocketReturn {
  */
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
   if (!('Notification' in window)) {
-    console.warn('⚠️ Browser does not support notifications');
     return 'denied';
   }
 
@@ -338,6 +369,5 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   }
 
   const permission = await Notification.requestPermission();
-  console.log('🔔 Notification permission:', permission);
   return permission;
 }

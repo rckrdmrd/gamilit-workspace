@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Eye, EyeOff, Key, Check, Loader2 } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import toast from 'react-hot-toast';
 import { profileAPI } from '@/services/api/profileAPI';
+import { useApiError } from '@shared/hooks';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { SaveButton, type SaveStatus } from '@shared/components/feedback/SaveButton';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
@@ -14,6 +15,7 @@ interface AccountSectionProps {
 }
 
 export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
+  const { handleError } = useApiError();
   const [passwordStatus, setPasswordStatus] = useState<SaveStatus>('idle');
   const [showCurrentPw, setShowCurrentPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
@@ -56,7 +58,7 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
         const status = await profileAPI.getEmailVerificationStatus();
         setIsEmailVerified(status.verified);
       } catch (error: unknown) {
-        const st = (error as any)?.response?.status;
+        const st = (error as { response?: { status?: number } })?.response?.status;
         if (st !== 401) console.error('Error checking verification status:', error);
       }
     };
@@ -70,13 +72,9 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
       setShowVerificationModal(true);
       setVerificationStatus('idle');
       toast.success('Codigo de verificacion enviado a tu email');
-    } catch (error: unknown) {
+    } catch (err: unknown) {
       setVerificationStatus('error');
-      const msg =
-        error instanceof Error
-          ? ((error as any).response?.data?.message || error.message)
-          : 'Error al enviar codigo de verificacion';
-      toast.error(msg);
+      handleError(err, 'Error al enviar codigo de verificacion');
     }
   };
 
@@ -95,13 +93,9 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
         toast.success('Email verificado correctamente');
       }
       setVerificationStatus('success');
-    } catch (error: unknown) {
+    } catch (err: unknown) {
       setVerificationStatus('error');
-      const msg =
-        error instanceof Error
-          ? ((error as any).response?.data?.message || error.message)
-          : 'Codigo de verificacion invalido';
-      toast.error(msg);
+      handleError(err, 'Codigo de verificacion invalido');
     }
   };
 
@@ -118,13 +112,9 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
       setAccount({ ...account, currentPassword: '', newPassword: '', confirmPassword: '' });
       setErrors({});
       setTimeout(() => setPasswordStatus('idle'), 2000);
-    } catch (error: unknown) {
+    } catch (err: unknown) {
       setPasswordStatus('error');
-      const msg =
-        error instanceof Error
-          ? ((error as any).response?.data?.message || error.message)
-          : 'Error al cambiar contrasena';
-      toast.error(msg);
+      handleError(err, 'Error al cambiar contrasena');
       setTimeout(() => setPasswordStatus('idle'), 3000);
     }
   };
@@ -293,64 +283,71 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
       </motion.div>
 
       {/* Email Verification Modal */}
-      {showVerificationModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
-          >
-            <h3 className="mb-4 text-xl font-bold text-detective-text">
-              Verificar tu email
-            </h3>
-            <p className="mb-4 text-sm text-detective-text-secondary">
-              Enviamos un codigo de verificacion a <strong>{account.email}</strong>. Ingresalo a continuacion.
-            </p>
-            <input
-              type="text"
-              value={verificationToken}
-              onChange={(e) => setVerificationToken(e.target.value)}
-              placeholder="Codigo de verificacion"
-              className="mb-4 w-full rounded-lg border-2 border-detective-orange/40 bg-white px-4 py-3 transition-all duration-200 placeholder:text-gray-400 focus:border-detective-orange focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowVerificationModal(false);
-                  setVerificationToken('');
-                  setVerificationStatus('idle');
-                }}
-                className="flex-1 rounded-lg border-2 border-detective-orange/40 px-4 py-2 font-medium text-detective-text transition-colors hover:bg-detective-bg"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleVerifyEmail}
-                disabled={verificationStatus === 'verifying'}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-400"
-              >
-                {verificationStatus === 'verifying' ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Verificando...
-                  </>
-                ) : (
-                  'Verificar'
-                )}
-              </button>
-            </div>
+      <Modal
+        isOpen={showVerificationModal}
+        onClose={() => {
+          setShowVerificationModal(false);
+          setVerificationToken('');
+          setVerificationStatus('idle');
+        }}
+        animated
+        size="md"
+        showCloseButton={false}
+        overlayClassName="bg-black/50"
+        className="rounded-xl shadow-xl"
+        contentClassName="custom"
+      >
+        <div className="p-6">
+          <h3 className="mb-4 text-xl font-bold text-detective-text">
+            Verificar tu email
+          </h3>
+          <p className="mb-4 text-sm text-detective-text-secondary">
+            Enviamos un codigo de verificacion a <strong>{account.email}</strong>. Ingresalo a continuacion.
+          </p>
+          <input
+            type="text"
+            value={verificationToken}
+            onChange={(e) => setVerificationToken(e.target.value)}
+            placeholder="Codigo de verificacion"
+            className="mb-4 w-full rounded-lg border-2 border-detective-orange/40 bg-white px-4 py-3 transition-all duration-200 placeholder:text-gray-400 focus:border-detective-orange focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
+          />
+          <div className="flex gap-3">
             <button
-              onClick={handleRequestVerification}
-              disabled={verificationStatus === 'sending'}
-              className="mt-4 w-full text-center text-sm text-detective-text-secondary hover:text-detective-orange"
+              onClick={() => {
+                setShowVerificationModal(false);
+                setVerificationToken('');
+                setVerificationStatus('idle');
+              }}
+              className="flex-1 rounded-lg border-2 border-detective-orange/40 px-4 py-2 font-medium text-detective-text transition-colors hover:bg-detective-bg"
             >
-              {verificationStatus === 'sending'
-                ? 'Enviando...'
-                : 'No recibiste el codigo? Reenviar'}
+              Cancelar
             </button>
-          </motion.div>
+            <button
+              onClick={handleVerifyEmail}
+              disabled={verificationStatus === 'verifying'}
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-400"
+            >
+              {verificationStatus === 'verifying' ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verificando...
+                </>
+              ) : (
+                'Verificar'
+              )}
+            </button>
+          </div>
+          <button
+            onClick={handleRequestVerification}
+            disabled={verificationStatus === 'sending'}
+            className="mt-4 w-full text-center text-sm text-detective-text-secondary hover:text-detective-orange"
+          >
+            {verificationStatus === 'sending'
+              ? 'Enviando...'
+              : 'No recibiste el codigo? Reenviar'}
+          </button>
         </div>
-      )}
+      </Modal>
     </>
   );
 };

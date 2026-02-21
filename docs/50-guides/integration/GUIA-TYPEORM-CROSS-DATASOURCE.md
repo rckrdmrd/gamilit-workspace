@@ -243,5 +243,13 @@ admin_dashboard:
 
 ---
 
+## 10. Estandares Relacionados
+
+- [`ESTANDAR-CROSS-SCHEMA-REFERENCES.md`](../../40-standards/ESTANDAR-CROSS-SCHEMA-REFERENCES.md) -- FKs cross-schema, cross-datasource entity registration, RLS functions, seed lookup patterns
+- [`ESTANDAR-DATABASE-PROFESIONAL.md`](../../40-standards/ESTANDAR-DATABASE-PROFESIONAL.md) -- PostgreSQL 15, DDL, RLS, triggers
+- [`ERR-INT-004-cross-datasource-relation.md`](../troubleshooting/errores-comunes/integracion/ERR-INT-004-cross-datasource-relation.md) -- Troubleshooting para errores de relacion cross-datasource
+
+---
+
 *Documento generado como parte de TASK-008-ANALISIS-ERRORES-BACKEND-GAMILIT*
 *Sistema SIMCO v4.3.0 - GAMILIT*

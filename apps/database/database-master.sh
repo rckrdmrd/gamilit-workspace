@@ -21,7 +21,8 @@
 #   ./database-master.sh --mode full --env prod
 #
 # AUTENTICACION:
-#   DEV:  usa sudo con password automatico (2320)
+#   DEV:  usa sudo con password desde $GAMILIT_SUDO_PASSWORD (env var)
+#   STAGING: misma autenticacion que dev (local) o prod (remoto)
 #   PROD: usa TCP con PGPASSWORD (sin sudo)
 #
 # POLITICA: Carga Limpia - Sin migrations, solo DDL puro
@@ -38,7 +39,9 @@ DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
 DB_PORT="5433"  # PostgreSQL 16 en este sistema usa puerto 5433
-SUDO_PASS_DEV="2320"
+# NOTE: Sudo password is read from environment variable only. Never hardcode passwords.
+# For dev, set: export GAMILIT_SUDO_PASSWORD="your_sudo_pass"
+SUDO_PASS_DEV="${GAMILIT_SUDO_PASSWORD:-}"
 
 # ============================================================================
 # COLORES
@@ -136,7 +139,11 @@ MODOS (--mode):
 AMBIENTES (--env):
     dev       Desarrollo local (default)
               - Usa sudo para acceso a postgres
-              - Password sudo automatico (2320)
+              - Requires $GAMILIT_SUDO_PASSWORD env var
+
+    staging   Pre-produccion / QA
+              - Usa misma autenticacion que dev (local) o prod (remoto)
+              - Seeds de staging (datos QA limitados)
 
     prod      Produccion
               - Usa TCP con PGPASSWORD
@@ -220,9 +227,9 @@ parse_arguments() {
     fi
 
     # Validar ambiente
-    if [[ "$ENV" != "dev" && "$ENV" != "prod" ]]; then
+    if [[ "$ENV" != "dev" && "$ENV" != "staging" && "$ENV" != "prod" ]]; then
         print_error "Ambiente invalido: $ENV"
-        echo "Ambientes validos: dev, prod"
+        echo "Ambientes validos: dev, staging, prod"
         exit 1
     fi
 }
@@ -234,11 +241,18 @@ parse_arguments() {
 setup_authentication() {
     print_step "Configurando autenticacion para ambiente: $ENV"
 
-    if [ "$ENV" = "dev" ]; then
-        # DEV: Verificar sudo
+    if [ "$ENV" = "dev" ] || [ "$ENV" = "staging" ]; then
+        # DEV/STAGING: Verificar sudo
+        # NOTE (DEV-ONLY): Sudo password is piped via stdin for non-interactive
+        # execution in development. In production, use TCP auth instead.
+        if [ -z "$SUDO_PASS_DEV" ]; then
+            print_error "GAMILIT_SUDO_PASSWORD env var is required for $ENV environment"
+            print_info "Set it with: export GAMILIT_SUDO_PASSWORD='your_sudo_password'"
+            exit 1
+        fi
         if ! echo "$SUDO_PASS_DEV" | sudo -S true 2>/dev/null; then
             print_error "No se pudo autenticar con sudo"
-            print_info "Verifica que el password sudo sea correcto (configurado: 2320)"
+            print_info "Verifica que \$GAMILIT_SUDO_PASSWORD sea correcto"
             exit 1
         fi
         print_success "Autenticacion sudo configurada"
@@ -490,8 +504,11 @@ execute_full_mode() {
     print_success "Usuario eliminado"
 
     # Paso 4: Crear usuario
+    # NOTE: Password is single-quoted in SQL. Special chars in DB_PASS are escaped
+    # by replacing single quotes with doubled single quotes (SQL standard escaping).
     print_step "[4/8] Creando usuario '$DB_USER'..."
-    run_as_postgres "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS' CREATEDB LOGIN;"
+    local ESCAPED_PASS="${DB_PASS//\'/\'\'}"
+    run_as_postgres "CREATE USER $DB_USER WITH PASSWORD '${ESCAPED_PASS}' CREATEDB LOGIN;"
     print_success "Usuario creado"
 
     # Paso 5: Crear base de datos
@@ -683,7 +700,10 @@ print_summary() {
     fi
     echo ""
     echo -e "  ${BOLD}Para verificar:${NC}"
-    echo -e "    PGPASSWORD='$DB_PASS' psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c 'SELECT COUNT(*) FROM auth_management.profiles;'"
+    # Mask password in log output — show only first 4 and last 4 chars
+    local MASKED_PASS="${DB_PASS:0:4}****${DB_PASS: -4}"
+    echo -e "    PGPASSWORD='<from .env>' psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c 'SELECT COUNT(*) FROM auth_management.profiles;'"
+    echo -e "    (Password: ${MASKED_PASS} — full value in credentials file)"
     echo ""
 }
 

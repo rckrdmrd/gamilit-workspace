@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.1.0"
-fecha: "2026-02-20"
+version: "13.1.0"
+fecha: "2026-02-21"  # Inventory validation 2026-02-21: tables, views, functions, triggers, RLS, services, DTOs corrected
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -27,15 +27,15 @@ resumen:
 metricas:
   database:
     schemas: 18
-    tablas: 169                  # 169 tables (168 SQL files, +2 multi-table, -1 MV file)
-    views: 22
+    tablas: 173                  # 173 ^CREATE TABLE in tables/**/*.sql (171 files, 2 multi-table: guild_missions+conversation_participants, 5 _cross_schema). Verified 2026-02-21
+    views: 18                    # 18 ^CREATE VIEW in views/*.sql (18 files). Verified 2026-02-21. Was 22 (overcounted, possibly included MVs)
     materialized_views: 7
-    funciones: 183               # 183 DDL source / 249 runtime (incl. trigger functions)
-    triggers: 67                 # 67 CREATE TRIGGER statements (not 126 trigger functions)
-    rls_policies: 231            # 231 DDL source (+4 user_purchases FIX-P0-1). Runtime: 471
+    funciones: 158               # 158 ^CREATE FUNCTION in functions/*.sql (116 files). Verified 2026-02-21. Note: ~44 additional inline functions in table/trigger/view files (total ~202 across all DDL)
+    triggers: 68                 # 68 CREATE TRIGGER in triggers/*.sql (37 files). Verified 2026-02-21. Note: ~64 additional inline triggers in table/function files
+    rls_policies: 251            # 251 ^CREATE POLICY in rls-policies/*.sql (37 files). Verified 2026-02-21. +10 resource-sharing-policies, +3 teacher_reports. Note: ~143 additional inline policies in table files
     foreign_keys: 299            # +1 missions_template_id_fkey (REC-009)
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
-    seeds: 85                    # 85 pipeline entries, 0 errores, 0 excluidos (post SEED-HOMOLOGATION 2026-02-20)
+    seeds: 92                    # 92 pipeline entries, 0 errores, 0 excluidos. UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups
     scripts:                     # Key database scripts
       - "recreate-database.sh"         # Main recreate (--env dev|prod --force)
       - "recreate-database-dev.sh"     # Wrapper DEV
@@ -44,11 +44,11 @@ metricas:
 
   backend:
     modulos: 23                  # 22 directorios + mail (transitivo)
-    entities: 155                # 155 archivos, 156 @Entity classes (+UserEquippedItem, +PendingUserInitialization)
-    dtos: 399                    # 399 en modules/ (+ ~5 en shared/)
-    services: 173                # +1 PendingInitializationsCronService (REC-007)
+    entities: 156                # 156 archivos, 159 @Entity classes (+UserEquippedItem now own file, +PendingUserInitialization, +ResourceRating, +ResourceComment, +ResourceDownload, message.entity has 2)
+    dtos: 401                    # 401 *.dto.ts files in modules/. Verified 2026-02-21
+    services: 172                # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
     controllers: 108
-    endpoints: 905               # Verified 2026-02-19: +1 from auth controller updates
+    endpoints: 912               # Verified 2026-02-21: +7 ResourceSharing endpoints on teacher-content.controller (rate, comments GET/POST, download, resources list/get)
     guards: 15
     decorators: 18               # 18 symbols en 9 archivos
     interceptors: 6
@@ -57,25 +57,26 @@ metricas:
     tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 590              # Verified 2026-02-19: find *.tsx excluding tests/stories/examples
-    hooks: 127                        # Verified 2026-02-19: admin(31)+teacher(27)+student(13)+shared(15)+features(39)+root(2)
+    componentes_tsx: 590              # Verified 2026-02-21: find -name "*.tsx" excl tests/stories/examples/_testing
+    hooks: 127                        # Verified 2026-02-21: find use*.ts excl user*/tests. +useCompletionAnimations, +useSharedResources, +useGamificationSocket, +useBatchEquipment, +useTeacherContent, +useTeacherMessages, +useAnalytics(teacher), +useExerciseState
     paginas: 70                       # 70 activas + 1 legacy
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
-    api_service_files: 67             # Verified 2026-02-19: 66 *API/*Api files + 1 NotificationService
-    api_calls_total: 575              # Verified 2026-02-19: apiClient calls in production code
+    api_service_files: 67             # Verified 2026-02-21: 45 in services/api (excl infra/index) + 19 features + 2 shared + 1 NotificationService(deprecated)
+    api_calls_total: 580              # ~580: +resourceSharingApi calls over previous 575
     portales: 4
     mecanicas_ejercicio: 30           # 30 mecanicas unicas de ejercicio
-    routes: 73                        # 73 <Route path=> definitions en App.tsx
+    routes: 73                        # 73 <Route path=> definitions en App.tsx (verified 2026-02-21)
     type_files: 49                    # 49 archivos type definition
-    tests_frontend: 213
+    tests_frontend: 236               # +23 CompletionModal accessibility tests, +51 USE_PROXY tests (api.config.test.ts)
 
   calidad:
-    tests_total: 833
-    coherencia_ddl_backend: "90.5%"  # 153 entity classes / 169 tables (100% bidirectional, 16 DDL-only in data_warehouse)
-    entity_registration: "100%"     # All 153 entities registered in forFeature() (FIX P2, 37 were missing)
+    tests_total: 833                 # Backend tests. Frontend tests now +74 (51 USE_PROXY + 23 CompletionModal a11y)
+    coherencia_ddl_backend: "90.2%"  # 156 entity files / 173 tables (100% bidirectional, 16 DDL-only in data_warehouse + 1 new resource table)
+    entity_registration: "100%"     # All entities registered in forFeature()
     cobertura_target: "80%"
     mock_only_services: 8           # mechanicsAPI, aiServiceAPI + 6 module-specific mechanics APIs (all MOCK-ONLY)
     dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
+    lint_warnings: 71               # Reduced from 911 to 71 (MQ-007: `any` type reduction)
 
 # -------------------------------------------------------------------------------
 # PORTALES
@@ -130,9 +131,9 @@ gamificacion:
 # -------------------------------------------------------------------------------
 
 inventarios_detallados:
-  database: "DATABASE_INVENTORY.yml (v8.8.0)"
-  backend: "BACKEND_INVENTORY.yml (v4.5.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v11.0.0)"
+  database: "DATABASE_INVENTORY.yml (v9.0.0)"
+  backend: "BACKEND_INVENTORY.yml (v5.0.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v12.0.0)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES
@@ -144,10 +145,15 @@ features:
     - "5 modulos educativos (23 tipos ejercicios)"
     - "4 portales diferenciados (estandarizados con PageShell pattern)"
     - "Sistema gamificacion maya completo"
-    - "RLS multi-tenancy (231 DDL source, 471 runtime policies)"
+    - "RLS multi-tenancy (234 DDL source, 474 runtime policies)"
     - "Real-time via Socket.IO"
-    - "833 tests pasando"
+    - "833 backend tests + 236 frontend tests"
     - "Admin API modularized (16 sub-APIs from monolith)"
+    - "Shared Pagination + enhanced Modal (AnimatePresence) + TabBar"
+    - "CompletionModal split (4 subcomponents + accessibility tests)"
+    - "ResourceSharing full-stack (3 DDL tables + 3 entities + 7 endpoints + API + hook)"
+    - "CI/CD pipelines (frontend-ci + backend-ci working, 24 standards indexed)"
+    - "Lint warnings 911 -> 71 (MQ-007 any reduction)"
 
   parciales:
     - "social (60%): DDL+entities completos, all registered in forFeature() (FIX P2), ~40 endpoints unwired in frontend"
@@ -178,5 +184,5 @@ credenciales:
   redis_db: 0
 
 # ===============================================================================
-# FIN MASTER INVENTORY v12.0.0
+# FIN MASTER INVENTORY v13.0.0
 # ===============================================================================

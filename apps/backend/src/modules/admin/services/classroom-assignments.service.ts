@@ -712,10 +712,10 @@ export class ClassroomAssignmentsService {
     assignments: Array<{ teacherId: string; classroomId: string }>,
   ): Promise<{
       assigned: number;
-      successful: any[];
+      successful: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
       failed: Array<{ teacherId: string; classroomId: string; reason: string }>;
     }> {
-    const successful: any[] = [];
+    const successful: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
     const failed: Array<{
       teacherId: string;
       classroomId: string;

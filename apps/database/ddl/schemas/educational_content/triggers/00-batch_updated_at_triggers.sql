@@ -61,7 +61,27 @@ CREATE TRIGGER trg_exercise_type_rubrics_updated_at
 COMMENT ON TRIGGER trg_exercise_type_rubrics_updated_at ON educational_content.exercise_type_rubrics
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
+-- Tabla: educational_content.resource_ratings (agregado 2026-02-21 - resource sharing)
+DROP TRIGGER IF EXISTS trg_resource_ratings_updated_at ON educational_content.resource_ratings CASCADE;
+CREATE TRIGGER trg_resource_ratings_updated_at
+    BEFORE UPDATE ON educational_content.resource_ratings
+    FOR EACH ROW
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
+
+COMMENT ON TRIGGER trg_resource_ratings_updated_at ON educational_content.resource_ratings
+    IS 'Actualiza updated_at automaticamente en cada UPDATE';
+
+-- Tabla: educational_content.resource_comments (agregado 2026-02-21 - resource sharing)
+DROP TRIGGER IF EXISTS trg_resource_comments_updated_at ON educational_content.resource_comments CASCADE;
+CREATE TRIGGER trg_resource_comments_updated_at
+    BEFORE UPDATE ON educational_content.resource_comments
+    FOR EACH ROW
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
+
+COMMENT ON TRIGGER trg_resource_comments_updated_at ON educational_content.resource_comments
+    IS 'Actualiza updated_at automaticamente en cada UPDATE';
+
 -- =====================================================
 -- FIN DE TRIGGERS CONSOLIDADOS
--- Total: 5 triggers
+-- Total: 7 triggers
 -- =====================================================

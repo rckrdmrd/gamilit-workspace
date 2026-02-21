@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Fondo Cenote Sagrado - Sacred cenote background -->
+  <!-- Sky gradient -->
+  <rect width="200" height="200" fill="#1C2D4A"/>
+  <!-- Stars -->
+  <g fill="#D4AF37" opacity="0.4">
+    <circle cx="20" cy="15" r="1"/>
+    <circle cx="60" cy="8" r="1.2"/>
+    <circle cx="100" cy="12" r="0.8"/>
+    <circle cx="145" cy="6" r="1"/>
+    <circle cx="180" cy="18" r="1.1"/>
+    <circle cx="35" cy="30" r="0.7"/>
+    <circle cx="170" cy="35" r="0.9"/>
+  </g>
+  <!-- Jungle canopy silhouette -->
+  <path d="M0 60 Q15 40 30 55 Q45 35 60 50 Q75 30 90 45 Q105 25 120 40 Q135 28 150 42 Q165 32 180 48 Q190 38 200 50 L200 80 L0 80Z" fill="#0D1F0D"/>
+  <!-- Rocky cenote rim -->
+  <path d="M0 80 Q20 75 40 82 Q60 72 80 80 Q100 70 120 78 Q140 72 160 80 Q180 74 200 80 L200 95 Q170 90 140 95 Q110 88 80 95 Q50 88 20 95 L0 92Z" fill="#5C4033"/>
+  <!-- Water surface -->
+  <ellipse cx="100" cy="120" rx="70" ry="25" fill="#0D4F4F"/>
+  <ellipse cx="100" cy="118" rx="65" ry="22" fill="#1A6B6B" opacity="0.7"/>
+  <!-- Water ripples -->
+  <ellipse cx="100" cy="120" rx="50" ry="15" stroke="#2D8B8B" stroke-width="0.5" fill="none" opacity="0.5"/>
+  <ellipse cx="100" cy="120" rx="35" ry="10" stroke="#2D8B8B" stroke-width="0.5" fill="none" opacity="0.3"/>
+  <!-- Underwater glow -->
+  <ellipse cx="100" cy="150" rx="40" ry="30" fill="#0D4F4F" opacity="0.5"/>
+  <ellipse cx="100" cy="155" rx="25" ry="20" fill="#1A6B6B" opacity="0.3"/>
+  <!-- Vines hanging from edges -->
+  <path d="M35 80 Q32 95 36 105" stroke="#2D5016" stroke-width="1.5" fill="none"/>
+  <path d="M165 80 Q168 95 164 105" stroke="#2D5016" stroke-width="1.5" fill="none"/>
+  <!-- Maya offering stone -->
+  <rect x="85" y="88" width="30" height="6" rx="2" fill="#8B4513"/>
+  <path d="M92 88 L95 84 L105 84 L108 88" fill="#A0522D"/>
+</svg>

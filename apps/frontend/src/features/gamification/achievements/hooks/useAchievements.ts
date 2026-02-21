@@ -182,6 +182,10 @@ export function useAchievements(): UseAchievementsReturn {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: achievementKeys.user(userId || '') });
       queryClient.invalidateQueries({ queryKey: achievementKeys.summary(userId || '') });
+      queryClient.invalidateQueries({ queryKey: ['shop'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['balance'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
       syncAndInvalidate();
     },
   });

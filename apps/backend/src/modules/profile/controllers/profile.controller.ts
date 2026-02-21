@@ -264,7 +264,7 @@ export class ProfileController {
   })
   async uploadAvatar(
     @Param('userId') userId: string,
-      @UploadedFile() file: any,
+      @UploadedFile() file: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
   ): Promise<ProfileResponseDto> {
     if (!file) {
       throw new BadRequestException('No file uploaded');

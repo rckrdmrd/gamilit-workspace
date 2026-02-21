@@ -53,6 +53,7 @@ export interface ShopItem {
   is_consumable: boolean;
   duration_days?: number;
   effect_data?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UserPurchase {

@@ -25,7 +25,7 @@ export const SopaLetrasGrid: React.FC<SopaLetrasGridProps> = ({
     }
     // Prioridad 2: Celdas de palabras ya encontradas (permanente - pueden reutilizarse)
     if (isFound(r, c)) {
-      return 'bg-blue-200 text-blue-900 font-bold hover:bg-blue-300';
+      return 'bg-detective-orange/30 text-detective-text font-bold hover:bg-detective-orange/40';
     }
     // Prioridad 3: Celdas normales
     return 'bg-detective-bg-secondary hover:bg-gray-200 text-detective-text';
@@ -65,7 +65,7 @@ export const SopaLetrasGrid: React.FC<SopaLetrasGridProps> = ({
           <div>• Haz click en las letras para seleccionar</div>
           <div>• <kbd className="px-1.5 py-0.5 bg-detective-bg-secondary rounded text-xs font-mono">ENTER</kbd> valida la palabra seleccionada</div>
           <div>• <kbd className="px-1.5 py-0.5 bg-detective-bg-secondary rounded text-xs font-mono">ESC</kbd> limpia la selección</div>
-          <div className="text-blue-700 font-medium mt-1">💡 Las letras azules pueden reutilizarse</div>
+          <div className="text-detective-orange font-medium mt-1">💡 Las letras resaltadas pueden reutilizarse</div>
         </div>
       </div>
     </div>

@@ -75,7 +75,7 @@ BEGIN
             is_active,
             metadata
         ) VALUES (
-            '10000001-0000-0000-0000-000000000001'::uuid,
+            gen_random_uuid(),
             v_admin_id,
             v_tenant_id,
             'super_admin',
@@ -117,7 +117,7 @@ BEGIN
             is_active,
             metadata
         ) VALUES (
-            '10000002-0000-0000-0000-000000000001'::uuid,
+            gen_random_uuid(),
             v_teacher_id,
             v_tenant_id,
             'admin_teacher',
@@ -159,7 +159,7 @@ BEGIN
             is_active,
             metadata
         ) VALUES (
-            '10000003-0000-0000-0000-000000000001'::uuid,
+            gen_random_uuid(),
             v_student_id,
             v_tenant_id,
             'student',

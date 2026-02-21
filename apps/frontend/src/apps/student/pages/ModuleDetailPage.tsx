@@ -5,11 +5,10 @@
  * ExerciseCard, ModuleMetaSections, and difficulty utils are extracted.
  */
 
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/app/providers/AuthContext';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { ColorfulCard } from '@shared/components/base/ColorfulCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -37,8 +36,12 @@ import {
 export default function ModuleDetailPage() {
   const { moduleId } = useParams();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+
+  // Mission-linked navigation: highlight exercises matching the active mission
+  const activeMissionId = searchParams.get('mission_id');
+  const exerciseTypeFilter = searchParams.get('exercise_type');
 
   const { module, exercises, progress, loading, error } = useModuleDetail(
     moduleId || '',
@@ -48,14 +51,10 @@ export default function ModuleDetailPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader
-          user={user ?? undefined}
-          gamificationData={gamificationData}
-          onLogout={logout}
-        />
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="animate-pulse space-y-4">
+      <StudentPageShell>
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8" aria-live="polite">
+          <div className="animate-pulse space-y-4" aria-label="Cargando detalle del modulo">
+            <span className="sr-only">Cargando detalle del modulo...</span>
             <div className="h-8 w-1/3 rounded bg-gray-200" />
             <div className="h-64 rounded bg-gray-200" />
             <div className="h-32 rounded bg-gray-200" />
@@ -66,19 +65,14 @@ export default function ModuleDetailPage() {
             </div>
           </div>
         </div>
-      </div>
+      </StudentPageShell>
     );
   }
 
   // Error state
   if (error || !module) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader
-          user={user ?? undefined}
-          gamificationData={gamificationData}
-          onLogout={logout}
-        />
+      <StudentPageShell>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <DetectiveButton
             variant="blue"
@@ -91,6 +85,7 @@ export default function ModuleDetailPage() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
+            role="alert"
             className="mb-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-red-800"
           >
             <p className="font-semibold">Error al cargar el modulo</p>
@@ -105,7 +100,7 @@ export default function ModuleDetailPage() {
             </button>
           </motion.div>
         </div>
-      </div>
+      </StudentPageShell>
     );
   }
 
@@ -118,13 +113,7 @@ export default function ModuleDetailPage() {
     typeof module.difficulty_level === 'string' ? module.difficulty_level : 'beginner';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader
-        user={user || undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <DetectiveButton
           variant="blue"
@@ -235,7 +224,7 @@ export default function ModuleDetailPage() {
         <ModuleMetaSections module={module} />
 
         {/* Exercises */}
-        <div className="mb-6">
+        <div className="mb-6" role="region" aria-label="Ejercicios del modulo">
           <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-detective-text">
             <Target className="h-5 w-5 text-detective-orange" />
             Ejercicios del Modulo
@@ -244,19 +233,50 @@ export default function ModuleDetailPage() {
             {completedExercises} de {totalExercises} ejercicios completados
           </p>
 
+          {/* Mission Active Banner */}
+          {activeMissionId && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 flex items-center gap-2 rounded-lg border border-orange-300 bg-orange-100 px-3 py-2 text-sm text-orange-800"
+            >
+              <Target className="h-4 w-4 flex-shrink-0 text-orange-600" />
+              <span>
+                Mision activa &mdash; {exerciseTypeFilter
+                  ? `Completa los ejercicios de tipo "${exerciseTypeFilter.replace(/_/g, ' ')}" para progresar`
+                  : 'Completa los ejercicios marcados para progresar'}
+              </span>
+            </motion.div>
+          )}
+
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {exercises.map((exercise, index) => (
-              <ColorfulCard
-                key={exercise.id}
-                id={exercise.id}
-                hover={!exercise.completed}
-                padding="md"
-                onClick={exercise.completed ? undefined : () => navigate(`/exercises/${exercise.id}`)}
-                animationDelay={index * 0.1}
-              >
-                <ExerciseCard exercise={exercise} completed={Boolean(exercise.completed)} />
-              </ColorfulCard>
-            ))}
+            {exercises.map((exercise, index) => {
+              const isMissionTarget = exerciseTypeFilter && exercise.exercise_type === exerciseTypeFilter;
+              return (
+                <div key={exercise.id} className="relative">
+                  {/* Mission target badge */}
+                  {isMissionTarget && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -right-1 -top-1 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-xs font-bold text-white shadow-md"
+                    >
+                      Mision
+                    </motion.span>
+                  )}
+                  <ColorfulCard
+                    id={exercise.id}
+                    hover={!exercise.completed}
+                    padding="md"
+                    onClick={exercise.completed ? undefined : () => navigate(`/exercises/${exercise.id}`)}
+                    animationDelay={index * 0.1}
+                    className={isMissionTarget ? 'ring-2 ring-orange-400 ring-offset-1' : undefined}
+                  >
+                    <ExerciseCard exercise={exercise} completed={Boolean(exercise.completed)} />
+                  </ColorfulCard>
+                </div>
+              );
+            })}
           </div>
 
           {exercises.length === 0 && (
@@ -271,6 +291,6 @@ export default function ModuleDetailPage() {
 
         <div className="h-16" />
       </div>
-    </div>
+    </StudentPageShell>
   );
 }

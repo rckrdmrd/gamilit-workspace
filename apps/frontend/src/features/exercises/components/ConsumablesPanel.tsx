@@ -24,7 +24,7 @@ interface ComodinConfig {
   type: ComodinType;
   label: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   iconColor: string;
   bgColor: string;
 }

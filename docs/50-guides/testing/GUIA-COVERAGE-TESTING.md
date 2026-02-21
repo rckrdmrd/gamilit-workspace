@@ -39,12 +39,12 @@
 ```
 1. SERVICES (alta prioridad)
    - Logica de negocio critica
-   - 170 services, ~30% cubiertos
+   - 173 services, ~30% cubiertos
    - ROI mas alto: 1 test = 1 regla de negocio validada
 
 2. CONTROLLERS (media prioridad)
    - Validacion de DTOs, guards, rutas
-   - 107 controllers
+   - 108 controllers
    - Tests de integracion ligeros
 
 3. GUARDS / INTERCEPTORS (alta prioridad)
@@ -54,12 +54,12 @@
 
 4. ENTITIES (baja prioridad)
    - Validacion de relaciones y transformers
-   - 152 entities
+   - 155 entity files (156 classes)
    - La mayoria se valida indirectamente via services
 
 5. FRONTEND COMPONENTS (media prioridad)
    - Componentes criticos: auth, exercises, gamification
-   - 475 componentes, 46 tests actuales (~10%)
+   - 580 componentes, 46 tests actuales (~10%)
    - Priorizar: formularios, integracion API, estado
 ```
 

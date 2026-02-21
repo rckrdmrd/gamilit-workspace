@@ -52,15 +52,12 @@ class NotificationService {
    */
   async getUserNotifications(userId: string): Promise<Notification[]> {
     try {
-      console.log('🔍 Loading notifications for user:', userId);
-
       // Try to fetch notifications from API (backend handles user from JWT token)
       const response = await apiClient.get<{ success: boolean; data: Notification[] }>(
         `/notifications`,
       );
 
       if (response.data?.success && response.data.data && response.data.data.length > 0) {
-        console.log('✅ Real notifications loaded from API:', response.data.data.length);
         return response.data.data.map((n) => ({
           ...n,
           timestamp: this.getRelativeTime(n.timestamp),
@@ -68,7 +65,6 @@ class NotificationService {
       }
 
       // Fallback: Generate enhanced notifications
-      console.log('📱 Generating fallback notifications...');
       return this.generateEnhancedFallbackNotifications(userId);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -214,8 +210,6 @@ class NotificationService {
    * Enhanced fallback for API failures
    */
   private generateEnhancedFallbackNotifications(userId: string): Notification[] {
-    console.log('🔄 Generating enhanced fallback notifications...');
-
     // Combine static detective notifications with dynamic ones
     const staticNotifications = this.getDefaultNotifications();
     const dynamicNotifications = this.generateDynamicNotifications(userId);
@@ -266,9 +260,8 @@ class NotificationService {
         userId,
       });
 
-      console.log('✅ Notification marked as read');
     } catch (_error) {
-      console.log('Could not mark notification as read via API, storing locally');
+      // API unavailable, store locally as fallback
       // Store in localStorage as fallback
       const readNotifications = JSON.parse(localStorage.getItem('glit_read_notifications') || '[]');
       if (!readNotifications.includes(notificationId)) {
@@ -306,7 +299,6 @@ class NotificationService {
         read: false,
       });
 
-      console.log('✅ Notification created via API');
     } catch (error) {
       console.error('Error creating notification:', error);
     }

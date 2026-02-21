@@ -481,7 +481,7 @@ export class WebhookService {
 
 > Referencia oficial: https://owasp.org/API-Security/
 >
-> Las APIs representan la superficie de ataque principal en aplicaciones modernas. gamilit expone 899 endpoints REST que requieren proteccion especifica mas alla del OWASP Top 10 web tradicional. Esta seccion cubre los 10 riesgos criticos de seguridad en APIs segun OWASP 2023, con ejemplos concretos del stack NestJS 11 + TypeORM + PostgreSQL de gamilit.
+> Las APIs representan la superficie de ataque principal en aplicaciones modernas. gamilit expone 905 endpoints REST que requieren proteccion especifica mas alla del OWASP Top 10 web tradicional. Esta seccion cubre los 10 riesgos criticos de seguridad en APIs segun OWASP 2023, con ejemplos concretos del stack NestJS 11 + TypeORM + PostgreSQL de gamilit.
 
 ---
 
@@ -1122,7 +1122,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 ### 1B.9 API9:2023 — Improper Inventory Management
 
-**Riesgo:** Endpoints obsoletos, no documentados, o de versiones anteriores quedan expuestos sin proteccion. En gamilit con 899 endpoints, mantener un inventario preciso es critico para evitar superficies de ataque desconocidas.
+**Riesgo:** Endpoints obsoletos, no documentados, o de versiones anteriores quedan expuestos sin proteccion. En gamilit con 905 endpoints, mantener un inventario preciso es critico para evitar superficies de ataque desconocidas.
 
 **Mitigacion en gamilit:**
 
@@ -1165,14 +1165,14 @@ export class ExercisesController {
 # orchestration/inventarios/BACKEND_INVENTORY.yml
 # Inventario SSOT sincronizado con el codigo fuente
 endpoints:
-  total: 899
+  total: 905
   por_modulo:
     auth: 12
     educational: 187
     gamification: 134
     admin: 98
     teacher: 156
-    # ... (22 modulos documentados)
+    # ... (23 modulos documentados)
 
   auditoria:
     ultima_fecha: 2026-02-14
@@ -1182,7 +1182,7 @@ endpoints:
 ```
 
 **Controles obligatorios:**
-- Todos los 899 endpoints documentados con decoradores Swagger (`@ApiTags`, `@ApiOperation`)
+- Todos los 905 endpoints documentados con decoradores Swagger (`@ApiTags`, `@ApiOperation`)
 - Inventario SSOT en `BACKEND_INVENTORY.yml` sincronizado con codigo fuente
 - Auditar periodicamente endpoints sin `@UseGuards()` — solo health y docs deben ser publicos
 - Versionado de API con prefijo `/api/v1/` para facilitar deprecacion

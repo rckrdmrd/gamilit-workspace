@@ -18,6 +18,7 @@ import { ExerciseValidatorService } from '../exercise-validator.service';
 import { Exercise } from '@/modules/educational/entities';
 import { createMockRepository } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
+import { ExerciseAnswerValidator } from '../../../dto/answers';
 
 describe('ExerciseValidatorService', () => {
   let service: ExerciseValidatorService;
@@ -39,6 +40,10 @@ describe('ExerciseValidatorService', () => {
     service = module.get<ExerciseValidatorService>(ExerciseValidatorService);
 
     jest.clearAllMocks();
+
+    // Mock ExerciseAnswerValidator.validate to avoid DTO structure validation
+    // interfering with type-specific validator tests (must be after clearAllMocks)
+    jest.spyOn(ExerciseAnswerValidator, 'validate').mockResolvedValue(undefined);
   });
 
   describe('Service Definition', () => {
@@ -123,7 +128,7 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('al menos 150 palabras'),
       );
       expect(result.metadata?.wordCount).toBe(50);
@@ -207,7 +212,7 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('al menos 4 paneles'),
       );
     });
@@ -228,7 +233,7 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('contenido (texto o imagen)'),
       );
     });
@@ -310,7 +315,7 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('subir o proporcionar la URL de tu video'),
       );
     });
@@ -329,7 +334,7 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('al menos 30 segundos'),
       );
     });

@@ -1,7 +1,7 @@
 # ERR-INT-003: Modulo Registrado sin Entidades en Datasource
 
 ## Descripcion
-Un modulo NestJS esta importado en `app.module.ts` pero sus entidades no estan incluidas en ninguno de los 10 datasources de TypeORM, causando errores de metadata al intentar inyectar repositorios. Con 152 entities distribuidas en 10 datasources, es facil omitir la configuracion de entities al agregar o mover modulos.
+Un modulo NestJS esta importado en `app.module.ts` pero sus entidades no estan incluidas en ninguno de los 10 datasources de TypeORM, causando errores de metadata al intentar inyectar repositorios. Con 155 entity files distribuidas en 11 datasources, es facil omitir la configuracion de entities al agregar o mover modulos.
 
 ## Sintomas
 - Error: `No metadata for "EntityName" was found. Entity metadata was not found.`

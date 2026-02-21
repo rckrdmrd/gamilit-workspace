@@ -71,7 +71,7 @@ export default function AdminMonitoringPage() {
         <AdminTabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} variant="underline" />
 
         {/* Tab Content */}
-        <div className="mt-6">
+        <div className="mt-6" role="region" aria-label={`Contenido de pestana: ${TABS.find(t => t.id === activeTab)?.label ?? activeTab}`}>
           {activeTab === 'logs' && <LogsViewer />}
 
           {activeTab === 'metrics' && (

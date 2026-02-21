@@ -5,7 +5,7 @@
  * @module teacher/services/exercise-responses
  */
 
-import { Injectable, NotFoundException, ForbiddenException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ForbiddenException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { ExerciseAttempt } from '@/modules/progress/entities/exercise-attempt.entity';
@@ -35,6 +35,8 @@ import {
  */
 @Injectable()
 export class ExerciseResponsesService {
+  private readonly logger = new Logger(ExerciseResponsesService.name);
+
   constructor(
     @InjectRepository(ExerciseAttempt, 'progress')
     private readonly attemptRepository: Repository<ExerciseAttempt>,
@@ -106,7 +108,7 @@ export class ExerciseResponsesService {
         '(c.teacher_id = $1 OR EXISTS (SELECT 1 FROM social_features.teacher_classrooms tc WHERE tc.teacher_id = $1 AND tc.classroom_id = c.id))',
         'profile.tenant_id = $2',
       ];
-      const params: any[] = [teacherId, tenantId];
+      const params: unknown[] = [teacherId, tenantId];
       let paramIndex = 3;
 
       if (query.student_id) {
@@ -251,7 +253,7 @@ export class ExerciseResponsesService {
 
       // Transform raw results to DTOs
       // FIX TASK-2026-01-18-007: Use requires_manual_grading from BD instead of hardcoded constant
-      const data: AttemptResponseDto[] = rawResults.map((row: any) => ({
+      const data: AttemptResponseDto[] = rawResults.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: row.attempt_id,
         student_id: row.attempt_user_id,
         student_name: `${row.profile_first_name || ''} ${row.profile_last_name || ''}`.trim() || 'Unknown',
@@ -280,10 +282,11 @@ export class ExerciseResponsesService {
         total_pages: Math.ceil(total / limit),
         stats, // P2-03: Include server-calculated stats
       };
-    } catch (error: any) {
-      console.error('ExerciseResponsesService.getAttempts ERROR:', error);
+    } catch (error: unknown) {
+      this.logger.error(`getAttempts failed: ${error instanceof Error ? error.message : error}`);
+      const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(
-        `getAttempts failed: ${error?.message || String(error)}`,
+        `getAttempts failed: ${message}`,
       );
     }
   }
@@ -401,7 +404,7 @@ export class ExerciseResponsesService {
     }
 
     // Parse exercise content if it's a string
-    let exerciseContent: any = {};
+    let exerciseContent: Record<string, unknown> = {};
     if (row.exercise_content) {
       try {
         exerciseContent = typeof row.exercise_content === 'string'
@@ -448,7 +451,7 @@ export class ExerciseResponsesService {
    * Extract correct answers from exercise content based on exercise type
    * Different exercise types store correct answers in different fields
    */
-  private extractCorrectAnswers(content: any, exerciseType: string): Record<string, unknown> {
+  private extractCorrectAnswers(content: any, exerciseType: string): Record<string, unknown> { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!content) return {};
 
     // Try common correct answer fields first
@@ -464,7 +467,7 @@ export class ExerciseResponsesService {
         // DB stores: stmt.answer (boolean), not correctAnswer or isTrue
         if (content.statements && Array.isArray(content.statements)) {
           const statements: Record<string, boolean> = {};
-          content.statements.forEach((stmt: any, idx: number) => {
+          (content.statements).forEach((stmt: any, idx: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
             // Use stmt.id if available, otherwise use index+1
             const key = stmt.id ? String(stmt.id) : String(idx + 1);
             // Priority: answer (DB field) > correctAnswer > isTrue > false
@@ -478,7 +481,7 @@ export class ExerciseResponsesService {
         // Extract correctAnswer from blanks
         if (content.blanks && Array.isArray(content.blanks)) {
           const blanks: Record<string, string> = {};
-          content.blanks.forEach((blank: any, idx: number) => {
+          (content.blanks).forEach((blank: any, idx: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
             blanks[String(idx + 1)] = blank.correctAnswer || blank.answer || '';
           });
           return { blanks };
@@ -492,11 +495,11 @@ export class ExerciseResponsesService {
         }
         if (content.across_clues || content.down_clues) {
           const words: Record<string, string> = {};
-          (content.across_clues || []).forEach((clue: any) => {
-            if (clue.answer) words[`H${clue.number}`] = clue.answer;
+          ((content.across_clues || [])).forEach((clue: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+            if (clue.answer) words[`H${clue.number}`] = clue.answer as string;
           });
-          (content.down_clues || []).forEach((clue: any) => {
-            if (clue.answer) words[`V${clue.number}`] = clue.answer;
+          ((content.down_clues || [])).forEach((clue: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+            if (clue.answer) words[`V${clue.number}`] = clue.answer as string;
           });
           return { words };
         }
@@ -518,7 +521,7 @@ export class ExerciseResponsesService {
         // Multiple choice - extract from questions
         if (content.questions && Array.isArray(content.questions)) {
           const answers: Record<string, string | number> = {};
-          content.questions.forEach((q: any, idx: number) => {
+          (content.questions).forEach((q: any, idx: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
             answers[`question_${idx + 1}`] = q.correctAnswer ?? q.correct_answer ?? '';
           });
           return answers;

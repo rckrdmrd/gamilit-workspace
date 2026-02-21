@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Mail, Smartphone, Trophy, BookOpen, Flame } from 'lucide-react';
@@ -164,7 +163,7 @@ export const NotificationsSection: React.FC = () => {
       setSaveStatus('error');
       const msg =
         error instanceof Error
-          ? ((error as any).response?.data?.message || error.message)
+          ? ((error as { response?: { data?: { message?: string } } }).response?.data?.message || error.message)
           : 'Error al guardar preferencias';
       toast.error(msg);
       setTimeout(() => setSaveStatus('idle'), 3000);

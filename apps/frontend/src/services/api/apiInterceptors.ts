@@ -3,9 +3,21 @@
  *
  * Additional request/response interceptors for logging, caching, and monitoring
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+
+/** Extended config with metadata for performance tracking */
+interface ConfigWithMetadata extends InternalAxiosRequestConfig {
+  metadata?: { startTime: number };
+  noCache?: boolean;
+}
+
+/** Extended response with cache metadata */
+interface ResponseWithCacheMeta extends AxiosResponse {
+  cacheMetadata?: {
+    cached: boolean;
+    expiresAt: string;
+  };
+}
 
 // ============================================================================
 // REQUEST INTERCEPTORS
@@ -23,7 +35,7 @@ export const timestampInterceptor = (
   }
 
   // Store start time for performance monitoring
-  (config as any).metadata = { startTime: Date.now() };
+  (config as ConfigWithMetadata).metadata = { startTime: Date.now() };
 
   return config;
 };
@@ -68,7 +80,7 @@ export const cacheControlInterceptor = (
   // Add cache control headers for GET requests
   if (config.method?.toLowerCase() === 'get' && config.headers) {
     // Check if cache is explicitly disabled
-    const noCache = (config as any).noCache;
+    const noCache = (config as ConfigWithMetadata).noCache;
 
     if (noCache) {
       config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
@@ -88,15 +100,10 @@ export const cacheControlInterceptor = (
  * Performance monitoring interceptor
  */
 export const performanceInterceptor = (response: AxiosResponse): AxiosResponse => {
-  const config = response.config as any;
+  const config = response.config as ConfigWithMetadata;
 
   if (config.metadata?.startTime) {
     const duration = Date.now() - config.metadata.startTime;
-
-    // Log slow requests (> 3 seconds)
-    if (duration > 3000) {
-      console.warn(`[API] Slow request detected: ${config.url} took ${duration}ms`);
-    }
 
     // Add duration to response for monitoring
     response.headers['X-Response-Time'] = `${duration}ms`;
@@ -119,7 +126,7 @@ export const cacheResponseInterceptor = (response: AxiosResponse): AxiosResponse
       const maxAge = parseInt(maxAgeMatch[1]);
 
       // Add cache metadata to response
-      (response as any).cacheMetadata = {
+      (response as ResponseWithCacheMeta).cacheMetadata = {
         cached: false,
         expiresAt: new Date(Date.now() + maxAge * 1000).toISOString(),
       };
@@ -182,41 +189,17 @@ const transformDates = <T>(obj: T): T => {
  */
 export const loggerInterceptor = {
   request: (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-    if (import.meta.env.VITE_DEBUG_API === 'true') {
-      console.group(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
-      console.log('Headers:', config.headers);
-      console.log('Data:', config.data);
-      console.log('Params:', config.params);
-      console.groupEnd();
-    }
+    // Logging removed — use browser Network tab for request debugging
     return config;
   },
 
   response: (response: AxiosResponse): AxiosResponse => {
-    if (import.meta.env.VITE_DEBUG_API === 'true') {
-      const config = response.config;
-      const duration = (config as any).metadata?.startTime
-        ? Date.now() - (config as any).metadata.startTime
-        : 0;
-
-      console.group(`[API Response] ${response.status} ${config.url} (${duration}ms)`);
-      console.log('Headers:', response.headers);
-      console.log('Data:', response.data);
-      console.groupEnd();
-    }
+    // Logging removed — use browser Network tab for response debugging
     return response;
   },
 
   error: (error: unknown): Promise<never> => {
-    if (import.meta.env.VITE_DEBUG_API === 'true') {
-      const axiosError = error as { config?: { url?: string }; response?: { status?: number; data?: unknown }; message?: string };
-      console.group('[API Error]');
-      console.error('URL:', axiosError.config?.url);
-      console.error('Status:', axiosError.response?.status);
-      console.error('Message:', axiosError.message);
-      console.error('Data:', axiosError.response?.data);
-      console.groupEnd();
-    }
+    // Logging removed — use browser Network tab for error debugging
     return Promise.reject(error);
   },
 };

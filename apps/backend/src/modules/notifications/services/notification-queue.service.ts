@@ -298,7 +298,7 @@ export class NotificationQueueService {
    * @param item - Item que falló
    * @param error - Error capturado (opcional)
    */
-  private handleFailure(item: NotificationQueue, error?: any): void {
+  private handleFailure(item: NotificationQueue, error?: any): void { // eslint-disable-line @typescript-eslint/no-explicit-any
     item.attempts++;
 
     if (item.attempts >= 3) {

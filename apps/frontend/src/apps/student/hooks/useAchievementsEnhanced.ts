@@ -3,8 +3,6 @@
  * Enhanced hook with comprehensive filtering, search, and statistics
  * ~300 lines
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
 import type {
@@ -27,7 +25,7 @@ export interface UseAchievementsEnhancedResult {
 
   // Filters
   filters: AchievementFiltersState;
-  setFilter: (key: keyof AchievementFiltersState, value: any) => void;
+  setFilter: (key: keyof AchievementFiltersState, value: AchievementFiltersState[keyof AchievementFiltersState]) => void;
   clearFilters: () => void;
 
   // Navigation
@@ -264,7 +262,7 @@ export const useAchievementsEnhanced = (userId?: string): UseAchievementsEnhance
   }, [achievements]);
 
   // Filter management
-  const setFilter = useCallback((key: keyof AchievementFiltersState, value: any) => {
+  const setFilter = useCallback((key: keyof AchievementFiltersState, value: AchievementFiltersState[keyof AchievementFiltersState]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
@@ -304,10 +302,8 @@ export const useAchievementsEnhanced = (userId?: string): UseAchievementsEnhance
     setError(null);
     try {
       if (userId) {
-        console.log('[useAchievementsEnhanced] Fetching achievements for userId:', userId);
         await fetchAchievements(userId);
       } else {
-        console.log('[useAchievementsEnhanced] No userId, only refreshing stats');
         refreshAchievements();
       }
     } catch (err) {
@@ -321,7 +317,6 @@ export const useAchievementsEnhanced = (userId?: string): UseAchievementsEnhance
   // FIX: CORR-ACH-002 - Solo hacer fetch si hay userId y el store esta vacio
   useEffect(() => {
     if (userId && achievements.length === 0) {
-      console.log('[useAchievementsEnhanced] Initial fetch triggered for userId:', userId);
       refresh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

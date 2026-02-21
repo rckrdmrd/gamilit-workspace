@@ -54,14 +54,14 @@ export const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ metrics 
               {metrics?.storageUsed !== null && metrics?.storageUsed !== undefined ? (
                 <>{metrics.storageUsed.toFixed(1)} GB</>
               ) : (
-                <span className="text-gray-500">N/A</span>
+                <span className="text-detective-text-secondary">N/A</span>
               )}
             </p>
             <p className="mt-1 text-xs text-detective-text-secondary">
               {metrics?.storageTotal !== null && metrics?.storageTotal !== undefined ? (
                 <>de {metrics.storageTotal} GB</>
               ) : (
-                <span className="text-gray-500">No disponible</span>
+                <span className="text-detective-text-secondary">No disponible</span>
               )}
             </p>
           </div>
@@ -79,7 +79,7 @@ export const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ metrics 
               metrics?.flaggedContentCount !== undefined ? (
                 metrics.flaggedContentCount
               ) : (
-                <span className="text-gray-500">N/A</span>
+                <span className="text-detective-text-secondary">N/A</span>
               )}
             </p>
             <p className="mt-1 text-xs text-detective-text-secondary">Requiere revision</p>

@@ -6,7 +6,7 @@
 
 ## Contexto
 
-En el desarrollo de gamilit (MVP 98% completado, 22 modulos, 152 entities, 899 endpoints), la gestion de tareas presentaba problemas criticos:
+En el desarrollo de gamilit (MVP 98% completado, 23 modulos, 155 entities (156 classes), 905 endpoints), la gestion de tareas presentaba problemas criticos:
 
 1. **Falta de estructura:** Tareas documentadas de forma inconsistente o no documentadas
 2. **Trazabilidad perdida:** Imposible rastrear que cambio se hizo, cuando y por que
@@ -26,7 +26,7 @@ Implementar el **Sistema de Gobernanza de Tareas** basado en el ciclo **CAPVED**
 ```
 +-----------------------------------------------------------------------------+
 | C - CONTEXTO                                                                 |
-| - Vincular tarea a modulo/epic (22 modulos core + educativos)               |
+| - Vincular tarea a modulo/epic (23 modulos core + educativos)               |
 | - Clasificar tipo: feature | fix | refactor | spike | doc-only              |
 | - Registrar origen: plan-original | descubrimiento | incidencia             |
 | - Cargar documentos SIMCO relevantes (DDL, Backend, Frontend)               |
@@ -37,7 +37,7 @@ Implementar el **Sistema de Gobernanza de Tareas** basado en el ciclo **CAPVED**
 | A - ANALISIS                                                                 |
 | - Comportamiento deseado (perspectiva de producto)                          |
 | - Restricciones: seguridad, performance, UX, gamificacion                   |
-| - Objetos impactados: BD (169 tablas), Backend (152 entities), Frontend     |
+| - Objetos impactados: BD (169 tablas), Backend (155 entities), Frontend     |
 | - Dependencias con otras tareas (bloquea/bloqueada por)                     |
 | - Salida: Lista de objetos + dependencias + riesgos                         |
 +-----------------------------------------------------------------------------+
@@ -100,8 +100,8 @@ Implementar el **Sistema de Gobernanza de Tareas** basado en el ciclo **CAPVED**
 [ ] Typecheck frontend pasa: cd apps/frontend && npm run typecheck
 
 ## Coherencia Entre Capas (CRITICO)
-[ ] DDL <-> Backend verificado (169 tablas = 152 entities coherentes)
-[ ] Backend <-> Frontend verificado (899 endpoints documentados)
+[ ] DDL <-> Backend verificado (169 tablas = 155 entity files coherentes)
+[ ] Backend <-> Frontend verificado (905 endpoints documentados)
 [ ] Si cambio DDL: BD recreada con recreate-database.sh
 
 ## Inventarios (SSOT)

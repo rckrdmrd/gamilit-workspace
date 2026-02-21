@@ -52,11 +52,6 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
         answers: { questions: userAnswers }, // FE-066: Wrap in 'questions' key to match DTO
       });
 
-      console.log('📊 [LecturaInferencial] Progress update sent:', {
-        answered: answeredCount,
-        totalQuestions: questions.length,
-        answersFormat: Object.keys(userAnswers).length > 0 ? 'valid' : 'empty',
-      });
     }
   }, [selectedAnswers, validated, startTime, onProgressUpdate, questions.length]);
 
@@ -166,11 +161,6 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [LecturaInferencial] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [LecturaInferencial] Submission error:', error);
       setFeedback({

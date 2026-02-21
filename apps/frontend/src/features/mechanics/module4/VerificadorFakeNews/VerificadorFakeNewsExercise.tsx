@@ -16,6 +16,7 @@ import {
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   exerciseId,
@@ -49,7 +50,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
         setFeedback({
             type: 'info',
             title: 'Verificación Enviada',
-            message: 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -71,11 +72,11 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema al enviar tu verificación. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema al enviar tu verificación. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);
@@ -118,10 +119,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
       const sanitizedClaimId = r.claimId && r.claimId.trim() !== ''
         ? r.claimId
         : `claim-fallback-${idx + 1}`;
-
-      if (!r.claimId || r.claimId.trim() === '') {
-        console.warn(`[VerificadorFakeNews CORR-010] onProgressUpdate: Fixed missing claimId at index ${idx}`);
-      }
 
       return {
         claim_id: sanitizedClaimId,
@@ -201,7 +198,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
     // Guard against empty array to prevent division by zero
     if (articleResults.length === 0) {
-      console.warn('[VerificadorFakeNews] No mock results available for article:', selectedArticleId);
       return;
     }
 
@@ -247,10 +243,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
         ? r.claimId
         : `claim-fallback-${idx + 1}`;
 
-      if (!r.claimId || r.claimId.trim() === '') {
-        console.warn(`[VerificadorFakeNews CORR-010] handleSubmit: Fixed missing claimId at index ${idx}`);
-      }
-
       return {
         claim_id: sanitizedClaimId,
         // Convert verdict to is_fake boolean: 'false' verdict means IS fake news
@@ -261,10 +253,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
           : `Verificado: ${originalClaim?.text?.substring(0, 50) || 'Afirmación analizada'}. Confianza: ${Math.round(r.confidence * 100)}%`,
       };
     });
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[VerificadorFakeNews CORR-010] Submitting claims_verified:', claims_verified);
-    }
 
     // Build submission with both formats for backwards compatibility
     const submissionData = {

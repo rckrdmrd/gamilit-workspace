@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
+import { GamificationOverlay } from '@/features/gamification/components/GamificationOverlay';
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
@@ -98,7 +99,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // User is authenticated and has required role (if specified)
-  return <>{children}</>;
+  return (
+    <>
+      <GamificationOverlay />
+      {children}
+    </>
+  );
 };
 
 /**

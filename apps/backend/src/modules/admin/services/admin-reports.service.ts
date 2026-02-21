@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { promises as fs } from 'fs';
-import { join } from 'path';
+import { join, resolve, basename } from 'path';
 import PDFDocument from 'pdfkit';
 import { Workbook } from 'exceljs';
 import { stringify } from 'csv-stringify/sync';
@@ -89,10 +89,12 @@ export class AdminReportsService {
     try {
       await fs.mkdir(this.REPORTS_DIR, { recursive: true });
       this.logger.log(`Reports directory ensured: ${this.REPORTS_DIR}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error creating reports directory: ${error.message}`,
-        error.stack,
+        `Error creating reports directory: ${message}`,
+        stack,
       );
     }
   }
@@ -265,31 +267,37 @@ export class AdminReportsService {
    */
   private async deleteReportFile(fileUrl: string): Promise<void> {
     try {
-      // Extraer nombre de archivo de la URL (/reports/filename.pdf → filename.pdf)
-      const fileName = fileUrl.split('/').pop();
+      // Extraer nombre de archivo de la URL (basename prevents path traversal)
+      const fileName = basename(fileUrl);
       if (!fileName) {
         this.logger.warn(`Invalid file URL: ${fileUrl}`);
         return;
       }
 
-      const filePath = join(this.REPORTS_DIR, fileName);
+      const filePath = resolve(this.REPORTS_DIR, fileName);
+      if (!filePath.startsWith(resolve(this.REPORTS_DIR))) {
+        this.logger.warn(`Path traversal attempt blocked: ${fileUrl}`);
+        return;
+      }
 
       // Verificar si el archivo existe antes de eliminar
       try {
         await fs.access(filePath);
         await fs.unlink(filePath);
         this.logger.log(`Report file deleted: ${fileName}`);
-      } catch (error: any) {
-        if (error.code === 'ENOENT') {
+      } catch (error: unknown) {
+        if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
           this.logger.warn(`Report file not found (already deleted?): ${fileName}`);
         } else {
           throw error;
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error deleting report file ${fileUrl}: ${error.message}`,
-        error.stack,
+        `Error deleting report file ${fileUrl}: ${message}`,
+        stack,
       );
     }
   }
@@ -342,10 +350,12 @@ export class AdminReportsService {
       this.logger.log(
         `Cleanup completed: ${expiredReports.length} expired reports deleted (${filesDeleted} files removed from storage)`,
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error during cleanup of expired reports: ${error.message}`,
-        error.stack,
+        `Error during cleanup of expired reports: ${message}`,
+        stack,
       );
     }
   }
@@ -419,16 +429,18 @@ export class AdminReportsService {
       this.logger.log(
         `Report ${reportId} generated successfully - File: ${fileName} (${stats.size} bytes)`,
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Error generating report ${reportId}: ${error.message}`,
-        error.stack,
+        `Error generating report ${reportId}: ${message}`,
+        stack,
       );
 
       // Marcar como fallido
       await this.reportRepo.update(reportId, {
         status: 'failed',
-        error_message: error.message,
+        error_message: message,
         completed_at: new Date(),
       });
     }
@@ -437,7 +449,7 @@ export class AdminReportsService {
   /**
    * Obtiene los datos para el reporte según su tipo
    */
-  private async fetchReportData(report: AdminReport): Promise<any[]> {
+  private async fetchReportData(report: AdminReport): Promise<Record<string, unknown>[]> {
     switch (report.report_type) {
       case 'users': {
         const users = await this.userRepo.find({
@@ -484,7 +496,7 @@ export class AdminReportsService {
   /**
    * Genera contenido PDF para el reporte
    */
-  private async generatePdfContent(report: AdminReport, data: any[]): Promise<Buffer> {
+  private async generatePdfContent(report: AdminReport, data: Record<string, unknown>[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
       const doc = new PDFDocument({ margin: 50 });
@@ -543,7 +555,7 @@ export class AdminReportsService {
   /**
    * Genera contenido Excel para el reporte
    */
-  private async generateExcelContent(report: AdminReport, data: any[]): Promise<Buffer> {
+  private async generateExcelContent(report: AdminReport, data: Record<string, unknown>[]): Promise<Buffer> {
     const workbook = new Workbook();
     workbook.creator = 'GAMILIT Platform';
     workbook.created = new Date();
@@ -599,7 +611,7 @@ export class AdminReportsService {
   /**
    * Genera contenido CSV para el reporte
    */
-  private async generateCsvContent(report: AdminReport, data: any[]): Promise<Buffer> {
+  private async generateCsvContent(report: AdminReport, data: Record<string, unknown>[]): Promise<Buffer> {
     if (data.length === 0) {
       return Buffer.from('No se encontraron datos para este reporte\n', 'utf-8');
     }

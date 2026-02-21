@@ -90,25 +90,18 @@ export function useModuleDetail(moduleId: string, userId?: string): UseModuleDet
         setModule(moduleResponse.data);
 
         // Fetch exercises for this specific module using the correct endpoint
-        console.log(`[useModuleDetail] Fetching exercises for module: ${moduleId}`);
         const exercisesResponse = await apiClient.get(`/educational/modules/${moduleId}/exercises`);
 
         // apiClient unwraps the response automatically
         // Backend sends: { success: true, data: [...], ... }
         // apiClient extracts: [...]
         const moduleExercises = exercisesResponse.data;
-        console.log(`[useModuleDetail] Exercises API response:`, exercisesResponse);
-        console.log(`[useModuleDetail] Module exercises:`, moduleExercises);
 
         // Sort by order_index (backend should already sort, but ensure order)
         const sortedExercises = Array.isArray(moduleExercises)
           ? moduleExercises.sort((a: Exercise, b: Exercise) => a.order_index - b.order_index)
           : [];
 
-        console.log(
-          `[useModuleDetail] Final sorted exercises (${sortedExercises.length}):`,
-          sortedExercises,
-        );
         setExercises(sortedExercises);
 
         // ✅ FIX: Fetch user progress for this module if userId is provided
@@ -118,10 +111,8 @@ export function useModuleDetail(moduleId: string, userId?: string): UseModuleDet
               `/progress/users/${userId}/modules/${moduleId}`,
             );
             setProgress(progressResponse.data);
-            console.log('[useModuleDetail] Progress fetched:', progressResponse.data);
           } catch (_progressErr) {
             // Progress not found is ok - user hasn't started module yet
-            console.log('[useModuleDetail] No progress found for module:', moduleId);
             setProgress(null);
           }
         }

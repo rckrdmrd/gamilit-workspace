@@ -73,10 +73,6 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
         answers: { matches },
       });
 
-      console.log('📊 [Emparejamiento] Progress update sent:', {
-        matchedPairs,
-        totalPairs,
-      });
     }
   }, [cards, hintsUsed, onProgressUpdate, startTime]);
 
@@ -126,8 +122,6 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
 
         // Invalidate dashboard to reflect new progress
         await syncAndInvalidate();
-
-        console.log('✅ [Emparejamiento] Submitted to backend:', response);
 
         setFeedback({
           type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
@@ -211,9 +205,9 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
               </span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

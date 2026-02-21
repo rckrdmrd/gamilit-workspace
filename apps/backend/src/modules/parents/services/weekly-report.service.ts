@@ -20,7 +20,8 @@ import {
   ParentNotificationStatus,
 } from '@/modules/auth/entities/parent-notification.entity';
 import { ParentAccount } from '@/modules/auth/entities/parent-account.entity';
-import { ParentStudentLink, LinkStatus } from '@/modules/auth/entities/parent-student-link.entity';
+import { ParentStudentLink } from '@/modules/auth/entities/parent-student-link.entity';
+import { LinkStatus } from '@/modules/parents/enums/parent-student-link.enums';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ReportContentAggregatorService, ProgressData } from './report-content-aggregator.service';
 

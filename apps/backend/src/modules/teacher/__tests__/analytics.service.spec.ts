@@ -15,10 +15,15 @@ import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { Assignment } from '@/modules/assignments/entities/assignment.entity';
 import { AssignmentSubmission } from '@/modules/assignments/entities/assignment-submission.entity';
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { Achievement } from '@/modules/gamification/entities/achievement.entity';
+import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
+import { MasteryTracking } from '@/modules/progress/entities/mastery-tracking.entity';
+import { SkillAssessment } from '@/modules/progress/entities/skill-assessment.entity';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
-  let _studentProgressService: StudentProgressService;
+  let studentProgressService: StudentProgressService;
 
   // Mock repositories
   const mockSubmissionRepository = {
@@ -49,6 +54,34 @@ describe('AnalyticsService', () => {
 
   const mockAssignmentSubmissionRepository = {
     find: jest.fn(),
+  };
+
+  const mockUserStatsRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    createQueryBuilder: jest.fn(),
+    count: jest.fn(),
+  };
+
+  const mockAchievementRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockUserAchievementRepository = {
+    find: jest.fn(),
+    count: jest.fn(),
+    createQueryBuilder: jest.fn(),
+  };
+
+  const mockMasteryTrackingRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockSkillAssessmentRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
   };
 
   // Mock StudentProgressService
@@ -88,12 +121,32 @@ describe('AnalyticsService', () => {
           useValue: mockClassroomMemberRepository,
         },
         {
-          provide: getRepositoryToken(Assignment, 'content'),
+          provide: getRepositoryToken(Assignment, 'educational'),
           useValue: mockAssignmentRepository,
         },
         {
-          provide: getRepositoryToken(AssignmentSubmission, 'content'),
+          provide: getRepositoryToken(AssignmentSubmission, 'educational'),
           useValue: mockAssignmentSubmissionRepository,
+        },
+        {
+          provide: getRepositoryToken(UserStats, 'gamification'),
+          useValue: mockUserStatsRepository,
+        },
+        {
+          provide: getRepositoryToken(Achievement, 'gamification'),
+          useValue: mockAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(UserAchievement, 'gamification'),
+          useValue: mockUserAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(MasteryTracking, 'progress'),
+          useValue: mockMasteryTrackingRepository,
+        },
+        {
+          provide: getRepositoryToken(SkillAssessment, 'progress'),
+          useValue: mockSkillAssessmentRepository,
         },
         {
           provide: StudentProgressService,
@@ -108,6 +161,12 @@ describe('AnalyticsService', () => {
 
     service = module.get<AnalyticsService>(AnalyticsService);
     studentProgressService = module.get<StudentProgressService>(StudentProgressService);
+
+    // Default: cache miss so getStudentInsights computes fresh data
+    mockCacheManager.get.mockResolvedValue(null);
+    // Default: no mastery tracking or skill assessment records
+    mockMasteryTrackingRepository.find.mockResolvedValue([]);
+    mockSkillAssessmentRepository.find.mockResolvedValue([]);
   });
 
   afterEach(() => {

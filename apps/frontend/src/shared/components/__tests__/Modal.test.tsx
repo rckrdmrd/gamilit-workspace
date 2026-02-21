@@ -11,7 +11,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Modal } from '../Modal';
+import { Modal } from '../common/Modal';
 
 // Mock createPortal to render inline for testing
 vi.mock('react-dom', async () => {
@@ -110,7 +110,7 @@ describe('Modal', () => {
   describe('backdrop', () => {
     it('should render backdrop overlay', () => {
       render(<Modal {...defaultProps} />);
-      const backdrop = document.querySelector('.bg-black.bg-opacity-50');
+      const backdrop = document.querySelector('.bg-black\\/50');
       expect(backdrop).toBeInTheDocument();
     });
 
@@ -118,7 +118,7 @@ describe('Modal', () => {
       const onClose = vi.fn();
       render(<Modal {...defaultProps} onClose={onClose} />);
 
-      const backdrop = document.querySelector('.bg-black.bg-opacity-50');
+      const backdrop = document.querySelector('.bg-black\\/50');
       fireEvent.click(backdrop!);
 
       expect(onClose).toHaveBeenCalledTimes(1);

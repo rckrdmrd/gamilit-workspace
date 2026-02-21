@@ -23,7 +23,7 @@ export const TimelineEvent: React.FC<TimelineEventProps> = ({ event, index }) =>
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-blue-600">
           <Calendar className="w-4 h-4" />
-          <span className="hidden">{event.year}</span>
+          <span className="text-sm font-bold text-detective-text">{event.year}</span>
         </div>
       </DetectiveCard>
     </motion.div>

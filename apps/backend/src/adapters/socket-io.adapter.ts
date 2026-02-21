@@ -22,6 +22,7 @@ export class SocketIOAdapter extends IoAdapter {
     super(app);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createIOServer(port: number, options?: ServerOptions): any {
     const serverOptions: Partial<ServerOptions> = {
       ...options,

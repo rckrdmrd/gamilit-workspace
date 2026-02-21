@@ -7,8 +7,6 @@
  * Data transformations (snake_case -> camelCase, null guards, default values)
  * are applied inside `select` so consumers receive validated, ready-to-use data.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gamificationConfigApi } from '@/services/api/admin/gamificationConfigApi';
 import type {
@@ -248,8 +246,9 @@ export function useGamificationConfig() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.stats() });
       toast.success('Parámetro actualizado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al actualizar parámetro');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al actualizar parámetro');
     },
   });
 
@@ -263,8 +262,9 @@ export function useGamificationConfig() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.parameter(key) });
       toast.success('Parámetro reseteado a valor por defecto');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al resetear parámetro');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al resetear parámetro');
     },
   });
 
@@ -278,8 +278,9 @@ export function useGamificationConfig() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.stats() });
       toast.success('Parámetros actualizados en masa correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error en actualización masiva');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error en actualización masiva');
     },
   });
 
@@ -294,8 +295,9 @@ export function useGamificationConfig() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.mayaRank(variables.id) });
       toast.success('Rango Maya actualizado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al actualizar rango');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al actualizar rango');
     },
   });
 
@@ -304,8 +306,9 @@ export function useGamificationConfig() {
    */
   const previewImpact = useMutation({
     mutationFn: (data: PreviewImpactDto) => gamificationConfigApi.previewImpact(data),
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al generar preview');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al generar preview');
     },
   });
 
@@ -321,8 +324,9 @@ export function useGamificationConfig() {
       // Invalidate all gamification queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['gamification'] });
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al restaurar valores por defecto');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al restaurar valores por defecto');
     },
   });
 

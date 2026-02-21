@@ -136,7 +136,7 @@ export class AdminProgressService {
       total_students: parseInt(classroom.total_students || '0'),
       active_students: parseInt(classroom.active_students || '0'),
       avg_class_progress_percent: parseFloat(classroom.avg_class_progress_percent || '0'),
-      students: studentsResult.map((row: any) => ({
+      students: studentsResult.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         user_id: row.user_id,
         display_name: row.display_name,
         email: row.email,
@@ -300,7 +300,7 @@ export class AdminProgressService {
 
     return {
       user_info: userInfo,
-      modules_progress: moduleProgressResult.map((row: any) => ({
+      modules_progress: moduleProgressResult.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: row.id,
         module_id: row.module_id,
         module_title: row.module_title,
@@ -317,7 +317,7 @@ export class AdminProgressService {
         classroom_id: row.classroom_id,
         classroom_name: row.classroom_name,
       })),
-      recent_submissions: submissionsResult.map((row: any) => ({
+      recent_submissions: submissionsResult.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: row.id,
         exercise_id: row.exercise_id,
         exercise_title: row.exercise_title,
@@ -388,7 +388,7 @@ export class AdminProgressService {
     const achievementsResult = await this.dataSource.query(achievementsQuery, [studentId]);
 
     // Map achievements to DTOs
-    const achievements: StudentAchievementDto[] = achievementsResult.map((row: any) => ({
+    const achievements: StudentAchievementDto[] = achievementsResult.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
       id: row.id,
       achievement_id: row.achievement_id,
       name: row.name,
@@ -721,14 +721,15 @@ export class AdminProgressService {
   /**
    * Convert PostgreSQL interval to minutes
    */
-  private convertIntervalToMinutes(interval: any): number {
+  private convertIntervalToMinutes(interval: unknown): number {
     if (!interval) return 0;
 
     // Handle PostgreSQL interval object
-    if (typeof interval === 'object') {
-      const hours = interval.hours || 0;
-      const minutes = interval.minutes || 0;
-      const seconds = interval.seconds || 0;
+    if (typeof interval === 'object' && interval !== null) {
+      const obj = interval as Record<string, number>;
+      const hours = obj.hours || 0;
+      const minutes = obj.minutes || 0;
+      const seconds = obj.seconds || 0;
       return hours * 60 + minutes + Math.round(seconds / 60);
     }
 
@@ -749,7 +750,7 @@ export class AdminProgressService {
   /**
    * Convert PostgreSQL interval to hours
    */
-  private convertIntervalToHours(interval: any): number {
+  private convertIntervalToHours(interval: unknown): number {
     const minutes = this.convertIntervalToMinutes(interval);
     return Math.round((minutes / 60) * 100) / 100; // Round to 2 decimal places
   }
@@ -757,7 +758,7 @@ export class AdminProgressService {
   /**
    * Convert array of objects to CSV string
    */
-  private convertToCSV(data: any[], columns: string[]): string {
+  private convertToCSV(data: Record<string, unknown>[], columns: string[]): string {
     if (!data || data.length === 0) {
       return columns.join(',') + '\n';
     }

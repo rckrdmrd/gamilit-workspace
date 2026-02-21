@@ -65,7 +65,7 @@ export class AdminInterventionsService {
 
     // Build WHERE clause
     const conditions: string[] = ['1=1'];
-    const params: any[] = [];
+    const params: unknown[] = [];
     let paramIndex = 1;
 
     if (severity) {
@@ -169,7 +169,7 @@ export class AdminInterventionsService {
     const rows = await this.dataSource.query(dataQuery, dataParams);
 
     // Map to DTOs
-    const data: InterventionAlertDto[] = rows.map((row: any) => ({
+    const data: InterventionAlertDto[] = rows.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
       id: row.id,
       student_id: row.student_id,
       student_name: row.student_name,

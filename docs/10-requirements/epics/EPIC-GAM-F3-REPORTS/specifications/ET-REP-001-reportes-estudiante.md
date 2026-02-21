@@ -61,7 +61,7 @@ El sistema de reportes de estudiante permite a los profesores visualizar y gener
 
 | Hook | Path | Descripcion |
 |------|------|-------------|
-| `useStudentProgress` | `apps/frontend/src/apps/teacher/hooks/useStudentProgress.ts` | Datos de progreso de estudiante |
+| ~~`useStudentProgress`~~ | ~~`apps/frontend/src/apps/teacher/hooks/useStudentProgress.ts`~~ | **Removed** (eliminado en Teacher Portal Audit 2026-02-20) — funcionalidad integrada en `useAnalytics` y `studentProgressApi` |
 | `useClassrooms` | `apps/frontend/src/apps/teacher/hooks/useClassrooms.ts` | Datos de classrooms |
 
 ---
@@ -245,7 +245,7 @@ class StudentProgressService {
 1. Profesor en dashboard de clase
 2. Click en fila de estudiante en tabla
 3. StudentDetailModal se abre
-4. useStudentProgress(studentId) carga datos
+4. useAnalytics / studentProgressApi carga datos (nota: useStudentProgress fue removido en Teacher Portal Audit 2026-02-20)
 5. Se muestran: perfil, metricas, graficos, historial
 6. Profesor puede navegar entre tabs del modal
 ```

@@ -11,6 +11,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
 import { TimerWidget } from '@shared/components/mechanics/TimerWidget';
@@ -19,7 +20,7 @@ import { HintSystem } from '@shared/components/mechanics/HintSystem';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Check, CheckCircle, XCircle } from 'lucide-react';
-import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { useExerciseSubmission, type SubmissionResult } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 
 // ============================================================================
@@ -84,7 +85,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   const [currentScore, setCurrentScore] = useState(0);
 
   // SECURE: Submission result from server (includes correct answers)
-  const [submissionResult, setSubmissionResult] = useState<any>(null);
+  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [showResults, setShowResults] = useState(false);
 
   // SECURE: Use submission hook
@@ -135,7 +136,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
 
   const handleUseHint = (hint: { id: string; text: string; cost: number }) => {
     recordHintUsed();
-    alert(`Pista: ${hint.text}`);
+    toast(`Pista: ${hint.text}`, { icon: '💡', duration: 5000 });
   };
 
   /**
@@ -312,7 +313,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white bg-opacity-50 p-4"
+                        className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white/50 p-4"
                       >
                         <div className="flex items-start gap-2">
                           <div className="flex-shrink-0 text-2xl">

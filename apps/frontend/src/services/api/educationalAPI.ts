@@ -4,8 +4,6 @@
  * API client for educational content including modules, exercises,
  * progress tracking, and analytics.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from './apiErrorHandler';
@@ -89,6 +87,8 @@ export interface ExerciseSubmissionResult {
     newRank: string;
     unlockedFeatures: string[];
   } | null;
+  requiresManualReview?: boolean;
+  status?: string;
   createdAt: string;
   explanations?: Record<string, string>;
 }
@@ -397,7 +397,7 @@ export const getExercises = async (filters?: {
     }
 
     // Backend returns exercises array directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<any[]>(API_ENDPOINTS.educational.exercises, {
+    const { data } = await apiClient.get<Record<string, unknown>[]>(API_ENDPOINTS.educational.exercises, {
       params: filters,
     });
 
@@ -422,7 +422,7 @@ export const getModuleExercises = async (moduleId: string): Promise<Exercise[]> 
     }
 
     // Backend returns exercises array directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<any[]>(
+    const { data } = await apiClient.get<Record<string, unknown>[]>(
       API_ENDPOINTS.educational.moduleExercises(moduleId),
     );
 
@@ -449,7 +449,7 @@ export const getExercise = async (exerciseId: string): Promise<Exercise> => {
     }
 
     // Backend returns exercise directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<any>(API_ENDPOINTS.educational.exercise(exerciseId));
+    const { data } = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.educational.exercise(exerciseId));
 
     // Transform backend response to frontend format
     return transformExercise(data);

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { getPerformanceLevelFromScore } from '@shared/utils/format.util';
 import {
   Search,
@@ -13,6 +13,7 @@ import {
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
 import { StudentStatusCard } from './StudentStatusCard';
 import { StudentDetailModal } from './StudentDetailModal';
 import { SuspendStudentModal } from './SuspendStudentModal';
@@ -27,6 +28,204 @@ import type { StudentFilter, StudentMonitoring, StudentStatus } from '../../type
 interface StudentMonitoringPanelProps {
   classroomId: string;
 }
+
+// ============================================================================
+// MonitoringTable — extracted sub-component using shared DataTable
+// ============================================================================
+
+interface MonitoringTableProps {
+  students: StudentMonitoring[];
+  sortField: string;
+  sortDirection: 'asc' | 'desc';
+  onSort: (field: 'name' | 'score' | 'completion' | 'activity') => void;
+  onRowClick: (student: StudentMonitoring) => void;
+  getStudentStatus: (student: StudentMonitoring) => string;
+  isStudentBlocked: (studentId: string) => boolean;
+  onViewDetails: (student: StudentMonitoring) => void;
+  onSuspend: (student: StudentMonitoring) => void;
+  onUnblock: (student: StudentMonitoring) => void;
+}
+
+function MonitoringTable({
+  students,
+  sortField,
+  sortDirection,
+  onSort,
+  onRowClick,
+  getStudentStatus,
+  isStudentBlocked,
+  onViewDetails,
+  onSuspend,
+  onUnblock,
+}: MonitoringTableProps) {
+  const handleSort = useCallback(
+    (columnKey: string) => {
+      onSort(columnKey as 'name' | 'score' | 'completion' | 'activity');
+    },
+    [onSort],
+  );
+
+  const columns = useMemo<Column<StudentMonitoring>[]>(
+    () => [
+      {
+        key: 'name',
+        label: 'Nombre',
+        sortable: true,
+        render: (row) => (
+          <div className="flex items-center gap-2">
+            <div>
+              <p className="font-medium text-detective-text">{row.full_name}</p>
+              <p className="text-xs text-gray-400">{row.email}</p>
+            </div>
+            {isStudentBlocked(row.id) && (
+              <span className="rounded bg-red-500/90 px-2 py-0.5 text-xs font-medium text-white">
+                Bloqueado
+              </span>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: 'studentStatus',
+        label: 'Estado',
+        render: (row) => {
+          const status = getStudentStatus(row);
+          const statusStyles: Record<string, string> = {
+            active: 'bg-green-500/20 text-green-500',
+            in_exercise: 'bg-blue-500/20 text-blue-500',
+            inactive: 'bg-gray-500/20 text-gray-400',
+            offline: 'bg-red-500/20 text-red-500',
+          };
+          const statusLabels: Record<string, string> = {
+            active: 'Activo',
+            in_exercise: 'En ejercicio',
+            inactive: 'Inactivo',
+            offline: 'Offline',
+          };
+          return (
+            <span
+              className={`inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium ${statusStyles[status] || ''}`}
+            >
+              {statusLabels[status] || status}
+            </span>
+          );
+        },
+      },
+      {
+        key: 'score',
+        label: 'Puntuacion',
+        sortable: true,
+        render: (row) => (
+          <span
+            className={`font-bold ${
+              (row.score_average || 0) >= 80
+                ? 'text-green-500'
+                : (row.score_average || 0) >= 60
+                  ? 'text-yellow-500'
+                  : 'text-red-500'
+            }`}
+          >
+            {(row.score_average || 0).toFixed(1)}%
+          </span>
+        ),
+      },
+      {
+        key: 'completion',
+        label: 'Completitud',
+        sortable: true,
+        render: (row) => (
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-16 rounded-full bg-gray-700">
+              <div
+                className={`h-2 rounded-full ${
+                  (row.progress_percentage || 0) >= 70
+                    ? 'bg-green-500'
+                    : (row.progress_percentage || 0) >= 50
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
+                }`}
+                style={{ width: `${row.progress_percentage || 0}%` }}
+              />
+            </div>
+            <span className="text-sm">{(row.progress_percentage || 0).toFixed(0)}%</span>
+          </div>
+        ),
+      },
+      {
+        key: 'performance',
+        label: 'Rendimiento',
+        render: (row) => {
+          const level = getPerformanceLevelFromScore(row.score_average || 0);
+          const levelStyles: Record<string, string> = {
+            high: 'bg-green-500/20 text-green-500',
+            medium: 'bg-yellow-500/20 text-yellow-500',
+            low: 'bg-red-500/20 text-red-500',
+          };
+          const levelLabels: Record<string, string> = {
+            high: 'Alto',
+            medium: 'Medio',
+            low: 'Bajo',
+          };
+          return (
+            <span className={`rounded px-2 py-1 text-xs font-medium ${levelStyles[level] || ''}`}>
+              {levelLabels[level] || level}
+            </span>
+          );
+        },
+      },
+      {
+        key: 'activity',
+        label: 'Ultima Actividad',
+        sortable: true,
+        render: (row) => (
+          <span className="text-detective-text-secondary">
+            {row.last_activity
+              ? new Date(row.last_activity).toLocaleDateString('es-ES')
+              : 'Sin actividad'}
+          </span>
+        ),
+      },
+      {
+        key: 'actions',
+        label: 'Acciones',
+        align: 'right' as const,
+        render: (row) => (
+          <div onClick={(e) => e.stopPropagation()}>
+            <StudentActionsMenu
+              student={row}
+              isBlocked={isStudentBlocked(row.id)}
+              onViewDetails={() => onViewDetails(row)}
+              onSuspend={() => onSuspend(row)}
+              onUnblock={() => onUnblock(row)}
+              onViewAlerts={() => window.open(`/teacher/alerts?student_id=${row.id}`, '_blank')}
+            />
+          </div>
+        ),
+      },
+    ],
+    [getStudentStatus, isStudentBlocked, onViewDetails, onSuspend, onUnblock],
+  );
+
+  return (
+    <DataTable<StudentMonitoring>
+      data={students}
+      columns={columns}
+      onRowClick={onRowClick}
+      variant="detective"
+      sortColumn={sortField}
+      sortDirection={sortDirection}
+      onSort={handleSort}
+      rowKey={(row) => row.id}
+      emptyMessage="No se encontraron estudiantes"
+      striped={false}
+      hoverable
+    />
+  );
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 
 export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelProps) {
   const [filters, setFilters] = useState<StudentFilter>({});
@@ -507,150 +706,20 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
           </div>
         </DetectiveCard>
       ) : viewMode === 'table' ? (
-        /* Table View */
+        /* Table View — powered by shared DataTable */
         <DetectiveCard>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th
-                    className="cursor-pointer px-4 py-3 text-left text-sm font-semibold text-gray-400 hover:text-detective-orange"
-                    onClick={() => handleSort('name')}
-                  >
-                    Nombre {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Estado
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-left text-sm font-semibold text-gray-400 hover:text-detective-orange"
-                    onClick={() => handleSort('score')}
-                  >
-                    Puntuacion {sortField === 'score' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-left text-sm font-semibold text-gray-400 hover:text-detective-orange"
-                    onClick={() => handleSort('completion')}
-                  >
-                    Completitud {sortField === 'completion' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Rendimiento
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-left text-sm font-semibold text-gray-400 hover:text-detective-orange"
-                    onClick={() => handleSort('activity')}
-                  >
-                    Ultima Actividad {sortField === 'activity' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-400">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAndSortedStudents.map((student) => (
-                  <tr
-                    key={student.id}
-                    className="cursor-pointer border-b border-gray-800 hover:bg-detective-bg-secondary"
-                    onClick={() => setSelectedStudent(student)}
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div>
-                          <p className="font-medium text-detective-text">{student.full_name}</p>
-                          <p className="text-xs text-gray-400">{student.email}</p>
-                        </div>
-                        {isStudentBlocked(student.id) && (
-                          <span className="rounded bg-red-500/90 px-2 py-0.5 text-xs font-medium text-white">
-                            Bloqueado
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium ${
-                          getStudentStatus(student) === 'active'
-                            ? 'bg-green-500/20 text-green-500'
-                            : getStudentStatus(student) === 'in_exercise'
-                              ? 'bg-blue-500/20 text-blue-500'
-                              : getStudentStatus(student) === 'inactive'
-                                ? 'bg-gray-500/20 text-gray-400'
-                                : 'bg-red-500/20 text-red-500'
-                        }`}
-                      >
-                        {getStudentStatus(student) === 'active' && 'Activo'}
-                        {getStudentStatus(student) === 'in_exercise' && 'En ejercicio'}
-                        {getStudentStatus(student) === 'inactive' && 'Inactivo'}
-                        {getStudentStatus(student) === 'offline' && 'Offline'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`font-bold ${
-                          (student.score_average || 0) >= 80
-                            ? 'text-green-500'
-                            : (student.score_average || 0) >= 60
-                              ? 'text-yellow-500'
-                              : 'text-red-500'
-                        }`}
-                      >
-                        {(student.score_average || 0).toFixed(1)}%
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-16 rounded-full bg-gray-700">
-                          <div
-                            className={`h-2 rounded-full ${
-                              (student.progress_percentage || 0) >= 70
-                                ? 'bg-green-500'
-                                : (student.progress_percentage || 0) >= 50
-                                  ? 'bg-yellow-500'
-                                  : 'bg-red-500'
-                            }`}
-                            style={{ width: `${student.progress_percentage || 0}%` }}
-                          />
-                        </div>
-                        <span className="text-sm">{(student.progress_percentage || 0).toFixed(0)}%</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`rounded px-2 py-1 text-xs font-medium ${
-                          getPerformanceLevelFromScore(student.score_average || 0) === 'high'
-                            ? 'bg-green-500/20 text-green-500'
-                            : getPerformanceLevelFromScore(student.score_average || 0) === 'medium'
-                              ? 'bg-yellow-500/20 text-yellow-500'
-                              : 'bg-red-500/20 text-red-500'
-                        }`}
-                      >
-                        {getPerformanceLevelFromScore(student.score_average || 0) === 'high' && 'Alto'}
-                        {getPerformanceLevelFromScore(student.score_average || 0) === 'medium' && 'Medio'}
-                        {getPerformanceLevelFromScore(student.score_average || 0) === 'low' && 'Bajo'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-detective-text-secondary">
-                      {student.last_activity
-                        ? new Date(student.last_activity).toLocaleDateString('es-ES')
-                        : 'Sin actividad'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <StudentActionsMenu
-                        student={student}
-                        isBlocked={isStudentBlocked(student.id)}
-                        onViewDetails={() => setSelectedStudent(student)}
-                        onSuspend={() => setStudentToSuspend(student)}
-                        onUnblock={() => handleUnblock(student)}
-                        onViewAlerts={() => window.open(`/teacher/alerts?student_id=${student.id}`, '_blank')}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <MonitoringTable
+            students={filteredAndSortedStudents}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+            onRowClick={setSelectedStudent}
+            getStudentStatus={getStudentStatus}
+            isStudentBlocked={isStudentBlocked}
+            onViewDetails={setSelectedStudent}
+            onSuspend={setStudentToSuspend}
+            onUnblock={handleUnblock}
+          />
         </DetectiveCard>
       ) : (
         /* Cards View */

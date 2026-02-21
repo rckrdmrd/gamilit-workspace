@@ -25,6 +25,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { useApiError } from '@shared/hooks';
 
 // Components
 import { AdminPageShell } from '../components/shared';
@@ -46,6 +47,7 @@ type TabType = 'overview' | 'engagement' | 'gamification' | 'retention';
  * AdminAnalyticsPage Component
  */
 export default function AdminAnalyticsPage() {
+  const { handleError } = useApiError();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isExporting, setIsExporting] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -71,8 +73,7 @@ export default function AdminAnalyticsPage() {
       await exportToCSV();
       setToast({ type: 'success', message: 'CSV exportado exitosamente' });
     } catch (err) {
-      console.error('Error exporting CSV:', err);
-      setToast({ type: 'error', message: 'Error al exportar CSV. Por favor, intenta nuevamente.' });
+      handleError(err, 'Error al exportar CSV');
     } finally {
       setIsExporting(false);
     }
@@ -154,30 +155,35 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
-            <p className="font-semibold">Error al cargar analíticas:</p>
-            <p>{error}</p>
-          </div>
-        )}
+        <div aria-live="polite">
+          {error && (
+            <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500" role="alert">
+              <p className="font-semibold">Error al cargar analiticas:</p>
+              <p>{error}</p>
+            </div>
+          )}
+        </div>
 
         {/* Toast Notification */}
-        {toast && (
-          <div
-            className={`rounded-lg border p-4 ${
-              toast.type === 'success'
-                ? 'border-green-500/50 bg-green-500/20 text-green-400'
-                : 'border-red-500/50 bg-red-500/20 text-red-400'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span>{toast.message}</span>
-              <button onClick={() => setToast(null)} className="ml-4 hover:opacity-70">
-                ✕
-              </button>
+        <div aria-live="polite">
+          {toast && (
+            <div
+              className={`rounded-lg border p-4 ${
+                toast.type === 'success'
+                  ? 'border-green-500/50 bg-green-500/20 text-green-400'
+                  : 'border-red-500/50 bg-red-500/20 text-red-400'
+              }`}
+              role="status"
+            >
+              <div className="flex items-center justify-between">
+                <span>{toast.message}</span>
+                <button onClick={() => setToast(null)} className="ml-4 hover:opacity-70" aria-label="Cerrar notificacion">
+                  <span aria-hidden="true">&#10005;</span>
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Tabs Navigation */}
         <AdminTabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} variant="cards" />
@@ -185,16 +191,16 @@ export default function AdminAnalyticsPage() {
         {/* Loading State */}
         {isLoading && (
           <DetectiveCard className="p-12">
-            <div className="flex flex-col items-center justify-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4" aria-live="polite">
               <RefreshCw className="h-12 w-12 animate-spin text-detective-orange" />
-              <p className="text-detective-text-secondary">Cargando analíticas...</p>
+              <p className="text-detective-text-secondary">Cargando analiticas...</p>
             </div>
           </DetectiveCard>
         )}
 
         {/* Tab Content */}
         {!isLoading && (
-          <div className="min-h-[400px]">
+          <div className="min-h-[400px]" role="region" aria-label={`Contenido de pestana: ${tabs.find(t => t.id === activeTab)?.label ?? activeTab}`}>
             {activeTab === 'overview' && (
               <OverviewTab
                 overview={overview}

@@ -2,7 +2,7 @@ export interface Recording {
   id: string;
   audioBlob: Blob | null;
   transcription: string;
-  analysis: any | null;
+  analysis: Record<string, unknown> | null;
   duration: number;
 }
 

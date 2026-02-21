@@ -190,11 +190,11 @@ bash apps/database/scripts/recreate-database.sh
 ```
 
 ### Validaciones Automaticas
-- RLS policies activas en todas las tablas multi-tenant (207 policies)
+- RLS policies activas en todas las tablas multi-tenant (231 DDL / 471 runtime policies)
 - Funciones SQL ejecutan sin errores (183 funciones DDL)
 - Triggers disparan correctamente (67 triggers)
-- Foreign keys validas (298 FKs)
-- ENUMs sincronizados con backend (40 ENUMs)
+- Foreign keys validas (299 FKs)
+- ENUMs sincronizados con backend (42 ENUMs)
 
 ---
 
@@ -240,6 +240,15 @@ Push to main
   -> Build (backend + frontend)
   -> Deploy (if all pass)
 ```
+
+---
+
+## Documentos Relacionados
+
+- [Guias de Pruebas por Modulo](../10-requirements/testing-guides/README.md) — Respuestas ejemplo y criterios de validacion para los 23 tipos de ejercicio (5 modulos educativos)
+- [ESTANDAR-TESTING](../40-standards/ESTANDAR-TESTING.md) — Estandar general de testing
+- [GUIA-E2E-PLAYWRIGHT](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md) — Testing E2E con Playwright
+- [GUIA-COVERAGE-TESTING](../50-guides/testing/GUIA-COVERAGE-TESTING.md) — Estrategia de cobertura
 
 ---
 

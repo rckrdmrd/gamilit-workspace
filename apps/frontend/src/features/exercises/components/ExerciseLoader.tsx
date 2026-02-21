@@ -7,8 +7,6 @@
  * @version 1.0.0
  * @since Phase 3 - Exercise System Restructuring
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';

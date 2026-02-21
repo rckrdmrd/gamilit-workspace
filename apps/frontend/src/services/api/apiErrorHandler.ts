@@ -3,8 +3,6 @@
  *
  * Centralized error handling utilities for API requests
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { AxiosError } from 'axios';
 import type { ApiError } from './apiTypes';
 
@@ -185,7 +183,7 @@ export const handleAPIError = (error: unknown, _contextMessage?: string): APIErr
 
   // Handle Axios errors
   if (isAxiosError(error)) {
-    const axiosError = error as AxiosError<any>;
+    const axiosError = error as AxiosError<{ error?: { message?: string; code?: string; details?: Record<string, unknown> }; message?: string; details?: Record<string, unknown>; code?: string; suspension?: Record<string, unknown> }>;
 
     // Network error (no response)
     if (!axiosError.response) {
@@ -224,7 +222,7 @@ export const handleAPIError = (error: unknown, _contextMessage?: string): APIErr
       case 403:
         // Check for account suspension
         if (errorCode === 'ACCOUNT_SUSPENDED') {
-          const suspensionDetails = errorData?.suspension || errorData;
+          const suspensionDetails = (errorData?.suspension || errorData) as { isPermanent: boolean; suspendedUntil?: string; reason?: string } | undefined;
           return new AccountSuspendedError(
             message || 'Your account has been suspended',
             suspensionDetails,

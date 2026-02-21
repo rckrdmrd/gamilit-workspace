@@ -7,10 +7,11 @@
  * @date 2025-11-24
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Users, TrendingUp, Award, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { DataTable, type Column } from '@/shared/components/common/DataTable';
 import type { ClassroomProgress, StudentProgressSummary } from '@/services/api/adminTypes';
 
 interface ClassroomsViewProps {
@@ -24,9 +25,37 @@ export const ClassroomsView: React.FC<ClassroomsViewProps> = ({
   isLoading,
   onStudentClick,
 }) => {
-  const [sortField, setSortField] = useState<keyof StudentProgressSummary>('display_name');
+  const [sortField, setSortField] = useState<string>('display_name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showStudents, setShowStudents] = useState(true);
+
+  const handleSort = (columnKey: string) => {
+    if (sortField === columnKey) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(columnKey);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedStudents = useMemo(() => {
+    if (!classroomProgress) return [];
+    return [...classroomProgress.students].sort((a, b) => {
+      const aVal = a[sortField as keyof StudentProgressSummary];
+      const bVal = b[sortField as keyof StudentProgressSummary];
+
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return sortDirection === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+
+      return sortDirection === 'asc'
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
+    });
+  }, [classroomProgress, sortField, sortDirection]);
 
   if (isLoading) {
     return (
@@ -51,31 +80,6 @@ export const ClassroomsView: React.FC<ClassroomsViewProps> = ({
     );
   }
 
-  const handleSort = (field: keyof StudentProgressSummary) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const sortedStudents = [...classroomProgress.students].sort((a, b) => {
-    const aVal = a[sortField];
-    const bVal = b[sortField];
-
-    if (aVal === null || aVal === undefined) return 1;
-    if (bVal === null || bVal === undefined) return -1;
-
-    if (typeof aVal === 'string' && typeof bVal === 'string') {
-      return sortDirection === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-    }
-
-    return sortDirection === 'asc'
-      ? (aVal as number) - (bVal as number)
-      : (bVal as number) - (aVal as number);
-  });
-
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Nunca';
     const date = new Date(dateString);
@@ -85,9 +89,103 @@ export const ClassroomsView: React.FC<ClassroomsViewProps> = ({
 
     if (diffDays === 0) return 'Hoy';
     if (diffDays === 1) return 'Ayer';
-    if (diffDays < 7) return `Hace ${diffDays} días`;
+    if (diffDays < 7) return `Hace ${diffDays} dias`;
     return date.toLocaleDateString('es-ES');
   };
+
+  const columns: Column<StudentProgressSummary>[] = [
+    {
+      key: 'display_name',
+      label: 'Nombre',
+      sortable: true,
+      render: (student) => (
+        <div>
+          <p className="font-medium text-detective-text">{student.display_name}</p>
+          <p className="text-xs text-detective-text-secondary">{student.email}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'level',
+      label: 'Nivel',
+      sortable: true,
+      render: (student) => (
+        <span className="text-detective-text">{student.level}</span>
+      ),
+    },
+    {
+      key: 'total_xp',
+      label: 'XP',
+      sortable: true,
+      render: (student) => (
+        <span className="text-detective-text">{student.total_xp.toLocaleString()}</span>
+      ),
+    },
+    {
+      key: 'avg_module_progress',
+      label: 'Progreso',
+      sortable: true,
+      render: (student) => (
+        <div className="flex items-center gap-2">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-detective-bg-secondary">
+            <div
+              className="h-full bg-detective-orange"
+              style={{ width: `${student.avg_module_progress}%` }}
+            />
+          </div>
+          <span className="text-sm text-detective-text">
+            {student.avg_module_progress.toFixed(0)}%
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: 'avg_score',
+      label: 'Puntaje',
+      sortable: true,
+      render: (student) => (
+        <span className="text-detective-text">
+          {student.avg_score ? `${student.avg_score.toFixed(1)}%` : 'N/A'}
+        </span>
+      ),
+    },
+    {
+      key: 'streak_days',
+      label: 'Racha',
+      sortable: true,
+      render: (student) => (
+        <span className="inline-flex items-center gap-1 rounded bg-detective-orange/20 px-2 py-1 text-xs font-medium text-detective-orange">
+          {student.streak_days} dias
+        </span>
+      ),
+    },
+    {
+      key: 'last_activity_at',
+      label: 'Ultima Actividad',
+      sortable: true,
+      render: (student) => (
+        <span className="text-sm text-detective-text-secondary">
+          {formatDate(student.last_activity_at)}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Accion',
+      render: (student) => (
+        <DetectiveButton
+          variant="outline"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onStudentClick(student.user_id);
+          }}
+        >
+          <ArrowRight className="h-4 w-4" />
+        </DetectiveButton>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -169,107 +267,16 @@ export const ClassroomsView: React.FC<ClassroomsViewProps> = ({
         </div>
 
         {showStudents && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-detective-border border-b">
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('display_name')}
-                  >
-                    Nombre
-                  </th>
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('level')}
-                  >
-                    Nivel
-                  </th>
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('total_xp')}
-                  >
-                    XP
-                  </th>
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('avg_module_progress')}
-                  >
-                    Progreso
-                  </th>
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('avg_score')}
-                  >
-                    Puntaje
-                  </th>
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('streak_days')}
-                  >
-                    Racha
-                  </th>
-                  <th
-                    className="cursor-pointer p-3 text-left text-detective-text-secondary hover:text-detective-text"
-                    onClick={() => handleSort('last_activity_at')}
-                  >
-                    Última Actividad
-                  </th>
-                  <th className="p-3 text-left text-detective-text-secondary">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedStudents.map((student) => (
-                  <tr
-                    key={student.user_id}
-                    className="border-detective-border border-b transition-colors hover:bg-detective-bg-secondary/30"
-                  >
-                    <td className="p-3">
-                      <div>
-                        <p className="font-medium text-detective-text">{student.display_name}</p>
-                        <p className="text-xs text-detective-text-secondary">{student.email}</p>
-                      </div>
-                    </td>
-                    <td className="p-3 text-detective-text">{student.level}</td>
-                    <td className="p-3 text-detective-text">{student.total_xp.toLocaleString()}</td>
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-detective-bg-secondary">
-                          <div
-                            className="h-full bg-detective-orange"
-                            style={{ width: `${student.avg_module_progress}%` }}
-                          />
-                        </div>
-                        <span className="text-sm text-detective-text">
-                          {student.avg_module_progress.toFixed(0)}%
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-3 text-detective-text">
-                      {student.avg_score ? `${student.avg_score.toFixed(1)}%` : 'N/A'}
-                    </td>
-                    <td className="p-3">
-                      <span className="inline-flex items-center gap-1 rounded bg-detective-orange/20 px-2 py-1 text-xs font-medium text-detective-orange">
-                        {student.streak_days} días
-                      </span>
-                    </td>
-                    <td className="p-3 text-sm text-detective-text-secondary">
-                      {formatDate(student.last_activity_at)}
-                    </td>
-                    <td className="p-3">
-                      <DetectiveButton
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onStudentClick(student.user_id)}
-                      >
-                        <ArrowRight className="h-4 w-4" />
-                      </DetectiveButton>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable<StudentProgressSummary>
+            data={sortedStudents}
+            columns={columns}
+            sortColumn={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+            emptyMessage="No hay estudiantes en esta aula"
+            striped={false}
+            hoverable
+          />
         )}
       </DetectiveCard>
     </div>

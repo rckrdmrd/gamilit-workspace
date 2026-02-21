@@ -39,6 +39,8 @@ import {
 import { MediaUploadController } from './controllers/media-upload.controller';
 import { ExerciseValidationController } from './controllers/exercise-validation.controller';
 import { ProgressModule } from '../progress/progress.module';
+import { WebSocketModule } from '../websocket/websocket.module';
+import { GamificationModule } from '../gamification/gamification.module';
 
 /**
  * EducationalModule
@@ -91,6 +93,9 @@ import { ProgressModule } from '../progress/progress.module';
     TypeOrmModule.forFeature([ClassroomMember, AssignmentClassroom], 'social'),
     // Import ProgressModule to access ExerciseSubmissionService for submit endpoint
     ProgressModule,
+    // F1-A: WebSocket events for gamification (exercise submit flow)
+    WebSocketModule,
+    GamificationModule,
   ],
   controllers: [
     ModulesController,

@@ -180,7 +180,7 @@ export class BrandingController {
   })
   async uploadLogo(
     @Param('tenantId', ParseUUIDPipe) tenantId: string,
-    @UploadedFile() file: any,
+    @UploadedFile() file: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
   ): Promise<{ url: string; message: string }> {
     const url = await this.brandingService.uploadLogo(tenantId, file);
     return {
@@ -242,7 +242,7 @@ export class BrandingController {
   })
   async uploadFavicon(
     @Param('tenantId', ParseUUIDPipe) tenantId: string,
-    @UploadedFile() file: any,
+    @UploadedFile() file: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
   ): Promise<{ url: string; message: string }> {
     const url = await this.brandingService.uploadFavicon(tenantId, file);
     return {

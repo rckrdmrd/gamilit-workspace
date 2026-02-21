@@ -56,6 +56,16 @@ export class MediaStorageService {
     }
   }
 
+  /** Resolve a path and ensure it stays within the uploads base directory */
+  private resolveUploadPath(...segments: string[]): string {
+    const uploadsBase = path.resolve(process.cwd(), 'uploads');
+    const resolved = path.resolve(uploadsBase, ...segments);
+    if (!resolved.startsWith(uploadsBase)) {
+      throw new BadRequestException('Invalid file path');
+    }
+    return resolved;
+  }
+
   /**
    * Sube un archivo multimedia
    *
@@ -66,7 +76,7 @@ export class MediaStorageService {
    * @throws BadRequestException si el archivo excede el límite o tipo no permitido
    */
   async uploadFile(
-    file: any,
+    file: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
     userId: string,
     dto: UploadMediaDto,
   ): Promise<MediaAttachment> {
@@ -102,8 +112,8 @@ export class MediaStorageService {
       ? path.join(dto.exerciseId || 'general', dto.submissionId)
       : dto.exerciseId || 'general';
 
-    const directoryPath = path.join(this.baseUploadPath, subPath);
-    const filePath = path.join(directoryPath, filename);
+    const directoryPath = this.resolveUploadPath('exercises', subPath);
+    const filePath = this.resolveUploadPath('exercises', subPath, filename);
 
     // Crear directorio si no existe
     await fs.mkdir(directoryPath, { recursive: true });
@@ -145,7 +155,7 @@ export class MediaStorageService {
       throw new NotFoundException(`Attachment with ID ${attachmentId} not found`);
     }
 
-    const absolutePath = path.join(process.cwd(), 'uploads', attachment.filePath);
+    const absolutePath = this.resolveUploadPath(attachment.filePath);
 
     // Verificar que el archivo existe físicamente
     try {
@@ -175,7 +185,7 @@ export class MediaStorageService {
       throw new NotFoundException(`Attachment with ID ${attachmentId} not found`);
     }
 
-    const absolutePath = path.join(process.cwd(), 'uploads', attachment.filePath);
+    const absolutePath = this.resolveUploadPath(attachment.filePath);
 
     // Eliminar archivo físico (ignorar si no existe)
     try {

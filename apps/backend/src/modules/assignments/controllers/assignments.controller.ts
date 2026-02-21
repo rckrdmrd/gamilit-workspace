@@ -117,7 +117,7 @@ export class AssignmentsController {
       }],
     },
   })
-  async findAll(@Query() query: any, @Request() req: AuthRequest) {
+  async findAll(@Query() query: any, @Request() req: AuthRequest) { // eslint-disable-line @typescript-eslint/no-explicit-any
     const teacherId = req.user!.id;
     return this.assignmentsService.findAll(teacherId, {
       isPublished: query.isPublished !== undefined ? query.isPublished === 'true' : undefined,
@@ -368,7 +368,7 @@ export class AssignmentsController {
   })
   async getSubmissions(
   @Param('id') id: string,
-    @Query() query: any,
+    @Query() query: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     @Request() req: AuthRequest,
   ) {
     const teacherId = req.user!.id;

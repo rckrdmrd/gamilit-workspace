@@ -417,13 +417,16 @@ create_user_and_database() {
     # Crear/actualizar usuario
     user_exists=$(query_as_postgres "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")
 
+    # Escape single quotes in password for safe SQL interpolation
+    local ESCAPED_PASS="${DB_PASSWORD//\'/\'\'}"
+
     if [ -z "$user_exists" ]; then
         print_info "Creando usuario $DB_USER..."
-        execute_as_postgres "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD' CREATEDB;" > /dev/null
+        execute_as_postgres "CREATE USER $DB_USER WITH PASSWORD '${ESCAPED_PASS}' CREATEDB;" > /dev/null
         print_success "Usuario creado"
     else
         print_info "Usuario $DB_USER ya existe, actualizando password..."
-        execute_as_postgres "ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD' CREATEDB;" > /dev/null
+        execute_as_postgres "ALTER USER $DB_USER WITH PASSWORD '${ESCAPED_PASS}' CREATEDB;" > /dev/null
         print_success "Password actualizado"
     fi
 
@@ -1104,7 +1107,7 @@ load_seeds() {
         "gamification_system/13-shop_items.sql|all|core"
         "gamification_system/14-achievements-m3-m5.sql|all|core"
         "gamification_system/15-comodin_usage_tracking.sql|all|core"
-        "gamification_system/16-shop_items_expanded.sql|dev|demo_gamification"
+        "gamification_system/16-shop_items_expanded.sql|all|gamification_system"
         "gamification_system/17-shop_items_metadata_normalization.sql|all|core"
         "gamification_system/18-user_purchases-demo.sql|dev|demo_gamification"
         "gamification_system/19-user_equipped_items-demo.sql|dev|demo_gamification"
@@ -1128,7 +1131,9 @@ load_seeds() {
         "educational_content/11-module_dependencies.sql|all|core"
         "educational_content/12-taxonomies.sql|all|core"
         "educational_content/13-exercise_type_rubrics.sql|all|core"
-        "educational_content/14-classroom_modules.sql|prod|core"
+        "educational_content/14-classroom_modules.sql|all|core"
+        "educational_content/14-teacher_contents.sql|dev|demo_data"
+        "educational_content/15-assignment_students.sql|dev|demo_data"
 
         # ==========================================
         # FASE 7: Content Management
@@ -1150,6 +1155,7 @@ load_seeds() {
         "social_features/04-teams.sql|all|core"
         "social_features/04-friendships.sql|dev|demo_data"
         "social_features/05-teacher-reports.sql|all|core"
+        "social_features/06-scheduled_reports.sql|dev|demo_data"
         "auth_management/08-assign-admin-schools.sql|all|core"
 
         # ==========================================
@@ -1159,6 +1165,9 @@ load_seeds() {
         "progress_tracking/01-demo-progress.sql|dev|demo_exercises"
         "progress_tracking/02-exercise-attempts.sql|dev|demo_exercises"
         "progress_tracking/03-manual-reviews.sql|dev|demo_exercises"
+        "progress_tracking/08-teacher-notes.sql|dev|demo_data"
+        "progress_tracking/15-student_intervention_alerts.sql|dev|demo_data"
+        "progress_tracking/16-teacher_alert_configurations.sql|dev|demo_data"
         "audit_logging/01-default-config.sql|all|core"
         "audit_logging/01-audit-logs.sql|dev|demo_data"
         "audit_logging/02-system-metrics.sql|dev|demo_data"
@@ -1177,6 +1186,7 @@ load_seeds() {
         # ==========================================
         # FASE 12: Communication
         # ==========================================
+        "communication/01-conversations.sql|dev|demo_data"
         "communication/01-system-messages.sql|dev|demo_data"
         "communication/02-message_participants.sql|dev|demo_data"
     )
@@ -1689,11 +1699,13 @@ show_summary() {
     echo -e "  Host:     $DB_HOST:$DB_PORT"
     echo -e "  Database: $DB_NAME"
     echo -e "  User:     $DB_USER"
-    echo -e "  Password: ${GREEN}${DB_PASSWORD:0:8}...${DB_PASSWORD: -4}${NC}"
+    echo -e "  Password: ${GREEN}${DB_PASSWORD:0:4}****${DB_PASSWORD: -4}${NC}"
     echo ""
 
     echo -e "${CYAN}Connection String:${NC}"
-    echo -e "  ${GREEN}postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME${NC}"
+    # Mask password in stdout — full credentials are saved to credentials file only
+    echo -e "  ${GREEN}postgresql://$DB_USER:****@$DB_HOST:$DB_PORT/$DB_NAME${NC}"
+    echo -e "  ${YELLOW}(Full connection string with password saved to credentials file)${NC}"
     echo ""
 
     # Guardar credenciales
@@ -1819,12 +1831,14 @@ main() {
         print_header "GAMILIT Platform - Inicialización de BD"
         echo "Selecciona ambiente:"
         echo "  1) dev"
-        echo "  2) prod"
+        echo "  2) staging"
+        echo "  3) prod"
         read -p "Opción: " env_option
 
         case $env_option in
             1) ENVIRONMENT="dev" ;;
-            2) ENVIRONMENT="prod" ;;
+            2) ENVIRONMENT="staging" ;;
+            3) ENVIRONMENT="prod" ;;
             *)
                 print_error "Opción inválida"
                 exit 1
@@ -1832,8 +1846,8 @@ main() {
         esac
     fi
 
-    if [ "$ENVIRONMENT" != "dev" ] && [ "$ENVIRONMENT" != "prod" ]; then
-        print_error "Ambiente inválido: $ENVIRONMENT"
+    if [ "$ENVIRONMENT" != "dev" ] && [ "$ENVIRONMENT" != "staging" ] && [ "$ENVIRONMENT" != "prod" ]; then
+        print_error "Ambiente inválido: $ENVIRONMENT (validos: dev, staging, prod)"
         exit 1
     fi
 

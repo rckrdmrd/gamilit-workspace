@@ -90,18 +90,16 @@ export function usePersistedFilters<T extends object>({
   defaultFilters,
   version,
   validator,
-  debug = false,
+  debug: _debug = false,
 }: PersistedFiltersOptions<T>) {
   const [filters, setFilters] = useState<T>(defaultFilters);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const log = useCallback(
-    (message: string, data?: unknown) => {
-      if (debug) {
-        console.log(`[usePersistedFilters:${storageKey}] ${message}`, data || '');
-      }
+    (_message: string, _data?: unknown) => {
+      // Debug logging removed for production cleanliness
     },
-    [debug, storageKey],
+    [],
   );
 
   // Load filters from localStorage on mount
@@ -271,8 +269,8 @@ export function clearAllPersistedFilters(prefix?: string): void {
       localStorage.removeItem(key);
     });
 
-    console.log(`[usePersistedFilters] Cleared ${keysToRemove.length} persisted filter keys`);
-  } catch (error) {
-    console.error('[usePersistedFilters] Error clearing persisted filters:', error);
+    // Persisted filter keys cleared
+  } catch (_error) {
+    // Handled by caller
   }
 }

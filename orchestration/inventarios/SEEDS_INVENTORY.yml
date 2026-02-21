@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 3.2.0
-  fecha: '2026-02-20'
+  version: 3.3.0
+  fecha: '2026-02-21'
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
@@ -11,7 +11,7 @@ seeds_inventory:
 
   resumen_ejecutivo:
     total_seeds_prod: 101    # ✅ ACTUALIZADO 2026-01-16 (validación integral)
-    total_seeds_dev: 85      # ✅ ACTUALIZADO 2026-02-20 (85 pipeline entries, +2 re-enabled: default-templates, moderation_rules)
+    total_seeds_dev: 92      # ✅ ACTUALIZADO 2026-02-21 (92 pipeline entries)
     total_seeds_staging: 56  # ✅ ACTUALIZADO 2026-01-16 (55% de prod - intencional)
     ejercicios_prod: 23
     ejercicios_dev: 24

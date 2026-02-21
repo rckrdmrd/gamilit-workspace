@@ -16,6 +16,7 @@
 
 import { useState, useEffect } from 'react';
 import { useReports } from '../hooks/useReports';
+import { useApiError } from '@shared/hooks';
 import { AdminPageShell } from '../components/shared';
 import { ReportGenerationForm } from '../components/reports/ReportGenerationForm';
 import { ReportsList } from '../components/reports/ReportsList';
@@ -25,6 +26,7 @@ import { cn } from '@shared/utils/cn';
 import type { GenerateReportParams } from '@/services/api/adminTypes';
 
 export default function AdminReportsPage() {
+  const { handleError } = useApiError();
   const [isGenerating, setIsGenerating] = useState(false);
   const [toast, setToast] = useState<{
     type: 'success' | 'error';
@@ -61,11 +63,7 @@ export default function AdminReportsPage() {
         message: 'Reporte generado exitosamente. Se está procesando...',
       });
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al generar reporte';
-      setToast({
-        type: 'error',
-        message: errorMessage,
-      });
+      handleError(err, 'Error al generar reporte');
     } finally {
       setIsGenerating(false);
     }
@@ -83,11 +81,7 @@ export default function AdminReportsPage() {
         message: 'Reporte descargado exitosamente',
       });
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al descargar reporte';
-      setToast({
-        type: 'error',
-        message: errorMessage,
-      });
+      handleError(err, 'Error al descargar reporte');
     }
   };
 
@@ -103,11 +97,7 @@ export default function AdminReportsPage() {
         message: 'Reporte eliminado exitosamente',
       });
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar reporte';
-      setToast({
-        type: 'error',
-        message: errorMessage,
-      });
+      handleError(err, 'Error al eliminar reporte');
     }
   };
 
@@ -140,37 +130,41 @@ export default function AdminReportsPage() {
         <BetaBanner dismissible={true} />
 
         {/* Toast Notifications */}
-        {toast && (
-          <div className={cn(
-            'mb-6 flex items-center gap-3 rounded-lg border p-4',
-            toast.type === 'success' ? 'border-green-500/50 bg-green-500/20 text-green-400' : 'border-red-500/50 bg-red-500/20 text-red-400'
-          )}>
-            {toast.type === 'success' ? <CheckCircle className="h-5 w-5 flex-shrink-0" /> : <XCircle className="h-5 w-5 flex-shrink-0" />}
-            <span className="flex-1 text-sm font-medium">{toast.message}</span>
-            <button onClick={() => setToast(null)} className="hover:opacity-70"><X className="h-4 w-4" /></button>
-          </div>
-        )}
+        <div aria-live="polite">
+          {toast && (
+            <div className={cn(
+              'mb-6 flex items-center gap-3 rounded-lg border p-4',
+              toast.type === 'success' ? 'border-green-500/50 bg-green-500/20 text-green-400' : 'border-red-500/50 bg-red-500/20 text-red-400'
+            )} role="status">
+              {toast.type === 'success' ? <CheckCircle className="h-5 w-5 flex-shrink-0" /> : <XCircle className="h-5 w-5 flex-shrink-0" />}
+              <span className="flex-1 text-sm font-medium">{toast.message}</span>
+              <button onClick={() => setToast(null)} className="hover:opacity-70" aria-label="Cerrar notificacion"><X className="h-4 w-4" /></button>
+            </div>
+          )}
+        </div>
 
         {/* Error Display */}
-        {error && !toast && (
-          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-400">
-            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
-            <div>
-              <h3 className="text-sm font-medium">Error</h3>
-              <div className="mt-1 text-sm opacity-90">{error}</div>
+        <div aria-live="polite">
+          {error && !toast && (
+            <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-400" role="alert">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+              <div>
+                <h3 className="text-sm font-medium">Error</h3>
+                <div className="mt-1 text-sm opacity-90">{error}</div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Report Generation Form */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1" role="region" aria-label="Formulario de generacion de reportes">
             <ReportGenerationForm onSubmit={handleGenerateReport} isGenerating={isGenerating} />
           </div>
 
           {/* Reports List */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2" role="region" aria-label="Lista de reportes generados">
             <ReportsList
               reports={reports}
               isLoading={isLoading}

@@ -50,7 +50,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [showRankUpModal, setShowRankUpModal] = useState(false);
-  const [rankUpData, setRankUpData] = useState<any>(null);
+  const [rankUpData, setRankUpData] = useState<Record<string, unknown> | null>(null);
 
   const currentScenario = exercise.scenarios[currentScenarioIndex];
   const currentAnswer = answers.find((a) => a.scenarioId === currentScenario.id);
@@ -112,10 +112,6 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
         answers: { scenarios: userAnswers },
       });
 
-      console.log('📊 [PrediccionNarrativa] Progress update sent:', {
-        answered: answeredCount,
-        totalScenarios: exercise.scenarios.length,
-      });
     }
   }, [answers, hintsUsed, timeSpent, onProgressUpdate, exercise.scenarios.length]);
 
@@ -200,11 +196,6 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [PrediccionNarrativa] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [PrediccionNarrativa] Submission error:', error);
       setFeedback({

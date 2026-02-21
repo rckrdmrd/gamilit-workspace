@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -16,6 +16,8 @@ import { OrganizationStatsSummaryDto } from '../../dto/dashboard';
  */
 @Injectable()
 export class ContentStatsService {
+  private readonly logger = new Logger(ContentStatsService.name);
+
   constructor(
     @InjectDataSource('auth')
     private readonly authConnection: DataSource,
@@ -40,7 +42,7 @@ export class ContentStatsService {
 
       return parseInt(result?.count || '0', 10);
     } catch (error) {
-      console.error('Error fetching exercises completed:', error);
+      this.logger.error(`Error fetching exercises completed: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }
@@ -71,7 +73,7 @@ export class ContentStatsService {
         new_organizations_month: parseInt(stats.new_organizations_month || '0', 10),
       };
     } catch (error) {
-      console.error('Error fetching organization stats summary:', error);
+      this.logger.error(`Error fetching organization stats summary: ${error instanceof Error ? error.message : error}`);
       throw error;
     }
   }
@@ -91,7 +93,7 @@ export class ContentStatsService {
 
       return parseInt(result[0]?.count || '0', 10);
     } catch (error) {
-      console.error('Error fetching pending approvals count:', error);
+      this.logger.error(`Error fetching pending approvals count: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }
@@ -111,7 +113,7 @@ export class ContentStatsService {
 
       return parseInt(result[0]?.count || '0', 10);
     } catch (error) {
-      console.error('Error fetching flagged content count:', error);
+      this.logger.error(`Error fetching flagged content count: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }
@@ -161,7 +163,7 @@ export class ContentStatsService {
         newAssignments: parseInt(assignmentsResult[0]?.count || '0', 10),
       };
     } catch (error) {
-      console.error('Error fetching content activity stats:', error);
+      this.logger.error(`Error fetching content activity stats: ${error instanceof Error ? error.message : error}`);
       return {
         newModules: 0,
         newExercises: 0,

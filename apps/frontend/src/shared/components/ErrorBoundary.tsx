@@ -3,6 +3,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
+  portal?: string;
 }
 
 interface ErrorBoundaryState {
@@ -21,7 +22,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error('ErrorBoundary caught error:', error, errorInfo);
+    console.error(`[ErrorBoundary${this.props.portal ? ` - ${this.props.portal}` : ''}]`, error, errorInfo);
   }
 
   handleReset = (): void => {

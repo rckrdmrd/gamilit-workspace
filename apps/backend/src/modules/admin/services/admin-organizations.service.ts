@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   BadRequestException,
   ConflictException,
@@ -81,6 +82,8 @@ import { Profile } from '@modules/auth/entities/profile.entity';
  */
 @Injectable()
 export class AdminOrganizationsService {
+  private readonly logger = new Logger(AdminOrganizationsService.name);
+
   constructor(
     @InjectDataSource('educational')
     private readonly educationalConnection: DataSource,
@@ -508,7 +511,7 @@ export class AdminOrganizationsService {
       return Math.round(gbValue * 100) / 100;
     } catch (error) {
       // Log error but don't fail - return 0 if table doesn't exist or query fails
-      console.error('[AdminOrganizationsService] Error calculating storage:', error);
+      this.logger.error(`Error calculating storage: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }

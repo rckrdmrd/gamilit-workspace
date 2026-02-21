@@ -156,7 +156,7 @@ export class PushNotificationService implements OnModuleInit {
    * });
    */
   async sendToSubscription(
-    subscription: any,
+    subscription: Record<string, unknown>,
     payload: {
       title: string;
       body: string;
@@ -188,15 +188,17 @@ export class PushNotificationService implements OnModuleInit {
       await webpush.sendNotification(subscription, notificationPayload);
       this.logger.debug('Push notification sent successfully');
       return true;
-    } catch (error: any) {
-      this.logger.error(`Failed to send push: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to send push: ${message}`);
 
       // Handle expired/invalid subscriptions (410 Gone, 404 Not Found)
-      if (error.statusCode === 410 || error.statusCode === 404) {
+      const statusCode = (error as Record<string, unknown>)?.statusCode;
+      if (statusCode === 410 || statusCode === 404) {
         this.logger.warn(
-          `Subscription expired or invalid (status: ${error.statusCode})`,
+          `Subscription expired or invalid (status: ${statusCode})`,
         );
-        throw new InvalidSubscriptionError(error.statusCode);
+        throw new InvalidSubscriptionError(statusCode as number);
       }
 
       throw error;

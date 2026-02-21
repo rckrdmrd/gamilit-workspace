@@ -216,7 +216,7 @@ export class ModuleProgressResponseDto {
    * Ruta de aprendizaje
    */
   @Expose()
-    learning_path!: any[];
+    learning_path!: Record<string, unknown>[];
 
   /**
    * Analíticas de rendimiento

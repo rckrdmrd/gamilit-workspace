@@ -9,8 +9,6 @@
  * Sprint 1 - Admin Portal Refactor
  * Created: 2026-02-18
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
@@ -75,12 +73,34 @@ const CONTENT_QUERY_KEYS = {
  * Backend returns: {data: T[], total, page, limit, total_pages}
  * Frontend expects: {items: T[], pagination: {page, totalPages, totalItems, limit}}
  */
-function normalizeResponse<T>(response: any): { items: T[]; pagination: any } {
-  if (response.items && response.pagination) {
-    return response;
+interface PaginationInfo {
+  page: number;
+  totalPages: number;
+  totalItems: number;
+  limit: number;
+}
+
+interface NormalizedResponse<T> {
+  items: T[];
+  pagination: PaginationInfo;
+}
+
+interface BackendPaginatedResponse<T> {
+  items?: T[];
+  pagination?: PaginationInfo;
+  data?: T[];
+  page?: number;
+  total_pages?: number;
+  total?: number;
+  limit?: number;
+}
+
+function normalizeResponse<T>(response: BackendPaginatedResponse<T> | T[]): NormalizedResponse<T> {
+  if (!Array.isArray(response) && response.items && response.pagination) {
+    return response as NormalizedResponse<T>;
   }
 
-  if (response.data && Array.isArray(response.data)) {
+  if (!Array.isArray(response) && response.data && Array.isArray(response.data)) {
     return {
       items: response.data,
       pagination: {
@@ -145,8 +165,9 @@ export function usePendingExercisesQuery(options: UsePendingExercisesQueryOption
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allPending() });
       toast.success('Ejercicio aprobado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al aprobar ejercicio');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al aprobar ejercicio');
     },
   });
 
@@ -158,8 +179,9 @@ export function usePendingExercisesQuery(options: UsePendingExercisesQueryOption
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allPending() });
       toast.success('Ejercicio rechazado');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al rechazar ejercicio');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al rechazar ejercicio');
     },
   });
 
@@ -217,7 +239,7 @@ export function useMediaLibraryQuery(options: UseMediaLibraryQueryOptions = {}) 
   const query = useQuery({
     queryKey: CONTENT_QUERY_KEYS.mediaLibrary(page, pageSize),
     queryFn: async () => {
-      const response = await apiClient.get<any>(API_ENDPOINTS.admin.content.mediaLibrary, {
+      const response = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.admin.content.mediaLibrary, {
         params: {
           page,
           limit: pageSize,
@@ -225,16 +247,16 @@ export function useMediaLibraryQuery(options: UseMediaLibraryQueryOptions = {}) 
       });
 
       // Handle different response wrappers
-      let rawData = response.data;
+      let rawData: Record<string, any> = response.data;
       if (response.data.success && response.data.data) {
-        rawData = response.data.data;
+        rawData = response.data.data as Record<string, any>;
       }
 
       const normalized = normalizeResponse<MediaItem>(rawData);
 
       // Extract storage info
-      const storageUsed = rawData.storageUsed || rawData.storage_used || 0;
-      const storageLimit = rawData.storageLimit || rawData.storage_limit || 0;
+      const storageUsed = (rawData.storageUsed || rawData.storage_used || 0) as number;
+      const storageLimit = (rawData.storageLimit || rawData.storage_limit || 0) as number;
 
       return {
         ...normalized,
@@ -270,8 +292,9 @@ export function useMediaLibraryQuery(options: UseMediaLibraryQueryOptions = {}) 
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allMedia() });
       toast.success('Archivo subido correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al subir archivo');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al subir archivo');
     },
   });
 
@@ -283,8 +306,9 @@ export function useMediaLibraryQuery(options: UseMediaLibraryQueryOptions = {}) 
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allMedia() });
       toast.success('Archivo eliminado');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al eliminar archivo');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al eliminar archivo');
     },
   });
 
@@ -298,8 +322,9 @@ export function useMediaLibraryQuery(options: UseMediaLibraryQueryOptions = {}) 
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allMedia() });
       toast.success('Archivos eliminados');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al eliminar archivos');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al eliminar archivos');
     },
   });
 
@@ -401,8 +426,9 @@ export function useContentVersionsQuery(options: UseContentVersionsQueryOptions 
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allVersions() });
       toast.success('Version creada correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al crear version');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al crear version');
     },
   });
 
@@ -486,8 +512,9 @@ export function useApprovalsQuery(options: UseApprovalsQueryOptions = {}) {
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allPending() });
       toast.success('Elemento aprobado');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al aprobar elemento');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al aprobar elemento');
     },
   });
 
@@ -500,8 +527,9 @@ export function useApprovalsQuery(options: UseApprovalsQueryOptions = {}) {
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.allPending() });
       toast.success('Elemento rechazado');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al rechazar elemento');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al rechazar elemento');
     },
   });
 
@@ -560,8 +588,9 @@ export function useLegacyExercises(options: UseLegacyExercisesOptions = {}) {
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.exercises() });
       toast.success('Ejercicio creado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al crear ejercicio');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al crear ejercicio');
     },
   });
 
@@ -574,8 +603,9 @@ export function useLegacyExercises(options: UseLegacyExercisesOptions = {}) {
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.exercises() });
       toast.success('Ejercicio actualizado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al actualizar ejercicio');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al actualizar ejercicio');
     },
   });
 
@@ -588,8 +618,9 @@ export function useLegacyExercises(options: UseLegacyExercisesOptions = {}) {
       queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.exercises() });
       toast.success('Ejercicio eliminado');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al eliminar ejercicio');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al eliminar ejercicio');
     },
   });
 

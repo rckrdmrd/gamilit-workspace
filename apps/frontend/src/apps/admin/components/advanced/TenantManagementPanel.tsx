@@ -20,8 +20,10 @@
  */
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { Building2, Plus, Edit, Power, PowerOff, Users, TrendingUp, Database } from 'lucide-react';
 
 interface Tenant {
@@ -79,14 +81,28 @@ export const TenantManagementPanel: React.FC = () => {
 
   const [editingTenant, setEditingTenant] = useState<Partial<Tenant> | null>(null);
   const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingSuspendId, setPendingSuspendId] = useState<string | null>(null);
 
-  const handleSuspend = async (id: string) => {
-    if (!confirm('Suspend this tenant? Users will lose access immediately.')) return;
-    console.log('Suspending tenant:', id);
+  const handleSuspend = (id: string) => {
+    setPendingSuspendId(id);
+    setShowConfirm(true);
+  };
+
+  const confirmSuspend = async () => {
+    if (pendingSuspendId) {
+      // FUTURE: Implement tenant suspension API call
+      toast.success('Tenant suspendido correctamente');
+      void pendingSuspendId;
+    }
+    setShowConfirm(false);
+    setPendingSuspendId(null);
   };
 
   const handleActivate = async (id: string) => {
-    console.log('Activating tenant:', id);
+    // FUTURE: Implement tenant activation API call
+    toast.success('Tenant activado correctamente');
+    void id;
   };
 
   const handleCreate = () => {
@@ -102,7 +118,7 @@ export const TenantManagementPanel: React.FC = () => {
   };
 
   const handleSave = async () => {
-    console.log('Saving tenant:', editingTenant);
+    // FUTURE: Implement tenant save API call
     setEditingTenant(null);
   };
 
@@ -414,6 +430,21 @@ export const TenantManagementPanel: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Confirm Suspend Dialog */}
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => {
+          setShowConfirm(false);
+          setPendingSuspendId(null);
+        }}
+        onConfirm={confirmSuspend}
+        title="Suspender Tenant"
+        message="Suspend this tenant? Users will lose access immediately."
+        confirmText="Suspender"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 };

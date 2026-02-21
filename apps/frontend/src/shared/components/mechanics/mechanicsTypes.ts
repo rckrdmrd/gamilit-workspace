@@ -25,6 +25,30 @@ export interface ExerciseFeedback {
   details?: Record<string, unknown>;
   // Indica que el ejercicio requiere revision manual del maestro
   pendingReview?: boolean;
+
+  // Datos de completación rica (opcionales, del SubmitExerciseResponse)
+  maxScore?: number;
+  timeSpent?: number;
+  hintsUsed?: number;
+  achievements?: Array<{
+    name: string;
+    description: string;
+    icon: string;
+    rarity: string;
+    mlCoinsReward?: number;
+    xpReward?: number;
+  }>;
+  rankUp?: {
+    newRank: string;
+    previousRank?: string;
+    bonusMLCoins: number;
+    newMultiplier: number;
+  } | null;
+  streakInfo?: {
+    currentStreak: number;
+    milestone: boolean;
+    reward: number;
+  };
 }
 
 export interface ExerciseAttempt {
@@ -188,7 +212,8 @@ export const saveProgress = async (
   const progressData: ProgressData = typeof progress === 'number' ? { score: progress } : progress;
 
   // TODO: Implement progress saving to backend
-  console.log('Saving progress:', exerciseId, progressData);
+  void exerciseId;
+  void progressData;
 };
 
 /**

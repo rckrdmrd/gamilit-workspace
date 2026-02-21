@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * SystemLogsViewer Component
  *
@@ -6,37 +5,25 @@
  * Displays log entries with syntax highlighting for JSON data.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
-import type { SystemLog, LogFilter } from '../../types';
+import { useSystemLogs } from '../../hooks/useSystemLogs';
+import type { SystemLog } from '../../types';
 
 export const SystemLogsViewer: React.FC = () => {
-  const [logs, setLogs] = useState<SystemLog[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState<LogFilter>({ level: ['error', 'warning', 'critical'] });
+  const [selectedLevels, setSelectedLevels] = useState<string[]>(['error', 'warning', 'critical']);
   const [autoScroll, setAutoScroll] = useState(false);
 
-  useEffect(() => {
-    fetchLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  const { logs: rawLogs, isLoading: loading } = useSystemLogs({ pageSize: 200 });
 
-  const fetchLogs = async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.get(API_ENDPOINTS.admin.logs, { params: filter });
-      const data = response.data.success ? response.data.data : response.data;
-      setLogs(data);
-    } catch (error) {
-      console.error('Failed to fetch logs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Cast hook data to component's SystemLog type and apply client-side level filter
+  const logs = useMemo(() => {
+    const allLogs = rawLogs as unknown as SystemLog[];
+    if (selectedLevels.length === 0) return allLogs;
+    return allLogs.filter((log) => selectedLevels.includes(log.level));
+  }, [rawLogs, selectedLevels]);
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -98,14 +85,14 @@ export const SystemLogsViewer: React.FC = () => {
           <button
             key={level}
             onClick={() => {
-              const currentLevels = filter.level || [];
-              const newLevels = currentLevels.includes(level as any)
-                ? currentLevels.filter((l) => l !== level)
-                : [...currentLevels, level as any];
-              setFilter({ ...filter, level: newLevels as any });
+              setSelectedLevels((prev) =>
+                prev.includes(level)
+                  ? prev.filter((l) => l !== level)
+                  : [...prev, level],
+              );
             }}
             className={`rounded-md px-3 py-1.5 text-xs capitalize transition-colors ${
-              filter.level?.includes(level as any)
+              selectedLevels.includes(level)
                 ? getLevelColor(level)
                 : 'bg-detective-bg-secondary text-gray-400'
             }`}

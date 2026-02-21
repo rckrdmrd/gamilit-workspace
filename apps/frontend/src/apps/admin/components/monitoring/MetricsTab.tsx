@@ -19,6 +19,7 @@
 import React, { useState, useEffect } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { Server, Cpu, HardDrive, Activity, AlertCircle, RefreshCw, Clock } from 'lucide-react';
 import type { ExtendedSystemMetrics } from '@/services/api/adminTypes';
 
@@ -98,15 +99,12 @@ export const MetricsTab: React.FC<MetricsTabProps> = ({ metrics, isLoading, onRe
 
   if (!metrics) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <Server className="mx-auto mb-4 h-16 w-16 text-gray-500" />
-          <p className="text-gray-400">No hay datos de métricas disponibles</p>
-          <DetectiveButton onClick={handleRefresh} className="mt-4">
-            Cargar Métricas
-          </DetectiveButton>
-        </div>
-      </div>
+      <EmptyState
+        icon={Server}
+        title="No hay datos de metricas disponibles"
+        description="Haz clic en el boton para cargar las metricas del sistema"
+        action={{ label: 'Cargar Metricas', onClick: handleRefresh }}
+      />
     );
   }
 

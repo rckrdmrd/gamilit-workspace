@@ -83,7 +83,6 @@ export const BrandingProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // Apply branding to DOM
       applyBranding(brandingConfig);
 
-      console.log('[BrandingProvider] Branding loaded for tenant:', tenantId);
     } catch (err) {
       console.error('[BrandingProvider] Failed to load branding:', err);
       setError(err instanceof Error ? err : new Error('Failed to load branding'));
@@ -133,7 +132,6 @@ export const BrandingProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // Apply updated branding
       applyBranding(updatedConfig);
 
-      console.log('[BrandingProvider] Branding updated successfully');
     } catch (err) {
       console.error('[BrandingProvider] Failed to update branding:', err);
       setError(err instanceof Error ? err : new Error('Failed to update branding'));

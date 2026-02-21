@@ -1,4 +1,7 @@
 /**
+ * @deprecated Use `api.config.ts` instead — this file is NOT proxy-aware and is not imported
+ * anywhere in the codebase. The SSOT for API configuration is `api.config.ts`.
+ *
  * Environment configuration for GAMILIT Platform
  *
  * IMPORTANT: All required environment variables must be defined in .env files
@@ -87,18 +90,6 @@ export const env = {
   debugApi: parseBooleanEnv('VITE_DEBUG_API', false),
   mockApi: parseBooleanEnv('VITE_MOCK_API', false),
 } as const;
-
-// Validation: Log configuration in development
-if (env.isDevelopment) {
-  console.log('[ENV] Configuration loaded:', {
-    mode: env.mode,
-    apiUrl: env.apiUrl,
-    wsUrl: env.wsUrl,
-    appName: env.appName,
-    enableGamification: env.enableGamification,
-    enableSocialFeatures: env.enableSocialFeatures,
-  });
-}
 
 // Validation: Warn if using localhost in production
 if (env.isProduction && env.api.host.includes('localhost')) {

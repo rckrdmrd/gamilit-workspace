@@ -3,18 +3,14 @@
  *
  * Hook for managing permissions of a specific role.
  *
- * Features:
- * - Get current permissions for a role
- * - Update permissions for a role
- * - Loading and error states
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
  *
  * Created: 2025-11-24 - AdminRolesPage Backend Integration
- * - Consumes adminAPI.getRolePermissions(), updateRolePermissions()
- * - Integrates with backend endpoints GET/PUT /admin/roles/:id/permissions
+ * Updated: 2026-02-20 - Migrated to React Query
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as adminAPI from '@/services/api/adminAPI';
 import type { RolePermissions, Permission, Role } from '@/services/api/adminTypes';
 
@@ -22,52 +18,21 @@ import type { RolePermissions, Permission, Role } from '@/services/api/adminType
 // TRANSFORMERS - Backend <-> Frontend
 // ============================================================================
 
-/**
- * Transforms backend permissions format to frontend format
- *
- * Backend: Record<string, boolean> = { "can_create_content": true, "can_view_users": false }
- * Frontend: Permission[] = [{ module: "content", action: "create", granted: true }]
- *
- * Permission key format: "can_{action}_{module}" or "{action}_{module}"
- * Examples:
- * - "can_create_content" -> { module: "content", action: "create", granted: true }
- * - "can_view_users" -> { module: "users", action: "view", granted: false }
- * - "can_edit_gamification" -> { module: "gamification", action: "edit", granted: true }
- *
- * @param backendPerms - Backend permissions Record<string, boolean>
- * @returns Frontend Permission[]
- */
 function transformPermissionsFromBackend(backendPerms: Record<string, boolean>): Permission[] {
   const permissions: Permission[] = [];
 
   Object.entries(backendPerms).forEach(([key, granted]) => {
-    // Match pattern: "can_{action}_{module}" or "{action}_{module}"
-    // Examples: "can_create_content", "view_users"
     const match = key.match(/^(?:can_)?(\w+)_(\w+)$/);
 
     if (match) {
       const [, action, module] = match;
 
-      // Validate action and module are valid values
       const validActions: Permission['action'][] = [
-        'view',
-        'create',
-        'edit',
-        'delete',
-        'manage',
-        'export',
+        'view', 'create', 'edit', 'delete', 'manage', 'export',
       ];
       const validModules: Permission['module'][] = [
-        'users',
-        'content',
-        'gamification',
-        'monitoring',
-        'system',
-        'organizations',
-        'reports',
-        'analytics',
-        'admin',
-        'roles',
+        'users', 'content', 'gamification', 'monitoring', 'system',
+        'organizations', 'reports', 'analytics', 'admin', 'roles',
       ];
 
       if (
@@ -79,39 +44,58 @@ function transformPermissionsFromBackend(backendPerms: Record<string, boolean>):
           action: action as Permission['action'],
           granted,
         });
-      } else {
-        console.warn(
-          `[transformPermissionsFromBackend] Invalid permission key: ${key} (action: ${action}, module: ${module})`,
-        );
       }
-    } else {
-      console.warn(`[transformPermissionsFromBackend] Could not parse permission key: ${key}`);
     }
   });
 
   return permissions;
 }
 
-/**
- * Transforms frontend permissions format to backend format
- *
- * Frontend: Permission[] = [{ module: "content", action: "create", granted: true }]
- * Backend: Record<string, boolean> = { "can_create_content": true }
- *
- * @param frontendPerms - Frontend Permission[]
- * @returns Backend Record<string, boolean>
- */
-function transformPermissionsToBackend(frontendPerms: Permission[]): Record<string, boolean> {
-  const backendPerms: Record<string, boolean> = {};
-
-  frontendPerms.forEach((perm) => {
-    // Generate key: "can_{action}_{module}"
-    const key = `can_${perm.action}_${perm.module}`;
-    backendPerms[key] = perm.granted;
-  });
-
-  return backendPerms;
+interface BackendRolePermissionsResponse {
+  role_id?: string;
+  role_name?: string;
+  description?: string;
+  user_count?: number;
+  is_system?: boolean;
+  updated_at?: string;
+  permissions?: Record<string, boolean>;
 }
+
+function transformBackendResponse(backendData: unknown): RolePermissions | null {
+  const data = backendData as BackendRolePermissionsResponse | null | undefined;
+  const backendPerms = data?.permissions;
+
+  if (!data || !backendPerms || typeof backendPerms !== 'object') {
+    return null;
+  }
+
+  const transformedPermissions = transformPermissionsFromBackend(backendPerms);
+
+  return {
+    role: {
+      roleId: data.role_id,
+      roleName: data.role_name,
+      description: data.description || '',
+      userCount: data.user_count || 0,
+      isSystem: data.is_system || false,
+      updatedAt: data.updated_at,
+    } as Role,
+    permissions: transformedPermissions,
+  };
+}
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const rolePermissionsKeys = {
+  all: ['admin', 'role-permissions'] as const,
+  detail: (roleId: string) => ['admin', 'role-permissions', roleId] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseRolePermissionsResult {
   // Data
@@ -127,154 +111,54 @@ export interface UseRolePermissionsResult {
   reset: () => void;
 }
 
-/**
- * Hook for managing permissions of a specific role
- *
- * @returns {UseRolePermissionsResult} Role permissions data, loading state, and operations
- *
- * @example
- * ```tsx
- * const { rolePermissions, loading, error, fetchRolePermissions, updatePermissions } = useRolePermissions();
- *
- * const handleSelectRole = async (roleId: string) => {
- *   await fetchRolePermissions(roleId);
- * };
- *
- * const handleSavePermissions = async () => {
- *   if (!rolePermissions) return;
- *   await updatePermissions(rolePermissions.role.roleId, modifiedPermissions);
- * };
- *
- * return (
- *   <div>
- *     {loading && <Spinner />}
- *     {error && <ErrorMessage>{error}</ErrorMessage>}
- *     {rolePermissions && (
- *       <PermissionsForm
- *         role={rolePermissions.role}
- *         permissions={rolePermissions.permissions}
- *         onSave={handleSavePermissions}
- *       />
- *     )}
- *   </div>
- * );
- * ```
- */
+// ============================================================================
+// Hook
+// ============================================================================
+
 export function useRolePermissions(): UseRolePermissionsResult {
-  // State management
-  const [rolePermissions, setRolePermissions] = useState<RolePermissions | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  // We need to track the current roleId for the query
+  // Using a manual approach since roleId is dynamic (set by fetchRolePermissions)
+  const activeRoleQuery = useQuery({
+    queryKey: rolePermissionsKeys.detail('__none__'),
+    queryFn: async () => null as RolePermissions | null,
+    enabled: false, // disabled by default
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ roleId, permissions }: { roleId: string; permissions: Permission[] }) => {
+      const backendData = await adminAPI.updateRolePermissions(roleId, permissions);
+      return { backendData, roleId };
+    },
+    onSuccess: ({ backendData, roleId }) => {
+      const frontendData = transformBackendResponse(backendData);
+      if (frontendData) {
+        queryClient.setQueryData(rolePermissionsKeys.detail(roleId), frontendData);
+      }
+    },
+  });
 
   // ============================================================================
-  // API CALLS
+  // ACTIONS
   // ============================================================================
 
-  /**
-   * Fetch permissions for a specific role
-   * Backend: GET /admin/roles/:id/permissions
-   *
-   * Response example:
-   * ```json
-   * {
-   *   "role": {
-   *     "roleId": "uuid",
-   *     "roleName": "admin_teacher",
-   *     "description": "Teacher Administrator",
-   *     "userCount": 10
-   *   },
-   *   "permissions": [
-   *     {
-   *       "module": "users",
-   *       "action": "view",
-   *       "granted": true
-   *     }
-   *   ]
-   * }
-   * ```
-   */
-  const fetchRolePermissions = useCallback(async (roleId: string): Promise<void> => {
-    if (!roleId) {
-      console.warn('[useRolePermissions] Cannot fetch permissions without roleId');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      const backendData = await adminAPI.getRolePermissions(roleId);
-
-      // Backend returns structure:
-      // {
-      //   role_id: string,
-      //   role_name: string,
-      //   permissions: Record<string, boolean>,
-      //   updated_at: string
-      // }
-
-      // Transform backend response to frontend format
-      const backendPerms = (backendData as any).permissions;
-
-      // Defensive: Validate backend response structure
-      if (!backendData || !backendPerms || typeof backendPerms !== 'object') {
-        console.error('[useRolePermissions] Invalid backend response structure:', backendData);
-        setError('Estructura de respuesta inválida del servidor');
-        setRolePermissions(null);
+  const fetchRolePermissions = useCallback(
+    async (roleId: string): Promise<void> => {
+      if (!roleId) {
         return;
       }
 
-      // Transform permissions from Record<string, boolean> to Permission[]
-      const transformedPermissions = transformPermissionsFromBackend(backendPerms);
+      const backendData = await adminAPI.getRolePermissions(roleId);
+      const frontendData = transformBackendResponse(backendData);
 
-      // Build frontend RolePermissions structure
-      const frontendData: RolePermissions = {
-        role: {
-          roleId: (backendData as any).role_id,
-          roleName: (backendData as any).role_name,
-          description: (backendData as any).description || '',
-          userCount: (backendData as any).user_count || 0,
-          isSystem: (backendData as any).is_system || false,
-          updatedAt: (backendData as any).updated_at,
-        } as Role,
-        permissions: transformedPermissions,
-      };
+      if (frontendData) {
+        queryClient.setQueryData(rolePermissionsKeys.detail(roleId), frontendData);
+      }
+    },
+    [queryClient],
+  );
 
-      console.log('[useRolePermissions] Transformed permissions:', {
-        backend: backendPerms,
-        frontend: transformedPermissions,
-        count: transformedPermissions.length,
-      });
-
-      setRolePermissions(frontendData);
-    } catch (err) {
-      console.error('[useRolePermissions] Failed to fetch role permissions:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch role permissions');
-      setRolePermissions(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  /**
-   * Update permissions for a specific role
-   * Backend: PUT /admin/roles/:id/permissions
-   *
-   * Request body:
-   * ```json
-   * {
-   *   "permissions": [
-   *     {
-   *       "module": "users",
-   *       "action": "view",
-   *       "granted": true
-   *     }
-   *   ]
-   * }
-   * ```
-   *
-   * @param roleId - Role ID to update
-   * @param permissions - New permissions array
-   */
   const updatePermissions = useCallback(
     async (roleId: string, permissions: Permission[]): Promise<void> => {
       if (!roleId) {
@@ -285,81 +169,21 @@ export function useRolePermissions(): UseRolePermissionsResult {
         throw new Error('permissions debe ser un array');
       }
 
-      setLoading(true);
-      setError(null);
-      try {
-        // Transform frontend permissions to backend format
-        const backendPermissions = transformPermissionsToBackend(permissions);
-
-        console.log('[useRolePermissions] Transforming permissions for update:', {
-          frontend: permissions,
-          backend: backendPermissions,
-          count: permissions.length,
-        });
-
-        // Send transformed permissions to backend
-        // Note: adminAPI.updateRolePermissions still expects Permission[] but we'll override the body
-        // We need to call the API directly with the correct format
-        const backendData = await adminAPI.updateRolePermissions(roleId, permissions);
-
-        // Backend returns same structure as GET
-        // {
-        //   role_id: string,
-        //   role_name: string,
-        //   permissions: Record<string, boolean>,
-        //   updated_at: string
-        // }
-
-        const backendPerms = (backendData as any).permissions;
-
-        // Defensive: Validate response structure
-        if (!backendData || !backendPerms || typeof backendPerms !== 'object') {
-          console.error('[useRolePermissions] Invalid update response:', backendData);
-          setError('Estructura de respuesta inválida del servidor');
-          return;
-        }
-
-        // Transform response permissions back to frontend format
-        const transformedPermissions = transformPermissionsFromBackend(backendPerms);
-
-        // Build frontend RolePermissions structure
-        const frontendData: RolePermissions = {
-          role: {
-            roleId: (backendData as any).role_id,
-            roleName: (backendData as any).role_name,
-            description: (backendData as any).description || '',
-            userCount: (backendData as any).user_count || 0,
-            isSystem: (backendData as any).is_system || false,
-            updatedAt: (backendData as any).updated_at,
-          } as Role,
-          permissions: transformedPermissions,
-        };
-
-        // Update local state with new permissions
-        setRolePermissions(frontendData);
-
-        console.log('[useRolePermissions] Permissions updated successfully for role:', roleId);
-      } catch (err) {
-        console.error('[useRolePermissions] Failed to update permissions:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to update permissions';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
+      await updateMutation.mutateAsync({ roleId, permissions });
     },
-    [],
+    [updateMutation],
   );
 
-  /**
-   * Reset state
-   * Useful when closing permission editor or deselecting role
-   */
   const reset = useCallback((): void => {
-    setRolePermissions(null);
-    setError(null);
-    setLoading(false);
-  }, []);
+    queryClient.removeQueries({ queryKey: rolePermissionsKeys.all });
+  }, [queryClient]);
+
+  // Get the most recent role permissions from cache
+  // We look for any cached data under rolePermissionsKeys
+  const cachedKeys = queryClient.getQueriesData<RolePermissions>({
+    queryKey: rolePermissionsKeys.all,
+  });
+  const latestPermissions = cachedKeys.length > 0 ? cachedKeys[cachedKeys.length - 1][1] : null;
 
   // ============================================================================
   // RETURN
@@ -367,11 +191,11 @@ export function useRolePermissions(): UseRolePermissionsResult {
 
   return {
     // Data
-    rolePermissions,
+    rolePermissions: latestPermissions ?? null,
 
     // State
-    loading,
-    error,
+    loading: activeRoleQuery.isLoading || updateMutation.isPending,
+    error: updateMutation.error instanceof Error ? updateMutation.error.message : null,
 
     // Operations
     fetchRolePermissions,

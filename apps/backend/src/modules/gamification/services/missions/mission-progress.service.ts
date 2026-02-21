@@ -44,6 +44,7 @@ export interface ProgressUpdateResult {
  */
 export type MissionActivityType =
   | 'complete_exercise'
+  | 'complete_exercise_type'
   | 'earn_xp'
   | 'use_comodin'
   | 'login_daily'
@@ -57,6 +58,10 @@ export interface ActivityData {
   type: MissionActivityType;
   value: number;
   metadata?: Record<string, unknown>;
+  /** Exercise type identifier (e.g., 'crucigrama', 'detective_textual') for exercise-linked missions */
+  exerciseType?: string;
+  /** Module number for module-filtered missions */
+  moduleNumber?: number;
 }
 
 @Injectable()
@@ -92,7 +97,8 @@ export class MissionProgressService {
     for (const mission of missions) {
       // Check if any objective matches the activity type
       const matchingObjectives = mission.objectives.filter((obj) =>
-        this.activityMatchesObjective(activity.type, obj.type),
+        this.activityMatchesObjective(activity.type, obj.type) &&
+        this.exerciseTypeMatchesObjective(activity, obj),
       );
 
       if (matchingObjectives.length === 0) {
@@ -198,6 +204,7 @@ export class MissionProgressService {
   ): boolean {
     const mappings: Record<MissionActivityType, string[]> = {
       complete_exercise: ['complete_exercises', 'exercise_count'],
+      complete_exercise_type: ['complete_exercise_type', 'complete_exercises', 'exercise_count'],
       earn_xp: ['earn_xp', 'xp_total'],
       use_comodin: ['use_comodines', 'comodin_count'],
       login_daily: ['daily_login', 'login_streak'],
@@ -207,6 +214,38 @@ export class MissionProgressService {
 
     const matchingTypes = mappings[activityType] || [];
     return matchingTypes.includes(objectiveType);
+  }
+
+  /**
+   * Checks if the activity's exercise type and module match the objective's constraints
+   *
+   * @description When an objective has required_exercise_type or required_module set,
+   * the activity must match those constraints for progress to count.
+   * - If objective has no constraints, any exercise matches (returns true)
+   * - If objective has required_exercise_type, activity.exerciseType must match
+   * - If objective has required_module, activity.moduleNumber must match
+   *
+   * @private
+   */
+  private exerciseTypeMatchesObjective(
+    activity: ActivityData,
+    objective: MissionObjective,
+  ): boolean {
+    // Check exercise type constraint
+    if (objective.required_exercise_type) {
+      if (!activity.exerciseType || activity.exerciseType !== objective.required_exercise_type) {
+        return false;
+      }
+    }
+
+    // Check module constraint
+    if (objective.required_module) {
+      if (!activity.moduleNumber || activity.moduleNumber !== objective.required_module) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**

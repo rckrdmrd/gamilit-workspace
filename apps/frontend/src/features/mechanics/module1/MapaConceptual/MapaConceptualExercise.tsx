@@ -71,10 +71,6 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
         answers: { connections },
       });
 
-      console.log('📊 [MapaConceptual] Progress update sent:', {
-        connectionsCount: connections.length,
-        totalExpected: correctConnections.length,
-      });
     }
   }, [connections, hintsUsed, onProgressUpdate, correctConnections, startTime]);
 
@@ -143,11 +139,6 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [MapaConceptual] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [MapaConceptual] Submission error:', error);
       setFeedback({
@@ -217,9 +208,9 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
               </span>
               <span>{Math.round(Math.min(progress, 100))}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>

@@ -276,9 +276,10 @@ export class BulkOperationsService {
 
         results.push({ userId: user.id, success: true });
         completed++;
-      } catch (error: any) {
-        this.logger.error(`Error suspending user ${user.id}: ${error.message}`);
-        results.push({ userId: user.id, success: false, error: error.message });
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.error(`Error suspending user ${user.id}: ${message}`);
+        results.push({ userId: user.id, success: false, error: message });
         failed++;
       }
 
@@ -338,8 +339,9 @@ export class BulkOperationsService {
         await this.suspensionRepo.delete({ user_id: user.id });
 
         completed++;
-      } catch (error: any) {
-        this.logger.error(`Error activating user ${user.id}: ${error.message}`);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.error(`Error activating user ${user.id}: ${message}`);
         failed++;
       }
 
@@ -381,8 +383,9 @@ export class BulkOperationsService {
 
       // Actualizar progreso de una vez
       await this.updateProgress(operationId, completed, failed);
-    } catch (error: any) {
-      this.logger.error(`Error updating roles in batch: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error updating roles in batch: ${message}`);
       // Fallback: procesar individualmente si falla el batch
       const users = await this.userRepo.findByIds(dto.userIds);
       const foundIds = new Set(users.map((u) => u.id));
@@ -393,8 +396,9 @@ export class BulkOperationsService {
           user.role = dto.newRole;
           await this.userRepo.save(user);
           completed++;
-        } catch (err: any) {
-          this.logger.error(`Error updating role for user ${user.id}: ${err.message}`);
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : String(err);
+          this.logger.error(`Error updating role for user ${user.id}: ${errMsg}`);
           failed++;
         }
 
@@ -449,8 +453,9 @@ export class BulkOperationsService {
 
       // Actualizar progreso de una vez
       await this.updateProgress(operationId, completed, failed);
-    } catch (error: any) {
-      this.logger.error(`Error in batch delete: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error in batch delete: ${message}`);
       // Fallback: procesar individualmente si falla el batch
       for (const userId of dto.userIds) {
         try {
@@ -464,8 +469,9 @@ export class BulkOperationsService {
             }
           }
           completed++;
-        } catch (err: any) {
-          this.logger.error(`Error deleting user ${userId}: ${err.message}`);
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : String(err);
+          this.logger.error(`Error deleting user ${userId}: ${errMsg}`);
           failed++;
         }
 

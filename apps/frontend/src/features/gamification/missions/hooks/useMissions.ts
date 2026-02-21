@@ -15,6 +15,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { apiClient } from '@/services/api/apiClient';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { useQueryClient } from '@tanstack/react-query';
 import type {
   Mission,
   MissionStats,
@@ -61,6 +62,7 @@ interface UseMissionsResult {
  * Main useMissions hook
  */
 export function useMissions(_userId?: string): UseMissionsResult {
+  const queryClient = useQueryClient();
   // State
   const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
   const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
@@ -145,7 +147,6 @@ export function useMissions(_userId?: string): UseMissionsResult {
     const userId = useAuthStore.getState().user?.id;
 
     if (!userId) {
-      console.log('[useMissions] No user authenticated, skipping fetch');
       // Establecer estados vacíos
       setDailyMissions([]);
       setWeeklyMissions([]);
@@ -180,6 +181,21 @@ export function useMissions(_userId?: string): UseMissionsResult {
     }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
+  }, [fetchMissions]);
+
+  // Sincronización en tiempo real con eventos WebSocket de gamificación.
+  useEffect(() => {
+    const refreshFromRealtime = () => {
+      void fetchMissions();
+    };
+    window.addEventListener('gamilit:mission:progress', refreshFromRealtime);
+    window.addEventListener('gamilit:mission:completed', refreshFromRealtime);
+    window.addEventListener('gamilit:balance:updated', refreshFromRealtime);
+    return () => {
+      window.removeEventListener('gamilit:mission:progress', refreshFromRealtime);
+      window.removeEventListener('gamilit:mission:completed', refreshFromRealtime);
+      window.removeEventListener('gamilit:balance:updated', refreshFromRealtime);
+    };
   }, [fetchMissions]);
 
   /**
@@ -317,6 +333,10 @@ export function useMissions(_userId?: string): UseMissionsResult {
 
           // Refresh missions
           await fetchMissions();
+          queryClient.invalidateQueries({ queryKey: ['shop'] });
+          queryClient.invalidateQueries({ queryKey: ['inventory'] });
+          queryClient.invalidateQueries({ queryKey: ['balance'] });
+          queryClient.invalidateQueries({ queryKey: ['userStats'] });
 
           return {
             success: true,
@@ -342,7 +362,7 @@ export function useMissions(_userId?: string): UseMissionsResult {
         };
       }
     },
-    [fetchMissions, untrackMission, updateMissionInState],
+    [fetchMissions, untrackMission, updateMissionInState, queryClient],
   );
 
   // Computed: All missions

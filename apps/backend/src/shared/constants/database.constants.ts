@@ -121,6 +121,9 @@ export const DB_TABLES = {
     EXERCISE_VALIDATION_CONFIG: 'exercise_validation_configs', // FIX H-016: singular→plural
     EXERCISE_TYPE_RUBRICS: 'exercise_type_rubrics', // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
     EXERCISE_VALIDATION_AUDIT: 'exercise_validation_audits', // FIX H-016: singular→plural
+    RESOURCE_RATINGS: 'resource_ratings', // Resource sharing: teacher ratings on shared content
+    RESOURCE_COMMENTS: 'resource_comments', // Resource sharing: teacher comments on shared content
+    RESOURCE_DOWNLOADS: 'resource_downloads', // Resource sharing: download tracking
     // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 

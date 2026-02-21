@@ -145,7 +145,7 @@ export class ChallengeParticipantsService {
    * @returns Lista de participaciones
    */
   async findByUserId(userId: string, status?: string): Promise<ChallengeParticipant[]> {
-    const where: any = { user_id: userId };
+    const where: Record<string, string> = { user_id: userId };
 
     if (status) {
       where.participation_status = status;

@@ -43,6 +43,10 @@ export { Skeleton, type SkeletonProps } from '../loading';
 export { Toast, ToastContainer, useToast } from './Toast';
 export type { ToastProps, ToastContainerProps, ToastType } from './Toast';
 
+// Stats Grid
+export { StatsCardGrid } from './StatsCardGrid';
+export type { StatsCardGridProps, StatItem } from './StatsCardGrid';
+
 // Tabs
 export { TabBar } from './TabBar';
 export type { TabDefinition } from './TabBar';

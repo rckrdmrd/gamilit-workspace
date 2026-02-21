@@ -11,9 +11,9 @@
 ```
 projects/gamilit/
 ├── apps/
-│   ├── backend/        # NestJS 11 - 22 módulos, 899 endpoints
-│   ├── frontend/       # React 19 - 474 componentes, 68 páginas
-│   └── database/ddl/   # PostgreSQL 15 - 18 schemas, 169 tablas
+│   ├── backend/        # NestJS 11 - 23 módulos, 912 endpoints
+│   ├── frontend/       # React 19 - 590 componentes, 70 páginas
+│   └── database/ddl/   # PostgreSQL 15 - 18 schemas, 173 tablas
 ├── orchestration/      # Documentación operacional
 ├── docs/               # Documentación de usuario
 ├── .claude/            # Config Claude Code
@@ -78,9 +78,9 @@ wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform
 
 | Archivo | Contenido |
 |---------|-----------|
-| `DATABASE_INVENTORY.yml` | 169 tablas, 18 schemas |
-| `BACKEND_INVENTORY.yml` | 22 módulos, 899 endpoints |
-| `FRONTEND_INVENTORY.yml` | 474 componentes, 68 páginas |
+| `DATABASE_INVENTORY.yml` | 173 tablas, 18 schemas |
+| `BACKEND_INVENTORY.yml` | 23 módulos, 912 endpoints |
+| `FRONTEND_INVENTORY.yml` | 590 componentes, 70 páginas |
 | `MASTER_INVENTORY.yml` | Totales consolidados |
 | `SEEDS_INVENTORY.yml` | Datos semilla |
 
@@ -89,22 +89,24 @@ wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform
 ## 6. SCHEMAS DE BD
 
 ```
-01_users        # Usuarios y autenticación
-02_institutions # Instituciones educativas
-03_courses      # Cursos y curriculas
-04_enrollments  # Matrículas
-05_assessments  # Evaluaciones
-06_gamification # Gamificación (XP, badges, leaderboards)
-07_content      # Contenido educativo
-08_notifications# Notificaciones
-09_payments     # Pagos
-10_analytics    # Analíticas
-11_support      # Soporte
-12_integrations # Integraciones
-13_audit        # Auditoría
-14_config       # Configuración
-15_calendar     # Calendario
-16_reports      # Reportes
+auth                  # Usuarios base (auth.users)
+auth_management       # Perfiles, roles, tenants, sesiones
+educational_content   # Modulos, ejercicios, rubrics, assignments
+progress_tracking     # Progreso, submissions, learning sessions
+gamification_system   # XP, rangos maya, achievements, ML coins, tienda
+social_features       # Escuelas, aulas, equipos, amigos, challenges
+notification_system   # Notificaciones, templates, queue, devices
+admin_dashboard       # Reportes admin, operaciones bulk, metricas
+audit_logging         # Logs auditoria, alertas sistema, actividad
+lti_integration       # Consumidores LTI, sesiones, grade passback
+communication         # Mensajes, conversaciones, participantes
+parent_portal         # Cuentas padres, vinculacion estudiantes
+data_warehouse        # Dimensiones, facts, ETL, ML (16 tablas)
+ml_analytics          # Modelos ML, predicciones (placeholder)
+content_moderation    # Moderacion contenido (placeholder)
+public                # Schema publico PostgreSQL
+extensions            # Extensiones PostgreSQL (uuid-ossp, etc.)
+gamilit               # Funciones utilitarias globales
 ```
 
 ---
@@ -113,10 +115,10 @@ wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform
 
 | Portal | Ruta | Estado |
 |--------|------|--------|
-| Student Portal | `/student/*` | 90% |
-| Teacher Portal | `/teacher/*` | 85% |
-| Admin Portal | `/admin/*` | 80% |
-| Public Website | `/` | 75% |
+| Student Portal | `/student/*` | 100% |
+| Teacher Portal | `/teacher/*` | 95% |
+| Admin Portal | `/admin/*` | 92% |
+| Parent Portal | `/parent/*` | 100% |
 
 ---
 

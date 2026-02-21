@@ -347,7 +347,7 @@ La Arquitectura Hexagonal (Ports & Adapters) complementa Clean Architecture al d
 
 Los puertos primarios son los puntos de entrada al sistema. En gamilit existen tres tipos principales:
 
-**1. HTTP Controllers (107 controllers)**
+**1. HTTP Controllers (108 controllers)**
 
 Son el adaptador primario mas comun. Cada controller recibe peticiones HTTP y las traduce a invocaciones de servicios de aplicacion.
 

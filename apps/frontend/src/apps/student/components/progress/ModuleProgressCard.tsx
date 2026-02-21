@@ -85,11 +85,11 @@ const getStatusIcon = (status: ExerciseStatus) => {
     case 'in_progress':
       return <Play className="h-4 w-4 text-yellow-500" />;
     case 'pending':
-      return <Circle className="h-4 w-4 text-gray-400" />;
+      return <Circle className="h-4 w-4 text-detective-text-secondary" />;
     case 'skipped':
       return <Circle className="h-4 w-4 text-red-400" />;
     default:
-      return <Circle className="h-4 w-4 text-gray-400" />;
+      return <Circle className="h-4 w-4 text-detective-text-secondary" />;
   }
 };
 
@@ -119,7 +119,7 @@ const getDifficultyColor = (difficulty: string) => {
     case 'expert':
       return 'bg-red-500/20 text-red-400';
     default:
-      return 'bg-gray-500/20 text-gray-400';
+      return 'bg-detective-neutral/20 text-detective-text-secondary';
   }
 };
 
@@ -168,7 +168,7 @@ export function ModuleProgressCard({
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">{module_title}</h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-detective-text-secondary">
               {completed_exercises}/{total_exercises} ejercicios completados
             </p>
           </div>
@@ -201,7 +201,7 @@ export function ModuleProgressCard({
             <Target className="h-4 w-4 text-blue-400" />
             <span className="text-lg font-bold text-white">{average_score.toFixed(0)}%</span>
           </div>
-          <p className="text-xs text-gray-400">Puntaje promedio</p>
+          <p className="text-xs text-detective-text-secondary">Puntaje promedio</p>
         </div>
 
         <div className="bg-detective-bg-secondary rounded-lg p-3 text-center">
@@ -209,7 +209,7 @@ export function ModuleProgressCard({
             <Trophy className="h-4 w-4 text-purple-400" />
             <span className="text-lg font-bold text-white">{total_xp_earned}</span>
           </div>
-          <p className="text-xs text-gray-400">XP ganados</p>
+          <p className="text-xs text-detective-text-secondary">XP ganados</p>
         </div>
 
         <div className="bg-detective-bg-secondary rounded-lg p-3 text-center">
@@ -217,7 +217,7 @@ export function ModuleProgressCard({
             <Coins className="h-4 w-4 text-yellow-400" />
             <span className="text-lg font-bold text-white">{total_ml_coins_earned}</span>
           </div>
-          <p className="text-xs text-gray-400">ML Coins</p>
+          <p className="text-xs text-detective-text-secondary">ML Coins</p>
         </div>
 
         <div className="bg-detective-bg-secondary rounded-lg p-3 text-center">
@@ -225,7 +225,7 @@ export function ModuleProgressCard({
             <Clock className="h-4 w-4 text-green-400" />
             <span className="text-lg font-bold text-white">{formatTime(estimated_remaining_minutes)}</span>
           </div>
-          <p className="text-xs text-gray-400">Tiempo restante</p>
+          <p className="text-xs text-detective-text-secondary">Tiempo restante</p>
         </div>
       </div>
 
@@ -240,7 +240,7 @@ export function ModuleProgressCard({
                 <span className={`text-xs px-2 py-0.5 rounded ${getDifficultyColor(next_exercise.difficulty)}`}>
                   {next_exercise.difficulty}
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-detective-text-secondary">
                   ~{next_exercise.estimated_minutes} min
                 </span>
               </div>
@@ -258,7 +258,7 @@ export function ModuleProgressCard({
       {/* Exercise List */}
       {showExerciseList && !compact && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-300 mb-2">Desglose de ejercicios</h4>
+          <h4 className="text-sm font-medium text-detective-text-secondary mb-2">Desglose de ejercicios</h4>
           <div className="max-h-60 overflow-y-auto space-y-2">
             {exercises.map((exercise, index) => (
               <motion.div
@@ -283,7 +283,7 @@ export function ModuleProgressCard({
                       <span className={`text-xs px-1.5 py-0.5 rounded ${getDifficultyColor(exercise.difficulty)}`}>
                         {exercise.difficulty}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-detective-text-secondary">
                         {getStatusLabel(exercise.status)}
                       </span>
                     </div>
@@ -296,7 +296,7 @@ export function ModuleProgressCard({
                       {exercise.score}/{exercise.max_score}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-detective-text-secondary">
                     {exercise.attempts_count > 0 ? `${exercise.attempts_count} intentos` : '~' + exercise.estimated_minutes + ' min'}
                   </p>
                 </div>

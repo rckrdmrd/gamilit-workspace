@@ -7,20 +7,24 @@
  * @version 1.0.0
  * @since Phase 2 - Exercise System Restructuring
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { createContext, useContext, useCallback, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import type { UserGamificationSummary } from '@/services/api/gamification/gamificationAPI';
+import type { User } from '@/features/auth/types/auth.types';
 import { useExerciseData, type ExerciseData, type PedagogicalGuide } from '../hooks/useExerciseData';
 import { useExerciseComodines, type UseExerciseComodinesReturn } from '../hooks/useExerciseComodines';
-import { useExerciseProgress, type ExerciseProgress } from '../hooks/useExerciseProgress';
+import { useExerciseProgress, type ExerciseProgress, type ProgressUpdate } from '../hooks/useExerciseProgress';
 import { useExercisePowerUps, type PowerUpEffects } from '@/apps/student/hooks/useExercisePowerUps';
+import type { PowerUp as GamificationPowerUp, ActivePowerUp as GamificationActivePowerUp } from '@/features/gamification/social/types/powerUpsTypes';
 import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
 import { submitExercise } from '@/services/api/educationalAPI';
 import type { ExerciseMechanicActions, ExerciseComodinesContext, ExerciseRegistryEntry } from '../types/exercise-mechanic.types';
+import type { ComodinType } from '../types/exercise.types';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { MANUAL_REVIEW_PENDING_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 
 // ============================================================================
 // CONTEXT TYPE
@@ -28,14 +32,15 @@ import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface ExerciseContextValue {
   // === Auth & User ===
-  user: any;
+  user: User | null;
   logout: () => Promise<void>;
-  gamificationData: any;
+  gamificationData: UserGamificationSummary | null;
 
   // === Exercise Data ===
   exercise: ExerciseData | null;
-  adaptedExercise: any;
+  adaptedExercise: Record<string, unknown> | null;
   mechanicEntry: ExerciseRegistryEntry | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   MechanicComponent: React.ComponentType<any> | null;
   isLoading: boolean;
   loadError: string | null;
@@ -45,12 +50,12 @@ export interface ExerciseContextValue {
 
   // === Progress ===
   progress: ExerciseProgress;
-  userAnswers: any;
+  userAnswers: unknown;
   hasUnsavedChanges: boolean;
   autoSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
   lastSavedAt: Date | null;
   startTime: Date;
-  handleProgressUpdate: (update: any) => void;
+  handleProgressUpdate: (update: Partial<ExerciseProgress> | ProgressUpdate) => void;
   handleSaveProgress: () => Promise<void>;
 
   // === Comodines (new — real API) ===
@@ -58,8 +63,8 @@ export interface ExerciseContextValue {
 
   // === Legacy Power-ups (existing hook) ===
   powerUps: {
-    availablePowerUps: any[];
-    activePowerUps: any[];
+    availablePowerUps: GamificationPowerUp[];
+    activePowerUps: GamificationActivePowerUp[];
     activatePowerUp: (id: string) => Promise<boolean>;
     getUsedPowerUps: () => string[];
     effects: PowerUpEffects;
@@ -132,7 +137,7 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   const comodines = useExerciseComodines(
     exerciseId,
     user?.id,
-    (exerciseData.exercise?.mechanicData as any)?.comodines_allowed ?? null,
+    (exerciseData.exercise?.mechanicData as Record<string, unknown> | undefined)?.comodines_allowed as ComodinType[] | null ?? null,
   );
 
   // Legacy power-ups hook
@@ -145,6 +150,9 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [availableCoins, setAvailableCoins] = useState(350);
+
+  // Skip confirmation dialog state
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
 
   // Mechanic actions ref
   const mechanicActionsRef = useRef<ExerciseMechanicActions>({});
@@ -203,12 +211,27 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
 
       await syncAndInvalidate();
 
+      // M3-M5: ejercicio requiere revision manual — no mostrar rewards aun
+      if (result.requiresManualReview || result.status === 'pending_review') {
+        setFeedback({
+          type: 'info',
+          title: 'Ejercicio Completado',
+          message: MANUAL_REVIEW_PENDING_MESSAGE,
+          pendingReview: true,
+          timeSpent: Math.floor((Date.now() - progressHook.startTime.getTime()) / 1000),
+          hintsUsed: progressHook.progress.hintsUsed || 0,
+        });
+        setShowFeedback(true);
+        return;
+      }
+
+      // Flujo normal: auto-graded (M1-M2)
       const xpEarned = result.rewards?.xp ?? 0;
       const mlCoinsEarned = result.rewards?.mlCoins ?? 0;
       let feedbackMessage = `Has obtenido ${result.score} puntos. Ganaste ${xpEarned} XP y ${mlCoinsEarned} ML Coins.`;
 
       if (result.rewards?.bonuses && result.rewards.bonuses.length > 0) {
-        const bonusDetails = result.rewards.bonuses.map((b: any) => `+${b.amount} ${b.type}`).join(', ');
+        const bonusDetails = result.rewards.bonuses.map((b: { amount: number; type: string }) => `+${b.amount} ${b.type}`).join(', ');
         feedbackMessage += ` Bonos: ${bonusDetails}`;
       }
 
@@ -224,9 +247,24 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
         title: result.isPerfect ? '¡Perfecto!' : 'Ejercicio Completado',
         message: feedbackMessage,
         score: result.score,
+        maxScore: 100,
         xpEarned,
         mlCoinsEarned,
         showConfetti: result.isPerfect || result.score >= 80 || !!result.rankUp,
+        achievements: result.achievements?.map(a => ({
+          name: a.name,
+          description: a.description,
+          icon: a.icon,
+          rarity: 'common',
+        })),
+        rankUp: result.rankUp ? {
+          newRank: result.rankUp.newRank,
+          previousRank: result.rankUp.previousRank,
+          bonusMLCoins: 0,
+          newMultiplier: 1,
+        } : null,
+        timeSpent: Math.floor((Date.now() - progressHook.startTime.getTime()) / 1000),
+        hintsUsed: progressHook.progress.hintsUsed || 0,
       });
       setShowFeedback(true);
 
@@ -245,13 +283,16 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   }, [exerciseId, progressHook, powerUps, syncAndInvalidate]);
 
   const handleSkip = useCallback(() => {
-    if (window.confirm('¿Estás seguro de que deseas omitir este ejercicio?')) {
-      const targetModuleId = exerciseData.exercise?.module_id || moduleId;
-      if (targetModuleId && targetModuleId !== 'undefined') {
-        navigate(`/modules/${targetModuleId}`);
-      } else {
-        navigate('/dashboard');
-      }
+    setShowSkipConfirm(true);
+  }, []);
+
+  const confirmSkip = useCallback(() => {
+    setShowSkipConfirm(false);
+    const targetModuleId = exerciseData.exercise?.module_id || moduleId;
+    if (targetModuleId && targetModuleId !== 'undefined') {
+      navigate(`/modules/${targetModuleId}`);
+    } else {
+      navigate('/dashboard');
     }
   }, [exerciseData.exercise, moduleId, navigate]);
 
@@ -333,6 +374,15 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   return (
     <ExerciseContext.Provider value={value}>
       {children}
+      <ConfirmDialog
+        isOpen={showSkipConfirm}
+        onClose={() => setShowSkipConfirm(false)}
+        onConfirm={confirmSkip}
+        title="Omitir ejercicio"
+        message="¿Estás seguro de que deseas omitir este ejercicio?"
+        confirmText="Omitir"
+        variant="warning"
+      />
     </ExerciseContext.Provider>
   );
 }

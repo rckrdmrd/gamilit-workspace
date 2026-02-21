@@ -364,7 +364,7 @@ export interface NotificationData {
     type: string;
     url: string;
   };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

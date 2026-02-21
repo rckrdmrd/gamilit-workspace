@@ -2,8 +2,6 @@
  * useExerciseState Hook
  * Manages all exercise state including submissions, time tracking, and localStorage persistence
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 export interface Exercise {
@@ -28,7 +26,7 @@ export interface ExerciseAttempt {
   hints_used: number;
   powerups_used: string[];
   submitted_at: Date;
-  answers?: any;
+  answers?: Record<string, unknown>;
 }
 
 export interface ExerciseState {
@@ -37,7 +35,7 @@ export interface ExerciseState {
   timeElapsed: number;
   hintsUsed: number;
   powerupsActive: string[];
-  answers: any;
+  answers: Record<string, unknown>;
   isCompleted: boolean;
   attempts: ExerciseAttempt[];
 }
@@ -86,7 +84,7 @@ export const useExerciseState = ({
           const parsed = JSON.parse(savedState);
           setState({
             ...parsed,
-            attempts: parsed.attempts.map((a: any) => ({
+            attempts: parsed.attempts.map((a: { submitted_at: string; [key: string]: unknown }) => ({
               ...a,
               submitted_at: new Date(a.submitted_at),
             })),
@@ -146,7 +144,7 @@ export const useExerciseState = ({
   }, [state, storageKey]);
 
   // Update answers
-  const updateAnswers = useCallback((answers: any) => {
+  const updateAnswers = useCallback((answers: Record<string, unknown>) => {
     setState((prev) => ({
       ...prev,
       answers,
@@ -211,7 +209,7 @@ export const useExerciseState = ({
 
   // Submit attempt
   const submitAttempt = useCallback(
-    async (answers: any, score: number) => {
+    async (answers: Record<string, unknown>, score: number) => {
       setIsSubmitting(true);
 
       try {

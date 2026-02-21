@@ -13,7 +13,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Modal } from '@shared/components/common/Modal';
 import { useParentStore } from '@/features/parent/store/parentStore';
+import { RelationshipType } from '@/features/parent/types/parent.types';
 import { ChildProgressCard } from '@/features/parent/ChildProgressCard';
 import {
   Users,
@@ -63,9 +65,9 @@ export const ParentDashboardPage: React.FC = () => {
 
   if (isLoading && students.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center" aria-live="polite">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" aria-hidden="true" />
           <p className="text-gray-600">Cargando dashboard...</p>
         </div>
       </div>
@@ -93,10 +95,11 @@ export const ParentDashboardPage: React.FC = () => {
               <Link
                 to="/parent/notifications"
                 className="relative p-2 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label={`Notificaciones${unreadNotifications > 0 ? ` (${unreadNotifications} sin leer)` : ''}`}
               >
                 <Bell className="w-5 h-5" />
                 {unreadNotifications > 0 && (
-                  <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center" aria-hidden="true">
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </span>
                 )}
@@ -106,6 +109,7 @@ export const ParentDashboardPage: React.FC = () => {
               <Link
                 to="/parent/settings"
                 className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Configuracion"
               >
                 <Settings className="w-5 h-5" />
               </Link>
@@ -114,6 +118,7 @@ export const ParentDashboardPage: React.FC = () => {
               <button
                 onClick={handleLogout}
                 className="p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Cerrar sesion"
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -128,14 +133,15 @@ export const ParentDashboardPage: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 flex items-center gap-2 p-4 bg-red-50 text-red-700 rounded-lg"
+            role="alert"
           >
-            <AlertCircle className="w-5 h-5" />
+            <AlertCircle className="w-5 h-5" aria-hidden="true" />
             <span>{error}</span>
           </motion.div>
         )}
 
         {/* Students Section */}
-        <section className="mb-8">
+        <section className="mb-8" role="region" aria-label="Mis hijos">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-indigo-600" />
@@ -199,7 +205,7 @@ export const ParentDashboardPage: React.FC = () => {
 
         {/* Stats Overview */}
         {students.length > 0 && (
-          <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" role="region" aria-label="Resumen de estadisticas">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -286,7 +292,7 @@ export const ParentDashboardPage: React.FC = () => {
         {students.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Recent Activity */}
-            <section>
+            <section role="region" aria-label="Actividad reciente">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900">Actividad Reciente</h2>
                 <Link
@@ -338,7 +344,7 @@ export const ParentDashboardPage: React.FC = () => {
             </section>
 
             {/* Upcoming Assignments */}
-            <section>
+            <section role="region" aria-label="Tareas proximas">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900">Tareas Proximas</h2>
                 <Link
@@ -419,7 +425,7 @@ const LinkStudentModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     try {
       await linkStudent({
         studentCode,
-        relationshipType: relationshipType as any,
+        relationshipType: relationshipType as RelationshipType,
       });
       onClose();
     } catch {
@@ -428,74 +434,74 @@ const LinkStudentModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-xl shadow-xl w-full max-w-md p-6"
-      >
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Vincular Hijo</h3>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Codigo del Estudiante
-            </label>
-            <input
-              type="text"
-              value={studentCode}
-              onChange={(e) => setStudentCode(e.target.value.toUpperCase())}
-              placeholder="Ej: STU-ABC123"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Tu hijo recibio este codigo al registrarse en GAMILIT
-            </p>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      animated
+      size="md"
+      title="Vincular Hijo"
+      showCloseButton={false}
+      className="rounded-xl shadow-xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+            {error}
           </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tu relacion
-            </label>
-            <select
-              value={relationshipType}
-              onChange={(e) => setRelationshipType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            >
-              <option value="father">Padre</option>
-              <option value="mother">Madre</option>
-              <option value="guardian">Tutor Legal</option>
-              <option value="grandparent">Abuelo/a</option>
-              <option value="other">Otro</option>
-            </select>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Codigo del Estudiante
+          </label>
+          <input
+            type="text"
+            value={studentCode}
+            onChange={(e) => setStudentCode(e.target.value.toUpperCase())}
+            placeholder="Ej: STU-ABC123"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Tu hijo recibio este codigo al registrarse en GAMILIT
+          </p>
+        </div>
 
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {isLoading ? 'Vinculando...' : 'Vincular'}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Tu relacion
+          </label>
+          <select
+            value={relationshipType}
+            onChange={(e) => setRelationshipType(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+            <option value="father">Padre</option>
+            <option value="mother">Madre</option>
+            <option value="guardian">Tutor Legal</option>
+            <option value="grandparent">Abuelo/a</option>
+            <option value="other">Otro</option>
+          </select>
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {isLoading ? 'Vinculando...' : 'Vincular'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 };
 

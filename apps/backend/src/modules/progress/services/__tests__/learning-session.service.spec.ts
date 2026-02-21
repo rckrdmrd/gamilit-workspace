@@ -248,8 +248,9 @@ describe('LearningSessionService', () => {
 
   describe('endSession', () => {
     beforeEach(() => {
-      sessionRepo.findOne.mockResolvedValue(mockSession as any);
-      sessionRepo.save.mockResolvedValue(mockSession as any);
+      const freshSession = { ...mockSession, started_at: new Date(Date.now() - 3600_000) };
+      sessionRepo.findOne.mockResolvedValue(freshSession as any);
+      sessionRepo.save.mockImplementation((s) => Promise.resolve(s));
     });
 
     it('should end session and calculate duration', async () => {
@@ -263,7 +264,7 @@ describe('LearningSessionService', () => {
     });
 
     it('should format duration correctly (HH:MM:SS)', async () => {
-      const startTime = new Date('2025-01-10T10:00:00');
+      const startTime = new Date(Date.now() - 7200_000); // 2 hours ago
       const sessionWithStart = { ...mockSession, started_at: startTime };
       sessionRepo.findOne.mockResolvedValue(sessionWithStart as any);
 
@@ -274,7 +275,7 @@ describe('LearningSessionService', () => {
     });
 
     it('should set active_time if not defined', async () => {
-      const sessionNoActiveTime = { ...mockSession, active_time: null };
+      const sessionNoActiveTime = { ...mockSession, started_at: new Date(Date.now() - 3600_000), active_time: null };
       sessionRepo.findOne.mockResolvedValue(sessionNoActiveTime as any);
 
       const result = await service.endSession(mockSessionId);

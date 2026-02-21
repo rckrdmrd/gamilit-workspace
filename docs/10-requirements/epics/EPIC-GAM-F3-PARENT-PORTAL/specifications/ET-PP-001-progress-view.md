@@ -352,6 +352,8 @@ export class ParentProgressController {
 // pages/StudentProgressPage.tsx (NUEVO)
 export const StudentProgressPage: React.FC = () => {
   const { studentId } = useParams();
+  // Nota: useStudentProgress del teacher portal fue removido (Teacher Portal Audit 2026-02-20).
+  // Para el parent portal, usar un hook propio o studentProgressApi.
   const { summary, isLoading } = useStudentProgress(studentId);
 
   if (isLoading) return <ProgressSkeleton />;

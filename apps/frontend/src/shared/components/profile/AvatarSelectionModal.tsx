@@ -1,8 +1,8 @@
-
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X, Check } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { Modal } from '@shared/components/common/Modal';
 import { cn } from '@shared/utils/cn';
 
 interface AvatarSelectionModalProps {
@@ -34,70 +34,72 @@ export const AvatarSelectionModal: React.FC<AvatarSelectionModalProps> = ({
     onSelect,
     currentAvatar,
 }) => {
-    if (!isOpen) return null;
+    // Note: ESC key, scroll lock, and focus trap are handled by Modal component
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl"
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            animated
+            size="lg"
+            showCloseButton={false}
+            overlayClassName="bg-black/50 backdrop-blur-sm"
+            className="overflow-hidden rounded-xl shadow-2xl"
+            contentClassName="custom"
+            ariaLabelledBy="avatar-selection-title"
+        >
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-detective-orange to-orange-600 p-4 text-white">
+                <h3 id="avatar-selection-title" className="text-lg font-bold">Elige tu Avatar</h3>
+                <button
+                    onClick={onClose}
+                    className="rounded-full bg-white/20 p-1 hover:bg-white/30 transition-colors"
+                    aria-label="Cerrar modal"
                 >
-                    {/* Header */}
-                    <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-detective-orange to-orange-600 p-4 text-white">
-                        <h3 className="text-lg font-bold">Elige tu Avatar</h3>
-                        <button
-                            onClick={onClose}
-                            className="rounded-full bg-white/20 p-1 hover:bg-white/30 transition-colors"
-                        >
-                            <X className="h-5 w-5" />
-                        </button>
-                    </div>
-
-                    {/* Body */}
-                    <div className="p-6">
-                        <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
-                            {AVATAR_OPTIONS.map((avatar, index) => {
-                                const isSelected = currentAvatar === avatar;
-                                return (
-                                    <motion.button
-                                        key={index}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => onSelect(avatar)}
-                                        className={cn(
-                                            'relative aspect-square overflow-hidden rounded-full border-4 transition-all',
-                                            isSelected
-                                                ? 'border-detective-orange shadow-lg ring-2 ring-detective-orange/30'
-                                                : 'border-transparent hover:border-gray-200'
-                                        )}
-                                    >
-                                        <img
-                                            src={avatar}
-                                            alt={`Avatar ${index + 1}`}
-                                            className="h-full w-full object-cover"
-                                        />
-                                        {isSelected && (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                                <Check className="h-8 w-8 text-white drop-shadow-md" />
-                                            </div>
-                                        )}
-                                    </motion.button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex justify-end border-t border-gray-100 bg-gray-50 p-4">
-                        <DetectiveButton variant="secondary" onClick={onClose}>
-                            Cancelar
-                        </DetectiveButton>
-                    </div>
-                </motion.div>
+                    <X className="h-5 w-5" />
+                </button>
             </div>
-        </AnimatePresence>
+
+            {/* Body */}
+            <div className="p-6">
+                <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+                    {AVATAR_OPTIONS.map((avatar, index) => {
+                        const isSelected = currentAvatar === avatar;
+                        return (
+                            <motion.button
+                                key={index}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => onSelect(avatar)}
+                                className={cn(
+                                    'relative aspect-square overflow-hidden rounded-full border-4 transition-all',
+                                    isSelected
+                                        ? 'border-detective-orange shadow-lg ring-2 ring-detective-orange/30'
+                                        : 'border-transparent hover:border-gray-200'
+                                )}
+                            >
+                                <img
+                                    src={avatar}
+                                    alt={`Avatar ${index + 1}`}
+                                    className="h-full w-full object-cover"
+                                />
+                                {isSelected && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                        <Check className="h-8 w-8 text-white drop-shadow-md" />
+                                    </div>
+                                )}
+                            </motion.button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end border-t border-gray-100 bg-gray-50 p-4">
+                <DetectiveButton variant="secondary" onClick={onClose}>
+                    Cancelar
+                </DetectiveButton>
+            </div>
+        </Modal>
     );
 };

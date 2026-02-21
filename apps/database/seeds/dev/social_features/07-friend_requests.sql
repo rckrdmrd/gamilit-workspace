@@ -52,20 +52,20 @@ BEGIN
     IF v_student2_id IS NULL THEN
         SELECT id INTO v_student2_id FROM auth_management.profiles WHERE is_active = true AND id != v_student1_id LIMIT 1;
     END IF;
-    IF v_student3_id IS NULL THEN
-        v_student3_id := '00000000-0000-4000-a000-000000000003'::uuid;
-    END IF;
-    IF v_student4_id IS NULL THEN
-        v_student4_id := '00000000-0000-4000-a000-000000000004'::uuid;
-    END IF;
-    IF v_student5_id IS NULL THEN
-        v_student5_id := '00000000-0000-4000-a000-000000000005'::uuid;
-    END IF;
-
-    -- Skip if insufficient users
+    -- Skip if insufficient users (need at least 2 distinct students)
     IF v_student1_id IS NULL OR v_student2_id IS NULL THEN
         RAISE NOTICE 'Insufficient users found. Skipping friend_requests seed.';
         RETURN;
+    END IF;
+    -- Fallback remaining students to available profiles
+    IF v_student3_id IS NULL THEN
+        v_student3_id := v_student1_id;
+    END IF;
+    IF v_student4_id IS NULL THEN
+        v_student4_id := v_student2_id;
+    END IF;
+    IF v_student5_id IS NULL THEN
+        v_student5_id := v_student1_id;
     END IF;
 
     INSERT INTO social_features.friend_requests (
@@ -80,7 +80,7 @@ BEGIN
 
     -- Pending requests
     (
-        '51111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         v_student3_id,
         'pending',
@@ -89,7 +89,7 @@ BEGIN
         NULL
     ),
     (
-        '51111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_student4_id,
         v_student1_id,
         'pending',
@@ -100,7 +100,7 @@ BEGIN
 
     -- Accepted request
     (
-        '51111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         v_student1_id,
         'accepted',
@@ -111,7 +111,7 @@ BEGIN
 
     -- Rejected request
     (
-        '51111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_student5_id,
         v_student2_id,
         'rejected',
@@ -122,7 +122,7 @@ BEGIN
 
     -- Cancelled request (requester cancelled)
     (
-        '51111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         v_student5_id,
         'cancelled',
@@ -133,7 +133,7 @@ BEGIN
 
     -- Another pending request
     (
-        '51111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_student3_id,
         v_student2_id,
         'pending',

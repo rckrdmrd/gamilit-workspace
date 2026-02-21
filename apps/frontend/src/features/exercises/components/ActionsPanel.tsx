@@ -119,9 +119,8 @@ export const ActionsPanel: React.FC = () => {
         {hints.length > 0 && (
           <HintSystem
             hints={hints}
-            onHintUsed={(hintIndex) => {
+            onHintUsed={(_hintIndex) => {
               // Hints cost is now handled via comodines
-              console.log(`Hint ${hintIndex} used`);
             }}
           />
         )}

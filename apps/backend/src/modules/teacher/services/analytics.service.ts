@@ -1593,7 +1593,7 @@ export class AnalyticsService {
    * Calculate student risk level
    */
   private calculateRiskLevel(
-    stats: any,
+    stats: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     overall_score: number,
     struggleCount: number,
   ): 'low' | 'medium' | 'high' {
@@ -1626,6 +1626,7 @@ export class AnalyticsService {
   /**
    * Generate student strengths
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private generateStrengths(stats: any, moduleProgress: any[], overall_score: number): string[] {
     const strengths: string[] = [];
 
@@ -1667,6 +1668,8 @@ export class AnalyticsService {
   /**
    * Generate areas for improvement
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private generateWeaknesses(struggleAreas: any[], stats: any): string[] {
     const weaknesses: string[] = [];
 
@@ -1707,8 +1710,8 @@ export class AnalyticsService {
    * Generate student strengths enhanced with mastery and skill assessment data
    */
   private generateStrengthsWithMastery(
-    stats: any,
-    moduleProgress: any[],
+    stats: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    moduleProgress: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
     overall_score: number,
     masteryData: {
       totalSkills: number;
@@ -1775,8 +1778,8 @@ export class AnalyticsService {
    * Generate areas for improvement enhanced with mastery and skill assessment data
    */
   private generateWeaknessesWithMastery(
-    struggleAreas: any[],
-    stats: any,
+    struggleAreas: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
+    stats: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     masteryData: {
       needsReviewCount: number;
       averageMasteryLevel: number;
@@ -1845,7 +1848,7 @@ export class AnalyticsService {
    * Calculate performance predictions
    */
   private calculatePredictions(
-    stats: any,
+    stats: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     overall_score: number,
     _risk_level: 'low' | 'medium' | 'high',
   ): { completion_probability: number; dropout_risk: number } {
@@ -1898,8 +1901,8 @@ export class AnalyticsService {
    * Generate personalized recommendations
    */
   private generateRecommendations(
-    stats: any,
-    struggleAreas: any[],
+    stats: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    struggleAreas: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
     overall_score: number,
     risk_level: 'low' | 'medium' | 'high',
   ): string[] {

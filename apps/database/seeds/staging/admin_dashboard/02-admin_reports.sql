@@ -4,7 +4,7 @@
 -- Descripcion: Datos iniciales para reportes administrativos
 -- Relacionado: EXT-002 (Admin Extendido), AUDIT-003
 -- Fecha: 2026-01-04
--- Updated: 2026-02-20 (Fix C2: dynamic tenant_id + profile lookup)
+-- Updated: 2026-02-21 (Replaced e0000000 placeholder UUIDs with gen_random_uuid())
 -- =====================================================
 
 -- NOTA: Este seed crea registros de ejemplo para el portal admin.
@@ -45,13 +45,19 @@ BEGIN
         RETURN;
     END IF;
 
+    -- Skip if seed data already exists (idempotency guard)
+    IF EXISTS (SELECT 1 FROM admin_dashboard.admin_reports WHERE requested_by = v_admin_profile_id LIMIT 1) THEN
+        RAISE NOTICE 'admin_reports seed data already exists, skipping';
+        RETURN;
+    END IF;
+
     -- Reporte completado (usuarios)
     INSERT INTO admin_dashboard.admin_reports (
         id, tenant_id, report_type, report_format, status,
         file_url, file_size, metadata, error_message,
         requested_by, created_at, completed_at, expires_at
     ) VALUES (
-        'e0000000-0000-0000-0000-000000000001',
+        gen_random_uuid(),
         v_tenant_id,
         'users', 'excel', 'completed',
         '/reports/users_report_2026-01-01.xlsx', 256000,
@@ -69,7 +75,7 @@ BEGIN
         file_url, file_size, metadata, error_message,
         requested_by, created_at, completed_at, expires_at
     ) VALUES (
-        'e0000000-0000-0000-0000-000000000002',
+        gen_random_uuid(),
         v_tenant_id,
         'progress', 'pdf', 'completed',
         '/reports/progress_report_2026-01-02.pdf', 512000,
@@ -87,7 +93,7 @@ BEGIN
         file_url, file_size, metadata, error_message,
         requested_by, created_at, completed_at, expires_at
     ) VALUES (
-        'e0000000-0000-0000-0000-000000000003',
+        gen_random_uuid(),
         v_tenant_id,
         'engagement', 'csv', 'generating',
         NULL, NULL,
@@ -104,7 +110,7 @@ BEGIN
         file_url, file_size, metadata, error_message,
         requested_by, created_at, completed_at, expires_at
     ) VALUES (
-        'e0000000-0000-0000-0000-000000000004',
+        gen_random_uuid(),
         v_tenant_id,
         'gamification', 'excel', 'failed',
         NULL, NULL,

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useErrorTracking } from '../../hooks/useAdminData';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 const severityColors = {
@@ -156,10 +157,11 @@ export const ErrorTrackingPanel: React.FC = () => {
         <h3 className="text-detective-subtitle mb-4">Recent Errors</h3>
         <div className="space-y-3">
           {errors.length === 0 ? (
-            <div className="py-8 text-center text-gray-400">
-              <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
-              <p>No errors found with current filters</p>
-            </div>
+            <EmptyState
+              icon={CheckCircle}
+              title="No errors found"
+              description="No se encontraron errores con los filtros actuales"
+            />
           ) : (
             errors.map((error) => {
               const colors = severityColors[error.severity];

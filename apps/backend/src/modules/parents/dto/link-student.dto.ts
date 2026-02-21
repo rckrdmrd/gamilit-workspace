@@ -10,7 +10,7 @@
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsEnum, Length } from 'class-validator';
-import { ParentRelationshipType } from '@/modules/auth/entities/parent-student-link.entity';
+import { ParentRelationshipType } from '@/modules/parents/enums/parent-student-link.enums';
 
 export class LinkStudentDto {
   @ApiProperty({

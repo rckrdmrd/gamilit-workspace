@@ -72,7 +72,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Log error
     if (status >= 500) {
       logger.error('Server error:', exception);
-      console.error('AllExceptionsFilter caught:', exception);
     }
 
     response.status(status).json({

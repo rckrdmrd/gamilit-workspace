@@ -6,10 +6,16 @@
  * - User data columns (name, email, role, status, org, last login)
  * - Per-row action buttons (edit, suspend/unsuspend, delete)
  * - Pagination controls
+ *
+ * Uses the shared DataTable component with detective variant.
  */
 
+import { useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { DataTable } from '@shared/components/common/DataTable';
+import type { Column } from '@shared/components/common/DataTable';
+import { Pagination } from '@shared/components/Pagination';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { RoleBadge, StatusBadge } from './UserBadges';
 import type { SystemUser } from '../../types';
 import {
@@ -20,6 +26,7 @@ import {
   Mail,
   Square,
   CheckSquare,
+  Users,
 } from 'lucide-react';
 
 interface UsersTableProps {
@@ -65,6 +72,149 @@ export function UsersTable({
   onPrevPage,
   onNextPage,
 }: UsersTableProps) {
+  /**
+   * Column definitions for the users table.
+   * The checkbox column is first, followed by data columns and actions.
+   */
+  const userColumns: Column<SystemUser>[] = useMemo(
+    () => [
+      {
+        key: '_select',
+        width: '48px',
+        label: (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (allUsersSelected) { onDeselectAll(); } else { onSelectAll(); }
+            }}
+            className="text-detective-text-secondary hover:text-detective-orange transition-colors"
+            title={allUsersSelected ? 'Deseleccionar todos' : 'Seleccionar todos'}
+          >
+            {allUsersSelected ? (
+              <CheckSquare className="h-5 w-5 text-detective-orange" />
+            ) : (
+              <Square className="h-5 w-5" />
+            )}
+          </button>
+        ),
+        render: (usr) => (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelection(usr.id);
+            }}
+            className="text-detective-text-secondary hover:text-detective-orange transition-colors"
+            title={selectedUsers.includes(usr.id) ? 'Deseleccionar' : 'Seleccionar'}
+          >
+            {selectedUsers.includes(usr.id) ? (
+              <CheckSquare className="h-5 w-5 text-detective-orange" />
+            ) : (
+              <Square className="h-5 w-5" />
+            )}
+          </button>
+        ),
+      },
+      {
+        key: 'full_name',
+        label: 'Usuario',
+        render: (usr) => (
+          <span className="font-medium text-detective-text">{usr.full_name}</span>
+        ),
+      },
+      {
+        key: 'email',
+        label: 'Email',
+        render: (usr) => (
+          <span className="flex items-center gap-2 text-detective-text-secondary">
+            <Mail className="h-4 w-4" />
+            {usr.email}
+          </span>
+        ),
+      },
+      {
+        key: 'role',
+        label: 'Rol',
+        render: (usr) => <RoleBadge role={usr.role} />,
+      },
+      {
+        key: 'status',
+        label: 'Estado',
+        render: (usr) => <StatusBadge status={usr.status} />,
+      },
+      {
+        key: 'organizationName',
+        label: 'Institucion',
+        render: (usr) => (
+          <span className="text-detective-text-secondary">
+            {usr.organizationName || usr.organizationId || 'N/A'}
+          </span>
+        ),
+      },
+      {
+        key: 'lastLogin',
+        label: 'Ultimo acceso',
+        render: (usr) => (
+          <span className="text-detective-text-secondary">{formatLastLogin(usr.lastLogin)}</span>
+        ),
+      },
+      {
+        key: '_actions',
+        label: 'Acciones',
+        render: (usr) => (
+          <div className="flex items-center gap-2">
+            <button
+              className="rounded p-1 text-detective-orange hover:bg-detective-bg hover:text-detective-orange-dark"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(usr);
+              }}
+              title="Editar"
+            >
+              <Edit className="h-4 w-4" />
+            </button>
+            {usr.status === 'active' ? (
+              <button
+                className="rounded p-1 text-red-400 hover:bg-detective-bg hover:text-red-500"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSuspend(usr.id, usr.full_name);
+                }}
+                title="Suspender"
+                disabled={loading}
+              >
+                <XCircle className="h-4 w-4" />
+              </button>
+            ) : (
+              <button
+                className="rounded p-1 text-green-400 hover:bg-detective-bg hover:text-green-500"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUnsuspend(usr.id, usr.full_name);
+                }}
+                title="Reactivar"
+                disabled={loading}
+              >
+                <CheckCircle className="h-4 w-4" />
+              </button>
+            )}
+            <button
+              className="rounded p-1 text-red-400 hover:bg-detective-bg hover:text-red-500"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(usr.id, usr.full_name);
+              }}
+              title="Eliminar"
+              disabled={loading}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [allUsersSelected, selectedUsers, loading, onSelectAll, onDeselectAll, onToggleSelection, onEdit, onSuspend, onUnsuspend, onDelete],
+  );
+
   return (
     <DetectiveCard>
       {loading && users.length === 0 ? (
@@ -74,158 +224,40 @@ export function UsersTable({
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="w-12 px-4 py-3 text-left">
-                    <button
-                      onClick={() => (allUsersSelected ? onDeselectAll() : onSelectAll())}
-                      className="text-detective-text-secondary hover:text-detective-orange transition-colors"
-                      title={allUsersSelected ? 'Deseleccionar todos' : 'Seleccionar todos'}
-                    >
-                      {allUsersSelected ? (
-                        <CheckSquare className="h-5 w-5 text-detective-orange" />
-                      ) : (
-                        <Square className="h-5 w-5" />
-                      )}
-                    </button>
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Usuario
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Rol
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Estado
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Institucion
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Ultimo acceso
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((usr) => (
-                  <tr
-                    key={usr.id}
-                    className={`border-b border-gray-700 transition-colors hover:bg-detective-bg-secondary ${
-                      selectedUsers.includes(usr.id) ? 'bg-detective-orange/10' : ''
-                    }`}
-                  >
-                    <td className="w-12 px-4 py-3">
-                      <button
-                        onClick={() => onToggleSelection(usr.id)}
-                        className="text-detective-text-secondary hover:text-detective-orange transition-colors"
-                        title={selectedUsers.includes(usr.id) ? 'Deseleccionar' : 'Seleccionar'}
-                      >
-                        {selectedUsers.includes(usr.id) ? (
-                          <CheckSquare className="h-5 w-5 text-detective-orange" />
-                        ) : (
-                          <Square className="h-5 w-5" />
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium text-detective-text">
-                      {usr.full_name}
-                    </td>
-                    <td className="flex items-center gap-2 px-4 py-3 text-sm text-detective-text-secondary">
-                      <Mail className="h-4 w-4" />
-                      {usr.email}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <RoleBadge role={usr.role} />
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <StatusBadge status={usr.status} />
-                    </td>
-                    <td className="px-4 py-3 text-sm text-detective-text-secondary">
-                      {usr.organizationName || usr.organizationId || 'N/A'}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-detective-text-secondary">
-                      {formatLastLogin(usr.lastLogin)}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="rounded p-1 text-blue-400 hover:bg-detective-bg hover:text-blue-300"
-                          onClick={() => onEdit(usr)}
-                          title="Editar"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        {usr.status === 'active' ? (
-                          <button
-                            className="rounded p-1 text-red-400 hover:bg-detective-bg hover:text-red-300"
-                            onClick={() => onSuspend(usr.id, usr.full_name)}
-                            title="Suspender"
-                            disabled={loading}
-                          >
-                            <XCircle className="h-4 w-4" />
-                          </button>
-                        ) : (
-                          <button
-                            className="rounded p-1 text-green-400 hover:bg-detective-bg hover:text-green-300"
-                            onClick={() => onUnsuspend(usr.id, usr.full_name)}
-                            title="Reactivar"
-                            disabled={loading}
-                          >
-                            <CheckCircle className="h-4 w-4" />
-                          </button>
-                        )}
-                        <button
-                          className="rounded p-1 text-red-400 hover:bg-detective-bg hover:text-red-300"
-                          onClick={() => onDelete(usr.id, usr.full_name)}
-                          title="Eliminar"
-                          disabled={loading}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <DataTable
+            data={users}
+            columns={userColumns}
+            variant="detective"
+            striped={false}
+            rowKey={(usr) => usr.id}
+            rowClassName={(usr) =>
+              selectedUsers.includes(usr.id) ? 'bg-detective-orange/10' : ''
+            }
+            emptyMessage="No se encontraron usuarios"
+          />
 
-            {users.length === 0 && !loading && (
-              <div className="py-8 text-center text-detective-text-secondary">
-                No se encontraron usuarios que coincidan con los filtros
-              </div>
-            )}
-          </div>
+          {users.length === 0 && !loading && (
+            <EmptyState
+              icon={Users}
+              title="No se encontraron usuarios"
+              description="No hay usuarios que coincidan con los filtros aplicados"
+            />
+          )}
 
           {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-between border-t border-gray-700 pt-4">
-              <div className="text-sm text-detective-text-secondary">
-                Pagina {currentPage} de {totalPages} ({totalUsers} usuarios totales)
-              </div>
-              <div className="flex gap-2">
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={onPrevPage}
-                  disabled={currentPage === 1 || loading}
-                >
-                  Anterior
-                </DetectiveButton>
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={onNextPage}
-                  disabled={currentPage === totalPages || loading}
-                >
-                  Siguiente
-                </DetectiveButton>
-              </div>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                if (page < currentPage) onPrevPage();
+                else if (page > currentPage) onNextPage();
+              }}
+              totalItems={totalUsers}
+              loading={loading}
+              variant="simple"
+              itemLabel="usuarios totales"
+              className="mt-4"
+            />
           )}
         </>
       )}

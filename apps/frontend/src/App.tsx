@@ -1,9 +1,10 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/app/providers/AuthContext';
 import { BrandingProvider } from '@/app/providers/BrandingProvider';
 import { ProtectedRoute, UnauthorizedPage } from '@/shared/components/ProtectedRoute';
+import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 
 // =====================================================
 // PUBLIC PAGES (Static imports - critical path)
@@ -54,24 +55,24 @@ const LearningPage = lazy(() => import('@/apps/student/pages/LearningPage'));
 // =====================================================
 // TEACHER PORTAL PAGES (Lazy loaded with PageShell)
 // =====================================================
-const TeacherDashboardPage = lazy(() => import('@/apps/teacher/pages/TeacherDashboard'));
-const TeacherAnalyticsPage = lazy(() => import('@/apps/teacher/pages/TeacherAnalytics'));
-const TeacherAssignmentsPage = lazy(() => import('@/apps/teacher/pages/TeacherAssignments'));
-const TeacherClassesPage = lazy(() => import('@/apps/teacher/pages/TeacherClasses'));
-const TeacherGamificationPage = lazy(() => import('@/apps/teacher/pages/TeacherGamification'));
-const TeacherStudentsPage = lazy(() => import('@/apps/teacher/pages/TeacherStudents'));
-const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlerts'));
-// TeacherCommunication — removed from navigation (Obs #18), code preserved
-// TeacherContent — removed from navigation (Obs #5), code preserved
-const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoring'));
-const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgress'));
-const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReports'));
-const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/TeacherExerciseResponses'));
-const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettings'));
-// TeacherNotifications — removed from navigation (Obs #19), code preserved
-// TeacherNotificationPreferences — removed from navigation (Obs #19), code preserved
-const TeacherAlertConfigPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertConfig')); // US-PM-007
-const ReviewPanelPage = lazy(() => import('@/apps/teacher/pages/TeacherReviewPanel'));
+const TeacherDashboardPage = lazy(() => import('@/apps/teacher/pages/TeacherDashboardPage'));
+const TeacherAnalyticsPage = lazy(() => import('@/apps/teacher/pages/TeacherAnalyticsPage'));
+const TeacherAssignmentsPage = lazy(() => import('@/apps/teacher/pages/TeacherAssignmentsPage'));
+const TeacherClassesPage = lazy(() => import('@/apps/teacher/pages/TeacherClassesPage'));
+const TeacherGamificationPage = lazy(() => import('@/apps/teacher/pages/TeacherGamificationPage'));
+const TeacherStudentsPage = lazy(() => import('@/apps/teacher/pages/TeacherStudentsPage'));
+const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertsPage'));
+const TeacherCommunicationPage = lazy(() => import('@/apps/teacher/pages/TeacherCommunicationPage'));
+const TeacherContentManagementPage = lazy(() => import('@/apps/teacher/pages/TeacherContentManagementPage'));
+const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoringPage'));
+const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgressPage'));
+const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReportsPage'));
+const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/TeacherExerciseResponsesPage'));
+const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettingsPage'));
+const TeacherNotificationsPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationsPage'));
+const TeacherNotificationPreferencesPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationPreferencesPage'));
+const TeacherAlertConfigPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertConfigPage')); // US-PM-007
+const ReviewPanelPage = lazy(() => import('@/apps/teacher/pages/TeacherReviewPanelPage'));
 
 // =====================================================
 // ADMIN PORTAL PAGES (Lazy loaded)
@@ -168,6 +169,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
               {/* ===== STUDENT PORTAL ===== */}
+              <Route element={<ErrorBoundary portal="Student"><Outlet /></ErrorBoundary>}>
               {/* Dashboard (protected) */}
               <Route
                 path="/dashboard"
@@ -188,7 +190,182 @@ function App() {
                 }
               />
 
+              {/* Progress Pages (protected) */}
+              <Route
+                path="/progress"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <MyProgressPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/progress/modules/:moduleId"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ModuleDetailsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Achievements Page (protected) */}
+              <Route
+                path="/achievements"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <AchievementsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Leaderboard Page (protected) */}
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <LeaderboardPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Exercise Player */}
+              <Route
+                path="/exercises/:exerciseId"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ExercisePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Missions Page */}
+              <Route
+                path="/missions"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <MissionsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Student Assignments Page (P1-002) */}
+              <Route
+                path="/assignments"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <AssignmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assignments/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <AssignmentDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Module Detail Page */}
+              <Route
+                path="/modules/:moduleId"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ModuleDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Profile Pages */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <EnhancedProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Settings Page */}
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Notifications Center */}
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <NotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Notification Settings */}
+              <Route
+                path="/settings/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <NotificationPreferencesPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/settings/devices"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <DeviceManagementSection />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Social Features */}
+              <Route
+                path="/friends"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <FriendsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/guilds"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <GuildsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Shop & Inventory */}
+              <Route
+                path="/shop"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ShopPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <InventoryPage />
+                  </ProtectedRoute>
+                }
+              />
+              </Route>{/* End Student ErrorBoundary */}
+
               {/* ===== TEACHER PORTAL ===== */}
+              <Route element={<ErrorBoundary portal="Teacher"><Outlet /></ErrorBoundary>}>
               <Route
                 path="/teacher/dashboard"
                 element={
@@ -221,7 +398,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* /teacher/communication — removed from navigation (Obs #18) */}
+              <Route
+                path="/teacher/communication"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherCommunicationPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/content"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherContentManagementPage />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/teacher/gamification"
@@ -294,8 +486,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* /teacher/notifications — removed from navigation (Obs #19) */}
-              {/* /teacher/settings/notifications — removed from navigation (Obs #19) */}
+              <Route
+                path="/teacher/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherNotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/settings/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherNotificationPreferencesPage />
+                  </ProtectedRoute>
+                }
+              />
               {/* US-PM-007: Alert Configuration Page */}
               <Route
                 path="/teacher/settings/alerts"
@@ -314,8 +520,10 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              </Route>{/* End Teacher ErrorBoundary */}
 
               {/* ===== ADMIN PORTAL ===== */}
+              <Route element={<ErrorBoundary portal="Admin"><Outlet /></ErrorBoundary>}>
               <Route
                 path="/admin/dashboard"
                 element={
@@ -494,8 +702,10 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              </Route>{/* End Admin ErrorBoundary */}
 
               {/* ===== PARENT PORTAL (EXT-011) ===== */}
+              <Route element={<ErrorBoundary portal="Parent"><Outlet /></ErrorBoundary>}>
               {/* Public routes for parent portal */}
               <Route path="/parent/login" element={<ParentLoginPage />} />
               <Route path="/parent/register" element={<ParentRegisterPage />} />
@@ -517,179 +727,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
-              {/* Progress Pages (protected) */}
-              <Route
-                path="/progress"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <MyProgressPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/progress/modules/:moduleId"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <ModuleDetailsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Achievements Page (protected) */}
-              <Route
-                path="/achievements"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <AchievementsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Leaderboard Page (protected) */}
-              <Route
-                path="/leaderboard"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <LeaderboardPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Exercise Player */}
-              <Route
-                path="/exercises/:exerciseId"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <ExercisePage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Missions Page */}
-              <Route
-                path="/missions"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <MissionsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Student Assignments Page (P1-002) */}
-              <Route
-                path="/assignments"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <AssignmentsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assignments/:id"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <AssignmentDetailPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Module Detail Page */}
-              <Route
-                path="/modules/:moduleId"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <ModuleDetailPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Profile Pages */}
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <EnhancedProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Settings Page */}
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <SettingsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Notifications Center */}
-              <Route
-                path="/notifications"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <NotificationsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Notification Settings */}
-              <Route
-                path="/settings/notifications"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <NotificationPreferencesPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/settings/devices"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <DeviceManagementSection />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Social Features */}
-              <Route
-                path="/friends"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <FriendsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/guilds"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <GuildsPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Shop & Inventory */}
-              <Route
-                path="/shop"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <ShopPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/inventory"
-                element={
-                  <ProtectedRoute allowedRoles={['student']}>
-                    <InventoryPage />
-                  </ProtectedRoute>
-                }
-              />
+              </Route>{/* End Parent ErrorBoundary */}
 
               {/* Unauthorized Page */}
               <Route path="/unauthorized" element={<UnauthorizedPage />} />

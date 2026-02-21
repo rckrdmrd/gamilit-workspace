@@ -10,12 +10,18 @@
  * - Credential management
  * - Error handling and loading states
  *
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
+ *
  * Created: 2026-01-27 - EXT-007 LTI Integration
+ * Updated: 2026-02-20 - Migrated to React Query
  * @see lti-consumers.controller.ts
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ltiApi } from '@/services/api/admin/ltiAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type {
   LtiConsumer,
   CreateLtiConsumerDto,
@@ -24,6 +30,20 @@ import type {
   ConnectionTestResult,
   LtiCredentials,
 } from '@/shared/types/lti.types';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const ltiConsumerKeys = {
+  all: ['admin', 'lti-consumers'] as const,
+  list: () => ['admin', 'lti-consumers', 'list'] as const,
+  stats: () => ['admin', 'lti-consumers', 'stats'] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseLtiConsumersResult {
   // Data
@@ -51,6 +71,10 @@ export interface UseLtiConsumersResult {
   refetch: () => Promise<void>;
 }
 
+// ============================================================================
+// Hook
+// ============================================================================
+
 /**
  * Hook for managing LTI consumers in the admin portal
  *
@@ -71,224 +95,176 @@ export interface UseLtiConsumersResult {
  * ```
  */
 export function useLtiConsumers(): UseLtiConsumersResult {
-  // State management
-  const [consumers, setConsumers] = useState<LtiConsumer[]>([]);
-  const [stats, setStats] = useState<LtiConsumerStats | null>(null);
+  const queryClient = useQueryClient();
+
+  // Client-side state (not server data)
   const [selectedConsumer, setSelectedConsumer] = useState<LtiConsumer | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [testingConnection, setTestingConnection] = useState(false);
-  const [regeneratingCredentials, setRegeneratingCredentials] = useState(false);
 
   // ============================================================================
-  // API CALLS - READ OPERATIONS
+  // QUERIES
   // ============================================================================
 
-  /**
-   * Fetch all LTI consumers
-   */
-  const fetchConsumers = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    try {
+  const consumersQuery = useQuery({
+    queryKey: ltiConsumerKeys.list(),
+    queryFn: async () => {
       const data = await ltiApi.getConsumers();
-      setConsumers(data || []);
-    } catch (err) {
-      console.error('[useLtiConsumers] Failed to fetch consumers:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch consumers');
-      setConsumers([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return data || [];
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Fetch consumer statistics
-   */
-  const fetchStats = useCallback(async (): Promise<void> => {
-    try {
+  const statsQuery = useQuery({
+    queryKey: ltiConsumerKeys.stats(),
+    queryFn: async () => {
       const data = await ltiApi.getConsumerStats();
-      setStats(data);
-    } catch (err) {
-      console.error('[useLtiConsumers] Failed to fetch stats:', err);
-      // Don't set error for stats - not critical
-    }
-  }, []);
+      return data;
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Refetch all data
-   */
+  // ============================================================================
+  // MUTATIONS
+  // ============================================================================
+
+  const createMutation = useMutation({
+    mutationFn: (data: CreateLtiConsumerDto) => ltiApi.createConsumer(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ltiConsumerKeys.all });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateLtiConsumerDto }) =>
+      ltiApi.updateConsumer(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ltiConsumerKeys.all });
+    },
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: (id: string) => ltiApi.verifyConsumer(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ltiConsumerKeys.all });
+    },
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: (id: string) => ltiApi.activateConsumer(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ltiConsumerKeys.all });
+    },
+  });
+
+  const deactivateMutation = useMutation({
+    mutationFn: (id: string) => ltiApi.deactivateConsumer(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ltiConsumerKeys.all });
+    },
+  });
+
+  const testConnectionMutation = useMutation({
+    mutationFn: (id: string) => ltiApi.testConnection(id),
+  });
+
+  const regenerateCredentialsMutation = useMutation({
+    mutationFn: (id: string) => ltiApi.regenerateCredentials(id),
+  });
+
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
+
+  const consumers = consumersQuery.data ?? [];
+  const stats = statsQuery.data ?? null;
+
+  const loading =
+    consumersQuery.isLoading ||
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    verifyMutation.isPending ||
+    activateMutation.isPending ||
+    deactivateMutation.isPending;
+
+  const firstError =
+    consumersQuery.error ??
+    createMutation.error ??
+    updateMutation.error ??
+    verifyMutation.error ??
+    activateMutation.error ??
+    deactivateMutation.error;
+
+  const error = firstError instanceof Error ? firstError.message : firstError ? String(firstError) : null;
+
+  const testingConnection = testConnectionMutation.isPending;
+  const regeneratingCredentials = regenerateCredentialsMutation.isPending;
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const fetchConsumers = useCallback(async (): Promise<void> => {
+    await consumersQuery.refetch();
+  }, [consumersQuery]);
+
+  const fetchStats = useCallback(async (): Promise<void> => {
+    await statsQuery.refetch();
+  }, [statsQuery]);
+
   const refetch = useCallback(async (): Promise<void> => {
-    await Promise.all([fetchConsumers(), fetchStats()]);
-  }, [fetchConsumers, fetchStats]);
+    await queryClient.invalidateQueries({ queryKey: ltiConsumerKeys.all });
+  }, [queryClient]);
 
-  // ============================================================================
-  // API CALLS - WRITE OPERATIONS
-  // ============================================================================
-
-  /**
-   * Create a new LTI consumer
-   */
   const createConsumer = useCallback(
     async (data: CreateLtiConsumerDto): Promise<LtiConsumer> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const consumer = await ltiApi.createConsumer(data);
-        await refetch();
-        return consumer;
-      } catch (err) {
-        console.error('[useLtiConsumers] Failed to create consumer:', err);
-        const message = err instanceof Error ? err.message : 'Failed to create consumer';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      return createMutation.mutateAsync(data);
     },
-    [refetch]
+    [createMutation],
   );
 
-  /**
-   * Update an existing LTI consumer
-   */
   const updateConsumer = useCallback(
     async (id: string, data: UpdateLtiConsumerDto): Promise<LtiConsumer> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const consumer = await ltiApi.updateConsumer(id, data);
-        await refetch();
-        return consumer;
-      } catch (err) {
-        console.error('[useLtiConsumers] Failed to update consumer:', err);
-        const message = err instanceof Error ? err.message : 'Failed to update consumer';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      return updateMutation.mutateAsync({ id, data });
     },
-    [refetch]
+    [updateMutation],
   );
 
-  /**
-   * Verify an LTI consumer
-   */
   const verifyConsumer = useCallback(
     async (id: string): Promise<LtiConsumer> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const consumer = await ltiApi.verifyConsumer(id);
-        await refetch();
-        return consumer;
-      } catch (err) {
-        console.error('[useLtiConsumers] Failed to verify consumer:', err);
-        const message = err instanceof Error ? err.message : 'Failed to verify consumer';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      return verifyMutation.mutateAsync(id);
     },
-    [refetch]
+    [verifyMutation],
   );
 
-  /**
-   * Activate a deactivated LTI consumer
-   */
   const activateConsumer = useCallback(
     async (id: string): Promise<LtiConsumer> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const consumer = await ltiApi.activateConsumer(id);
-        await refetch();
-        return consumer;
-      } catch (err) {
-        console.error('[useLtiConsumers] Failed to activate consumer:', err);
-        const message = err instanceof Error ? err.message : 'Failed to activate consumer';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      return activateMutation.mutateAsync(id);
     },
-    [refetch]
+    [activateMutation],
   );
 
-  /**
-   * Deactivate (soft delete) an LTI consumer
-   */
   const deactivateConsumer = useCallback(
     async (id: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await ltiApi.deactivateConsumer(id);
-        await refetch();
-      } catch (err) {
-        console.error('[useLtiConsumers] Failed to deactivate consumer:', err);
-        const message = err instanceof Error ? err.message : 'Failed to deactivate consumer';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      await deactivateMutation.mutateAsync(id);
     },
-    [refetch]
+    [deactivateMutation],
   );
 
-  /**
-   * Test connection to an LTI consumer
-   */
-  const testConnection = useCallback(async (id: string): Promise<ConnectionTestResult> => {
-    setTestingConnection(true);
-    try {
-      const result = await ltiApi.testConnection(id);
-      return result;
-    } catch (err) {
-      console.error('[useLtiConsumers] Connection test failed:', err);
-      throw err;
-    } finally {
-      setTestingConnection(false);
-    }
-  }, []);
+  const testConnection = useCallback(
+    async (id: string): Promise<ConnectionTestResult> => {
+      return testConnectionMutation.mutateAsync(id);
+    },
+    [testConnectionMutation],
+  );
 
-  /**
-   * Regenerate credentials for an LTI consumer
-   */
-  const regenerateCredentials = useCallback(async (id: string): Promise<LtiCredentials> => {
-    setRegeneratingCredentials(true);
-    try {
-      const credentials = await ltiApi.regenerateCredentials(id);
-      return credentials;
-    } catch (err) {
-      console.error('[useLtiConsumers] Failed to regenerate credentials:', err);
-      throw err;
-    } finally {
-      setRegeneratingCredentials(false);
-    }
-  }, []);
+  const regenerateCredentials = useCallback(
+    async (id: string): Promise<LtiCredentials> => {
+      return regenerateCredentialsMutation.mutateAsync(id);
+    },
+    [regenerateCredentialsMutation],
+  );
 
-  /**
-   * Select a consumer for viewing/editing
-   */
   const selectConsumer = useCallback((consumer: LtiConsumer | null): void => {
     setSelectedConsumer(consumer);
-  }, []);
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
-
-  /**
-   * Initial data fetch on mount
-   */
-  useEffect(() => {
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ============================================================================

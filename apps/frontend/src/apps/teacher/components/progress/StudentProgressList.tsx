@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
-import { ArrowUpDown, ArrowUp, ArrowDown, Users, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { Users, AlertTriangle, CheckCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
 import type { StudentMonitoring } from '../../types';
 
 interface StudentProgressListProps {
@@ -11,11 +12,85 @@ interface StudentProgressListProps {
 type SortField = 'name' | 'progress' | 'score' | 'lastActivity' | 'exercises';
 type SortDirection = 'asc' | 'desc';
 
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+const getProgressBadge = (progress: number) => {
+  if (progress < 30) {
+    return (
+      <div className="flex items-center gap-2 rounded-full border border-red-500 bg-red-500/10 px-3 py-1">
+        <AlertTriangle className="h-4 w-4 text-red-500" />
+        <span className="text-xs font-semibold text-red-500">En Riesgo</span>
+      </div>
+    );
+  } else if (progress < 70) {
+    return (
+      <div className="flex items-center gap-2 rounded-full border border-yellow-500 bg-yellow-500/10 px-3 py-1">
+        <span className="text-xs font-semibold text-yellow-500">En Progreso</span>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex items-center gap-2 rounded-full border border-green-500 bg-green-500/10 px-3 py-1">
+        <CheckCircle className="h-4 w-4 text-green-500" />
+        <span className="text-xs font-semibold text-green-500">Buen Progreso</span>
+      </div>
+    );
+  }
+};
+
+const getScoreColor = (score: number) => {
+  if (score >= 80) return 'text-green-500';
+  if (score >= 60) return 'text-yellow-500';
+  return 'text-red-500';
+};
+
+/**
+ * Calcula el tiempo transcurrido desde la ultima actividad
+ * FIX-2026-01-25: Validacion para valores null/undefined/invalidos
+ */
+const getTimeSinceLastActivity = (lastActivity: string | null | undefined): string => {
+  if (!lastActivity) {
+    return 'Sin actividad';
+  }
+
+  const last = new Date(lastActivity);
+
+  if (isNaN(last.getTime())) {
+    return 'Fecha invalida';
+  }
+
+  const now = new Date();
+  const diffMs = now.getTime() - last.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 0) {
+    return 'Hace un momento';
+  }
+
+  if (diffMins < 1) {
+    return 'Hace un momento';
+  } else if (diffMins < 60) {
+    return `Hace ${diffMins} min`;
+  } else if (diffMins < 1440) {
+    const hours = Math.floor(diffMins / 60);
+    return `Hace ${hours} ${hours === 1 ? 'hr' : 'hrs'}`;
+  } else {
+    const days = Math.floor(diffMins / 1440);
+    return `Hace ${days} ${days === 1 ? 'dia' : 'dias'}`;
+  }
+};
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
 /**
  * StudentProgressList - Tabla de progreso de estudiantes con ordenamiento
  *
- * Características:
- * - Ordenamiento por múltiples campos (nombre, progreso, score, última actividad)
+ * Caracteristicas:
+ * - Ordenamiento por multiples campos (nombre, progreso, score, ultima actividad)
  * - Indicadores visuales de estudiantes en riesgo (progreso < 30%)
  * - Badges de estado de progreso
  * - Click en estudiante para ver detalles
@@ -44,7 +119,7 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
           bValue = b.score_average;
           break;
         case 'lastActivity':
-          // FIX-2026-01-25: Validación para last_activity null/undefined
+          // FIX-2026-01-25: Validacion para last_activity null/undefined
           aValue = a.last_activity ? new Date(a.last_activity).getTime() : 0;
           bValue = b.last_activity ? new Date(b.last_activity).getTime() : 0;
           break;
@@ -64,97 +139,112 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
     return sorted;
   }, [students, sortField, sortDirection]);
 
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const renderSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="h-4 w-4 text-detective-text-secondary" />;
-    }
-    return sortDirection === 'asc' ? (
-      <ArrowUp className="h-4 w-4 text-detective-orange" />
-    ) : (
-      <ArrowDown className="h-4 w-4 text-detective-orange" />
-    );
-  };
-
-  const getProgressBadge = (progress: number) => {
-    if (progress < 30) {
-      return (
-        <div className="flex items-center gap-2 rounded-full border border-red-500 bg-red-500 bg-opacity-10 px-3 py-1">
-          <AlertTriangle className="h-4 w-4 text-red-500" />
-          <span className="text-xs font-semibold text-red-500">En Riesgo</span>
-        </div>
-      );
-    } else if (progress < 70) {
-      return (
-        <div className="flex items-center gap-2 rounded-full border border-yellow-500 bg-yellow-500 bg-opacity-10 px-3 py-1">
-          <span className="text-xs font-semibold text-yellow-500">En Progreso</span>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center gap-2 rounded-full border border-green-500 bg-green-500 bg-opacity-10 px-3 py-1">
-          <CheckCircle className="h-4 w-4 text-green-500" />
-          <span className="text-xs font-semibold text-green-500">Buen Progreso</span>
-        </div>
-      );
-    }
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 60) return 'text-yellow-500';
-    return 'text-red-500';
-  };
-
-  /**
-   * Calcula el tiempo transcurrido desde la última actividad
-   * FIX-2026-01-25: Añadida validación para valores null/undefined/inválidos
-   */
-  const getTimeSinceLastActivity = (lastActivity: string | null | undefined): string => {
-    // Validar que lastActivity exista
-    if (!lastActivity) {
-      return 'Sin actividad';
-    }
-
-    const last = new Date(lastActivity);
-
-    // Validar que la fecha sea válida
-    if (isNaN(last.getTime())) {
-      return 'Fecha inválida';
-    }
-
-    const now = new Date();
-    const diffMs = now.getTime() - last.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-
-    // Manejar fechas futuras
-    if (diffMins < 0) {
-      return 'Hace un momento';
-    }
-
-    if (diffMins < 1) {
-      return 'Hace un momento';
-    } else if (diffMins < 60) {
-      return `Hace ${diffMins} min`;
-    } else if (diffMins < 1440) {
-      const hours = Math.floor(diffMins / 60);
-      return `Hace ${hours} ${hours === 1 ? 'hr' : 'hrs'}`;
-    } else {
-      const days = Math.floor(diffMins / 1440);
-      return `Hace ${days} ${days === 1 ? 'día' : 'días'}`;
-    }
-  };
+  const handleSort = useCallback(
+    (columnKey: string) => {
+      const field = columnKey as SortField;
+      if (sortField === field) {
+        setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      } else {
+        setSortField(field);
+        setSortDirection('asc');
+      }
+    },
+    [sortField],
+  );
 
   // Contar estudiantes en riesgo
   const atRiskCount = students.filter((s) => s.progress_percentage < 30).length;
+
+  const columns = useMemo<Column<StudentMonitoring>[]>(
+    () => [
+      {
+        key: 'name',
+        label: 'Estudiante',
+        sortable: true,
+        render: (row) => (
+          <div>
+            <p className="font-semibold text-detective-text">{row.full_name}</p>
+            <p className="text-xs text-detective-text-secondary">{row.email}</p>
+            {row.current_module && (
+              <p className="mt-1 text-xs text-detective-orange">
+                Modulo: {row.current_module.substring(0, 25)}...
+              </p>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: 'progress',
+        label: 'Progreso',
+        sortable: true,
+        render: (row) => (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-24 rounded-full bg-detective-bg">
+                <div
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    row.progress_percentage < 30
+                      ? 'bg-red-500'
+                      : row.progress_percentage < 70
+                        ? 'bg-yellow-500'
+                        : 'bg-green-500'
+                  }`}
+                  style={{ width: `${row.progress_percentage}%` }}
+                />
+              </div>
+              <span className="text-sm font-bold text-detective-text">
+                {row.progress_percentage.toFixed(0)}%
+              </span>
+            </div>
+          </div>
+        ),
+      },
+      {
+        key: 'score',
+        label: 'Score Promedio',
+        sortable: true,
+        render: (row) => (
+          <p className={`text-xl font-bold ${getScoreColor(row.score_average)}`}>
+            {row.score_average.toFixed(0)}%
+          </p>
+        ),
+      },
+      {
+        key: 'exercises',
+        label: 'Ejercicios',
+        sortable: true,
+        render: (row) => (
+          <div>
+            <p className="font-semibold text-detective-text">
+              {row.exercises_completed}/{row.exercises_total}
+            </p>
+            <p className="text-xs text-detective-text-secondary">
+              {row.exercises_total > 0
+                ? ((row.exercises_completed / row.exercises_total) * 100).toFixed(0)
+                : 0}
+              % completados
+            </p>
+          </div>
+        ),
+      },
+      {
+        key: 'lastActivity',
+        label: 'Ultima Actividad',
+        sortable: true,
+        render: (row) => (
+          <p className="text-sm text-detective-text-secondary">
+            {getTimeSinceLastActivity(row.last_activity)}
+          </p>
+        ),
+      },
+      {
+        key: 'status',
+        label: 'Estado',
+        render: (row) => getProgressBadge(row.progress_percentage),
+      },
+    ],
+    [],
+  );
 
   if (students.length === 0) {
     return (
@@ -188,16 +278,16 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
       {atRiskCount > 0 && (
         <DetectiveCard hoverable={false}>
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-red-500 bg-opacity-10 p-3">
+            <div className="rounded-lg bg-red-500/10 p-3">
               <AlertTriangle className="h-6 w-6 text-red-500" />
             </div>
             <div>
               <h4 className="mb-1 text-lg font-bold text-detective-text">
-                ⚠️ Estudiantes que Requieren Atención
+                Estudiantes que Requieren Atencion
               </h4>
               <p className="text-detective-text-secondary">
                 {atRiskCount} estudiante(s) tienen menos del 30% de progreso. Considera intervenir
-                para apoyarlos y evitar rezago académico.
+                para apoyarlos y evitar rezago academico.
               </p>
             </div>
           </div>
@@ -206,137 +296,19 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
 
       {/* Table */}
       <DetectiveCard hoverable={false}>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-detective-border border-b">
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort('name')}
-                    className="flex items-center gap-2 text-sm font-semibold text-detective-text transition-colors hover:text-detective-orange"
-                  >
-                    Estudiante
-                    {renderSortIcon('name')}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort('progress')}
-                    className="flex items-center gap-2 text-sm font-semibold text-detective-text transition-colors hover:text-detective-orange"
-                  >
-                    Progreso
-                    {renderSortIcon('progress')}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort('score')}
-                    className="flex items-center gap-2 text-sm font-semibold text-detective-text transition-colors hover:text-detective-orange"
-                  >
-                    Score Promedio
-                    {renderSortIcon('score')}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort('exercises')}
-                    className="flex items-center gap-2 text-sm font-semibold text-detective-text transition-colors hover:text-detective-orange"
-                  >
-                    Ejercicios
-                    {renderSortIcon('exercises')}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort('lastActivity')}
-                    className="flex items-center gap-2 text-sm font-semibold text-detective-text transition-colors hover:text-detective-orange"
-                  >
-                    Última Actividad
-                    {renderSortIcon('lastActivity')}
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <span className="text-sm font-semibold text-detective-text">Estado</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedStudents.map((student, index) => (
-                <tr
-                  key={student.id || `student-${index}`}
-                  onClick={() => onStudentClick?.(student)}
-                  className="border-detective-border cursor-pointer border-b transition-colors hover:bg-detective-bg-secondary"
-                >
-                  {/* Nombre */}
-                  <td className="px-4 py-4">
-                    <div>
-                      <p className="font-semibold text-detective-text">{student.full_name}</p>
-                      <p className="text-xs text-detective-text-secondary">{student.email}</p>
-                      {student.current_module && (
-                        <p className="mt-1 text-xs text-detective-orange">
-                          Módulo: {student.current_module.substring(0, 25)}...
-                        </p>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* Progreso */}
-                  <td className="px-4 py-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-24 rounded-full bg-detective-bg">
-                          <div
-                            className={`h-2 rounded-full transition-all duration-300 ${
-                              student.progress_percentage < 30
-                                ? 'bg-red-500'
-                                : student.progress_percentage < 70
-                                  ? 'bg-yellow-500'
-                                  : 'bg-green-500'
-                            }`}
-                            style={{ width: `${student.progress_percentage}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-bold text-detective-text">
-                          {student.progress_percentage.toFixed(0)}%
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Score */}
-                  <td className="px-4 py-4">
-                    <p className={`text-xl font-bold ${getScoreColor(student.score_average)}`}>
-                      {student.score_average.toFixed(0)}%
-                    </p>
-                  </td>
-
-                  {/* Ejercicios */}
-                  <td className="px-4 py-4">
-                    <p className="font-semibold text-detective-text">
-                      {student.exercises_completed}/{student.exercises_total}
-                    </p>
-                    <p className="text-xs text-detective-text-secondary">
-                      {student.exercises_total > 0
-                        ? ((student.exercises_completed / student.exercises_total) * 100).toFixed(0)
-                        : 0}
-                      % completados
-                    </p>
-                  </td>
-
-                  {/* Última Actividad */}
-                  <td className="px-4 py-4">
-                    <p className="text-sm text-detective-text-secondary">
-                      {getTimeSinceLastActivity(student.last_activity)}
-                    </p>
-                  </td>
-
-                  {/* Estado */}
-                  <td className="px-4 py-4">{getProgressBadge(student.progress_percentage)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable<StudentMonitoring>
+          data={sortedStudents}
+          columns={columns}
+          onRowClick={onStudentClick}
+          variant="detective"
+          sortColumn={sortField}
+          sortDirection={sortDirection}
+          onSort={handleSort}
+          rowKey={(row) => row.id || row.full_name}
+          emptyMessage="No hay estudiantes en esta clase"
+          striped={false}
+          hoverable
+        />
       </DetectiveCard>
 
       {/* Summary Footer */}

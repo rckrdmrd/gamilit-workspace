@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import type { ElementType, ReactNode } from 'react';
 import { useForm, type UseFormRegisterReturn } from 'react-hook-form';
 import { X, Save, Loader2, Info, Link2, Settings, Shield } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { LtiConsumer, CreateLtiConsumerDto } from '@/shared/types/lti.types';
 
@@ -221,8 +222,8 @@ export function LtiConsumerForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-detective-card shadow-xl">
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="lg" className="bg-detective-card p-0">
+      <div className="-mx-6 -my-4">
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-detective-border bg-detective-card px-6 py-4">
           <h2 className="text-xl font-semibold text-detective-text">
@@ -416,7 +417,7 @@ export function LtiConsumerForm({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 

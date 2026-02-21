@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "11.0.0"
-fecha: "2026-02-19"
+version: "12.0.0"
+fecha: "2026-02-21"
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -11,30 +11,31 @@ styling: "TailwindCSS 4.x"
 build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 
 # -------------------------------------------------------------------------------
-# RESUMEN (Verificado contra codigo 2026-02-19)
+# RESUMEN (Verificado contra codigo 2026-02-21)
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 590                          # Verified 2026-02-19: find -name "*.tsx" excluding tests/stories/examples
-  hooks: 127                                    # Verified 2026-02-19: admin(31)+teacher(27)+student(13)+shared(15)+features(39)+root(2)
+  componentes_tsx: 590                          # Verified 2026-02-21: find *.tsx excl tests/stories/examples/_testing. +CompletionHeader, +CompletionActions, +Pagination, +ResourceSharingPanel, +StudentMonitoringPanel, +SuspendStudentModal, +StudentDetailModal, +more
+  hooks: 127                                    # Verified 2026-02-21: find use*.ts excl user*/tests. +useCompletionAnimations, +useSharedResources, +useGamificationSocket, +useBatchEquipment, +useTeacherContent, +useTeacherMessages, +useAnalytics(teacher), +useExerciseState, +useBranding(shared)
   paginas: 70                                   # 70 activas + 1 legacy
   stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003)
-  api_service_files: 67                         # Verified 2026-02-19: 66 *API/*Api files + 1 NotificationService
-  api_calls_total: 575                          # Verified 2026-02-19: apiClient.(get|post|put|patch|delete) calls excluding tests/docs
+  api_service_files: 67                         # Verified 2026-02-21: 45 services/api (excl infra/index) + 19 features + 2 shared + 1 NotificationService(deprecated). +resourceSharingApi.ts
+  api_calls_total: 580                          # ~580: +resourceSharingApi calls over previous 575
   type_definition_files: 49                     # 49 archivos, 430+ tipos/interfaces/enums exportados
   portales: 4
   mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
-  routes: 73                                    # 73 <Route path=> definitions en App.tsx (verified 2026-02-17)
+  routes: 73                                    # 73 <Route path=> definitions en App.tsx (verified 2026-02-21)
   contexts_providers: 4                         # AuthContext, BrandingProvider, ExerciseContext (Exercise Restructuring), barrel
   config_files: 16                              # 14 root + exercise-registry.ts + registrations.ts
   utility_files: 37                             # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1) + difficulty.ts + inventory/utils.ts + downloadCSV.ts
   constant_files: 9                             # Verified 2026-02-19: enums.constants, colors, breakpoints, ranks.constants, exerciseFeedback.constants, assignmentStatus, maya-ranks-ui, queryKeys, barrel
+  test_files: 48                                # Verified 2026-02-21: 12 .test.ts + 36 .test.tsx (incl. +51 USE_PROXY in api.config.test.ts, +23 a11y in CompletionModal.accessibility.test.tsx)
   dependencies_prod: 27
   dependencies_dev: 36
   path_aliases: 11
 
 # -------------------------------------------------------------------------------
-# PORTALES (Verificado contra apps/ directories 2026-02-19)
+# PORTALES (Verificado contra apps/ directories 2026-02-21)
 # -------------------------------------------------------------------------------
 
 portales:
@@ -42,47 +43,58 @@ portales:
     directorio: "apps/student/"
     completitud: "~100%"
     paginas: 20                                 # 18 *Page.tsx + DashboardComplete + DeviceManagementSection
-    componentes_tsx: 100                        # Verified 2026-02-19: all .tsx in portal excluding tests/stories/examples
+    componentes_tsx: 100                        # Verified 2026-02-21: incl. +CompletionHeader, +CompletionActions, +CompletionModalSections (CompletionModal split)
     descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda, misiones, amigos"
     cambios_recientes: |
+      v12.0.0 (Phase 1+2 Backlog 2026-02-21):
+      - CompletionModal split into 4: CompletionModal + CompletionHeader + CompletionActions + CompletionModalSections
+      - +useCompletionAnimations hook extracted
+      - CompletionModal.accessibility.test.tsx: 23 tests + ariaLabelledBy on 10 modals
+      - 17 inline modals migrated to shared Modal
       v11.0.0 (Estandarizacion Cross-Portal):
       - StudentPageShell created (shared/StudentPageShell.tsx)
       - useStudentPageSetup hook created (centralized page setup: title, error, loading)
       - ProfileInventoryTab.tsx added to profile/
       - Settings sections refactored (SaveButton, ProfileSection, PrivacySection, NotificationsSection)
-      - Student types barrel (apps/student/types/index.ts)
       v10.0.0: Student Portal Refactor Phase 2-4: 9 pages, 5,397 -> 2,101 lines (-61%), 29 new components
 
   - nombre: "Portal Maestro"
     directorio: "apps/teacher/"
     completitud: "~95%"
-    paginas: 19                                 # 19 paginas (ADR-030: sin sufijo "Page")
-    componentes_tsx: 55                         # Verified 2026-02-19: .tsx in components/ only (excl. tests/stories/examples)
-    hooks: 27                                   # Verified 2026-02-19: 27 use*.ts files in hooks/
-    descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, comunicacion"
+    paginas: 19                                 # 19 paginas (ADR-030: renamed with "Page" suffix)
+    componentes_tsx: 46                         # Verified 2026-02-21: 46 .tsx in components/ (excl tests). +ResourceSharingPanel, +more post-AUDIT
+    hooks: 25                                   # Verified 2026-02-21: 25 use*.ts (excl index.ts). +useSharedResources, +useTeacherContent, +useTeacherMessages, +useAnalytics
+    descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, comunicacion, resource sharing"
     cambios_recientes: |
+      v12.0.0 (Phase 1+2 Backlog 2026-02-21):
+      - 4 teacher pages re-enabled (routes + sidebar items)
+      - +ResourceSharingPanel component (full-stack wired)
+      - +useSharedResources hook + resourceSharingApi.ts API service
+      - 19 teacher page files renamed (ADR-030 compliance)
+      - AnimatePresence modal migration (17 Framer Motion modals)
+      v11.1.0 (TEACHER-PORTAL-AUDIT 2026-02-20):
+      - 10 orphaned components deleted (ClassroomsGrid, ClassroomCard, CreateAssignmentModal, etc.)
+      - 1 HOC deleted (withTeacherLayout)
+      - 4 hooks deleted (useGrading, useStudentProgress, useMissionStats, useMasteryTracking)
+      - 1 API service deleted (gradingApi.ts -> manualReviewApi.ts + reportsApi.ts)
       v11.0.0 (Estandarizacion Cross-Portal):
-      - TeacherPageShell created (shared/TeacherPageShell.tsx)
-      - useTeacherPageSetup hook created (centralized page setup)
-      - useScheduledReports, useSharedReports hooks added
-      - scheduledReportsApi.ts, sharedReportsApi.ts API files added
-      - withTeacherLayout HOC updated, components/index.ts barrel updated
-      v7.0.0: 12 pages renamed (ADR-030), 8 migrated to withTeacherLayout HOC
+      - TeacherPageShell, useTeacherPageSetup, scheduledReportsApi, sharedReportsApi added
 
   - nombre: "Portal Administrador"
     directorio: "apps/admin/"
     completitud: "~92%"
     paginas: 19                                 # 19 paginas (incl. AdminExerciseCreatePage)
-    componentes_tsx: 123                        # Verified 2026-02-19: .tsx in components/ only (excl. tests/stories/examples)
-    hooks: 31                                   # Verified 2026-02-19: 31 use*.ts files in hooks/
+    componentes_tsx: 123                        # Verified 2026-02-21: .tsx in components/ only (excl. tests/stories/examples)
+    hooks: 31                                   # Verified 2026-02-21: 31 use*.ts files in hooks/ (excl index.ts). +21 hooks migrated to React Query
     descripcion: "Dashboard, usuarios, contenido, analytics, monitoreo, reportes, gamificacion config"
     cambios_recientes: |
+      v12.0.0 (Phase 1+2 Backlog 2026-02-21):
+      - 21 admin hooks migrated to React Query (from direct apiClient calls)
+      - 17 inline modals migrated to shared Modal
       v11.0.0 (Estandarizacion Cross-Portal):
       - adminAPI.ts refactored from 1818-line monolith to 265-line re-export barrel
       - 12 new admin sub-API files extracted (dashboard, organizations, content, users, roles,
         gamification, monitoring, settings, reports, alerts, analytics, progress)
-      - Admin hooks updated to use admin sub-APIs and queryKeys constants
-      - AdminPageShell, AdminTabBar updated for consistency
       v9.0.0 (Sprint 2 Admin Portal Refactor):
       - ALL 19 pages migrated to AdminPageShell, total page lines: 7,471 -> 3,568 (52% reduction)
 
@@ -124,26 +136,30 @@ features:
     componentes_tsx: 3                          # NotificationBell, NotificationDropdown, test
 
 # -------------------------------------------------------------------------------
-# SHARED COMPONENTS (66 .tsx production, 13 tests)
+# SHARED COMPONENTS (68 .tsx production, 13 tests)
 # -------------------------------------------------------------------------------
 
 shared:
-  componentes_tsx: 66                           # Verified 2026-02-19: excluding tests/stories/examples
+  componentes_tsx: 68                           # Verified 2026-02-21: excluding tests/stories/examples. +Pagination, +CosmeticAvatar, +AchievementModal, +AchievementFilter, +AchievementCard, +AchievementsGrid
   desglose:
-    root_components: 24                         # Avatar, AvatarDisplay, AvatarUpload, Button, Card, ErrorBoundary, ExerciseAttemptCard, Footer, Header, Input, LeaderboardTable, LeaderboardTabs, Modal, PowerUpBar(student?), ProgressCard, ProgressFilter, ProtectedRoute, Sidebar, StatsOverview, UnderConstruction, UserStatsCard, etc.
-    tests: 13                                   # In __tests__/ directory
+    root_components: 30                         # Avatar, AvatarDisplay, AvatarUpload, AchievementCard, AchievementFilter, AchievementModal, AchievementsGrid, Button, Card, CosmeticAvatar, ErrorBoundary, ExerciseAttemptCard, Footer, Header, Input, LeaderboardTable, LeaderboardTabs, Modal, Pagination, ProgressCard, ProgressFilter, ProtectedRoute, Sidebar, StatsOverview, UnderConstruction, UserStatsCard, etc.
+    tests: 13                                   # In __tests__/ directory (incl. Modal.test.tsx, Sidebar.test.tsx)
     base_components: 10                         # ColorfulCard, DetectiveButton, DetectiveCard, EnhancedCard, InputDetective, ProgressBar, RankBadge, StatusBadge, TabBar, Toast
     celebrations: 1                             # ConfettiCelebration
     common: 5                                   # ConfirmDialog, DataTable, FeatureBadge, FormField, Modal
-    feedback: 4                                 # NEW: ConfirmDialog, EmptyState, ErrorMessage, SaveButton (Estandarizacion)
-    settings: 2                                 # NEW: ProfileSettingsForm, PrivacySettingsForm (Estandarizacion)
+    feedback: 4                                 # ConfirmDialog, EmptyState, ErrorMessage, SaveButton
+    settings: 2                                 # ProfileSettingsForm, PrivacySettingsForm
     exercises: 1                                # UnifiedExerciseLayout
     profile: 1                                  # AvatarSelectionModal
     layout: 2                                   # GamifiedHeader, GamilitSidebar
-    loading: 3                                  # SkeletonCard, LoadingSpinner (moved from root), LoadingOverlay (moved from base)
+    loading: 3                                  # SkeletonCard, LoadingSpinner, LoadingOverlay
     mechanics: 9                                # ExerciseContentRenderer, ExerciseGradientHeader, FeedbackModal, HintSystem, MediaUploader, ProgressTracker, RubricEvaluator, ScoreDisplay, TimerWidget
     media: 3                                    # AudioPlayer, VideoPlayer, NavigationPathViewer
     timeline: 1                                 # ActivityTimeline
+  nuevos_v12:
+    - "Pagination.tsx — shared reusable pagination component, 9 consumers"
+    - "Modal.tsx enhanced with AnimatePresence (Framer Motion), 17 modals migrated"
+    - "TabBar.tsx enhanced (was existing, now shared pattern)"
 
 # -------------------------------------------------------------------------------
 # STORES (ZUSTAND) — 13 archivos verificados con create()
@@ -185,23 +201,25 @@ stores:
   # React Query hooks o Context providers, no stores Zustand reales.
 
 # -------------------------------------------------------------------------------
-# HOOKS (127 archivos verificados 2026-02-19)
+# HOOKS (127 archivos verificados 2026-02-21)
 # -------------------------------------------------------------------------------
 
 hooks:
-  total: 127                                    # Verified 2026-02-19: use*.ts files excluding types/services/tests/examples
+  total: 127                                    # Verified 2026-02-21: find use*.ts excl user*/tests/index.ts
   por_directorio:
-    apps_admin_hooks: 31                        # Verified 2026-02-19: 31 use*.ts (was 25, +6 Estandarizacion: useAdminPageSetup, useAlerts, useOrganizations, useProgress, useReports, etc.)
-    apps_teacher_hooks: 27                      # Verified 2026-02-19: 27 use*.ts (was 24, +3: useTeacherPageSetup, useScheduledReports, useSharedReports)
-    apps_student_hooks: 13                      # Verified 2026-02-19: 13 use*.ts (was 10, +3: useStudentPageSetup, useAchievementsEnhanced, useRecentActivities)
-    shared_hooks: 15                            # Verified 2026-02-19: 15 use*.ts (was 11, +4: useApiError, usePageTitle, useInvalidateDashboard, useModuleAccess)
-    features_gamification_social_hooks: 10      # Verified 2026-02-19: +2 useInventoryData, useActivatePowerUp, +2 useEquipment, useAdvancedLeaderboard
+    apps_admin_hooks: 31                        # Verified 2026-02-21: 31 use*.ts (excl index.ts)
+    apps_teacher_hooks: 24                      # Verified 2026-02-21: 24 use*.ts (excl index.ts). +useSharedResources, +useTeacherContent, +useTeacherMessages, +useAnalytics
+    apps_student_hooks: 13                      # Verified 2026-02-21: 13 use*.ts (excl index.ts). +useExerciseState
+    apps_student_components_hooks: 1            # useCompletionAnimations (in components/exercise/)
+    shared_hooks: 16                            # Verified 2026-02-21: 16 use*.ts (excl index.ts). +useBranding(shared), +useUserGamification
+    features_gamification_social_hooks: 11      # +useBatchEquipment, +useGuilds
     features_gamification_economy_hooks: 7      # useCoins, useInventory, useInventoryQuery, useShop, useShopData, useShopPurchase, useTransactions
     features_auth_hooks: 5                      # useAuth, usePermissions, useRole, useSession, useUser
     features_gamification_ranks_hooks: 5        # useMultipliers, useProgression, useRank, useRanksConfig, useRankUpNotification
     features_exercises_hooks: 5                 # useExerciseComodines, useExerciseData, useExerciseProgress, useExerciseRewards, useExerciseTimer
     hooks_root: 2                               # useBranding, useFavicon
     features_notifications_hooks: 2             # usePushNotifications, useWebSocket
+    features_gamification_hooks: 1              # useGamificationSocket
     features_gamification_achievements_hooks: 1 # useAchievements
     features_gamification_battles_hooks: 1      # useBattle
     features_gamification_missions_hooks: 1     # useMissions
@@ -211,16 +229,16 @@ hooks:
   # Nota: Conteo excluye index.ts barrels, test files, .example.tsx files.
 
 # -------------------------------------------------------------------------------
-# API SERVICES (67 archivos, ~575 llamadas apiClient)
+# API SERVICES (67 archivos, ~580 llamadas apiClient)
 # -------------------------------------------------------------------------------
 
 api_services:
-  total_files: 67                               # Verified 2026-02-19: 66 *API/*Api files + 1 NotificationService.ts
-  total_api_calls: 575                          # Verified 2026-02-19: apiClient.(get|post|put|patch|delete) calls in production code
+  total_files: 67                               # Verified 2026-02-21: 45 services/api (excl infra/index) + 19 features + 2 shared + 1 NotificationService(deprecated)
+  total_api_calls: 580                          # ~580: +resourceSharingApi calls over previous 575
   por_directorio:
     services_api_root: 11                       # adminAPI (barrel), contentAPI, educationalAPI, friendsAPI, notificationsAPI, passwordAPI, profileAPI, schoolsAPI, studentAssignmentsAPI, teamsAPI, twoFactorAPI
     services_api_admin: 16                      # achievementsApi, alertsApi, analyticsApi, classroomTeacherApi, contentApi, dashboardApi, gamificationApi, gamificationConfigApi, ltiAPI, monitoringApi, organizationsApi, progressApi, reportsApi, rolesApi, settingsApi, usersApi
-    services_api_teacher: 15                    # alertConfigApi, analyticsApi, assignmentsApi, bonusCoinsApi, classroomsApi, exerciseResponsesApi, gradingApi, interventionAlertsApi, reportsApi, scheduledReportsApi, sharedReportsApi, studentProgressApi, teacherApi, teacherContentApi, teacherMessagesApi
+    services_api_teacher: 15                    # +resourceSharingApi.ts (ResourceSharing feature). alertConfigApi, analyticsApi, assignmentsApi, bonusCoinsApi, classroomsApi, exerciseResponsesApi, interventionAlertsApi, reportsApi, resourceSharingApi, scheduledReportsApi, sharedReportsApi, studentProgressApi, teacherApi, teacherContentApi, teacherMessagesApi
     services_api_branding: 1                    # brandingAPI.ts (migrated from lib/api/)
     services_api_gamification: 1                # gamificationAPI.ts (migrated from lib/api/)
     services_api_progress: 1                    # progressAPI.ts (migrated from lib/api/)
@@ -244,7 +262,7 @@ api_services:
   # lib/api/index.ts — re-exports from new locations for backward compat
 
   cobertura_backend:
-    endpoints_backend_total: 905
+    endpoints_backend_total: 912
     endpoints_llamados_frontend: "350-400"      # ~40-45% cobertura global
     cobertura_por_portal:
       parent: "~90-100%"                        # 17 endpoints, API file dedicado
@@ -401,5 +419,5 @@ hallazgos:
       Phase 5: PageShell pattern (StudentPageShell, TeacherPageShell + pageSetup hooks)
 
 # ===============================================================================
-# FIN FRONTEND INVENTORY v11.0.0
+# FIN FRONTEND INVENTORY v12.0.0
 # ===============================================================================

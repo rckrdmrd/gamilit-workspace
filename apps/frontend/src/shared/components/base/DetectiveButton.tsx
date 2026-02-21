@@ -106,7 +106,7 @@ export const DetectiveButton = React.forwardRef<HTMLButtonElement, DetectiveButt
           isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
           className
         )}
-        {...(props as any)}
+        {...(props as Record<string, unknown>)}
       >
         {loading ? (
           <>

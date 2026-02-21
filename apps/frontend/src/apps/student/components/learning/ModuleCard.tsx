@@ -92,7 +92,7 @@ export function ModuleCard({ module, index, style, onModuleClick }: ModuleCardPr
                   {module.progress}%
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-detective-bg-secondary">
                 <motion.div
                   className={`h-full rounded-full bg-gradient-to-r ${style.color}`}
                   initial={{ width: 0 }}
@@ -105,7 +105,7 @@ export function ModuleCard({ module, index, style, onModuleClick }: ModuleCardPr
 
           {/* Locked Message */}
           {!unlocked && index > 0 && (
-            <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-3 text-xs text-gray-500">
+            <div className="flex items-center gap-2 rounded-lg bg-detective-bg-secondary p-3 text-xs text-detective-text-secondary">
               <Lock className="h-4 w-4" />
               <span>Completa el Modulo {index} para desbloquear</span>
             </div>

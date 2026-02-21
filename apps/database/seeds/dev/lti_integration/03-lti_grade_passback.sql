@@ -16,15 +16,35 @@ SET search_path TO lti_integration, auth_management, public;
 
 DO $$
 DECLARE
-    v_moodle_consumer_id UUID := '10000000-0000-0000-0000-000000000001';
-    v_canvas_consumer_id UUID := '20000000-0000-0000-0000-000000000002';
-    v_blackboard_consumer_id UUID := '30000000-0000-0000-0000-000000000003';
-    v_session1_id UUID := '21111111-1111-1111-1111-111111111001';
-    v_session2_id UUID := '21111111-1111-1111-1111-111111111002';
-    v_session3_id UUID := '21111111-1111-1111-1111-111111111003';
+    v_moodle_consumer_id UUID;
+    v_canvas_consumer_id UUID;
+    v_blackboard_consumer_id UUID;
+    v_session1_id UUID;
+    v_session2_id UUID;
+    v_session3_id UUID;
     v_student_id UUID;
 BEGIN
     RAISE NOTICE 'Creating LTI grade passback sample records...';
+
+    -- Resolve consumer IDs by name
+    SELECT id INTO v_moodle_consumer_id FROM lti_integration.lti_consumers WHERE name ILIKE '%moodle%' LIMIT 1;
+    SELECT id INTO v_canvas_consumer_id FROM lti_integration.lti_consumers WHERE name ILIKE '%canvas%' LIMIT 1;
+    SELECT id INTO v_blackboard_consumer_id FROM lti_integration.lti_consumers WHERE name ILIKE '%blackboard%' LIMIT 1;
+
+    -- Resolve session IDs by consumer (from 02-lti_sessions.sql)
+    SELECT id INTO v_session1_id FROM lti_integration.lti_sessions WHERE consumer_id = v_moodle_consumer_id LIMIT 1;
+    SELECT id INTO v_session2_id FROM lti_integration.lti_sessions WHERE consumer_id = v_canvas_consumer_id LIMIT 1;
+    SELECT id INTO v_session3_id FROM lti_integration.lti_sessions WHERE consumer_id = v_blackboard_consumer_id LIMIT 1;
+
+    IF v_moodle_consumer_id IS NULL OR v_session1_id IS NULL THEN
+        RAISE NOTICE 'LTI consumers/sessions not found. Run prior seeds first. Skipping.';
+        RETURN;
+    END IF;
+    -- Fallback for optional consumers/sessions
+    IF v_canvas_consumer_id IS NULL THEN v_canvas_consumer_id := v_moodle_consumer_id; END IF;
+    IF v_blackboard_consumer_id IS NULL THEN v_blackboard_consumer_id := v_moodle_consumer_id; END IF;
+    IF v_session2_id IS NULL THEN v_session2_id := v_session1_id; END IF;
+    IF v_session3_id IS NULL THEN v_session3_id := v_session1_id; END IF;
 
     -- Get a student ID
     SELECT id INTO v_student_id FROM auth_management.profiles
@@ -32,6 +52,12 @@ BEGIN
 
     IF v_student_id IS NULL THEN
         SELECT id INTO v_student_id FROM auth_management.profiles WHERE is_active = true LIMIT 1;
+    END IF;
+
+    -- Idempotency guard
+    IF EXISTS (SELECT 1 FROM lti_integration.lti_grade_passback LIMIT 1) THEN
+        RAISE NOTICE 'LTI grade passback records already exist, skipping insert';
+        RETURN;
     END IF;
 
     INSERT INTO lti_integration.lti_grade_passback (
@@ -65,7 +91,7 @@ BEGIN
 
     -- Grade 1: Successful passback to Moodle
     (
-        '31111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_session1_id,
         v_student_id,
         v_moodle_consumer_id,
@@ -103,7 +129,7 @@ BEGIN
 
     -- Grade 2: Pending passback to Canvas (just graded)
     (
-        '31111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_session2_id,
         v_student_id,
         v_canvas_consumer_id,
@@ -137,7 +163,7 @@ BEGIN
 
     -- Grade 3: Failed passback (LMS unavailable)
     (
-        '31111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_session3_id,
         v_student_id,
         v_blackboard_consumer_id,
@@ -174,7 +200,7 @@ BEGIN
 
     -- Grade 4: Retrying passback (network timeout)
     (
-        '31111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_session1_id,
         v_student_id,
         v_moodle_consumer_id,
@@ -210,7 +236,7 @@ BEGIN
 
     -- Grade 5: In Progress activity (not yet completed)
     (
-        '31111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_session2_id,
         v_student_id,
         v_canvas_consumer_id,
@@ -244,7 +270,7 @@ BEGIN
 
     -- Grade 6: Successful passback with high score
     (
-        '31111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_session1_id,
         v_student_id,
         v_moodle_consumer_id,
@@ -278,12 +304,7 @@ BEGIN
         )
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        passback_status = EXCLUDED.passback_status,
-        attempt_count = EXCLUDED.attempt_count,
-        last_sent_at = EXCLUDED.last_sent_at,
-        lms_response = EXCLUDED.lms_response,
-        metadata = EXCLUDED.metadata;
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'LTI grade passback records created successfully';
 

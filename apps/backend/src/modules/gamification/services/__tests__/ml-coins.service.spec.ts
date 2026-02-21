@@ -150,15 +150,15 @@ describe('MLCoinsService', () => {
       });
     });
 
-    it('should throw NotFoundException if user stats not found', async () => {
+    it('should return 0 balance if user stats not found (graceful fallback)', async () => {
       // Arrange
       userStatsRepo.findOne.mockResolvedValue(null);
 
-      // Act & Assert
-      await expect(service.getBalance(mockUserId)).rejects.toThrow(NotFoundException);
-      await expect(service.getBalance(mockUserId)).rejects.toThrow(
-        `User stats not found for ${mockUserId}`,
-      );
+      // Act
+      const result = await service.getBalance(mockUserId);
+
+      // Assert — service returns 0 instead of throwing (graceful for uninitialized users)
+      expect(result).toBe(0);
     });
   });
 
@@ -183,12 +183,20 @@ describe('MLCoinsService', () => {
       });
     });
 
-    it('should throw NotFoundException if user stats not found', async () => {
+    it('should return default stats if user stats not found (graceful fallback)', async () => {
       // Arrange
       userStatsRepo.findOne.mockResolvedValue(null);
 
-      // Act & Assert
-      await expect(service.getCoinsStats(mockUserId)).rejects.toThrow(NotFoundException);
+      // Act
+      const result = await service.getCoinsStats(mockUserId);
+
+      // Assert — service returns defaults instead of throwing (graceful for uninitialized users)
+      expect(result).toEqual({
+        current_balance: 0,
+        total_earned: 0,
+        total_spent: 0,
+        earned_today: 0,
+      });
     });
   });
 

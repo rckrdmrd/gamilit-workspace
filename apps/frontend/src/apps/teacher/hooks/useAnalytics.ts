@@ -8,11 +8,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { analyticsApi } from '@services/api/teacher';
+import { reportsApi } from '@services/api/teacher/reportsApi';
+import type { GenerateReportDto } from '@services/api/teacher/reportsApi';
 import type { ClassroomAnalytics, EngagementMetrics } from '@apps/teacher/types';
 import type {
   GetAnalyticsQueryDto,
   GetEngagementMetricsDto,
-  GenerateReportsDto,
   Report,
 } from '@services/api/teacher/analyticsApi';
 
@@ -64,7 +65,7 @@ export interface UseAnalyticsReturn {
   engagement: EngagementMetrics | null;
   loading: boolean;
   error: Error | null;
-  generateReport: (config: GenerateReportsDto) => Promise<Report>;
+  generateReport: (config: GenerateReportDto) => Promise<Report>;
   refresh: () => Promise<void>;
 }
 
@@ -93,12 +94,22 @@ export function useAnalytics(
   });
 
   const reportMutation = useMutation({
-    mutationFn: (config: GenerateReportsDto) => analyticsApi.generateReport(config),
+    mutationFn: (config: GenerateReportDto) => reportsApi.generateReport(config),
   });
 
   const generateReport = useCallback(
-    async (config: GenerateReportsDto): Promise<Report> => {
-      return reportMutation.mutateAsync(config);
+    async (config: GenerateReportDto): Promise<Report> => {
+      const result = await reportMutation.mutateAsync(config);
+      // Map binary response to Report shape for backward compatibility
+      return {
+        id: result.metadata.reportId,
+        type: config.type,
+        title: config.title || 'Report',
+        status: 'completed' as const,
+        file_url: URL.createObjectURL(result.blob),
+        created_at: result.metadata.generatedAt,
+        expires_at: new Date(Date.now() + 3600000).toISOString(),
+      };
     },
     [reportMutation],
   );

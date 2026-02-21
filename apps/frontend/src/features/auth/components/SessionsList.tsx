@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Monitor, Smartphone, Tablet, X, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { authAPI } from '../api/authAPI';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import toast from 'react-hot-toast';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 
 export const SessionsList: React.FC = () => {
   const queryClient = useQueryClient();
+  const [confirmRevoke, setConfirmRevoke] = useState<{ open: boolean; sessionId: string | null }>({ open: false, sessionId: null });
 
   // Fetch sessions using react-query
   const { data: sessions, isLoading, error } = useQuery({
@@ -23,15 +25,14 @@ export const SessionsList: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['sessions'] });
       toast.success('Sesión cerrada exitosamente');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al cerrar la sesión');
+    onError: (error: unknown) => {
+      const err = error instanceof Error ? error : { message: 'Error al cerrar la sesión' };
+      toast.error(err.message || 'Error al cerrar la sesión');
     },
   });
 
   const handleRevokeSession = (sessionId: string) => {
-    if (confirm('¿Estás seguro de que deseas cerrar esta sesión?')) {
-      revokeMutation.mutate(sessionId);
-    }
+    setConfirmRevoke({ open: true, sessionId });
   };
 
   const getDeviceIcon = (deviceType: string) => {
@@ -80,40 +81,57 @@ export const SessionsList: React.FC = () => {
   }
 
   return (
-    <div className="space-y-3">
-      {sessions.map((session) => (
-        <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            {getDeviceIcon(session.deviceType)}
-            <div>
-              <p className="text-detective-body font-medium">
-                {session.browser} en {session.os}
-              </p>
-              <p className="text-detective-small text-gray-500">
-                {session.ipAddress} • {formatLastActivity(session.lastActivity)}
-              </p>
+    <>
+      <div className="space-y-3">
+        {sessions.map((session) => (
+          <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              {getDeviceIcon(session.deviceType)}
+              <div>
+                <p className="text-detective-body font-medium">
+                  {session.browser} en {session.os}
+                </p>
+                <p className="text-detective-small text-gray-500">
+                  {session.ipAddress} • {formatLastActivity(session.lastActivity)}
+                </p>
+              </div>
             </div>
+            {session.isCurrent ? (
+              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                Sesión Actual
+              </span>
+            ) : (
+              <button
+                onClick={() => handleRevokeSession(session.id)}
+                disabled={revokeMutation.isPending}
+                className="p-2 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Cerrar sesión"
+              >
+                {revokeMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 text-red-600 animate-spin" />
+                ) : (
+                  <X className="w-4 h-4 text-red-600" />
+                )}
+              </button>
+            )}
           </div>
-          {session.isCurrent ? (
-            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
-              Sesión Actual
-            </span>
-          ) : (
-            <button
-              onClick={() => handleRevokeSession(session.id)}
-              disabled={revokeMutation.isPending}
-              className="p-2 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Cerrar sesión"
-            >
-              {revokeMutation.isPending ? (
-                <Loader2 className="w-4 h-4 text-red-600 animate-spin" />
-              ) : (
-                <X className="w-4 h-4 text-red-600" />
-              )}
-            </button>
-          )}
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <ConfirmDialog
+        isOpen={confirmRevoke.open}
+        onClose={() => setConfirmRevoke({ open: false, sessionId: null })}
+        onConfirm={() => {
+          if (confirmRevoke.sessionId) {
+            revokeMutation.mutate(confirmRevoke.sessionId);
+          }
+          setConfirmRevoke({ open: false, sessionId: null });
+        }}
+        title="Cerrar sesión"
+        message="¿Estás seguro de que deseas cerrar esta sesión?"
+        confirmText="Cerrar sesión"
+        variant="danger"
+      />
+    </>
   );
 };

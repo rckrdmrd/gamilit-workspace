@@ -447,7 +447,7 @@ export class BattleGateway
   /**
    * Broadcast event to all players in a battle
    */
-  broadcastToBattle(challengeId: string, event: string, data: any): void {
+  broadcastToBattle(challengeId: string, event: string, data: any): void { // eslint-disable-line @typescript-eslint/no-explicit-any
     this.server.to(`battle:${challengeId}`).emit(event, {
       ...data,
       timestamp: new Date().toISOString(),
@@ -461,7 +461,7 @@ export class BattleGateway
     challengeId: string,
     excludeUserId: string,
     event: string,
-    data: any,
+    data: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): void {
     const players = this.battleRooms.get(challengeId);
     if (!players) return;
@@ -482,7 +482,7 @@ export class BattleGateway
   /**
    * Notify specific player in battle
    */
-  notifyPlayer(userId: string, event: string, data: any): void {
+  notifyPlayer(userId: string, event: string, data: any): void { // eslint-disable-line @typescript-eslint/no-explicit-any
     const socketId = this.userSockets.get(userId);
     if (socketId) {
       this.server.to(socketId).emit(event, {

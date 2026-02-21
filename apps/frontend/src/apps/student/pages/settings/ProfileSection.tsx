@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -61,7 +60,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({ user }) => {
       setSaveStatus('error');
       const msg =
         error instanceof Error
-          ? ((error as any).response?.data?.message || error.message)
+          ? ((error as { response?: { data?: { message?: string } } }).response?.data?.message || error.message)
           : 'Error al guardar perfil';
       toast.error(msg);
       setTimeout(() => setSaveStatus('idle'), 3000);

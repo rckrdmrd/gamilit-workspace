@@ -16,13 +16,26 @@ SET search_path TO lti_integration, auth_management, public;
 
 DO $$
 DECLARE
-    v_moodle_consumer_id UUID := '10000000-0000-0000-0000-000000000001';
-    v_canvas_consumer_id UUID := '20000000-0000-0000-0000-000000000002';
-    v_blackboard_consumer_id UUID := '30000000-0000-0000-0000-000000000003';
+    v_moodle_consumer_id UUID;
+    v_canvas_consumer_id UUID;
+    v_blackboard_consumer_id UUID;
     v_student_id UUID;
     v_teacher_id UUID;
 BEGIN
     RAISE NOTICE 'Creating LTI session sample records...';
+
+    -- Resolve consumer IDs by name (from 01-lti_consumers.sql)
+    SELECT id INTO v_moodle_consumer_id FROM lti_integration.lti_consumers WHERE name ILIKE '%moodle%' LIMIT 1;
+    SELECT id INTO v_canvas_consumer_id FROM lti_integration.lti_consumers WHERE name ILIKE '%canvas%' LIMIT 1;
+    SELECT id INTO v_blackboard_consumer_id FROM lti_integration.lti_consumers WHERE name ILIKE '%blackboard%' LIMIT 1;
+
+    IF v_moodle_consumer_id IS NULL THEN
+        RAISE NOTICE 'LTI consumers not found. Run 01-lti_consumers.sql first. Skipping.';
+        RETURN;
+    END IF;
+    -- Fallback for optional consumers
+    IF v_canvas_consumer_id IS NULL THEN v_canvas_consumer_id := v_moodle_consumer_id; END IF;
+    IF v_blackboard_consumer_id IS NULL THEN v_blackboard_consumer_id := v_moodle_consumer_id; END IF;
 
     -- Get sample user IDs
     SELECT id INTO v_student_id FROM auth_management.profiles
@@ -38,6 +51,12 @@ BEGIN
 
     IF v_teacher_id IS NULL THEN
         v_teacher_id := v_student_id;
+    END IF;
+
+    -- Idempotency guard
+    IF EXISTS (SELECT 1 FROM lti_integration.lti_sessions LIMIT 1) THEN
+        RAISE NOTICE 'LTI sessions already exist, skipping insert';
+        RETURN;
     END IF;
 
     INSERT INTO lti_integration.lti_sessions (
@@ -70,7 +89,7 @@ BEGIN
 
     -- Session 1: Active student session from Moodle (current)
     (
-        '21111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_moodle_consumer_id,
         v_student_id,
         'launch-moodle-' || extract(epoch from now())::text,
@@ -112,7 +131,7 @@ BEGIN
 
     -- Session 2: Active teacher session from Canvas
     (
-        '21111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_canvas_consumer_id,
         v_teacher_id,
         'launch-canvas-' || extract(epoch from now())::text,
@@ -152,7 +171,7 @@ BEGIN
 
     -- Session 3: Ended student session from Blackboard (completed)
     (
-        '21111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_blackboard_consumer_id,
         v_student_id,
         'launch-bb-completed-001',
@@ -188,7 +207,7 @@ BEGIN
 
     -- Session 4: Deep Linking session from Moodle (instructor)
     (
-        '21111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_moodle_consumer_id,
         v_teacher_id,
         'launch-moodle-deeplink-001',
@@ -227,7 +246,7 @@ BEGIN
 
     -- Session 5: Expired session (timeout)
     (
-        '21111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_canvas_consumer_id,
         v_student_id,
         'launch-canvas-expired-001',
@@ -260,11 +279,7 @@ BEGIN
         )
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        is_active = EXCLUDED.is_active,
-        last_activity_at = EXCLUDED.last_activity_at,
-        session_state = EXCLUDED.session_state,
-        metadata = EXCLUDED.metadata;
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'LTI sessions created successfully';
 

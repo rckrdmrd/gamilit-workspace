@@ -12,11 +12,12 @@ import {
   HttpStatus,
   Res,
   StreamableFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiProduces } from '@nestjs/swagger';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
-import { join } from 'path';
+import { join, resolve, basename } from 'path';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminReportsService } from '../services/admin-reports.service';
@@ -97,9 +98,12 @@ export class AdminReportsController {
     const tenantId = req.user!.tenant_id!;
     const report = await this.adminReportsService.downloadReport(id, tenantId);
 
-    // Extraer nombre del archivo de la URL
-    const fileName = report.file_url!.split('/').pop()!;
-    const filePath = join(AdminReportsController.REPORTS_DIR, fileName);
+    // Extraer nombre del archivo de la URL (basename prevents path traversal)
+    const fileName = basename(report.file_url!);
+    const filePath = resolve(AdminReportsController.REPORTS_DIR, fileName);
+    if (!filePath.startsWith(resolve(AdminReportsController.REPORTS_DIR))) {
+      throw new BadRequestException('Invalid file path');
+    }
 
     // Configurar headers de respuesta
     const mimeType = this.getMimeType(report.format);

@@ -20,13 +20,10 @@ import {
   DB_SCHEMAS,
   DB_TABLES,
 } from '../../../shared/constants/database.constants';
+import { AssignmentType } from '../enums/assignment.enums';
 
-export enum AssignmentType {
-  PRACTICE = 'practice',
-  QUIZ = 'quiz',
-  EXAM = 'exam',
-  HOMEWORK = 'homework',
-}
+// Re-export for backward compatibility
+export { AssignmentType } from '../enums/assignment.enums';
 
 @Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.ASSIGNMENTS })
 // CORRECTED (2025-12-18): Usar nombres de propiedades en lugar de nombres de columnas

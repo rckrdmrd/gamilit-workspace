@@ -1,4 +1,4 @@
-# Schema 3: education (13 tablas, 42 RLS policies)
+# Schema 3: education (16 tablas, 42 RLS policies)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
 
@@ -292,3 +292,59 @@ Motor de repeticion espaciada.
 
 **Indices:** `idx_spaced_rep_student_next` (student_id, next_review_date)
 **Entity:** `SpacedRepetition`
+
+---
+
+### education.resource_ratings
+Calificaciones de recursos educativos compartidos por docentes.
+
+| Columna | Tipo | Nullable | Default | Descripcion |
+|---------|------|----------|---------|-------------|
+| id | UUID | NOT NULL | gen_random_uuid() | PK |
+| resource_id | UUID | NOT NULL | - | FK educational_content.teacher_contents |
+| teacher_id | UUID | NOT NULL | - | FK auth_management.profiles |
+| rating | SMALLINT | NOT NULL | - | Calificacion (1-5, CHECK constraint) |
+| created_at | TIMESTAMPTZ | NULL | NOW() | - |
+| updated_at | TIMESTAMPTZ | NULL | NOW() | - |
+
+**Indices:** `idx_resource_ratings_resource_id`, `idx_resource_ratings_teacher_id`
+**Constraint:** UNIQUE(resource_id, teacher_id)
+**Entity:** `ResourceRating`
+**DDL:** `schemas/educational_content/tables/28-resource_ratings.sql`
+
+---
+
+### education.resource_comments
+Comentarios de docentes en recursos educativos compartidos.
+
+| Columna | Tipo | Nullable | Default | Descripcion |
+|---------|------|----------|---------|-------------|
+| id | UUID | NOT NULL | gen_random_uuid() | PK |
+| resource_id | UUID | NOT NULL | - | FK educational_content.teacher_contents |
+| author_id | UUID | NOT NULL | - | FK auth_management.profiles |
+| text | TEXT | NOT NULL | - | Contenido del comentario |
+| is_deleted | BOOLEAN | NULL | FALSE | Soft delete para moderacion |
+| created_at | TIMESTAMPTZ | NULL | NOW() | - |
+| updated_at | TIMESTAMPTZ | NULL | NOW() | - |
+
+**Indices:** `idx_resource_comments_resource_id`, `idx_resource_comments_author_id`, `idx_resource_comments_created_at`
+**Entity:** `ResourceComment`
+**DDL:** `schemas/educational_content/tables/29-resource_comments.sql`
+
+---
+
+### education.resource_downloads
+Tracking de descargas de recursos educativos compartidos.
+
+| Columna | Tipo | Nullable | Default | Descripcion |
+|---------|------|----------|---------|-------------|
+| id | UUID | NOT NULL | gen_random_uuid() | PK |
+| resource_id | UUID | NOT NULL | - | FK educational_content.teacher_contents |
+| downloaded_by | UUID | NOT NULL | - | FK auth_management.profiles |
+| downloaded_at | TIMESTAMPTZ | NULL | NOW() | Momento de la descarga |
+
+**Indices:** `idx_resource_downloads_resource_id`, `idx_resource_downloads_downloaded_by`
+**Entity:** `ResourceDownload`
+**DDL:** `schemas/educational_content/tables/30-resource_downloads.sql`
+
+> **Nota (2026-02-21):** Estas 3 tablas soportan el feature ResourceSharingPanel del Teacher Portal, permitiendo a docentes calificar, comentar y trackear descargas de contenido educativo compartido.

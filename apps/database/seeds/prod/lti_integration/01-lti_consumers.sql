@@ -101,7 +101,7 @@ INSERT INTO lti_integration.lti_consumers (
 -- 1. MOODLE LMS (Placeholder)
 -- =====================================================
 (
-    '10000000-0000-0000-0000-000000000001'::uuid,
+    gen_random_uuid(),
     'Moodle LMS',
     'https://moodle.example.edu',
     'MOODLE_CLIENT_ID_PLACEHOLDER', -- REEMPLAZAR con credencial real
@@ -130,7 +130,7 @@ INSERT INTO lti_integration.lti_consumers (
 -- 2. CANVAS LMS (Placeholder)
 -- =====================================================
 (
-    '20000000-0000-0000-0000-000000000002'::uuid,
+    gen_random_uuid(),
     'Canvas LMS',
     'https://canvas.example.edu',
     'CANVAS_CLIENT_ID_PLACEHOLDER', -- REEMPLAZAR con credencial real
@@ -159,7 +159,7 @@ INSERT INTO lti_integration.lti_consumers (
 -- 3. BLACKBOARD LEARN (Placeholder)
 -- =====================================================
 (
-    '30000000-0000-0000-0000-000000000003'::uuid,
+    gen_random_uuid(),
     'Blackboard Learn',
     'https://blackboard.example.edu',
     'BLACKBOARD_CLIENT_ID_PLACEHOLDER', -- REEMPLAZAR con credencial real

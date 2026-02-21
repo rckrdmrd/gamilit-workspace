@@ -4,20 +4,33 @@
  * Custom hook for fetching and managing system logs (application logs).
  * Different from useAuditLogs which handles authentication attempts.
  *
- * Features:
- * - Fetch system logs with filtering
- * - Pagination support
- * - Log level filtering (debug, info, warn, error)
- * - Date range filtering
- * - Search in message
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
  *
  * Backend: GET /admin/system/logs
  * Created: 2026-01-25 - P1 Gap Integration
+ * Updated: 2026-02-20 - Migrated to React Query
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getSystemLogs } from '@/services/api/adminAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type { LogEntry, LogFilters } from '@/services/api/adminTypes';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const systemLogsKeys = {
+  all: ['admin', 'system-logs'] as const,
+  list: (filters: SystemLogFilters, page: number, limit: number) =>
+    ['admin', 'system-logs', 'list', { ...filters, page, limit }] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -49,24 +62,10 @@ export interface UseSystemLogsResult {
   setPage: (page: number) => void;
 }
 
-/**
- * Hook for managing system logs
- *
- * @example
- * ```tsx
- * const { logs, isLoading, error, setFilters, setPage } = useSystemLogs({
- *   page: 1,
- *   pageSize: 50,
- *   autoFetch: true
- * });
- *
- * // Filter by log level
- * setFilters({ level: 'error' });
- *
- * // Search in logs
- * setFilters({ search: 'database connection' });
- * ```
- */
+// ============================================================================
+// Hook
+// ============================================================================
+
 export function useSystemLogs(params?: UseSystemLogsParams): UseSystemLogsResult {
   const {
     filters: initialFilters = {},
@@ -75,117 +74,92 @@ export function useSystemLogs(params?: UseSystemLogsParams): UseSystemLogsResult
     autoFetch = true,
   } = params || {};
 
-  // State
-  const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [pagination, setPagination] = useState({
-    page: initialPage,
-    totalPages: 0,
-    totalItems: 0,
-    limit: initialPageSize,
-  });
+  // Client-side filter/pagination state
   const [filters, setFiltersState] = useState<SystemLogFilters>(initialFilters);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [page, setPageState] = useState(initialPage);
+  const [pageSize] = useState(initialPageSize);
 
-  /**
-   * Transform frontend filters to backend LogFilters format
-   */
-  const transformFilters = useCallback((f: SystemLogFilters): LogFilters => {
-    return {
-      level: f.level,
-      date: f.date,
-      search: f.search,
-      page: pagination.page,
-      limit: pagination.limit,
-    };
-  }, [pagination.page, pagination.limit]);
+  // ============================================================================
+  // QUERY
+  // ============================================================================
 
-  /**
-   * Fetch system logs from API
-   * Backend: GET /admin/system/logs
-   */
-  const fetchLogs = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const query = useQuery({
+    queryKey: systemLogsKeys.list(filters, page, pageSize),
+    queryFn: async () => {
+      const apiFilters: LogFilters = {
+        level: filters.level,
+        date: filters.date,
+        search: filters.search,
+        page,
+        limit: pageSize,
+      };
 
-    try {
-      const apiFilters = transformFilters(filters);
       const response = await getSystemLogs(apiFilters);
 
       // Handle different response structures
       if (Array.isArray(response)) {
-        // Direct array response
-        setLogs(response);
-        setPagination(prev => ({
-          ...prev,
-          totalItems: response.length,
-          totalPages: 1,
-        }));
+        return {
+          items: response as LogEntry[],
+          pagination: {
+            page,
+            limit: pageSize,
+            totalItems: response.length,
+            totalPages: 1,
+          },
+        };
       } else if ('items' in response && response.items) {
-        // PaginatedResponse with items
-        setLogs(response.items);
-        if (response.pagination) {
-          setPagination({
-            page: response.pagination.page || pagination.page,
-            limit: response.pagination.limit || pagination.limit,
-            totalItems: response.pagination.totalItems || 0,
-            totalPages: response.pagination.totalPages || 0,
-          });
-        }
+        return {
+          items: response.items as LogEntry[],
+          pagination: {
+            page: response.pagination?.page || page,
+            limit: response.pagination?.limit || pageSize,
+            totalItems: response.pagination?.totalItems || 0,
+            totalPages: response.pagination?.totalPages || 0,
+          },
+        };
       } else {
-        // Unknown structure - try to extract data
         console.warn('[useSystemLogs] Unknown response structure:', response);
-        setLogs([]);
+        return {
+          items: [] as LogEntry[],
+          pagination: { page, limit: pageSize, totalItems: 0, totalPages: 0 },
+        };
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch system logs';
-      setError(errorMessage);
-      console.error('[useSystemLogs] Error fetching logs:', err);
-      setLogs([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filters, transformFilters, pagination.page, pagination.limit]);
+    },
+    enabled: autoFetch,
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Update filters and reset to page 1
-   */
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
   const setFilters = useCallback((newFilters: SystemLogFilters) => {
     setFiltersState(newFilters);
-    setPagination((prev) => ({ ...prev, page: 1 }));
+    setPageState(1);
   }, []);
 
-  /**
-   * Update current page
-   */
-  const setPage = useCallback((page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+  const setPage = useCallback((newPage: number) => {
+    setPageState(newPage);
   }, []);
 
-  /**
-   * Manual refetch
-   */
   const refetch = useCallback(async () => {
-    await fetchLogs();
-  }, [fetchLogs]);
+    await query.refetch();
+  }, [query]);
 
-  /**
-   * Auto-fetch on mount and when dependencies change
-   */
-  useEffect(() => {
-    if (autoFetch) {
-      fetchLogs();
-    }
-  }, [fetchLogs, autoFetch]);
+  // ============================================================================
+  // RETURN
+  // ============================================================================
+
+  const pagination = query.data?.pagination;
 
   return {
-    logs,
-    total: pagination.totalItems,
-    page: pagination.page,
-    totalPages: pagination.totalPages,
-    pageSize: pagination.limit,
-    isLoading,
-    error,
+    logs: query.data?.items ?? [],
+    total: pagination?.totalItems ?? 0,
+    page: pagination?.page ?? page,
+    totalPages: pagination?.totalPages ?? 0,
+    pageSize: pagination?.limit ?? pageSize,
+    isLoading: query.isLoading,
+    error: query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
     refetch,
     setFilters,
     setPage,

@@ -4,18 +4,18 @@
  * Custom hook for managing analytics data in the Admin Portal.
  * Provides state management and data fetching for all analytics endpoints.
  *
- * Features:
- * - Fetches overview, engagement, gamification, activity, top users, and retention data
- * - Manages loading and error states
- * - Provides refresh functionality
- * - CSV export capability
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
  *
  * @author Frontend-Developer Agent
  * @date 2025-11-24
+ * @updated 2026-02-20 - Migrated to React Query
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { adminAPI } from '@/services/api/adminAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type {
   AnalyticsOverview,
   EngagementAnalytics,
@@ -25,9 +25,24 @@ import type {
   TopUser,
 } from '@/services/api/adminTypes';
 
-/**
- * Analytics Hook State Interface
- */
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const analyticsKeys = {
+  all: ['admin', 'analytics'] as const,
+  overview: () => ['admin', 'analytics', 'overview'] as const,
+  engagement: () => ['admin', 'analytics', 'engagement'] as const,
+  gamification: () => ['admin', 'analytics', 'gamification'] as const,
+  activityTimeline: () => ['admin', 'analytics', 'activity-timeline'] as const,
+  topUsers: () => ['admin', 'analytics', 'top-users'] as const,
+  retention: () => ['admin', 'analytics', 'retention'] as const,
+};
+
+// ============================================================================
+// Return Interface (unchanged for backward compatibility)
+// ============================================================================
+
 interface UseAnalyticsReturn {
   // Data
   overview: AnalyticsOverview | null;
@@ -52,130 +67,87 @@ interface UseAnalyticsReturn {
  * Fetches and manages all analytics data for the admin dashboard.
  */
 export function useAnalytics(): UseAnalyticsReturn {
-  // State
-  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
-  const [engagement, setEngagement] = useState<EngagementAnalytics | null>(null);
-  const [gamification, setGamification] = useState<GamificationAnalytics | null>(null);
-  const [activityTimeline, setActivityTimeline] = useState<DailyActivity[]>([]);
-  const [topUsers, setTopUsers] = useState<TopUser[]>([]);
-  const [retention, setRetention] = useState<RetentionAnalytics | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  /**
-   * Fetch overview analytics
-   */
-  const fetchOverview = useCallback(async () => {
-    try {
-      const response = await adminAPI.analytics.getOverview();
-      setOverview(response);
-    } catch (err: unknown) {
-      console.error('Error fetching overview:', err);
-      // Don't set global error for individual fetch failures
-    }
-  }, []);
+  // ============================================================================
+  // QUERIES (parallel, independent)
+  // ============================================================================
 
-  /**
-   * Fetch engagement analytics
-   */
-  const fetchEngagement = useCallback(async () => {
-    try {
-      const response = await adminAPI.analytics.getEngagement({});
-      setEngagement(response);
-    } catch (err: unknown) {
-      console.error('Error fetching engagement:', err);
-    }
-  }, []);
+  const overviewQuery = useQuery({
+    queryKey: analyticsKeys.overview(),
+    queryFn: () => adminAPI.analytics.getOverview(),
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Fetch gamification analytics
-   */
-  const fetchGamification = useCallback(async () => {
-    try {
-      const response = await adminAPI.analytics.getGamification();
-      setGamification(response);
-    } catch (err: unknown) {
-      console.error('Error fetching gamification:', err);
-    }
-  }, []);
+  const engagementQuery = useQuery({
+    queryKey: analyticsKeys.engagement(),
+    queryFn: () => adminAPI.analytics.getEngagement({}),
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Fetch activity timeline
-   */
-  const fetchActivityTimeline = useCallback(async () => {
-    try {
+  const gamificationQuery = useQuery({
+    queryKey: analyticsKeys.gamification(),
+    queryFn: () => adminAPI.analytics.getGamification(),
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
+
+  const activityTimelineQuery = useQuery({
+    queryKey: analyticsKeys.activityTimeline(),
+    queryFn: async () => {
       const response = await adminAPI.analytics.getActivityTimeline({ days: 30 });
-      setActivityTimeline(response.timeline || []);
-    } catch (err: unknown) {
-      console.error('Error fetching activity timeline:', err);
-    }
-  }, []);
+      return (response.timeline || []) as DailyActivity[];
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Fetch top users
-   */
-  const fetchTopUsers = useCallback(async () => {
-    try {
+  const topUsersQuery = useQuery({
+    queryKey: analyticsKeys.topUsers(),
+    queryFn: async () => {
       const response = await adminAPI.analytics.getTopUsers({
         metric: 'xp',
         limit: 10,
       });
-      setTopUsers(response.users || []);
-    } catch (err: unknown) {
-      console.error('Error fetching top users:', err);
-    }
-  }, []);
+      return (response.users || []) as TopUser[];
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Fetch retention analytics
-   */
-  const fetchRetention = useCallback(async () => {
-    try {
-      const response = await adminAPI.analytics.getRetention();
-      setRetention(response);
-    } catch (err: unknown) {
-      console.error('Error fetching retention:', err);
-    }
-  }, []);
+  const retentionQuery = useQuery({
+    queryKey: analyticsKeys.retention(),
+    queryFn: () => adminAPI.analytics.getRetention(),
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-  /**
-   * Fetch all analytics data
-   */
-  const fetchAll = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await Promise.all([
-        fetchOverview(),
-        fetchEngagement(),
-        fetchGamification(),
-        fetchActivityTimeline(),
-        fetchTopUsers(),
-        fetchRetention(),
-      ]);
-    } catch (err: unknown) {
-      // MED-009 FIX: Validación de tipo para error
-      const errorMessage = err instanceof Error ? err.message : 'Error al cargar analíticas';
-      setError(errorMessage);
-      console.error('Error fetching analytics:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    fetchOverview,
-    fetchEngagement,
-    fetchGamification,
-    fetchActivityTimeline,
-    fetchTopUsers,
-    fetchRetention,
-  ]);
+  // ============================================================================
+  // COMBINED STATE
+  // ============================================================================
 
-  /**
-   * Refresh all data
-   */
-  const refresh = useCallback(() => {
-    return fetchAll();
-  }, [fetchAll]);
+  const isLoading =
+    overviewQuery.isLoading ||
+    engagementQuery.isLoading ||
+    gamificationQuery.isLoading ||
+    activityTimelineQuery.isLoading ||
+    topUsersQuery.isLoading ||
+    retentionQuery.isLoading;
+
+  // Aggregate first error found
+  const firstError =
+    overviewQuery.error ??
+    engagementQuery.error ??
+    gamificationQuery.error ??
+    activityTimelineQuery.error ??
+    topUsersQuery.error ??
+    retentionQuery.error;
+
+  const error = firstError instanceof Error ? firstError.message : firstError ? String(firstError) : null;
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const refresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
+  }, [queryClient]);
 
   /**
    * Export analytics to CSV
@@ -202,18 +174,17 @@ export function useAnalytics(): UseAnalyticsReturn {
     }
   }, []);
 
-  // Load data on mount
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+  // ============================================================================
+  // RETURN
+  // ============================================================================
 
   return {
-    overview,
-    engagement,
-    gamification,
-    activityTimeline,
-    topUsers,
-    retention,
+    overview: overviewQuery.data ?? null,
+    engagement: engagementQuery.data ?? null,
+    gamification: gamificationQuery.data ?? null,
+    activityTimeline: activityTimelineQuery.data ?? [],
+    topUsers: topUsersQuery.data ?? [],
+    retention: retentionQuery.data ?? null,
     isLoading,
     error,
     refresh,

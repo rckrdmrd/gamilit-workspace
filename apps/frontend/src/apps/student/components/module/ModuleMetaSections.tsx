@@ -18,17 +18,16 @@ import {
 } from 'lucide-react';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 
-interface ModuleMetaData {
-  learning_objectives?: string[];
-  competencies?: string[];
-  skills_developed?: string[];
-  prerequisites?: string[];
-  rangoMayaRequired?: string;
-  rangoMayaGranted?: string;
-}
-
 interface ModuleMetaSectionsProps {
-  module: ModuleMetaData;
+  module: {
+    learning_objectives?: string[];
+    competencies?: string[];
+    skills_developed?: string[];
+    prerequisites?: string[];
+    rangoMayaRequired?: string;
+    rangoMayaGranted?: string;
+    [key: string]: unknown;
+  };
 }
 
 export function ModuleMetaSections({ module }: ModuleMetaSectionsProps) {

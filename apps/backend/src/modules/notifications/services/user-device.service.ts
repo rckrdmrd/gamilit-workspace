@@ -137,7 +137,7 @@ export class UserDeviceService {
     userId: string,
     includeInactive: boolean = false,
   ): Promise<UserDevice[]> {
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (!includeInactive) {
       where.isActive = true;

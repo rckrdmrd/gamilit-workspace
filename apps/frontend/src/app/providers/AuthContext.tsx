@@ -52,8 +52,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // CRITICAL: Check for logout flag FIRST to prevent race condition
       const isLoggingOut = localStorage.getItem('is_logging_out');
       if (isLoggingOut === 'true') {
-        console.log('🚪 [AuthProvider] is_logging_out flag detected - clearing all auth data');
-
         // User is logging out, clear flag
         localStorage.removeItem('is_logging_out');
 
@@ -72,7 +70,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           isLoading: false,
         });
 
-        console.log('🚪 [AuthProvider] Auth cleared - user should stay on login page');
         return;
       }
 
@@ -103,13 +100,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           error: null,
         });
 
-        console.log('✅ [AuthContext] Session restored - both systems synchronized', {
-          userId: userData.id,
-          email: userData.email,
-        });
       } catch (err) {
         // Token is invalid or expired, clear storage
-        console.error('Failed to load user profile:', err);
         localStorage.removeItem('auth-token');
         localStorage.removeItem('refresh-token');
         localStorage.removeItem('auth-storage');
@@ -186,15 +178,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
 
-      console.log('✅ [AuthContext] Login successful - both systems synchronized', {
-        userId: userData.id,
-        email: userData.email,
-        role: userData.role,
-      });
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error
-          ? ((err as any).response?.data?.message || err.message)
+          ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message || err.message)
           : 'Login failed. Please check your credentials.';
       setError(errorMessage);
 
@@ -269,11 +256,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
 
-      console.log('✅ [AuthContext] Registration successful - both systems synchronized');
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error
-          ? ((err as any).response?.data?.message || err.message)
+          ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message || err.message)
           : 'Registration failed. Please try again.';
       setError(errorMessage);
 
@@ -336,11 +322,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error: null,
       });
 
-      console.log('✅ [AuthContext] User profile refreshed - both systems synchronized');
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error
-          ? ((err as any).response?.data?.message || err.message)
+          ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message || err.message)
           : 'Failed to refresh user profile.';
       setError(errorMessage);
 

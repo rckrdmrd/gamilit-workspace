@@ -10,8 +10,10 @@ import {
   calculateScore,
   saveProgress,
   FeedbackData,
+  type DifficultyLevel,
 } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 interface ProgressData {
   progress: {
@@ -53,7 +55,7 @@ const defaultExercise: AnalisisMemesData = {
   id: 'analisis-memes',
   title: 'Análisis de Memes',
   description: 'Analiza la imagen del meme e identifica elementos clave',
-  difficulty: 'medium' as any,
+  difficulty: 'medium' as DifficultyLevel,
   estimatedTime: 600,
   topic: 'Análisis de textos digitales',
   hints: [],
@@ -93,7 +95,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
         setFeedback({
           type: 'info',
           title: 'Análisis Enviado',
-          message: 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -115,11 +117,11 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);

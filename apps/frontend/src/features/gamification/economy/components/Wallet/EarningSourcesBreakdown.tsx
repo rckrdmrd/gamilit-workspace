@@ -17,7 +17,8 @@ export const EarningSourcesBreakdown: React.FC = () => {
 
       <div className="space-y-4">
         {data.map((source, index) => {
-          const Icon = (LucideIcons as any)[source.icon] || LucideIcons.Circle;
+          const IconMap = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>>;
+          const Icon = IconMap[source.icon] || LucideIcons.Circle;
 
           return (
             <motion.div

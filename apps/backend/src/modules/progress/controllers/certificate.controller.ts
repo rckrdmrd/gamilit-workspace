@@ -29,7 +29,7 @@ import {
   CertificateVerificationDto,
   GetCertificatesQueryDto,
 } from '../dto/certificate.dto';
-import { CertificateStatus } from '../entities/certificate.entity';
+import { CertificateStatus } from '../enums/certificate.enums';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@shared/guards/roles.guard';
 import { Roles } from '@shared/decorators/roles.decorator';

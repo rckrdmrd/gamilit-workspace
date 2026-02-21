@@ -104,8 +104,8 @@ depends_on: []
 
 **Decision:** `orchestration/inventarios/` contiene SSOT de implementacion (no producto):
 - `DATABASE_INVENTORY.yml` — Schemas, tablas, views, funciones (169 tablas)
-- `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (152 entities, 899 endpoints)
-- `FRONTEND_INVENTORY.yml` — Components, pages, stores (475 componentes, 68 paginas)
+- `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (155 entity files/156 classes, 905 endpoints)
+- `FRONTEND_INVENTORY.yml` — Components, pages, stores (580 componentes, 70 paginas)
 - `MASTER_INVENTORY.yml` — Metricas consolidadas
 
 **Separacion clara:**

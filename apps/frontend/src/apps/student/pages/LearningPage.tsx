@@ -14,10 +14,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, Sparkles, Loader2, AlertCircle } from 'lucide-react';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { useAuthStore } from '@/features/auth/store/authStore';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { Search, Sparkles, AlertCircle } from 'lucide-react';
+import { LoadingSpinner } from '@shared/components/loading';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { useUserModules } from '@/apps/student/hooks/useUserModules';
 import { ModuleCard } from '@/apps/student/components/learning/ModuleCard';
 
@@ -44,9 +43,6 @@ const containerVariants = {
 
 export default function LearningPage() {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-  const { gamificationData } = useUserGamification(user?.id);
   const { modules, loading, error, refresh } = useUserModules();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -71,13 +67,7 @@ export default function LearningPage() {
   const getModuleStyle = (index: number) => MODULE_STYLES[index] ?? DEFAULT_STYLE;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800">
-      <GamifiedHeader
-        user={user || undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <motion.div
@@ -142,15 +132,15 @@ export default function LearningPage() {
 
         {/* Loading State */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="mb-4 h-10 w-10 animate-spin text-detective-orange" />
+          <div className="flex flex-col items-center justify-center py-20" aria-live="polite">
+            <LoadingSpinner size="lg" className="mb-4" />
             <p className="text-sm text-gray-500">Cargando modulos...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && !loading && (
-          <div className="flex flex-col items-center justify-center py-20">
+          <div className="flex flex-col items-center justify-center py-20" role="alert">
             <AlertCircle className="mb-4 h-10 w-10 text-red-400" />
             <p className="mb-2 text-lg font-medium text-gray-700">Error al cargar modulos</p>
             <p className="mb-4 text-sm text-gray-500">{error.message}</p>
@@ -169,6 +159,8 @@ export default function LearningPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
+            role="region"
+            aria-label="Modulos de aprendizaje"
             className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
             {filteredModules.map((mod, index) => (
@@ -200,6 +192,6 @@ export default function LearningPage() {
           </motion.div>
         )}
       </main>
-    </div>
+    </StudentPageShell>
   );
 }

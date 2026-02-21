@@ -26,6 +26,12 @@ BEGIN
     SELECT id INTO v_tenant_id FROM auth_management.tenants WHERE name ILIKE '%demo%' OR name ILIKE '%gamilit%' LIMIT 1;
     SELECT id INTO v_admin_id FROM auth_management.profiles WHERE role = 'admin' LIMIT 1;
 
+    -- Idempotency guard: skip if seed data already exists
+    IF EXISTS (SELECT 1 FROM audit_logging.pending_user_initialization LIMIT 1) THEN
+        RAISE NOTICE 'pending_user_initialization seed data already exists, skipping insert';
+        RETURN;
+    END IF;
+
     -- Sample pending initialization records (simulating failed triggers)
     INSERT INTO audit_logging.pending_user_initialization (
         id,
@@ -51,7 +57,7 @@ BEGIN
 
     -- Record 1: Pending - Database connection timeout
     (
-        '11111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         gen_random_uuid(),
         NULL,
         v_tenant_id,
@@ -74,7 +80,7 @@ BEGIN
 
     -- Record 2: Retrying - Foreign key constraint
     (
-        '11111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         gen_random_uuid(),
         NULL,
         v_tenant_id,
@@ -97,7 +103,7 @@ BEGIN
 
     -- Record 3: Resolved - Successfully retried
     (
-        '11111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         gen_random_uuid(),
         NULL,
         v_tenant_id,
@@ -120,7 +126,7 @@ BEGIN
 
     -- Record 4: Failed - Max retries exceeded
     (
-        '11111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         gen_random_uuid(),
         NULL,
         v_tenant_id,
@@ -143,7 +149,7 @@ BEGIN
 
     -- Record 5: Manual intervention required
     (
-        '11111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         gen_random_uuid(),
         NULL,
         v_tenant_id,
@@ -164,11 +170,7 @@ BEGIN
         NOW() - INTERVAL '8 hours'
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        status = EXCLUDED.status,
-        retry_count = EXCLUDED.retry_count,
-        last_retry_at = EXCLUDED.last_retry_at,
-        updated_at = gamilit.now_mexico();
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'Pending user initialization records created successfully';
 END $$;

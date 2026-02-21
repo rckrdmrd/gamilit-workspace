@@ -1,11 +1,21 @@
+/**
+ * GuildStatsGrid - Stats overview cards for the guilds page.
+ *
+ * Thin wrapper around the shared StatsCardGrid component.
+ *
+ * @module apps/student/components/guilds/GuildStatsGrid
+ */
+
 import { Shield, Users, Target, Trophy } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { StatsCardGrid } from '@shared/components/base/StatsCardGrid';
+import type { StatItem } from '@shared/components/base/StatsCardGrid';
 
 interface GuildStatsGridProps {
   totalGuilds: number;
   recruitingCount: number;
   activeChallengesCount: number;
   guildLevel: number;
+  loading?: boolean;
 }
 
 export function GuildStatsGrid({
@@ -13,32 +23,14 @@ export function GuildStatsGrid({
   recruitingCount,
   activeChallengesCount,
   guildLevel,
+  loading,
 }: GuildStatsGridProps) {
-  const stats = [
-    { label: 'Total Guilds', value: totalGuilds, icon: Shield, color: 'bg-purple-500/20', iconColor: 'text-purple-600' },
-    { label: 'Recruiting', value: recruitingCount, icon: Users, color: 'bg-blue-500/20', iconColor: 'text-blue-600' },
-    { label: 'Active Challenges', value: activeChallengesCount, icon: Target, color: 'bg-detective-orange/20', iconColor: 'text-detective-orange' },
-    { label: 'Guild Level', value: guildLevel, icon: Trophy, color: 'bg-detective-gold/20', iconColor: 'text-detective-gold' },
+  const stats: StatItem[] = [
+    { label: 'Total Guilds', value: totalGuilds, icon: Shield, iconBg: 'bg-purple-500/20', iconColor: 'text-purple-600' },
+    { label: 'Recruiting', value: recruitingCount, icon: Users, iconBg: 'bg-blue-500/20', iconColor: 'text-blue-600' },
+    { label: 'Active Challenges', value: activeChallengesCount, icon: Target, iconBg: 'bg-detective-orange/20', iconColor: 'text-detective-orange' },
+    { label: 'Guild Level', value: guildLevel, icon: Trophy, iconBg: 'bg-detective-gold/20', iconColor: 'text-detective-gold' },
   ];
 
-  return (
-    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-      {stats.map((stat) => {
-        const Icon = stat.icon;
-        return (
-          <DetectiveCard key={stat.label} hoverable={false}>
-            <div className="flex items-center gap-3">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-full ${stat.color}`}>
-                <Icon className={`h-6 w-6 ${stat.iconColor}`} />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-detective-text">{stat.value}</p>
-                <p className="text-sm text-detective-text-secondary">{stat.label}</p>
-              </div>
-            </div>
-          </DetectiveCard>
-        );
-      })}
-    </div>
-  );
+  return <StatsCardGrid items={stats} columns={4} loading={loading} />;
 }

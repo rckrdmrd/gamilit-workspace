@@ -2,8 +2,8 @@
 
 > Flujo tecnico end-to-end para equipamiento cosmético usando `shop_items.metadata` y `user_equipped_items`.
 
-**Version:** 1.0.0  
-**Fecha:** 2026-02-17  
+**Version:** 2.0.0
+**Fecha:** 2026-02-21
 **Estado:** Activo  
 **Contrato canónico metadata:** `docs/40-standards/ESTANDAR-METADATA-ITEMS.md`
 
@@ -30,7 +30,7 @@ sequenceDiagram
 
     User->>FE: Click en Equipar
     FE->>API: POST /gamification/inventory/equip
-    API->>SVC: equipItem(userId, itemId)
+    API->>SVC: equipItem(userId, dto: { item_id })
     SVC->>DB: Validar item en shop_items
     SVC->>DB: Validar ownership en user_purchases
     SVC->>DB: Upsert por (user_id, category_id) en user_equipped_items
@@ -57,11 +57,11 @@ sequenceDiagram
 
 ### 4.1 Equipar (`POST /gamification/inventory/equip`)
 
-1. Validar `itemId` (UUID).
+1. Validar `item_id` (UUID, via `EquipItemDto`).
 2. Buscar item + categoría.
 3. Validar que no sea consumible.
 4. Validar compra completada del usuario.
-5. Actualizar o crear registro equipado por categoría.
+5. Actualizar o crear registro equipado por categoría (UPSERT por `user_id, category_id`).
 6. Responder con estado actualizado.
 
 Errores:
@@ -71,7 +71,7 @@ Errores:
 
 ### 4.2 Quitar (`POST /gamification/inventory/unequip`)
 
-1. Validar `itemId`.
+1. Validar `item_id` (UUID, via `EquipItemDto`).
 2. Eliminar relación equipada de usuario/item.
 3. Si no existe, responder `404`.
 
@@ -79,7 +79,16 @@ Errores:
 
 1. Consultar `user_equipped_items` por `user_id`.
 2. Incluir relaciones `item` y `category`.
-3. Retornar payload para render frontend.
+3. Aplicar `mergeVisualConfig()` a cada item — copia claves visuales (`type`, `asset_url`, `border_color`, `display_text`, `color`, `animated`, `animation`, `glow_color`) desde `effect_data` hacia `metadata`.
+4. Retornar payload enriquecido para render frontend.
+
+### 4.4 Consultar Batch (`GET /gamification/inventory/equipped/batch`)
+
+1. Recibir `userIds` (query param, separados por coma, max 50).
+2. Consultar `user_equipped_items` para todos los IDs con relaciones `item` y `category`.
+3. Aplicar `mergeVisualConfig()` a cada item.
+4. Retornar mapa `{ userId: { categoryName: { itemId, name, assetUrl, type, data } } }`.
+5. Usado por leaderboards, listas de amigos para evitar N+1 queries.
 
 ---
 
@@ -103,13 +112,24 @@ El frontend debe:
 ### Backend
 - `apps/backend/src/modules/gamification/controllers/inventory.controller.ts`
 - `apps/backend/src/modules/gamification/services/inventory.service.ts`
+- `apps/backend/src/modules/gamification/services/shop.service.ts` (getUserPurchases con relacion item)
 - `apps/backend/src/modules/gamification/dto/inventory/equip-item.dto.ts`
+- `apps/backend/src/modules/gamification/utils/visual-config.util.ts` (mergeVisualConfig)
 
 ### Datos
 - `gamification_system.shop_items`
 - `gamification_system.user_purchases`
 - `gamification_system.user_equipped_items`
 
+### Frontend
+- `apps/frontend/src/features/gamification/social/api/inventory.api.ts`
+- `apps/frontend/src/features/gamification/social/types/inventory.types.ts`
+- `apps/frontend/src/apps/student/components/profile/ProfileHero.tsx`
+
+### Assets
+- `apps/frontend/public/assets/` (10 SVGs placeholder maya-themed)
+
 ### Documentación relacionada
 - `docs/40-api/ENDPOINTS-INVENTORY-EQUIP.md`
+- `docs/40-standards/ESTANDAR-METADATA-ITEMS.md`
 - `docs/30-ux-ui/flujos/student/FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md`

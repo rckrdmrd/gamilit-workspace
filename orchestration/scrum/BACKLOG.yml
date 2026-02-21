@@ -3,8 +3,8 @@
 # Version: 2.0.0
 # Sistema: SIMCO v4.0.0
 
-version: "2.2.0"
-updated: "2026-02-19"
+version: "2.3.0"
+updated: "2026-02-21"
 
 # ============================================
 # EPICAS ACTIVAS
@@ -83,8 +83,9 @@ epicas:
         titulo: "Reducir 911 warnings no-explicit-any en backend"
         prioridad: "P2"
         esfuerzo: "XL"
-        estado: "documentado"
-        nota: "Phased approach: auth→gamification→educational modules first. Target 911→<200. Requires dedicated sprint."
+        estado: "completado"
+        fecha_completado: "2026-02-20"
+        detalle_fix: "840+ any→explicit types, 911→0 warnings. 4 parallel agents + eslint-disable syntax fix (57 patterns)."
       - id: "MQ-008"
         titulo: "Crear skill simco-apply-backend-standard"
         prioridad: "P2"
@@ -248,24 +249,30 @@ epicas:
         titulo: "Migrar 25 admin hooks de useState+useEffect a React Query"
         prioridad: "P1"
         esfuerzo: "XL"
-        estado: "diferido"
-        nota: "Guia creada en docs/50-guides/REACT-QUERY-MIGRATION-GUIDE.md. Requiere sprint dedicado."
+        estado: "completado"
+        fecha_completado: "2026-02-20"
+        detalle_fix: "21 hooks migrated (6 already done, 4 UI-only skipped). useState+useEffect → useQuery/useMutation."
       - id: "STD-002"
         titulo: "Migrar 34 inline modals restantes a shared Modal"
         prioridad: "P2"
         esfuerzo: "L"
-        estado: "pendiente"
-        nota: "8/42 migrados en Fase 4. Gradual adoption."
+        estado: "completado"
+        fecha_completado: "2026-02-20"
+        detalle_fix: "17 migrated (admin 7, teacher 5, shared 1, LTI 3, gamification 1). 19 Framer Motion skipped (different pattern)."
       - id: "STD-003"
         titulo: "Promover Pagination de teacher a shared"
         prioridad: "P2"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-20"
+        detalle_fix: "Shared Pagination (2 variants, 9 consumers). ~450 LOC inline eliminated."
       - id: "STD-004"
         titulo: "Unificar 3 implementaciones TabBar (shared + AdminTabBar + teacher inline)"
         prioridad: "P2"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-20"
+        detalle_fix: "TabBar enhanced (5 variants, 4 teacher pages + AdminTabBar wrapper)."
 
 # ============================================
 # HISTORIAS EN BACKLOG

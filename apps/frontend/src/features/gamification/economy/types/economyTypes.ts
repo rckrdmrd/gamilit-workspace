@@ -210,6 +210,17 @@ export interface ShopItem {
     duration?: number;            // If temporary effect (days)
     stackable?: boolean;          // Can own multiple
     tradeable?: boolean;          // Can trade with others
+    // Visual fields (from backend mergeVisualConfig)
+    type?: string;           // 'avatar' | 'profile_frame' | 'profile_background' | 'title' | 'badge' | 'chat_effect' | 'sticker_pack'
+    asset_url?: string;      // SVG/image path
+    border_color?: string;   // CSS color for frames
+    display_text?: string;   // Text for titles
+    color?: string;          // CSS color for titles/effects
+    css_class?: string;      // Tailwind class for advanced frames
+    render_mode?: string;    // Rendering mode
+    animated?: boolean;
+    animation?: string;      // Animation name
+    glow_color?: string;     // Glow effect color
   };
   stock?: number;        // Remaining stock (for limited items)
   available?: boolean;   // Whether item is currently available

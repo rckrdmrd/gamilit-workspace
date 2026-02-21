@@ -9,8 +9,8 @@
  */
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { NotificationFrequency, ReportFormat, RelationshipType } from '@/modules/auth/entities/parent-account.entity';
-import { LinkStatus, ParentRelationshipType } from '@/modules/auth/entities/parent-student-link.entity';
+import { NotificationFrequency, ReportFormat, RelationshipType } from '@/modules/parents/enums/parent-account.enums';
+import { LinkStatus, ParentRelationshipType } from '@/modules/parents/enums/parent-student-link.enums';
 
 /**
  * Auth Tokens Response

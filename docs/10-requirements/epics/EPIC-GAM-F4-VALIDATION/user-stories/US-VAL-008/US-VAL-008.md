@@ -27,13 +27,13 @@ updated_date: "2026-02-10"
 ## Criterios de Aceptacion
 
 ### CA-01: Table-Entity Mapping
-169 tablas mapeadas a 152 entities, delta explicado (views, junction tables)
+169 tablas mapeadas a 155 entities, delta explicado (views, junction tables)
 
 ### CA-02: Column-Field Alignment
 0 type mismatches entre columnas DB y campos entity
 
 ### CA-03: Endpoint Coverage
-899 endpoints mapeados a controllers
+905 endpoints mapeados a controllers
 
 ## Tasks
 

@@ -9,17 +9,22 @@
 
 ## 1. Resumen de Endpoints
 
-El Portal Teacher expone **45+ endpoints** organizados en 7 controladores:
+El Portal Teacher expone **63+ endpoints** organizados en 10 controladores:
 
 | Controller | Base Path | Endpoints | Descripcion |
 |------------|-----------|-----------|-------------|
 | TeacherController | `/teacher` | 20 | Dashboard, progress, analytics, grading |
 | TeacherClassroomsController | `/teacher/classrooms` | 12 | CRUD de aulas, estudiantes |
+| TeacherAssignmentsController | `/teacher/assignments` | * | Gestion de asignaciones |
 | InterventionAlertsController | `/teacher/alerts` | 5 | Alertas de intervencion |
+| AlertConfigController | `/teacher/alert-config` | * | Configuracion de umbrales de alertas |
+| ManualReviewController | `/teacher/reviews` | * | Revision manual de ejercicios |
 | TeacherCommunicationController | `/teacher/messages` | 6 | Mensajes y comunicacion |
-| TeacherContentController | `/teacher/content` | 5 | Contenido personalizado |
+| TeacherContentController | `/teacher/content` | 13 | Contenido personalizado + resource sharing |
 | ExerciseResponsesController | `/teacher/exercise-responses` | 4 | Respuestas de ejercicios |
 | TeacherGradesController | `/teacher/grades` | 3 | Calificaciones |
+
+> **Nota:** Los controladores marcados con `*` requieren conteo detallado de endpoints. La cifra "63+" refleja los 7 controladores documentados; el total real incluye los 3 controladores agregados.
 
 ---
 
@@ -878,9 +883,209 @@ Content-Type: application/json
 
 ---
 
-## 10. Error Handling
+## 10. Resource Sharing APIs
 
-### 10.1 Codigos de Error Comunes
+Endpoints on `TeacherContentController` for sharing, discovering, rating, and commenting on educational resources between teachers.
+
+### 10.1 GET /teacher/content/resources
+
+Lista recursos compartidos con paginacion y filtros.
+
+**Request:**
+```http
+GET /api/v1/teacher/content/resources?page=1&limit=20&type=WORKSHEET&difficulty=medium&search=lectura
+Authorization: Bearer {token}
+```
+
+**Query Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| page | number | No | Pagina (default: 1) |
+| limit | number | No | Items por pagina (default: 20) |
+| type | string | No | Filtrar por tipo de contenido |
+| difficulty | string | No | Filtrar por dificultad |
+| search | string | No | Buscar por titulo o descripcion |
+| sort_by | string | No | created_at, rating, downloads |
+| sort_order | string | No | asc, desc |
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Ejercicio de comprension lectora",
+      "type": "WORKSHEET",
+      "difficulty": "medium",
+      "author": {
+        "id": "uuid",
+        "name": "Prof. Martinez"
+      },
+      "average_rating": 4.5,
+      "total_ratings": 12,
+      "total_downloads": 45,
+      "total_comments": 8,
+      "visibility": "PUBLIC",
+      "created_at": "2025-11-20T10:00:00Z"
+    }
+  ],
+  "total": 150,
+  "page": 1,
+  "limit": 20,
+  "total_pages": 8
+}
+```
+
+### 10.2 GET /teacher/content/resources/:id
+
+Obtiene detalle completo de un recurso compartido.
+
+**Request:**
+```http
+GET /api/v1/teacher/content/resources/uuid
+Authorization: Bearer {token}
+```
+
+**Response (200):**
+```json
+{
+  "id": "uuid",
+  "title": "Ejercicio de comprension lectora",
+  "type": "WORKSHEET",
+  "difficulty": "medium",
+  "description": "Ejercicio enfocado en inferencias...",
+  "instructions": "Leer el texto y responder...",
+  "xp_reward": 100,
+  "ml_coins_reward": 50,
+  "estimated_duration_minutes": 30,
+  "author": {
+    "id": "uuid",
+    "name": "Prof. Martinez",
+    "avatar_url": "https://..."
+  },
+  "average_rating": 4.5,
+  "total_ratings": 12,
+  "total_downloads": 45,
+  "total_comments": 8,
+  "user_rating": 4,
+  "visibility": "PUBLIC",
+  "created_at": "2025-11-20T10:00:00Z",
+  "updated_at": "2025-11-25T14:00:00Z"
+}
+```
+
+### 10.3 POST /teacher/content/resources/:id/rate
+
+Califica un recurso compartido (1-5 estrellas).
+
+**Request:**
+```http
+POST /api/v1/teacher/content/resources/uuid/rate
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "rating": 4
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "resource_id": "uuid",
+  "user_rating": 4,
+  "new_average_rating": 4.3,
+  "total_ratings": 13
+}
+```
+
+### 10.4 GET /teacher/content/resources/:id/comments
+
+Obtiene comentarios de un recurso con paginacion.
+
+**Request:**
+```http
+GET /api/v1/teacher/content/resources/uuid/comments?page=1&limit=10
+Authorization: Bearer {token}
+```
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "author": {
+        "id": "uuid",
+        "name": "Prof. Lopez",
+        "avatar_url": "https://..."
+      },
+      "content": "Excelente recurso, lo use en mi clase de 5to",
+      "created_at": "2025-11-22T16:30:00Z"
+    }
+  ],
+  "total": 8,
+  "page": 1,
+  "limit": 10,
+  "total_pages": 1
+}
+```
+
+### 10.5 POST /teacher/content/resources/:id/comments
+
+Agrega un comentario a un recurso compartido.
+
+**Request:**
+```http
+POST /api/v1/teacher/content/resources/uuid/comments
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "content": "Muy util para reforzar comprension inferencial"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "uuid",
+  "resource_id": "uuid",
+  "author": {
+    "id": "uuid",
+    "name": "Prof. Garcia"
+  },
+  "content": "Muy util para reforzar comprension inferencial",
+  "created_at": "2025-11-29T11:00:00Z"
+}
+```
+
+### 10.6 POST /teacher/content/resources/:id/download
+
+Registra la descarga de un recurso (para tracking de metricas).
+
+**Request:**
+```http
+POST /api/v1/teacher/content/resources/uuid/download
+Authorization: Bearer {token}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "resource_id": "uuid",
+  "total_downloads": 46,
+  "download_url": "https://..."
+}
+```
+
+---
+
+## 11. Error Handling
+
+### 11.1 Codigos de Error Comunes
 
 | Code | Description | Resolution |
 |------|-------------|------------|
@@ -892,7 +1097,7 @@ Content-Type: application/json
 | 429 | Too Many Requests | Rate limit excedido |
 | 500 | Internal Error | Contactar soporte |
 
-### 10.2 Formato de Error
+### 11.2 Formato de Error
 
 ```json
 {
@@ -904,7 +1109,7 @@ Content-Type: application/json
 }
 ```
 
-### 10.3 Manejo en Frontend
+### 11.3 Manejo en Frontend
 
 ```typescript
 // hooks/useErrorHandler.ts
@@ -938,7 +1143,7 @@ export function useApiError() {
 
 ---
 
-## 11. Rate Limiting
+## 12. Rate Limiting
 
 | Endpoint Category | Rate Limit | Window |
 |-------------------|------------|--------|
@@ -950,7 +1155,7 @@ export function useApiError() {
 
 ---
 
-## 12. Websocket Events
+## 13. Websocket Events
 
 El Portal Teacher puede suscribirse a eventos en tiempo real:
 
@@ -981,4 +1186,6 @@ socket.on('student:progress', (data) => {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 1.2.0 | 2026-02-21 | Fixed TeacherContentController endpoint count (11->13, actual count from source), added 3 missing controllers (TeacherAssignments, AlertConfig, ManualReview), updated total (51->63+) |
+| 1.1.0 | 2026-02-21 | Added 6 Resource Sharing endpoints (section 10), updated endpoint counts (45->51, TeacherContentController 5->11) |
 | 1.0.0 | 2025-11-29 | Creacion inicial |

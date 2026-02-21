@@ -8,52 +8,10 @@ import {
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+import { MissionTypeEnum, MissionStatusEnum, MissionObjective, MissionRewards } from '../enums/mission.enums';
 
-/**
- * Mission Type Enum
- * @description Tipos de misiones disponibles
- */
-export enum MissionTypeEnum {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  SPECIAL = 'special',
-}
-
-/**
- * Mission Status Enum
- * @description Estados del ciclo de vida de una misión
- */
-export enum MissionStatusEnum {
-  ACTIVE = 'active',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CLAIMED = 'claimed',
-  EXPIRED = 'expired',
-}
-
-/**
- * Mission Objectives Schema
- * @description Estructura de objetivos de la misión
- */
-export interface MissionObjective {
-  type: string;
-  target: number;
-  current: number;
-  description?: string;
-}
-
-/**
- * Mission Rewards Schema
- * @description Estructura de recompensas de la misión
- */
-export interface MissionRewards {
-  ml_coins?: number;
-  xp?: number;
-  items?: Array<{
-    type: string;
-    quantity: number;
-  }>;
-}
+// Re-export enums/interfaces for backward compatibility
+export { MissionTypeEnum, MissionStatusEnum, MissionObjective, MissionRewards } from '../enums/mission.enums';
 
 /**
  * Mission Entity
@@ -101,9 +59,9 @@ export class Mission {
   @Column({ type: 'text', nullable: true })
     description!: string | null;
 
+  // DDL uses TEXT + CHECK constraint (not PG ENUM)
   @Column({
-    type: 'enum',
-    enum: MissionTypeEnum,
+    type: 'text',
   })
     mission_type!: MissionTypeEnum;
 
@@ -113,9 +71,9 @@ export class Mission {
   @Column({ type: 'jsonb' })
     rewards!: MissionRewards;
 
+  // DDL uses TEXT + CHECK constraint (not PG ENUM)
   @Column({
-    type: 'enum',
-    enum: MissionStatusEnum,
+    type: 'text',
     default: MissionStatusEnum.ACTIVE,
   })
     status!: MissionStatusEnum;

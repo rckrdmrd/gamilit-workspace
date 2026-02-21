@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { X, AlertTriangle, AlertCircle, Star } from 'lucide-react';
@@ -44,25 +45,6 @@ export function MayaRankEditModal({
       setErrors([]);
     }
   }, [rank]);
-
-  // Close modal on Esc key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
 
   if (!isOpen || !rank) return null;
 
@@ -175,13 +157,8 @@ export function MayaRankEditModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div
-        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="xl" className="bg-transparent shadow-none p-0">
+      <div className="-mx-6 -my-4">
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -386,6 +363,6 @@ export function MayaRankEditModal({
           </div>
         </DetectiveCard>
       </div>
-    </div>
+    </Modal>
   );
 }

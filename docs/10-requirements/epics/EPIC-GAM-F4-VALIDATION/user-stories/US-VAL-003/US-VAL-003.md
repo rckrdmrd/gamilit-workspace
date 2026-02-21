@@ -21,7 +21,7 @@ updated_date: "2026-02-10"
 ## Descripcion
 
 **Como** backend developer
-**Quiero** verificar que todos los 22 modulos del backend responden correctamente
+**Quiero** verificar que todos los 23 modulos del backend responden correctamente
 **Para** confirmar que la API esta funcional y lista para integracion
 
 ## Criterios de Aceptacion
@@ -33,7 +33,7 @@ GET /health retorna 200 OK con todas las datasources conectadas
 Register → login → refresh → logout funciona end-to-end
 
 ### CA-03: Module Smoke
-22/22 modulos responden con status correcto (1 endpoint por modulo)
+23/23 modulos responden con status correcto (1 endpoint por modulo)
 
 ### CA-04: WebSocket
 Socket.IO handshake exitoso con autenticacion JWT
@@ -47,7 +47,7 @@ Sin X-Tenant-ID → 401, con header → 200 (RLS filtra por tenant)
 |------|--------|---------|
 | [TASK-VAL-003-F2-BACKEND](TASK-VAL-003-F2-BACKEND/) | Health check endpoint | Health |
 | [TASK-VAL-003-F2-BACKEND-AUTH](TASK-VAL-003-F2-BACKEND-AUTH/) | Auth flow completo | Auth |
-| [TASK-VAL-003-F2-BACKEND-SMOKE](TASK-VAL-003-F2-BACKEND-SMOKE/) | Smoke test 22 modulos | Smoke |
+| [TASK-VAL-003-F2-BACKEND-SMOKE](TASK-VAL-003-F2-BACKEND-SMOKE/) | Smoke test 23 modulos | Smoke |
 | [TASK-VAL-003-F2-BACKEND-WEBSOCKET](TASK-VAL-003-F2-BACKEND-WEBSOCKET/) | WebSocket handshake | WebSocket |
 | [TASK-VAL-003-F2-BACKEND-TENANCY](TASK-VAL-003-F2-BACKEND-TENANCY/) | Multi-tenancy verification | Tenancy |
 

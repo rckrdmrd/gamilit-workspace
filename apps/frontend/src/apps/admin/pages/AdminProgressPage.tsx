@@ -161,16 +161,18 @@ export default function AdminProgressPage() {
               <TrendingUp className="h-8 w-8 text-detective-orange" />
               <h1 className="text-3xl font-bold text-detective-text">Seguimiento de Progreso</h1>
             </div>
-            <div className="flex items-center gap-2 text-detective-text-secondary">
-              {breadcrumbs.map((crumb, index) => (
-                <React.Fragment key={index}>
-                  {index > 0 && <span>/</span>}
-                  <span className={index === breadcrumbs.length - 1 ? 'font-medium' : ''}>
-                    {crumb}
-                  </span>
-                </React.Fragment>
-              ))}
-            </div>
+            <nav aria-label="Ruta de navegacion">
+              <div className="flex items-center gap-2 text-detective-text-secondary">
+                {breadcrumbs.map((crumb, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && <span aria-hidden="true">/</span>}
+                    <span className={index === breadcrumbs.length - 1 ? 'font-medium' : ''} aria-current={index === breadcrumbs.length - 1 ? 'page' : undefined}>
+                      {crumb}
+                    </span>
+                  </React.Fragment>
+                ))}
+              </div>
+            </nav>
           </div>
 
           <div className="flex items-center gap-3">
@@ -192,7 +194,7 @@ export default function AdminProgressPage() {
 
         {/* View Selector */}
         <DetectiveCard padding="sm">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Selector de vista">
             <DetectiveButton
               variant={activeView === 'overview' ? 'primary' : 'outline'}
               onClick={() => handleViewChange('overview')}
@@ -253,24 +255,27 @@ export default function AdminProgressPage() {
         )}
 
         {/* Error Message */}
-        {error && (
-          <DetectiveCard variant="danger">
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-red-500/20 p-2">
-                <TrendingUp className="h-5 w-5 text-red-500" />
+        <div aria-live="polite">
+          {error && (
+            <DetectiveCard variant="danger">
+              <div className="flex items-start gap-3" role="alert">
+                <div className="rounded-lg bg-red-500/20 p-2">
+                  <TrendingUp className="h-5 w-5 text-red-500" />
+                </div>
+                <div className="flex-1">
+                  <p className="mb-1 font-semibold text-red-500">Error al cargar datos</p>
+                  <p className="text-sm text-red-400">{error}</p>
+                </div>
+                <DetectiveButton variant="outline" size="sm" onClick={clearError}>
+                  Cerrar
+                </DetectiveButton>
               </div>
-              <div className="flex-1">
-                <p className="mb-1 font-semibold text-red-500">Error al cargar datos</p>
-                <p className="text-sm text-red-400">{error}</p>
-              </div>
-              <DetectiveButton variant="outline" size="sm" onClick={clearError}>
-                Cerrar
-              </DetectiveButton>
-            </div>
-          </DetectiveCard>
-        )}
+            </DetectiveCard>
+          )}
+        </div>
 
         {/* Content based on active view */}
+        <div role="region" aria-label={`Vista: ${activeView === 'overview' ? 'Resumen General' : activeView === 'classrooms' ? 'Por Aula' : 'Por Estudiante'}`}>
         {activeView === 'overview' && <OverviewView overview={overview} isLoading={isLoading} />}
 
         {activeView === 'classrooms' && (
@@ -284,6 +289,7 @@ export default function AdminProgressPage() {
         {activeView === 'students' && (
           <StudentDetailView studentProgress={studentProgress} isLoading={isLoading} />
         )}
+        </div>
       </div>
     </AdminPageShell>
   );

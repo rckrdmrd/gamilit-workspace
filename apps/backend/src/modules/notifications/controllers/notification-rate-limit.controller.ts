@@ -277,11 +277,11 @@ export class NotificationRateLimitController {
   /**
    * Map internal status to DTO
    */
-  private mapToStatusDto(status: any): RateLimitStatusDto {
+  private mapToStatusDto(status: any): RateLimitStatusDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     const channels: Record<string, ChannelRateLimitDto> = {};
 
     for (const [channel, result] of Object.entries(status.channels)) {
-      const r = result as any;
+      const r = result as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       channels[channel] = {
         allowed: r.allowed,
         remaining: r.remaining,

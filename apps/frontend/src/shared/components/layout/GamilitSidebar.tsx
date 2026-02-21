@@ -75,7 +75,7 @@ export interface SidebarModuleProgress {
   id: string;
   title: string;
   subtitle: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   progress: number;
   isUnlocked: boolean;
   isCompleted: boolean;
@@ -254,10 +254,28 @@ const getNavigationItems = (
       icon: 'Trophy',
     },
     {
+      id: 'content',
+      label: 'Gestión de Contenido',
+      path: '/teacher/content',
+      icon: 'BookOpen',
+    },
+    {
+      id: 'communication',
+      label: 'Comunicación',
+      path: '/teacher/communication',
+      icon: 'MessageSquare',
+    },
+    {
       id: 'analytics',
       label: 'Analiticas',
       path: '/teacher/analytics',
       icon: 'BarChart3',
+    },
+    {
+      id: 'notifications',
+      label: 'Notificaciones',
+      path: '/teacher/notifications',
+      icon: 'Bell',
     },
     {
       id: 'settings',
@@ -475,8 +493,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
   userRole = 'student',
 }) => {
   const branding = useContext(BrandingContext);
-  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
-  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
+  const logoIconUrl = branding?.config?.logoIconUrl ?? DEFAULT_BRANDING.logoIconUrl;
   const navigationItems = getNavigationItems(userRole);
 
   /**
@@ -540,12 +557,17 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
           {/* Header Section */}
           <div className="border-b border-gray-100 p-6">
             <div className="flex items-center space-x-3">
-              {logoUrl ? (
-                <img src={logoUrl} alt={platformName} className="h-8 w-8 object-contain" />
+              {logoIconUrl ? (
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 p-1.5">
+                  <img src={logoIconUrl} alt="" className="h-full w-full object-contain" aria-hidden="true" />
+                </div>
               ) : null}
-              <h2 className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-lg font-bold text-transparent">
-                {platformName}
-              </h2>
+              <div>
+                <h2 className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-lg font-bold leading-tight text-transparent">
+                  GAMILIT
+                </h2>
+                <p className="text-xs font-medium leading-tight text-gray-500">lee y gana</p>
+              </div>
             </div>
           </div>
 

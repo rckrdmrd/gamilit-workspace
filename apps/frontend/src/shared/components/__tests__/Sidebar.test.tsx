@@ -186,7 +186,7 @@ describe('Sidebar', () => {
         <Sidebar isOpen={true} onClose={mockOnClose} />
       );
 
-      const overlay = container.querySelector('.bg-black.bg-opacity-50');
+      const overlay = container.querySelector('.bg-black\\/50');
       expect(overlay).toBeInTheDocument();
     });
 
@@ -195,7 +195,7 @@ describe('Sidebar', () => {
         <Sidebar isOpen={false} onClose={mockOnClose} />
       );
 
-      const overlay = container.querySelector('.bg-black.bg-opacity-50');
+      const overlay = container.querySelector('.bg-black\\/50');
       expect(overlay).not.toBeInTheDocument();
     });
 
@@ -204,7 +204,7 @@ describe('Sidebar', () => {
         <Sidebar isOpen={true} onClose={mockOnClose} />
       );
 
-      const overlay = container.querySelector('.bg-black.bg-opacity-50');
+      const overlay = container.querySelector('.bg-black\\/50');
       fireEvent.click(overlay!);
 
       expect(mockOnClose).toHaveBeenCalledTimes(1);

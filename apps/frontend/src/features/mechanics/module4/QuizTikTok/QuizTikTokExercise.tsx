@@ -13,8 +13,10 @@ import { QuizTikTokData } from './quizTikTokTypes';
 import {
   saveProgress,
   FeedbackData,
+  type DifficultyLevel,
 } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 interface ProgressData {
   progress: {
@@ -58,7 +60,7 @@ const getDefaultExercise = (exerciseId: string, difficulty: string): QuizTikTokD
   id: exerciseId,
   title: 'Quiz TikTok',
   description: 'Responde las preguntas en formato TikTok',
-  difficulty: difficulty as any,
+  difficulty: difficulty as DifficultyLevel,
   estimatedTime: 300,
   topic: 'Marie Curie',
   hints: [],
@@ -152,7 +154,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         setFeedback({
             type: 'info',
             title: 'Quiz Enviado',
-            message: 'Tu trabajo ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -174,11 +176,11 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);

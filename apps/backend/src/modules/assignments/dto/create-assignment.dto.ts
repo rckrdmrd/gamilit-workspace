@@ -13,7 +13,7 @@ import {
   Max,
   Length,
 } from 'class-validator';
-import { AssignmentType } from '../entities/assignment.entity';
+import { AssignmentType } from '../enums/assignment.enums';
 
 export class CreateAssignmentDto {
   @IsString()

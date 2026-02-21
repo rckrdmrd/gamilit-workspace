@@ -3,8 +3,6 @@
  *
  * Helper functions and utilities for leaderboard operations
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type { LeaderboardEntry, LeaderboardTypeVariant } from './LiveLeaderboard';
 
 // ============================================================================
@@ -211,29 +209,30 @@ export const getTimeUntilRefresh = (lastUpdated: Date, refreshInterval: number):
 /**
  * Validate leaderboard entry
  */
-export const isValidEntry = (entry: any): entry is LeaderboardEntry => {
+export const isValidEntry = (entry: unknown): entry is LeaderboardEntry => {
+  if (typeof entry !== 'object' || entry === null) return false;
+  const e = entry as Record<string, unknown>;
   return (
-    typeof entry === 'object' &&
-    typeof entry.rank === 'number' &&
-    typeof entry.userId === 'string' &&
-    typeof entry.username === 'string' &&
-    typeof entry.score === 'number' &&
-    typeof entry.xp === 'number' &&
-    typeof entry.streak === 'number' &&
-    typeof entry.completionPercentage === 'number' &&
-    entry.rank > 0 &&
-    entry.score >= 0 &&
-    entry.xp >= 0 &&
-    entry.streak >= 0 &&
-    entry.completionPercentage >= 0 &&
-    entry.completionPercentage <= 100
+    typeof e.rank === 'number' &&
+    typeof e.userId === 'string' &&
+    typeof e.username === 'string' &&
+    typeof e.score === 'number' &&
+    typeof e.xp === 'number' &&
+    typeof e.streak === 'number' &&
+    typeof e.completionPercentage === 'number' &&
+    (e.rank as number) > 0 &&
+    (e.score as number) >= 0 &&
+    (e.xp as number) >= 0 &&
+    (e.streak as number) >= 0 &&
+    (e.completionPercentage as number) >= 0 &&
+    (e.completionPercentage as number) <= 100
   );
 };
 
 /**
  * Sanitize leaderboard entries
  */
-export const sanitizeEntries = (entries: any[]): LeaderboardEntry[] => {
+export const sanitizeEntries = (entries: unknown[]): LeaderboardEntry[] => {
   return entries.filter(isValidEntry);
 };
 

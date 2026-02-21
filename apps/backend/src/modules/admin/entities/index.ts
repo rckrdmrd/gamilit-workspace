@@ -42,4 +42,5 @@ export { MetricsHistory } from './metrics-history.entity';
 
 // Re-export AuditLog from audit module
 // Permite queries de auditoria directamente desde admin sin duplicar entity
-export { AuditLog, ActorType, Severity, Status } from '../../audit/entities/audit-log.entity';
+export { AuditLog } from '../../audit/entities/audit-log.entity';
+export { ActorType, Severity, Status } from '../../audit/enums/audit-log.enums';

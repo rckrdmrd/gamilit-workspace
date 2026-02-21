@@ -9,6 +9,7 @@ import type { ExerciseProps, HypertextNode } from './navegacionHipertextualTypes
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 
 export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
@@ -45,7 +46,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
         setFeedback({
             type: 'info',
             title: 'Navegación Enviada',
-            message: 'Tu trabajo ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -67,11 +68,11 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);

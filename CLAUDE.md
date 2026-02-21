@@ -38,8 +38,8 @@ SIN FETCH = ESTADO INCOMPLETO
 ### RC2: COHERENCIA ENTRE CAPAS
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
-  DDL -> Backend: Toda tabla DEBE tener entity (169 tablas = 153 entities, 16 DDL-only en data_warehouse)
-  Backend -> Frontend: Endpoints documentados (904 endpoints)
+  DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/159 classes, 16 DDL-only en data_warehouse)
+  Backend -> Frontend: Endpoints documentados (912 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
 SI HAY GAPS: DOCUMENTAR + BLOQUEAR avance hasta resolver
@@ -161,7 +161,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 21 | analytics | Learning analytics, reportes | 85% |
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
 
-**Total:** 23 modulos, 154 entities, 172 services, 108 controllers, 904 endpoints
+**Total:** 23 modulos, 156 entities (159 classes), 172 services, 108 controllers, 912 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
 > Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` no configurado), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
@@ -334,9 +334,9 @@ gamilit/
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
-|   +-- backend/                 <- NestJS 11 (23 modulos, 904 endpoints)
+|   +-- backend/                 <- NestJS 11 (23 modulos, 912 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
-|   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 169 tablas)
+|   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 173 tablas)
 |   +-- devops/                  <- Deployment scripts
 |   +-- _MAP.md
 +-- docs/
@@ -431,24 +431,24 @@ proyecto:
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 169 |
-| Views | 22 |
+| Tablas | 173 |
+| Views | 18 |
 | Materialized Views | 7 |
-| Funciones | 183 (DDL) / 249 (runtime) |
-| Triggers | 67 |
-| Politicas RLS | 227 |
-| Foreign Keys | 298 |
+| Funciones | 158 (DDL functions/ dirs) |
+| Triggers | 68 |
+| Politicas RLS | 251 (DDL rls-policies/ dirs) |
+| Foreign Keys | 299 |
 | ENUMs | 42 |
 
 ### Backend
 | Metrica | Valor |
 |---------|-------|
 | Modulos | 23 |
-| Entities | 154 |
-| DTOs | 399 |
+| Entities | 156 files (159 classes) |
+| DTOs | 401 |
 | Services | 172 |
 | Controllers | 108 |
-| Endpoints | 904 |
+| Endpoints | 912 |
 | Guards | 15 |
 | Decorators | 18 |
 | Tests | 833 passing (60 spec files) |
@@ -456,16 +456,16 @@ proyecto:
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 507 |
-| Hooks | 106 |
+| Componentes (.tsx prod) | 590 |
+| Hooks | 127 |
 | Paginas | 70 |
-| Stores Zustand | 14 |
-| API Service Files | 53 |
-| API Calls Total | 570 |
+| Stores Zustand | 13 |
+| API Service Files | 67 |
+| API Calls Total | ~580 |
 | Portales | 4 |
 | Mecanicas Ejercicio | 30 |
 | Routes | 73 |
-| Type Files | 47 |
+| Type Files | 49 |
 
 > **SSOT:** `orchestration/inventarios/MASTER_INVENTORY.yml`
 

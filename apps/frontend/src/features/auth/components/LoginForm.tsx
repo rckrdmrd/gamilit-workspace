@@ -87,19 +87,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     // CRITICAL: Don't redirect if user just logged out
     const isLoggingOut = localStorage.getItem('is_logging_out');
     if (isLoggingOut === 'true') {
-      console.log('⚠️ [LoginForm] is_logging_out flag detected - skipping auto-redirect');
       return;
     }
 
     if (isAuthenticated && user) {
       // Use role-based redirect instead of hardcoded redirectTo
       const targetRoute = getRoleBasedRedirect(user.role);
-      console.log(
-        '✅ [LoginForm] User authenticated - role:',
-        user.role,
-        '- redirecting to:',
-        targetRoute,
-      );
       navigate(targetRoute);
     }
   }, [isAuthenticated, user, navigate]);
@@ -133,7 +126,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       // Note: The useEffect will also handle redirect, but we do it here for immediate navigation
       if (user) {
         const targetRoute = getRoleBasedRedirect(user.role);
-        console.log('✅ [LoginForm] Login successful - redirecting to:', targetRoute);
         navigate(targetRoute);
       }
     } catch (err: unknown) {

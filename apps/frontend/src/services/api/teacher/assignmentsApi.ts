@@ -40,6 +40,10 @@ export interface UpdateAssignmentDto {
 
 /**
  * DTO for grading a submission
+ *
+ * AUDIT-C4-DUP1: This is the canonical grading DTO used by assignmentsApi.gradeSubmission().
+ * The duplicate in gradingApi.ts (SubmitFeedbackDto) was removed along with gradingApi
+ * (orphaned — no active component consumed useGrading hook).
  */
 export interface GradeSubmissionDto {
   score: number;
@@ -289,6 +293,10 @@ class AssignmentsAPI {
    * Get submission by ID
    *
    * Returns detailed information about a specific submission.
+   * Calls GET /teacher/submissions/:submissionId on the backend.
+   *
+   * AUDIT-C4-DUP2: This is the CANONICAL submission-by-ID function.
+   * The duplicate `gradingApi.getSubmissionById()` was removed (gradingApi was orphaned).
    *
    * @param submissionId - ID of the submission
    * @returns Promise<Submission> Submission details
@@ -317,6 +325,10 @@ class AssignmentsAPI {
    * Grade a submission
    *
    * Submits a grade and optional feedback for a student submission.
+   * Calls POST /teacher/submissions/:submissionId/feedback on the backend.
+   *
+   * AUDIT-C4-DUP1: This is the CANONICAL grading function. The duplicate
+   * `gradingApi.submitFeedback()` was removed (gradingApi was orphaned).
    *
    * @param submissionId - ID of the submission
    * @param data - Grading data (score, feedback, grade)

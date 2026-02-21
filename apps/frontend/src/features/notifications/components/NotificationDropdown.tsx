@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNotificationsStore } from '../store/notificationsStore';
+import type { Notification } from '@/services/api/notificationsAPI';
 import './NotificationDropdown.css';
 
 interface NotificationDropdownProps {
@@ -22,16 +23,36 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
     fetchNotifications();
   }, [fetchNotifications]);
 
+  const resolveNotificationType = (notification: Notification): string => {
+    const dataType = notification.data?.notificationType;
+    const originalType = notification.data?.original_type;
+    if (typeof dataType === 'string') return dataType;
+    if (typeof originalType === 'string') return originalType;
+    return notification.type;
+  };
+
   const getNotificationIcon = (type: string) => {
     switch (type) {
+      case 'achievement':
       case 'achievement_unlocked': return '🏆';
+      case 'mission':
       case 'rank_up': return '🎉';
+      case 'rank_promoted': return '🎉';
       case 'streak_milestone': return '🔥';
+      case 'social':
       case 'friend_request': return '👥';
       case 'friend_accepted': return '✅';
       case 'level_up': return '⬆️';
+      case 'assignment':
+      case 'exercise_feedback': return '📝';
+      case 'shop_purchase': return '🛒';
+      case 'gamification': return '🎮';
+      case 'mission_rewards_claimed': return '🎯';
       case 'ml_coins_earned': return '💰';
+      case 'coins_earned':
+      case 'coins_received': return '💰';
       case 'mission_completed': return '✨';
+      case 'system': return '📢';
       case 'system_announcement': return '📢';
       default: return '📬';
     }
@@ -95,7 +116,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
             }}
           >
             <div className="notification-icon">
-              {getNotificationIcon(notification.type)}
+              {getNotificationIcon(resolveNotificationType(notification))}
             </div>
             <div className="notification-content">
               <h4>{notification.title}</h4>

@@ -8,7 +8,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuditLog, ActorType, Severity, Status } from '../entities/audit-log.entity';
+import { AuditLog } from '../entities/audit-log.entity';
+import { ActorType, Severity, Status } from '../enums/audit-log.enums';
 import { CreateAuditLogDto } from '../dto/create-audit-log.dto';
 
 @Injectable()

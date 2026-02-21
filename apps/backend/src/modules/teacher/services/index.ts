@@ -9,7 +9,7 @@ export * from './grading.service';
 export * from './analytics.service';
 export * from './student-risk-alert.service';
 export * from './reports.service';
-export * from './ml-predictor.service';
+// TASK-2026-02-20-B5-1: Removed MLPredictorService (placeholder heuristic, never injected/used)
 export * from './teacher-classrooms-crud.service';
 export * from './intervention-alerts.service';
 export * from './teacher-messages.service';

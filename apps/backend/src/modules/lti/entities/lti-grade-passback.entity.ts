@@ -23,31 +23,10 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { LtiConsumer } from './lti-consumer.entity';
 import { LtiSession } from './lti-session.entity';
 import { Profile } from '../../auth/entities/profile.entity';
+import { ActivityProgress, GradingProgress, PassbackStatus } from '../enums/lti-grade-passback.enums';
 
-export enum ActivityProgress {
-  INITIALIZED = 'Initialized',
-  STARTED = 'Started',
-  IN_PROGRESS = 'InProgress',
-  SUBMITTED = 'Submitted',
-  COMPLETED = 'Completed',
-}
-
-export enum GradingProgress {
-  NOT_READY = 'NotReady',
-  FAILED = 'Failed',
-  PENDING = 'Pending',
-  PENDING_MANUAL = 'PendingManual',
-  FULLY_GRADED = 'FullyGraded',
-  PROCESSED = 'Processed',
-}
-
-export enum PassbackStatus {
-  PENDING = 'pending',
-  SENDING = 'sending',
-  SUCCESS = 'success',
-  FAILED = 'failed',
-  RETRYING = 'retrying',
-}
+// Re-export enums for backward compatibility
+export { ActivityProgress, GradingProgress, PassbackStatus } from '../enums/lti-grade-passback.enums';
 
 @Entity({ schema: DB_SCHEMAS.LTI_INTEGRATION, name: DB_TABLES.LTI.LTI_GRADE_PASSBACK })
 @Index(['sessionId'])

@@ -1,11 +1,11 @@
 -- =====================================================
 -- Seed: auth.users - Test Users (PRODUCTION CLEAN)
 -- Description: Solo usuarios de testing con dominio @gamilit.com
--- Environment: PRODUCTION
+-- Environment: ALL
 -- Dependencies: None (auth schema base)
 -- Order: 01
 -- Created: 2025-11-17
--- Version: 2.0 (CLEAN - Solo 3 usuarios @gamilit.com)
+-- Version: 3.0 (gen_random_uuid() - no placeholder UUIDs)
 -- =====================================================
 --
 -- USUARIOS DE TESTING (3):
@@ -15,14 +15,14 @@
 --
 -- TOTAL: 3 usuarios
 --
--- POLÍTICA DE CARGA LIMPIA:
--- ✅ Solo usuarios @gamilit.com
--- ✅ Sin usuarios @demo.glit.edu.mx
--- ✅ UUIDs predecibles para testing
--- ✅ Passwords idénticos para facilitar testing
+-- POLITICA DE CARGA LIMPIA:
+-- - Solo usuarios @gamilit.com
+-- - Sin usuarios @demo.glit.edu.mx
+-- - UUIDs generados dinamicamente con gen_random_uuid()
+-- - Passwords identicos para facilitar testing
 --
 -- IMPORTANTE: Estos usuarios son para testing.
--- En producción real, usar proceso de registro normal.
+-- En produccion real, usar proceso de registro normal.
 -- =====================================================
 
 SET search_path TO auth, public;
@@ -31,7 +31,13 @@ SET search_path TO auth, public;
 -- PASSWORDS ENCRYPTED WITH BCRYPT
 -- =====================================================
 -- Password: "Test1234" (todos los usuarios)
--- Se genera dinámicamente con: crypt('Test1234', gen_salt('bf', 10))
+-- Se genera dinamicamente con: crypt('Test1234', gen_salt('bf', 10))
+--
+-- NOTA IDEMPOTENCIA: gen_salt() produce un salt diferente en cada ejecucion,
+-- por lo que el hash bcrypt cambia en cada re-run del seed. Esto es COSMETICO:
+-- ON CONFLICT actualiza el hash y la password sigue siendo "Test1234".
+-- La funcionalidad no se ve afectada. No reemplazar con hash estatico
+-- porque bcrypt con salt dinamico es la practica correcta.
 -- =====================================================
 
 -- =====================================================
@@ -59,8 +65,8 @@ INSERT INTO auth.users (
 -- USUARIO 1: ADMIN
 -- =====================================================
 (
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'admin@gamilit.com',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -87,8 +93,8 @@ INSERT INTO auth.users (
 -- USUARIO 2: TEACHER
 -- =====================================================
 (
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'teacher@gamilit.com',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -115,8 +121,8 @@ INSERT INTO auth.users (
 -- USUARIO 3: STUDENT
 -- =====================================================
 (
-    'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'student@gamilit.com',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -188,9 +194,9 @@ BEGIN
     RAISE NOTICE '========================================';
 
     IF user_count = 3 THEN
-        RAISE NOTICE '✓ Los 3 usuarios de testing fueron creados correctamente';
+        RAISE NOTICE 'Los 3 usuarios de testing fueron creados correctamente';
     ELSE
-        RAISE WARNING '⚠ Se esperaban 3 usuarios, se crearon %', user_count;
+        RAISE WARNING 'Se esperaban 3 usuarios, se crearon %', user_count;
     END IF;
 END $$;
 
@@ -208,12 +214,16 @@ END $$;
 -- =====================================================
 -- CHANGELOG
 -- =====================================================
+-- v3.0 (2026-02-21): ELIMINACION DE UUIDs PLACEHOLDER
+--   - Reemplazados UUIDs mnemotecnicos (aaaa, bbbb, cccc) con gen_random_uuid()
+--   - Reemplazados instance_id 00000000 con gen_random_uuid()
+--   - ON CONFLICT (email) mantiene idempotencia
+--
 -- v2.0 (2025-11-17): LIMPIEZA COMPLETA
 --   - Eliminados 20 usuarios @demo.glit.edu.mx
 --   - Mantenidos solo 3 usuarios @gamilit.com
---   - Política de carga limpia aplicada
---   - UUIDs predecibles (aaaa..., bbbb..., cccc...)
+--   - Politica de carga limpia aplicada
 --
--- v1.0 (2025-01-11): Versión original
+-- v1.0 (2025-01-11): Version original
 --   - 23 usuarios (3 @gamilit.com + 20 @demo.glit.edu.mx)
 -- =====================================================

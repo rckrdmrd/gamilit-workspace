@@ -3,20 +3,34 @@
  *
  * Custom hook for fetching configuration categories and validating config.
  *
- * Features:
- * - Fetch all available configuration categories
- * - Validate configuration before saving
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
  *
  * Backend Endpoints:
  * - GET /admin/system/config/categories
  * - POST /admin/system/config/validate
  *
  * Created: 2026-01-25 - P1 Gap Integration
+ * Updated: 2026-02-20 - Migrated to React Query
  */
 
 import { useState, useCallback } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { getConfigCategories, validateConfig } from '@/services/api/adminAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type { SettingsCategory } from '@/services/api/adminTypes';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const configCategoriesKeys = {
+  categories: () => ['admin', 'config', 'categories'] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface ConfigValidationResult {
   valid: boolean;
@@ -40,131 +54,97 @@ export interface UseConfigCategoriesResult {
   clearValidation: () => void;
 }
 
-/**
- * Hook for managing configuration categories and validation
- *
- * @example
- * ```tsx
- * const {
- *   categories,
- *   validationResult,
- *   fetchCategories,
- *   validateConfiguration
- * } = useConfigCategories();
- *
- * // Fetch categories on mount
- * useEffect(() => {
- *   fetchCategories();
- * }, []);
- *
- * // Validate before saving
- * const handleSave = async (config) => {
- *   const result = await validateConfiguration('security', config);
- *   if (result.valid) {
- *     // Proceed with save
- *   }
- * };
- * ```
- */
+// ============================================================================
+// Hook
+// ============================================================================
+
 export function useConfigCategories(): UseConfigCategoriesResult {
-  // State
-  const [categories, setCategories] = useState<SettingsCategory[]>([]);
   const [validationResult, setValidationResult] = useState<ConfigValidationResult | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Fetch all configuration categories
-   * Backend: GET /admin/system/config/categories
-   */
-  const fetchCategories = useCallback(async (): Promise<SettingsCategory[]> => {
-    setIsLoading(true);
-    setError(null);
+  // ============================================================================
+  // QUERY
+  // ============================================================================
 
-    try {
+  const categoriesQuery = useQuery({
+    queryKey: configCategoriesKeys.categories(),
+    queryFn: async () => {
       const data = await getConfigCategories();
-      setCategories(data || []);
-      return data || [];
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch config categories';
-      setError(errorMessage);
-      console.error('[useConfigCategories] Error fetching categories:', err);
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      return (data || []) as SettingsCategory[];
+    },
+    staleTime: STALE_TIMES.STATIC,
+  });
 
-  /**
-   * Validate configuration before saving
-   * Backend: POST /admin/system/config/validate
-   *
-   * @param category - Configuration category to validate
-   * @param config - Configuration object to validate
-   * @returns Validation result with errors and warnings
-   */
+  // ============================================================================
+  // MUTATION (validation)
+  // ============================================================================
+
+  const validateMutation = useMutation({
+    mutationFn: async ({
+      category,
+      config,
+    }: {
+      category: SettingsCategory;
+      config: Record<string, unknown>;
+    }) => {
+      const result = await validateConfig(category, config);
+
+      const rawErrors = Array.isArray(result?.errors) ? result.errors : [];
+      const errors = rawErrors.map((error: string | { field: string; message: string }) =>
+        typeof error === 'string' ? { field: '_general', message: error } : error,
+      );
+
+      const normalizedResult: ConfigValidationResult = {
+        valid: result?.valid ?? false,
+        errors,
+        warnings: [],
+      };
+
+      return normalizedResult;
+    },
+    onSuccess: (result) => {
+      setValidationResult(result);
+    },
+    onError: (err) => {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to validate configuration';
+      const failedResult: ConfigValidationResult = {
+        valid: false,
+        errors: [{ field: '_general', message: errorMessage }],
+        warnings: [],
+      };
+      setValidationResult(failedResult);
+    },
+  });
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const fetchCategories = useCallback(async (): Promise<SettingsCategory[]> => {
+    const result = await categoriesQuery.refetch();
+    return result.data ?? [];
+  }, [categoriesQuery]);
+
   const validateConfiguration = useCallback(
     async (category: SettingsCategory, config: Record<string, unknown>): Promise<ConfigValidationResult> => {
-      setIsValidating(true);
-      setError(null);
-
-      try {
-        const result = await validateConfig(category, config);
-
-        // Ensure result has expected structure
-        const rawErrors = Array.isArray(result?.errors) ? result.errors : [];
-        const errors = rawErrors.map((error) =>
-          typeof error === 'string' ? { field: '_general', message: error } : error,
-        );
-
-        const normalizedResult: ConfigValidationResult = {
-          valid: result?.valid ?? false,
-          errors,
-          warnings: [],
-        };
-
-        setValidationResult(normalizedResult);
-        return normalizedResult;
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to validate configuration';
-        setError(errorMessage);
-        console.error('[useConfigCategories] Error validating config:', err);
-
-        // Return failed validation result
-        const failedResult: ConfigValidationResult = {
-          valid: false,
-          errors: [{ field: '_general', message: errorMessage }],
-          warnings: [],
-        };
-        setValidationResult(failedResult);
-        return failedResult;
-      } finally {
-        setIsValidating(false);
-      }
+      return validateMutation.mutateAsync({ category, config });
     },
-    [],
+    [validateMutation],
   );
 
-  /**
-   * Clear validation result
-   */
   const clearValidation = useCallback(() => {
     setValidationResult(null);
-    setError(null);
   }, []);
 
+  // ============================================================================
+  // RETURN
+  // ============================================================================
+
   return {
-    // Data
-    categories,
+    categories: categoriesQuery.data ?? [],
     validationResult,
-
-    // State
-    isLoading,
-    isValidating,
-    error,
-
-    // Actions
+    isLoading: categoriesQuery.isLoading,
+    isValidating: validateMutation.isPending,
+    error: categoriesQuery.error instanceof Error ? categoriesQuery.error.message : categoriesQuery.error ? String(categoriesQuery.error) : null,
     fetchCategories,
     validateConfiguration,
     clearValidation,

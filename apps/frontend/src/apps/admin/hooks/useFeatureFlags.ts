@@ -19,12 +19,28 @@
  * Currently uses mock data for development
  *
  * Created: 2025-12-05 - FE-ADMIN-011-016 (Sprint P2-B)
+ * Updated: 2026-02-20 - Migrated to React Query
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { FEATURE_FLAGS, API_ENDPOINTS } from '@/config/api.config';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type { FeatureFlag, CreateFlagDto, UpdateFlagDto } from '../types';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const featureFlagKeys = {
+  all: ['admin', 'feature-flags'] as const,
+  list: () => ['admin', 'feature-flags', 'list'] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseFeatureFlagsResult {
   flags: FeatureFlag[];
@@ -86,174 +102,182 @@ const MOCK_FLAGS: FeatureFlag[] = [
 // HIGH-005 FIX: Usar FEATURE_FLAGS en lugar de valor hardcodeado
 const USE_MOCK_DATA = FEATURE_FLAGS.USE_MOCK_DATA || FEATURE_FLAGS.MOCK_API;
 
+// ============================================================================
+// Hook
+// ============================================================================
+
 export function useFeatureFlags(): UseFeatureFlagsResult {
-  const [flags, setFlags] = useState<FeatureFlag[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  /**
-   * Fetch all feature flags
-   */
-  const fetchFlags = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // ============================================================================
+  // QUERY
+  // ============================================================================
 
-    try {
+  const flagsQuery = useQuery({
+    queryKey: featureFlagKeys.list(),
+    queryFn: async () => {
       if (USE_MOCK_DATA) {
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 500));
-        setFlags(MOCK_FLAGS);
-        return;
+        return MOCK_FLAGS;
       }
 
       // HIGH-005 FIX: Usar ruta directa en lugar de API_ENDPOINTS.admin.base
       const response = await apiClient.get<FeatureFlag[]>('/admin/feature-flags');
-      setFlags(response.data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch feature flags';
-      setError(message);
-      console.error('[useFeatureFlags] fetchFlags error:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return response.data;
+    },
+    staleTime: STALE_TIMES.SEMI_STATIC,
+    enabled: true,
+  });
 
-  /**
-   * Create a new feature flag
-   */
+  // ============================================================================
+  // MUTATIONS
+  // ============================================================================
+
+  const createMutation = useMutation({
+    mutationFn: async (data: CreateFlagDto) => {
+      if (USE_MOCK_DATA) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const newFlag: FeatureFlag = {
+          id: Date.now().toString(),
+          key: data.key,
+          name: data.name,
+          description: data.description,
+          isEnabled: data.isEnabled ?? false,
+          rolloutPercentage: data.rolloutPercentage ?? 0,
+          targetRoles: data.targetRoles ?? [],
+          targetUsers: data.targetUsers ?? [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: 'admin@gamilit.com',
+          lastModifiedBy: 'admin@gamilit.com',
+        };
+
+        return newFlag;
+      }
+
+      // HIGH-005 FIX: Usar ruta directa
+      const response = await apiClient.post<FeatureFlag>('/admin/feature-flags', data);
+      return response.data;
+    },
+    onSuccess: (newFlag) => {
+      // Optimistically add to cache
+      queryClient.setQueryData<FeatureFlag[]>(featureFlagKeys.list(), (old) =>
+        old ? [...old, newFlag] : [newFlag],
+      );
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ key, data }: { key: string; data: UpdateFlagDto }) => {
+      if (USE_MOCK_DATA) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return { key, data };
+      }
+
+      // HIGH-005 FIX: Usar ruta directa
+      const response = await apiClient.put<FeatureFlag>(`/admin/feature-flags/${key}`, data);
+      return response.data;
+    },
+    onSuccess: (_result, variables) => {
+      if (USE_MOCK_DATA) {
+        // Update mock data in cache
+        queryClient.setQueryData<FeatureFlag[]>(featureFlagKeys.list(), (old) =>
+          old?.map((flag) =>
+            flag.key === variables.key
+              ? {
+                  ...flag,
+                  ...variables.data,
+                  updatedAt: new Date().toISOString(),
+                  lastModifiedBy: 'admin@gamilit.com',
+                }
+              : flag,
+          ),
+        );
+      } else {
+        queryClient.invalidateQueries({ queryKey: featureFlagKeys.all });
+      }
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (key: string) => {
+      if (USE_MOCK_DATA) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return key;
+      }
+
+      // HIGH-005 FIX: Usar ruta centralizada
+      await apiClient.delete(API_ENDPOINTS.admin.featureFlags.delete(key));
+      return key;
+    },
+    onSuccess: (deletedKey) => {
+      queryClient.setQueryData<FeatureFlag[]>(featureFlagKeys.list(), (old) =>
+        old?.filter((flag) => flag.key !== deletedKey),
+      );
+    },
+  });
+
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
+
+  const flags = flagsQuery.data ?? [];
+  const loading =
+    flagsQuery.isLoading ||
+    flagsQuery.isFetching ||
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending;
+
+  const firstError = flagsQuery.error ?? createMutation.error ?? updateMutation.error ?? deleteMutation.error;
+  const error = firstError instanceof Error ? firstError.message : firstError ? String(firstError) : null;
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const fetchFlags = useCallback(async (): Promise<void> => {
+    await flagsQuery.refetch();
+  }, [flagsQuery]);
+
   const createFlag = useCallback(
-    async (data: CreateFlagDto) => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        if (USE_MOCK_DATA) {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 500));
-
-          const newFlag: FeatureFlag = {
-            id: Date.now().toString(),
-            key: data.key,
-            name: data.name,
-            description: data.description,
-            isEnabled: data.isEnabled ?? false,
-            rolloutPercentage: data.rolloutPercentage ?? 0,
-            targetRoles: data.targetRoles ?? [],
-            targetUsers: data.targetUsers ?? [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            createdBy: 'admin@gamilit.com',
-            lastModifiedBy: 'admin@gamilit.com',
-          };
-
-          setFlags((prev) => [...prev, newFlag]);
-          return;
-        }
-
-        // HIGH-005 FIX: Usar ruta directa
-        const response = await apiClient.post<FeatureFlag>('/admin/feature-flags', data);
-        setFlags((prev) => [...prev, response.data]);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to create feature flag';
-        setError(message);
-        console.error('[useFeatureFlags] createFlag error:', err);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+    async (data: CreateFlagDto): Promise<void> => {
+      await createMutation.mutateAsync(data);
     },
-    [],
+    [createMutation],
   );
 
-  /**
-   * Update an existing feature flag
-   */
   const updateFlag = useCallback(
-    async (key: string, data: UpdateFlagDto) => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        if (USE_MOCK_DATA) {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 500));
-
-          setFlags((prev) =>
-            prev.map((flag) =>
-              flag.key === key
-                ? {
-                    ...flag,
-                    ...data,
-                    updatedAt: new Date().toISOString(),
-                    lastModifiedBy: 'admin@gamilit.com',
-                  }
-                : flag,
-            ),
-          );
-          return;
-        }
-
-        // HIGH-005 FIX: Usar ruta directa
-        const response = await apiClient.put<FeatureFlag>(`/admin/feature-flags/${key}`, data);
-        setFlags((prev) => prev.map((flag) => (flag.key === key ? response.data : flag)));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to update feature flag';
-        setError(message);
-        console.error('[useFeatureFlags] updateFlag error:', err);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+    async (key: string, data: UpdateFlagDto): Promise<void> => {
+      await updateMutation.mutateAsync({ key, data });
     },
-    [],
+    [updateMutation],
   );
 
-  /**
-   * Delete a feature flag
-   */
   const deleteFlag = useCallback(
-    async (key: string) => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        if (USE_MOCK_DATA) {
-          // Simulate API delay
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          setFlags((prev) => prev.filter((flag) => flag.key !== key));
-          return;
-        }
-
-        // HIGH-005 FIX: Usar ruta centralizada
-        await apiClient.delete(API_ENDPOINTS.admin.featureFlags.delete(key));
-        setFlags((prev) => prev.filter((flag) => flag.key !== key));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to delete feature flag';
-        setError(message);
-        console.error('[useFeatureFlags] deleteFlag error:', err);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+    async (key: string): Promise<void> => {
+      await deleteMutation.mutateAsync(key);
     },
-    [],
+    [deleteMutation],
   );
 
-  /**
-   * Toggle a feature flag on/off
-   */
   const toggleFlag = useCallback(
-    async (key: string) => {
+    async (key: string): Promise<void> => {
       const flag = flags.find((f) => f.key === key);
       if (!flag) {
-        setError(`Flag with key "${key}" not found`);
-        return;
+        throw new Error(`Flag with key "${key}" not found`);
       }
 
-      await updateFlag(key, { isEnabled: !flag.isEnabled });
+      await updateMutation.mutateAsync({ key, data: { isEnabled: !flag.isEnabled } });
     },
-    [flags, updateFlag],
+    [flags, updateMutation],
   );
+
+  // ============================================================================
+  // RETURN
+  // ============================================================================
 
   return {
     flags,

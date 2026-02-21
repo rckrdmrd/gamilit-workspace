@@ -167,7 +167,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
                     {selectedModule.exercises.map((exercise) => (
                       <label
                         key={exercise.id}
-                        className="flex items-center gap-3 p-3 bg-detective-bg-secondary rounded-lg cursor-pointer hover:bg-opacity-80 transition-colors"
+                        className="flex items-center gap-3 p-3 bg-detective-bg-secondary rounded-lg cursor-pointer hover:bg-detective-bg-secondary/80 transition-colors"
                       >
                         <input
                           type="checkbox"
@@ -292,7 +292,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
                 {students.map((student) => (
                   <label
                     key={student.id}
-                    className="flex items-center gap-3 p-3 bg-detective-bg-secondary rounded-lg cursor-pointer hover:bg-opacity-80 transition-colors"
+                    className="flex items-center gap-3 p-3 bg-detective-bg-secondary rounded-lg cursor-pointer hover:bg-detective-bg-secondary/80 transition-colors"
                   >
                     <input
                       type="checkbox"

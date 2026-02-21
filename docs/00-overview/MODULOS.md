@@ -8,7 +8,7 @@
 
 ## Resumen
 
-GAMILIT cuenta con 22 modulos backend organizados en 4 categorias funcionales. Cada modulo sigue la arquitectura estandar NestJS con entities, services, controllers, DTOs y tests.
+GAMILIT cuenta con 23 modulos backend organizados en 4 categorias funcionales. Cada modulo sigue la arquitectura estandar NestJS con entities, services, controllers, DTOs y tests.
 
 | Categoria | Cantidad | Modulos |
 |-----------|----------|---------|
@@ -430,9 +430,9 @@ Generacion de reportes y exportaciones.
 | 20 | parents | 3 | ~20 | 3 | 2 | 100% |
 | 21 | analytics | 2 | ~25 | 5 | 3 | 85% |
 | 22 | reports | 3 | ~20 | 3 | 2 | 75% |
-| **TOTAL** | | **~152** | **~899** | **~170** | **~107** | **~92%** |
+| **TOTAL** | | **~155** | **905** | **173** | **108** | **~92%** |
 
 ---
 
-*GAMILIT - 22 Modulos Backend*
+*GAMILIT - 23 Modulos Backend*
 *NestJS 11 + TypeORM 0.3.x*

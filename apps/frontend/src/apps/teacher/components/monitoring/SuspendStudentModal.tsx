@@ -10,6 +10,7 @@
 
 import { useState } from 'react';
 import { X, AlertTriangle, Ban, ShieldOff } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { StudentMonitoring } from '../../types';
 import { useStudentBlocking, BlockType, BlockStudentDto } from '../../hooks/useStudentBlocking';
@@ -83,8 +84,8 @@ export function SuspendStudentModal({
   const isValid = reason.trim().length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="w-full max-w-md rounded-lg border-2 border-detective-orange bg-detective-bg">
+    <Modal isOpen={true} onClose={onClose} showCloseButton={false} size="sm" className="border-2 border-detective-orange bg-detective-bg p-0">
+      <div className="-mx-6 -my-4">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-detective-orange p-4">
           <div className="flex items-center gap-3">
@@ -197,6 +198,6 @@ export function SuspendStudentModal({
           </DetectiveButton>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

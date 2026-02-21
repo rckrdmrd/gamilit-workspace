@@ -66,6 +66,12 @@ BEGIN
         RETURN;
     END IF;
 
+    -- Idempotency guard
+    IF EXISTS (SELECT 1 FROM social_features.peer_challenges WHERE title = 'Duelo de Comprension Literal' LIMIT 1) THEN
+        RAISE NOTICE 'Peer challenges seed data already exists, skipping insert';
+        RETURN;
+    END IF;
+
     INSERT INTO social_features.peer_challenges (
         id,
         challenge_type,
@@ -97,7 +103,7 @@ BEGIN
 
     -- Challenge 1: Open head-to-head challenge
     (
-        '61111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         'head_to_head',
         v_student1_id,
         v_module1_id,
@@ -137,7 +143,7 @@ BEGIN
 
     -- Challenge 2: Multiplayer in progress
     (
-        '61111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         'multiplayer',
         v_student2_id,
         v_module2_id,
@@ -177,7 +183,7 @@ BEGIN
 
     -- Challenge 3: Completed challenge
     (
-        '61111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         'head_to_head',
         v_student3_id,
         v_module1_id,
@@ -216,7 +222,7 @@ BEGIN
 
     -- Challenge 4: Cancelled challenge
     (
-        '61111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         'tournament',
         v_student1_id,
         NULL,
@@ -256,7 +262,7 @@ BEGIN
 
     -- Challenge 5: Private leaderboard challenge
     (
-        '61111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         'leaderboard',
         v_student2_id,
         v_module1_id,
@@ -302,7 +308,7 @@ BEGIN
 
     -- Challenge 6: Tournament for vocabulary mastery
     (
-        '61111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         'tournament',
         v_student1_id,
         v_module1_id,
@@ -343,7 +349,7 @@ BEGIN
 
     -- Challenge 7: Completed multiplayer reading comprehension
     (
-        '61111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         'multiplayer',
         v_student3_id,
         v_module2_id,
@@ -385,7 +391,7 @@ BEGIN
 
     -- Challenge 8: Open head-to-head speed reading
     (
-        '61111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         'head_to_head',
         v_student2_id,
         NULL,
@@ -426,7 +432,7 @@ BEGIN
 
     -- Challenge 9: Expired challenge (never started)
     (
-        '61111111-1111-1111-1111-111111111009'::uuid,
+        gen_random_uuid(),
         'multiplayer',
         v_student1_id,
         v_module1_id,
@@ -467,7 +473,7 @@ BEGIN
 
     -- Challenge 10: Open leaderboard for classroom competition
     (
-        '61111111-1111-1111-1111-111111111010'::uuid,
+        gen_random_uuid(),
         'leaderboard',
         v_student3_id,
         NULL,
@@ -513,13 +519,7 @@ BEGIN
         )
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        status = EXCLUDED.status,
-        current_participants = EXCLUDED.current_participants,
-        started_at = EXCLUDED.started_at,
-        completed_at = EXCLUDED.completed_at,
-        metadata = EXCLUDED.metadata,
-        updated_at = gamilit.now_mexico();
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'Peer challenges created successfully';
 

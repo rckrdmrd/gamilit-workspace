@@ -86,9 +86,9 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 |---------|------------|
 | **Schema** | Agrupacion logica de objetos de BD (tablas, funciones, vistas). 18 schemas en gamilit. |
 | **DDL (Data Definition Language)** | SQL para definir estructura (CREATE, ALTER, DROP). |
-| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 207 policies activas. |
+| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 231 DDL / 471 runtime policies. |
 | **Trigger** | Funcion que se ejecuta automaticamente ante eventos de BD. 67 triggers. |
-| **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). 40 ENUMs. |
+| **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). 42 ENUMs. |
 | **JSONB** | Tipo de dato JSON binario en PostgreSQL para datos flexibles. |
 | **Materialized View** | Vista pre-computada para mejor performance. 7 MVs. |
 | **Seed** | Script de datos iniciales para poblar tablas. |
@@ -98,23 +98,23 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 
 | Termino | Definicion |
 |---------|------------|
-| **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). 152 entities. |
+| **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). 155 entity files (156 @Entity classes). |
 | **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. 399 DTOs. |
-| **Service** | Clase con logica de negocio. 170 services. |
-| **Controller** | Clase que maneja endpoints HTTP. 107 controllers. |
+| **Service** | Clase con logica de negocio. 173 services. |
+| **Controller** | Clase que maneja endpoints HTTP. 108 controllers. |
 | **Guard** | Middleware para autorizacion (ej: JwtAuthGuard, RolesGuard, TenantGuard). 15 guards. |
 | **Decorator** | Anotacion que modifica comportamiento (ej: @Roles()). 18 decorators. |
-| **Module** | Unidad de organizacion en NestJS. 22 modulos. |
+| **Module** | Unidad de organizacion en NestJS. 23 modulos. |
 
 ### Frontend (React 19)
 
 | Termino | Definicion |
 |---------|------------|
-| **Component** | Elemento de UI reutilizable. 475 componentes. |
-| **Hook** | Funcion para manejar estado y efectos. 102 hooks. |
-| **Store** | Estado global de la aplicacion (Zustand). 14 stores. |
-| **Page** | Componente que representa una ruta. 68 paginas. |
-| **API Service** | Servicio para comunicacion con backend. 52 API services. |
+| **Component** | Elemento de UI reutilizable. 580 componentes. |
+| **Hook** | Funcion para manejar estado y efectos. 123 hooks. |
+| **Store** | Estado global de la aplicacion (Zustand). 13 stores. |
+| **Page** | Componente que representa una ruta. 70 paginas. |
+| **API Service** | Servicio para comunicacion con backend. 66 API service files. |
 
 ### Arquitectura
 

@@ -6,8 +6,8 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
 import { ReportTemplateSelector } from './ReportTemplateSelector';
 import type { ReportConfig, ReportFormat } from '../../types';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { reportsApi } from '@/services/api/teacher/reportsApi';
+import type { GenerateReportDto } from '@/services/api/teacher/reportsApi';
 
 interface ReportGeneratorProps {
   classroomId: string;
@@ -36,26 +36,24 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
     try {
       setGenerating(true);
 
-      const response = await apiClient.post(
-        API_ENDPOINTS.teacher.reports.generate,
-        {
-          ...config,
-          classroom_id: classroomId,
-          template_id: selectedTemplate,
-          type: selectedTemplate.includes('progress')
-            ? 'progress'
-            : selectedTemplate.includes('evaluation')
-              ? 'evaluation'
-              : selectedTemplate.includes('intervention')
-                ? 'intervention'
-                : 'custom',
-        },
-        {
-          responseType: 'blob',
-        },
-      );
+      const reportType = selectedTemplate.includes('progress')
+        ? 'progress'
+        : selectedTemplate.includes('evaluation')
+          ? 'evaluation'
+          : selectedTemplate.includes('intervention')
+            ? 'intervention'
+            : 'custom';
 
-      const blob = response.data;
+      const dto: GenerateReportDto & { template_id: string } = {
+        ...config,
+        classroom_id: classroomId,
+        template_id: selectedTemplate,
+        type: reportType as GenerateReportDto['type'],
+        format: (config.format || 'pdf') as GenerateReportDto['format'],
+      };
+
+      const result = await reportsApi.generateReport(dto as GenerateReportDto);
+      const blob = result.blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -153,7 +151,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
                     {(['pdf', 'excel', 'csv'] as ReportFormat[]).map((format) => (
                       <label
                         key={format}
-                        className="flex cursor-pointer items-center gap-2 rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-opacity-80"
+                        className="flex cursor-pointer items-center gap-2 rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-detective-bg-secondary/80"
                       >
                         <input
                           type="radio"
@@ -190,7 +188,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
                   {students.map((student) => (
                     <label
                       key={student.id}
-                      className="flex cursor-pointer items-center gap-2 rounded bg-detective-bg-secondary p-2 transition-colors hover:bg-opacity-80"
+                      className="flex cursor-pointer items-center gap-2 rounded bg-detective-bg-secondary p-2 transition-colors hover:bg-detective-bg-secondary/80"
                     >
                       <input
                         type="checkbox"

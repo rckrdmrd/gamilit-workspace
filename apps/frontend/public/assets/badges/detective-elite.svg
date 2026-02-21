@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Detective Elite Badge -->
+  <!-- Shield shape -->
+  <path d="M50 8 L85 25 L85 55 Q85 80 50 95 Q15 80 15 55 L15 25 Z" fill="#1C1C1C" stroke="#D4AF37" stroke-width="2.5"/>
+  <!-- Inner shield -->
+  <path d="M50 16 L78 30 L78 53 Q78 73 50 87 Q22 73 22 53 L22 30 Z" fill="#2D3748"/>
+  <!-- Magnifying glass -->
+  <circle cx="50" cy="48" r="14" fill="none" stroke="#D4AF37" stroke-width="3"/>
+  <line x1="60" y1="58" x2="70" y2="68" stroke="#D4AF37" stroke-width="3" stroke-linecap="round"/>
+  <!-- Eye in center -->
+  <ellipse cx="50" cy="47" rx="6" ry="5" fill="#D4AF37" opacity="0.9"/>
+  <circle cx="50" cy="47" r="2.5" fill="#1C1C1C"/>
+  <!-- Star at top -->
+  <polygon points="50,12 52,18 58,18 53,22 55,28 50,24 45,28 47,22 42,18 48,18" fill="#FFD700"/>
+  <!-- Elite text -->
+  <text x="50" y="80" text-anchor="middle" font-family="sans-serif" font-size="8" font-weight="bold" fill="#D4AF37">ELITE</text>
+</svg>

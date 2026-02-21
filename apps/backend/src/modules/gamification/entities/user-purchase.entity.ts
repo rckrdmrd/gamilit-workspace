@@ -3,8 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
+import { ShopItem } from './shop-item.entity';
 
 /**
  * UserPurchase Entity (gamification_system.user_purchases)
@@ -46,6 +49,10 @@ export class UserPurchase {
    */
   @Column({ type: 'uuid' })
     item_id!: string;
+
+  @ManyToOne(() => ShopItem, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'item_id' })
+    item?: ShopItem;
 
   /**
    * ID del tenant (FK → auth_management.tenants)

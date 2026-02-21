@@ -667,7 +667,7 @@ trend!: PerformanceTrendItemDto[];
 
 1. **Actualizaciones de hooks:**
    - Actualizar `useClassroomData.ts` para consumir `performance_trend`
-   - Actualizar `useStudentProgress.ts` si aplica
+   - Actualizar hooks de analytics si aplica (nota: `useStudentProgress` fue removido en Teacher Portal Audit 2026-02-20; usar `useAnalytics` o `studentProgressApi`)
 
 2. **Componentes:**
    - Agregar nuevo `<ProgressChart type="line" />` en `ClassProgressDashboard.tsx`

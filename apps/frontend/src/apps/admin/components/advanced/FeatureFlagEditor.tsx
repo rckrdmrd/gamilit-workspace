@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { X, Save, Flag } from 'lucide-react';
@@ -102,8 +103,9 @@ export const FeatureFlagEditor: React.FC<FeatureFlagEditorProps> = ({ flag, onSa
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <DetectiveCard className="w-full max-w-2xl border-2 border-detective-orange">
+    <Modal isOpen={true} onClose={onClose} showCloseButton={false} size="lg" className="bg-transparent shadow-none p-0">
+      <div className="-mx-6 -my-4">
+        <DetectiveCard className="w-full max-w-2xl border-2 border-detective-orange">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -223,6 +225,7 @@ export const FeatureFlagEditor: React.FC<FeatureFlagEditorProps> = ({ flag, onSa
           </div>
         </form>
       </DetectiveCard>
-    </div>
+      </div>
+    </Modal>
   );
 };

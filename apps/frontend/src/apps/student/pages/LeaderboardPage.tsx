@@ -13,12 +13,12 @@ import { FriendsMiniLeaderboard } from '../components/leaderboard/FriendsMiniLea
 import { LeaderboardTipsPanel } from '../components/leaderboard/LeaderboardTipsPanel';
 
 // Layout
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 
 // Hooks
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
+import { useBatchEquipment } from '@/features/gamification/social/hooks/useBatchEquipment';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useUserClassroom } from '../hooks/useUserClassroom';
 import { useDashboardData } from '../hooks/useDashboardData';
 
@@ -26,8 +26,7 @@ import { useDashboardData } from '../hooks/useDashboardData';
 import { cn } from '@shared/utils/cn';
 
 export default function LeaderboardPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
+  const { user } = useAuth();
   const { classroomId: userClassroomId } = useUserClassroom(user?.id);
   const { progress, achievements } = useDashboardData();
 
@@ -43,6 +42,12 @@ export default function LeaderboardPage() {
     getUserEntry,
     getUserPosition,
   } = useLeaderboards();
+
+  // Batch fetch equipped cosmetics for all visible users
+  const leaderboardUserIds = (currentLeaderboard?.entries || [])
+    .map((e) => e.userId)
+    .filter(Boolean);
+  const { equippedMap } = useBatchEquipment(leaderboardUserIds);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
@@ -79,18 +84,12 @@ export default function LeaderboardPage() {
       : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader
-        user={user || undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       {/* Filters Section */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sticky top-16 z-10 bg-white shadow-md"
+        className="sticky top-16 z-10 bg-detective-surface shadow-md"
       >
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="mb-4 flex items-center justify-between">
@@ -114,10 +113,11 @@ export default function LeaderboardPage() {
               whileTap={{ scale: 0.95 }}
               onClick={handleRefresh}
               disabled={isRefreshing}
+              aria-label="Actualizar clasificacion"
               className="flex items-center gap-2 rounded-lg bg-detective-orange px-4 py-2 text-white transition-colors hover:bg-detective-orange-dark disabled:opacity-50"
             >
               <RefreshCw className={cn('h-5 w-5', isRefreshing && 'animate-spin')} />
-              <span className="hidden md:inline">Actualizar</span>
+              <span className="hidden md:inline" aria-hidden="true">Actualizar</span>
             </motion.button>
           </div>
 
@@ -136,7 +136,7 @@ export default function LeaderboardPage() {
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-          <main className="space-y-6 lg:col-span-3">
+          <main className="space-y-6 lg:col-span-3" role="region" aria-label="Tabla de clasificacion">
             {userEntry && (
               <UserPositionCard userEntry={userEntry} pointsToNext={pointsToNext} />
             )}
@@ -152,7 +152,7 @@ export default function LeaderboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="rounded-xl bg-white p-6 shadow-lg"
+              className="rounded-xl bg-detective-surface p-6 shadow-lg"
             >
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-xl font-bold text-detective-text">
@@ -170,11 +170,13 @@ export default function LeaderboardPage() {
                 </h2>
                 <button
                   onClick={() => setAutoScrollEnabled(!autoScrollEnabled)}
+                  aria-label={autoScrollEnabled ? 'Desactivar auto-scroll' : 'Activar auto-scroll'}
+                  aria-pressed={autoScrollEnabled}
                   className={cn(
                     'rounded-lg px-3 py-1 text-sm font-semibold transition-colors',
                     autoScrollEnabled
                       ? 'bg-detective-orange text-white'
-                      : 'bg-gray-200 text-gray-600',
+                      : 'bg-detective-surface-elevated text-detective-text-secondary',
                   )}
                 >
                   Auto-scroll
@@ -182,16 +184,16 @@ export default function LeaderboardPage() {
               </div>
 
               {loading && (
-                <div className="flex items-center justify-center py-12">
-                  <RefreshCw className="h-8 w-8 animate-spin text-detective-orange" />
-                  <span className="ml-3 text-gray-600">Cargando clasificacion...</span>
+                <div className="flex items-center justify-center py-12" aria-live="polite">
+                  <RefreshCw className="h-8 w-8 animate-spin text-detective-orange" role="status" aria-label="Cargando clasificacion" />
+                  <span className="ml-3 text-detective-text-secondary">Cargando clasificacion...</span>
                 </div>
               )}
 
               {!loading && leaderboardError && (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="flex flex-col items-center justify-center py-12 text-center" role="alert">
                   <AlertCircle className="mb-4 h-12 w-12 text-red-500" />
-                  <p className="text-gray-600">{leaderboardError}</p>
+                  <p className="text-detective-text-secondary">{leaderboardError}</p>
                   <button
                     onClick={() => refreshLeaderboard()}
                     className="mt-4 rounded-lg bg-detective-orange px-4 py-2 text-white hover:bg-detective-orange/90"
@@ -206,6 +208,7 @@ export default function LeaderboardPage() {
                   entries={currentLeaderboard.entries}
                   showTopThree={true}
                   highlightUser={true}
+                  equippedMap={equippedMap}
                 />
               )}
 
@@ -223,6 +226,6 @@ export default function LeaderboardPage() {
       </div>
 
       <div className="h-16" />
-    </div>
+    </StudentPageShell>
   );
 }

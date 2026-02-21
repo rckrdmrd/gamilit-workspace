@@ -9,8 +9,6 @@
  *
  * SECURITY: Never validate answers locally. Always submit to server.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useRef, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -95,7 +93,7 @@ export interface SubmissionResult {
 
 export interface UseExerciseSubmissionOptions {
   onSuccess?: (result: SubmissionResult) => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
   onRateLimitError?: (retryAfter: number) => void;
   trackHints?: boolean;
   trackPowerups?: boolean;
@@ -134,7 +132,7 @@ export function useExerciseSubmission(
    * Submit exercise mutation
    */
   const mutation = useMutation({
-    mutationFn: async (answers: Record<string, any>) => {
+    mutationFn: async (answers: Record<string, unknown>) => {
       // 1. CLIENT-SIDE VALIDATION with Zod
       const payload: SubmitExercisePayload = {
         answers,
@@ -158,7 +156,7 @@ export function useExerciseSubmission(
       const response = await apiClient.post<{
         success: boolean;
         data: SubmissionResult;
-        error?: any;
+        error?: { message?: string; code?: string; retryAfter?: number };
       }>(`/educational/exercises/${exerciseId}/submit`, payload);
 
       if (!response.data.success) {
@@ -172,14 +170,12 @@ export function useExerciseSubmission(
       // Invalidate React Query cache to refresh dashboard and modules
       // This ensures progress updates immediately after exercise completion
       if (user?.id) {
-        console.log('🔄 [useExerciseSubmission] Invalidating dashboard and modules cache...');
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
           queryClient.invalidateQueries({ queryKey: ['dashboard', user.id] }),
           queryClient.invalidateQueries({ queryKey: ['userModules'] }),
           queryClient.invalidateQueries({ queryKey: ['userModules', user.id] }),
         ]);
-        console.log('✅ [useExerciseSubmission] Cache invalidated successfully');
       }
 
       // Call custom success handler
@@ -194,10 +190,11 @@ export function useExerciseSubmission(
       });
     },
 
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       // Handle rate limiting errors
-      if (error.response?.status === 429) {
-        const retryAfter = error.response.data?.error?.retryAfter || 5;
+      const err = error as { response?: { status?: number; data?: { error?: { code?: string; message?: string; retryAfter?: number } } } };
+      if (err.response?.status === 429) {
+        const retryAfter = err.response.data?.error?.retryAfter || 5;
 
         if (options.onRateLimitError) {
           options.onRateLimitError(retryAfter);
@@ -210,8 +207,8 @@ export function useExerciseSubmission(
       }
 
       // Handle validation errors
-      if (error.response?.status === 400) {
-        const errorCode = error.response.data?.error?.code;
+      if (err.response?.status === 400) {
+        const errorCode = err.response.data?.error?.code;
 
         if (errorCode === 'SUBMISSION_TOO_FAST') {
           toast.error('Please take time to complete the exercise.');
@@ -220,7 +217,7 @@ export function useExerciseSubmission(
         } else if (errorCode === 'VALIDATION_ERROR') {
           toast.error('Invalid submission data. Please try again.');
         } else {
-          toast.error(error.response.data?.error?.message || 'Submission failed');
+          toast.error(err.response.data?.error?.message || 'Submission failed');
         }
         return;
       }

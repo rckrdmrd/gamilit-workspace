@@ -95,7 +95,7 @@ BEGIN
 
     -- Team Lectores members
     (
-        '41111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_team_lectores,
         v_student1_id,
         'owner',
@@ -103,7 +103,7 @@ BEGIN
         NULL
     ),
     (
-        '41111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_team_lectores,
         v_student2_id,
         'admin',
@@ -111,7 +111,7 @@ BEGIN
         NULL
     ),
     (
-        '41111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_team_lectores,
         v_student3_id,
         'member',
@@ -121,7 +121,7 @@ BEGIN
 
     -- Team Inferencias members
     (
-        '41111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_team_inferencias,
         v_student2_id,
         'owner',
@@ -129,7 +129,7 @@ BEGIN
         NULL
     ),
     (
-        '41111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_team_inferencias,
         v_student1_id,
         'member',
@@ -139,7 +139,7 @@ BEGIN
 
     -- Team Criticos members
     (
-        '41111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_team_criticos,
         v_teacher_id,
         'owner',
@@ -147,7 +147,7 @@ BEGIN
         NULL
     ),
     (
-        '41111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_team_criticos,
         v_student3_id,
         'member',
@@ -157,7 +157,7 @@ BEGIN
 
     -- Former member (left team)
     (
-        '41111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         v_team_lectores,
         v_teacher_id,
         'member',

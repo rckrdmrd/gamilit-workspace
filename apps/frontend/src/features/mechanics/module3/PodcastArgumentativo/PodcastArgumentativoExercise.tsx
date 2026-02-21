@@ -10,6 +10,7 @@ import type { ArgumentAnalysis } from '../../shared/aiTypes';
 import type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { uploadMedia } from '@/shared/api/mediaApi';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -91,7 +92,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     isSupported: isSpeechSupported,
     isListening,
     error: speechError,
-    confidence: speechConfidence,
+    confidence: _speechConfidence,
   } = useSpeechToText({ language: 'es-MX', continuous: true, interimResults: true });  const { submitAsync } = useExerciseSubmission(exerciseId);
 
 
@@ -221,7 +222,6 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
       if (!transcriptionText && isSpeechSupported) {
         // Speech API was available but no transcript captured
-        console.warn('[PodcastArgumentativo] Speech recognition available but no transcript captured');
         transcriptionText = scriptText; // Use manual script text if available
       }
 
@@ -254,10 +254,6 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       const newScore = Math.round(avgScore * 100);
       setCurrentScore(newScore);
 
-      // Log confidence if available
-      if (speechConfidence > 0) {
-        console.log(`[PodcastArgumentativo] Speech recognition confidence: ${Math.round(speechConfidence * 100)}%`);
-      }
     } finally {
       setAnalyzing(false);
     }
@@ -310,8 +306,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
             exerciseId,
           });
           serverAudioUrl = uploadResult.url;
-        } catch (uploadError) {
-          console.error('[PodcastArgumentativo] Audio upload failed:', uploadError);
+        } catch (_uploadError) {
           setFeedback({
             type: 'error',
             title: 'Error al Subir Audio',
@@ -342,7 +337,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
         setFeedback({
           type: 'info',
           title: 'Ejercicio Enviado',
-          message: 'Tu podcast ha sido enviado para revision del maestro. Recibiras tus recompensas cuando sea evaluado.',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           score: undefined, // No mostrar score aun
           showConfetti: false,
           xpEarned: 0,
@@ -354,11 +349,6 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
         // Sync pero sin mostrar rewards
         await syncAndInvalidate();
-
-        console.log('📝 [PodcastArgumentativo] Submission pending review:', {
-          status: response.status,
-          requiresManualReview: response.requiresManualReview,
-        });
 
         return;
       }
@@ -390,12 +380,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [PodcastArgumentativo] Submission successful:', {
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('[PodcastArgumentativo] Error al enviar:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

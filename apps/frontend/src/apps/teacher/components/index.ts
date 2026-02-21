@@ -2,9 +2,6 @@
 export { TeacherPageShell } from './shared/TeacherPageShell';
 export type { TeacherPageShellProps } from './shared/TeacherPageShell';
 
-// HOC (deprecated — use TeacherPageShell instead)
-export { withTeacherLayout } from './withTeacherLayout';
-
 // Monitoring Components
 export { StudentMonitoringPanel } from './monitoring/StudentMonitoringPanel';
 export { StudentStatusCard } from './monitoring/StudentStatusCard';
@@ -22,7 +19,6 @@ export { ModuleCompletionCard } from './progress/ModuleCompletionCard';
 
 // Alert Components
 export { InterventionAlertsPanel } from './alerts/InterventionAlertsPanel';
-export { AlertCard } from './alerts/AlertCard';
 
 // Analytics Components
 export { LearningAnalyticsDashboard } from './analytics/LearningAnalyticsDashboard';

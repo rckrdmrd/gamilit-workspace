@@ -12,7 +12,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/app/providers/AuthContext';
 import {
   Package,
   Zap,
@@ -23,9 +22,10 @@ import {
   Loader,
 } from 'lucide-react';
 
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { TabBar } from '@shared/components/base/TabBar';
+import type { TabDefinition } from '@shared/components/base/TabBar';
 
 import { useInventoryData } from '@/features/gamification/social/hooks/useInventoryData';
 import { useActivatePowerUp } from '@/features/gamification/social/hooks/useActivatePowerUp';
@@ -40,21 +40,18 @@ import { isPowerUp } from '@/apps/student/components/inventory/utils';
 
 import type { ShopItem } from '@/features/gamification/economy/types/economyTypes';
 import type { PowerUp } from '@/features/gamification/social/types/powerUpsTypes';
-import { cn } from '@shared/utils/cn';
 
 type TabType = 'all' | 'cosmetics' | 'powerups' | 'active';
 
-const TABS: { id: TabType; label: string; icon: React.ElementType; badge?: string }[] = [
+const TABS: TabDefinition<TabType>[] = [
   { id: 'all', label: 'All Items', icon: Package },
-  { id: 'cosmetics', label: 'Cosmetics', icon: Sparkles, badge: 'Proximamente' },
+  { id: 'cosmetics', label: 'Cosmetics', icon: Sparkles },
   { id: 'powerups', label: 'Power-ups', icon: Zap },
   { id: 'active', label: 'Active', icon: TrendingUp },
 ];
 
 export default function InventoryPage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
 
   // Data hooks
   const { allItems, powerUps, activePowerUps, isLoading, isLoadingActive } = useInventoryData();
@@ -102,13 +99,7 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader
-        user={user ?? undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
@@ -142,36 +133,13 @@ export default function InventoryPage() {
         <ActivePowerUpsBanner activePowerUps={activePowerUps} />
 
         {/* Tabs */}
-        <div className="mb-6 flex items-center gap-2 overflow-x-auto" role="tablist">
-          {TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <motion.button
-                key={tab.id}
-                role="tab"
-                aria-selected={isActive}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  'flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-3 font-semibold transition-all',
-                  isActive
-                    ? 'bg-detective-orange text-white shadow-lg'
-                    : 'bg-white text-detective-text hover:bg-detective-bg',
-                )}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{tab.label}</span>
-                {tab.badge && (
-                  <span className="ml-1 rounded bg-yellow-500/20 px-2 py-0.5 text-xs text-yellow-700">
-                    {tab.badge}
-                  </span>
-                )}
-              </motion.button>
-            );
-          })}
-        </div>
+        <TabBar<TabType>
+          tabs={TABS}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          variant="pills"
+          className="mb-6 overflow-x-auto"
+        />
 
         {/* Search (hidden on Active tab) */}
         {activeTab !== 'active' && (
@@ -205,14 +173,14 @@ export default function InventoryPage() {
             <motion.div key="items" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               {isLoading ? (
                 <DetectiveCard hoverable={false}>
-                  <div className="py-12 text-center">
-                    <Loader className="mx-auto mb-4 h-16 w-16 animate-spin text-detective-orange" />
+                  <div className="py-12 text-center" aria-live="polite">
+                    <Loader className="mx-auto mb-4 h-16 w-16 animate-spin text-detective-orange" role="status" aria-label="Cargando inventario" />
                     <h3 className="mb-2 text-xl font-bold text-detective-text">Loading Inventory...</h3>
                     <p className="text-detective-text-secondary">Please wait while we fetch your items</p>
                   </div>
                 </DetectiveCard>
               ) : filteredItems.length > 0 ? (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div role="region" aria-label="Items del inventario" className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredItems.map((item, index) => (
                     <InventoryItemCard
                       key={item.id}
@@ -256,6 +224,6 @@ export default function InventoryPage() {
           isActivating={isActivating}
         />
       </main>
-    </div>
+    </StudentPageShell>
   );
 }

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Award,
   BookOpen,
@@ -45,6 +45,7 @@ import {
   Gem,
   type LucideIcon,
 } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import type { Achievement } from '../../types/achievementsTypes';
 import { ConfettiCelebration } from '../../../../../shared/components/celebrations/ConfettiCelebration';
 
@@ -114,110 +115,106 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
-        onClick={onClose}
-      >
-        {/* Enhanced Confetti System */}
-        <ConfettiCelebration
-          show={showConfetti}
-          rarity={getConfettiRarity()}
-          onComplete={() => {
-            // Optional: handle completion
-          }}
-        />
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      animated
+      size="md"
+      showCloseButton={false}
+      className="overflow-hidden rounded-detective shadow-detective-lg"
+      contentClassName="custom"
+      ariaLabelledBy="achievement-unlock-title"
+    >
+      {/* Enhanced Confetti System */}
+      <ConfettiCelebration
+        show={showConfetti}
+        rarity={getConfettiRarity()}
+        onComplete={() => {
+          // Optional: handle completion
+        }}
+      />
 
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0, y: 50 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.5, opacity: 0, y: 50 }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-md overflow-hidden rounded-detective bg-white p-8 shadow-detective-lg"
-        >
-          {/* Celebration Header */}
-          <div className="mb-6 text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 0.5, times: [0, 0.5, 1] }}
-              className="mb-4 inline-block rounded-full bg-gradient-to-br from-detective-gold to-detective-orange p-6"
-            >
-              <IconComponent className="h-16 w-16 text-white" />
-            </motion.div>
+      <div className="p-8">
+        {/* Celebration Header */}
+        <div className="mb-6 text-center">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 0.5, times: [0, 0.5, 1] }}
+            className="mb-4 inline-block rounded-full bg-gradient-to-br from-detective-gold to-detective-orange p-6"
+          >
+            <IconComponent className="h-16 w-16 text-white" />
+          </motion.div>
 
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mb-2 text-detective-3xl font-bold text-detective-text"
-            >
-              Logro Desbloqueado!
-            </motion.h2>
+          <motion.h2
+            id="achievement-unlock-title"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-2 text-detective-3xl font-bold text-detective-text"
+          >
+            Logro Desbloqueado!
+          </motion.h2>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-detective-xl font-semibold text-detective-orange"
-            >
-              {achievement.title}
-            </motion.p>
-          </div>
-
-          {/* Description */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="mb-6 text-center text-detective-text-secondary"
+            transition={{ delay: 0.3 }}
+            className="text-detective-xl font-semibold text-detective-orange"
           >
-            {achievement.description}
+            {achievement.title}
           </motion.p>
+        </div>
 
-          {/* Rewards */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mb-6 flex justify-center gap-8 rounded-detective bg-detective-bg p-4"
-          >
-            <div className="text-center">
-              <Coins className="mx-auto mb-2 h-8 w-8 text-detective-gold" />
-              <p className="text-detective-2xl font-bold text-detective-text">
-                +{achievement.mlCoinsReward}
-              </p>
-              <p className="text-detective-sm text-detective-text-secondary">ML Coins</p>
-            </div>
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mb-6 text-center text-detective-text-secondary"
+        >
+          {achievement.description}
+        </motion.p>
 
-            <div className="text-center">
-              <Zap className="mx-auto mb-2 h-8 w-8 text-detective-orange" />
-              <p className="text-detective-2xl font-bold text-detective-text">
-                +{achievement.xpReward}
-              </p>
-              <p className="text-detective-sm text-detective-text-secondary">XP</p>
-            </div>
-          </motion.div>
+        {/* Rewards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mb-6 flex justify-center gap-8 rounded-detective bg-detective-bg p-4"
+        >
+          <div className="text-center">
+            <Coins className="mx-auto mb-2 h-8 w-8 text-detective-gold" />
+            <p className="text-detective-2xl font-bold text-detective-text">
+              +{achievement.mlCoinsReward}
+            </p>
+            <p className="text-detective-sm text-detective-text-secondary">ML Coins</p>
+          </div>
 
-          {/* Actions */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="flex gap-3"
-          >
-            <button
-              onClick={onClose}
-              className="flex-1 rounded-detective bg-detective-orange py-3 font-semibold text-white transition-colors hover:bg-detective-orange-dark"
-            >
-              Continuar
-            </button>
-          </motion.div>
+          <div className="text-center">
+            <Zap className="mx-auto mb-2 h-8 w-8 text-detective-orange" />
+            <p className="text-detective-2xl font-bold text-detective-text">
+              +{achievement.xpReward}
+            </p>
+            <p className="text-detective-sm text-detective-text-secondary">XP</p>
+          </div>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+
+        {/* Actions */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="flex gap-3"
+        >
+          <button
+            onClick={onClose}
+            className="flex-1 rounded-detective bg-detective-orange py-3 font-semibold text-white transition-colors hover:bg-detective-orange-dark"
+          >
+            Continuar
+          </button>
+        </motion.div>
+      </div>
+    </Modal>
   );
 };

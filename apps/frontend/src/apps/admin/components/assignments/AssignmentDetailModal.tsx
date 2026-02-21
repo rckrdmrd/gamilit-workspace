@@ -12,8 +12,9 @@
 
 import { Users, Calendar, BookOpen, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
 import { useAssignmentDetail } from '../../hooks/useAdminAssignments';
-import type { AdminAssignment } from '../../hooks/useAdminAssignments';
+import type { AdminAssignment, AssignmentSubmission } from '../../hooks/useAdminAssignments';
 
 interface AssignmentDetailModalProps {
   assignment: AdminAssignment | null;
@@ -72,6 +73,44 @@ export function AssignmentDetailModal({ assignment, isOpen, onClose }: Assignmen
     }
     return `${minutes}m`;
   };
+
+  const submissionColumns: Column<AssignmentSubmission>[] = [
+    {
+      key: 'student_name',
+      label: 'Estudiante',
+    },
+    {
+      key: 'status',
+      label: 'Estado',
+      render: (row) => getSubmissionStatusBadge(row.status),
+    },
+    {
+      key: 'submitted_at',
+      label: 'Fecha de Entrega',
+      render: (row) => (
+        <span className="text-detective-text-secondary">
+          {row.submitted_at ? formatDate(row.submitted_at) : 'No entregada'}
+        </span>
+      ),
+    },
+    {
+      key: 'grade',
+      label: 'Calificaci\u00f3n',
+      render: (row) =>
+        row.grade !== null ? (
+          <span className="font-medium text-detective-text">{row.grade}</span>
+        ) : (
+          <span className="text-detective-text-secondary">-</span>
+        ),
+    },
+    {
+      key: 'graded_by',
+      label: 'Calificado Por',
+      render: (row) => (
+        <span className="text-detective-text-secondary">{row.graded_by || '-'}</span>
+      ),
+    },
+  ];
 
   return (
     <Modal
@@ -213,58 +252,14 @@ export function AssignmentDetailModal({ assignment, isOpen, onClose }: Assignmen
                 <h3 className="mb-3 text-lg font-semibold text-detective-text">
                   Entregas de Estudiantes ({detail.submissions.length})
                 </h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gray-700">
-                        <th className="px-4 py-2 text-left text-sm font-medium text-detective-text-secondary">
-                          Estudiante
-                        </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-detective-text-secondary">
-                          Estado
-                        </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-detective-text-secondary">
-                          Fecha de Entrega
-                        </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-detective-text-secondary">
-                          Calificación
-                        </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-detective-text-secondary">
-                          Calificado Por
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detail.submissions.map((submission) => (
-                        <tr key={submission.student_id} className="border-b border-gray-700">
-                          <td className="px-4 py-2 text-sm text-detective-text">
-                            {submission.student_name}
-                          </td>
-                          <td className="px-4 py-2">
-                            {getSubmissionStatusBadge(submission.status)}
-                          </td>
-                          <td className="px-4 py-2 text-sm text-detective-text-secondary">
-                            {submission.submitted_at
-                              ? formatDate(submission.submitted_at)
-                              : 'No entregada'}
-                          </td>
-                          <td className="px-4 py-2 text-sm">
-                            {submission.grade !== null ? (
-                              <span className="font-medium text-detective-text">
-                                {submission.grade}
-                              </span>
-                            ) : (
-                              <span className="text-detective-text-secondary">-</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-2 text-sm text-detective-text-secondary">
-                            {submission.graded_by || '-'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <DataTable<AssignmentSubmission>
+                  columns={submissionColumns}
+                  data={detail.submissions}
+                  variant="detective"
+                  rowKey={(row) => row.student_id}
+                  striped={false}
+                  emptyMessage="No hay entregas registradas"
+                />
               </div>
             </div>
           ) : (

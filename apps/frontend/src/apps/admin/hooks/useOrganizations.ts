@@ -4,24 +4,35 @@
  * Comprehensive hook for managing organizations with CRUD operations,
  * feature flags, subscription management, and user listing.
  *
- * Features:
- * - List, create, update, delete organizations
- * - Feature flag management per organization
- * - Subscription management
- * - User listing per organization
- * - Pagination and filtering
- * - Error handling and loading states
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
  *
  * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
- * - Now uses adminAPI methods instead of direct apiClient calls
+ * Updated: 2026-02-20 - Migrated to React Query
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as adminAPI from '@/services/api/adminAPI';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type { Organization, OrganizationUser, PaginatedResponse } from '../types';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const organizationsKeys = {
+  all: ['admin', 'organizations'] as const,
+  list: (page: number, pageSize: number) =>
+    ['admin', 'organizations', 'list', { page, pageSize }] as const,
+  detail: (id: string) => ['admin', 'organizations', 'detail', id] as const,
+  users: (id: string) => ['admin', 'organizations', 'users', id] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseOrganizationsResult {
   // Data
@@ -63,7 +74,7 @@ export interface UseOrganizationsResult {
 
 export interface CreateOrganizationData {
   name: string;
-  slug?: string; // CORR-P0: Add slug support for organization creation
+  slug?: string;
   plan: 'free' | 'basic' | 'professional' | 'enterprise';
   features?: string[];
 }
@@ -80,286 +91,220 @@ export interface SubscriptionData {
   autoRenew: boolean;
 }
 
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Map API org to frontend Organization format
+ */
+interface BackendOrganization {
+  id?: string;
+  name?: string;
+  features?: string[];
+  tier?: string;
+  plan?: string;
+  users?: number;
+  userCount?: number;
+  status?: string;
+  is_active?: boolean;
+  created_at?: string;
+  createdAt?: string;
+  [key: string]: unknown;
+}
+
+function mapOrganization(org: unknown): Organization {
+  const o = org as BackendOrganization;
+  return {
+    ...(o as Record<string, unknown>),
+    features: Array.isArray(o.features) ? o.features : [],
+    plan: o.tier || o.plan || 'free',
+    userCount: o.users ?? o.userCount ?? 0,
+    status: o.status || (o.is_active !== false ? 'active' : 'inactive'),
+    createdAt: o.created_at || o.createdAt || new Date().toISOString(),
+  } as Organization;
+}
+
+// ============================================================================
+// Hook
+// ============================================================================
+
 export function useOrganizations(): UseOrganizationsResult {
-  // State management
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const queryClient = useQueryClient();
+
+  // Client-side state
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   const [organizationUsers, setOrganizationUsers] = useState<OrganizationUser[]>([]);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // ============================================================================
-  // API CALLS - CRUD OPERATIONS
+  // QUERIES
   // ============================================================================
 
-  /**
-   * Fetch organizations with pagination
-   * Updated: Now uses adminAPI.getOrganizations()
-   * Fixed: Uses items/pagination structure from PaginatedResponse
-   * BUG-ADMIN-006: Added runtime validation for response structure
-   */
+  const orgsQuery = useQuery({
+    queryKey: organizationsKeys.list(page, pageSize),
+    queryFn: async () => {
+      const response = await adminAPI.getOrganizations({
+        page,
+        limit: pageSize,
+      });
+
+      if (!response || !Array.isArray(response.items) || !response.pagination) {
+        console.error('Invalid organizations response structure:', response);
+        return { items: [] as Organization[], total: 0 };
+      }
+
+      const validatedOrgs = response.items.map(mapOrganization);
+      return { items: validatedOrgs, total: response.pagination.totalItems };
+    },
+    staleTime: STALE_TIMES.SEMI_STATIC,
+  });
+
+  // ============================================================================
+  // MUTATIONS
+  // ============================================================================
+
+  const createMutation = useMutation({
+    mutationFn: async (data: CreateOrganizationData) => {
+      const payload: Record<string, unknown> = {
+        name: data.name,
+        subscription_tier: data.plan,
+        ...(data.slug && { slug: data.slug }),
+        ...(data.features && { features: data.features }),
+      };
+      const newOrg = await adminAPI.createOrganization(payload);
+      return mapOrganization(newOrg);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationsKeys.all });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateOrganizationData }) => {
+      const updatedOrg = await adminAPI.updateOrganization(id, data);
+      return mapOrganization(updatedOrg);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationsKeys.all });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await adminAPI.deleteOrganization(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationsKeys.all });
+    },
+  });
+
+  const updateFeatureFlagsMutation = useMutation({
+    mutationFn: async ({ id, features }: { id: string; features: string[] }) => {
+      const updatedOrg = await adminAPI.updateOrganizationFeatures(id, features);
+      return mapOrganization(updatedOrg);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationsKeys.all });
+    },
+  });
+
+  const updateSubscriptionMutation = useMutation({
+    mutationFn: async ({ id, subscription }: { id: string; subscription: SubscriptionData }) => {
+      const response = await apiClient.patch<{ success: boolean; data: Organization }>(
+        API_ENDPOINTS.admin.organizationSubscription(id),
+        subscription,
+      );
+      const apiOrg = response.data.success
+        ? response.data.data
+        : (response.data as unknown as Organization);
+      return mapOrganization(apiOrg);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: organizationsKeys.all });
+    },
+  });
+
+  // ============================================================================
+  // DERIVED DATA
+  // ============================================================================
+
+  const organizations = orgsQuery.data?.items ?? [];
+  const total = orgsQuery.data?.total ?? 0;
+  const loading =
+    orgsQuery.isLoading ||
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending ||
+    updateFeatureFlagsMutation.isPending ||
+    updateSubscriptionMutation.isPending;
+
+  const error =
+    orgsQuery.error instanceof Error ? orgsQuery.error.message :
+    createMutation.error instanceof Error ? createMutation.error.message :
+    updateMutation.error instanceof Error ? updateMutation.error.message :
+    deleteMutation.error instanceof Error ? deleteMutation.error.message :
+    null;
+
+  // ============================================================================
+  // ACTION HANDLERS (backward-compatible)
+  // ============================================================================
+
   const fetchOrganizations = useCallback(
     async (newPage?: number, newPageSize?: number): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await adminAPI.getOrganizations({
-          page: newPage || page,
-          limit: newPageSize || pageSize,
-        });
-
-        // BUG-ADMIN-006: Validate response structure in runtime
-        if (!response || !Array.isArray(response.items) || !response.pagination) {
-          console.error('Invalid organizations response structure:', response);
-          setError('Estructura de respuesta inválida del servidor');
-          setOrganizations([]);
-          setTotal(0);
-          return;
-        }
-
-        // BUG-ADMIN-007: Ensure features array exists in each org
-        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        // CORR-P0: Map is_active → status
-        const validatedOrgs = response.items.map((org: any) => ({
-          ...org,
-          features: Array.isArray(org.features) ? org.features : [],
-          plan: org.tier || org.plan || 'free',
-          userCount: org.users ?? org.userCount ?? 0,
-          status: org.status || (org.is_active !== false ? 'active' : 'inactive'),
-          createdAt: org.created_at || org.createdAt || new Date().toISOString(),
-        }));
-
-        setOrganizations(validatedOrgs);
-        setTotal(response.pagination.totalItems);
-        if (newPage) setPage(newPage);
-        if (newPageSize) setPageSize(newPageSize);
-      } catch (err) {
-        console.error('Failed to fetch organizations:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch organizations');
-        setOrganizations([]);
-      } finally {
-        setLoading(false);
-      }
+      if (newPage) setPage(newPage);
+      if (newPageSize) setPageSize(newPageSize);
+      await orgsQuery.refetch();
     },
-    [page, pageSize],
+    [orgsQuery],
   );
 
-  /**
-   * Get single organization by ID
-   * Updated: Now uses adminAPI.getOrganization()
-   * BUG-ADMIN-007: Added validation for features array
-   */
   const getOrganization = useCallback(async (id: string): Promise<Organization> => {
-    setLoading(true);
-    setError(null);
-    try {
-      // Cast to any to access both camelCase and snake_case properties from backend
-      const org = (await adminAPI.getOrganization(id)) as any;
-
-      // BUG-ADMIN-007: Ensure features array exists
-      // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-      // CORR-P0: Map is_active → status
-      const validatedOrg: Organization = {
-        ...org,
-        features: Array.isArray(org.features) ? org.features : [],
-        plan: org.tier || org.plan || 'free',
-        userCount: org.users ?? org.userCount ?? 0,
-        status: org.status || (org.is_active !== false ? 'active' : 'inactive'),
-        createdAt: org.created_at || org.createdAt || new Date().toISOString(),
-      };
-
-      return validatedOrg;
-    } catch (err) {
-      console.error('Failed to fetch organization:', err);
-      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch organization';
-      setError(errorMsg);
-      throw new Error(errorMsg);
-    } finally {
-      setLoading(false);
-    }
+    const org = await adminAPI.getOrganization(id);
+    return mapOrganization(org);
   }, []);
 
-  /**
-   * Create new organization
-   * Updated: Now uses adminAPI.createOrganization()
-   */
   const createOrganization = useCallback(
     async (data: CreateOrganizationData): Promise<Organization> => {
-      setLoading(true);
-      setError(null);
-      try {
-        // CORR-P0: Ensure slug is passed if needed, transform to backend format
-        const payload: any = {
-          name: data.name,
-          subscription_tier: data.plan, // Backend expects subscription_tier
-          ...(data.slug && { slug: data.slug }),
-          ...(data.features && { features: data.features }),
-        };
-
-        // Cast to any to access both camelCase and snake_case properties from backend
-        const newOrg = (await adminAPI.createOrganization(payload)) as any;
-
-        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        // CORR-P0: Map is_active → status
-        const mappedOrg: Organization = {
-          ...newOrg,
-          features: Array.isArray(newOrg.features) ? newOrg.features : [],
-          plan: newOrg.tier || newOrg.plan || 'free',
-          userCount: newOrg.users ?? newOrg.userCount ?? 0,
-          status: newOrg.status || (newOrg.is_active !== false ? 'active' : 'inactive'),
-          createdAt: newOrg.created_at || newOrg.createdAt || new Date().toISOString(),
-        };
-
-        // Refresh list
-        await fetchOrganizations();
-
-        return mappedOrg;
-      } catch (err) {
-        console.error('Failed to create organization:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to create organization';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
+      return createMutation.mutateAsync(data);
     },
-    [fetchOrganizations],
+    [createMutation],
   );
 
-  /**
-   * Update organization
-   * Updated: Now uses adminAPI.updateOrganization()
-   */
   const updateOrganization = useCallback(
     async (id: string, data: UpdateOrganizationData): Promise<Organization> => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Cast to any to access both camelCase and snake_case properties from backend
-        const updatedOrg = (await adminAPI.updateOrganization(id, data)) as any;
-
-        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        // CORR-P0: Map is_active → status
-        const mappedOrg: Organization = {
-          ...updatedOrg,
-          features: Array.isArray(updatedOrg.features) ? updatedOrg.features : [],
-          plan: updatedOrg.tier || updatedOrg.plan || 'free',
-          userCount: updatedOrg.users ?? updatedOrg.userCount ?? 0,
-          status: updatedOrg.status || (updatedOrg.is_active !== false ? 'active' : 'inactive'),
-          createdAt: updatedOrg.created_at || updatedOrg.createdAt || new Date().toISOString(),
-        };
-
-        // Update local state
-        setOrganizations((prev) => prev.map((org) => (org.id === id ? mappedOrg : org)));
-
-        // Update selected if it's the one being updated
-        if (selectedOrganization?.id === id) {
-          setSelectedOrganization(mappedOrg);
-        }
-
-        return mappedOrg;
-      } catch (err) {
-        console.error('Failed to update organization:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to update organization';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
+      const result = await updateMutation.mutateAsync({ id, data });
+      if (selectedOrganization?.id === id) {
+        setSelectedOrganization(result);
       }
+      return result;
     },
-    [selectedOrganization],
+    [updateMutation, selectedOrganization],
   );
 
-  /**
-   * Delete organization
-   * Updated: Now uses adminAPI.deleteOrganization()
-   */
   const deleteOrganization = useCallback(
     async (id: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await adminAPI.deleteOrganization(id);
-
-        // Remove from local state
-        setOrganizations((prev) => prev.filter((org) => org.id !== id));
-
-        // Clear selection if it's the deleted one
-        if (selectedOrganization?.id === id) {
-          setSelectedOrganization(null);
-        }
-
-        // Refresh list
-        await fetchOrganizations();
-      } catch (err) {
-        console.error('Failed to delete organization:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to delete organization';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
+      await deleteMutation.mutateAsync(id);
+      if (selectedOrganization?.id === id) {
+        setSelectedOrganization(null);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedOrganization],
+    [deleteMutation, selectedOrganization],
   );
 
-  // ============================================================================
-  // API CALLS - FEATURE MANAGEMENT
-  // ============================================================================
-
-  /**
-   * Update feature flags for organization
-   * Updated: Now uses adminAPI.updateOrganizationFeatures()
-   */
   const updateFeatureFlags = useCallback(
     async (id: string, features: string[]): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Cast to any to access both camelCase and snake_case properties from backend
-        const updatedOrg = (await adminAPI.updateOrganizationFeatures(id, features)) as any;
-
-        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        // CORR-P0: Map is_active → status
-        const mappedOrg: Organization = {
-          ...updatedOrg,
-          features: Array.isArray(updatedOrg.features) ? updatedOrg.features : [],
-          plan: updatedOrg.tier || updatedOrg.plan || 'free',
-          userCount: updatedOrg.users ?? updatedOrg.userCount ?? 0,
-          status: updatedOrg.status || (updatedOrg.is_active !== false ? 'active' : 'inactive'),
-          createdAt: updatedOrg.created_at || updatedOrg.createdAt || new Date().toISOString(),
-        };
-
-        // Update local state
-        setOrganizations((prev) => prev.map((org) => (org.id === id ? mappedOrg : org)));
-
-        // Update selected if it's the one being updated
-        if (selectedOrganization?.id === id) {
-          setSelectedOrganization(mappedOrg);
-        }
-      } catch (err) {
-        console.error('Failed to update feature flags:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to update feature flags';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
+      const result = await updateFeatureFlagsMutation.mutateAsync({ id, features });
+      if (selectedOrganization?.id === id) {
+        setSelectedOrganization(result);
       }
     },
-    [selectedOrganization],
+    [updateFeatureFlagsMutation, selectedOrganization],
   );
 
-  /**
-   * Toggle a single feature flag
-   * BUG-ADMIN-006: Added input validation
-   */
   const toggleFeature = useCallback(
     async (id: string, feature: string): Promise<void> => {
-      // BUG-ADMIN-006: Validate inputs
       if (!id || !feature) {
         console.error('[useOrganizations] Invalid toggleFeature params:', { id, feature });
         throw new Error('ID y feature son requeridos');
@@ -371,7 +316,6 @@ export function useOrganizations(): UseOrganizationsResult {
         throw new Error('Organization not found');
       }
 
-      // BUG-ADMIN-007: Safe access to features with Array validation
       const currentFeatures = Array.isArray(org.features) ? org.features : [];
       const newFeatures = currentFeatures.includes(feature)
         ? currentFeatures.filter((f) => f !== feature)
@@ -382,69 +326,18 @@ export function useOrganizations(): UseOrganizationsResult {
     [organizations, updateFeatureFlags],
   );
 
-  // ============================================================================
-  // API CALLS - SUBSCRIPTION MANAGEMENT
-  // ============================================================================
-
-  /**
-   * Update organization subscription
-   */
   const updateSubscription = useCallback(
     async (id: string, subscription: SubscriptionData): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await apiClient.patch<{ success: boolean; data: Organization }>(
-          API_ENDPOINTS.admin.organizationSubscription(id),
-          subscription,
-        );
-        // Cast to any to access both camelCase and snake_case properties from backend
-        const apiOrg: any = response.data.success
-          ? response.data.data
-          : (response.data as unknown as Organization);
-
-        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        // CORR-P0: Map is_active → status
-        const updatedOrg: Organization = {
-          ...apiOrg,
-          features: Array.isArray(apiOrg.features) ? apiOrg.features : [],
-          plan: apiOrg.tier || apiOrg.plan || 'free',
-          userCount: apiOrg.users ?? apiOrg.userCount ?? 0,
-          status: apiOrg.status || (apiOrg.is_active !== false ? 'active' : 'inactive'),
-          createdAt: apiOrg.created_at || apiOrg.createdAt || new Date().toISOString(),
-        };
-
-        // Update local state
-        setOrganizations((prev) => prev.map((org) => (org.id === id ? updatedOrg : org)));
-
-        // Update selected if it's the one being updated
-        if (selectedOrganization?.id === id) {
-          setSelectedOrganization(updatedOrg);
-        }
-      } catch (err) {
-        console.error('Failed to update subscription:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to update subscription';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
+      const result = await updateSubscriptionMutation.mutateAsync({ id, subscription });
+      if (selectedOrganization?.id === id) {
+        setSelectedOrganization(result);
       }
     },
-    [selectedOrganization],
+    [updateSubscriptionMutation, selectedOrganization],
   );
 
-  // ============================================================================
-  // API CALLS - USER MANAGEMENT
-  // ============================================================================
-
-  /**
-   * Fetch users for an organization
-   * BUG-ADMIN-006: Added defensive validation for response structure
-   */
   const fetchOrganizationUsers = useCallback(
     async (id: string, userPage?: number, userPageSize?: number): Promise<void> => {
-      setLoading(true);
-      setError(null);
       try {
         const response = await apiClient.get<{
           success: boolean;
@@ -460,7 +353,6 @@ export function useOrganizations(): UseOrganizationsResult {
           ? response.data.data
           : (response.data as unknown as PaginatedResponse<OrganizationUser>);
 
-        // BUG-ADMIN-006: Validate response structure
         if (!data || !Array.isArray(data.data)) {
           console.warn('[useOrganizations] Invalid organization users response:', data);
           setOrganizationUsers([]);
@@ -470,22 +362,12 @@ export function useOrganizations(): UseOrganizationsResult {
         setOrganizationUsers(data.data);
       } catch (err) {
         console.error('Failed to fetch organization users:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch organization users');
         setOrganizationUsers([]);
-      } finally {
-        setLoading(false);
       }
     },
     [],
   );
 
-  // ============================================================================
-  // SELECTION
-  // ============================================================================
-
-  /**
-   * Select an organization for detailed view
-   */
   const selectOrganization = useCallback(
     async (id: string | null): Promise<void> => {
       if (id === null) {
@@ -497,8 +379,6 @@ export function useOrganizations(): UseOrganizationsResult {
       try {
         const org = await getOrganization(id);
         setSelectedOrganization(org);
-
-        // Also fetch users for this organization
         await fetchOrganizationUsers(id);
       } catch (err) {
         console.error('Failed to select organization:', err);
@@ -506,18 +386,6 @@ export function useOrganizations(): UseOrganizationsResult {
     },
     [getOrganization, fetchOrganizationUsers],
   );
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
-
-  /**
-   * Initial data fetch
-   */
-  useEffect(() => {
-    fetchOrganizations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // ============================================================================
   // RETURN

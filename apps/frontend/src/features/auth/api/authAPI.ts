@@ -4,8 +4,6 @@
  * API client for authentication endpoints including login, register,
  * logout, token refresh, password recovery, and email verification.
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
@@ -29,7 +27,22 @@ import type { ApiResponse } from '@/services/api/apiTypes';
  * Map backend user response to frontend User type
  * Now matches backend structure exactly - no transformation needed
  */
-const mapBackendUserToFrontend = (backendUser: any): User => {
+interface BackendUser {
+  id: string;
+  email: string;
+  role: string;
+  first_name?: string;
+  firstName?: string;
+  last_name?: string;
+  lastName?: string;
+  display_name?: string;
+  displayName?: string;
+  avatar_url?: string;
+  equipped_items?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+const mapBackendUserToFrontend = (backendUser: BackendUser): User => {
   return {
     // Spread all backend fields first (snake_case pass-through)
     ...backendUser,
@@ -51,17 +64,18 @@ const mapBackendUserToFrontend = (backendUser: any): User => {
  * Map backend auth response to frontend AuthResponse
  * Backend returns 'accessToken' but frontend expects 'token'
  */
-const mapBackendAuthResponse = (backendResponse: any): AuthResponse => {
-  console.log('🔄 [authAPI] Mapping backend response:', {
-    hasAccessToken: !!backendResponse.accessToken,
-    hasToken: !!backendResponse.token,
-    hasRefreshToken: !!backendResponse.refreshToken,
-    hasUser: !!backendResponse.user,
-  });
+interface BackendAuthResponse {
+  accessToken?: string;
+  token?: string;
+  refreshToken?: string;
+  expiresIn: string;
+  user: BackendUser;
+}
 
+const mapBackendAuthResponse = (backendResponse: BackendAuthResponse): AuthResponse => {
   return {
     user: mapBackendUserToFrontend(backendResponse.user),
-    token: backendResponse.accessToken || backendResponse.token, // Backend uses 'accessToken'
+    token: backendResponse.accessToken || backendResponse.token || '', // Backend uses 'accessToken'
     refreshToken: backendResponse.refreshToken,
     expiresIn: backendResponse.expiresIn,
   };
@@ -151,14 +165,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     }
 
     // Real API call
-    const response = await apiClient.post<any>(API_ENDPOINTS.auth.login, credentials);
-
-    console.log('✅ [authAPI] Login response received:', {
-      hasData: !!response.data,
-      dataKeys: response.data ? Object.keys(response.data) : [],
-      hasUser: !!response.data?.user,
-      hasAccessToken: !!response.data?.accessToken,
-    });
+    const response = await apiClient.post<BackendAuthResponse>(API_ENDPOINTS.auth.login, credentials);
 
     // Backend returns data directly, not wrapped in { data: {...} }
     return mapBackendAuthResponse(response.data);
@@ -182,7 +189,7 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
 
     // Map frontend register data to backend format
     // RegisterForm may send first_name/last_name directly or fullName to split
-    const regData = registerData as any;
+    const regData = registerData as RegisterData & { first_name?: string; last_name?: string; school_id?: string };
     let firstName = regData.first_name || '';
     let lastName = regData.last_name || '';
 
@@ -201,13 +208,7 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
     };
 
     // Real API call
-    const response = await apiClient.post<any>(API_ENDPOINTS.auth.register, backendRegisterData);
-
-    console.log('✅ [authAPI] Register response received:', {
-      hasData: !!response.data,
-      hasUser: !!response.data?.user,
-      hasAccessToken: !!response.data?.accessToken,
-    });
+    const response = await apiClient.post<BackendAuthResponse>(API_ENDPOINTS.auth.register, backendRegisterData);
 
     // Backend returns data directly, not wrapped in { data: {...} }
     return mapBackendAuthResponse(response.data);
@@ -380,7 +381,7 @@ export const getCurrentUser = async (): Promise<User> => {
 
     // Real API call - backend returns { success: true, data: { user: {...} } }
     // After apiClient interceptor unwraps { success, data }, response.data = inner data
-    const response = await apiClient.get<any>(API_ENDPOINTS.auth.getCurrentUser);
+    const response = await apiClient.get<{ user?: BackendUser } & BackendUser>(API_ENDPOINTS.auth.getCurrentUser);
 
     // After interceptor unwrap, response.data is the inner object (may have .user or be the user directly)
     const userData = response.data?.user || response.data;
@@ -416,7 +417,7 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     }
 
     // Map frontend updates to backend format
-    const backendUpdates: any = {};
+    const backendUpdates: Record<string, unknown> = {};
     if (updates.firstName) {
       backendUpdates.firstName = updates.firstName;
     }
@@ -428,7 +429,7 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     }
 
     // Real API call
-    const response = await apiClient.patch<ApiResponse<any>>(
+    const response = await apiClient.patch<ApiResponse<BackendUser>>(
       API_ENDPOINTS.auth.updateProfile,
       backendUpdates,
     );

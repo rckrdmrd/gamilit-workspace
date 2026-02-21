@@ -7,9 +7,11 @@
  * @version 1.0 (2025-01-13) - Initial implementation for FE-054
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
+import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
 
 // Device type icons
 const DEVICE_TYPE_ICONS: Record<string, string> = {
@@ -41,8 +43,12 @@ export const DeviceManagementSection: React.FC = () => {
   const [editedName, setEditedName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [message, setMessage] = useState('');
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; deviceId: string | null; deviceName: string }>({
+    open: false,
+    deviceId: null,
+    deviceName: '',
+  });
 
   // Load devices on mount
   useEffect(() => {
@@ -62,7 +68,6 @@ export const DeviceManagementSection: React.FC = () => {
   const handleStartEdit = (deviceId: string, currentName: string) => {
     setEditingDeviceId(deviceId);
     setEditedName(currentName || '');
-    setMessage('');
   };
 
   // Cancel editing
@@ -74,49 +79,48 @@ export const DeviceManagementSection: React.FC = () => {
   // Save edited device name
   const handleSaveEdit = async (deviceId: string) => {
     if (!editedName.trim()) {
-      setMessage('❌ El nombre no puede estar vacío');
+      toast.error('El nombre no puede estar vacío');
       return;
     }
 
     setIsUpdating(true);
-    setMessage('');
 
     try {
       await updateDeviceName(deviceId, editedName.trim());
       setEditingDeviceId(null);
       setEditedName('');
-      setMessage('✅ Nombre actualizado correctamente');
-      setTimeout(() => setMessage(''), 3000);
+      toast.success('Nombre actualizado correctamente');
     } catch (error) {
-      setMessage('❌ Error al actualizar el nombre');
+      toast.error('Error al actualizar el nombre');
       console.error('Error updating device name:', error);
     } finally {
       setIsUpdating(false);
     }
   };
 
-  // Delete device
-  const handleDeleteDevice = async (deviceId: string, deviceName: string) => {
-    const confirmed = window.confirm(
-      `¿Estás seguro de que quieres eliminar el dispositivo "${deviceName || 'Sin nombre'}"?\n\nDejarás de recibir notificaciones push en este dispositivo.`,
-    );
+  // Delete device — opens confirm dialog
+  const handleDeleteDevice = useCallback((deviceId: string, deviceName: string) => {
+    setDeleteConfirm({ open: true, deviceId, deviceName: deviceName || 'Sin nombre' });
+  }, []);
 
-    if (!confirmed) return;
+  // Confirmed delete
+  const handleConfirmDelete = useCallback(async () => {
+    const { deviceId } = deleteConfirm;
+    if (!deviceId) return;
 
+    setDeleteConfirm({ open: false, deviceId: null, deviceName: '' });
     setIsDeleting(deviceId);
-    setMessage('');
 
     try {
       await deleteDevice(deviceId);
-      setMessage('✅ Dispositivo eliminado correctamente');
-      setTimeout(() => setMessage(''), 3000);
+      toast.success('Dispositivo eliminado correctamente');
     } catch (error) {
-      setMessage('❌ Error al eliminar el dispositivo');
+      toast.error('Error al eliminar el dispositivo');
       console.error('Error deleting device:', error);
     } finally {
       setIsDeleting(null);
     }
-  };
+  }, [deleteConfirm, deleteDevice]);
 
   // Format last used date
   const formatLastUsed = (dateString?: string) => {
@@ -497,22 +501,17 @@ export const DeviceManagementSection: React.FC = () => {
         </div>
       )}
 
-      {/* Status Message */}
-      {message && (
-        <div
-          style={{
-            marginTop: '1rem',
-            padding: '1rem',
-            backgroundColor: message.includes('✅') ? '#e8f5e9' : '#ffebee',
-            color: message.includes('✅') ? '#2e7d32' : '#c62828',
-            borderRadius: '8px',
-            textAlign: 'center',
-            fontWeight: 'bold',
-          }}
-        >
-          {message}
-        </div>
-      )}
+      {/* Delete Device Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirm.open}
+        onClose={() => setDeleteConfirm({ open: false, deviceId: null, deviceName: '' })}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar dispositivo"
+        message={`¿Estás seguro de que quieres eliminar el dispositivo "${deleteConfirm.deviceName}"? Dejarás de recibir notificaciones push en este dispositivo.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
 
       {/* Info Footer */}
       <div

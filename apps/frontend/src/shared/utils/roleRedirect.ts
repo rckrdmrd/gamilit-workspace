@@ -32,19 +32,14 @@
  * ```
  */
 export const getRoleBasedRedirect = (role: string): string => {
-  console.log('[roleRedirect] Getting redirect for role:', role);
-
   switch (role) {
     case 'super_admin':
-      console.log('[roleRedirect] Redirecting to admin portal');
       return '/admin/dashboard';
 
     case 'admin_teacher':
-      console.log('[roleRedirect] Redirecting to teacher portal');
       return '/teacher/dashboard';
 
     case 'student':
-      console.log('[roleRedirect] Redirecting to student portal');
       return '/dashboard';
 
     default:

@@ -51,8 +51,9 @@ export class TeacherReportsService {
     }
 
     return this.dataSource.transaction(async (manager) => {
-      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
-      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+      // MED-06 FIX: Use set_config() with parameterized query instead of string interpolation
+      // set_config(name, value, is_local) with is_local=true is equivalent to SET LOCAL
+      await manager.query(`SELECT set_config('app.current_user_id', $1, true)`, [teacherId]);
 
       const reports = await manager.find(TeacherReport, {
         where: { teacherId },
@@ -81,8 +82,8 @@ export class TeacherReportsService {
     }
 
     return this.dataSource.transaction(async (manager) => {
-      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
-      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+      // MED-06 FIX: Use set_config() with parameterized query instead of string interpolation
+      await manager.query(`SELECT set_config('app.current_user_id', $1, true)`, [teacherId]);
 
       // Get all reports for the teacher
       const reports = await manager.find(TeacherReport, {
@@ -158,8 +159,8 @@ export class TeacherReportsService {
     }
 
     return this.dataSource.transaction(async (manager) => {
-      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
-      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+      // MED-06 FIX: Use set_config() with parameterized query instead of string interpolation
+      await manager.query(`SELECT set_config('app.current_user_id', $1, true)`, [teacherId]);
 
       const report = await manager.findOne(TeacherReport, {
         where: { id: reportId },
@@ -226,8 +227,8 @@ export class TeacherReportsService {
     }
 
     await this.dataSource.transaction(async (manager) => {
-      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
-      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+      // MED-06 FIX: Use set_config() with parameterized query instead of string interpolation
+      await manager.query(`SELECT set_config('app.current_user_id', $1, true)`, [teacherId]);
 
       const report = await manager.findOne(TeacherReport, {
         where: { id: reportId },

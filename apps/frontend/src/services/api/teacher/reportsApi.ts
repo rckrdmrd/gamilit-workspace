@@ -11,6 +11,7 @@
  */
 
 import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES
@@ -32,7 +33,8 @@ export type ReportType =
   | 'system'
   | 'student_insights'
   | 'classroom_summary'
-  | 'risk_analysis';
+  | 'risk_analysis'
+  | 'custom';
 
 /**
  * DTO for generating a new report
@@ -40,10 +42,14 @@ export type ReportType =
 export interface GenerateReportDto {
   type: ReportType;
   format: ReportFormat;
+  title?: string;
   classroom_id?: string;
   student_ids?: string[];
+  module_ids?: string[];
   start_date?: string;
   end_date?: string;
+  include_charts?: boolean;
+  include_recommendations?: boolean;
 }
 
 /**
@@ -295,6 +301,53 @@ export async function deleteReport(reportId: string): Promise<void> {
   }
 }
 
+/**
+ * Report status response
+ *
+ * AUDIT-C4-DUP4: Moved from analyticsApi.ts to reportsApi.ts
+ * Report status logically belongs with other report functions.
+ */
+export interface ReportStatusResponse {
+  id: string;
+  type: string;
+  title: string;
+  status: 'generating' | 'completed' | 'failed';
+  file_url?: string;
+  created_at: string;
+  expires_at: string;
+}
+
+/**
+ * Get report generation status
+ *
+ * AUDIT-C4-DUP4: Moved from analyticsApi — report status logically belongs here.
+ * Checks the status of a previously generated report.
+ * Useful for polling when report generation is asynchronous.
+ *
+ * @param reportId - ID of the report
+ * @returns Promise<ReportStatusResponse> Report metadata with current status
+ * @throws Error if request fails
+ *
+ * @example
+ * ```typescript
+ * const status = await reportsApi.getReportStatus('report-uuid');
+ * if (status.status === 'completed') {
+ *   console.log(`Report ready: ${status.file_url}`);
+ * }
+ * ```
+ */
+export async function getReportStatus(reportId: string): Promise<ReportStatusResponse> {
+  try {
+    const { data } = await apiClient.get<ReportStatusResponse>(
+      `${API_ENDPOINTS.teacher.reports.list}/${reportId}/status`,
+    );
+    return data;
+  } catch (error) {
+    console.error('[ReportsAPI] Error fetching report status:', error);
+    throw error;
+  }
+}
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
@@ -309,6 +362,7 @@ export async function deleteReport(reportId: string): Promise<void> {
  * const result = await reportsApi.generateReport({ type: 'student_insights', format: 'pdf' });
  * const recent = await reportsApi.getRecentReports();
  * const stats = await reportsApi.getReportStats();
+ * const status = await reportsApi.getReportStatus('report-uuid');
  * ```
  */
 export const reportsApi = {
@@ -317,6 +371,7 @@ export const reportsApi = {
   getReportStats,
   downloadReport,
   deleteReport, // TASK-2026-01-18-015 Sprint 4.2
+  getReportStatus, // AUDIT-C4-DUP4: Moved from analyticsApi
 };
 
 export default reportsApi;

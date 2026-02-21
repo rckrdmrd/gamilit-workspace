@@ -83,6 +83,18 @@ export class BrandingService {
     }
   }
 
+  /** Validate tenantId format and resolve safe directory path */
+  private resolveTenantDir(tenantId: string): string {
+    if (!/^[0-9a-f-]{36}$/i.test(tenantId)) {
+      throw new BadRequestException('Invalid tenant ID format');
+    }
+    const tenantDir = path.resolve(this.uploadBasePath, tenantId);
+    if (!tenantDir.startsWith(path.resolve(this.uploadBasePath))) {
+      throw new BadRequestException('Invalid path');
+    }
+    return tenantDir;
+  }
+
   /**
    * Get branding configuration for a tenant
    *
@@ -193,6 +205,7 @@ export class BrandingService {
    * @param file - Uploaded file (Multer)
    * @returns URL of the uploaded logo (medium size)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
   async uploadLogo(tenantId: string, file: any): Promise<string> {
     // Validate tenant
     const tenant = await this.tenantRepo.findOne({ where: { id: tenantId } });
@@ -222,8 +235,8 @@ export class BrandingService {
       LOGO_SIZES,
     );
 
-    // Save files
-    const tenantDir = path.join(this.uploadBasePath, tenantId);
+    // Save files (path-traversal safe)
+    const tenantDir = this.resolveTenantDir(tenantId);
     await fs.mkdir(tenantDir, { recursive: true });
 
     const logoUrls: LogoSizesDto = {};
@@ -257,6 +270,7 @@ export class BrandingService {
    * @param file - Uploaded file (Multer)
    * @returns URL of the uploaded favicon
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
   async uploadFavicon(tenantId: string, file: any): Promise<string> {
     // Validate tenant
     const tenant = await this.tenantRepo.findOne({ where: { id: tenantId } });
@@ -286,8 +300,8 @@ export class BrandingService {
       FAVICON_SIZES,
     );
 
-    // Save files
-    const tenantDir = path.join(this.uploadBasePath, tenantId);
+    // Save files (path-traversal safe)
+    const tenantDir = this.resolveTenantDir(tenantId);
     await fs.mkdir(tenantDir, { recursive: true });
 
     // Save the ico-sized version as main favicon

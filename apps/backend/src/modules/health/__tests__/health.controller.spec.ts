@@ -3,6 +3,7 @@ import { HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { HealthController } from '../health.controller';
 import { HealthService } from '../health.service';
+import { MetricsService } from '../metrics.service';
 import { HealthStatus } from '../dto/health-check.dto';
 
 describe('HealthController', () => {
@@ -29,7 +30,7 @@ describe('HealthController', () => {
         responseTime: 42,
         message: 'All critical tables exist',
         details: {
-          totalChecked: 9,
+          totalChecked: 8,
           allPresent: true,
         },
       },
@@ -56,7 +57,7 @@ describe('HealthController', () => {
         responseTime: 42,
         message: 'All critical tables exist',
         details: {
-          totalChecked: 9,
+          totalChecked: 8,
           allPresent: true,
         },
       },
@@ -84,7 +85,7 @@ describe('HealthController', () => {
         responseTime: 85,
         message: '2 critical table(s) missing',
         details: {
-          totalChecked: 9,
+          totalChecked: 8,
           missingCount: 2,
           missing: ['auth_management.users', 'educational_content.modules'],
         },
@@ -98,12 +99,24 @@ describe('HealthController', () => {
       checkHealth: jest.fn(),
     };
 
+    const mockMetricsService = {
+      incrementCounter: jest.fn(),
+      observeHistogram: jest.fn(),
+      setGauge: jest.fn(),
+      getMetrics: jest.fn().mockReturnValue({}),
+      getPrometheusMetrics: jest.fn().mockReturnValue(''),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HealthController],
       providers: [
         {
           provide: HealthService,
           useValue: mockHealthService,
+        },
+        {
+          provide: MetricsService,
+          useValue: mockMetricsService,
         },
       ],
     }).compile();

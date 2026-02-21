@@ -1,7 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from 'react';
+/**
+ * useAdminData Hooks
+ *
+ * Provides user activity tracking, error tracking, and CSV export utilities
+ * for the admin portal.
+ *
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
+ *
+ * Original: 2025-11-19
+ * Updated: 2026-02-20 - Migrated to React Query
+ */
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 
 export interface UserActivity {
   id: string;
@@ -26,74 +39,97 @@ export interface ErrorLog {
   resolved: boolean;
 }
 
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const adminDataKeys = {
+  activity: (filters?: Record<string, string | undefined>) =>
+    ['admin', 'activity', filters] as const,
+  errors: (filters?: Record<string, string | boolean | undefined>) =>
+    ['admin', 'errors', filters] as const,
+};
+
+// ============================================================================
+// useUserActivity
+// ============================================================================
+
 export function useUserActivity(filters?: { role?: string; dateFrom?: string; action?: string }) {
-  const [activities, setActivities] = useState<UserActivity[]>([]);
-  const [onlineUsers, setOnlineUsers] = useState(0);
-  const [activeSessions, setActiveSessions] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const query = useQuery({
+    queryKey: adminDataKeys.activity(filters as Record<string, string | undefined>),
+    queryFn: async () => {
+      const params = new URLSearchParams(filters as Record<string, string>);
+      const response = await apiClient.get(`${API_ENDPOINTS.admin.activity}?${params}`);
+      const data = response.data.success ? response.data.data : response.data;
 
-  useEffect(() => {
-    const fetchActivity = async () => {
-      try {
-        const params = new URLSearchParams(filters as any);
-        const response = await apiClient.get(`${API_ENDPOINTS.admin.activity}?${params}`);
-        const data = response.data.success ? response.data.data : response.data;
+      return {
+        activities: (data.activities || []) as UserActivity[],
+        onlineUsers: (data.onlineUsers || 0) as number,
+        activeSessions: (data.activeSessions || 0) as number,
+      };
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: 30000, // Refresh every 30 seconds (replaces setInterval)
+  });
 
-        setActivities(data.activities || []);
-        setOnlineUsers(data.onlineUsers || 0);
-        setActiveSessions(data.activeSessions || 0);
-      } catch (err) {
-        console.error('Failed to fetch activity:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivity();
-    const interval = setInterval(fetchActivity, 30000); // Refresh every 30 seconds
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filters)]);
-
-  return { activities, onlineUsers, activeSessions, loading };
+  return {
+    activities: query.data?.activities ?? [],
+    onlineUsers: query.data?.onlineUsers ?? 0,
+    activeSessions: query.data?.activeSessions ?? 0,
+    loading: query.isLoading,
+  };
 }
+
+// ============================================================================
+// useErrorTracking
+// ============================================================================
 
 export function useErrorTracking(filters?: { severity?: string; resolved?: boolean }) {
-  const [errors, setErrors] = useState<ErrorLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchErrors = async () => {
-    try {
-      const params = new URLSearchParams(filters as any);
+  const query = useQuery({
+    queryKey: adminDataKeys.errors(filters as Record<string, string | boolean | undefined>),
+    queryFn: async () => {
+      const params = new URLSearchParams(filters as Record<string, string>);
       const response = await apiClient.get(`${API_ENDPOINTS.admin.errors.list}?${params}`);
       const data = response.data.success ? response.data.data : response.data;
-      setErrors(data.errors || []);
-    } catch (err) {
-      console.error('Failed to fetch errors:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return (data.errors || []) as ErrorLog[];
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
+
+  const resolveMutation = useMutation({
+    mutationFn: (errorId: string) =>
+      apiClient.patch(API_ENDPOINTS.admin.errors.resolve(errorId)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminDataKeys.errors(filters as Record<string, string | boolean | undefined>),
+      });
+    },
+  });
 
   const markAsResolved = async (errorId: string) => {
-    try {
-      await apiClient.patch(API_ENDPOINTS.admin.errors.resolve(errorId));
-      fetchErrors(); // Refresh list
-    } catch (err) {
-      console.error('Failed to mark error as resolved:', err);
-    }
+    await resolveMutation.mutateAsync(errorId);
   };
 
-  useEffect(() => {
-    fetchErrors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filters)]);
+  const refresh = async () => {
+    await query.refetch();
+  };
 
-  return { errors, loading, markAsResolved, refresh: fetchErrors };
+  return {
+    errors: query.data ?? [],
+    loading: query.isLoading,
+    markAsResolved,
+    refresh,
+  };
 }
 
+// ============================================================================
+// useExportData (no API calls - pure utility, unchanged)
+// ============================================================================
+
 export function useExportData() {
-  const exportToCSV = (data: any[], filename: string) => {
+  const exportToCSV = (data: Record<string, unknown>[], filename: string) => {
     if (data.length === 0) return;
 
     const headers = Object.keys(data[0]);

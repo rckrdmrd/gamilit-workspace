@@ -106,8 +106,9 @@ export function AchievementsTab() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'achievements'] });
       toast.success('Estado del logro actualizado');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al actualizar logro');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al actualizar logro');
     },
   });
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { StatusBadge } from '@shared/components/base/StatusBadge';
-import { Modal } from '@shared/components/Modal';
+import { Modal } from '@shared/components/common/Modal';
 import { useApiError } from '@shared/hooks';
 import { useSharedReports } from '../../hooks/useSharedReports';
 import type { RecentReport } from './RecentReportsTable';
@@ -31,7 +31,7 @@ export interface SharedReportsTabProps {
 }
 
 export function SharedReportsTab({ recentReports }: SharedReportsTabProps) {
-  const handleError = useApiError();
+  const { handleError } = useApiError();
   const {
     sharedByMe,
     sharedWithMe,
@@ -542,9 +542,9 @@ export function SharedReportsTab({ recentReports }: SharedReportsTabProps) {
       </div>
 
       {/* Revoke confirmation modal */}
-      {revokeConfirm.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <DetectiveCard className="mx-4 max-w-md">
+      <Modal isOpen={revokeConfirm.show} onClose={() => setRevokeConfirm({ show: false, id: null, name: '' })} showCloseButton={false} size="sm" className="bg-transparent shadow-none p-0">
+        <div className="-mx-6 -my-4">
+          <DetectiveCard className="max-w-md">
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-detective-text">Confirmar Revocación</h3>
               <p className="text-sm text-detective-text-secondary">
@@ -580,7 +580,7 @@ export function SharedReportsTab({ recentReports }: SharedReportsTabProps) {
             </div>
           </DetectiveCard>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

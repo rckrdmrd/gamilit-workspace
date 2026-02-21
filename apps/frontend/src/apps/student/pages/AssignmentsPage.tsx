@@ -26,8 +26,7 @@ import { useStudentAssignmentsStore } from '@/features/assignments/store/student
 import type { StudentAssignment, AssignmentFilters } from '@/services/api/studentAssignmentsAPI';
 
 // Components
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { useAuth } from '@/features/auth/hooks/useAuth';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 
 // ============================================================================
 // STATUS CONFIGURATION
@@ -174,7 +173,8 @@ function GradesSummaryCard() {
 
   if (isLoadingGrades) {
     return (
-      <div className="animate-pulse rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white">
+      <div className="animate-pulse rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white" aria-live="polite">
+        <span className="sr-only">Cargando resumen de calificaciones...</span>
         <div className="mb-4 h-6 w-1/2 rounded bg-white/20"></div>
         <div className="h-10 w-1/3 rounded bg-white/20"></div>
       </div>
@@ -243,8 +243,8 @@ function FilterTabs({ currentFilter, onFilterChange }: FilterTabsProps) {
   ];
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2">
-      <Filter className="h-5 w-5 flex-shrink-0 text-gray-400" />
+    <div className="flex items-center gap-2 overflow-x-auto pb-2" role="group" aria-label="Filtrar tareas por estado">
+      <Filter className="h-5 w-5 flex-shrink-0 text-detective-text-secondary" aria-hidden="true" />
       {filters.map((filter) => (
         <button
           key={filter.key || 'all'}
@@ -252,8 +252,8 @@ function FilterTabs({ currentFilter, onFilterChange }: FilterTabsProps) {
           className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors
             ${
               currentFilter === filter.key
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-detective-orange text-white'
+                : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg'
             }`}
         >
           {filter.label}
@@ -269,7 +269,6 @@ function FilterTabs({ currentFilter, onFilterChange }: FilterTabsProps) {
 
 export default function AssignmentsPage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
   const { assignments, isLoading, error, filters, fetchAssignments, setFilters } =
     useStudentAssignmentsStore();
@@ -286,10 +285,7 @@ export default function AssignmentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <GamifiedHeader user={user || undefined} onLogout={logout} />
-
+    <StudentPageShell>
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Grades Summary */}
@@ -304,14 +300,15 @@ export default function AssignmentsPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4" role="alert">
             <p className="text-red-700">{error}</p>
           </div>
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" aria-live="polite">
+            <span className="sr-only">Cargando tareas asignadas...</span>
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="animate-pulse rounded-xl bg-white p-5">
                 <div className="mb-3 h-4 w-3/4 rounded bg-gray-200"></div>
@@ -324,7 +321,7 @@ export default function AssignmentsPage() {
 
         {/* Empty State */}
         {!isLoading && assignments.length === 0 && (
-          <div className="py-12 text-center">
+          <div className="py-12 text-center" aria-live="polite">
             <ClipboardList className="mx-auto mb-4 h-16 w-16 text-gray-300" />
             <h3 className="mb-2 text-lg font-medium text-gray-900">No tienes tareas asignadas</h3>
             <p className="text-gray-500">
@@ -340,6 +337,8 @@ export default function AssignmentsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            role="region"
+            aria-label="Lista de tareas asignadas"
             className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
           >
             {assignments.map((assignment) => (
@@ -352,6 +351,6 @@ export default function AssignmentsPage() {
           </motion.div>
         )}
       </main>
-    </div>
+    </StudentPageShell>
   );
 }

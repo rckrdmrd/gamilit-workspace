@@ -123,7 +123,7 @@ export class MailService {
       return false;
     }
 
-    let lastError: any;
+    let lastError: unknown;
 
     // Retry logic con backoff exponencial
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {

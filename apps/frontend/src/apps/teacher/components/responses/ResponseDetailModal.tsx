@@ -15,6 +15,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import {
   X,
   User,
@@ -694,6 +695,8 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
   const navigate = useNavigate();
   const { data: attempt, isLoading, error } = useAttemptDetail(attemptId, open);
 
+  // Note: ESC key, scroll lock, and focus trap are handled by Modal component
+
   /**
    * Navigate to ReviewPanel with submissionId parameter
    */
@@ -704,44 +707,33 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
     }
   };
 
-  if (!open) return null;
-
   return (
-    <AnimatePresence>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={onClose}
-          />
+    <Modal
+      isOpen={open}
+      onClose={onClose}
+      animated
+      size="5xl"
+      showCloseButton={false}
+      overlayClassName="bg-black/60 backdrop-blur-[2px] p-4"
+      className="overflow-hidden rounded-2xl shadow-2xl my-8"
+      contentClassName="custom"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+        <h2 id="response-detail-title" className="flex items-center gap-2 text-2xl font-bold text-white">
+          <FileText className="h-6 w-6" />
+          Detalle de Respuesta
+        </h2>
+        <button
+          onClick={onClose}
+          className="rounded-lg p-2 transition-colors hover:bg-white/20"
+        >
+          <X className="h-6 w-6 text-white" />
+        </button>
+      </div>
 
-          {/* Modal Container */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="relative my-8 w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl"
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
-              <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
-                <FileText className="h-6 w-6" />
-                Detalle de Respuesta
-              </h2>
-              <button
-                onClick={onClose}
-                className="rounded-lg p-2 transition-colors hover:bg-white/20"
-              >
-                <X className="h-6 w-6 text-white" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="max-h-[calc(100vh-200px)] overflow-y-auto p-6">
+      {/* Content */}
+      <div className="max-h-[calc(100vh-200px)] overflow-y-auto p-6">
               {isLoading && <LoadingState />}
 
               {error && <ErrorState message={error.message} />}
@@ -994,9 +986,6 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
                 Cerrar
               </button>
             </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+    </Modal>
   );
 };

@@ -3,6 +3,7 @@ import { AlertCircle, CheckCircle, XCircle, Clock, AlertTriangle, Filter } from 
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
+import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
 import { useInterventionAlerts } from '../../hooks/useInterventionAlerts';
 import {
   InterventionAlertSeverity,
@@ -48,6 +49,8 @@ export function InterventionAlertsPanel({
   const [selectedAlert, setSelectedAlert] = useState<StudentInterventionAlert | null>(null);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [resolutionNotes, setResolutionNotes] = useState('');
+  const [dismissConfirmOpen, setDismissConfirmOpen] = useState(false);
+  const [pendingDismissId, setPendingDismissId] = useState<string | null>(null);
 
   const getSeverityColor = (severity: InterventionAlertSeverity): string => {
     switch (severity) {
@@ -125,20 +128,27 @@ export function InterventionAlertsPanel({
     }
   };
 
-  const handleDismiss = async (alertId: string) => {
-    if (confirm('¿Estás seguro de que quieres descartar esta alerta?')) {
-      try {
-        await dismissAlert(alertId);
-        toast.success('Alerta descartada exitosamente', {
-          duration: 3000,
-          icon: '🗑️',
-        });
-      } catch (err) {
-        console.error('Error dismissing alert:', err);
-        toast.error('Error al descartar la alerta. Por favor intenta nuevamente.', {
-          duration: 4000,
-        });
-      }
+  const handleDismiss = (alertId: string) => {
+    setPendingDismissId(alertId);
+    setDismissConfirmOpen(true);
+  };
+
+  const executeDismiss = async () => {
+    if (!pendingDismissId) return;
+    try {
+      await dismissAlert(pendingDismissId);
+      toast.success('Alerta descartada exitosamente', {
+        duration: 3000,
+        icon: '🗑️',
+      });
+    } catch (err) {
+      console.error('Error dismissing alert:', err);
+      toast.error('Error al descartar la alerta. Por favor intenta nuevamente.', {
+        duration: 4000,
+      });
+    } finally {
+      setDismissConfirmOpen(false);
+      setPendingDismissId(null);
     }
   };
 
@@ -395,6 +405,21 @@ export function InterventionAlertsPanel({
           </div>
         )}
       </Modal>
+
+      {/* Confirm dialog para descartar alerta */}
+      <ConfirmDialog
+        isOpen={dismissConfirmOpen}
+        onClose={() => {
+          setDismissConfirmOpen(false);
+          setPendingDismissId(null);
+        }}
+        onConfirm={executeDismiss}
+        title="Descartar alerta"
+        message="¿Estás seguro de que quieres descartar esta alerta? Esta acción no se puede deshacer."
+        confirmText="Descartar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

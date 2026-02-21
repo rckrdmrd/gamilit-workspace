@@ -3,11 +3,13 @@ import { useAuth } from '@features/auth/hooks/useAuth';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { profileAPI } from '@/services/api/profileAPI';
 import { toast } from 'react-hot-toast';
+import { useApiError } from '@shared/hooks';
 import { Camera, Save, Loader2, Check, Key, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 
 export const ProfileSettings: React.FC = () => {
     const { user } = useAuth();
+    const { handleError } = useApiError();
 
     const [profile, setProfile] = useState({
         displayName: user?.displayName || user?.email?.split('@')[0] || '',
@@ -47,10 +49,9 @@ export const ProfileSettings: React.FC = () => {
             setSaveStatus('saved');
             toast.success('Perfil actualizado correctamente');
             setTimeout(() => setSaveStatus('idle'), 2000);
-        } catch (error) {
-            console.error('Error saving profile:', error);
+        } catch (err) {
+            handleError(err, 'Error al guardar perfil');
             setSaveStatus('error');
-            toast.error('Error al guardar perfil');
             setTimeout(() => setSaveStatus('idle'), 3000);
         }
     };
@@ -69,9 +70,8 @@ export const ProfileSettings: React.FC = () => {
             const result = await profileAPI.uploadAvatar(user.id, file);
             setProfile({ ...profile, avatar: result.avatarUrl });
             toast.success('Avatar actualizado');
-        } catch (error) {
-            console.error('Error uploading avatar:', error);
-            toast.error('Error al subir avatar');
+        } catch (err) {
+            handleError(err, 'Error al subir avatar');
         } finally {
             setIsUploading(false);
         }
@@ -98,9 +98,8 @@ export const ProfileSettings: React.FC = () => {
             setAccount({ currentPassword: '', newPassword: '', confirmPassword: '' });
             setSaveStatus('saved');
             setTimeout(() => setSaveStatus('idle'), 2000);
-        } catch (error) {
-            console.error('Error changing password:', error);
-            toast.error('Error al cambiar contraseña');
+        } catch (err) {
+            handleError(err, 'Error al cambiar contraseña');
             setSaveStatus('error');
             setTimeout(() => setSaveStatus('idle'), 3000);
         }
@@ -161,7 +160,7 @@ export const ProfileSettings: React.FC = () => {
                             <input
                                 value={user?.email || ''}
                                 disabled
-                                className="w-full cursor-not-allowed rounded-lg border border-detective-border bg-gray-100 px-4 py-2 text-gray-500"
+                                className="w-full cursor-not-allowed rounded-lg border border-detective-border bg-detective-bg-secondary px-4 py-2 text-detective-text-secondary"
                             />
                         </div>
                         <div>
@@ -224,7 +223,7 @@ export const ProfileSettings: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-detective-text-secondary hover:text-detective-text"
                             >
                                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </button>
@@ -252,7 +251,7 @@ export const ProfileSettings: React.FC = () => {
                     <button
                         onClick={handlePasswordChange}
                         disabled={!account.currentPassword || !account.newPassword || saveStatus === 'saving'}
-                        className="flex items-center gap-2 rounded-lg bg-gray-800 px-6 py-2 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50"
+                        className="flex items-center gap-2 rounded-lg bg-detective-bg-secondary px-6 py-2 font-medium text-detective-text transition-colors hover:bg-detective-border disabled:opacity-50"
                     >
                         <Key className="h-4 w-4" />
                         Actualizar Contraseña

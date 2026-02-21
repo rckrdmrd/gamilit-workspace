@@ -149,8 +149,8 @@ enum ScheduleStatus {
   ACTIVE = 'active',
   PAUSED = 'paused',
   COMPLETED = 'completed',
-  FAILED = 'failed',
 }
+// Nota: DDL canonical CHECK (status IN ('active', 'paused', 'completed')). No incluye 'failed'.
 ```
 
 ---

@@ -16,14 +16,27 @@ SET search_path TO notifications, public;
 
 DO $$
 DECLARE
-    v_notif1_id UUID := '81111111-1111-1111-1111-111111111001';
-    v_notif2_id UUID := '81111111-1111-1111-1111-111111111002';
-    v_notif4_id UUID := '81111111-1111-1111-1111-111111111004';
-    v_notif5_id UUID := '81111111-1111-1111-1111-111111111005';
-    v_notif6_id UUID := '81111111-1111-1111-1111-111111111006';
-    v_notif8_id UUID := '81111111-1111-1111-1111-111111111008';
+    v_notif1_id UUID;
+    v_notif2_id UUID;
+    v_notif4_id UUID;
+    v_notif5_id UUID;
+    v_notif6_id UUID;
+    v_notif8_id UUID;
 BEGIN
     RAISE NOTICE 'Creating notification log records...';
+
+    -- Resolve notification IDs by title (dynamically generated in 03-notifications.sql)
+    SELECT id INTO v_notif1_id FROM notifications.notifications WHERE title = 'Logro Desbloqueado: Primeros Pasos' LIMIT 1;
+    SELECT id INTO v_notif2_id FROM notifications.notifications WHERE title = 'Nueva Tarea: Ejercicios Modulo 2' LIMIT 1;
+    SELECT id INTO v_notif4_id FROM notifications.notifications WHERE title = 'Nueva Solicitud de Amistad' LIMIT 1;
+    SELECT id INTO v_notif5_id FROM notifications.notifications WHERE title = 'Mantenimiento Programado' LIMIT 1;
+    SELECT id INTO v_notif6_id FROM notifications.notifications WHERE title = 'Racha de 7 Dias!' LIMIT 1;
+    SELECT id INTO v_notif8_id FROM notifications.notifications WHERE title = 'Actualizacion de Perfil' LIMIT 1;
+
+    IF v_notif1_id IS NULL THEN
+        RAISE NOTICE 'Notifications not found. Run 03-notifications.sql first. Skipping.';
+        RETURN;
+    END IF;
 
     INSERT INTO notifications.notification_logs (
         id,
@@ -39,7 +52,7 @@ BEGIN
 
     -- Logs for notification 1 (achievement - in_app and push)
     (
-        '91111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_notif1_id,
         'in_app',
         'delivered',
@@ -53,7 +66,7 @@ BEGIN
         jsonb_build_object('device', 'web')
     ),
     (
-        '91111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_notif1_id,
         'push',
         'delivered',
@@ -70,7 +83,7 @@ BEGIN
 
     -- Logs for notification 2 (assignment - all channels)
     (
-        '91111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_notif2_id,
         'in_app',
         'delivered',
@@ -81,7 +94,7 @@ BEGIN
         jsonb_build_object()
     ),
     (
-        '91111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_notif2_id,
         'email',
         'sent',
@@ -96,7 +109,7 @@ BEGIN
         jsonb_build_object('email_type', 'transactional')
     ),
     (
-        '91111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_notif2_id,
         'push',
         'delivered',
@@ -112,7 +125,7 @@ BEGIN
 
     -- Logs for notification 4 (social - friend request)
     (
-        '91111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_notif4_id,
         'in_app',
         'delivered',
@@ -123,7 +136,7 @@ BEGIN
         jsonb_build_object()
     ),
     (
-        '91111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_notif4_id,
         'push',
         'delivered',
@@ -139,7 +152,7 @@ BEGIN
 
     -- Logs for notification 5 (system - maintenance)
     (
-        '91111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         v_notif5_id,
         'in_app',
         'delivered',
@@ -150,7 +163,7 @@ BEGIN
         jsonb_build_object('priority', 'urgent')
     ),
     (
-        '91111111-1111-1111-1111-111111111009'::uuid,
+        gen_random_uuid(),
         v_notif5_id,
         'email',
         'delivered',
@@ -167,7 +180,7 @@ BEGIN
 
     -- Logs for notification 6 (gamification - streak)
     (
-        '91111111-1111-1111-1111-111111111010'::uuid,
+        gen_random_uuid(),
         v_notif6_id,
         'in_app',
         'delivered',
@@ -178,7 +191,7 @@ BEGIN
         jsonb_build_object()
     ),
     (
-        '91111111-1111-1111-1111-111111111011'::uuid,
+        gen_random_uuid(),
         v_notif6_id,
         'push',
         'failed',
@@ -195,7 +208,7 @@ BEGIN
 
     -- Logs for notification 8 (failed email)
     (
-        '91111111-1111-1111-1111-111111111012'::uuid,
+        gen_random_uuid(),
         v_notif8_id,
         'email',
         'bounced',
@@ -211,7 +224,7 @@ BEGIN
         jsonb_build_object('attempt', 1)
     ),
     (
-        '91111111-1111-1111-1111-111111111013'::uuid,
+        gen_random_uuid(),
         v_notif8_id,
         'email',
         'failed',
@@ -226,11 +239,7 @@ BEGIN
         jsonb_build_object('attempt', 3, 'final_attempt', true)
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        status = EXCLUDED.status,
-        delivered_at = EXCLUDED.delivered_at,
-        error_message = EXCLUDED.error_message,
-        provider_response = EXCLUDED.provider_response;
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'Notification logs created successfully';
 

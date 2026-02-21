@@ -8,7 +8,7 @@
 import { IsString, IsOptional, IsEnum, IsArray, IsUUID, IsDateString, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AssignmentType } from '@modules/assignments/entities/assignment.entity';
+import { AssignmentType } from '@modules/assignments/enums/assignment.enums';
 
 // ============================================================================
 // QUERY DTOs

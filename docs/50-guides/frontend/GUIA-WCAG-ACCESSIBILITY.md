@@ -11,7 +11,7 @@ estado: vigente
 
 ## 1. Proposito
 
-Implementar WCAG 2.1 nivel AA en los 475 componentes React de gamilit. Esta guia establece
+Implementar WCAG 2.1 nivel AA en los 590 componentes React de gamilit. Esta guia establece
 los criterios, patrones y herramientas necesarios para garantizar que la plataforma educativa
 sea accesible para todos los estudiantes, incluidos aquellos con discapacidades visuales,
 auditivas, motoras o cognitivas.
@@ -464,6 +464,27 @@ Antes de marcar un componente como completado, verificar:
 
 ---
 
+## Patrones ARIA Implementados (Wave 9 — Feb 2026)
+
+Cobertura actual tras Wave 9 de accesibilidad (51 paginas, 4 portales):
+
+| Patron ARIA | Ocurrencias | Archivos | Uso |
+|-------------|-------------|----------|-----|
+| `role="alert"` | 46 | 34 | Error states, validacion |
+| `aria-live="polite"` | 56 | 39 | Loading states, contenido dinamico |
+| `role="region"` + `aria-label` | 42 | 30 | Secciones semanticas |
+| `role="tablist"` + `role="tab"` + `aria-selected` | — | 6 | Tab navigation |
+| `aria-hidden="true"` | 15 | 10 | Iconos decorativos |
+| `sr-only` (clase CSS) | 17 | 15 | Texto solo para screen readers |
+
+### Gaps Conocidos (Backlog)
+
+- **aria-hidden underuse:** Iconos decorativos sin `aria-hidden="true"` en ~20 componentes adicionales
+- **sr-only underuse:** Faltan labels `sr-only` en algunos botones icon-only (~10 instancias)
+- **Redundancia corregida:** `role="status"` + `aria-live="polite"` eliminada en 3 paginas admin (role="status" implica aria-live="polite" segun WAI-ARIA spec)
+
+---
+
 ## 10. Referencias
 
 - **WCAG 2.1 Quick Reference:** https://www.w3.org/WAI/WCAG21/quickref/
@@ -472,6 +493,12 @@ Antes de marcar un componente como completado, verificar:
 - **WAI-ARIA Practices:** https://www.w3.org/WAI/ARIA/apg/
 - **Tailwind sr-only:** https://tailwindcss.com/docs/screen-readers
 
+### Estandares relacionados del proyecto
+
+- [`STANDARD-UX-PATTERNS.md`](../../40-standards/STANDARD-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, confirmation dialogs
+- [`STANDARD-COMPONENT.md`](../../40-standards/STANDARD-COMPONENT.md) -- Props typing, export patterns, file naming
+- [`ESTANDAR-FRONTEND-PROFESIONAL.md`](../../40-standards/ESTANDAR-FRONTEND-PROFESIONAL.md) -- Compound components, performance, testing
+
 ---
 
-*Ultima actualizacion: 2026-02-14*
+*Ultima actualizacion: 2026-02-21*

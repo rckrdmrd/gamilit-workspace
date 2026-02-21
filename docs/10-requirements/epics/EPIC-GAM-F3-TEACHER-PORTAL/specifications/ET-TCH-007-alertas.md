@@ -408,6 +408,8 @@ interface StudentPermissions {
 
 ### CRON de Deteccion
 
+> **Note (2026-02-20):** The actual implementation now uses `find({ where: { id: In(...) } })` instead of the deprecated `findByIds` method. The code sample below is simplified for illustration.
+
 ```typescript
 @Injectable()
 export class StudentRiskAlertService {

@@ -73,7 +73,7 @@ export const ExerciseFeedback: React.FC<ExerciseFeedbackProps> = ({
 
       {/* Rewards */}
       {(feedback.xpEarned !== undefined || feedback.mlCoinsEarned !== undefined) && (
-        <div className="flex items-center gap-4 mb-4 p-3 bg-white bg-opacity-50 rounded-lg">
+        <div className="flex items-center gap-4 mb-4 p-3 bg-white/50 rounded-lg">
           {feedback.xpEarned !== undefined && feedback.xpEarned > 0 && (
             <div className="flex items-center text-purple-700 font-semibold">
               <Zap className="w-5 h-5 mr-1" />
@@ -91,7 +91,7 @@ export const ExerciseFeedback: React.FC<ExerciseFeedbackProps> = ({
 
       {/* Explanation */}
       {explanation && (
-        <div className="mt-4 p-4 bg-white bg-opacity-60 rounded-lg border border-gray-200">
+        <div className="mt-4 p-4 bg-white/60 rounded-lg border border-gray-200">
           <h4 className="text-sm font-semibold text-gray-900 mb-2">
             Explicación:
           </h4>

@@ -41,7 +41,7 @@ INSERT INTO gamification_system.user_achievements (
     progress_data, milestones_reached, metadata,
     started_at, created_at
 ) VALUES (
-    'e0000001-0001-0000-0000-000000000001'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'blu3wt7@gmail.com'),
     '90000007-0000-0000-0000-000000000001'::uuid,
     1, 1, true, 100.00,
@@ -69,7 +69,7 @@ INSERT INTO gamification_system.user_achievements (
     progress_data, milestones_reached, metadata,
     started_at, created_at
 ) VALUES (
-    'e0000001-0002-0000-0000-000000000001'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'blu3wt7@gmail.com'),
     '90000001-0000-0000-0000-000000000001'::uuid,
     1, 1, true, 100.00,
@@ -97,7 +97,7 @@ INSERT INTO gamification_system.user_achievements (
     progress_data, milestones_reached, metadata,
     started_at, created_at
 ) VALUES (
-    'e0000001-0003-0000-0000-000000000001'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'blu3wt7@gmail.com'),
     '90000002-0000-0000-0000-000000000001'::uuid,
     3, 3, true, 100.00,
@@ -125,7 +125,7 @@ INSERT INTO gamification_system.user_achievements (
     progress_data, milestones_reached, metadata,
     started_at, created_at
 ) VALUES (
-    'e0000001-0004-0000-0000-000000000001'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'blu3wt7@gmail.com'),
     '90000001-0000-0000-0000-000000000002'::uuid,
     15, 25, false, 60.00, NULL,
@@ -151,7 +151,7 @@ INSERT INTO gamification_system.user_achievements (
     progress_data, milestones_reached, metadata,
     started_at, created_at
 ) VALUES (
-    'e0000002-0001-0000-0000-000000000002'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'hernandezfonsecabenjamin7@gmail.com'),
     '90000007-0000-0000-0000-000000000001'::uuid,
     1, 1, true, 100.00,
@@ -179,7 +179,7 @@ INSERT INTO gamification_system.user_achievements (
     progress_data, milestones_reached, metadata,
     started_at, created_at
 ) VALUES (
-    'e0000002-0002-0000-0000-000000000002'::uuid,
+    gen_random_uuid(),
     (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'hernandezfonsecabenjamin7@gmail.com'),
     '90000001-0000-0000-0000-000000000001'::uuid,
     5, 25, false, 20.00, NULL,
@@ -201,17 +201,17 @@ INSERT INTO gamification_system.user_achievements
 (id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
 VALUES
 -- Primera Visita
-('e0000003-0001-0000-0000-000000000003'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '15 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '15 days', gamilit.now_mexico() - INTERVAL '15 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '15 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '15 days', gamilit.now_mexico() - INTERVAL '15 days'),
 -- Primeros Pasos
-('e0000003-0002-0000-0000-000000000003'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '14 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '14 days', gamilit.now_mexico() - INTERVAL '14 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '14 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '14 days', gamilit.now_mexico() - INTERVAL '14 days'),
 -- Lector Principiante
-('e0000003-0003-0000-0000-000000000003'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000001-0000-0000-0000-000000000002'::uuid, 25, 25, true, 100.00, gamilit.now_mexico() - INTERVAL '12 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('exercises_completed', 25), ARRAY['milestone_10', 'milestone_20', 'milestone_25'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '13 days', gamilit.now_mexico() - INTERVAL '12 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000001-0000-0000-0000-000000000002'::uuid, 25, 25, true, 100.00, gamilit.now_mexico() - INTERVAL '12 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('exercises_completed', 25), ARRAY['milestone_10', 'milestone_20', 'milestone_25'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '13 days', gamilit.now_mexico() - INTERVAL '12 days'),
 -- Racha de 7 Dias
-('e0000003-0004-0000-0000-000000000003'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '7 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '10 days', gamilit.now_mexico() - INTERVAL '7 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '7 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '10 days', gamilit.now_mexico() - INTERVAL '7 days'),
 -- Modulo 1 Completado
-('e0000003-0005-0000-0000-000000000003'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000003-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '10 days', true, true, true, jsonb_build_object('xp', 500, 'ml_coins', 150, 'certificate_url', '/certificates/modules/modulo-1.pdf'), jsonb_build_object('module_completed', 'modulo-01', 'score', 88), ARRAY['module_1_completed'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '10 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000003-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '10 days', true, true, true, jsonb_build_object('xp', 500, 'ml_coins', 150, 'certificate_url', '/certificates/modules/modulo-1.pdf'), jsonb_build_object('module_completed', 'modulo-01', 'score', 88), ARRAY['module_1_completed'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '10 days'),
 -- Lector Experimentado (en progreso 40% por Modulo 2)
-('e0000003-0006-0000-0000-000000000003'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000001-0000-0000-0000-000000000003'::uuid, 35, 100, false, 35.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 35, 'target', 100), ARRAY['milestone_25'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '10 days')
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'marbancarlos916@gmail.com'), '90000001-0000-0000-0000-000000000003'::uuid, 35, 100, false, 35.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 35, 'target', 100), ARRAY['milestone_25'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '10 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     progress = EXCLUDED.progress,
     is_completed = EXCLUDED.is_completed,
@@ -225,11 +225,11 @@ INSERT INTO gamification_system.user_achievements
 (id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
 VALUES
 -- Primera Visita
-('e0000004-0001-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'diego.colores09@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '14 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '14 days', gamilit.now_mexico() - INTERVAL '14 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'diego.colores09@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '14 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '14 days', gamilit.now_mexico() - INTERVAL '14 days'),
 -- Primeros Pasos
-('e0000004-0002-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'diego.colores09@gmail.com'), '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '13 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '13 days', gamilit.now_mexico() - INTERVAL '13 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'diego.colores09@gmail.com'), '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '13 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '13 days', gamilit.now_mexico() - INTERVAL '13 days'),
 -- Lector Principiante (en progreso 80%)
-('e0000004-0003-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'diego.colores09@gmail.com'), '90000001-0000-0000-0000-000000000002'::uuid, 20, 25, false, 80.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 20, 'target', 25), ARRAY['milestone_10', 'milestone_20'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '12 days')
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'diego.colores09@gmail.com'), '90000001-0000-0000-0000-000000000002'::uuid, 20, 25, false, 80.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 20, 'target', 25), ARRAY['milestone_10', 'milestone_20'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '12 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     progress = EXCLUDED.progress,
     completion_percentage = EXCLUDED.completion_percentage;
@@ -239,7 +239,7 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 -- CORRECCION 2026-01-10: Se agregan achievements de demo para permitir testing
 -- visual de la pagina /achievements. Anteriormente deshabilitado (2026-01-07).
--- UUID: cccccccc-cccc-cccc-cccc-cccccccccccc = student@gamilit.com
+-- User: student@gamilit.com (dynamically resolved via profile lookup)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 DO $$
@@ -254,13 +254,13 @@ BEGIN
     (id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
     VALUES
     -- Primera Visita (completado)
-    ('e0000005-0001-0000-0000-000000000005'::uuid, v_student_profile_id, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '5 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true, 'category', 'special'), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '5 days'),
+    (gen_random_uuid(), v_student_profile_id, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '5 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true, 'category', 'special'), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '5 days'),
     -- Primeros Pasos (completado)
-    ('e0000005-0002-0000-0000-000000000005'::uuid, v_student_profile_id, '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '4 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true, 'category', 'progress'), gamilit.now_mexico() - INTERVAL '4 days', gamilit.now_mexico() - INTERVAL '4 days'),
+    (gen_random_uuid(), v_student_profile_id, '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '4 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true, 'category', 'progress'), gamilit.now_mexico() - INTERVAL '4 days', gamilit.now_mexico() - INTERVAL '4 days'),
     -- Racha de 3 Dias (completado, rewards sin reclamar)
-    ('e0000005-0003-0000-0000-000000000005'::uuid, v_student_profile_id, '90000002-0000-0000-0000-000000000001'::uuid, 3, 3, true, 100.00, gamilit.now_mexico() - INTERVAL '2 days', true, true, false, jsonb_build_object('xp', 150, 'ml_coins', 50), jsonb_build_object('streak_days', 3), ARRAY['day_1', 'day_2', 'day_3'], jsonb_build_object('demo_achievement', true, 'category', 'streak'), gamilit.now_mexico() - INTERVAL '4 days', gamilit.now_mexico() - INTERVAL '2 days'),
+    (gen_random_uuid(), v_student_profile_id, '90000002-0000-0000-0000-000000000001'::uuid, 3, 3, true, 100.00, gamilit.now_mexico() - INTERVAL '2 days', true, true, false, jsonb_build_object('xp', 150, 'ml_coins', 50), jsonb_build_object('streak_days', 3), ARRAY['day_1', 'day_2', 'day_3'], jsonb_build_object('demo_achievement', true, 'category', 'streak'), gamilit.now_mexico() - INTERVAL '4 days', gamilit.now_mexico() - INTERVAL '2 days'),
     -- Lector Principiante (en progreso 60%)
-    ('e0000005-0004-0000-0000-000000000005'::uuid, v_student_profile_id, '90000001-0000-0000-0000-000000000002'::uuid, 6, 10, false, 60.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 6, 'target', 10), ARRAY['milestone_5'], jsonb_build_object('demo_achievement', true, 'category', 'progress', 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '3 days')
+    (gen_random_uuid(), v_student_profile_id, '90000001-0000-0000-0000-000000000002'::uuid, 6, 10, false, 60.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 6, 'target', 10), ARRAY['milestone_5'], jsonb_build_object('demo_achievement', true, 'category', 'progress', 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '3 days')
     ON CONFLICT (user_id, achievement_id) DO UPDATE SET
         progress = EXCLUDED.progress,
         is_completed = EXCLUDED.is_completed,
@@ -273,7 +273,7 @@ END $$;
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 -- CORRECCION 2026-01-07: Los usuarios de testing NO deben tener achievements
 -- preexistentes. Deben empezar desde cero como un usuario recien registrado.
--- UUID: bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb = teacher@gamilit.com
+-- User: teacher@gamilit.com (dynamically resolved via profile lookup)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- [DESHABILITADO] Los achievements para teacher@gamilit.com han sido removidos
@@ -287,15 +287,15 @@ INSERT INTO gamification_system.user_achievements
 (id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
 VALUES
 -- Primera Visita
-('e0000007-0001-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '28 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '28 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '28 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '28 days'),
 -- Racha de 7 Dias
-('e0000007-0002-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '20 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '23 days', gamilit.now_mexico() - INTERVAL '20 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '20 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '23 days', gamilit.now_mexico() - INTERVAL '20 days'),
 -- Racha de 30 Dias (en progreso 40%)
-('e0000007-0003-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000002-0000-0000-0000-000000000003'::uuid, 12, 30, false, 40.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 12, 'target', 30), ARRAY['day_7'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '16 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000002-0000-0000-0000-000000000003'::uuid, 12, 30, false, 40.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 12, 'target', 30), ARRAY['day_7'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '16 days'),
 -- Companero de Aula
-('e0000007-0004-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '26 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '26 days', gamilit.now_mexico() - INTERVAL '26 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '26 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '26 days', gamilit.now_mexico() - INTERVAL '26 days'),
 -- Estudiante Colaborativo
-('e0000007-0005-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000006-0000-0000-0000-000000000002'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '23 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('collaborations', 10), ARRAY['collab_5', 'collab_10'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '24 days', gamilit.now_mexico() - INTERVAL '23 days')
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'barraganfer03@gmail.com'), '90000006-0000-0000-0000-000000000002'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '23 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('collaborations', 10), ARRAY['collab_5', 'collab_10'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '24 days', gamilit.now_mexico() - INTERVAL '23 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     progress = EXCLUDED.progress,
     is_completed = EXCLUDED.is_completed,
@@ -306,7 +306,7 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 -- CORRECCION 2026-01-07: Los usuarios de testing NO deben tener achievements
 -- preexistentes. Deben empezar desde cero como un usuario recien registrado.
--- UUID: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa = admin@gamilit.com
+-- User: admin@gamilit.com (dynamically resolved via profile lookup)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- [DESHABILITADO] Los achievements para admin@gamilit.com han sido removidos
@@ -320,11 +320,11 @@ INSERT INTO gamification_system.user_achievements
 (id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
 VALUES
 -- Primera Visita
-('e0000009-0001-0000-0000-000000000009'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'roman.rebollar.marcoantonio1008@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '45 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '45 days', gamilit.now_mexico() - INTERVAL '45 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'roman.rebollar.marcoantonio1008@gmail.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '45 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '45 days', gamilit.now_mexico() - INTERVAL '45 days'),
 -- Racha de 30 Dias (en progreso 67%)
-('e0000009-0002-0000-0000-000000000009'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'roman.rebollar.marcoantonio1008@gmail.com'), '90000002-0000-0000-0000-000000000003'::uuid, 20, 30, false, 66.67, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 20, 'target', 30), ARRAY['day_7', 'day_14'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '45 days', gamilit.now_mexico() - INTERVAL '25 days'),
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'roman.rebollar.marcoantonio1008@gmail.com'), '90000002-0000-0000-0000-000000000003'::uuid, 20, 30, false, 66.67, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 20, 'target', 30), ARRAY['day_7', 'day_14'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '45 days', gamilit.now_mexico() - INTERVAL '25 days'),
 -- Companero de Aula
-('e0000009-0003-0000-0000-000000000009'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'roman.rebollar.marcoantonio1008@gmail.com'), '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '40 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '40 days', gamilit.now_mexico() - INTERVAL '40 days')
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'roman.rebollar.marcoantonio1008@gmail.com'), '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '40 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '40 days', gamilit.now_mexico() - INTERVAL '40 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     progress = EXCLUDED.progress,
     is_completed = EXCLUDED.is_completed,
@@ -338,7 +338,7 @@ INSERT INTO gamification_system.user_achievements
 (id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
 VALUES
 -- Primera Visita
-('e0000010-0001-0000-0000-000000000010'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'ricardolugo786@icloud.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '5 days', true, false, false, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '5 days')
+(gen_random_uuid(), (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'ricardolugo786@icloud.com'), '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '5 days', true, false, false, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '5 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     is_completed = EXCLUDED.is_completed,
     completion_percentage = EXCLUDED.completion_percentage;

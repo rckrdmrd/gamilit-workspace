@@ -23,7 +23,7 @@ export const DashboardQuickActions: React.FC<DashboardQuickActionsProps> = ({ me
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <button
           onClick={() => navigate('/admin/users')}
-          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-opacity-80"
+          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-detective-bg-secondary/80"
         >
           <Users className="mx-auto mb-2 h-8 w-8 text-blue-500" />
           <p className="text-sm font-medium text-detective-text">Gestionar Usuarios</p>
@@ -33,7 +33,7 @@ export const DashboardQuickActions: React.FC<DashboardQuickActionsProps> = ({ me
         </button>
         <button
           onClick={() => navigate('/admin/institutions')}
-          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-opacity-80"
+          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-detective-bg-secondary/80"
         >
           <Building2 className="mx-auto mb-2 h-8 w-8 text-purple-500" />
           <p className="text-sm font-medium text-detective-text">Instituciones</p>
@@ -43,7 +43,7 @@ export const DashboardQuickActions: React.FC<DashboardQuickActionsProps> = ({ me
         </button>
         <button
           onClick={() => navigate('/admin/content')}
-          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-opacity-80"
+          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-detective-bg-secondary/80"
         >
           <BookOpen className="mx-auto mb-2 h-8 w-8 text-green-500" />
           <p className="text-sm font-medium text-detective-text">Contenido</p>
@@ -56,7 +56,7 @@ export const DashboardQuickActions: React.FC<DashboardQuickActionsProps> = ({ me
         </button>
         <button
           onClick={() => navigate('/admin/gamification')}
-          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-opacity-80"
+          className="rounded-lg bg-detective-bg-secondary p-4 text-center transition-all hover:scale-105 hover:bg-detective-bg-secondary/80"
         >
           <Trophy className="mx-auto mb-2 h-8 w-8 text-detective-gold" />
           <p className="text-sm font-medium text-detective-text">Gamificacion</p>

@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { studentProgressApi } from '@services/api/teacher';
 import type { StudentMonitoring } from '../../types';
@@ -124,8 +125,8 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-lg border-2 border-detective-orange bg-detective-bg">
+    <Modal isOpen={true} onClose={onClose} showCloseButton={false} size="full" className="border-2 border-detective-orange bg-detective-bg p-0 max-w-5xl">
+      <div className="-mx-6 -my-4">
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-detective-orange bg-detective-bg p-6">
           <div>
@@ -429,6 +430,6 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
           </div>
         )}
       </div>
-    </div>
+    </Modal>
   );
 }

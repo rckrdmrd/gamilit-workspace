@@ -52,7 +52,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [showRankUpModal, setShowRankUpModal] = useState(false);
-  const [rankUpData, setRankUpData] = useState<any>(null);
+  const [rankUpData, setRankUpData] = useState<Record<string, unknown> | null>(null);
 
   // Timer
   useEffect(() => {
@@ -166,11 +166,6 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [PuzzleContexto] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [PuzzleContexto] Submission error:', error);
       setFeedback({

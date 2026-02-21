@@ -110,7 +110,7 @@ Este documento detalla **TODAS las dependencias** entre objetos del Student Port
 
 | API Service | Hooks Student | Hooks Teacher | Datos Compartidos |
 |-------------|---------------|---------------|-------------------|
-| `progressAPI` | useDashboardData, useUserModules | useStudentProgress | module_progress |
+| `progressAPI` | useDashboardData, useUserModules | useAnalytics, studentProgressApi (nota: `useStudentProgress` removido en Teacher Portal Audit 2026-02-20) | module_progress |
 | `gamificationAPI` | useGamificationData | useStudentsEconomy, useAchievementsStats | user_stats, achievements |
 | `submissionsAPI` | useExerciseState | useExerciseResponses | exercise_submissions |
 | `missionsAPI` | useMissions | - (pendiente) | missions, user_missions |

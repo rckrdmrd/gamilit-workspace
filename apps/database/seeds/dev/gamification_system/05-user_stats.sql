@@ -57,7 +57,17 @@ BEGIN
     LIMIT 1;
 
     IF v_tenant_id IS NULL THEN
-        v_tenant_id := 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
+        -- Fallback: try slug-based lookup
+        SELECT id INTO v_tenant_id
+        FROM auth_management.tenants
+        WHERE slug = 'gamilit-platform' OR slug = 'gamilit' OR slug = 'default'
+        ORDER BY created_at
+        LIMIT 1;
+    END IF;
+
+    IF v_tenant_id IS NULL THEN
+        RAISE NOTICE 'No tenant found, skipping user_stats base records';
+        RETURN;
     END IF;
 
     -- Resolver profile IDs para usuarios de testing
@@ -574,10 +584,10 @@ WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p O
 -- Si necesitas usuarios DEMO con progreso elevado, usa los usuarios
 -- demo definidos en FASE 2 (UUIDs: 01ac4f00..., 02bc5f00..., etc.)
 --
--- Usuarios de Testing (valores iniciales automaticos):
--- - admin@gamilit.com   (aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)
--- - teacher@gamilit.com (bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb)
--- - student@gamilit.com (cccccccc-cccc-cccc-cccc-cccccccccccc)
+-- Usuarios de Testing (valores iniciales automaticos, UUIDs dinamicos):
+-- - admin@gamilit.com   (dynamically generated)
+-- - teacher@gamilit.com (dynamically generated)
+-- - student@gamilit.com (dynamically generated)
 -- =====================================================
 
 -- NOTA: Los siguientes UPDATEs estan comentados intencionalmente.
@@ -586,19 +596,13 @@ WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p O
 
 /*
 -- [DESHABILITADO] Testing Admin: Super Admin - Nivel 10
-UPDATE gamification_system.user_stats
-SET level = 10, total_xp = 50000, ml_coins = 5000, ...
-WHERE user_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid;
+-- Would use: WHERE user_id = (SELECT id FROM auth.users WHERE email = 'admin@gamilit.com')
 
 -- [DESHABILITADO] Testing Teacher: Profesor - Nivel 5
-UPDATE gamification_system.user_stats
-SET level = 5, total_xp = 10000, ml_coins = 1000, ...
-WHERE user_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
+-- Would use: WHERE user_id = (SELECT id FROM auth.users WHERE email = 'teacher@gamilit.com')
 
 -- [DESHABILITADO] Testing Student: Estudiante - Nivel 3
-UPDATE gamification_system.user_stats
-SET level = 3, total_xp = 3200, ml_coins = 425, ...
-WHERE user_id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid;
+-- Would use: WHERE user_id = (SELECT id FROM auth.users WHERE email = 'student@gamilit.com')
 */
 
 -- =====================================================

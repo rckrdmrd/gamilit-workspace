@@ -14,8 +14,10 @@ import {
   calculateScore,
   saveProgress,
   FeedbackData,
+  type DifficultyLevel,
 } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 interface ProgressData {
   progress: {
@@ -57,7 +59,7 @@ const getDefaultExercise = (exerciseId: string, difficulty: string): InfografiaI
   id: exerciseId,
   title: 'Infografía Interactiva',
   description: 'Explora la infografía interactiva revelando cada elemento',
-  difficulty: difficulty as any,
+  difficulty: difficulty as DifficultyLevel,
   estimatedTime: 420,
   topic: 'Textos digitales interactivos',
   hints: [],
@@ -157,7 +159,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         setFeedback({
             type: 'info',
             title: 'Infografía Enviada',
-            message: 'Tu trabajo ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -179,11 +181,11 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);

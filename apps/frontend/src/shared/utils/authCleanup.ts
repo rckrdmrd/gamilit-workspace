@@ -44,12 +44,6 @@ export const clearAllAuthData = (): void => {
     }
   }
   keysToRemove.forEach(key => localStorage.removeItem(key));
-
-  console.log('[authCleanup] All auth data cleared:', {
-    tokensCleared: true,
-    zustandCleared: true,
-    additionalKeysCleared: keysToRemove.length,
-  });
 };
 
 /**
@@ -79,26 +73,17 @@ export const clearAllAuthData = (): void => {
 export const performLogout = async (
   backendLogout?: () => Promise<void>
 ): Promise<void> => {
-  console.log('[authCleanup] Starting logout sequence...');
-
   // CRITICAL: Set logout flag FIRST to prevent race condition
   // This prevents AuthContext useEffect from restoring session during redirect
   localStorage.setItem('is_logging_out', 'true');
-  console.log('[authCleanup] Set is_logging_out flag to prevent session restore');
 
   try {
     // Try to call backend logout
     if (backendLogout) {
-      console.log('[authCleanup] Calling backend logout...');
       await backendLogout();
-      console.log('[authCleanup] Backend logout successful');
-    } else {
-      console.log('[authCleanup] No backend logout function provided (offline mode)');
     }
-  } catch (error) {
-    console.error('[authCleanup] Backend logout failed:', error);
+  } catch (_error) {
     // Continue with local cleanup even if backend fails
-    console.log('[authCleanup] Continuing with local cleanup...');
   } finally {
     // Always clear local data
     clearAllAuthData();
@@ -106,7 +91,6 @@ export const performLogout = async (
     // Force redirect to login (reliable across all scenarios)
     // Using window.location.href instead of React Router navigate()
     // because it ensures a clean page reload and state reset
-    console.log('[authCleanup] Redirecting to /login...');
     window.location.href = '/login';
   }
 };

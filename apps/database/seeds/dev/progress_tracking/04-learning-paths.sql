@@ -15,12 +15,23 @@ SET search_path TO progress_tracking, educational_content, auth_management, publ
 DO $$
 DECLARE
     teacher_id UUID;
+    v_path1_id UUID := gen_random_uuid();
+    v_path2_id UUID := gen_random_uuid();
+    v_path3_id UUID := gen_random_uuid();
+    v_path4_id UUID := gen_random_uuid();
+    v_path5_id UUID := gen_random_uuid();
 BEGIN
     -- Get a teacher ID to assign as creator
     SELECT id INTO teacher_id
     FROM auth_management.profiles
     WHERE role = 'admin_teacher'
     LIMIT 1;
+
+    -- Idempotency: If paths already exist, skip insert
+    IF EXISTS (SELECT 1 FROM progress_tracking.learning_paths WHERE name = 'Viaje de Lectura para Principiantes' LIMIT 1) THEN
+        RAISE NOTICE 'Learning paths already exist, skipping insert';
+        RETURN;
+    END IF;
 
     RAISE NOTICE 'Creating learning paths...';
 
@@ -32,7 +43,7 @@ BEGIN
     -- Path 1: Beginner Reading Journey (Recommended for new users)
     -- ================================================================================
     (
-        '11111111-1111-1111-1111-111111111001'::uuid,
+        v_path1_id,
         'Viaje de Lectura para Principiantes',
         'Ruta de aprendizaje ideal para estudiantes que comienzan su aventura en comprension lectora. Incluye modulos de lectura literal e inferencial.',
         true, -- is_recommended
@@ -48,7 +59,7 @@ BEGIN
     -- Path 2: Intermediate Reading Mastery
     -- ================================================================================
     (
-        '11111111-1111-1111-1111-111111111002'::uuid,
+        v_path2_id,
         'Dominio de Lectura Intermedia',
         'Para estudiantes que ya dominan la lectura literal y buscan mejorar sus habilidades inferenciales y criticas.',
         false,
@@ -64,7 +75,7 @@ BEGIN
     -- Path 3: Advanced Critical Thinking
     -- ================================================================================
     (
-        '11111111-1111-1111-1111-111111111003'::uuid,
+        v_path3_id,
         'Pensamiento Critico Avanzado',
         'Ruta avanzada que incluye analisis critico, produccion de textos y habilidades digitales.',
         false,
@@ -80,7 +91,7 @@ BEGIN
     -- Path 4: Complete Reading Curriculum
     -- ================================================================================
     (
-        '11111111-1111-1111-1111-111111111004'::uuid,
+        v_path4_id,
         'Curriculum Completo de Lectura',
         'Ruta completa que cubre todos los modulos desde lectura literal hasta produccion de textos.',
         false,
@@ -96,7 +107,7 @@ BEGIN
     -- Path 5: Quick Review Path (for catch-up)
     -- ================================================================================
     (
-        '11111111-1111-1111-1111-111111111005'::uuid,
+        v_path5_id,
         'Revision Rapida',
         'Ruta de repaso para estudiantes que necesitan refrescar conocimientos previos.',
         false,
@@ -107,14 +118,7 @@ BEGIN
         NOW() - INTERVAL '10 days',
         NOW() - INTERVAL '10 days'
     )
-    ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        description = EXCLUDED.description,
-        is_recommended = EXCLUDED.is_recommended,
-        difficulty_level = EXCLUDED.difficulty_level,
-        estimated_hours = EXCLUDED.estimated_hours,
-        is_active = EXCLUDED.is_active,
-        updated_at = NOW();
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'Learning paths created successfully';
     RAISE NOTICE '  - Total paths: 5';

@@ -295,7 +295,7 @@ export class AdminMonitoringService implements OnModuleInit {
       }
 
       // Map database results to MetricDataPoint
-      const dataPoints: MetricDataPoint[] = result.map((row: any) => ({
+      const dataPoints: MetricDataPoint[] = result.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         timestamp: new Date(row.recorded_at).toISOString(),
         memory_usage_percent: parseFloat(row.memory_usage_percent) || 0,
         cpu_usage_percent: parseFloat(row.cpu_usage_percent) || 0,
@@ -418,7 +418,7 @@ export class AdminMonitoringService implements OnModuleInit {
         );
       }
 
-      const errors: RecentErrorDto[] = result.map((row: any) => ({
+      const errors: RecentErrorDto[] = result.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: row.id,
         log_level: row.log_level,
         message: row.message,
@@ -478,7 +478,7 @@ export class AdminMonitoringService implements OnModuleInit {
         [safeHours],
       );
 
-      const trends: ErrorTrendDataPoint[] = result.map((row: any) => ({
+      const trends: ErrorTrendDataPoint[] = result.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         time_bucket: new Date(row.time_bucket).toISOString(),
         error_count: parseInt(row.error_count) || 0,
         fatal_count: parseInt(row.fatal_count) || 0,

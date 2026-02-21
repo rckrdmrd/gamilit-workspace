@@ -15,9 +15,10 @@
  * @component
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAlerts } from '../hooks/useAlerts';
 import { AdminPageShell } from '../components/shared';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 
 // Components
 import { AlertsStats } from '../components/alerts/AlertsStats';
@@ -39,7 +40,7 @@ import type { SystemAlert } from '@/services/api/adminTypes';
  * AdminAlertsPage Component
  */
 export default function AdminAlertsPage() {
-  const handleError = useApiError();
+  const { handleError } = useApiError();
   const {
     alerts,
     stats,
@@ -65,6 +66,10 @@ export default function AdminAlertsPage() {
     resolve: false,
   });
 
+  // ConfirmDialog state for suppress action
+  const [showSuppressConfirm, setShowSuppressConfirm] = useState(false);
+  const [pendingSuppressAlert, setPendingSuppressAlert] = useState<SystemAlert | null>(null);
+
   const handleAlertClick = (alert: SystemAlert) => {
     setSelectedAlert(alert);
     setModalsState({ details: true, acknowledge: false, resolve: false });
@@ -80,19 +85,22 @@ export default function AdminAlertsPage() {
     setModalsState({ details: false, acknowledge: false, resolve: true });
   };
 
-  const handleSuppress = async (alert: SystemAlert) => {
-    if (
-      window.confirm(
-        `¿Estás seguro de que deseas suprimir la alerta "${alert.title}"?\n\nEsto marcará la alerta como no relevante.`,
-      )
-    ) {
-      try {
-        await suppressAlert(alert.id);
-      } catch (err) {
-        handleError(err as Parameters<typeof handleError>[0], 'Error al suprimir alerta');
-      }
+  const handleSuppress = useCallback((alert: SystemAlert) => {
+    setPendingSuppressAlert(alert);
+    setShowSuppressConfirm(true);
+  }, []);
+
+  const handleSuppressConfirm = useCallback(async () => {
+    if (!pendingSuppressAlert) return;
+    setShowSuppressConfirm(false);
+    try {
+      await suppressAlert(pendingSuppressAlert.id);
+    } catch (err) {
+      handleError(err as Parameters<typeof handleError>[0], 'Error al suprimir alerta');
+    } finally {
+      setPendingSuppressAlert(null);
     }
-  };
+  }, [pendingSuppressAlert, suppressAlert, handleError]);
 
   const handleAcknowledgeConfirm = async (note?: string) => {
     if (selectedAlert) {
@@ -133,7 +141,9 @@ export default function AdminAlertsPage() {
         </div>
 
         {/* Statistics Cards */}
-        <AlertsStats stats={stats} isLoading={isLoadingStats} />
+        <div role="region" aria-label="Estadisticas de alertas">
+          <AlertsStats stats={stats} isLoading={isLoadingStats} />
+        </div>
 
         {/* Filters */}
         <AlertFilters
@@ -145,13 +155,14 @@ export default function AdminAlertsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
+          <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500" role="alert">
             <p className="font-semibold">Error al cargar alertas:</p>
             <p>{error}</p>
           </div>
         )}
 
         {/* Alerts List */}
+        <div role="region" aria-label="Lista de alertas" aria-live="polite">
         <AlertsList
           alerts={alerts}
           isLoading={isLoading}
@@ -163,6 +174,7 @@ export default function AdminAlertsPage() {
           onNextPage={nextPage}
           onPrevPage={prevPage}
         />
+        </div>
 
         {/* Modals */}
         <AlertDetailsModal
@@ -183,6 +195,23 @@ export default function AdminAlertsPage() {
           isOpen={modalsState.resolve}
           onClose={closeModals}
           onConfirm={handleResolveConfirm}
+        />
+
+        <ConfirmDialog
+          isOpen={showSuppressConfirm}
+          onClose={() => {
+            setShowSuppressConfirm(false);
+            setPendingSuppressAlert(null);
+          }}
+          onConfirm={handleSuppressConfirm}
+          title="Suprimir alerta"
+          message={
+            pendingSuppressAlert
+              ? `¿Estás seguro de que deseas suprimir la alerta "${pendingSuppressAlert.title}"? Esto marcará la alerta como no relevante.`
+              : ''
+          }
+          confirmText="Suprimir"
+          variant="warning"
         />
       </div>
     </AdminPageShell>

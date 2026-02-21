@@ -1,8 +1,8 @@
 # COMPONENTES FRONTEND - INVENTARIO
 
 **Proyecto:** GAMILIT - Plataforma Educativa Gamificada
-**Version:** 1.0
-**Fecha:** 2025-12-26
+**Version:** 1.1
+**Fecha:** 2026-02-21
 **Auditoria:** Inventario real de componentes implementados
 
 ---
@@ -170,6 +170,9 @@ Cada mecanica tiene:
 | Exercise | 6 | ExerciseCard, ExerciseTimer |
 | Achievements | 7 | AchievementsPreview, BadgeDisplay |
 | Gamification | 7 | CoinBalance, XPProgress |
+| Shop | 3 | ShopItemCard, PurchaseModal, ShopIcon |
+| Inventory | 5 | InventoryItemCard, PowerUpModal, ActivePowerUpsBanner, ActivePowerUpsList, InventoryStatsGrid |
+| Profile | 4 | ProfileInventoryTab (equip/unequip), ProfileStatsTab, ProfileBadgesDisplay, ProfileHeader |
 | Interactions | 2 | FeedbackModal, HelpRequest |
 | Notifications | 3 | NotificationBell, NotificationList |
 
@@ -260,6 +263,7 @@ Cada carpeta tiene `index.ts` para exports centralizados.
 
 ---
 
-**Generado por:** Requirements-Analyst
-**Fecha:** 2025-12-26
-**Version:** 1.0
+**Generado por:** Requirements-Analyst  
+**Fecha:** 2026-02-21  
+**Version:** 1.1  
+**Ultima actualizacion:** Se agrego inventario de componentes shop, inventory y profile del Student App.

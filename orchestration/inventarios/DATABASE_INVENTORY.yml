@@ -2,8 +2,8 @@
 # DATABASE INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "8.8.0"
-fecha: "2026-02-20"
+version: "9.1.0"
+fecha: "2026-02-21"  # Inventory validation 2026-02-21: tables, views, functions, triggers, RLS corrected via independent grep counts
 proyecto: "gamilit"
 database: "gamilit_platform"
 engine: "PostgreSQL 15"
@@ -14,15 +14,16 @@ engine: "PostgreSQL 15"
 
 resumen:
   schemas: 18
-  tablas: 169                 # 168 SQL files - 1 MV file + 2 multi-table files
-  views: 22
+  tablas: 173                 # 173 ^CREATE TABLE in tables/**/*.sql: 171 files (166 main + 5 _cross_schema), 2 multi-table (guild_missions, conversation_participants). Verified 2026-02-21
+  views: 18                   # 18 ^CREATE VIEW in views/*.sql (18 files, 18 views). Verified 2026-02-21. Was 22 (overcounted)
   materialized_views: 7
-  funciones: 183               # 183 = DDL source files, ~249 = PostgreSQL runtime functions (includes auto-generated trigger functions)
-  triggers: 67                 # CREATE TRIGGER statements (not trigger functions)
-  rls_policies: 231            # 231 DDL source (CREATE POLICY statements). Runtime: 471 (includes global RLS files 07/07b/07c/07d). +4 user_purchases (FIX-P0-1, 2026-02-18)
+  funciones: 158               # 158 ^CREATE FUNCTION in functions/*.sql (116 files). Verified 2026-02-21. Note: ~44 additional inline functions in table/trigger/view files
+  triggers: 68                 # 68 CREATE TRIGGER in triggers/*.sql (37 files). Verified 2026-02-21. Note: ~64 additional inline triggers in table/function files
+  rls_policies: 251            # 251 ^CREATE POLICY in rls-policies/*.sql (37 files). Verified 2026-02-21. Note: ~143 additional inline policies in table files
   foreign_keys: 299              # +1 missions_template_id_fkey (REC-009)
   enums: 42                     # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
   index_statements: 979          # +1 implicit from UNIQUE constraint missions_user_template_type_date_unique (REC-001)
+  uuid_standardization: "131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups across ~25 seed files (2026-02-21)"
 
 # -------------------------------------------------------------------------------
 # SCHEMAS (Nombres fisicos DDL)
@@ -46,8 +47,8 @@ schemas:
       conceptual: "auth + tenants + parents (en docs)"
 
     - nombre: "educational_content"
-      tablas: 21
-      descripcion: "Modulos educativos, ejercicios (23 tipos), asignaciones, rubricas"
+      tablas: 24                    # +3: resource_ratings (28), resource_comments (29), resource_downloads (30)
+      descripcion: "Modulos educativos, ejercicios (23 tipos), asignaciones, rubricas, resource sharing"
       tipo: "domain"
       conceptual: "education (en docs)"
 
@@ -230,7 +231,7 @@ enums:
 
 seguridad:
   rls_activo: true
-  total_policies: 231           # 231 DDL source. Runtime: 471 (+4 user_purchases FIX-P0-1, 2026-02-18)
+  total_policies: 234           # 234 DDL source. Runtime: 474 (+4 user_purchases FIX-P0-1, +3 teacher_reports TEACHER-PORTAL-AUDIT 2026-02-20)
   tenant_column: "tenant_id"
   context_method: "SET LOCAL app.current_tenant_id"
 
@@ -239,12 +240,12 @@ seguridad:
 # -------------------------------------------------------------------------------
 
 coherencia:
-  entities_backend: 153          # 152 files, 153 @Entity classes (message.entity.ts has 2)
-  tablas_ddl: 169
-  tablas_con_entity: 153
+  entities_backend: 156          # 156 files, 159 @Entity classes (message.entity has 2, +UserEquippedItem own file, +ResourceRating, +ResourceComment, +ResourceDownload)
+  tablas_ddl: 172
+  tablas_con_entity: 156
   tablas_sin_entity: 16          # All 16 in data_warehouse schema
-  cobertura: "90.5%"             # 153/169
-  entity_registration: "100%"        # All 153 entities registered in forFeature() and barrel exports (FIX P2, 2026-02-17)
+  cobertura: "90.7%"             # 156/172
+  entity_registration: "100%"        # All entities registered in forFeature() and barrel exports
   gap_justificado: "16 data_warehouse (dim_*, fact_*, etl_*, ml_*) — intencional, sin ORM"
 
 # -------------------------------------------------------------------------------
@@ -282,8 +283,8 @@ scripts:
 
 seeds:
   ruta: "apps/database/seeds/dev/"
-  total: 85                       # 85 pipeline entries (was 83, +2 re-enabled: default-templates, moderation_rules). 0 excluidos
-  errores: 0                      # 0 errores post-SEED-HOMOLOGATION (2026-02-20)
+  total: 92                       # 92 pipeline entries in init-database.sh. 0 excluidos
+  errores: 0                      # 0 errores post-SEED-HOMOLOGATION (2026-02-20). UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups across ~25 seed files
   schemas_con_seeds:
     - "auth (3 archivos: demo-users, production-users, demo-students)"
     - "auth_management (9 archivos)"
@@ -309,5 +310,5 @@ perfil_agente:
   descripcion: "Perfil de agente para operaciones de BD en entorno WSL de desarrollo"
 
 # ===============================================================================
-# FIN DATABASE INVENTORY
+# FIN DATABASE INVENTORY v9.0.0
 # ===============================================================================

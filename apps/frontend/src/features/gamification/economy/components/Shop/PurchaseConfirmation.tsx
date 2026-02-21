@@ -4,22 +4,29 @@
 
 import { motion } from 'framer-motion';
 import { CheckCircle, Sparkles } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 
-export const PurchaseConfirmation: React.FC = () => {
+interface PurchaseConfirmationProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
+  isOpen = true,
+  onClose = () => {},
+}) => {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      animated
+      size="md"
+      showCloseButton={false}
+      className="rounded-detective shadow-2xl"
+      contentClassName="custom"
+      ariaLabelledBy="purchase-confirmation-title"
     >
-      <motion.div
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.5, opacity: 0 }}
-        transition={{ type: 'spring', damping: 20 }}
-        className="bg-white rounded-detective p-8 max-w-md mx-4 text-center shadow-2xl"
-      >
+      <div className="p-8 text-center">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -34,7 +41,7 @@ export const PurchaseConfirmation: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <h2 className="text-detective-2xl font-bold text-detective-text mb-2">
+          <h2 id="purchase-confirmation-title" className="text-detective-2xl font-bold text-detective-text mb-2">
             Purchase Successful!
           </h2>
           <p className="text-detective-text-secondary mb-4">
@@ -47,7 +54,7 @@ export const PurchaseConfirmation: React.FC = () => {
             <Sparkles className="w-5 h-5" />
           </div>
         </motion.div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </Modal>
   );
 };

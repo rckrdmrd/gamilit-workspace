@@ -33,7 +33,7 @@ export function NotificationsSettingsSection({
   setNotifications,
   saveStatus,
   handleSave,
-  navigate,
+  navigate: _navigate,
 }: NotificationsSettingsSectionProps) {
   return (
     <motion.div
@@ -273,12 +273,12 @@ export function NotificationsSettingsSection({
               Gestiona preferencias detalladas para cada tipo de notificación y
               dispositivos
             </p>
-            <button
-              onClick={() => navigate('/teacher/settings/notifications')}
-              className="rounded-lg bg-detective-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-orange-dark"
+            <Link
+              to="/teacher/settings/notifications"
+              className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
-              Ir a Preferencias de Notificaciones
-            </button>
+              Preferencias Avanzadas
+            </Link>
           </div>
 
           {/* Intervention Alerts Configuration Link */}

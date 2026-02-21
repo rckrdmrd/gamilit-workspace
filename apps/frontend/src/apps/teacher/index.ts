@@ -1,5 +1,5 @@
 // Main Page
-export { default as TeacherDashboard } from './pages/TeacherDashboard';
+export { default as TeacherDashboard } from './pages/TeacherDashboardPage';
 
 // Components
 export * from './components';

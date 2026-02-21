@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
-  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
+  const logoIconUrl = branding?.config?.logoIconUrl ?? DEFAULT_BRANDING.logoIconUrl;
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -113,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -137,14 +137,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             className="flex items-center space-x-2"
             onClick={onClose}
           >
-            {logoUrl ? (
-              <img src={logoUrl} alt={platformName} className="h-8 w-8 object-contain" />
+            {logoIconUrl ? (
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 p-1.5">
+                <img src={logoIconUrl} alt="" className="h-full w-full object-contain" aria-hidden="true" />
+              </div>
             ) : (
               <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">G</span>
               </div>
             )}
-            <span className="text-xl font-bold text-gray-900">{platformName}</span>
+            <div>
+              <p className="text-lg font-bold leading-tight text-gray-900">GAMILIT</p>
+              <p className="text-xs font-medium leading-tight text-gray-500">lee y gana</p>
+            </div>
           </Link>
 
           {/* Close button (mobile only) */}

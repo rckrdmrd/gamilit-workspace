@@ -5,19 +5,15 @@
  * Shows audit log of administrative activities.
  *
  * Features:
- * - Sortable columns
+ * - Sortable columns (via shared DataTable)
  * - Pagination
  * - Search/filter by action type
  * - Action type badges
  * - Success/error indicators
  * - Details modal
  * - Export to CSV
- * - Real-time updates
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   CheckCircle,
   XCircle,
@@ -25,11 +21,10 @@ import {
   Download,
   Search,
   Filter,
-  ChevronUp,
-  ChevronDown,
-  ChevronsUpDown,
 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
+import { Pagination } from '@shared/components/Pagination';
 import { Modal } from '@shared/components/common/Modal';
 import type { AdminAction } from '../../types';
 
@@ -82,8 +77,8 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
 
     // Apply sorting
     filtered.sort((a, b) => {
-      let aValue: any = a[sortField];
-      let bValue: any = b[sortField];
+      let aValue: string | number = a[sortField] as string;
+      let bValue: string | number = b[sortField] as string;
 
       // Handle date sorting
       if (sortField === 'timestamp') {
@@ -113,11 +108,12 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
   // HANDLERS
   // ============================================================================
 
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
+  const handleSort = (field: string) => {
+    const typedField = field as SortField;
+    if (sortField === typedField) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
-      setSortField(field);
+      setSortField(typedField);
       setSortOrder('desc');
     }
   };
@@ -181,16 +177,77 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
     );
   };
 
-  const getSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ChevronsUpDown className="h-4 w-4 text-gray-500" />;
-    }
-    return sortOrder === 'asc' ? (
-      <ChevronUp className="h-4 w-4 text-detective-orange" />
-    ) : (
-      <ChevronDown className="h-4 w-4 text-detective-orange" />
-    );
-  };
+  // ============================================================================
+  // COLUMN DEFINITIONS
+  // ============================================================================
+
+  const columns: Column<AdminAction>[] = [
+    {
+      key: 'timestamp',
+      label: 'Timestamp',
+      sortable: true,
+      render: (action) =>
+        action.timestamp
+          ? new Date(action.timestamp).toLocaleString('es-ES')
+          : 'N/A',
+    },
+    {
+      key: 'adminName',
+      label: 'Admin',
+      sortable: true,
+    },
+    {
+      key: 'action',
+      label: 'Action',
+      sortable: true,
+    },
+    {
+      key: 'actionType',
+      label: 'Type',
+      render: (action) => getActionTypeBadge(action.actionType),
+    },
+    {
+      key: 'targetType',
+      label: 'Target',
+      sortable: true,
+      render: (action) => (
+        <div>
+          <div className="font-semibold">{action.targetType}</div>
+          {action.targetName && (
+            <div className="text-xs text-gray-500">{action.targetName}</div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'success',
+      label: 'Status',
+      align: 'center' as const,
+      render: (action) =>
+        action.success ? (
+          <CheckCircle className="mx-auto h-5 w-5 text-green-500" />
+        ) : (
+          <XCircle className="mx-auto h-5 w-5 text-red-500" />
+        ),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      align: 'center' as const,
+      render: (action) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleViewDetails(action);
+          }}
+          className="hover:bg-detective-bg-tertiary rounded-lg p-2 transition-colors"
+          title="View details"
+        >
+          <Eye className="h-4 w-4 text-detective-orange" />
+        </button>
+      ),
+    },
+  ];
 
   // ============================================================================
   // RENDER
@@ -245,176 +302,31 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th
-                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
-                onClick={() => handleSort('timestamp')}
-              >
-                <div className="text-detective-small flex items-center gap-2 text-gray-400">
-                  <span>Timestamp</span>
-                  {getSortIcon('timestamp')}
-                </div>
-              </th>
-              <th
-                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
-                onClick={() => handleSort('adminName')}
-              >
-                <div className="text-detective-small flex items-center gap-2 text-gray-400">
-                  <span>Admin</span>
-                  {getSortIcon('adminName')}
-                </div>
-              </th>
-              <th
-                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
-                onClick={() => handleSort('action')}
-              >
-                <div className="text-detective-small flex items-center gap-2 text-gray-400">
-                  <span>Action</span>
-                  {getSortIcon('action')}
-                </div>
-              </th>
-              <th className="text-detective-small px-4 py-3 text-left text-gray-400">Type</th>
-              <th
-                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
-                onClick={() => handleSort('targetType')}
-              >
-                <div className="text-detective-small flex items-center gap-2 text-gray-400">
-                  <span>Target</span>
-                  {getSortIcon('targetType')}
-                </div>
-              </th>
-              <th className="text-detective-small px-4 py-3 text-center text-gray-400">Status</th>
-              <th className="text-detective-small px-4 py-3 text-center text-gray-400">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center">
-                    <div className="flex items-center justify-center gap-2 text-gray-400">
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      >
-                        <Filter className="h-5 w-5" />
-                      </motion.div>
-                      <span>Loading actions...</span>
-                    </div>
-                  </td>
-                </tr>
-              ) : paginatedActions.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
-                    No admin actions found
-                  </td>
-                </tr>
-              ) : (
-                paginatedActions.map((action, index) => (
-                  <motion.tr
-                    key={action.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ delay: index * 0.03 }}
-                    className="border-b border-gray-800 transition-colors hover:bg-detective-bg-secondary"
-                  >
-                    <td className="text-detective-small px-4 py-3">
-                      {action.timestamp
-                        ? new Date(action.timestamp).toLocaleString('es-ES')
-                        : 'N/A'}
-                    </td>
-                    <td className="text-detective-small px-4 py-3">{action.adminName}</td>
-                    <td className="text-detective-small px-4 py-3">{action.action}</td>
-                    <td className="px-4 py-3">{getActionTypeBadge(action.actionType)}</td>
-                    <td className="text-detective-small px-4 py-3">
-                      <div>
-                        <div className="font-semibold">{action.targetType}</div>
-                        {action.targetName && (
-                          <div className="text-xs text-gray-500">{action.targetName}</div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {action.success ? (
-                        <CheckCircle className="mx-auto h-5 w-5 text-green-500" />
-                      ) : (
-                        <XCircle className="mx-auto h-5 w-5 text-red-500" />
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleViewDetails(action)}
-                        className="hover:bg-detective-bg-tertiary rounded-lg p-2 transition-colors"
-                        title="View details"
-                      >
-                        <Eye className="h-4 w-4 text-detective-orange" />
-                      </button>
-                    </td>
-                  </motion.tr>
-                ))
-              )}
-            </AnimatePresence>
-          </tbody>
-        </table>
-      </div>
+      <DataTable<AdminAction>
+        data={paginatedActions}
+        columns={columns}
+        variant="detective"
+        loading={loading}
+        emptyMessage="No admin actions found"
+        sortColumn={sortField}
+        sortDirection={sortOrder}
+        onSort={handleSort}
+        striped={false}
+        rowKey={(row) => row.id}
+      />
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-between border-t border-gray-700 pt-4">
-          <div className="text-detective-small text-gray-400">
-            Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-            {Math.min(currentPage * itemsPerPage, filteredAndSortedActions.length)} of{' '}
-            {filteredAndSortedActions.length} actions
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 3) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
-
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`h-10 w-10 rounded-lg transition-colors ${
-                      currentPage === pageNum
-                        ? 'bg-detective-orange text-white'
-                        : 'hover:bg-detective-bg-tertiary bg-detective-bg-secondary'
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredAndSortedActions.length}
+          pageSize={itemsPerPage}
+          variant="full"
+          itemLabel="actions"
+          className="mt-6"
+        />
       )}
 
       {/* Details Modal */}

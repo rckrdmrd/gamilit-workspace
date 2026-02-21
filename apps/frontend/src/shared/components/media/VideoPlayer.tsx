@@ -259,7 +259,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
       {/* Loading overlay */}
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
           <svg className="w-12 h-12 text-white animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -422,9 +422,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       {!isPlaying && !isLoading && (
         <button
           onClick={togglePlay}
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-colors"
+          className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
         >
-          <div className="w-20 h-20 bg-blue-500 bg-opacity-90 rounded-full flex items-center justify-center">
+          <div className="w-20 h-20 bg-blue-500/90 rounded-full flex items-center justify-center">
             <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>

@@ -171,7 +171,7 @@ export function ClassroomTeachersTab() {
             <div>
               <p className="font-semibold">Error al cargar aula</p>
               <p className="text-sm">
-                {(error as any)?.response?.data?.message || 'Aula no encontrada'}
+                {(error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Aula no encontrada'}
               </p>
             </div>
           </div>

@@ -14,8 +14,6 @@
  *
  * ~320 lines
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
@@ -33,10 +31,11 @@ import {
   Eye,
   Gift,
   Star,
+  ArrowRight,
 } from 'lucide-react';
 import type { Mission, MissionCategory } from '../types/missionsTypes';
 import { cn } from '@shared/utils/cn';
-import { getColorSchemeById } from '@shared/utils/colorPalette';
+import { getColorSchemeById, type ColorScheme } from '@shared/utils/colorPalette';
 import { getMissionProgress, getMissionRewards } from '../utils/missionHelpers';
 
 type StatusStyles = {
@@ -51,6 +50,7 @@ interface MissionCardProps {
   onStart?: (missionId: string) => void;
   onClaim?: (missionId: string) => void;
   onTrack?: (missionId: string) => void;
+  onGoToExercise?: (missionId: string) => void;
   isTracked?: boolean;
 }
 
@@ -59,21 +59,27 @@ export function MissionCard({
   onStart,
   onClaim,
   onTrack,
+  onGoToExercise,
   isTracked = false,
 }: MissionCardProps) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState('');
 
   // Get unique color scheme based on mission ID (consistent across renders)
-  const colorScheme = useMemo(() => {
+  const colorScheme = useMemo((): ColorScheme => {
     if (!mission.id) {
       return {
         iconGradient: 'from-blue-500 to-cyan-500',
         progressGradient: 'from-blue-500 to-cyan-500',
+        buttonGradient: 'from-blue-500 to-cyan-500',
+        buttonHoverGradient: 'from-blue-600 to-cyan-600',
         border: 'border-blue-400',
         shadow: 'shadow-blue-200',
         background: 'bg-blue-50',
         badge: 'bg-blue-500 text-white',
+        primary: 'blue-500',
+        secondary: 'cyan-500',
+        light: 'blue-50',
       };
     }
     return getColorSchemeById(mission.id);
@@ -125,6 +131,13 @@ export function MissionCard({
 
   // Get category icon
   const CategoryIcon = getCategoryIcon(mission.category);
+
+  // Check if this is a special mission with exercise constraints (navigable)
+  const hasExerciseConstraints = useMemo(() => {
+    if (mission.type !== 'special') return false;
+    const firstObj = mission.objectives?.[0];
+    return !!(firstObj?.required_exercise_type || firstObj?.required_module);
+  }, [mission.type, mission.objectives]);
 
   // Status-based styling with random colors
   const statusStyles = useMemo(() => {
@@ -334,7 +347,24 @@ export function MissionCard({
               </motion.button>
             )}
 
-            {mission.status === 'in_progress' && (
+            {mission.status === 'in_progress' && hasExerciseConstraints && onGoToExercise ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onGoToExercise(mission.id)}
+                className={cn(
+                  'w-full rounded-lg py-3 font-semibold',
+                  'bg-gradient-to-r from-orange-500 to-amber-500',
+                  'hover:from-orange-600 hover:to-amber-600',
+                  'text-white',
+                  'flex items-center justify-center gap-2',
+                  'shadow-md transition-colors',
+                )}
+              >
+                <ArrowRight className="h-5 w-5" />
+                Ir al Ejercicio
+              </motion.button>
+            ) : mission.status === 'in_progress' ? (
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 className={cn(
@@ -347,7 +377,7 @@ export function MissionCard({
                 <Target className="h-5 w-5" />
                 En Progreso
               </motion.button>
-            )}
+            ) : null}
 
             {mission.status === 'completed' && (
               <motion.button
@@ -412,7 +442,7 @@ function getCategoryIcon(category: MissionCategory) {
   return icons[category] || BookOpen;
 }
 
-function getStatusStyles(status: Mission['status'], colorScheme: any): StatusStyles {
+function getStatusStyles(status: Mission['status'], colorScheme: ColorScheme | null): StatusStyles {
   // Provide default values if colorScheme is undefined or missing properties
   const defaultScheme = {
     border: 'border-blue-400',

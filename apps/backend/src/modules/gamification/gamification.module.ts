@@ -1,8 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Peer Challenges Module (EXT-009)
 import { PeerChallengesModule } from './peer-challenges/peer-challenges.module';
+
+// F5-A: Cross-module imports for notification pipeline
+import { WebSocketModule } from '../websocket/websocket.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 // Entities
 import {
@@ -121,6 +125,10 @@ import {
     TypeOrmModule.forFeature([ExerciseSubmission], 'progress'),
     // Peer Challenges Module (EXT-009: Matchmaking and Real-time Battles)
     PeerChallengesModule,
+    // F5-A: WebSocket for real-time gamification events
+    WebSocketModule,
+    // F5-A: NotificationsModule for in-app/email/push notifications on achievements & missions
+    forwardRef(() => NotificationsModule),
   ],
   providers: [
     UserStatsService,

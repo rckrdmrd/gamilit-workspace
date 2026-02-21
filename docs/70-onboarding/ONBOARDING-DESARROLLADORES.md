@@ -95,7 +95,7 @@ gamilit-workspace/
 ├── CLAUDE.md                 # Instrucciones para agentes IA (leer primero)
 ├── ecosystem.config.js       # PM2 config (backend:3006, frontend:3005)
 ├── apps/                     # MONOREPO (todo en mismo repo Git)
-│   ├── backend/              # NestJS 11 (22 modulos, 899 endpoints)
+│   ├── backend/              # NestJS 11 (23 modulos, 905 endpoints)
 │   │   └── src/modules/      # Modulos del backend (@BACKEND)
 │   ├── frontend/             # React 19 + Zustand + TailwindCSS
 │   │   └── src/              # Codigo frontend (@FRONTEND)
@@ -273,4 +273,4 @@ npm run test:cov
 - [ ] Lei documentacion de estandares
 - [ ] Entiendo el flujo de commits [GAM-XXX]
 - [ ] Entiendo la estructura monorepo (apps/backend, apps/frontend, apps/database)
-- [ ] Conozco los 4 portales y 22 modulos
+- [ ] Conozco los 4 portales y 23 modulos

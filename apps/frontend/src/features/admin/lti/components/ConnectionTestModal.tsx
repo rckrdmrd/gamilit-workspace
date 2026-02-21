@@ -17,6 +17,7 @@ import {
   Clock,
   RefreshCw,
 } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { LtiConsumer, ConnectionTestResult } from '@/shared/types/lti.types';
@@ -169,8 +170,8 @@ export function ConnectionTestModal({
   if (!isOpen || !consumer) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-xl bg-detective-card shadow-xl">
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="sm" className="bg-detective-card p-0">
+      <div className="-mx-6 -my-4">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-detective-border px-6 py-4">
           <div>
@@ -285,7 +286,7 @@ export function ConnectionTestModal({
           </DetectiveButton>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

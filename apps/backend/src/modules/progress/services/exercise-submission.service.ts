@@ -11,7 +11,7 @@ import { UserStatsService } from '@/modules/gamification/services/user-stats.ser
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { MissionsService } from '@/modules/gamification/services/missions.service';
 import { AchievementsService } from '@/modules/gamification/services/achievements.service';
-import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
+import { MissionTypeEnum } from '@/modules/gamification/enums/mission.enums';
 import { NotificationService } from '@/modules/notifications/services/notification.service';
 import { MailService } from '@/modules/mail/mail.service';
 import { NotificationTypeEnum } from '@shared/constants/enums.constants';
@@ -577,7 +577,7 @@ export class ExerciseSubmissionService {
       correctAnswers: number;
       totalQuestions: number;
       feedback: string;
-      details: any;
+      details: Record<string, unknown>;
       auditId: string;
     }> {
     // Get exercise to check type
@@ -1458,7 +1458,7 @@ export class ExerciseSubmissionService {
       const activeMissions = allMissions.filter(mission =>
         mission.status !== 'completed' &&
         mission.status !== 'claimed' &&
-        mission.objectives?.some((obj: any) => obj.type === 'complete_exercises'),
+        mission.objectives?.some((obj: any) => obj.type === 'complete_exercises'), // eslint-disable-line @typescript-eslint/no-explicit-any
       );
 
       if (activeMissions.length === 0) {
@@ -1488,7 +1488,7 @@ export class ExerciseSubmissionService {
         const xpMissions = allMissions.filter(mission =>
           mission.status !== 'completed' &&
           mission.status !== 'claimed' &&
-          mission.objectives?.some((obj: any) => obj.type === 'earn_xp'),
+          mission.objectives?.some((obj: any) => obj.type === 'earn_xp'), // eslint-disable-line @typescript-eslint/no-explicit-any
         );
 
         for (const mission of xpMissions) {

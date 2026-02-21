@@ -26,3 +26,5 @@ export {
 export * from './alert-config.dto';
 // Teacher Assignments DTOs
 export * from './teacher-assignments.dto';
+// Resource Sharing DTOs (ResourceSharingPanel backend support)
+export * from './shared-resource.dto';

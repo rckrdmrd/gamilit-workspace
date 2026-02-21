@@ -120,10 +120,10 @@ BEGIN
     WHERE user_id = v_student3_id
     LIMIT 1;
 
-    -- Deterministic fallback UUIDs if no attempts exist (idempotency: gen_random_uuid() would break ON CONFLICT on re-run)
-    IF v_attempt1_id IS NULL THEN v_attempt1_id := '81111111-bbbb-1111-1111-111111111001'::uuid; END IF;
-    IF v_attempt2_id IS NULL THEN v_attempt2_id := '81111111-bbbb-1111-1111-111111111002'::uuid; END IF;
-    IF v_attempt3_id IS NULL THEN v_attempt3_id := '81111111-bbbb-1111-1111-111111111003'::uuid; END IF;
+    -- Fallback: generate random attempt IDs if no real attempts exist
+    IF v_attempt1_id IS NULL THEN v_attempt1_id := gen_random_uuid(); END IF;
+    IF v_attempt2_id IS NULL THEN v_attempt2_id := gen_random_uuid(); END IF;
+    IF v_attempt3_id IS NULL THEN v_attempt3_id := gen_random_uuid(); END IF;
 
     RAISE NOTICE '  Students: %, %, %', v_student1_id, v_student2_id, v_student3_id;
     RAISE NOTICE '  Exercises: %, %, %', v_exercise1_id, v_exercise2_id, v_exercise3_id;
@@ -148,7 +148,7 @@ BEGIN
 
     -- Record 1: Student 1, Exercise 1 - Used 2 pistas
     (
-        '81111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         v_exercise1_id,
         v_attempt1_id,
@@ -164,10 +164,10 @@ BEGIN
 
     -- Record 2: Student 1, Exercise 2 - Used all pistas (limit reached)
     (
-        '81111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         v_exercise2_id,
-        '81111111-aaaa-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         3,    -- pistas_used (LIMIT REACHED)
         0,    -- vision_lectora_used
         0,    -- segunda_oportunidad_used
@@ -180,7 +180,7 @@ BEGIN
 
     -- Record 3: Student 2, Exercise 1 - Used vision_lectora
     (
-        '81111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         v_exercise1_id,
         v_attempt2_id,
@@ -196,10 +196,10 @@ BEGIN
 
     -- Record 4: Student 2, Exercise 3 - Used segunda_oportunidad
     (
-        '81111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         v_exercise3_id,
-        '81111111-aaaa-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         0,    -- pistas_used
         0,    -- vision_lectora_used
         1,    -- segunda_oportunidad_used (LIMIT REACHED)
@@ -212,7 +212,7 @@ BEGIN
 
     -- Record 5: Student 3, Exercise 1 - Used all types
     (
-        '81111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_student3_id,
         v_exercise1_id,
         v_attempt3_id,
@@ -228,10 +228,10 @@ BEGIN
 
     -- Record 6: Student 3, Exercise 2 - Fresh attempt, no comodines yet
     (
-        '81111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_student3_id,
         v_exercise2_id,
-        '81111111-aaaa-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         0,    -- pistas_used
         0,    -- vision_lectora_used
         0,    -- segunda_oportunidad_used
@@ -244,10 +244,10 @@ BEGIN
 
     -- Record 7: Student 1, Exercise 3 - Heavy pistas user
     (
-        '81111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         v_exercise3_id,
-        '81111111-aaaa-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         3,    -- pistas_used (LIMIT)
         1,    -- vision_lectora_used (LIMIT)
         0,    -- segunda_oportunidad_used
@@ -260,10 +260,10 @@ BEGIN
 
     -- Record 8: Student 2, Exercise 2 - Minimal usage
     (
-        '81111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         v_exercise2_id,
-        '81111111-aaaa-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         1,    -- pistas_used
         0,    -- vision_lectora_used
         0,    -- segunda_oportunidad_used
@@ -276,10 +276,10 @@ BEGIN
 
     -- Record 9: Student 3, Exercise 3 - All limits reached
     (
-        '81111111-1111-1111-1111-111111111009'::uuid,
+        gen_random_uuid(),
         v_student3_id,
         v_exercise3_id,
-        '81111111-aaaa-1111-1111-111111111009'::uuid,
+        gen_random_uuid(),
         3,    -- pistas_used (LIMIT)
         1,    -- vision_lectora_used (LIMIT)
         1,    -- segunda_oportunidad_used (LIMIT)
@@ -292,10 +292,10 @@ BEGIN
 
     -- Record 10: Student 1, older attempt
     (
-        '81111111-1111-1111-1111-111111111010'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         v_exercise1_id,
-        '81111111-aaaa-1111-1111-111111111010'::uuid,
+        gen_random_uuid(),
         1,    -- pistas_used
         1,    -- vision_lectora_used (LIMIT)
         0,    -- segunda_oportunidad_used

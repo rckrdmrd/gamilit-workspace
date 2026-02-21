@@ -421,6 +421,7 @@ export class PredictionService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchDropoutFeatures(studentId: string): Promise<any> {
     // Fetch relevant features from progress_tracking
     const result = await this.progressDataSource.query(
@@ -464,7 +465,7 @@ export class PredictionService {
     };
   }
 
-  private calculateDropoutProbability(features: any): number {
+  private calculateDropoutProbability(features: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     // Heuristic calculation (placeholder for ML model)
     const inactivityWeight = Math.min(features.days_since_last_activity / 14, 1) * 0.35;
     const streakWeight = (1 - Math.min(features.current_streak / 7, 1)) * 0.25;
@@ -482,7 +483,7 @@ export class PredictionService {
     return 'low';
   }
 
-  private calculateConfidence(features: any): number {
+  private calculateConfidence(features: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     // Higher confidence when we have more data
     const dataPoints = features.submissions_30d || 0;
     const baseConfidence = 0.6;
@@ -490,7 +491,7 @@ export class PredictionService {
     return Number((baseConfidence + dataBonus).toFixed(2));
   }
 
-  private getContributingFactors(features: any): ContributingFactorDto[] {
+  private getContributingFactors(features: any): ContributingFactorDto[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     const factors: ContributingFactorDto[] = [];
 
     if (features.days_since_last_activity > 7) {
@@ -528,7 +529,7 @@ export class PredictionService {
 
   private getRecommendedInterventions(
     riskLevel: string,
-    features: any,
+    features: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): RecommendedInterventionDto[] {
     const interventions: RecommendedInterventionDto[] = [];
 
@@ -559,6 +560,7 @@ export class PredictionService {
     return interventions;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchPerformanceFeatures(studentId: string): Promise<any> {
     const result = await this.progressDataSource.query(
       `
@@ -576,6 +578,7 @@ export class PredictionService {
     return result[0] || { avgScore: 50, score_stddev: 15, total_submissions: 0 };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchExerciseInfo(exerciseId: string): Promise<any> {
     const result = await this.progressDataSource.query(
       `
@@ -597,13 +600,13 @@ export class PredictionService {
     return result[0];
   }
 
-  private calculatePredictedScore(studentFeatures: any, exerciseInfo: any): number {
+  private calculatePredictedScore(studentFeatures: any, exerciseInfo: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     const baseScore = studentFeatures.avg_score || 50;
     const difficultyAdjustment = (3 - (exerciseInfo.difficulty || 3)) * 5;
     return Math.max(0, Math.min(100, baseScore + difficultyAdjustment));
   }
 
-  private calculateConfidenceMargin(features: any): number {
+  private calculateConfidenceMargin(features: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     const stddev = features.score_stddev || 15;
     return Math.min(stddev * 1.5, 25);
   }
@@ -620,7 +623,7 @@ export class PredictionService {
     return 'appropriate';
   }
 
-  private estimateCompletionTime(exerciseInfo: any, studentFeatures: any): number {
+  private estimateCompletionTime(exerciseInfo: any, studentFeatures: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     const baseTime = exerciseInfo.estimated_time || 15;
     const avgTimeRatio = studentFeatures.avg_time_spent
       ? studentFeatures.avg_time_spent / 300
@@ -630,7 +633,7 @@ export class PredictionService {
 
   private generatePerformanceTips(
     difficultyMatch: string,
-    features: any,
+    features: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): string[] {
     const tips: string[] = [];
 
@@ -651,6 +654,7 @@ export class PredictionService {
   private async fetchDifficultyFeatures(
     studentId: string,
     moduleId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const result = await this.progressDataSource.query(
       `
@@ -674,7 +678,7 @@ export class PredictionService {
     };
   }
 
-  private calculateZPD(features: any): ZoneOfProximalDevelopmentDto {
+  private calculateZPD(features: any): ZoneOfProximalDevelopmentDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     const performance = features.avg_module_score || 50;
     const optimal = Math.ceil(performance / 20);
     return {
@@ -684,7 +688,7 @@ export class PredictionService {
     };
   }
 
-  private calculateRecommendedDifficulty(features: any, zpd: any): number {
+  private calculateRecommendedDifficulty(features: any, zpd: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     const currentPerformance = features.avg_module_score || 50;
 
     if (currentPerformance >= 80) {
@@ -696,7 +700,7 @@ export class PredictionService {
   }
 
   private generateDifficultyReason(
-    features: any,
+    features: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     recommended: number,
     current: number,
   ): string {
@@ -722,7 +726,7 @@ export class PredictionService {
       [moduleId, difficulty],
     );
 
-    return (result || []).map((e: any) => ({
+    return (result || []).map((e: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
       exerciseId: e.id,
       exerciseName: e.title,
       difficulty: e.difficulty_level,
@@ -730,6 +734,7 @@ export class PredictionService {
     }));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchEngagementFeatures(studentId: string): Promise<any> {
     const result = await this.progressDataSource.query(
       `
@@ -746,7 +751,7 @@ export class PredictionService {
     return result[0] || { active_days_7d: 0, total_time_7d: 0, sessions_7d: 0 };
   }
 
-  private calculateEngagementScore(features: any): number {
+  private calculateEngagementScore(features: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     const daysScore = Math.min(features.active_days_7d / 5, 1) * 40;
     const timeScore = Math.min(features.total_time_7d / 180, 1) * 30;
     const sessionsScore = Math.min(features.sessions_7d / 7, 1) * 30;
@@ -763,19 +768,19 @@ export class PredictionService {
     return 'very_low';
   }
 
-  private predictWeeklySessions(features: any): number {
+  private predictWeeklySessions(features: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     return Math.round(features.sessions_7d * 0.9);
   }
 
-  private predictWeeklyTime(features: any): number {
+  private predictWeeklyTime(features: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     return Math.round(features.total_time_7d * 0.85);
   }
 
-  private determineBestTime(features: any): string {
+  private determineBestTime(features: any): string { // eslint-disable-line @typescript-eslint/no-explicit-any
     return 'afternoon'; // Simplified - would analyze session times
   }
 
-  private suggestEngagementActivities(features: any): string[] {
+  private suggestEngagementActivities(features: any): string[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     const activities: string[] = [];
 
     if (features.sessions_7d < 3) {
@@ -787,6 +792,7 @@ export class PredictionService {
     return activities;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchInsightsFeatures(studentId: string): Promise<any> {
     const result = await this.progressDataSource.query(
       `
@@ -808,7 +814,7 @@ export class PredictionService {
   }
 
   private analyzePerformanceTrend(
-    features: any,
+    features: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): 'improving' | 'stable' | 'declining' {
     const diff = (features.recent_avg_score || 50) - (features.avg_score || 50);
     if (diff > 5) return 'improving';
@@ -816,14 +822,14 @@ export class PredictionService {
     return 'stable';
   }
 
-  private identifyStrengths(features: any): string[] {
+  private identifyStrengths(features: any): string[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     const strengths: string[] = [];
     if (features.avg_score >= 70) strengths.push('Strong academic performance');
     if (features.total_exercises > 50) strengths.push('Consistent practice');
     return strengths.length > 0 ? strengths : ['Keep building your skills!'];
   }
 
-  private identifyWeaknesses(features: any): string[] {
+  private identifyWeaknesses(features: any): string[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     const weaknesses: string[] = [];
     if (features.avg_score < 60) weaknesses.push('Score improvement needed');
     return weaknesses;
@@ -832,7 +838,7 @@ export class PredictionService {
   private generatePersonalizedRecommendations(
     dropout: DropoutRiskPredictionDto,
     engagement: EngagementPredictionDto,
-    features: any,
+    features: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): string[] {
     const recommendations: string[] = [];
 
@@ -852,7 +858,7 @@ export class PredictionService {
   private determineNextBestActions(
     dropout: DropoutRiskPredictionDto,
     engagement: EngagementPredictionDto,
-    features: any,
+    features: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): NextBestActionDto[] {
     const actions: NextBestActionDto[] = [];
 
@@ -873,6 +879,7 @@ export class PredictionService {
     return actions;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchClassroomInfo(classroomId: string): Promise<any> {
     const result = await this.progressDataSource.query(
       `SELECT id, name FROM social_features.classrooms WHERE id = $1`,
@@ -892,7 +899,7 @@ export class PredictionService {
       `,
       [classroomId],
     );
-    return (result || []).map((r: any) => r.user_id);
+    return (result || []).map((r: any) => r.user_id); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   private toStudentRiskSummary(

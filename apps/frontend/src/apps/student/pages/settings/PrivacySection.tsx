@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { profileAPI } from '@/services/api/profileAPI';
@@ -37,13 +36,13 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
     const load = async () => {
       try {
         const res = await profileAPI.getPreferences();
-        const prefs = res.preferences as Record<string, any>;
+        const prefs = res.preferences as Record<string, Record<string, unknown>>;
         if (prefs?.privacy) {
           setPrivacy({
-            profileVisibility: prefs.privacy.profileVisibility ?? prefs.privacy.profile_visibility ?? DEFAULT_PRIVACY.profileVisibility,
-            showOnlineStatus: prefs.privacy.showOnlineStatus ?? prefs.privacy.show_online_status ?? DEFAULT_PRIVACY.showOnlineStatus,
-            allowFriendRequests: prefs.privacy.allowFriendRequests ?? prefs.privacy.allow_friend_requests ?? DEFAULT_PRIVACY.allowFriendRequests,
-            showActivity: prefs.privacy.showActivity ?? prefs.privacy.show_activity ?? DEFAULT_PRIVACY.showActivity,
+            profileVisibility: (prefs.privacy.profileVisibility ?? prefs.privacy.profile_visibility ?? DEFAULT_PRIVACY.profileVisibility) as string,
+            showOnlineStatus: (prefs.privacy.showOnlineStatus ?? prefs.privacy.show_online_status ?? DEFAULT_PRIVACY.showOnlineStatus) as boolean,
+            allowFriendRequests: (prefs.privacy.allowFriendRequests ?? prefs.privacy.allow_friend_requests ?? DEFAULT_PRIVACY.allowFriendRequests) as boolean,
+            showActivity: (prefs.privacy.showActivity ?? prefs.privacy.show_activity ?? DEFAULT_PRIVACY.showActivity) as boolean,
           });
         }
       } catch {
@@ -60,7 +59,7 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
     try {
       // Load current preferences first, then merge privacy into them
       const currentRes = await profileAPI.getPreferences();
-      const currentPrefs = (currentRes.preferences || {}) as Record<string, any>;
+      const currentPrefs = (currentRes.preferences || {}) as Record<string, unknown>;
 
       await profileAPI.updatePreferences(user.id, {
         ...currentPrefs,
@@ -70,7 +69,7 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
           allowFriendRequests: privacy.allowFriendRequests,
           showActivity: privacy.showActivity,
         },
-      } as any);
+      } as Record<string, unknown>);
       setSaveStatus('saved');
       toast.success('Configuracion de privacidad guardada');
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -78,7 +77,7 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
       setSaveStatus('error');
       const msg =
         error instanceof Error
-          ? ((error as any).response?.data?.message || error.message)
+          ? ((error as { response?: { data?: { message?: string } } }).response?.data?.message || error.message)
           : 'Error al guardar configuracion';
       toast.error(msg);
       setTimeout(() => setSaveStatus('idle'), 3000);

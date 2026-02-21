@@ -88,10 +88,6 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
         answers: { texts },
       });
 
-      console.log('📊 [TextoEnMovimiento] Progress update sent:', {
-        textsCount: texts.length,
-        minRequired: minTexts,
-      });
     }
   }, [texts, hintsUsed, onProgressUpdate, minTexts, startTime]);
 
@@ -169,13 +165,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
 
       await syncAndInvalidate();
 
-      console.log('✅ [TextoEnMovimiento] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('❌ [TextoEnMovimiento] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

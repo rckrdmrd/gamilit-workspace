@@ -18,10 +18,10 @@ let isRedirectingToLogin = false;
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }> = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -79,15 +79,6 @@ apiClient.interceptors.request.use(
       config.params = camelToSnake(config.params);
     }
 
-    // Log request in debug mode
-    if (FEATURE_FLAGS.DEBUG_API) {
-      console.log('[API Request]', {
-        method: config.method?.toUpperCase(),
-        url: config.url,
-        data: config.data,
-      });
-    }
-
     return config;
   },
   (error) => {
@@ -105,15 +96,6 @@ apiClient.interceptors.request.use(
  */
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    // Log response in debug mode
-    if (FEATURE_FLAGS.DEBUG_API) {
-      console.log('[API Response]', {
-        status: response.status,
-        url: response.config.url,
-        data: response.data,
-      });
-    }
-
     // Unwrap backend response format: { success, data, timestamp, path }
     // Extract the inner "data" field if it exists (from TransformResponseInterceptor)
     if (

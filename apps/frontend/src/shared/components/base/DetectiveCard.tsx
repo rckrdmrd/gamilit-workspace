@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
@@ -66,7 +65,7 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
 
     return (
       <Component
-        ref={ref as any}
+        ref={ref as React.Ref<HTMLDivElement>}
         onClick={onClick}
         className={cn(
           // Variant styles from detective-theme.css
@@ -82,16 +81,16 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={
           isClickable
-            ? (e) => {
+            ? (e: React.KeyboardEvent<HTMLDivElement>) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  onClick?.(e as any);
+                  onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
                 }
               }
             : undefined
         }
-        {...(motionProps as any)}
-        {...(props as any)}
+        {...(motionProps as Record<string, unknown>)}
+        {...(props as Record<string, unknown>)}
       >
         {children}
       </Component>

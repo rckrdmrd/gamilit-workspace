@@ -14,14 +14,14 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Coins, Zap, Flame, Activity, BarChart3, TrendingUp, Backpack } from 'lucide-react';
 
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { AvatarSelectionModal } from '@shared/components/profile/AvatarSelectionModal';
 
 import { useProfileData } from '@/apps/student/hooks/useProfileData';
 import { useAvatarUpdate } from '@/apps/student/hooks/useAvatarUpdate';
 import { useEquipment } from '@/features/gamification/social/hooks/useEquipment';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useEquippedVisuals } from '@/features/gamification/social/hooks/useEquippedVisuals';
 import { cn } from '@shared/utils/cn';
 import type { RankType } from '@shared/components/base/RankBadge';
 import type { MayaRank } from '@/features/gamification/ranks/types/ranksTypes';
@@ -52,13 +52,14 @@ const MAYA_RANK_MAP: Record<MayaRank, RankType> = {
 };
 
 export default function EnhancedProfilePage() {
-  const { user, logout, userProgress, balance, achievements, achievementStats } = useProfileData();
+  const { user, userProgress, balance, achievements, achievementStats } = useProfileData();
   const { updateAvatar } = useAvatarUpdate();
   const { equippedItems } = useEquipment();
-  const { gamificationData } = useUserGamification(user?.id);
 
   const [selectedTab, setSelectedTab] = useState<TabId>('overview');
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+
+  const { frame, background, title, badge } = useEquippedVisuals();
 
   const handleAvatarSelect = async (avatarUrl: string) => {
     const success = await updateAvatar(avatarUrl);
@@ -66,10 +67,10 @@ export default function EnhancedProfilePage() {
   };
 
   const stats: ProfileStat[] = [
-    { label: 'ML Coins', value: String(balance?.current ?? 0), icon: Coins, color: 'text-yellow-500', bgColor: 'bg-yellow-50' },
-    { label: 'XP Total', value: String(userProgress?.currentXP ?? 0), icon: Zap, color: 'text-blue-500', bgColor: 'bg-blue-50' },
-    { label: 'Logros', value: `${achievementStats.unlockedAchievements}/${achievementStats.totalAchievements}`, icon: Trophy, color: 'text-purple-500', bgColor: 'bg-purple-50' },
-    { label: 'Racha', value: '7 dias', icon: Flame, color: 'text-orange-500', bgColor: 'bg-orange-50' },
+    { label: 'ML Coins', value: String(balance?.current ?? 0), icon: Coins, color: 'text-yellow-400', bgColor: 'bg-yellow-500/20' },
+    { label: 'XP Total', value: String(userProgress?.currentXP ?? 0), icon: Zap, color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
+    { label: 'Logros', value: `${achievementStats.unlockedAchievements}/${achievementStats.totalAchievements}`, icon: Trophy, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
+    { label: 'Racha', value: '7 dias', icon: Flame, color: 'text-orange-400', bgColor: 'bg-orange-500/20' },
   ];
 
   const recentAchievements = useMemo(
@@ -89,26 +90,32 @@ export default function EnhancedProfilePage() {
     : 'chilan';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900">
-      <GamifiedHeader
-        user={user || undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       <main className="container mx-auto px-4 py-8">
         <ProfileHero
           user={user}
           rankType={rankType}
           stats={stats}
-          equippedFrameColor={
-            equippedItems.find((e) => e.category?.name === 'frame')?.item?.metadata?.color as string | undefined
-          }
+          equippedFrameColor={frame?.borderColor}
+          equippedBackground={background ? {
+            name: title?.name || '',
+            assetUrl: background.assetUrl,
+          } : undefined}
+          equippedTitle={title ? {
+            name: title.name || '',
+            displayText: title.text,
+            color: title.color,
+          } : undefined}
+          equippedBadge={badge ? {
+            name: badge.name || '',
+            assetUrl: badge.assetUrl,
+          } : undefined}
           onAvatarClick={() => setShowAvatarModal(true)}
         />
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-2 overflow-x-auto pb-2" role="tablist">
+        {/* TODO: Migrate to TabBar when it supports custom gradient colors (purple-to-pink) */}
+        <div className="mb-6 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Secciones del perfil">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -123,7 +130,7 @@ export default function EnhancedProfilePage() {
                   'flex items-center gap-2 whitespace-nowrap rounded-lg px-6 py-3 font-semibold transition-all',
                   selectedTab === tab.id
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:bg-gray-50',
+                    : 'bg-detective-surface text-detective-text-secondary hover:bg-detective-surface-elevated',
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -134,6 +141,7 @@ export default function EnhancedProfilePage() {
         </div>
 
         {/* Tab Content */}
+        <div role="tabpanel" aria-live="polite">
         <AnimatePresence mode="wait">
           {selectedTab === 'overview' && (
             <motion.div
@@ -217,6 +225,7 @@ export default function EnhancedProfilePage() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </main>
 
       <AvatarSelectionModal
@@ -225,6 +234,6 @@ export default function EnhancedProfilePage() {
         onSelect={handleAvatarSelect}
         currentAvatar={user?.avatar_url || ''}
       />
-    </div>
+    </StudentPageShell>
   );
 }

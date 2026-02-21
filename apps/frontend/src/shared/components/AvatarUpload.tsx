@@ -213,7 +213,8 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
       const error = err as Error;
       console.error('Error uploading avatar:', error);
 
-      const errorMessage = (error as any).response?.data?.message ||
+      const axiosLikeError = error as { response?: { data?: { message?: string } } };
+      const errorMessage = axiosLikeError.response?.data?.message ||
                           error.message ||
                           'Error al subir el avatar';
 

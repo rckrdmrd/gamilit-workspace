@@ -45,7 +45,10 @@ export class MLCoinsService {
     });
 
     if (!userStats) {
-      throw new NotFoundException(`User stats not found for ${userId}`);
+      this.logger.warn(
+        `User stats not found for ${userId} — returning 0 balance (user may not be fully initialized)`,
+      );
+      return 0;
     }
 
     return userStats.ml_coins;
@@ -65,7 +68,15 @@ export class MLCoinsService {
     });
 
     if (!userStats) {
-      throw new NotFoundException(`User stats not found for ${userId}`);
+      this.logger.warn(
+        `User stats not found for ${userId} — returning default coin stats (user may not be fully initialized)`,
+      );
+      return {
+        current_balance: 0,
+        total_earned: 0,
+        total_spent: 0,
+        earned_today: 0,
+      };
     }
 
     return {

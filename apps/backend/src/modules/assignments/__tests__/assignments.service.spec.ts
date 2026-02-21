@@ -13,6 +13,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { AssignmentsService } from '../services/assignments.service';
+import { NotificationService } from '@/modules/notifications/services/notification.service';
 import { Assignment } from '../entities/assignment.entity';
 import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
 import { AssignmentExercise } from '../entities/assignment-exercise.entity';
@@ -109,6 +110,10 @@ describe('AssignmentsService', () => {
         {
           provide: getRepositoryToken(AssignmentSubmission, 'educational'),
           useValue: mockSubmissionRepo,
+        },
+        {
+          provide: NotificationService,
+          useValue: { create: jest.fn(), sendFromTemplate: jest.fn() },
         },
       ],
     }).compile();

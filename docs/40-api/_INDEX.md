@@ -6,7 +6,7 @@
 
 | Archivo | Descripcion |
 |---------|-------------|
-| [API-REFERENCE.md](./API-REFERENCE.md) | Referencia completa de la API (899 endpoints) |
+| [API-REFERENCE.md](./API-REFERENCE.md) | Referencia completa de la API (911 endpoints) |
 | [ENDPOINTS-INVENTORY-EQUIP.md](./ENDPOINTS-INVENTORY-EQUIP.md) | Contratos API de equipamiento cosmetico |
 | [ADMIN-PORTAL-ENDPOINTS.md](./ADMIN-PORTAL-ENDPOINTS.md) | Endpoints del portal administrativo |
 | [WEB-PUSH-MIGRATION.md](./WEB-PUSH-MIGRATION.md) | Migracion a Web Push notifications |

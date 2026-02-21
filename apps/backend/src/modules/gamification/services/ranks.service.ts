@@ -190,11 +190,27 @@ export class RanksService {
       },
     });
 
-    const savedRank = await this.userRankRepo.save(newRank);
-    this.logger.log(
-      `User ${userId} initialized with default rank Ajaw (auto-created)`,
-    );
-    return savedRank;
+    try {
+      const savedRank = await this.userRankRepo.save(newRank);
+      this.logger.log(
+        `User ${userId} initialized with default rank Ajaw (auto-created)`,
+      );
+      return savedRank;
+    } catch (error: unknown) {
+      // Handle race condition: DB trigger already created the rank
+      const errCode = (error as Record<string, unknown>)?.code ?? (error as Record<string, Record<string, unknown>>)?.driverError?.code;
+      if (errCode === '23505') {
+        this.logger.warn(
+          `User ${userId} rank already exists (created by DB trigger) — fetching existing record`,
+        );
+        const existing = await this.userRankRepo.findOne({
+          where: { user_id: userId },
+          order: { achieved_at: 'DESC' },
+        });
+        if (existing) return existing;
+      }
+      throw error;
+    }
   }
 
   /**
@@ -216,7 +232,36 @@ export class RanksService {
    */
   async calculateRankProgress(userId: string): Promise<RankProgressDto> {
     const currentRank = await this.getCurrentRank(userId);
-    const userStats = await this.userStatsService.findByUserId(userId);
+
+    let userStats: { total_xp: number };
+    try {
+      userStats = await this.userStatsService.findByUserId(userId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        this.logger.warn(
+          `User stats not found for ${userId} in calculateRankProgress — returning default progress (user may not be fully initialized)`,
+        );
+        const defaultRankConfig = this.getRankConfig(currentRank.current_rank);
+        const defaultNextRank = defaultRankConfig.next_rank;
+        return {
+          current_rank: currentRank.current_rank,
+          next_rank: defaultNextRank,
+          progress_percentage: 0,
+          xp_current: 0,
+          xp_required: defaultNextRank
+            ? this.getRankConfig(defaultNextRank).xp_min
+            : defaultRankConfig.xp_max,
+          xp_remaining: defaultNextRank
+            ? this.getRankConfig(defaultNextRank).xp_min
+            : 0,
+          ml_coins_bonus_on_promotion: defaultNextRank
+            ? this.getRankConfig(defaultNextRank).ml_coins_bonus
+            : 0,
+          is_max_rank: !defaultNextRank,
+        };
+      }
+      throw error;
+    }
 
     const currentXP = userStats.total_xp;
     const rankConfig = this.getRankConfig(currentRank.current_rank);
@@ -278,9 +323,10 @@ export class RanksService {
 
       // Puede promocionar si tiene 0 XP restante
       return progress.xp_remaining === 0;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
       this.logger.error(
-        `Error checking promotion eligibility for user ${userId}: ${error?.message || error}`,
+        `Error checking promotion eligibility for user ${userId}: ${message}`,
       );
       return false;
     }

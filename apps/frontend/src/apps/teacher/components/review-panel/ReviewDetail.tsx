@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { X, Save, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { ManualReview, RubricEvaluation, ReviewRewards, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
 import { ExerciseContentRenderer } from '@/shared/components/mechanics/ExerciseContentRenderer';
@@ -481,39 +482,37 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       </div>
 
       {/* FIX TASK-2026-01-18-012: Modal de Confirmacion */}
-      {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-detective p-6 max-w-md mx-4 shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-amber-100 rounded-full">
-                <AlertTriangle className="h-6 w-6 text-amber-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">Confirmar Calificacion</h3>
+      <Modal isOpen={showConfirmModal} onClose={() => setShowConfirmModal(false)} showCloseButton={false} size="sm">
+        <div className="-mx-6 -my-4 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-amber-100 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-amber-600" />
             </div>
-            <p className="text-gray-600 mb-2">
-              Estas a punto de calificar este ejercicio con <strong>{_totalScore}/100 puntos</strong>.
-            </p>
-            <p className="text-gray-500 text-sm mb-6">
-              El estudiante sera notificado y recibira las recompensas correspondientes (XP y ML Coins).
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-detective transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleCompleteReview}
-                disabled={completing}
-                className="px-4 py-2 bg-green-600 text-white rounded-detective hover:bg-green-700 transition-colors disabled:opacity-50"
-              >
-                {completing ? 'Calificando...' : 'Confirmar'}
-              </button>
-            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Confirmar Calificacion</h3>
+          </div>
+          <p className="text-gray-600 mb-2">
+            Estas a punto de calificar este ejercicio con <strong>{_totalScore}/100 puntos</strong>.
+          </p>
+          <p className="text-gray-500 text-sm mb-6">
+            El estudiante sera notificado y recibira las recompensas correspondientes (XP y ML Coins).
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowConfirmModal(false)}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-detective transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleCompleteReview}
+              disabled={completing}
+              className="px-4 py-2 bg-green-600 text-white rounded-detective hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              {completing ? 'Calificando...' : 'Confirmar'}
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
 
       {/* FIX TASK-2026-01-18-012: FeedbackModal para mostrar exito */}
       {showSuccessModal && feedbackData && (

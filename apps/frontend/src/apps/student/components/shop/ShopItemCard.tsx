@@ -5,8 +5,9 @@
  */
 
 import { motion } from 'framer-motion';
-import { Coins, Check } from 'lucide-react';
+import { Coins, Check, ShoppingCart, Ban } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ShopIcon } from './ShopIcon';
 import { getRarityGradient, getRarityBadgeClass } from '@shared/utils/rarityColors';
 import { cn } from '@shared/utils/cn';
@@ -50,6 +51,26 @@ export function ShopItemCard({ item, userBalance, onPurchase, index }: ShopItemC
             </span>
           </div>
 
+          {/* Visual Preview */}
+          {item.metadata?.type && item.metadata.asset_url && (
+            <div className="flex justify-center rounded-lg bg-gray-50 p-2">
+              {item.metadata.type === 'title' ? (
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: (item.metadata.color as string) || '#D4AF37' }}
+                >
+                  {(item.metadata.display_text as string) || item.name}
+                </span>
+              ) : (
+                <img
+                  src={item.metadata.asset_url as string}
+                  alt={item.name}
+                  className="h-12 w-12 object-contain"
+                />
+              )}
+            </div>
+          )}
+
           {/* Item Info */}
           <div>
             <h3 className="mb-1 text-lg font-bold text-detective-text">{item.name}</h3>
@@ -58,35 +79,41 @@ export function ShopItemCard({ item, userBalance, onPurchase, index }: ShopItemC
             </p>
           </div>
 
-          {/* Price */}
-          <div className="flex items-center justify-between border-t border-detective-bg pt-2">
+          {/* Price and Action */}
+          <div className="space-y-2 border-t border-detective-bg pt-2">
             <div className="flex items-center gap-1">
               <Coins className="h-5 w-5 text-detective-gold" />
               <span className="text-xl font-bold text-detective-text">{item.price}</span>
             </div>
 
             {item.isOwned ? (
-              <span className="flex items-center gap-1 rounded-lg border border-green-200 bg-green-100 px-3 py-2 text-sm font-semibold text-green-700">
-                <Check className="h-4 w-4" />
-                Owned
+              <span className="flex w-full items-center justify-center gap-1 rounded-lg border border-green-200 bg-green-100 px-3 py-2 text-sm font-semibold text-green-700" role="status" aria-label={`${item.name} ya adquirido`}>
+                <Check className="h-4 w-4" aria-hidden="true" />
+                Adquirido
               </span>
             ) : (
-              <button
+              <DetectiveButton
+                variant="primary"
+                size="md"
                 onClick={() => onPurchase(item)}
                 disabled={!item.isPurchasable || !canAfford}
-                className={cn(
-                  'rounded-lg px-4 py-2 font-medium transition-all',
-                  item.isPurchasable && canAfford
-                    ? 'btn-detective'
-                    : 'cursor-not-allowed bg-gray-200 text-gray-400 opacity-60',
-                )}
+                className="w-full"
+                leftIcon={
+                  !item.isPurchasable ? (
+                    <Ban className="h-4 w-4" />
+                  ) : !canAfford ? (
+                    <Coins className="h-4 w-4" />
+                  ) : (
+                    <ShoppingCart className="h-4 w-4" />
+                  )
+                }
               >
                 {!item.isPurchasable
-                  ? 'Not Available'
+                  ? 'No Disponible'
                   : !canAfford
-                    ? 'Not Enough Coins'
-                    : 'Buy Now'}
-              </button>
+                    ? 'Insuficientes'
+                    : 'Comprar'}
+              </DetectiveButton>
             )}
           </div>
         </div>

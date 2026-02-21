@@ -4,6 +4,11 @@
 **Mantenido por:** Frontend-Agent
 **Proyecto:** GAMILIT
 
+**Estandares relacionados:**
+- [`STANDARD-API.md`](../../../40-standards/STANDARD-API.md) -- Ubicacion canonica de APIs, React Query, error handling
+- [`STANDARD-TYPES.md`](../../../40-standards/STANDARD-TYPES.md) -- Jerarquia de tipos, anti-duplicados
+- [`ESTANDAR-NOMENCLATURA-API.md`](../../../40-standards/ESTANDAR-NOMENCLATURA-API.md) -- snake_case/camelCase entre capas
+
 ---
 
 ## 🎯 PROPÓSITO

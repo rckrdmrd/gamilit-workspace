@@ -83,17 +83,14 @@ export function useBattle() {
     });
 
     socket.on('connect', () => {
-      console.log('[Matchmaking] Connected');
       setConnected(true);
     });
 
     socket.on('disconnect', () => {
-      console.log('[Matchmaking] Disconnected');
       setConnected(false);
     });
 
     socket.on(MatchmakingEvent.QUEUE_JOINED, (data: QueueStatus['position']) => {
-      console.log('[Matchmaking] Queue joined:', data);
       setQueueStatus({
         inQueue: true,
         position: data,
@@ -102,7 +99,6 @@ export function useBattle() {
     });
 
     socket.on(MatchmakingEvent.QUEUE_UPDATE, (data: QueueStatus['position']) => {
-      console.log('[Matchmaking] Queue update:', data);
       setQueueStatus({
         inQueue: true,
         position: data,
@@ -111,19 +107,16 @@ export function useBattle() {
     });
 
     socket.on(MatchmakingEvent.MATCH_FOUND, (data: MatchResult) => {
-      console.log('[Matchmaking] Match found:', data);
       setMatchResult(data);
       setLoading(false);
     });
 
     socket.on(MatchmakingEvent.MATCHMAKING_TIMEOUT, () => {
-      console.log('[Matchmaking] Timeout');
       stopSearching();
       setError('Matchmaking timed out. Please try again.');
     });
 
     socket.on(MatchmakingEvent.ERROR, (data: { message: string }) => {
-      console.error('[Matchmaking] Error:', data.message);
       setError(data.message);
       setLoading(false);
     });
@@ -195,36 +188,30 @@ export function useBattle() {
       });
 
       socket.on('connect', () => {
-        console.log('[Battle] Connected');
         setConnected(true);
         // Join the battle room
         socket.emit(BattleEvent.JOIN, { challengeId });
       });
 
       socket.on('disconnect', () => {
-        console.log('[Battle] Disconnected');
         setConnected(false);
       });
 
       socket.on(BattleEvent.STATE, (data: BattleState) => {
-        console.log('[Battle] State update:', data);
         setBattleState(data);
       });
 
-      socket.on(BattleEvent.COUNTDOWN, (data: { count: number; message?: string }) => {
-        console.log('[Battle] Countdown:', data.count);
+      socket.on(BattleEvent.COUNTDOWN, (_data: { count: number; message?: string }) => {
         // Could dispatch to a countdown state if needed
       });
 
       socket.on(BattleEvent.START, (data: { state: BattleState }) => {
-        console.log('[Battle] Battle started');
         setBattleState(data.state);
       });
 
       socket.on(
         BattleEvent.QUESTION_NEXT,
         (data: { question: BattleQuestion; timeRemaining?: number }) => {
-          console.log('[Battle] Next question:', data.question.questionNumber);
           setCurrentQuestion(data.question);
         },
       );
@@ -232,7 +219,6 @@ export function useBattle() {
       socket.on(
         BattleEvent.SCORE_UPDATE,
         (data: { players: Array<{ id: string; score: number }> }) => {
-          console.log('[Battle] Score update:', data);
           const myPlayer = data.players.find((p) => p.id === user?.id);
           const opponent = data.players.find((p) => p.id !== user?.id);
           if (myPlayer && opponent) {
@@ -243,33 +229,29 @@ export function useBattle() {
 
       socket.on(
         BattleEvent.OPPONENT_ANSWERED,
-        (data: { playerId: string; correct: boolean }) => {
-          console.log('[Battle] Opponent answered:', data.correct ? 'correct' : 'incorrect');
+        (_data: { playerId: string; correct: boolean }) => {
+          // Opponent answer acknowledgment received
         },
       );
 
       socket.on(
         BattleEvent.OPPONENT_DISCONNECTED,
         (data: { playerId: string; waitingTime: number }) => {
-          console.log('[Battle] Opponent disconnected, waiting:', data.waitingTime);
           setPlayerConnected(data.playerId, false);
           setError('Opponent disconnected. Waiting for reconnection...');
         },
       );
 
       socket.on(BattleEvent.OPPONENT_RECONNECTED, (data: { playerId: string }) => {
-        console.log('[Battle] Opponent reconnected');
         setPlayerConnected(data.playerId, true);
         setError(null);
       });
 
       socket.on(BattleEvent.END, (data: BattleResult) => {
-        console.log('[Battle] Battle ended:', data);
         setBattleResult(data);
       });
 
       socket.on(BattleEvent.ERROR, (data: { message: string }) => {
-        console.error('[Battle] Error:', data.message);
         setError(data.message);
       });
 

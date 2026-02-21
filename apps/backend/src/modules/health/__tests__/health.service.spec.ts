@@ -223,7 +223,7 @@ describe('HealthService', () => {
       // Assert
       expect(result.status).toBe(HealthStatus.HEALTHY);
       expect(result.message).toBe('All critical tables exist');
-      expect(result.details?.totalChecked).toBe(9);
+      expect(result.details?.totalChecked).toBe(8);
       expect(result.details?.allPresent).toBe(true);
     });
 
@@ -254,13 +254,13 @@ describe('HealthService', () => {
       await service.checkCriticalTables();
 
       // Assert
-      // Verify queries were made to check tables
+      // Verify queries were made to check tables across the 6 datasources used by the 8 critical tables
+      // Note: contentDataSource and notificationsDataSource are NOT used by any critical table
       expect(authDataSource.query).toHaveBeenCalled();
       expect(educationalDataSource.query).toHaveBeenCalled();
       expect(gamificationDataSource.query).toHaveBeenCalled();
       expect(progressDataSource.query).toHaveBeenCalled();
       expect(socialDataSource.query).toHaveBeenCalled();
-      expect(contentDataSource.query).toHaveBeenCalled();
       expect(auditDataSource.query).toHaveBeenCalled();
     });
 

@@ -223,30 +223,7 @@ export const transformUserAchievements = (
     return [];
   }
 
-  // DEBUG: Log raw data from backend
-  console.log('[TRANSFORMER] Raw apiResponses count:', apiResponses.length);
-  if (apiResponses.length > 0) {
-    console.log('[TRANSFORMER] Sample raw data:', apiResponses.slice(0, 2).map(r => ({
-      id: r.id,
-      achievement_id: r.achievement_id,
-      is_completed: r.is_completed,
-      rewards_claimed: r.rewards_claimed,
-      progress: r.progress,
-    })));
-  }
-
   const transformed = apiResponses.map(transformUserAchievement);
-
-  // DEBUG: Log transformed data
-  console.log('[TRANSFORMER] Transformed count:', transformed.length);
-  if (transformed.length > 0) {
-    console.log('[TRANSFORMER] Sample transformed:', transformed.slice(0, 2).map(t => ({
-      id: t.id,
-      achievementId: t.achievementId,
-      status: t.status,
-      progress: t.progress,
-    })));
-  }
 
   return transformed;
 };

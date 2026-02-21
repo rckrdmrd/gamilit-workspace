@@ -210,7 +210,7 @@ export class AdminRolesService {
           });
         } catch (error) {
           // If role name doesn't match GamilityRoleEnum, default to 0
-          console.warn(`Could not count users for role ${role.name}:`, error);
+          this.logger.warn(`Could not count users for role ${role.name}: ${error instanceof Error ? error.message : error}`);
           usersCount = 0;
         }
 

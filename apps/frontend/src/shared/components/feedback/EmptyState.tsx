@@ -21,7 +21,7 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
+    <div role="status" className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
       <div className="mb-4 rounded-full bg-detective-bg-secondary p-4">
         <Icon className="h-8 w-8 text-detective-text-secondary" />
       </div>

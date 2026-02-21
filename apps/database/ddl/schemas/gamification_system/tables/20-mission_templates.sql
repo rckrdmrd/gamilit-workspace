@@ -23,6 +23,7 @@ CREATE TABLE gamification_system.mission_templates (
     min_level integer DEFAULT 1,
     max_level integer,
     required_module integer,
+    required_exercise_type character varying(50) DEFAULT NULL,
     icon character varying(50),
     color character varying(20),
     metadata jsonb DEFAULT '{}'::jsonb,
@@ -48,6 +49,7 @@ CREATE INDEX idx_mission_templates_type ON gamification_system.mission_templates
 CREATE INDEX idx_mission_templates_active ON gamification_system.mission_templates(is_active);
 CREATE INDEX idx_mission_templates_category ON gamification_system.mission_templates(category);
 CREATE INDEX idx_mission_templates_difficulty ON gamification_system.mission_templates(difficulty);
+CREATE INDEX idx_mission_templates_exercise_type ON gamification_system.mission_templates(required_exercise_type) WHERE required_exercise_type IS NOT NULL;
 
 -- Foreign Keys
 ALTER TABLE ONLY gamification_system.mission_templates
@@ -67,6 +69,7 @@ COMMENT ON COLUMN gamification_system.mission_templates.target_value IS 'Require
 COMMENT ON COLUMN gamification_system.mission_templates.difficulty IS 'Difficulty level: easy, normal, hard, epic';
 COMMENT ON COLUMN gamification_system.mission_templates.is_active IS 'Whether template is active and can be used to generate missions';
 COMMENT ON COLUMN gamification_system.mission_templates.priority IS 'Priority for selection (higher = more likely to be selected)';
+COMMENT ON COLUMN gamification_system.mission_templates.required_exercise_type IS 'Required exercise type for exercise-linked missions (e.g., crucigrama, detective_textual). NULL = any exercise counts';
 COMMENT ON COLUMN gamification_system.mission_templates.metadata IS 'Additional JSON configuration data';
 
 -- Permissions

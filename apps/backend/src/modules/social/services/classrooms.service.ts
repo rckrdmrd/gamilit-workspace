@@ -68,7 +68,7 @@ export class ClassroomsService {
    * @returns Lista de aulas ordenadas por nombre
    */
   async findAll(schoolId?: string, teacherId?: string): Promise<Classroom[]> {
-    const whereCondition: any = {};
+    const whereCondition: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     if (schoolId) {
       whereCondition.school_id = schoolId;
@@ -304,7 +304,7 @@ export class ClassroomsService {
    * @returns Aula actualizada
    * @throws NotFoundException si el aula no existe
    */
-  async updateSchedule(id: string, schedule: any[]): Promise<Classroom> {
+  async updateSchedule(id: string, schedule: any[]): Promise<Classroom> { // eslint-disable-line @typescript-eslint/no-explicit-any
     const classroom = await this.classroomRepo.findOne({ where: { id } });
 
     if (!classroom) {

@@ -6,6 +6,7 @@ import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
@@ -43,14 +44,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   const statements = exercise.content?.statements || [];
   const currentStatement = statements[currentIndex];
   const totalStatements = statements.length;
-
-  // DEBUG CORR-010: Diagnóstico de statementId vacío
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[TribunalOpiniones DEBUG] exercise.content:', exercise.content);
-    console.log('[TribunalOpiniones DEBUG] statements:', statements);
-    console.log('[TribunalOpiniones DEBUG] currentStatement:', currentStatement);
-    console.log('[TribunalOpiniones DEBUG] currentStatement?.id:', currentStatement?.id);
-  }
 
   // Load existing evaluation when navigating
   useEffect(() => {
@@ -98,9 +91,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       const sanitizedEvaluations = allEvaluations.map((ev, idx) => {
         if (!ev.statementId || ev.statementId.trim() === '') {
           const fallbackId = `stmt-${idx + 1}`;
-          if (process.env.NODE_ENV === 'development') {
-            console.warn(`[TribunalOpiniones CORR-010] onProgressUpdate: Fixing missing statementId at index ${idx}`);
-          }
           return { ...ev, statementId: fallbackId };
         }
         return ev;
@@ -110,15 +100,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       const answers: TribunalOpinionesAnswers = {
         evaluations: sanitizedEvaluations,
       };
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[TribunalOpiniones] onProgressUpdate:', {
-          savedCount: savedEvaluations.length,
-          totalCount: sanitizedEvaluations.length,
-          evaluationIds: sanitizedEvaluations.map(e => e.statementId),
-          allHaveIds: sanitizedEvaluations.every(e => e.statementId && e.statementId.trim() !== ''),
-        });
-      }
 
       onProgressUpdate({
         progress: {
@@ -150,10 +131,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     if (currentStatement && currentClassification && currentVerdict) {
       // CORR-010 FIX: Use fallback ID if statement.id is missing
       const stmtId = currentStatement.id || `stmt-${currentIndex + 1}`;
-
-      if (!currentStatement.id && process.env.NODE_ENV === 'development') {
-        console.warn('[TribunalOpiniones] Statement missing id, using fallback:', stmtId);
-      }
 
       const evaluation: StatementEvaluation = {
         statementId: stmtId,
@@ -231,7 +208,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       const sanitizedEvaluations = evaluationsArray.map((ev, idx) => {
         if (!ev.statementId || ev.statementId.trim() === '') {
           const fallbackId = `stmt-${idx + 1}`;
-          console.warn(`[TribunalOpiniones CORR-010] Regenerating missing statementId at index ${idx}: ${fallbackId}`);
           return { ...ev, statementId: fallbackId };
         }
         return ev;
@@ -243,7 +219,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       );
 
       if (stillInvalid.length > 0) {
-        console.error('[TribunalOpiniones CORR-010] Still invalid after sanitization:', stillInvalid);
         setFeedback({
           type: 'error',
           title: 'Error de Validación',
@@ -257,28 +232,20 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         evaluations: sanitizedEvaluations,
       };
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[TribunalOpiniones] Submitting answers:', JSON.stringify(answers, null, 2));
-      }
-
-      const response = await submitAsync(answers);
+      const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
       // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
       if (response.status === 'pending_review' || response.requiresManualReview) {
         setFeedback({
           type: 'info',
           title: 'Enviado para Revisión',
-          message: response.message || 'Tu evaluación ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
+          message: response.message || MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         await syncAndInvalidate();
-
-        if (process.env.NODE_ENV === 'development') {
-          console.log('📤 [TribunalOpiniones] Submission sent for manual review');
-        }
         return;
       }
 
@@ -306,15 +273,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ [TribunalOpiniones] Submission successful:', {
-          score: response.score,
-          rewards: response.rewards,
-        });
-      }
     } catch (error) {
-      console.error('[TribunalOpiniones] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

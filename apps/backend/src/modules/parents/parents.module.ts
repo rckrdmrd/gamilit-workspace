@@ -56,7 +56,7 @@ import { MailModule } from '@/modules/mail/mail.module';
       useFactory: async (configService: ConfigService) => {
         const expiresIn = configService.get<string>('JWT_EXPIRES_IN') || '7d';
         return {
-          secret: configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
+          secret: configService.get<string>('JWT_SECRET') || 'dev-only-jwt-secret-not-for-production',
           signOptions: {
             expiresIn: expiresIn as any,
           },

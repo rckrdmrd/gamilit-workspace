@@ -102,7 +102,7 @@ export class PredictionController {
   })
   async getDropoutRisk(
     @Param('studentId', ParseUUIDPipe) studentId: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<DropoutRiskPredictionDto> {
     await this.verifyAccess(req.user, studentId);
 
@@ -136,7 +136,7 @@ export class PredictionController {
   async getPerformance(
     @Param('studentId', ParseUUIDPipe) studentId: string,
     @Param('exerciseId', ParseUUIDPipe) exerciseId: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<PerformancePredictionDto> {
     await this.verifyAccess(req.user, studentId);
 
@@ -172,7 +172,7 @@ export class PredictionController {
   async getDifficulty(
     @Param('studentId', ParseUUIDPipe) studentId: string,
     @Param('moduleId', ParseUUIDPipe) moduleId: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<DifficultyRecommendationDto> {
     await this.verifyAccess(req.user, studentId);
 
@@ -203,7 +203,7 @@ export class PredictionController {
   })
   async getEngagement(
     @Param('studentId', ParseUUIDPipe) studentId: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<EngagementPredictionDto> {
     await this.verifyAccess(req.user, studentId);
 
@@ -231,7 +231,7 @@ export class PredictionController {
   })
   async getStudentInsights(
     @Param('studentId', ParseUUIDPipe) studentId: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<StudentInsightsDto> {
     await this.verifyAccess(req.user, studentId);
 
@@ -261,7 +261,7 @@ export class PredictionController {
   })
   async batchPredictDropoutRisk(
     @Body() dto: BatchPredictDropoutRiskRequestDto,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<DropoutRiskPredictionDto[]> {
     this.logger.log(
       `[BATCH] Dropout risk requested for ${dto.studentIds.length} students by ${req.user.sub}`,
@@ -290,7 +290,7 @@ export class PredictionController {
   })
   async batchPredictClassroom(
     @Param('classroomId', ParseUUIDPipe) classroomId: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<ClassroomInsightsDto> {
     this.logger.log(
       `[BATCH] Classroom predictions requested for ${classroomId} by ${req.user.sub}`,
@@ -336,7 +336,7 @@ export class PredictionController {
   })
   async getAtRiskStudents(
     @Query() query: AtRiskDashboardQueryDto,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<DropoutRiskPredictionDto[]> {
     this.logger.log(
       `[DASHBOARD] At-risk students requested by ${req.user.sub}`,
@@ -363,7 +363,7 @@ export class PredictionController {
     description: 'Dashboard metrics',
     type: DashboardMetricsDto,
   })
-  async getDashboardMetrics(@Request() req: any): Promise<DashboardMetricsDto> {
+  async getDashboardMetrics(@Request() req: any): Promise<DashboardMetricsDto> { // eslint-disable-line @typescript-eslint/no-explicit-any
     this.logger.log(`[DASHBOARD] Metrics requested by ${req.user.sub}`);
 
     // Return placeholder metrics
@@ -388,7 +388,7 @@ export class PredictionController {
    * - Teachers can view predictions for students in their classrooms
    * - Admins can view all predictions
    */
-  private async verifyAccess(user: any, studentId: string): Promise<void> {
+  private async verifyAccess(user: any, studentId: string): Promise<void> { // eslint-disable-line @typescript-eslint/no-explicit-any
     const userId = user.sub;
     const userRole = user.role || user.roles?.[0];
 

@@ -59,7 +59,7 @@ export class ParentAuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync<ParentJwtPayload>(token, {
-        secret: this.configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
+        secret: this.configService.get<string>('JWT_SECRET') || 'dev-only-jwt-secret-not-for-production',
       });
 
       // Verify this is a parent token

@@ -5,6 +5,7 @@
 -- Dependencies: auth schema base, auth_management.gamilit_role ENUM
 -- Order: 01b (after 01-demo-users.sql)
 -- Created: 2026-02-17
+-- Version: 2.0 (gen_random_uuid() - no placeholder UUIDs)
 -- =====================================================
 --
 -- USUARIOS DEMO (4):
@@ -45,8 +46,8 @@ INSERT INTO auth.users (
 -- ESTUDIANTE 1
 -- =====================================================
 (
-    'dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'estudiante1@demo.glit.edu.mx',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -62,8 +63,8 @@ INSERT INTO auth.users (
 -- ESTUDIANTE 2
 -- =====================================================
 (
-    'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'estudiante2@demo.glit.edu.mx',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -79,8 +80,8 @@ INSERT INTO auth.users (
 -- ESTUDIANTE 3
 -- =====================================================
 (
-    'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'estudiante3@demo.glit.edu.mx',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -96,8 +97,8 @@ INSERT INTO auth.users (
 -- INSTRUCTOR DEMO
 -- =====================================================
 (
-    '11111111-2222-3333-4444-555555555555'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
+    gen_random_uuid(),
     'instructor@demo.glit.edu.mx',
     crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
@@ -135,3 +136,15 @@ BEGIN
     RAISE NOTICE '  - instructor@demo.glit.edu.mx';
     RAISE NOTICE '========================================';
 END $$;
+
+-- =====================================================
+-- CHANGELOG
+-- =====================================================
+-- v2.0 (2026-02-21): ELIMINACION DE UUIDs PLACEHOLDER
+--   - Reemplazados UUIDs mnemotecnicos (dddd, eeee, ffff, 1111-2222) con gen_random_uuid()
+--   - Reemplazados instance_id 00000000 con gen_random_uuid()
+--   - ON CONFLICT (email) mantiene idempotencia
+--
+-- v1.0 (2026-02-17): Version original
+--   - 4 usuarios demo creados
+-- =====================================================

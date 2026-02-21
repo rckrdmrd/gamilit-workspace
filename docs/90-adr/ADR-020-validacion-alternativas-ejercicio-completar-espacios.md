@@ -300,7 +300,7 @@ La función SQL `validate_fill_in_blank` ahora valida automáticamente contra `c
 
 ### Documentación del Problema
 - `orchestration/agentes/architecture-analyst/ejercicio-1-3-validacion-alternativas-2025-11-24/01-ANALISIS-GAP.md`
-- `docs/00-vision-general/GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md` (líneas 372-386)
+- `docs/10-requirements/testing-guides/guia-pruebas-modulo-1.md` (líneas 372-386)
 
 ### Implementación
 - `orchestration/agentes/architecture-analyst/ejercicio-1-3-validacion-alternativas-2025-11-24/02-PLAN-CORRECCION.md`

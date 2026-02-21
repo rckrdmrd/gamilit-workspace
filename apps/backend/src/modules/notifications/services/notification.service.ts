@@ -40,6 +40,22 @@ import { NotificationRateLimitService } from './rate-limit.service';
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
+  private readonly notificationTypeMap: Record<string, string> = {
+    achievement_unlocked: 'achievement',
+    rank_up: 'gamification',
+    rank_promoted: 'gamification',
+    streak_milestone: 'gamification',
+    mission_completed: 'mission',
+    mission_rewards_claimed: 'mission',
+    coins_earned: 'gamification',
+    coins_received: 'gamification',
+    xp_earned: 'gamification',
+    exercise_feedback: 'assignment',
+    new_assignment: 'assignment',
+    assignment_graded: 'assignment',
+    system_announcement: 'system',
+    shop_purchase: 'gamification',
+  };
 
   constructor(
     @InjectRepository(Notification, 'notifications')
@@ -79,6 +95,17 @@ export class NotificationService {
     },
   ): Promise<Notification> {
     const channels = data.channels || ['in_app'];
+    const normalizedType = this.normalizeNotificationType(data.type);
+    const enrichedData = {
+      ...(data.data || {}),
+      notificationType: data.type,
+      normalizedType,
+    };
+    const enrichedMetadata = {
+      ...(data.metadata || {}),
+      original_type: data.type,
+      normalized_type: normalizedType,
+    };
 
     // Check rate limit unless skipped (for system notifications)
     if (!options?.skipRateLimit && this.rateLimitService) {
@@ -88,9 +115,9 @@ export class NotificationService {
       userId: data.userId,
       title: data.title,
       message: data.message,
-      type: data.type,
-      data: data.data,
-      metadata: data.metadata,
+      type: normalizedType,
+      data: enrichedData,
+      metadata: enrichedMetadata,
       priority: data.priority || 'normal',
       channels: channels,
       status: 'sent',
@@ -104,7 +131,7 @@ export class NotificationService {
       data.userId,
       data.title,
       data.message,
-      data.type,
+      normalizedType,
       channels,
     );
 
@@ -159,16 +186,26 @@ export class NotificationService {
       await this.checkRateLimits(data.userId, channels, options?.tenantId);
     }
 
+    const rawType = data.type || 'system';
+    const normalizedType = this.normalizeNotificationType(rawType);
+    const enrichedData = {
+      ...data.variables,
+      notificationType: rawType,
+      normalizedType,
+    };
+
     // 4. Crear notificación con campos DDL reales
     const notification = this.notificationRepository.create({
       userId: data.userId,
       title: rendered.subject,
       message: rendered.body,
-      type: data.type || 'system', // tipo por defecto si no se especifica
-      data: data.variables,
+      type: normalizedType, // tipo por defecto si no se especifica
+      data: enrichedData,
       metadata: {
         ...data.metadata,
         template_key: data.templateKey,
+        original_type: rawType,
+        normalized_type: normalizedType,
       },
       priority: 'normal',
       channels: channels,
@@ -182,7 +219,7 @@ export class NotificationService {
       data.userId,
       rendered.subject,
       rendered.body,
-      data.type || 'system',
+      normalizedType,
       channels,
     );
 
@@ -465,5 +502,9 @@ export class NotificationService {
       );
       return '';
     }
+  }
+
+  private normalizeNotificationType(type: string): string {
+    return this.notificationTypeMap[type] || type;
   }
 }

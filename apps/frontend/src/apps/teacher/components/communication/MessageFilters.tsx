@@ -23,7 +23,7 @@ interface MessageFiltersProps {
     unread?: boolean;
     search?: string;
   };
-  onFiltersChange: (filters: any) => void;
+  onFiltersChange: (filters: { type?: MessageType; unread?: boolean; search?: string }) => void;
   onRefresh: () => void;
 }
 
@@ -56,7 +56,7 @@ export const MessageFilters: React.FC<MessageFiltersProps> = ({
         {/* Filtro por tipo */}
         <select
           value={filters.type || ''}
-          onChange={(e) => onFiltersChange({ ...filters, type: e.target.value || undefined })}
+          onChange={(e) => onFiltersChange({ ...filters, type: (e.target.value || undefined) as MessageType | undefined })}
           className="rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-detective-orange"
         >
           <option value="">Todos los tipos</option>

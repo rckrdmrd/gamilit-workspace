@@ -13,7 +13,6 @@
 export { teacherApi, TeacherDashboardAPI } from './teacherApi';
 export { studentProgressApi, StudentProgressAPI } from './studentProgressApi';
 export { analyticsApi, AnalyticsAPI } from './analyticsApi';
-export { gradingApi, GradingAPI } from './gradingApi';
 export { classroomsApi, ClassroomsAPI } from './classroomsApi';
 export { assignmentsApi, AssignmentsAPI } from './assignmentsApi';
 export { interventionAlertsApi } from './interventionAlertsApi';
@@ -27,6 +26,7 @@ export { reportsApi } from './reportsApi'; // P1-003: Teacher Reports services
 export { scheduledReportsApi } from './scheduledReportsApi'; // Scheduled Reports CRUD + pause/resume
 export { sharedReportsApi } from './sharedReportsApi'; // Shared Reports between teachers
 export { alertConfigApi, AlertConfigAPI } from './alertConfigApi'; // US-PM-007: Alert configuration
+export { resourceSharingApi } from './resourceSharingApi'; // Resource Sharing (ResourceSharingPanel)
 
 // Re-export shared profile API for consistency (ISS-FE-002)
 export { profileAPI } from '../profileAPI';
@@ -58,15 +58,6 @@ export type {
   StudentInsights,
 } from './analyticsApi';
 
-// Grading types
-export type {
-  GetSubmissionsQueryDto,
-  SubmitFeedbackDto,
-  BulkGradeDto,
-  SubmissionDetail,
-  PaginatedSubmissionsResponse,
-} from './gradingApi';
-
 // Classrooms types
 export type {
   GetClassroomsQueryDto,
@@ -95,12 +86,6 @@ export type {
   InterventionAlertType,
   InterventionAlertSeverity,
   InterventionAlertStatus,
-  // Deprecated aliases (remove after 2025-12-08)
-  Alert,
-  AlertsListResponse,
-  AlertType,
-  AlertSeverity,
-  AlertStatus,
 } from './interventionAlertsApi';
 
 // Teacher Messages types
@@ -150,6 +135,7 @@ export type {
   ReportMetadata,
   TeacherReport,
   ReportStats,
+  ReportStatusResponse, // AUDIT-C4-DUP4: Moved from analyticsApi
 } from './reportsApi';
 
 // Scheduled Reports types
@@ -168,6 +154,18 @@ export type {
   SharedReportResponseDto,
   SharedWithMeResponseDto,
 } from './sharedReportsApi';
+
+// Resource Sharing types (ResourceSharingPanel)
+export type {
+  SearchResourcesParams,
+  SharedResourceResponse,
+  SharedResourcesListResponse,
+  ResourceComment as ResourceSharingComment,
+  CommentsListResponse,
+  RatingResponse,
+  DownloadResponse,
+} from './resourceSharingApi';
+export { mapToSharedResource } from './resourceSharingApi';
 
 // Manual Review types — canonical location is @/shared/api/manualReviewApi
 

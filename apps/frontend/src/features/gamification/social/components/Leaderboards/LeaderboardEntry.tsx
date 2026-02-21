@@ -6,10 +6,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import type { LeaderboardEntry as Entry } from '../../types/leaderboardsTypes';
+import type { EquippedItemsBatchMap } from '../../types/inventory.types';
+import { CosmeticAvatar } from '@shared/components/CosmeticAvatar';
 
 interface LeaderboardEntryProps {
   entry: Entry;
   index: number;
+  equippedMap?: EquippedItemsBatchMap | null;
 }
 
 const getRankColor = (rank: number) => {
@@ -26,7 +29,7 @@ const getRankIcon = (rank: number) => {
   return Icons.User;
 };
 
-export const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ entry, index }) => {
+export const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ entry, index, equippedMap }) => {
   const RankIcon = getRankIcon(entry.rank);
   const isTopThree = entry.rank <= 3;
 
@@ -37,7 +40,7 @@ export const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ entry, index
       transition={{ delay: index * 0.05 }}
       className={`flex items-center gap-4 p-4 rounded-detective transition-all ${
         entry.isCurrentUser
-          ? 'bg-detective-orange bg-opacity-10 border-2 border-detective-orange shadow-orange'
+          ? 'bg-detective-orange/10 border-2 border-detective-orange shadow-orange'
           : 'bg-white hover:shadow-card'
       }`}
     >
@@ -47,13 +50,12 @@ export const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ entry, index
         {isTopThree ? <RankIcon className="w-6 h-6" /> : <span className="text-lg">#{entry.rank}</span>}
       </div>
 
-      <img
-        src={entry.avatar}
-        alt={entry.username}
-        className="w-12 h-12 rounded-full object-cover"
-        onError={(e) => {
-          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username)}&background=f97316&color=fff`;
-        }}
+      <CosmeticAvatar
+        userId={entry.userId}
+        name={entry.username}
+        fallbackAvatar={entry.avatar}
+        equippedMap={equippedMap}
+        size="md"
       />
 
       <div className="flex-1 min-w-0">

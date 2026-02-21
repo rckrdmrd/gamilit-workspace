@@ -61,9 +61,16 @@ BEGIN
     LIMIT 1;
 
     IF v_teacher_id IS NULL THEN
-        -- Usar el UUID conocido como fallback
-        v_teacher_id := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
-        RAISE WARNING 'Teacher default no encontrado, usando UUID: %', v_teacher_id;
+        -- Fallback: try any teacher/admin profile
+        SELECT p.id INTO v_teacher_id
+        FROM auth_management.profiles p
+        WHERE p.role::text IN ('teacher', 'admin_teacher', 'super_admin')
+        LIMIT 1;
+    END IF;
+
+    IF v_teacher_id IS NULL THEN
+        RAISE NOTICE 'No teacher profile found, skipping classrooms seed';
+        RETURN;
     END IF;
 
     RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
@@ -102,7 +109,7 @@ INSERT INTO social_features.classrooms (
 -- asignar a TODOS los estudiantes nuevos registrados.
 -- =====================================================
 (
-    'a0000000-0000-4000-a000-000000000001'::uuid,  -- UUID v4 valido para classroom DEFAULT (FIX-2026-01-18: ParseUUIDPipe)
+    gen_random_uuid(),                              -- UUID generada dinámicamente
     v_default_school_id,                            -- GAMILIT - Institución General
     v_tenant_id,
     v_teacher_id,                                   -- Teacher default (teacher@gamilit.com)
@@ -210,7 +217,7 @@ END $$;
 -- 1. Agregar al teacher owner del classroom
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
 SELECT
-    'cc000001-0000-4000-a000-000000000001'::uuid,  -- UUID v4 valido (FIX-2026-01-18)
+    gen_random_uuid(),                              -- UUID generada dinámicamente
     c.teacher_id,
     c.id,
     c.tenant_id,

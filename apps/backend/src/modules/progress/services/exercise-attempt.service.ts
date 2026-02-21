@@ -9,7 +9,7 @@ import { UserStatsService } from '@/modules/gamification/services/user-stats.ser
 import { MissionsService } from '@/modules/gamification/services/missions.service';
 import { ComodinesService } from '@/modules/gamification/services/comodines.service';
 import { AchievementsService } from '@/modules/gamification/services/achievements.service';
-import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
+import { MissionTypeEnum } from '@/modules/gamification/enums/mission.enums';
 import { Exercise } from '@/modules/educational/entities';
 
 /**
@@ -228,7 +228,7 @@ export class ExerciseAttemptService {
       score: number;
       isCorrect: boolean;
       feedback: string;
-      details: any;
+      details: Record<string, unknown>;
       auditId: string;
     }> {
     this.logger.log(`[FE-059] Validating attempt #${attemptNumber} for exercise ${exerciseId}`);

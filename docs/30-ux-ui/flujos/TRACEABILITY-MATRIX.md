@@ -1,7 +1,7 @@
 # Matriz de Trazabilidad de Flujos
 
-**Version:** 1.7.0
-**Fecha:** 2026-02-19
+**Version:** 1.8.0
+**Fecha:** 2026-02-21
 
 ---
 
@@ -42,7 +42,7 @@
 | FL-PRN-03 | [FLUJO-NOTIFICACIONES-PADRES.md](./parents/FLUJO-NOTIFICACIONES-PADRES.md) | `portal padres (inbox)` | `/api/v1/parents/notifications/*` | `notifications.*`, `communication.*` |
 | FL-STU-07 | [FLUJO-TIENDA-OVERVIEW.md](./student/FLUJO-TIENDA-OVERVIEW.md) | `apps/student/pages/ShopPage.tsx` | `/gamification/shop/categories`, `/gamification/shop/items`, `/gamification/shop/purchases/:userId` | `gamification_system.shop_categories`, `shop_items`, `user_purchases` |
 | FL-STU-08 | [FLUJO-INVENTARIO-ITEMS.md](./student/FLUJO-INVENTARIO-ITEMS.md) | `apps/student/pages/InventoryPage.tsx` | `/gamification/comodines/users/:userId/inventory`, `/gamification/comodines/use` | `gamification_system.comodines_inventory`, `comodin_usage_log` |
-| FL-STU-19 | [FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md](./student/FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md) | `apps/student/pages/InventoryPage.tsx`, `features/gamification/social/hooks/useInventory.ts` | `/gamification/inventory/equipped`, `/gamification/inventory/equip`, `/gamification/inventory/unequip` | `gamification_system.user_equipped_items`, `shop_items`, `user_purchases` |
+| FL-STU-19 | [FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md](./student/FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md) | `apps/student/pages/InventoryPage.tsx`, `apps/student/components/profile/ProfileInventoryTab.tsx`, `features/gamification/social/hooks/useEquipment.ts` | `/gamification/inventory/equipped`, `/gamification/inventory/equip`, `/gamification/inventory/unequip` | `gamification_system.user_equipped_items`, `shop_items`, `user_purchases` |
 | FL-STU-09 | [FLUJO-AMIGOS.md](./student/FLUJO-AMIGOS.md) | `apps/student/pages/FriendsPage.tsx` | `/social/users/:userId/friends`, `/social/friendships/request`, `/social/activities/feed` | `social_features.friendships`, `friend_requests`, `user_activities` |
 | FL-STU-10 | [FLUJO-GREMIOS.md](./student/FLUJO-GREMIOS.md) | `apps/student/pages/GuildsPage.tsx` | `/social/teams`, `/social/teams/:teamId/members/:userId` | `social_features.guilds`, `guild_members` |
 | FL-STU-11 | [FLUJO-SETTINGS-DISPOSITIVOS.md](./student/FLUJO-SETTINGS-DISPOSITIVOS.md) | `apps/student/pages/DeviceManagementSection.tsx` | `/notifications/devices`, `/notifications/devices/:id` | `notifications.user_devices` |
@@ -84,6 +84,9 @@
 ---
 
 ## Changelog
+
+### v1.8.0 (2026-02-21)
+- **FL-STU-19** actualizado: Agregado `ProfileInventoryTab.tsx` como segundo punto de entrada para equipamiento. Reemplazado `useInventory.ts` (deprecado) por `useEquipment.ts` (hook canonico).
 
 ### v1.7.0 (2026-02-19)
 - **FL-TCH-04** enriquecido: Agregado TabBar con 3 pestanas (Generador, Programados, Compartidos), `ScheduledReportsTab`, `SharedReportsTab`, `scheduledReportsApi` (7 endpoints), `sharedReportsApi` (6 endpoints), hooks `useScheduledReports` y `useSharedReports`. Datos actualizados a tablas reales (`social_features.*`).

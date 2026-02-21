@@ -608,9 +608,9 @@ implementation:
         description: Hook para gestión de assignments
         methods: [assignments, createAssignment, distributeAssignment]
 
-      - name: useGrading.ts
-        description: Hook para sistema de calificación
-        methods: [queue, gradeSubmission, autoGrade]
+      - name: useManualReviews.ts  # useGrading.ts eliminado en Teacher Portal Audit 2026-02-20, funcionalidad migrada a useManualReviews + manualReviewApi
+        description: Hook para sistema de calificación y revision manual
+        methods: [pendingReviews, submitReview, reviewHistory, gradeSubmission]
 
       - name: useTeacherAnalytics.ts
         description: Hook para analytics de maestro

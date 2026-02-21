@@ -480,7 +480,7 @@ export class ExerciseSubmissionController {
   async provideFeedback(
   @Param('id') id: string,
     @Body() body: { feedback: Record<string, unknown> },
-    @Request() _req: any,
+    @Request() _req: AuthRequest,
   ) {
     // req.user contains the authenticated teacher's data from JWT
     return this.submissionService.provideFeedback(id, body.feedback);
@@ -626,7 +626,7 @@ export class ExerciseSubmissionController {
     status: 403,
     description: 'Acceso denegado - Se requieren permisos de profesor',
   })
-  async findPendingReview(@Request() _req: any) {
+  async findPendingReview(@Request() _req: AuthRequest) {
     // req.user contains the authenticated teacher's data from JWT
     return this.submissionService.findPendingReview();
   }

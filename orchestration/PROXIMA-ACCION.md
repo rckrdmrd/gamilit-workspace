@@ -1,13 +1,13 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-20
-**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Estandarizacion Portales (5 Fases) COMPLETADA** | **Admin Portal Refactor Sprint 0+1+2 COMPLETADO** | **Student Portal Refactor Fases 0-4 COMPLETADO** | **Settings Fixes + Registro/Avatar/Inventario COMPLETADO**
+**Ultima Actualizacion:** 2026-02-21
+**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Compliance Audit v2 COMPLETADA** | **UUID Seed Migration COMPLETADA** | **Documentation Alignment COMPLETADA**
 **Sprint Actual:** Sprint 1 — Calidad y Estabilizacion (2026-02-17 a 2026-03-03) — **100% COMPLETADO**
-**Ultima Tarea:** UUID Audit + Ejecucion Fixes (TASK-2026-02-20-UUID-AUDIT) — **CERRADA: 4/4 P0 + 8/8 P1 + 5/5 P2 + 5/5 P3 ejecutados, ~27 archivos modificados**
-**Tareas Pendientes:** MQ-005 (Repository pattern — DEFERRED per ADR-045), MQ-007 (911 no-explicit-any — DOCUMENTED, XL sprint needed)
-**BLOQUEANTES DEPLOY (10 items):** Ver `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/03-CHECKLIST-PRODUCCION.md`
+**Ultima Tarea:** Architecture violations fix — 32 module-boundaries violations → 0. Extracted enums from 8 entity files into dedicated enum files (7 new files), moved profileRepo from exercises.controller to ExercisesService, fixed test regex for abstract classes. 51 suites, 2324 tests, 0 failures across 4 shards (shard 3/5 OOMs — memory limit, not test failure). Also: Test suite fixes (17 failing→0), Logger standardization (30→0), Frontend console.log cleanup (375→0).
+**Tareas Pendientes Locales:** ALT-02 (vite→Nginx, depende BLQ-01/02), ALT-09 (synthetic DEV data — requiere decision de equipo), MQ-005 (DEFERRED per ADR-045), Shard 3/5 OOM (jest memory — needs investigation or split)
+**BLOQUEANTES DEPLOY (4 restantes — requieren acceso SSH servidor):** BLQ-01/02/03/04 en `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/03-CHECKLIST-PRODUCCION.md`
 **Backlog Resuelto (2026-02-18):** MQ-008 (skill created), MQ-009 (XP sync FIXED), TRZ-006 (plan created), DBOPS-005 (CI script + job created)
-**CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 404 RLS, 85 pipeline entries, 169 tablas.
+**CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 474 RLS, 92 pipeline entries, 169 tablas.
 **Normalizacion Documental (Fase 2/3):** **CERRADA** (Lotes 1-3 + Olas 1-8 completadas, `BROKEN_GLOBAL_TOTAL=0`)
 
 > Desacople documental:
@@ -18,6 +18,288 @@
 ---
 
 ## Estado Actual
+
+### Wave 10 — ARIA Validation + Documentation (2026-02-21) — **EN PROGRESO**
+
+**Validacion de patrones ARIA implementados en Wave 9 + actualizacion de documentacion de accesibilidad.**
+
+| Item | Descripcion | Estado |
+|------|-------------|--------|
+| DOC-01 | GUIA-WCAG-ACCESSIBILITY.md actualizada: componentes 580→590, seccion "Patrones ARIA Implementados (Wave 9)" agregada | **COMPLETADO** |
+| DOC-02 | PROXIMA-ACCION.md actualizada con Wave 9 (completada) y Wave 10 (en progreso) | **COMPLETADO** |
+| VAL-01 | Validacion cruzada de conteos ARIA vs codebase real | PENDIENTE |
+| VAL-02 | Verificacion de gaps conocidos (aria-hidden, sr-only underuse) | PENDIENTE |
+
+---
+
+### Wave 9 — ARIA Accessibility (2026-02-21) — **COMPLETADA**
+
+**Implementacion sistematica de patrones ARIA en 51 paginas across 4 portales (estudiante, maestro, admin, padres).**
+
+| Patron ARIA | Ocurrencias | Archivos | Uso |
+|-------------|-------------|----------|-----|
+| `role="alert"` | 46 | 34 | Error states, validacion |
+| `aria-live="polite"` | 56 | 39 | Loading states, contenido dinamico |
+| `role="region"` + `aria-label` | 42 | 30 | Secciones semanticas |
+| `role="tablist"` + `role="tab"` + `aria-selected` | — | 6 | Tab navigation |
+| `aria-hidden="true"` | 15 | 10 | Iconos decorativos |
+| `sr-only` (clase CSS) | 17 | 15 | Texto solo para screen readers |
+
+**Gaps identificados (backlog):** ~20 iconos decorativos sin `aria-hidden`, ~10 botones icon-only sin `sr-only` labels, 3 redundancias `role="status"` + `aria-live="polite"` corregidas en admin.
+**Documentacion:** GUIA-WCAG-ACCESSIBILITY.md actualizada con seccion de patrones ARIA y metricas Wave 9.
+
+---
+
+### CI/CD Fixes + Security Hardening Round 2 (2026-02-21) — **COMPLETADA**
+
+**CI workflow fixes (4 workflows) + security fixes (3 vulnerabilities) + debug cleanup (2 services).**
+
+| Item | Descripción | Impacto |
+|------|-------------|---------|
+| CI-01 | deploy-production.yml: Node 18→20, `refs/heads/main`→`master`, frontend cache path, stale Sprint 2 metrics removed | CI/CD |
+| CI-02 | validate-constants.yml: branches missing `master`, Node 18→20 | CI/CD |
+| CI-03 | validate-api-routes.yml: `npm install`→`npm ci` | CI/CD |
+| SEC-01 | **2FA OTP logging removed** — console.log exposed OTP codes (3 locations). Replaced with NestJS Logger (no sensitive data) | SEGURIDAD |
+| SEC-02 | **Path traversal fix** — admin-reports controller+service: `split('/').pop()`→`basename()` + `resolve()` + startsWith guard | SEGURIDAD |
+| SEC-03 | **Path traversal fix** — branding.service: UUID format validation + resolve() + startsWith guard for tenant upload dirs | SEGURIDAD |
+| SEC-04 | **Path traversal fix** — media-storage.service: resolveUploadPath() helper, 3 file ops hardened (upload, get, delete) | SEGURIDAD |
+| SEC-05 | **JWT secret production guard** — env.validation.ts: JWT_SECRET, JWT_REFRESH_SECRET, SESSION_SECRET required in NODE_ENV=production | SEGURIDAD |
+| SEC-06 | **Secret fallback cleanup** — 10 files: `'dev-secret-change-in-production'`→`'dev-only-jwt-secret-not-for-production'` (config+8 modules) | SEGURIDAD |
+| SEC-07 | **JSON.parse hardening** — gamification-config.service (rank.perks) + two-factor-auth.service (backup_codes) wrapped in try/catch | SEGURIDAD |
+| CLN-01 | exercises.service.ts: removed `[FE-060 FIX]` and `[BUG-002 FIX]` debug console.logs | LIMPIEZA |
+
+**Archivos modificados:** 19 (4 workflows, 3 config files, 8 module files, 4 service files)
+**Build:** 0 errores TS backend, 0 errores lint
+
+---
+
+### Security + Deploy Hardening (2026-02-21) — **COMPLETADA**
+
+**7 items de producción resueltos localmente (sin SSH). 3 agentes paralelos.**
+
+| Item | Descripción | Impacto |
+|------|-------------|---------|
+| MED-06 | SQL injection fix: 4x `SET LOCAL '${id}'` → `set_config($1, true)` parameterizado | SEGURIDAD |
+| MED-07 | Password sanitization: hardcoded `2320` eliminado, SQL escaping, stdout masking | SEGURIDAD |
+| ALT-04 | CORS: HTTP origins filtrados en producción, solo HTTPS | SEGURIDAD |
+| ALT-07 | staging.conf creado para database init | DEPLOY |
+| ALT-10 | Nginx config versionado en `apps/devops/nginx/gamilit.conf` (SSL, WSS, headers, gzip) | DEVOPS |
+| ALT-12 | Deploy zero-downtime: `pm2 stop all` → `pm2 reload` | DEPLOY |
+| ALT-13 | Full `pg_dump -F c` + retención 5 backups | DEPLOY |
+| ALT-14 | Post-deploy DB validation (tables≥169, funcs≥158, 7 schemas) | DEPLOY |
+
+**Archivos creados:** 2 (staging.conf, gamilit.conf)
+**Archivos modificados:** 4 (main.ts, deploy-production.sh, database-master.sh, init-database.sh)
+**Build:** 0 errores TS frontend + backend
+
+---
+
+### Compliance Audit v2 + UUID Seed Migration + Documentation Alignment (2026-02-21) — **COMPLETADA**
+
+**Auditoría completa de coherencia código↔documentación↔estándares. UUID migration, 3 code fixes, 28 doc edits, 4 inventarios SSOT corregidos.**
+
+| Fase | Alcance | Resultado |
+|------|---------|-----------|
+| UUID Seed Migration | 131 placeholder UUIDs → gen_random_uuid() en 25+ archivos (dev/prod/staging) | PASS |
+| DDL-Entity-Seed Coherence | 3 tablas, 10 RLS, 7 triggers, 3 seeds nuevos | ALL PASS |
+| Standards Compliance | 16 archivos auditados vs 10 estándares + ADRs | 15 PASS, 5 WARN, 0 FAIL |
+| Documentation Alignment | 17 archivos, 28 stale refs corregidas | PASS |
+| Inventarios SSOT | MASTER/DATABASE/BACKEND/CLAUDE.md actualizados | 9 métricas corregidas |
+
+**Code fixes aplicados (3 WARNs resueltos):**
+- `teacher-content.service.ts`: 4x `as any` → enum casts explícitos (TeacherContentType, TeacherContentDifficulty, TeacherContentVisibility, TeacherContentStatus)
+- `teacher-content.controller.ts`: ParseUUIDPipe en todos los params `:id`
+- `useCompletionAnimations.ts`: SSR-safe window guard
+
+**Inventarios corregidos:**
+- Tablas: 172→173, Views: 22→18, Funciones: 183→158, Triggers: 67→68, RLS: 234→251
+- Services: 173→172, DTOs: 400→401
+- CLAUDE.md: 6 métricas actualizadas
+
+**Build:** 0 errores TS frontend + backend.
+**Reports:** `orchestration/tareas/TASK-2026-02-21-COMPLIANCE-AUDIT/` (04, 05, 06, 07)
+
+---
+
+### Tailwind v4 bg-opacity Migration + CompletionModal/Shop Fixes (2026-02-20) — **COMPLETADA**
+
+**Migracion sistematica de bg-opacity v3→v4 + fixes criticos CompletionModal, Shop, DetectiveCard. Auditoria de cumplimiento contra estandares.**
+
+| Fase | Alcance | Archivos | Ediciones |
+|------|---------|:--------:|:---------:|
+| 1A | CompletionModal: close button, ESC, backdrop, ARIA, focus trap, scroll lock | 1 | 8 |
+| 1B | Modal.tsx overlay bg-opacity fix | 1 | 1 |
+| 1C | DetectiveCard CSS padding conflict (4 card classes) | 1 | 4 |
+| 1D | ShopItemCard btn-detective padding conflict | 1 | 1 |
+| 2A-2E | bg-opacity v3→v4 migration (modales, teacher, features, admin, tests) | 37 | 79 |
+| Audit | Validacion estandares, principios, WCAG, flujos | 0 | 0 (review only) |
+
+**Resultado migracion:** `bg-opacity-*` en .tsx/.ts: **0 restantes** (era 60+). `text-opacity-*`/`border-opacity-*`: **0**.
+**Build:** OK (0 errors).
+
+**Auditoria contra estandares — Resultado: APROBADO con 3 acciones completadas:**
+
+| Estandar | Cumplimiento | Notas |
+|----------|:------------:|-------|
+| GUIA-WCAG-ACCESSIBILITY §3.6 | **100%** | Focus trap (useFocusTrap), ESC, body scroll lock, ARIA (role/modal/labelledby) |
+| ESTANDAR-FRONTEND-PROFESIONAL | **95%** | Patrones correctos; CompletionModal 624 LOC (pre-existente, refactor en backlog) |
+| PRINCIPIO-SEPARATION-OF-CONCERNS | **90%** | UI/gamification separados via hooks; componente grande pero funcional |
+| ADR-004 (Exercise Engine) | **100%** | CompletionModal integra scoring, XP, ML Coins, achievements |
+| ADR-038 (Canonical Structure) | **100%** | Archivos en paths correctos, naming PascalCase |
+| STANDARD-COMPONENT | **85%** | DetectiveCard padding solo via React component (verificado: 0 uso directo CSS) |
+
+**Pendientes (backlog, no blockers):**
+- ~~CompletionModal 624 LOC → split en subcomponentes~~ — **COMPLETADO** (261 LOC + 3 subcomponents)
+- ~~Test coverage para features accesibilidad CompletionModal~~ — **COMPLETADO** (23 accessibility tests + 31 existing = 54 total)
+- ~~Documentacion tematica detective-theme.css (GUIA-DETECTIVE-THEME.md)~~ — **COMPLETADO** (v1.1.0, ~950 lines, 17 sections)
+
+---
+
+### Backlog Completo — 8 Tareas Paralelas (2026-02-20) - **8/8 COMPLETADAS**
+
+**Ejecucion de todas las tareas pendientes del proyecto en 2 batches de agentes paralelos. 0 TS errors frontend + backend.**
+
+| # | Tarea | Agentes | Resultado |
+|---|-------|:-------:|-----------|
+| 1 | Enable TeacherContent + Communication + Notifications + NotificationPreferences | 1 | 4 routes + 3 sidebar items + advanced link restored |
+| 2 | CompletionModal split (624→261 LOC) | 1 | 3 subcomponents + 1 hook extracted, 31 tests pass |
+| 3 | Pagination + TabBar → shared | 1 | Shared Pagination (2 variants, 9 consumers), TabBar enhanced (5 variants, 4 teacher pages + AdminTabBar wrapper), ~450 LOC inline eliminated |
+| 4 | USE_PROXY unit tests | 1 | 51 tests covering proxy/direct/endpoints/flags/edge cases |
+| 5 | ResourceSharingPanel full-stack | 1 | 3 DDL tables + 3 entities + 6 service methods + 6 endpoints + frontend API + hook + component wired |
+| 6 | 17 inline modals → shared Modal | 1 | 17 migrated (admin 7, teacher 5, shared 1, LTI 3, gamification 1), 19 Framer Motion skipped |
+| 7 | React Query migration 21 admin hooks | 1 | 21 hooks migrated (6 already done, 4 UI-only skipped), useState+useEffect → useQuery/useMutation |
+| 8 | MQ-007: no-explicit-any 911→71 (92%) | 4 | 840+ `any` fixed across entire codebase, 0 TS errors |
+
+**Nuevos archivos creados:** ~15 (3 DDL, 3 entities, 1 DTO, 1 API service, 1 hook, 3 CompletionModal subcomponents, 1 shared Pagination, 1 test file)
+**Archivos modificados:** ~80+ (routes, sidebar, admin hooks, exercise mechanics, shared components, modals, API config)
+**Build:** Frontend 0 TS errors, Backend 0 TS errors
+
+---
+
+### TASK-2026-02-20-TEACHER-PORTAL-AUDIT — Auditoria + Correcciones Portal Teacher (2026-02-20) - **COMPLETADA (24/24 corrections)**
+
+**Auditoria exhaustiva con 5 agentes paralelos + ejecucion de 24 correcciones en 3 sprints. Score global: 87% → ~97%. 22 archivos de audit output en `orchestration/tareas/TASK-2026-02-20-TEACHER-PORTAL-AUDIT/`.**
+
+| Capa | Score Pre | Score Post | Correcciones |
+|------|----------|-----------|--------------|
+| Frontend | 92% | 98% | 16 huerfanos eliminados, API consolidada, manual review wired, difficulty E1 fix, dead link E3 fix |
+| Backend-DB | 95% | 99% | 3 enum→VARCHAR, RLS added, composite index, MLPredictor removed, findByIds fixed, memory fix |
+| API Cross-Ref | 93% | 99% | gradingApi removed, deprecated methods removed, 2 new wrappers (permissions + assignment analytics) |
+| Seeds | 65% | 92% | 6 seeds creados (3 HIGH + 3 MEDIUM), classroom_modules dev/staging, CROSS JOIN fix |
+| Feature Flags | 88% | 92% | .env.example 5 flags added |
+
+**24 correcciones ejecutadas (todas DONE):**
+Sprint 1 (5): TypeORM enums, analyticsApi fix, staging assignments, teacher-notes, SharedReport EDIT
+Sprint 2 (7): RLS policies, composite index, .env.example, API consolidation, 16 orphaned files, manual review wiring, 3 HIGH seeds
+Sprint 3 (12): MLPredictor removal, 2x findByIds fix, memory fix, 2 API wrappers, 2 deprecated API cleanup, CROSS JOIN fix, classroom_modules dev/staging, 3 MEDIUM seeds, difficulty E1 fix, dead link E3 fix
+
+**Validacion post-Sprint 3 (5 items, todos DONE):**
+- VAL-01: Standards compliance 10/10 PASS vs 8 estandares (0 FAIL, 3 non-blocking warnings)
+- VAL-02: Doc alignment audit — 14 stale refs found, 2 inventory fixes (seed count 88→92)
+- VAL-03: P2 doc fixes — 4 files, 16 edits (GUIDE, FLOWS, FLUJO-GESTION, FLUJO-ANALYTICS)
+- VAL-04: P3 doc fixes — 4 files, 7 edits (ET-TCH-005, ET-TCH-007, ET-TCH-004, API-SERVICES)
+- VAL-05: P4 doc fix — _MAP.md ml-predictor reference updated
+
+**Pendiente (backlog):** ~~Habilitar TeacherContent + TeacherCommunication pages~~ **COMPLETADO**, ~~restaurar TeacherNotifications~~ **COMPLETADO**, ~~ResourceSharingPanel backend~~ **COMPLETADO** (3 DDL + 3 entities + 6 endpoints + frontend wired).
+
+---
+
+### Backlog Completo Fase 2 — 5 Tareas Paralelas (2026-02-20) - **5/5 COMPLETADAS**
+
+**Ejecucion de tareas restantes: AnimatePresence modal migration, accessibility testing, documentation, CI/CD fixes, ADR-030 naming. 0 TS errors frontend + backend.**
+
+| # | Tarea | Agentes | Resultado |
+|---|-------|:-------:|-----------|
+| 1 | AnimatePresence Modal + 17 Framer Motion modals | 1 | Shared Modal enhanced (animated, overlayClassName, contentClassName props), 17 modals migrated (gamification 5, student 4, admin 4, teacher 2, shared 1, parent 1), 2 skipped (not modals), duplicate focus trap/scroll/ESC handlers removed |
+| 2 | CompletionModal accessibility tests + focus trapping | 1 | 23 new tests (7 WCAG categories), 10 modals get ariaLabelledBy prop, shared Modal enhanced with ariaLabelledBy, 54 total tests pass |
+| 3 | GUIA-DETECTIVE-THEME.md v1.1.0 | 1 | Updated to ~950 lines, 17 sections, added InputDetective/ProgressBar/Loading/Skeleton docs, WCAG contrast table, migration guide |
+| 4 | CI/CD fixes + standards cross-refs | 1 | frontend-ci.yml cache-dependency-path fixed, api-docs-check real Swagger check, cache-performance removed, 7 missing standards indexed, 6 guide files cross-referenced |
+| 5 | ADR-030 teacher naming + temp script cleanup | 1 | 19 teacher pages renamed (git mv), 7 exports updated, 18 App.tsx imports updated, 4 temp DB scripts deleted |
+
+**Build:** Frontend 0 TS errors, Backend 0 TS errors
+
+---
+
+### TASK-2026-02-20-DEPLOY-BLOCKERS — Correccion Bloqueantes Deploy (2026-02-20) - **11/41 RESUELTOS**
+
+**Resolucion de 6 bloqueantes + 5 items de alta prioridad del checklist de produccion.**
+
+| Item | Descripcion | Archivo | Estado |
+|------|-------------|---------|--------|
+| BLQ-05 | Sudo password eliminado de database-master.sh | database-master.sh | **RESUELTO** |
+| BLQ-06 | Health check URL corregido /api/health → /api/v1/health | deploy-production.sh | **RESUELTO** |
+| BLQ-07 | Seeds gamification renumerados (Sprint anterior) | seeds/ | **RESUELTO** |
+| BLQ-08 | 05-user_stats.sql sincronizado (Sprint anterior) | seeds/ | **RESUELTO** |
+| BLQ-09 | .env.database + .env.dev removidos de git tracking | .gitignore + git rm | **RESUELTO** |
+| BLQ-10 | Branch main → master en deploy-production.yml | .github/workflows/ | **RESUELTO** |
+| ALT-01 | Tests ahora bloquean deploy (print_warning → print_error + return 1) | deploy-production.sh | **RESUELTO** |
+| ALT-03 | process.send('ready') para PM2 wait_ready | main.ts | **RESUELTO** |
+| ALT-05 | env_file (invalido PM2) eliminado de ecosystem.config.js | ecosystem.config.js | **RESUELTO** |
+| ALT-06 | continue-on-error eliminado del CI build | deploy-production.yml | **RESUELTO** |
+| ALT-11 | Source maps deshabilitados en produccion | vite.config.ts | **RESUELTO** |
+
+**Pendientes servidor (requieren acceso SSH):** BLQ-01 (env secrets), BLQ-02 (JWT_REFRESH_SECRET), BLQ-03 (frontend .env.production), BLQ-04 (admin password)
+
+---
+
+### TASK-2026-02-20-FRONTEND-STYLING-AUDIT — Auditoria + Correccion Frontend Estilos (2026-02-20) - **4/4 FASES COMPLETADAS**
+
+**Correccion integral de estilos, temas e integracion de estandarizaciones previas. 18 agentes paralelos, ~75 archivos modificados.**
+
+| Fase | Alcance | Agentes | Archivos |
+|------|---------|:-------:|:--------:|
+| 1 | Criticos globales (Button.tsx, UserDetailModal, RoleEditor, Timeline, CausaEfecto) | 5 | 5 |
+| 2 | PageShell migration (13 student pages) + Admin/Teacher colores + Exercise mechanics | 5 | 26 |
+| 3 | Contraste tabs/badges + Forms/charts + Admin modals + Backgrounds + Icons | 5 | 22 |
+| 4 | useApiError adoption (21 files) + LoadingSpinner (9 files) + Progress bars (12 files) | 3 | ~30 |
+
+**Output:** `orchestration/tareas/TASK-2026-02-20-FRONTEND-STYLING-AUDIT/` (01-HALLAZGOS, 02-PLAN, 03-RESULTADOS)
+
+---
+
+### Auditoria Informe Deploy + Validacion Entorno + Fix Acceso LAN (2026-02-20) - **COMPLETADO**
+
+**Fase 1 — Auditoria:** 3 agentes paralelos verificaron 56 hallazgos contra codebase actual.
+**Fase 2 — Validacion Entorno:** Integrada en Fase 1 (hallazgos F4).
+**Fase 3 — Fix Acceso LAN:** Proxy-aware URLs + CORS LAN auto-accept.
+**Fase 4 — Compliance:** 7 hallazgos de cumplimiento verificados y corregidos.
+
+| Archivo | Cambio |
+|---------|--------|
+| `apps/frontend/src/config/api.config.ts` | `USE_PROXY` flag: URLs relativas (`/api/v1`) en dev, absolutas en prod |
+| `apps/frontend/.env` | `VITE_API_HOST=proxy`, `VITE_WS_HOST=` |
+| `apps/frontend/.env.example` | Documentado modo proxy como opcion |
+| `apps/frontend/src/config/env.ts` | Marcado `@deprecated` (dead code, no proxy-aware) |
+| `apps/backend/src/main.ts` | CORS LAN auto-accept en dev + `process.send('ready')` (fix F4-A03) + `corsOriginValidator` compartido |
+| `apps/backend/src/adapters/redis-io.adapter.ts` | Acepta CORS callback (consistencia HTTP+WS) |
+| `docs/20-architecture/AMBIENTES-DEV-PROD.md` | v1.1.0: Seccion "Modo Proxy y Acceso LAN" |
+| `orchestration/tareas/.../05-AUDITORIA-ESTADO-ACTUAL.md` | Reporte completo: 4 resueltos, 6 parciales, 46 pendientes |
+
+**Hallazgos Auditoria:** 56 total → 4 RESUELTO (7%), 6 PARCIAL (11%), 46 PENDIENTE (82%)
+**Compliance:** 7 findings verificados (F1-F7), todos corregidos o documentados.
+**Tests pendientes:** Unit tests para branching `USE_PROXY` (ESTANDAR-TESTING 2.1).
+
+---
+
+### TASK-2026-02-20-AUDIT-DOCS — Auditoria Integral de Documentacion (2026-02-20) - **COMPLETADO**
+
+**Objetivo:** Sincronizar 100% de metricas en docs/ con MASTER_INVENTORY.yml v12.1.0.
+**Ejecucion:** 5 streams paralelos + 3 rondas de verificacion grep.
+
+| Stream | Alcance | Archivos | Ediciones |
+|--------|---------|----------|-----------|
+| A | CLAUDE.md + overview | 4 | 28 |
+| B | Arquitectura + ADRs | 8 | 28 |
+| C | EPICs + requirements | 15 | ~45 |
+| D | Guias/portales/standards | 16 | ~42 |
+| E | READMEs nuevos | 5 | 5 creados |
+| Fix | Residuos post-verificacion | 9 | ~15 |
+
+**Metricas corregidas (17):** modules, entities, services, controllers, endpoints, components, hooks, pages, stores, API files, API calls, routes, RLS DDL, RLS runtime, FKs, ENUMs, type files.
+
+**Output:** `orchestration/tareas/TASK-2026-02-20-AUDIT-DOCS/` (01-HALLAZGOS, 02-DISCREPANCIAS, 03-PLAN, 04-VERIFICACION)
+
+---
 
 ### TASK-2026-02-20-UUID-AUDIT — Auditoria + Ejecucion Fixes (2026-02-20) - **TODO COMPLETADO**
 
@@ -209,14 +491,14 @@
 | ADR | ADR-046-pageshell-pattern.md | 1 |
 | Guide | REACT-QUERY-MIGRATION-GUIDE.md | 1 |
 
-#### Items Diferidos para Futuros Sprints
+#### Items Diferidos para Futuros Sprints — TODOS COMPLETADOS
 
-| Item | Prioridad | Esfuerzo | Detalle |
-|------|-----------|----------|---------|
-| React Query migration de 25 admin hooks | P1 | XL | useState+useEffect → React Query. Requiere sprint dedicado |
-| 34 inline modals restantes | P2 | L | 8/42 migrados, 34 pendientes (gradual) |
-| Pagination promover a shared | P2 | M | Solo existe en teacher, admin reimplementa inline |
-| TabBar unificacion (3 implementaciones) | P2 | M | shared + AdminTabBar + inline teacher |
+| Item | Prioridad | Estado |
+|------|-----------|--------|
+| ~~React Query migration de 25 admin hooks~~ | P1 | **COMPLETADO** — 21 hooks migrated (6 already done, 4 UI-only) |
+| ~~34 inline modals restantes~~ | P2 | **COMPLETADO** — 17 migrated + 19 Framer Motion skipped (gradual) |
+| ~~Pagination promover a shared~~ | P2 | **COMPLETADO** — Shared Pagination, 9 consumers, 2 variants |
+| ~~TabBar unificacion~~ | P2 | **COMPLETADO** — 5 variants, AdminTabBar thin wrapper, 4 teacher pages |
 
 #### Inventarios Actualizados
 

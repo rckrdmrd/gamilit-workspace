@@ -16,6 +16,7 @@ import { UserAchievement } from '@/modules/gamification/entities/user-achievemen
 import { Achievement } from '@/modules/gamification/entities/achievement.entity';
 import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
+import { InventoryService } from '@/modules/gamification/services/inventory.service';
 
 // Mock bcrypt globally
 jest.mock('bcrypt', () => ({
@@ -97,6 +98,15 @@ describe('AuthService', () => {
     find: jest.fn(),
   };
 
+  // Mock services - Gamification
+  const mockInventoryService = {
+    initializeUserInventory: jest.fn(),
+    getEquippedItems: jest.fn(),
+    getEquippedItemsMap: jest.fn().mockResolvedValue({}),
+    equipItem: jest.fn(),
+    unequipItem: jest.fn(),
+  };
+
   const mockJwtService = {
     sign: jest.fn(),
   };
@@ -151,6 +161,11 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(ExerciseSubmission, 'progress'),
           useValue: mockExerciseSubmissionRepository,
+        },
+        // Gamification services
+        {
+          provide: InventoryService,
+          useValue: mockInventoryService,
         },
         {
           provide: JwtService,
@@ -242,7 +257,7 @@ describe('AuthService', () => {
       expect(mockAttemptRepository.create).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(result.user).toBeDefined();
-      expect(result.user.id).toBe('user-1');
+      expect(result.user.id).toBe('profile-1'); // toUserResponse returns profile.id
       expect(result.user.email).toBe('test@example.com');
       expect(result.accessToken).toBeDefined();
       expect(result.refreshToken).toBeDefined();
@@ -407,7 +422,7 @@ describe('AuthService', () => {
       expect(result.accessToken).toBe('access_token');
       expect(result.refreshToken).toBe('refresh_token');
       expect(result.user).toBeDefined();
-      expect(result.user.id).toBe('user-1');
+      expect(result.user.id).toBe('profile-1'); // toUserResponse returns profile.id
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: 'test@example.com' },
       });

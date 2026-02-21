@@ -18,9 +18,9 @@ Esta guia establece la estrategia, configuracion y mejores practicas para implem
 | Aspecto | Detalle |
 |---------|---------|
 | Portales | 4 (Estudiante, Maestro, Admin, Padres) |
-| Componentes .tsx | 475 produccion |
-| Paginas | 68 activas |
-| Rutas | 70 en App.tsx |
+| Componentes .tsx | 580 produccion |
+| Paginas | 70 activas |
+| Rutas | 73 en App.tsx |
 | Ejercicios | 30 mecanicas unicas en 5 modulos educativos |
 | Tests E2E actuales | 0 (primera implementacion) |
 | Test runner unitario frontend | Vitest (46 archivos) |
@@ -1160,6 +1160,7 @@ await page.waitForTimeout(3000); // PROHIBIDO
 - [ESTANDAR-TESTING](../../40-standards/ESTANDAR-TESTING.md) - Estandar general de testing (piramide, unit, integration, E2E)
 - [GUIA-COVERAGE-TESTING](./GUIA-COVERAGE-TESTING.md) - Estrategia de cobertura y metricas
 - [TESTING-GUIDE](./TESTING-GUIDE.md) - Guia general de testing gamilit (Jest + Vitest)
+- [Guias de Pruebas por Modulo](../../10-requirements/testing-guides/README.md) - Respuestas ejemplo y criterios de validacion para los 23 tipos de ejercicio (5 modulos)
 - [Playwright Documentation](https://playwright.dev/docs/intro) - Documentacion oficial
 
 ---

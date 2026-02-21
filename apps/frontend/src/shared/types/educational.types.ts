@@ -2,8 +2,6 @@
  * Educational Types
  * Type definitions for Educational Module API responses
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Difficulty Level Enum
  * Matches database enum: educational_content.difficulty_level
@@ -646,7 +644,7 @@ export interface ExerciseContent {
   correct_answer?: never;
   code_template?: string;
   test_cases?: TestCase[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -654,8 +652,8 @@ export interface ExerciseContent {
  * For coding exercises
  */
 export interface TestCase {
-  input: any;
-  expected_output: any;
+  input: unknown;
+  expected_output: unknown;
   is_hidden: boolean;
   description?: string;
 }

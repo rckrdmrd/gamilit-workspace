@@ -25,10 +25,13 @@ SET search_path TO auth, public;
 -- Crear usuario de testing si no existe
 DO $$
 DECLARE
-    student_user_id UUID := 'cccccccc-cccc-cccc-cccc-cccccccccccc';
+    student_user_id UUID;
 BEGIN
     -- Verificar si ya existe
-    IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'student@gamilit.com') THEN
+    SELECT id INTO student_user_id FROM auth.users WHERE email = 'student@gamilit.com';
+
+    IF student_user_id IS NULL THEN
+        student_user_id := gen_random_uuid();
         INSERT INTO auth.users (
             id,
             email,
@@ -57,7 +60,7 @@ BEGIN
             email_confirmed_at = COALESCE(email_confirmed_at, NOW()),
             updated_at = NOW()
         WHERE email = 'student@gamilit.com';
-        RAISE NOTICE 'Usuario student@gamilit.com actualizado';
+        RAISE NOTICE 'Usuario student@gamilit.com actualizado (ID: %)', student_user_id;
     END IF;
 END $$;
 

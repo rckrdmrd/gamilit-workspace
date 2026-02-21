@@ -22,28 +22,9 @@ import {
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { Profile } from './profile.entity';
+import { RelationshipType, NotificationFrequency, ReportFormat } from '@/modules/parents/enums/parent-account.enums';
 
-export enum RelationshipType {
-  MOTHER = 'mother',
-  FATHER = 'father',
-  GUARDIAN = 'guardian',
-  TUTOR = 'tutor',
-  OTHER = 'other',
-}
-
-export enum NotificationFrequency {
-  REALTIME = 'realtime',
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  ON_DEMAND = 'on_demand',
-}
-
-export enum ReportFormat {
-  EMAIL = 'email',
-  IN_APP = 'in_app',
-  BOTH = 'both',
-}
+export { RelationshipType, NotificationFrequency, ReportFormat };
 
 @Entity({ schema: DB_SCHEMAS.AUTH, name: DB_TABLES.AUTH.PARENT_ACCOUNTS })
 @Index(['profileId'])

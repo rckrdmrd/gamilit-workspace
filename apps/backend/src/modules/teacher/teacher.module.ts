@@ -44,6 +44,9 @@ import { AssignmentClassroom } from '@modules/social/entities/assignment-classro
 import { StudentInterventionAlert } from './entities/student-intervention-alert.entity';
 import { Message, MessageParticipant } from './entities/message.entity';
 import { TeacherContent } from './entities/teacher-content.entity';
+import { ResourceRating } from './entities/resource-rating.entity';
+import { ResourceComment } from './entities/resource-comment.entity';
+import { ResourceDownload } from './entities/resource-download.entity';
 import { TeacherReport } from './entities/teacher-report.entity';
 // TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
 import { ScheduledReport } from './entities/scheduled-report.entity';
@@ -189,7 +192,7 @@ import { MailModule } from '@modules/mail/mail.module';
     // CORRECTED (2025-12-18): Cambiado de 'content' a 'educational'
     // Assignment, AssignmentSubmission y TeacherContent pertenecen a educational_content schema
     // TeacherAssignmentsController: Added AssignmentExercise
-    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, AssignmentExercise, TeacherContent], 'educational'),
+    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, AssignmentExercise, TeacherContent, ResourceRating, ResourceComment, ResourceDownload], 'educational'),
 
     // Entities from 'progress' datasource (teacher entities)
     TypeOrmModule.forFeature([StudentInterventionAlert], 'progress'),

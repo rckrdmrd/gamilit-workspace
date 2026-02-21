@@ -282,7 +282,7 @@ resolved_gaps:
       area: "Frontend"
       description: "Teacher Portal tiene duplicación de archivos (TeacherX vs TeacherXPage)"
       status: "✅ RESUELTO"
-      resolution: "Creado HOC withTeacherLayout, eliminados 6 wrappers (-132 LOC)"
+      resolution: "Creado HOC withTeacherLayout (luego eliminado en Teacher Portal Audit 2026-02-20), reemplazado por PageShell pattern (ADR-046)"
       commit: "9ca73bf1"
       date: "2026-01-22"
       impact: "Reducción deuda técnica, código más mantenible"

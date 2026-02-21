@@ -39,7 +39,7 @@ export class AdminUsersService {
 
     // Build WHERE conditions for cross-schema query
     const conditions: string[] = [];
-    const params: any[] = [];
+    const params: unknown[] = [];
     let paramIndex = 1;
 
     if (search) {
@@ -114,7 +114,7 @@ export class AdminUsersService {
 
       // Transform raw results to UserDetailsDto
       // FIX: Use instanceToPlain to trigger @Transform decorators for date serialization
-      const transformedUsers = rawResults.map((row: any) => {
+      const transformedUsers = rawResults.map((row: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         // Derive status: use deleted_at if set, otherwise use entity status field
         const computedStatus = row.deleted_at ? 'suspended' : (row.status || 'active');
 

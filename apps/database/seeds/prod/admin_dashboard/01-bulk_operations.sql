@@ -13,6 +13,13 @@
 DO $$
 DECLARE
     v_admin_profile_id UUID;
+    v_target1 UUID := gen_random_uuid();
+    v_target2 UUID := gen_random_uuid();
+    v_target3 UUID := gen_random_uuid();
+    v_target4 UUID := gen_random_uuid();
+    v_target5 UUID := gen_random_uuid();
+    v_target6 UUID := gen_random_uuid();
+    v_target7 UUID := gen_random_uuid();
 BEGIN
     -- Dynamic admin profile lookup
     SELECT p.id INTO v_admin_profile_id
@@ -35,21 +42,27 @@ BEGIN
         RETURN;
     END IF;
 
+    -- Idempotency guard: skip if seed data already exists
+    IF EXISTS (SELECT 1 FROM admin_dashboard.bulk_operations LIMIT 1) THEN
+        RAISE NOTICE 'bulk_operations seed data already exists, skipping insert';
+        RETURN;
+    END IF;
+
     -- Operacion bulk completada (historica)
     INSERT INTO admin_dashboard.bulk_operations (
         id, operation_type, target_entity, target_ids, target_count,
         completed_count, failed_count, status, error_details,
         started_by, started_at, completed_at, result
     ) VALUES (
-        'a0000000-0000-0000-0000-000000000001',
+        gen_random_uuid(),
         'suspend_users', 'users',
-        ARRAY['b0000000-0000-0000-0000-000000000001'::UUID, 'b0000000-0000-0000-0000-000000000002'::UUID, 'b0000000-0000-0000-0000-000000000003'::UUID],
+        ARRAY[v_target1, v_target2, v_target3],
         3, 3, 0, 'completed', '[]'::jsonb,
         v_admin_profile_id,
         gamilit.now_mexico() - INTERVAL '7 days',
         gamilit.now_mexico() - INTERVAL '7 days' + INTERVAL '5 seconds',
         '{"message": "3 usuarios suspendidos exitosamente", "affected_roles": ["student"]}'::jsonb
-    ) ON CONFLICT (id) DO NOTHING;
+    );
 
     -- Operacion bulk con errores parciales
     INSERT INTO admin_dashboard.bulk_operations (
@@ -57,16 +70,16 @@ BEGIN
         completed_count, failed_count, status, error_details,
         started_by, started_at, completed_at, result
     ) VALUES (
-        'a0000000-0000-0000-0000-000000000002',
+        gen_random_uuid(),
         'update_role', 'users',
-        ARRAY['c0000000-0000-0000-0000-000000000001'::UUID, 'c0000000-0000-0000-0000-000000000002'::UUID],
+        ARRAY[v_target4, v_target5],
         2, 1, 1, 'completed',
-        '[{"user_id": "c0000000-0000-0000-0000-000000000002", "error": "Usuario no encontrado"}]'::jsonb,
+        jsonb_build_array(jsonb_build_object('user_id', v_target5::text, 'error', 'Usuario no encontrado')),
         v_admin_profile_id,
         gamilit.now_mexico() - INTERVAL '3 days',
         gamilit.now_mexico() - INTERVAL '3 days' + INTERVAL '3 seconds',
         '{"message": "1 de 2 usuarios actualizados", "new_role": "teacher"}'::jsonb
-    ) ON CONFLICT (id) DO NOTHING;
+    );
 
     -- Operacion bulk pendiente (en cola)
     INSERT INTO admin_dashboard.bulk_operations (
@@ -74,14 +87,14 @@ BEGIN
         completed_count, failed_count, status, error_details,
         started_by, started_at, completed_at, result
     ) VALUES (
-        'a0000000-0000-0000-0000-000000000003',
+        gen_random_uuid(),
         'activate_users', 'users',
-        ARRAY['d0000000-0000-0000-0000-000000000001'::UUID, 'd0000000-0000-0000-0000-000000000002'::UUID, 'd0000000-0000-0000-0000-000000000003'::UUID, 'd0000000-0000-0000-0000-000000000004'::UUID, 'd0000000-0000-0000-0000-000000000005'::UUID],
+        ARRAY[v_target1, v_target2, v_target5, v_target6, v_target7],
         5, 0, 0, 'pending', '[]'::jsonb,
         v_admin_profile_id,
         gamilit.now_mexico(),
         NULL, NULL
-    ) ON CONFLICT (id) DO NOTHING;
+    );
 
     RAISE NOTICE 'Seed bulk_operations: 3 registros insertados (admin=%)', v_admin_profile_id;
 END $$;

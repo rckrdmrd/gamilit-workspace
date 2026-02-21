@@ -74,7 +74,7 @@ export class StudentAssignmentsController {
       }],
     },
   })
-  async getMyAssignments(@Query() query: any, @Request() req: AuthRequest) {
+  async getMyAssignments(@Query() query: Record<string, string>, @Request() req: AuthRequest) {
     const studentId = req.user!.id;
     return this.assignmentsService.findStudentAssignments(studentId, {
       status: query.status,

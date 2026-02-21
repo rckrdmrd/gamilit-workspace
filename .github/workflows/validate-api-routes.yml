@@ -30,11 +30,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies (root)
-        run: npm install
+        run: npm ci
 
       - name: Install frontend dependencies
         working-directory: apps/frontend
-        run: npm install
+        run: npm ci
 
       - name: Run ESLint with custom API rules
         working-directory: apps/frontend

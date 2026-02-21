@@ -9,7 +9,8 @@
 
 import React from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { Users, FileCheck, Target, Clock, TrendingUp, BookOpen } from 'lucide-react';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
+import { Users, FileCheck, Target, Clock, TrendingUp, BookOpen, BarChart3 } from 'lucide-react';
 import type { ProgressOverview } from '@/services/api/adminTypes';
 
 interface OverviewViewProps {
@@ -33,7 +34,11 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ overview, isLoading 
   if (!overview) {
     return (
       <DetectiveCard>
-        <p className="py-8 text-center text-detective-text-secondary">No hay datos disponibles</p>
+        <EmptyState
+          icon={BarChart3}
+          title="No hay datos disponibles"
+          description="Los datos de progreso apareceran cuando haya actividad en el sistema"
+        />
       </DetectiveCard>
     );
   }

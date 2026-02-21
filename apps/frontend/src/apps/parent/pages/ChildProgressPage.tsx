@@ -91,6 +91,7 @@ export const ChildProgressPage: React.FC = () => {
             <button
               onClick={() => navigate('/parent/dashboard')}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Volver al dashboard"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -121,7 +122,7 @@ export const ChildProgressPage: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 bg-white p-1 rounded-lg shadow-sm inline-flex">
+        <nav className="flex gap-2 mb-6 bg-white p-1 rounded-lg shadow-sm inline-flex" role="tablist" aria-label="Secciones de progreso">
           {[
             { id: 'overview', label: 'Resumen' },
             { id: 'activities', label: 'Actividades' },
@@ -129,7 +130,10 @@ export const ChildProgressPage: React.FC = () => {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
+              onClick={() => setActiveTab(tab.id as 'overview' | 'activities' | 'reports')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? 'bg-indigo-600 text-white'
@@ -139,12 +143,12 @@ export const ChildProgressPage: React.FC = () => {
               {tab.label}
             </button>
           ))}
-        </div>
+        </nav>
 
         {isLoadingData ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-12" aria-live="polite">
             <div className="flex flex-col items-center gap-4">
-              <RefreshCw className="w-8 h-8 text-indigo-600 animate-spin" />
+              <RefreshCw className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
               <p className="text-gray-600">Cargando datos...</p>
             </div>
           </div>
@@ -152,7 +156,7 @@ export const ChildProgressPage: React.FC = () => {
           <>
             {/* Overview Tab */}
             {activeTab === 'overview' && progress && (
-              <div className="space-y-6">
+              <div className="space-y-6" id="tabpanel-overview" role="tabpanel" aria-label="Resumen">
                 {/* Main Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <motion.div
@@ -300,7 +304,7 @@ export const ChildProgressPage: React.FC = () => {
 
             {/* Activities Tab */}
             {activeTab === 'activities' && (
-              <div className="bg-white rounded-xl shadow-sm divide-y">
+              <div className="bg-white rounded-xl shadow-sm divide-y" id="tabpanel-activities" role="tabpanel" aria-label="Actividades">
                 {activities.length === 0 ? (
                   <div className="p-8 text-center text-gray-500">
                     No hay actividades recientes
@@ -356,10 +360,12 @@ export const ChildProgressPage: React.FC = () => {
 
             {/* Reports Tab */}
             {activeTab === 'reports' && studentId && (
+              <div id="tabpanel-reports" role="tabpanel" aria-label="Reportes">
               <WeeklyReportView
                 studentId={studentId}
                 reports={reports.filter((r) => r.studentId === studentId)}
               />
+              </div>
             )}
           </>
         )}

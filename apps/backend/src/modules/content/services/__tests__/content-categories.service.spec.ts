@@ -19,7 +19,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 import { ContentCategoriesService } from '../content-categories.service';
-import { ContentCategory } from '../../entities';
+import { ContentCategory } from '../../entities/content-category.entity';
 import { createMockRepository, createMockQueryBuilder } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
 

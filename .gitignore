@@ -44,6 +44,12 @@ build/
 .env.production
 .env.development
 .env.test
+# Database env files (contain credentials)
+.env.database
+.env.dev
+apps/database/.env.database
+apps/database/.env.dev
+
 # Permitir archivos de ejemplo (sin secrets)
 !.env.*.example
 !.env.example

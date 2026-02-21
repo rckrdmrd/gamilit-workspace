@@ -10,6 +10,10 @@
 
 En modulos 3 al 5, la respuesta pasa a estado de revision manual hasta que un docente completa rubricado, calificacion y cierre de recompensas.
 
+Mensaje mostrado al estudiante al enviar:
+
+- "Tu actividad fue enviada para evaluacion del maestro. Las recompensas (XP y ML Coins) se otorgaran cuando el maestro complete la evaluacion."
+
 ## Diagrama Mermaid
 
 ```mermaid
@@ -45,3 +49,12 @@ stateDiagram-v2
 ## Riesgo funcional documentado
 
 - Si la etapa de recompensas falla despues de marcar revision completada, puede existir inconsistencia `graded` sin `rewardsApplied`.
+
+## Flujo de recompensas diferidas (UI)
+
+1. Estudiante envia ejercicio M3-M5.
+2. Frontend muestra estado `pendingReview` en `FeedbackModal`.
+3. Docente completa revision.
+4. Backend envia notificacion in-app con `notificationType=exercise_feedback` y payload de `score`, `xpEarned`, `mlCoinsEarned`.
+5. Frontend dispara evento `gamilit:exercise:feedback`.
+6. `StudentPageShell` abre `DelayedRewardsModal` con calificacion y recompensas otorgadas.

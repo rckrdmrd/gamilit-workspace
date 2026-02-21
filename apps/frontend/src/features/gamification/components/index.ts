@@ -4,3 +4,7 @@
  */
 
 export { StreakIndicator } from './StreakIndicator';
+export { GamificationOverlay } from './GamificationOverlay';
+export { XpGainedPopup } from './XpGainedPopup';
+export { CoinsEarnedPopup } from './CoinsEarnedPopup';
+export { RankUpModal } from './RankUpModal';

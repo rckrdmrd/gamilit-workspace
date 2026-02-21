@@ -16,7 +16,7 @@ export const PermissionMatrix: React.FC<PermissionMatrixProps> = ({ role }) => {
     { name: 'Configurar sistema', student: false, teacher: false, admin: true },
   ];
 
-  const hasPermission = (permission: any) => {
+  const hasPermission = (permission: { student: boolean; teacher: boolean; admin: boolean }) => {
     if (role === 'student') return permission.student;
     if (role === 'admin_teacher') return permission.teacher;
     if (role === 'super_admin') return permission.admin;

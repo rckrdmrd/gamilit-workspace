@@ -5,8 +5,8 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AssignmentWizard } from './AssignmentWizard';
 import { AssignmentList } from './AssignmentList';
 import type { Assignment } from '../../types';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { assignmentsApi, classroomsApi } from '@/services/api/teacher';
+import { getModules } from '@/services/api/educationalAPI';
 import toast from 'react-hot-toast';
 
 interface AssignmentCreatorProps {
@@ -51,30 +51,34 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
         setError(null);
 
         // Fetch assignments
-        const assignmentsResponse = await apiClient.get(API_ENDPOINTS.teacher.assignments, {
-          params: { classroom_id: classroomId },
-        });
-        setAssignments(assignmentsResponse.data.assignments || []);
+        const assignmentsData = await assignmentsApi.getAssignments({ classroom_id: classroomId });
+        setAssignments(assignmentsData || []);
 
-        // Fetch modules for wizard (if endpoint exists)
+        // Fetch modules for wizard
         try {
-          const modulesEndpoint =
-            (API_ENDPOINTS as unknown as { teacher?: { modules?: string } }).teacher?.modules ||
-            '/teacher/modules';
-          const modulesResponse = await apiClient.get(modulesEndpoint);
-          setModules(modulesResponse.data.modules || []);
+          const modulesData = await getModules();
+          setModules(
+            modulesData.map((m) => ({
+              id: m.id,
+              title: m.title,
+              exercises: [],
+            })),
+          );
         } catch {
-          // Modules endpoint may not exist yet - wizard will handle empty state
+          // Modules endpoint may not be available - wizard will handle empty state
           setModules([]);
         }
 
         // Fetch students for wizard
         try {
-          const studentsResponse = await apiClient.get(
-            API_ENDPOINTS.teacher.classroomStudents?.(classroomId) ||
-              `/teacher/classrooms/${classroomId}/students`
+          const studentsResponse = await classroomsApi.getClassroomStudents(classroomId);
+          const studentsList = studentsResponse.data || [];
+          setStudents(
+            studentsList.map((s) => ({
+              id: s.id,
+              full_name: s.full_name,
+            })),
           );
-          setStudents(studentsResponse.data.students || studentsResponse.data || []);
         } catch {
           // Students endpoint may fail - wizard will handle empty state
           setStudents([]);
@@ -95,12 +99,15 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
 
   const handleCreateAssignment = async (data: AssignmentFormData) => {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.teacher.createAssignment, {
-        ...data,
+      const newAssignment = await assignmentsApi.createAssignment({
+        title: data.title,
+        description: '',
+        type: 'practice',
+        due_date: data.end_date,
         classroom_id: classroomId,
+        exercise_ids: data.exercise_ids,
       });
 
-      const newAssignment = response.data;
       setAssignments([newAssignment, ...assignments]);
       setShowWizard(false);
       toast.success('Asignación creada exitosamente', { duration: 3000 });

@@ -34,8 +34,8 @@ Impacto funcional: Permite al maestro tomar decisiones pedagogicas basadas en da
 flowchart TD
     A[Maestro accede a /teacher/analytics o /teacher/reports] --> B{Pagina?}
 
-    B -- Analytics --> C[TeacherAnalytics.tsx]
-    B -- Reports --> D[TeacherReports.tsx]
+    B -- Analytics --> C[TeacherAnalyticsPage.tsx]
+    B -- Reports --> D[TeacherReportsPage.tsx]
 
     %% Analytics Flow
     C --> C1[useClassrooms: cargar aulas]
@@ -52,7 +52,7 @@ flowchart TD
     C9 --> C10{Accion del maestro?}
     C10 -- Cambiar tab --> C9
     C10 -- Cambiar filtros --> C2
-    C10 -- Exportar CSV --> C11[analyticsApi.generateReport]
+    C10 -- Exportar CSV --> C11[reportsApi.generateReport]
     C11 --> C12[POST /teacher/reports/generate]
     C12 --> C13[Descargar archivo]
 
@@ -114,7 +114,7 @@ flowchart TD
 ### Flujo A: Analiticas (TeacherAnalytics)
 
 #### Paso 1: Carga inicial
-1. **Frontend:** `TeacherAnalytics.tsx` se monta en ruta `/teacher/analytics`.
+1. **Frontend:** `TeacherAnalyticsPage.tsx` se monta en ruta `/teacher/analytics`.
 2. **Frontend:** `useClassrooms()` obtiene las aulas del maestro.
 3. **Frontend:** Auto-selecciona la primera aula disponible.
 
@@ -135,14 +135,14 @@ flowchart TD
 13. **Frontend:** Tab Engagement: 4 cards (DAU, WAU, duracion, sesiones/usuario) + comparacion periodo anterior + tabla uso features.
 
 #### Paso 4: Exportacion
-14. **Frontend:** Boton "Exportar a CSV" invoca `analyticsApi.generateReport()`.
+14. **Frontend:** Boton "Exportar a CSV" invoca `reportsApi.generateReport()`.
 15. **Backend:** `POST /teacher/reports/generate` genera archivo y retorna `Report { status, file_url }`.
 16. **Frontend:** Si `status === 'completed'`, abre `file_url` en nueva pestana.
 
 ### Flujo B: Reportes (TeacherReports)
 
 #### Paso 1: Carga inicial
-1. **Frontend:** `TeacherReports.tsx` se monta en ruta `/teacher/reports`.
+1. **Frontend:** `TeacherReportsPage.tsx` se monta en ruta `/teacher/reports`.
 2. **Frontend:** `loadInitialData()` ejecuta 3 llamadas secuenciales:
    - `GET /api/v1/teacher/classrooms` (aulas del maestro)
    - `GET /api/v1/teacher/reports/recent` (reportes recientes)
@@ -209,7 +209,7 @@ flowchart TD
 5. **Frontend:** Boton "Compartir reporte" abre modal con:
    - Selector de reporte existente (de los reportes generados del maestro).
    - ID del maestro destinatario (teacher ID).
-   - Nivel de permiso: `view` (solo lectura) o `download` (descarga permitida).
+   - Nivel de permiso: `view` (solo lectura), `download` (descarga permitida) o `edit` (edicion permitida).
    - Fecha de expiracion (opcional).
    - Mensaje opcional para el destinatario.
 6. **Frontend:** `POST /api/v1/teacher/reports/share` con `ShareReportDto`.
@@ -240,8 +240,8 @@ flowchart TD
 
 | Tipo | Ruta | Descripcion |
 |------|------|-------------|
-| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherAnalytics.tsx` | Dashboard de analiticas con 3 tabs |
-| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherReports.tsx` | Generador y gestor de reportes |
+| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherAnalyticsPage.tsx` | Dashboard de analiticas con 3 tabs |
+| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx` | Generador y gestor de reportes |
 | Componente | `apps/frontend/src/apps/teacher/components/reports/ReportGenerator.tsx` | Formulario de generacion de reportes |
 | Componente | `apps/frontend/src/shared/components/base/DetectiveCard.tsx` | Card base del sistema de diseno |
 | Componente | `apps/frontend/src/shared/components/base/DetectiveButton.tsx` | Boton base del sistema de diseno |
@@ -254,7 +254,7 @@ flowchart TD
 | Hook | `apps/frontend/src/apps/teacher/hooks/useClassrooms.ts` | Lista de aulas del maestro |
 | Hook | `apps/frontend/src/apps/teacher/hooks/useScheduledReports.ts` | CRUD de reportes programados (7 operaciones) |
 | Hook | `apps/frontend/src/apps/teacher/hooks/useSharedReports.ts` | Gestion de reportes compartidos (6 operaciones) |
-| API Service | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | API de analiticas (7 metodos) |
+| API Service | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | API de analiticas (5 metodos) |
 | API Service | `apps/frontend/src/services/api/teacher/reportsApi.ts` | API de reportes (5 metodos) |
 | API Service | `apps/frontend/src/services/api/teacher/scheduledReportsApi.ts` | API de reportes programados (7 metodos) |
 | API Service | `apps/frontend/src/services/api/teacher/sharedReportsApi.ts` | API de reportes compartidos (6 metodos) |
@@ -355,10 +355,10 @@ flowchart TD
 
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
-| Frontend (analytics) | `apps/frontend/src/apps/teacher/pages/TeacherAnalytics.tsx` | Ruta `/teacher/analytics`, 3 tabs, graficas Chart.js |
-| Frontend (reports) | `apps/frontend/src/apps/teacher/pages/TeacherReports.tsx` | Ruta `/teacher/reports`, ReportGenerator, CRUD reportes |
+| Frontend (analytics) | `apps/frontend/src/apps/teacher/pages/TeacherAnalyticsPage.tsx` | Ruta `/teacher/analytics`, 3 tabs, graficas Chart.js |
+| Frontend (reports) | `apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx` | Ruta `/teacher/reports`, ReportGenerator, CRUD reportes |
 | Frontend (hook) | `apps/frontend/src/apps/teacher/hooks/useAnalytics.ts` | Promise.all de analytics + engagement |
-| Frontend (API analytics) | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | 7 metodos: getClassroomAnalytics, getEngagementMetrics, generateReport, etc. |
+| Frontend (API analytics) | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | 5 metodos: getClassroomAnalytics, getEngagementMetrics, getEconomyAnalytics, getAchievementsStats, getStudentInsights |
 | Frontend (API reports) | `apps/frontend/src/services/api/teacher/reportsApi.ts` | 5 metodos: generateReport, getRecentReports, getReportStats, downloadReport, deleteReport |
 | Frontend (tab programados) | `apps/frontend/src/apps/teacher/components/reports/ScheduledReportsTab.tsx` | Tab de gestion de reportes programados |
 | Frontend (tab compartidos) | `apps/frontend/src/apps/teacher/components/reports/SharedReportsTab.tsx` | Tab de gestion de reportes compartidos |
@@ -370,7 +370,8 @@ flowchart TD
 | Backend (controller) | `apps/backend/src/modules/teacher/controllers/teacher.controller.ts` | 30+ endpoints teacher/* (analytics linea 257, reports linea 384) |
 | Backend (classrooms) | `apps/backend/src/modules/teacher/controllers/teacher-classrooms.controller.ts` | GET classrooms del maestro |
 | Database | `apps/database/ddl/schemas/social_features/tables/08-teacher_reports.sql` | Metadata de reportes generados |
-| Database | `apps/database/ddl/schemas/social_features/tables/11-scheduled_reports.sql` | Reportes programados |
+| Database | `apps/database/ddl/schemas/social_features/tables/08b-scheduled_reports.sql` | Reportes programados |
+| Database | `apps/database/ddl/schemas/social_features/tables/08c-shared_reports.sql` | Reportes compartidos entre maestros |
 | Database | `apps/database/ddl/schemas/progress_tracking/tables/01-module_progress.sql` | Fuente de datos de progreso |
 | Database | `apps/database/ddl/schemas/progress_tracking/tables/03-exercise_attempts.sql` | Fuente de datos de intentos |
 | Database | `apps/database/ddl/schemas/progress_tracking/tables/engagement_metrics.sql` | Metricas de engagement |

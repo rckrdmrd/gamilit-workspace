@@ -12,7 +12,7 @@
 | **Backend Framework** | NestJS | 11.x | Framework modular para API REST + WebSocket |
 | **ORM** | TypeORM | 0.3.x | Mapeo objeto-relacional, entities, migrations |
 | **Frontend Framework** | React | 19.x | UI library para SPA con 4 portales |
-| **State Management** | Zustand | 5.x | Estado global ligero (14 stores) |
+| **State Management** | Zustand | 5.x | Estado global ligero (13 stores) |
 | **UI Styling** | TailwindCSS | 4.x | Utility-first CSS framework |
 | **Build Tool** | Vite | 6.x | Frontend build y dev server |
 | **Database** | PostgreSQL | 15.x | BD relacional con RLS multi-tenant |
@@ -74,9 +74,9 @@
 |---------|---------|-----------|
 | react | 19.x | UI library |
 | react-dom | 19.x | DOM rendering |
-| react-router-dom | 7.x | Client-side routing (72 routes) |
-| zustand | 5.x | State management (14 stores) |
-| axios | 1.x | HTTP client (52 API services) |
+| react-router-dom | 7.x | Client-side routing (73 routes) |
+| zustand | 5.x | State management (13 stores) |
+| axios | 1.x | HTTP client (67 API services) |
 | socket.io-client | 4.8+ | WebSocket client |
 
 ### UI & Styling
@@ -121,7 +121,7 @@
 ### Features Utilizados
 | Feature | Descripcion |
 |---------|-------------|
-| Row-Level Security (RLS) | 207 policies para multi-tenancy |
+| Row-Level Security (RLS) | 231 DDL / 471 runtime policies para multi-tenancy |
 | Schemas | 18 schemas modulares para separacion logica |
 | Functions | 183 funciones (DDL) para logica de negocio |
 | Triggers | 67 triggers para eventos automaticos |
@@ -136,7 +136,7 @@
 | UUID | Primary keys (todas las tablas) |
 | TIMESTAMPTZ | Fechas con timezone |
 | JSONB | Configuraciones, metadata flexible |
-| ENUM (40) | Tipos enumerados sincronizados con backend |
+| ENUM (42) | Tipos enumerados sincronizados con backend |
 | ARRAY | Tags, roles, permissions |
 | TEXT | Contenido educativo, descripciones |
 | NUMERIC | Puntos, scores, monedas |
@@ -176,12 +176,12 @@ Browser (React 19)
 
 | Patron | Implementacion |
 |--------|----------------|
-| **Modular Architecture** | 22 modulos NestJS independientes |
+| **Modular Architecture** | 23 modulos NestJS independientes |
 | **Repository Pattern** | TypeORM repositories por entity |
 | **DTO Pattern** | 399 DTOs para validacion de entrada/salida |
 | **Guard Pattern** | 15 guards para autorizacion |
 | **Decorator Pattern** | 18 decorators custom |
-| **Multi-tenancy** | RLS en PostgreSQL (207 policies) |
+| **Multi-tenancy** | RLS en PostgreSQL (231 DDL / 471 runtime policies) |
 | **Event-driven** | Socket.IO para real-time updates |
 | **CQRS (partial)** | Materialized Views para lectura, tablas para escritura |
 | **Clean Architecture** | Separacion layers: controller -> service -> repository |
@@ -194,7 +194,7 @@ Browser (React 19)
 |-----------|------------|---------|
 | Autenticacion | JWT + Passport | Access token 15min + Refresh token 7d |
 | Autorizacion | RBAC | 4 roles: estudiante, maestro, admin, padre |
-| Multi-tenancy | PostgreSQL RLS | 207 policies, aislamiento por escuela |
+| Multi-tenancy | PostgreSQL RLS | 231 DDL / 471 runtime policies, aislamiento por escuela |
 | Validacion | class-validator / zod | DTOs en backend, schemas en frontend |
 | Rate Limiting | @nestjs/throttler | 100 req/min por IP |
 | CORS | NestJS CORS | Origenes especificos por ambiente |

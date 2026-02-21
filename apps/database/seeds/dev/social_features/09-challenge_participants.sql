@@ -16,16 +16,27 @@ SET search_path TO social_features, auth_management, public;
 
 DO $$
 DECLARE
-    v_challenge1_id UUID := '61111111-1111-1111-1111-111111111001';
-    v_challenge2_id UUID := '61111111-1111-1111-1111-111111111002';
-    v_challenge3_id UUID := '61111111-1111-1111-1111-111111111003';
-    v_challenge5_id UUID := '61111111-1111-1111-1111-111111111005';
+    v_challenge1_id UUID;
+    v_challenge2_id UUID;
+    v_challenge3_id UUID;
+    v_challenge5_id UUID;
     v_student1_id UUID;
     v_student2_id UUID;
     v_student3_id UUID;
     v_student4_id UUID;
 BEGIN
     RAISE NOTICE 'Creating challenge participant records...';
+
+    -- Resolve challenge IDs by title (from 08-peer_challenges.sql)
+    SELECT id INTO v_challenge1_id FROM social_features.peer_challenges WHERE title = 'Duelo de Comprension Literal' LIMIT 1;
+    SELECT id INTO v_challenge2_id FROM social_features.peer_challenges WHERE title = 'Torneo Inferencias Rapidas' LIMIT 1;
+    SELECT id INTO v_challenge3_id FROM social_features.peer_challenges WHERE title = 'Desafio Rapido: Idea Principal' LIMIT 1;
+    SELECT id INTO v_challenge5_id FROM social_features.peer_challenges WHERE title = 'Ranking Semanal del Salon 2A' LIMIT 1;
+
+    IF v_challenge1_id IS NULL THEN
+        RAISE NOTICE 'Peer challenges not found. Run 08-peer_challenges.sql first. Skipping.';
+        RETURN;
+    END IF;
 
     -- Get student IDs
     SELECT id INTO v_student1_id FROM auth_management.profiles
@@ -91,7 +102,7 @@ BEGIN
 
     -- Challenge 1 participants (Open - creator only)
     (
-        '71111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_challenge1_id,
         v_student1_id,
         'accepted',
@@ -117,7 +128,7 @@ BEGIN
 
     -- Challenge 2 participants (In Progress - 4 participants)
     (
-        '71111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_challenge2_id,
         v_student2_id,
         'in_progress',
@@ -141,7 +152,7 @@ BEGIN
         jsonb_build_object('is_creator', true, 'current_exercise', 8)
     ),
     (
-        '71111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_challenge2_id,
         v_student1_id,
         'in_progress',
@@ -165,7 +176,7 @@ BEGIN
         jsonb_build_object('current_exercise', 9)
     ),
     (
-        '71111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_challenge2_id,
         v_student3_id,
         'in_progress',
@@ -189,7 +200,7 @@ BEGIN
         jsonb_build_object('current_exercise', 10, 'leading', true)
     ),
     (
-        '71111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_challenge2_id,
         v_student4_id,
         'in_progress',
@@ -215,7 +226,7 @@ BEGIN
 
     -- Challenge 3 participants (Completed)
     (
-        '71111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_challenge3_id,
         v_student3_id,
         'completed',
@@ -239,7 +250,7 @@ BEGIN
         jsonb_build_object('final_position', 'runner_up')
     ),
     (
-        '71111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_challenge3_id,
         v_student1_id,
         'completed',
@@ -265,7 +276,7 @@ BEGIN
 
     -- Challenge 5 participants (Leaderboard - in progress, multiple)
     (
-        '71111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         v_challenge5_id,
         v_student2_id,
         'in_progress',
@@ -289,7 +300,7 @@ BEGIN
         jsonb_build_object('is_creator', true, 'daily_scores', ARRAY[40, 45, 40])
     ),
     (
-        '71111111-1111-1111-1111-111111111009'::uuid,
+        gen_random_uuid(),
         v_challenge5_id,
         v_student1_id,
         'in_progress',
@@ -313,7 +324,7 @@ BEGIN
         jsonb_build_object('daily_scores', ARRAY[35, 40, 35])
     ),
     (
-        '71111111-1111-1111-1111-111111111010'::uuid,
+        gen_random_uuid(),
         v_challenge5_id,
         v_student3_id,
         'in_progress',

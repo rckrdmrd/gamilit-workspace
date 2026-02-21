@@ -88,7 +88,7 @@ export class ResourceOwnershipGuard implements CanActivate {
    * Extrae el user ID del recurso de params, body o query
    */
   private extractResourceUserId(
-    request: any,
+    request: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     ownershipField?: string,
   ): string | null {
     const { params, body, query } = request;

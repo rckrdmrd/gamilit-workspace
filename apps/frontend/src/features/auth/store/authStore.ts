@@ -39,14 +39,6 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => {
-      // Log on store initialization
-      console.log('🔄 [authStore] Initializing store...');
-      const storedData = localStorage.getItem('auth-storage');
-      console.log('💾 [authStore] Stored data in localStorage:', {
-        hasStoredData: !!storedData,
-        storedDataPreview: storedData ? storedData.substring(0, 100) + '...' : null,
-      });
-
       return {
         // Initial state
         user: null,

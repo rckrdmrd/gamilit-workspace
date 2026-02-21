@@ -19,22 +19,10 @@ import {
   Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+import { RubricCriteria } from '../enums/exercise-type-rubric.types';
 
-/**
- * Estructura de criterio de evaluación
- * FIX TASK-2026-01-18-011: Agregado campo id opcional (definido en seeds de BD)
- */
-export interface RubricCriteria {
-  id?: string; // ID único del criterio (definido en seeds, ej: "clasificacion", "veredicto")
-  name: string;
-  description: string;
-  weight: number; // Porcentaje (suma total = 100)
-  levels: {
-    score: number;
-    label: string;
-    description: string;
-  }[];
-}
+// Re-export for backward compatibility
+export { RubricCriteria } from '../enums/exercise-type-rubric.types';
 
 @Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.EXERCISE_TYPE_RUBRICS })
 @Index(['exerciseType'])

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Megaphone, Users, Share2, CheckCircle, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -75,10 +76,6 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
         answers: { campaigns },
       });
 
-      console.log('📊 [CallToAction] Progress update sent:', {
-        campaignsCount: campaigns.length,
-        minRequired: minCampaigns,
-      });
     }
   }, [campaigns, hintsUsed, onProgressUpdate, minCampaigns, startTime]);
 
@@ -170,13 +167,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
 
       await syncAndInvalidate();
 
-      console.log('✅ [CallToAction] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('❌ [CallToAction] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
@@ -370,7 +361,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
                       Firmar Petición
                     </button>
                     <button
-                      onClick={() => alert('Compartiendo en redes sociales...')}
+                      onClick={() => toast.success('Compartiendo en redes sociales...')}
                       className="flex items-center gap-2 rounded-detective bg-detective-blue px-4 py-2 font-medium text-white transition-colors hover:bg-detective-blue/90"
                     >
                       <Share2 className="h-5 w-5" />

@@ -78,7 +78,7 @@ export class ModelAdminController {
     description: 'List of model information',
     type: [MLModelInfoDto],
   })
-  async listModels(@Request() req: any): Promise<MLModelInfoDto[]> {
+  async listModels(@Request() req: any): Promise<MLModelInfoDto[]> { // eslint-disable-line @typescript-eslint/no-explicit-any
     this.logger.log(`[ADMIN] Models list requested by ${req.user.sub}`);
 
     const modelStatuses = ModelReadyGuard.getAllModelStatuses();
@@ -121,7 +121,7 @@ export class ModelAdminController {
   })
   async getModelMetrics(
     @Param('modelType') modelType: string,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<MLModelInfoDto> {
     this.logger.log(
       `[ADMIN] Metrics for model ${modelType} requested by ${req.user.sub}`,
@@ -163,7 +163,7 @@ export class ModelAdminController {
   async triggerTraining(
     @Param('modelType') modelType: string,
     @Body() dto: TriggerTrainingRequestDto,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<TriggerTrainingResponseDto> {
     this.logger.log(
       `[ADMIN] Training triggered for model ${modelType} by ${req.user.sub}`,
@@ -209,7 +209,7 @@ export class ModelAdminController {
     @Param('modelType') modelType: string,
     @Param('version') version: string,
     @Body() dto: ActivateModelVersionRequestDto,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<ActivateModelVersionResponseDto> {
     this.logger.log(
       `[ADMIN] Activating ${modelType} v${version} by ${req.user.sub}`,
@@ -250,7 +250,7 @@ export class ModelAdminController {
   })
   async getPredictionLogs(
     @Query() query: PredictionLogsQueryDto,
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<PaginatedPredictionLogsDto> {
     this.logger.log(`[ADMIN] Prediction logs requested by ${req.user.sub}`);
 
@@ -283,7 +283,7 @@ export class ModelAdminController {
     type: ClearCacheResponseDto,
   })
   async clearPredictionCache(
-    @Request() req: any,
+    @Request() req: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<ClearCacheResponseDto> {
     this.logger.warn(
       `[ADMIN] Prediction cache clear requested by ${req.user.sub}`,
@@ -311,7 +311,7 @@ export class ModelAdminController {
     status: 200,
     description: 'Cache statistics',
   })
-  async getCacheStats(@Request() req: any): Promise<any> {
+  async getCacheStats(@Request() req: any): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
     this.logger.log(`[ADMIN] Cache stats requested by ${req.user.sub}`);
     return this.cacheService.getStats();
   }

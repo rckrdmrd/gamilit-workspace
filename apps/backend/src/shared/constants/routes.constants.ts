@@ -87,11 +87,12 @@ export const API_ROUTES = {
       `/gamification/users/${userId}/missions/${missionId}`,
 
     // Comodines (Power-ups)
-    COMODINES: (userId: string) => `/gamification/users/${userId}/comodines`,
-    PURCHASE_COMODIN: (userId: string, type: string) =>
-      `/gamification/users/${userId}/comodines/${type}/purchase`,
-    USE_COMODIN: (userId: string, type: string) =>
-      `/gamification/users/${userId}/comodines/${type}/use`,
+    COMODINES: '/gamification/comodines',
+    COMODIN_INVENTORY: (userId: string) => `/gamification/comodines/users/${userId}/inventory`,
+    COMODIN_HISTORY: (userId: string) => `/gamification/comodines/users/${userId}/history`,
+    COMODIN_STATS: (userId: string) => `/gamification/comodines/users/${userId}/stats`,
+    PURCHASE_COMODIN: '/gamification/comodines/purchase',
+    USE_COMODIN: '/gamification/comodines/use',
 
     // Notifications
     NOTIFICATIONS: (userId: string) => `/gamification/users/${userId}/notifications`,

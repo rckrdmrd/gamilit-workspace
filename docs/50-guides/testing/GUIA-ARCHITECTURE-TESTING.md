@@ -18,7 +18,7 @@ estado: vigente
 
 ## 1. Proposito
 
-Validar que las reglas arquitectonicas del proyecto gamilit se cumplen automaticamente mediante tests. Esto previene la degradacion gradual de la arquitectura conforme crece el codebase (22 modulos, 152 entities, 170 services, 107 controllers).
+Validar que las reglas arquitectonicas del proyecto gamilit se cumplen automaticamente mediante tests. Esto previene la degradacion gradual de la arquitectura conforme crece el codebase (23 modulos, 155 entities (156 classes), 173 services, 108 controllers).
 
 Los architecture tests son tests automatizados que verifican:
 
@@ -101,7 +101,7 @@ describe('Architecture Rules', () => {
 });
 ```
 
-**Justificacion en gamilit:** Con 107 controllers y 170 services, es critico mantener esta separacion. Un controller que accede directamente al repository bypasa validaciones de negocio, guards y interceptors.
+**Justificacion en gamilit:** Con 108 controllers y 173 services, es critico mantener esta separacion. Un controller que accede directamente al repository bypasa validaciones de negocio, guards y interceptors.
 
 ### 3.2 Entities no importan de infrastructure
 
@@ -129,7 +129,7 @@ it('entities should not depend on services', async () => {
 });
 ```
 
-**Justificacion en gamilit:** Las 152 entities del proyecto representan el modelo de datos de 18 schemas PostgreSQL. Deben ser independientes de la logica de negocio para permitir su reutilizacion en multiples services y modulos.
+**Justificacion en gamilit:** Las 155 entities (156 classes) del proyecto representan el modelo de datos de 18 schemas PostgreSQL. Deben ser independientes de la logica de negocio para permitir su reutilizacion en multiples services y modulos.
 
 ### 3.3 Sin dependencias circulares entre modulos
 
@@ -147,6 +147,8 @@ it('should have no circular dependencies between modules', async () => {
 ```
 
 **Justificacion en gamilit:** Con 22 modulos interconectados (auth, educational, gamification, progress, etc.), las dependencias circulares son un riesgo real. NestJS tiene `forwardRef()` como escape, pero su uso debe ser excepcional y documentado.
+
+> **Nota:** Los 22 modulos mencionados corresponden a los directorios fisicos listados en el test 3.4 a continuacion. El proyecto tiene 23 modulos conceptuales en total.
 
 ### 3.4 Cada modulo tiene su propio module.ts
 
@@ -241,7 +243,7 @@ it('DTOs should not import repositories', async () => {
 });
 ```
 
-**Justificacion en gamilit:** Con 399 DTOs distribuidos en 22 modulos, mantener los DTOs como estructuras puras de datos es esencial para la mantenibilidad. La logica de transformacion pertenece a los services.
+**Justificacion en gamilit:** Con 399 DTOs distribuidos en 23 modulos, mantener los DTOs como estructuras puras de datos es esencial para la mantenibilidad. La logica de transformacion pertenece a los services.
 
 ### 3.7 Interceptors en shared o su modulo especifico
 

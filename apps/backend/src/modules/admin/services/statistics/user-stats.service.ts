@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
@@ -17,6 +17,8 @@ import { AdminQueryBuilder } from '../query-builders/admin.query-builder';
  */
 @Injectable()
 export class UserStatsService {
+  private readonly logger = new Logger(UserStatsService.name);
+
   constructor(
     @InjectDataSource('auth')
     private readonly authConnection: DataSource,
@@ -43,7 +45,7 @@ export class UserStatsService {
 
       return parseInt(result?.count || '0', 10);
     } catch (error) {
-      console.error('Error fetching active users:', error);
+      this.logger.error(`Error fetching active users: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }
@@ -87,7 +89,7 @@ export class UserStatsService {
         total_admins: parseInt(stats.total_admins || '0', 10),
       };
     } catch (error) {
-      console.error('Error fetching user stats summary:', error);
+      this.logger.error(`Error fetching user stats summary: ${error instanceof Error ? error.message : error}`);
       throw error;
     }
   }
@@ -108,7 +110,7 @@ export class UserStatsService {
 
       return result;
     } catch (error) {
-      console.error('Error fetching inactive user count:', error);
+      this.logger.error(`Error fetching inactive user count: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }
@@ -130,7 +132,7 @@ export class UserStatsService {
 
       return result;
     } catch (error) {
-      console.error('Error fetching unverified user count:', error);
+      this.logger.error(`Error fetching unverified user count: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }
@@ -166,7 +168,7 @@ export class UserStatsService {
         engagementRate,
       };
     } catch (error) {
-      console.error('Error calculating user engagement:', error);
+      this.logger.error(`Error calculating user engagement: ${error instanceof Error ? error.message : error}`);
       return {
         activeUsers: 0,
         totalUsers: 0,

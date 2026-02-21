@@ -9,7 +9,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditService } from '../services/audit.service';
-import { AuditLog, ActorType, Severity, Status } from '../entities/audit-log.entity';
+import { AuditLog } from '../entities/audit-log.entity';
+import { ActorType, Severity, Status } from '../enums/audit-log.enums';
 import { CreateAuditLogDto } from '../dto/create-audit-log.dto';
 
 describe('AuditService', () => {

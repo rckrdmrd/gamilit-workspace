@@ -1,6 +1,5 @@
 // apps/frontend/src/apps/admin/hooks/useClassroomTeacher.ts
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { classroomTeacherApi } from '@/services/api/admin/classroomTeacherApi';
 import type {
@@ -10,10 +9,16 @@ import type {
 } from '@/types/admin/classroom-teacher.types';
 import toast from 'react-hot-toast';
 
+interface AssignmentListQuery {
+  schoolId?: string;
+  page?: number;
+  limit?: number;
+}
+
 const QUERY_KEYS = {
   classroomTeachers: (classroomId: string) => ['classroom-teachers', 'classroom', classroomId],
   teacherClassrooms: (teacherId: string) => ['classroom-teachers', 'teacher', teacherId],
-  allAssignments: (query?: any) => ['classroom-teachers', 'all', query],
+  allAssignments: (query?: AssignmentListQuery) => ['classroom-teachers', 'all', query],
   classroomsList: (search?: string) => ['classrooms-list', search],
   teachersList: (search?: string) => ['teachers-list', search],
 };
@@ -43,7 +48,7 @@ export function useClassroomTeacher() {
     });
   };
 
-  const useAllAssignments = (query?: any) => {
+  const useAllAssignments = (query?: AssignmentListQuery) => {
     return useQuery({
       queryKey: QUERY_KEYS.allAssignments(query),
       queryFn: () => classroomTeacherApi.listAllAssignments(query),
@@ -90,8 +95,9 @@ export function useClassroomTeacher() {
       // LOW-004 FIX: Mensajes en español consistente
       toast.success('Profesor asignado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al asignar profesor');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al asignar profesor');
     },
   });
 
@@ -109,8 +115,9 @@ export function useClassroomTeacher() {
       // LOW-004 FIX: Mensajes en español consistente
       toast.success('Profesor removido correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al remover profesor');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al remover profesor');
     },
   });
 
@@ -128,8 +135,9 @@ export function useClassroomTeacher() {
       // LOW-004 FIX: Mensajes en español consistente
       toast.success('Aulas asignadas correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al asignar aulas');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al asignar aulas');
     },
   });
 
@@ -139,8 +147,9 @@ export function useClassroomTeacher() {
       queryClient.invalidateQueries({ queryKey: ['classroom-teachers'] });
       toast.success('Asignación masiva completada');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error en asignación masiva');
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error en asignación masiva');
     },
   });
 

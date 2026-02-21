@@ -30,8 +30,25 @@ BEGIN
     WHERE name LIKE 'GAMILIT%' OR id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid
     LIMIT 1;
 
-    -- Admin para created_by
-    v_admin_id := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid;
+    -- Admin para created_by (dynamic lookup by email)
+    SELECT p.id INTO v_admin_id
+    FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'admin@gamilit.com'
+    LIMIT 1;
+
+    IF v_admin_id IS NULL THEN
+        -- Fallback: any admin profile
+        SELECT p.id INTO v_admin_id
+        FROM auth_management.profiles p
+        WHERE p.role::text = 'super_admin'
+        LIMIT 1;
+    END IF;
+
+    IF v_admin_id IS NULL THEN
+        RAISE NOTICE 'No admin profile found, skipping marie_curie_content seed';
+        RETURN;
+    END IF;
 
     IF v_tenant_id IS NULL THEN
         -- Usar UUID por defecto si no se encuentra

@@ -24,13 +24,13 @@ export interface ExerciseData {
   estimatedTime: number;
   completed: boolean;
   moduleTitle?: string;
-  mechanicData?: any;
+  mechanicData?: Record<string, any>;
 }
 
 /**
  * Maps difficulty levels - validates against DifficultyLevel enum
  */
-const mapDifficulty = (difficulty: any): DifficultyLevel => {
+const mapDifficulty = (difficulty: unknown): DifficultyLevel => {
   // Handle legacy string values
   const legacyMap: Record<string, DifficultyLevel> = {
     facil: DifficultyLevelEnum.BEGINNER,
@@ -45,9 +45,9 @@ const mapDifficulty = (difficulty: any): DifficultyLevel => {
   }
 
   // If it's already a valid DifficultyLevel, return it
-  const validValues = Object.values(DifficultyLevelEnum);
+  const validValues = Object.values(DifficultyLevelEnum) as unknown[];
   if (validValues.includes(difficulty)) {
-    return difficulty;
+    return difficulty as DifficultyLevel;
   }
 
   // Default to INTERMEDIATE (B2)
@@ -163,8 +163,6 @@ export const adaptToCrucigramaData = (exercise: ExerciseData): any => {
   // NEW FORMAT: Backend sends pre-built grid (SECURE)
   // Check if backend sent pre-generated grid (Array format)
   if (Array.isArray(content.grid) && content.gridConfig) {
-    console.log('[SECURE] Using pre-generated grid from backend');
-
     return {
       ...base,
       grid: content.grid, // Pre-built grid WITHOUT answers

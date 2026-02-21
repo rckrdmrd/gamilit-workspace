@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { CertificateStatus, CertificateType } from '../entities/certificate.entity';
+import { CertificateStatus, CertificateType } from '../enums/certificate.enums';
 
 /**
  * DTO for generating a new certificate

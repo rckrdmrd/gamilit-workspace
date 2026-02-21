@@ -73,10 +73,11 @@ export class ScheduledReport {
   @Column({ name: 'student_ids', type: 'uuid', array: true, nullable: true })
   studentIds!: string[] | null;
 
+  // FIX AUDIT-B2: DDL uses VARCHAR(20) with CHECK constraint, not PostgreSQL ENUM type
   @Column({
     name: 'frequency',
-    type: 'enum',
-    enum: ScheduleFrequency,
+    type: 'varchar',
+    length: 20,
     default: ScheduleFrequency.WEEKLY,
   })
   frequency!: ScheduleFrequency;
@@ -101,10 +102,11 @@ export class ScheduledReport {
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive!: boolean;
 
+  // FIX AUDIT-B2: DDL uses VARCHAR(20) with CHECK constraint, not PostgreSQL ENUM type
   @Column({
     name: 'status',
-    type: 'enum',
-    enum: ScheduleStatus,
+    type: 'varchar',
+    length: 20,
     default: ScheduleStatus.ACTIVE,
   })
   status!: ScheduleStatus;

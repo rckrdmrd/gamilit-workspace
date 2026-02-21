@@ -9,11 +9,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rightIcon?: React.ReactNode;
 }
 
+/**
+ * Detective theme variant styles.
+ * See also: @shared/styles/detective-theme.css for `.btn-detective` CSS class
+ * which provides an alternative CSS-only button style with hover scale effects.
+ */
 const variantStyles = {
-  primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-  secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900',
-  outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
-  ghost: 'text-blue-600 hover:bg-blue-50',
+  primary:
+    'bg-gradient-to-r from-detective-orange to-detective-orange-dark text-white hover:from-detective-orange-dark hover:to-detective-orange shadow-md hover:shadow-lg',
+  secondary: 'bg-detective-bg-secondary text-detective-text hover:bg-detective-border',
+  outline: 'border-2 border-detective-orange text-detective-orange hover:bg-detective-orange/10',
+  ghost: 'text-detective-orange hover:bg-detective-orange/10',
   danger: 'bg-red-600 hover:bg-red-700 text-white',
 };
 
@@ -70,13 +76,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-disabled={isDisabled}
         className={cn(
           // Base styles
-          'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 active:scale-95',
+          'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-detective-orange active:scale-95',
           // Variant styles
           variantStyles[variant],
           // Size styles
           sizeStyles[size],
           // Disabled state
-          isDisabled && 'opacity-50 cursor-not-allowed hover:bg-inherit',
+          isDisabled && 'opacity-60 cursor-not-allowed pointer-events-none',
           className
         )}
         {...props}

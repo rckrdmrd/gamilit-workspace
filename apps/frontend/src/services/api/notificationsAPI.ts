@@ -11,16 +11,27 @@ export interface Notification {
   id: string;
   userId: string;
   type:
+    | 'achievement'
+    | 'mission'
+    | 'assignment'
+    | 'social'
+    | 'system'
+    | 'gamification'
     | 'achievement_unlocked'
     | 'rank_promoted'
+    | 'rank_up'
     | 'mission_completed'
+    | 'mission_rewards_claimed'
     | 'mission_expired'
     | 'friend_request'
     | 'friend_accepted'
     | 'assignment_created'
     | 'assignment_graded'
+    | 'exercise_feedback'
     | 'module_unlocked'
     | 'coins_received'
+    | 'coins_earned'
+    | 'shop_purchase'
     | 'system_announcement';
   title: string;
   message: string;

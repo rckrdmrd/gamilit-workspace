@@ -83,7 +83,7 @@ export const CrucigramaGrid: React.FC<CrucigramaGridProps> = ({
                   whileHover={{ scale: 1.05 }}
                   className={cn(
                     'w-10 h-10 bg-white relative cursor-pointer',
-                    isSelected && 'ring-2 ring-blue-500'
+                    isSelected && 'ring-2 ring-detective-orange bg-detective-orange/20'
                   )}
                   onClick={() => onCellClick(cell.row, cell.col)}
                 >
@@ -113,7 +113,7 @@ export const CrucigramaGrid: React.FC<CrucigramaGridProps> = ({
                     }
                     onKeyDown={(e) => handleKeyDown(e, cell.row, cell.col)}
                     aria-label={cellLabel}
-                    className="w-full h-full text-center text-lg font-bold uppercase bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+                    className="w-full h-full text-center text-lg font-bold uppercase bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-detective-orange focus:ring-inset"
                     style={{ caretColor: 'transparent' }}
                   />
                 </motion.div>

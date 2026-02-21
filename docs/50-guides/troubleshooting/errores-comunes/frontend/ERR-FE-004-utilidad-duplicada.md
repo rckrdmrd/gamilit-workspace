@@ -1,7 +1,7 @@
 # ERR-FE-004: Archivo Utility Duplicado
 
 ## Descripcion
-Existen dos o mas archivos que exportan la misma funcion o utilidad, causando confusion sobre cual importar y riesgo de comportamiento inconsistente si las implementaciones divergen con el tiempo. Esto es particularmente problematico en un codebase con 475 componentes que pueden importar de cualquiera de las copias.
+Existen dos o mas archivos que exportan la misma funcion o utilidad, causando confusion sobre cual importar y riesgo de comportamiento inconsistente si las implementaciones divergen con el tiempo. Esto es particularmente problematico en un codebase con 580 componentes que pueden importar de cualquiera de las copias.
 
 ## Sintomas
 - Dos archivos con nombres similares en el mismo directorio o directorios adyacentes (ej: `cn.ts` y `cn.util.ts`)

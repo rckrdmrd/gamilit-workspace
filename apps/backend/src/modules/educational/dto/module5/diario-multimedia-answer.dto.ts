@@ -101,7 +101,7 @@ export class DiaryEntryDto {
     required: false,
   })
   @IsOptional()
-  multimedia?: any;
+  multimedia?: Record<string, unknown>;
 }
 
 /**

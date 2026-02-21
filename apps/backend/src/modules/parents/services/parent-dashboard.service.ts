@@ -15,7 +15,8 @@ import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
 
 import { ParentAccount } from '@/modules/auth/entities/parent-account.entity';
-import { ParentStudentLink, LinkStatus } from '@/modules/auth/entities/parent-student-link.entity';
+import { ParentStudentLink } from '@/modules/auth/entities/parent-student-link.entity';
+import { LinkStatus } from '@/modules/parents/enums/parent-student-link.enums';
 import { ParentNotification, ParentNotificationStatus } from '@/modules/auth/entities/parent-notification.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 
@@ -352,7 +353,7 @@ export class ParentDashboardService {
         [studentIds, limit],
       );
 
-      return assignments.map((a: any) => ({
+      return assignments.map((a: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: a.id,
         studentId: a.student_id,
         studentName: profileMap.get(a.student_id) || 'Unknown',
@@ -399,7 +400,7 @@ export class ParentDashboardService {
       offset?: number;
     },
   ): Promise<ParentNotification[]> {
-    const query: any = { parentAccountId };
+    const query: Record<string, unknown> = { parentAccountId };
 
     if (options?.studentId) {
       query.studentId = options.studentId;

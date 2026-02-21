@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request } from 'express';
 import { AuditService } from '../services/audit.service';
-import { ActorType, Severity, Status } from '../entities/audit-log.entity';
+import { ActorType, Severity, Status } from '../enums/audit-log.enums';
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {

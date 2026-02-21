@@ -712,6 +712,31 @@ spend_ml_coins(
 
 ---
 
+## 🛡️ Resiliencia para Usuarios No Inicializados
+
+### Contexto
+
+El registro `user_stats` se crea por el trigger DB `gamilit.initialize_user_stats()` al insertar un perfil. Si el trigger falla silenciosamente (tiene `EXCEPTION WHEN OTHERS` que permite continuar), el usuario se crea pero sin `user_stats`.
+
+### Comportamiento Defensivo (2026-02-20)
+
+`MLCoinsService.getBalance()` y `getCoinsStats()` retornan **defaults seguros** en vez de lanzar `NotFoundException`:
+
+| Método | Sin user_stats | Con user_stats |
+|--------|---------------|----------------|
+| `getBalance()` | Retorna `0` + `logger.warn` | Retorna `userStats.ml_coins` |
+| `getCoinsStats()` | Retorna `{ current_balance: 0, total_earned: 0, total_spent: 0, earned_today: 0 }` + `logger.warn` | Retorna valores reales |
+
+**Justificación:**
+- El frontend usa `Promise.allSettled()` con fallbacks a 0 (FL-STU-13)
+- Un 404 en dashboard de usuario nuevo es peor UX que mostrar balance 0
+- El trigger `pending_user_initialization` registra el fallo para retry automático
+- Consistente con ADR-014 (nil-safety patterns) y ADR-045 (clean architecture pragmática)
+
+**Nota:** Los métodos transaccionales (`addCoins`, `spendCoins`) siguen lanzando `NotFoundException` si no hay `user_stats`, ya que una operación de escritura sin registro es un error real.
+
+---
+
 **Creado:** 2025-11-08
 **Aprobado por:** Database Team
 **Próxima revisión:** 2025-12-01

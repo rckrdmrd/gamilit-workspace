@@ -1,8 +1,8 @@
 # COHERENCE: Backend Entities vs DDL Tables
 
 **Proyecto:** GAMILIT
-**Version:** 2.2.0
-**Fecha:** 2026-02-18
+**Version:** 2.3.0
+**Fecha:** 2026-02-21
 **Tarea:** TASK-2026-02-12-ANALISIS-BD-VS-DOCS (Sprint R3)
 
 ---
@@ -15,15 +15,15 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 | Metrica | Valor |
 |---------|-------|
-| Total Entities Backend | 153 files (154 @Entity classes) |
-| Total Tablas DDL | 169 |
-| Tablas con Entity | 153 |
-| Tablas sin Entity | 16 |
-| Cobertura | ~90.5% |
+| Total Entities Backend | 156 files (159 @Entity classes) |
+| Total Tablas DDL | 173 |
+| Tablas con Entity | 156 |
+| Tablas sin Entity | 17 |
+| Cobertura | ~90.2% |
 
-**Nota:** Las 16 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw). Las anteriores excepciones auth.users y auth_management.roles (03b) ahora estan cubiertas indirectamente. Ver seccion "Tablas DDL sin Entity" mas abajo.
+**Nota:** Las 17 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw) + 1 auth.users (gestionada externamente). Las anteriores excepciones auth_management.roles (03b) ahora estan cubiertas indirectamente. Ver seccion "Tablas DDL sin Entity" mas abajo.
 
-**Auditoria:** Verificado en TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION (2026-02-12).
+**Auditoria:** Verificado en TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION (2026-02-12). Actualizado 2026-02-21 con +3 resource entities (TASK-2026-02-21-COMPLIANCE-AUDIT).
 
 ---
 
@@ -271,22 +271,29 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Modulo: teacher (6 Entities)
+## Modulo: teacher (9 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
 | message.entity.ts | 01-messages.sql | communication | MATCH |
-| scheduled-report.entity.ts | 11-scheduled_reports.sql | social_features | MATCH |
-| shared-report.entity.ts | 12-shared_reports.sql | social_features | MATCH |
+| resource-rating.entity.ts | 28-resource_ratings.sql | educational_content | MATCH |
+| resource-comment.entity.ts | 29-resource_comments.sql | educational_content | MATCH |
+| resource-download.entity.ts | 30-resource_downloads.sql | educational_content | MATCH |
+| scheduled-report.entity.ts | 08b-scheduled_reports.sql | social_features | MATCH |
+| shared-report.entity.ts | 08c-shared_reports.sql | social_features | MATCH |
 | student-intervention-alert.entity.ts | 19-student_intervention_alerts.sql | progress_tracking | MATCH |
 | teacher-content.entity.ts | 25-teacher_content.sql | educational_content | MATCH |
 | teacher-report.entity.ts | 08-teacher_reports.sql | social_features | MATCH |
 
-**Cobertura teacher:** 100% (6/6)
+**Cobertura teacher:** 100% (9/9)
+
+> **Nota (2026-02-21):** 3 new resource sharing entities added: resource_ratings, resource_comments, resource_downloads. These support the ResourceSharingPanel feature for teacher content collaboration.
+
+> **Nota DDL-Entity pattern:** `scheduled_reports.frequency`, `scheduled_reports.status`, y `shared_reports.permission_level` usan TypeORM `varchar(20)` (no TypeORM enum) para coincidir con el patron DDL `VARCHAR(20) + CHECK constraint`. Ver comentarios `FIX AUDIT-B2` en las entities.
 
 ---
 
-## Tablas DDL sin Entity Directa (18 tablas)
+## Tablas DDL sin Entity Directa (17 tablas)
 
 ### Categoria 1: Data Warehouse (16 tablas) - Intencional
 
@@ -391,7 +398,7 @@ Para mejorar coherencia frontend:
 | content | 10 | 10 | 80% |
 | lti | 3 | 3 | 100% |
 | notifications | 7 | 7 | 100% |
-| teacher | 6 (7 classes) | 6 | 100% |
+| teacher | 9 (10 classes) | 9 | 100% |
 | communication | 2 (+ 2 in teacher) | 4 | 100% |
 
 ### Calificacion Global
@@ -406,7 +413,7 @@ Para mejorar coherencia frontend:
 | Communication datasource | PENDIENTE (conversation entities huerfanas) |
 | Frontend types incompletos | MEJORABLE |
 
-**Coherencia Global: ~90.5%** (153/169 tablas con entity) - Nivel satisfactorio para produccion.
+**Coherencia Global: ~90.2%** (156/173 tablas con entity) - Nivel satisfactorio para produccion.
 
 ---
 
@@ -461,7 +468,7 @@ Inconsistencias de estilo corregidas:
 
 ## Conclusiones
 
-1. **Coherencia Backend-DDL es buena** (~90.5%) con todos los gaps justificados
+1. **Coherencia Backend-DDL es buena** (~90.2%) con todos los gaps justificados
 2. **16 tablas data_warehouse sin entity** es intencional (acceso SQL raw)
 3. **4 columnas faltantes HIGH/MEDIUM** fueron corregidas en Sprint R3
 4. **2 schemas hardcoded** fueron corregidos a usar DB_SCHEMAS constants

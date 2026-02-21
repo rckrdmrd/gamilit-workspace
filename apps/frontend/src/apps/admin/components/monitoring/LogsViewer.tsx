@@ -13,7 +13,7 @@
  * - Export to CSV (optional)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -21,11 +21,13 @@ import {
   Filter,
   CheckCircle,
   XCircle,
-  ChevronLeft,
-  ChevronRight,
   RefreshCw,
 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DataTable } from '@shared/components/common/DataTable';
+import type { Column } from '@shared/components/common/DataTable';
+import { Pagination } from '@shared/components/Pagination';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { useAuditLogs } from '../../hooks/useAuditLogs';
 import type { AuditLogFilters } from '@/services/api/adminTypes';
 
@@ -64,7 +66,7 @@ export const LogsViewer: React.FC = () => {
   /**
    * Handle filter changes
    */
-  const handleFilterChange = (key: keyof AuditLogFilters, value: any) => {
+  const handleFilterChange = (key: keyof AuditLogFilters, value: AuditLogFilters[keyof AuditLogFilters]) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     updateFilters(newFilters);
@@ -93,6 +95,63 @@ export const LogsViewer: React.FC = () => {
       second: '2-digit',
     });
   };
+
+  /**
+   * Column definitions for the audit logs table
+   */
+  const logColumns: Column<(typeof logs)[number]>[] = useMemo(
+    () => [
+      {
+        key: 'attemptedAt',
+        label: 'Timestamp',
+        render: (log) => (
+          <span className="text-gray-300">{formatDate(log.attemptedAt)}</span>
+        ),
+      },
+      {
+        key: 'email',
+        label: 'Email',
+        render: (log) => <span className="text-gray-300">{log.email}</span>,
+      },
+      {
+        key: 'success',
+        label: 'Status',
+        render: (log) =>
+          log.success ? (
+            <span className="inline-flex items-center gap-1 rounded-md bg-green-500/20 px-2 py-1 text-xs font-medium text-green-400">
+              <CheckCircle className="h-3 w-3" />
+              Success
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-md bg-red-500/20 px-2 py-1 text-xs font-medium text-red-400">
+              <XCircle className="h-3 w-3" />
+              Failed
+            </span>
+          ),
+      },
+      {
+        key: 'ipAddress',
+        label: 'IP Address',
+        render: (log) => (
+          <span className="text-gray-400">{log.ipAddress || 'N/A'}</span>
+        ),
+      },
+      {
+        key: 'failureReason',
+        label: 'Details',
+        render: (log) =>
+          log.failureReason ? (
+            <details className="cursor-pointer">
+              <summary className="text-blue-400 hover:text-blue-300">View reason</summary>
+              <p className="mt-2 text-xs text-gray-500">{log.failureReason}</p>
+            </details>
+          ) : (
+            <span className="text-gray-400">-</span>
+          ),
+      },
+    ],
+    [],
+  );
 
   /**
    * Export logs to CSV
@@ -243,106 +302,37 @@ export const LogsViewer: React.FC = () => {
 
       {/* Empty State */}
       {!isLoading && logs.length === 0 && (
-        <div className="py-12 text-center">
-          <FileText className="mx-auto mb-4 h-16 w-16 text-gray-600" />
-          <p className="text-gray-400">No audit logs found</p>
-        </div>
+        <EmptyState
+          icon={FileText}
+          title="No audit logs found"
+          description="No hay registros de auditoria que mostrar"
+        />
       )}
 
       {/* Table */}
       {logs.length > 0 && (
         <>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Timestamp
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    IP Address
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Details
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log) => (
-                  <motion.tr
-                    key={log.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="border-b border-gray-800 transition-colors hover:bg-detective-bg-secondary"
-                  >
-                    <td className="px-4 py-3 text-sm text-gray-300">
-                      {formatDate(log.attemptedAt)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-300">{log.email}</td>
-                    <td className="px-4 py-3">
-                      {log.success ? (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-green-500/20 px-2 py-1 text-xs font-medium text-green-400">
-                          <CheckCircle className="h-3 w-3" />
-                          Success
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-red-500/20 px-2 py-1 text-xs font-medium text-red-400">
-                          <XCircle className="h-3 w-3" />
-                          Failed
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-400">{log.ipAddress || 'N/A'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-400">
-                      {log.failureReason ? (
-                        <details className="cursor-pointer">
-                          <summary className="text-blue-400 hover:text-blue-300">
-                            View reason
-                          </summary>
-                          <p className="mt-2 text-xs text-gray-500">{log.failureReason}</p>
-                        </details>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            data={logs}
+            columns={logColumns}
+            variant="detective"
+            striped={false}
+            rowKey={(log) => log.id}
+            emptyMessage="No audit logs found"
+          />
 
           {/* Pagination */}
-          <div className="mt-6 flex items-center justify-between border-t border-gray-800 pt-6">
-            <div className="text-sm text-gray-400">
-              Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, total)} of {total}{' '}
-              entries
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1}
-                className="hover:bg-detective-bg-tertiary flex items-center gap-1 rounded-lg bg-detective-bg-secondary px-3 py-2 text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </button>
-              <span className="px-4 py-2 text-sm text-gray-300">
-                Page {page} of {totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page === totalPages}
-                className="hover:bg-detective-bg-tertiary flex items-center gap-1 rounded-lg bg-detective-bg-secondary px-3 py-2 text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            totalItems={total}
+            pageSize={pageSize}
+            loading={isLoading}
+            variant="simple"
+            itemLabel="entries"
+            className="mt-6 border-gray-800 pt-6"
+          />
         </>
       )}
     </DetectiveCard>

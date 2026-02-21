@@ -5,16 +5,14 @@
  * AdminSettingsPage components (GeneralSettings, SecuritySettings) use
  * useSystemConfig hook instead, which provides simpler category-based config management.
  *
- * This hook was initially designed with additional features (sendTestEmail, createBackup, etc.)
- * but those features are not yet implemented in the backend.
+ * Migrated to React Query for consistency with other admin hooks.
  *
  * Manages system settings and configuration.
  * Updated: 2025-11-28 - Marked as deprecated, use useSystemConfig instead
- * Created: 2025-11-19 - Created for AdminSettingsPage integration (FE-059)
+ * Updated: 2026-02-20 - Migrated to React Query
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useCallback } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminAPI } from '@/services/api/adminAPI';
 
 export type SettingsCategory = 'general' | 'email' | 'notifications' | 'security' | 'maintenance';
@@ -42,7 +40,7 @@ export interface NotificationSettings {
 }
 
 export interface SecuritySettings {
-  sessionDuration: number; // minutes
+  sessionDuration: number;
   maxLoginAttempts: number;
   require2FA: boolean;
 }
@@ -74,37 +72,59 @@ export interface UseSettingsResult {
   // Actions
   setActiveSection: (section: SettingsCategory) => void;
   fetchSettings: (category: SettingsCategory) => Promise<void>;
-  updateSettings: (category: SettingsCategory, data: any) => Promise<void>;
+  updateSettings: (category: SettingsCategory, data: Record<string, unknown>) => Promise<void>;
   resetToDefaults: (category: SettingsCategory) => Promise<void>;
-  sendTestEmail: () => Promise<void>;
   enableMaintenanceMode: () => Promise<void>;
-  createBackup: () => Promise<void>;
-  clearCache: () => Promise<void>;
 }
 
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const settingsKeys = {
+  all: ['admin', 'settings'] as const,
+  category: (cat: SettingsCategory) => ['admin', 'settings', cat] as const,
+};
+
 export function useSettings(initialSection: SettingsCategory = 'general'): UseSettingsResult {
-  // State
+  const queryClient = useQueryClient();
+
+  // Client-side state
   const [settings, setSettings] = useState<Partial<SystemSettings>>({});
   const [activeSection, setActiveSection] = useState<SettingsCategory>(initialSection);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  /**
-   * Fetch settings for a specific category
-   */
+  // ============================================================================
+  // MUTATIONS
+  // ============================================================================
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ category, data }: { category: SettingsCategory; data: Record<string, unknown> }) => {
+      await adminAPI.settings.updateCategoryConfig(category, data);
+      return { category, data };
+    },
+    onSuccess: ({ category, data }) => {
+      setSettings((prev) => ({ ...prev, [category]: data }));
+      queryClient.invalidateQueries({ queryKey: settingsKeys.category(category) });
+      setSuccessMessage('Configuracion guardada correctamente');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    },
+  });
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
   const fetchSettings = useCallback(async (category: SettingsCategory): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
       const data = await adminAPI.settings.getCategoryConfig(category);
-      setSettings((prev) => ({
-        ...prev,
-        [category]: data,
-      }));
+      setSettings((prev) => ({ ...prev, [category]: data }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al cargar configuración';
+      const message = err instanceof Error ? err.message : 'Error al cargar configuracion';
       setError(message);
       console.error('Failed to fetch settings:', err);
     } finally {
@@ -112,201 +132,69 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
     }
   }, []);
 
-  /**
-   * Update settings for a specific category
-   */
   const updateSettings = useCallback(
-    async (category: SettingsCategory, data: any): Promise<void> => {
-      setSaving(true);
+    async (category: SettingsCategory, data: Record<string, unknown>): Promise<void> => {
       setError(null);
       setSuccessMessage(null);
       try {
-        await adminAPI.settings.updateCategoryConfig(category, data);
-
-        // Update local state
-        setSettings((prev) => ({
-          ...prev,
-          [category]: data,
-        }));
-
-        setSuccessMessage('Configuración guardada correctamente');
-
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccessMessage(null), 3000);
+        await updateMutation.mutateAsync({ category, data });
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Error al guardar configuración';
+        const message = err instanceof Error ? err.message : 'Error al guardar configuracion';
         setError(message);
-        console.error('Failed to update settings:', err);
         throw err;
-      } finally {
-        setSaving(false);
       }
     },
-    [],
+    [updateMutation],
   );
 
-  /**
-   * Reset settings to defaults for a category
-   */
   const resetToDefaults = useCallback(async (category: SettingsCategory): Promise<void> => {
-    setSaving(true);
+    setLoading(true);
     setError(null);
     try {
-      // Note: resetDefaults endpoint not available in adminAPI yet
-      // Using getCategoryConfig to reload defaults as temporary workaround
       const defaults = await adminAPI.settings.getCategoryConfig(category);
-
-      // Update local state
-      setSettings((prev) => ({
-        ...prev,
-        [category]: defaults,
-      }));
-
-      setSuccessMessage('Configuración restablecida a valores por defecto');
+      setSettings((prev) => ({ ...prev, [category]: defaults }));
+      setSuccessMessage('Configuracion restablecida a valores por defecto');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al restablecer configuración';
+      const message = err instanceof Error ? err.message : 'Error al restablecer configuracion';
       setError(message);
-      console.error('Failed to reset settings:', err);
       throw err;
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   }, []);
 
-  /**
-   * Send test email (SMTP verification)
-   * @deprecated Esta función usa una implementación mock. Backend no tiene endpoint disponible.
-   */
-  const sendTestEmail = useCallback(async (): Promise<void> => {
-    console.warn(
-      '[useSettings] sendTestEmail() está deprecado y usa una implementación mock. ' +
-      'Esta función no realiza ninguna operación real. Implemente el endpoint en backend primero.'
-    );
-    setError(null);
-    try {
-      // TODO: Add endpoint to adminAPI when available
-      // await adminAPI.settings.testEmail();
-
-      // Temporary mock - NO REAL OPERATION
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccessMessage('Email de prueba enviado correctamente (MOCK)');
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al enviar email de prueba';
-      setError(message);
-      console.error('Failed to send test email:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Enable maintenance mode
-   */
   const enableMaintenanceMode = useCallback(async (): Promise<void> => {
-    setSaving(true);
     setError(null);
     try {
-      // TODO: Add specific endpoint when available
       await updateSettings('maintenance', {
         ...settings.maintenance,
         maintenanceMode: true,
       });
-
       setSuccessMessage('Modo mantenimiento activado');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al activar modo mantenimiento';
       setError(message);
-      console.error('Failed to enable maintenance mode:', err);
       throw err;
-    } finally {
-      setSaving(false);
     }
   }, [settings.maintenance, updateSettings]);
 
-  /**
-   * Create database backup
-   * @deprecated Esta función usa una implementación mock. Backend no tiene endpoint disponible.
-   */
-  const createBackup = useCallback(async (): Promise<void> => {
-    console.warn(
-      '[useSettings] createBackup() está deprecado y usa una implementación mock. ' +
-      'Esta función no realiza ninguna operación real. Implemente el endpoint en backend primero.'
-    );
-    setError(null);
-    try {
-      // TODO: Add endpoint to adminAPI when available
-      // await adminAPI.maintenance.createBackup();
-
-      // Temporary mock - NO REAL OPERATION
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Update maintenance settings with new backup time (MOCK)
-      const now = new Date().toISOString();
-      setSettings((prev) => ({
-        ...prev,
-        maintenance: {
-          ...(prev.maintenance as MaintenanceSettings),
-          lastBackup: now,
-        },
-      }));
-
-      setSuccessMessage('Respaldo de base de datos creado correctamente (MOCK)');
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al crear respaldo';
-      setError(message);
-      console.error('Failed to create backup:', err);
-      throw err;
-    }
-  }, []);
-
-  /**
-   * Clear system cache
-   * @deprecated Esta función usa una implementación mock. Backend no tiene endpoint disponible.
-   */
-  const clearCache = useCallback(async (): Promise<void> => {
-    console.warn(
-      '[useSettings] clearCache() está deprecado y usa una implementación mock. ' +
-      'Esta función no realiza ninguna operación real. Implemente el endpoint en backend primero.'
-    );
-    setError(null);
-    try {
-      // TODO: Add endpoint to adminAPI when available
-      // await adminAPI.maintenance.clearCache();
-
-      // Temporary mock - NO REAL OPERATION
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccessMessage('Caché del sistema limpiada correctamente (MOCK)');
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al limpiar caché';
-      setError(message);
-      console.error('Failed to clear cache:', err);
-      throw err;
-    }
-  }, []);
+  // ============================================================================
+  // RETURN
+  // ============================================================================
 
   return {
-    // Data
     settings,
     activeSection,
-
-    // State
-    loading,
-    saving,
+    loading: loading || updateMutation.isPending,
+    saving: updateMutation.isPending,
     error,
     successMessage,
-
-    // Actions
     setActiveSection,
     fetchSettings,
     updateSettings,
     resetToDefaults,
-    sendTestEmail,
     enableMaintenanceMode,
-    createBackup,
-    clearCache,
   };
 }

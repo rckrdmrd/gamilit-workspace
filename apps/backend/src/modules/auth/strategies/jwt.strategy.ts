@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
+      secretOrKey: configService.get<string>('JWT_SECRET') || 'dev-only-jwt-secret-not-for-production',
     });
   }
 
@@ -47,7 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * - Luego validamos el user asociado (profile.user_id -> auth.users.id)
    * - Retornamos profile.id como id/sub para consistencia con FKs de gamification
    */
-  async validate(payload: any) {
+  async validate(payload: { sub: string; email: string; role: string; iat: number; exp: number }) {
     const { sub: profileId } = payload;
 
     // DB-125: Buscar profile primero (sub = profile.id)

@@ -67,7 +67,7 @@ export interface UserPreferencesSchema {
    * Preferencias adicionales personalizadas
    * @flexible Permite agregar campos custom sin modificar schema
    */
-  [key: string]: any;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**

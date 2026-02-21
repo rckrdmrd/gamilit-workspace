@@ -16,10 +16,22 @@ SET search_path TO notifications, public;
 
 DO $$
 DECLARE
-    v_notif_pending UUID := '81111111-1111-1111-1111-111111111003';
-    v_notif7_id UUID := '81111111-1111-1111-1111-111111111007';
+    v_notif_pending UUID;
+    v_notif7_id UUID;
 BEGIN
     RAISE NOTICE 'Creating notification queue records...';
+
+    -- Resolve notification IDs by title (dynamically generated in 03-notifications.sql)
+    SELECT id INTO v_notif_pending FROM notifications.notifications WHERE title = 'Nueva Mision Disponible!' LIMIT 1;
+    SELECT id INTO v_notif7_id FROM notifications.notifications WHERE title = 'Recordatorio: Tarea Proxima a Vencer' LIMIT 1;
+
+    IF v_notif_pending IS NULL AND v_notif7_id IS NULL THEN
+        RAISE NOTICE 'Notifications not found. Run 03-notifications.sql first. Skipping.';
+        RETURN;
+    END IF;
+    -- Fallback: use whichever is available
+    IF v_notif_pending IS NULL THEN v_notif_pending := v_notif7_id; END IF;
+    IF v_notif7_id IS NULL THEN v_notif7_id := v_notif_pending; END IF;
 
     INSERT INTO notifications.notification_queue (
         id,
@@ -37,7 +49,7 @@ BEGIN
 
     -- Queued entry (immediate, high priority)
     (
-        'a1111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_notif_pending,
         'in_app',
         NOW(),
@@ -52,7 +64,7 @@ BEGIN
 
     -- Processing entry
     (
-        'a1111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_notif7_id,
         'in_app',
         NOW() - INTERVAL '1 minute',
@@ -67,7 +79,7 @@ BEGIN
 
     -- Scheduled for future (email digest)
     (
-        'a1111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_notif_pending,
         'email',
         NOW() + INTERVAL '2 hours',
@@ -82,7 +94,7 @@ BEGIN
 
     -- Successfully sent
     (
-        'a1111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_notif7_id,
         'push',
         NOW() - INTERVAL '40 minutes',
@@ -97,7 +109,7 @@ BEGIN
 
     -- Failed after max attempts
     (
-        'a1111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_notif_pending,
         'push',
         NOW() - INTERVAL '1 hour',
@@ -112,7 +124,7 @@ BEGIN
 
     -- Urgent notification (high priority)
     (
-        'a1111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_notif7_id,
         'email',
         NOW(),
@@ -127,7 +139,7 @@ BEGIN
 
     -- Low priority scheduled
     (
-        'a1111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_notif_pending,
         'email',
         NOW() + INTERVAL '6 hours',
@@ -142,7 +154,7 @@ BEGIN
 
     -- Retry after first failure
     (
-        'a1111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         v_notif7_id,
         'push',
         NOW() + INTERVAL '15 minutes',
@@ -155,11 +167,7 @@ BEGIN
         NOW() - INTERVAL '20 minutes'
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        status = EXCLUDED.status,
-        attempts = EXCLUDED.attempts,
-        last_attempt_at = EXCLUDED.last_attempt_at,
-        error_message = EXCLUDED.error_message;
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'Notification queue records created successfully';
 

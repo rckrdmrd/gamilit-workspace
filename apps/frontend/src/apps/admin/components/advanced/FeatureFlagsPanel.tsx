@@ -13,8 +13,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import {
   Flag,
   Plus,
@@ -40,6 +42,8 @@ export const FeatureFlagsPanel: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFlag, setEditingFlag] = useState<FeatureFlag | null>(null);
   const [showEditor, setShowEditor] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingDeleteKey, setPendingDeleteKey] = useState<string | null>(null);
 
   // Fetch flags on mount
   useEffect(() => {
@@ -81,10 +85,18 @@ export const FeatureFlagsPanel: React.FC = () => {
     await fetchFlags();
   };
 
-  const handleDeleteFlag = async (key: string) => {
-    if (window.confirm('¿Estás seguro de eliminar este feature flag? Esta acción no se puede deshacer.')) {
-      await deleteFlag(key);
+  const handleDeleteFlag = (key: string) => {
+    setPendingDeleteKey(key);
+    setShowConfirm(true);
+  };
+
+  const confirmDeleteFlag = async () => {
+    if (pendingDeleteKey) {
+      await deleteFlag(pendingDeleteKey);
+      toast.success('Feature flag eliminado correctamente');
     }
+    setShowConfirm(false);
+    setPendingDeleteKey(null);
   };
 
   const handleToggleFlag = async (key: string) => {
@@ -105,7 +117,7 @@ export const FeatureFlagsPanel: React.FC = () => {
           <Flag className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-2xl font-bold text-detective-text">Feature Flags</h2>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-detective-text-secondary">
               Control feature rollout and availability across the platform
             </p>
           </div>
@@ -121,12 +133,12 @@ export const FeatureFlagsPanel: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <DetectiveCard className="border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5">
+        <DetectiveCard className="border border-detective-orange/30 bg-gradient-to-br from-detective-orange/10 to-detective-orange/5">
           <div className="flex items-center gap-3">
-            <Flag className="h-6 w-6 text-blue-500" />
+            <Flag className="h-6 w-6 text-detective-orange" />
             <div>
-              <p className="text-sm text-gray-400">Total Flags</p>
-              <p className="text-2xl font-bold text-blue-500">{stats.total}</p>
+              <p className="text-sm text-detective-text-secondary">Total Flags</p>
+              <p className="text-2xl font-bold text-detective-orange">{stats.total}</p>
             </div>
           </div>
         </DetectiveCard>
@@ -135,7 +147,7 @@ export const FeatureFlagsPanel: React.FC = () => {
           <div className="flex items-center gap-3">
             <ToggleRight className="h-6 w-6 text-green-500" />
             <div>
-              <p className="text-sm text-gray-400">Enabled</p>
+              <p className="text-sm text-detective-text-secondary">Enabled</p>
               <p className="text-2xl font-bold text-green-500">{stats.enabled}</p>
             </div>
           </div>
@@ -145,7 +157,7 @@ export const FeatureFlagsPanel: React.FC = () => {
           <div className="flex items-center gap-3">
             <ToggleLeft className="h-6 w-6 text-red-500" />
             <div>
-              <p className="text-sm text-gray-400">Disabled</p>
+              <p className="text-sm text-detective-text-secondary">Disabled</p>
               <p className="text-2xl font-bold text-red-500">{stats.disabled}</p>
             </div>
           </div>
@@ -168,15 +180,15 @@ export const FeatureFlagsPanel: React.FC = () => {
 
           {/* Status Filter */}
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-400">Filter by status:</span>
+            <Filter className="h-4 w-4 text-detective-text-secondary" />
+            <span className="text-sm text-detective-text-secondary">Filter by status:</span>
             <div className="flex gap-2">
               <button
                 onClick={() => setFilterStatus('all')}
                 className={`rounded px-3 py-1 text-sm transition-colors ${
                   filterStatus === 'all'
                     ? 'bg-detective-orange text-white'
-                    : 'bg-detective-bg-secondary text-gray-400 hover:bg-gray-700'
+                    : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-border'
                 }`}
               >
                 All ({stats.total})
@@ -186,7 +198,7 @@ export const FeatureFlagsPanel: React.FC = () => {
                 className={`rounded px-3 py-1 text-sm transition-colors ${
                   filterStatus === 'enabled'
                     ? 'bg-green-500 text-white'
-                    : 'bg-detective-bg-secondary text-gray-400 hover:bg-gray-700'
+                    : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-border'
                 }`}
               >
                 Enabled ({stats.enabled})
@@ -196,7 +208,7 @@ export const FeatureFlagsPanel: React.FC = () => {
                 className={`rounded px-3 py-1 text-sm transition-colors ${
                   filterStatus === 'disabled'
                     ? 'bg-red-500 text-white'
-                    : 'bg-detective-bg-secondary text-gray-400 hover:bg-gray-700'
+                    : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-border'
                 }`}
               >
                 Disabled ({stats.disabled})
@@ -216,7 +228,7 @@ export const FeatureFlagsPanel: React.FC = () => {
       {/* Loading State */}
       {loading && (
         <DetectiveCard>
-          <div className="py-8 text-center text-gray-400">Loading feature flags...</div>
+          <div className="py-8 text-center text-detective-text-secondary">Loading feature flags...</div>
         </DetectiveCard>
       )}
 
@@ -225,7 +237,7 @@ export const FeatureFlagsPanel: React.FC = () => {
         <div className="space-y-4">
           {filteredFlags.length === 0 ? (
             <DetectiveCard>
-              <div className="py-8 text-center text-gray-400">
+              <div className="py-8 text-center text-detective-text-secondary">
                 {searchTerm || filterStatus !== 'all'
                   ? 'No feature flags match your filters'
                   : 'No feature flags created yet'}
@@ -245,7 +257,7 @@ export const FeatureFlagsPanel: React.FC = () => {
                             {flag.key}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-400">{flag.description}</p>
+                        <p className="text-sm text-detective-text-secondary">{flag.description}</p>
                       </div>
                     </div>
 
@@ -270,8 +282,8 @@ export const FeatureFlagsPanel: React.FC = () => {
                       </button>
 
                       <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-400">Rollout:</span>
+                        <TrendingUp className="h-4 w-4 text-detective-text-secondary" />
+                        <span className="text-sm text-detective-text-secondary">Rollout:</span>
                         <span className="text-sm font-bold text-detective-orange">
                           {flag.rolloutPercentage}%
                         </span>
@@ -279,8 +291,8 @@ export const FeatureFlagsPanel: React.FC = () => {
 
                       {flag.targetRoles.length > 0 && (
                         <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm text-gray-400">Roles:</span>
+                          <Users className="h-4 w-4 text-detective-text-secondary" />
+                          <span className="text-sm text-detective-text-secondary">Roles:</span>
                           <span className="text-sm text-detective-text">
                             {flag.targetRoles.length}
                           </span>
@@ -294,7 +306,7 @@ export const FeatureFlagsPanel: React.FC = () => {
                         {flag.targetRoles.map((role) => (
                           <span
                             key={role}
-                            className="rounded bg-blue-500/20 px-2 py-0.5 text-xs text-blue-400"
+                            className="rounded bg-detective-orange/20 px-2 py-0.5 text-xs text-detective-orange"
                           >
                             {role}
                           </span>
@@ -303,7 +315,7 @@ export const FeatureFlagsPanel: React.FC = () => {
                     )}
 
                     {/* Metadata */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-4 text-xs text-detective-text-secondary">
                       <span>
                         Updated: {new Date(flag.updatedAt).toLocaleDateString('es-ES')}
                       </span>
@@ -347,6 +359,21 @@ export const FeatureFlagsPanel: React.FC = () => {
           }}
         />
       )}
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => {
+          setShowConfirm(false);
+          setPendingDeleteKey(null);
+        }}
+        onConfirm={confirmDeleteFlag}
+        title="Eliminar Feature Flag"
+        message="¿Estas seguro de eliminar este feature flag? Esta accion no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 };

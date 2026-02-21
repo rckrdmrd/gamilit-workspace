@@ -45,7 +45,7 @@ export default function AdminAdvancedPage() {
           </div>
 
           {/* Feature Flags Panel - IMPLEMENTED */}
-          <div>
+          <div role="region" aria-label="Feature Flags">
             <div className="mb-4 flex items-center gap-2">
               <Zap className="h-6 w-6 text-detective-orange" />
               <h2 className="text-2xl font-bold text-detective-text">Feature Flags</h2>
@@ -55,7 +55,7 @@ export default function AdminAdvancedPage() {
           </div>
 
           {/* A/B Testing Dashboard - BASIC */}
-          <div>
+          <div role="region" aria-label="A/B Testing">
             <div className="mb-4 flex items-center gap-2">
               <Beaker className="h-6 w-6 text-purple-500" />
               <h2 className="text-2xl font-bold text-detective-text">A/B Testing</h2>
@@ -65,7 +65,7 @@ export default function AdminAdvancedPage() {
           </div>
 
           {/* Future Sections - Placeholders */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2" role="region" aria-label="Funcionalidades futuras">
             {/* Tenant Management - Under Construction */}
             <DetectiveCard>
               <div className="mb-4 flex items-center justify-between">

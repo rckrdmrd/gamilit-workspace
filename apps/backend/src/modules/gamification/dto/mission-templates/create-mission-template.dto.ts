@@ -172,6 +172,16 @@ export class CreateMissionTemplateDto {
     required_module?: number;
 
   @ApiPropertyOptional({
+    description: 'Required exercise type for exercise-linked missions (e.g., crucigrama, detective_textual)',
+    example: 'crucigrama',
+    maxLength: 50,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+    required_exercise_type?: string;
+
+  @ApiPropertyOptional({
     description: 'Icon identifier',
     example: 'trophy',
     maxLength: 50,

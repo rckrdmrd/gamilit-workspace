@@ -21,13 +21,68 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Users, TrendingUp, TrendingDown } from 'lucide-react';
+import { Users, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import type { RetentionAnalytics } from '@/services/api/adminTypes';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
+import type { RetentionAnalytics, CohortRetention } from '@/services/api/adminTypes';
 
 interface RetentionTabProps {
   retention: RetentionAnalytics | null;
 }
+
+/** Column definitions for Cohort Retention table */
+const cohortColumns: Column<CohortRetention>[] = [
+  {
+    key: 'cohort_month',
+    label: 'Mes de Cohorte',
+    render: (row) => <span className="font-medium">{row.cohort_month}</span>,
+  },
+  {
+    key: 'cohort_size',
+    label: 'Tamaño del Cohorte',
+    render: (row) => row.cohort_size.toLocaleString('es-ES'),
+  },
+  {
+    key: 'retained_users',
+    label: 'Usuarios Retenidos',
+    render: (row) => row.retained_users.toLocaleString('es-ES'),
+  },
+  {
+    key: 'retention_rate',
+    label: 'Tasa de Retención',
+    render: (row) => {
+      const retentionRate = row.retention_rate * 100;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="bg-detective-bg-tertiary h-2 flex-1 rounded-full">
+            <div
+              className={`h-2 rounded-full ${
+                retentionRate >= 70
+                  ? 'bg-green-500'
+                  : retentionRate >= 40
+                    ? 'bg-yellow-500'
+                    : 'bg-red-500'
+              }`}
+              style={{ width: `${retentionRate}%` }}
+            />
+          </div>
+          <span
+            className={`text-sm font-semibold ${
+              retentionRate >= 70
+                ? 'text-green-400'
+                : retentionRate >= 40
+                  ? 'text-yellow-400'
+                  : 'text-red-400'
+            }`}
+          >
+            {retentionRate.toFixed(1)}%
+          </span>
+        </div>
+      );
+    },
+  },
+];
 
 /**
  * RetentionTab Component
@@ -71,9 +126,11 @@ export function RetentionTab({ retention }: RetentionTabProps) {
 
   if (!retention) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-detective-text-secondary">No hay datos de retención disponibles</p>
-      </div>
+      <EmptyState
+        icon={BarChart3}
+        title="No hay datos de retencion disponibles"
+        description="Los datos de retencion apareceran cuando haya suficientes cohortes"
+      />
     );
   }
 
@@ -141,7 +198,7 @@ export function RetentionTab({ retention }: RetentionTabProps) {
                   border: '1px solid #374151',
                   borderRadius: '8px',
                 }}
-                formatter={(value: any) => `${value.toFixed(1)}%`}
+                formatter={(value: number) => `${value.toFixed(1)}%`}
               />
               <Legend />
               <Line
@@ -154,9 +211,11 @@ export function RetentionTab({ retention }: RetentionTabProps) {
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-detective-text-secondary">
-            No hay datos de tendencia
-          </div>
+          <EmptyState
+            icon={TrendingUp}
+            title="No hay datos de tendencia"
+            className="h-[300px]"
+          />
         )}
       </DetectiveCard>
 
@@ -234,74 +293,12 @@ export function RetentionTab({ retention }: RetentionTabProps) {
       {/* Cohort Table */}
       <DetectiveCard className="p-6">
         <h3 className="mb-4 text-xl font-bold text-detective-text">Análisis de Cohortes</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-detective-border border-b">
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Mes de Cohorte
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Tamaño del Cohorte
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Usuarios Retenidos
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Tasa de Retención
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {retention.cohorts.map((cohort) => {
-                const retentionRate = cohort.retention_rate * 100;
-                return (
-                  <tr
-                    key={cohort.cohort_month}
-                    className="border-detective-border border-b transition-colors hover:bg-detective-bg-secondary"
-                  >
-                    <td className="px-4 py-3 font-medium text-detective-text">
-                      {cohort.cohort_month}
-                    </td>
-                    <td className="px-4 py-3 text-detective-text">
-                      {cohort.cohort_size.toLocaleString('es-ES')}
-                    </td>
-                    <td className="px-4 py-3 text-detective-text">
-                      {cohort.retained_users.toLocaleString('es-ES')}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="bg-detective-bg-tertiary h-2 flex-1 rounded-full">
-                          <div
-                            className={`h-2 rounded-full ${
-                              retentionRate >= 70
-                                ? 'bg-green-500'
-                                : retentionRate >= 40
-                                  ? 'bg-yellow-500'
-                                  : 'bg-red-500'
-                            }`}
-                            style={{ width: `${retentionRate}%` }}
-                          />
-                        </div>
-                        <span
-                          className={`text-sm font-semibold ${
-                            retentionRate >= 70
-                              ? 'text-green-400'
-                              : retentionRate >= 40
-                                ? 'text-yellow-400'
-                                : 'text-red-400'
-                          }`}
-                        >
-                          {retentionRate.toFixed(1)}%
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <DataTable<CohortRetention>
+          data={retention.cohorts}
+          columns={cohortColumns}
+          striped={false}
+          emptyMessage="No hay datos de cohortes"
+        />
       </DetectiveCard>
     </div>
   );

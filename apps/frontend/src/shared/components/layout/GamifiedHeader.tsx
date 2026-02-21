@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -23,7 +22,7 @@ import { NotificationBell } from '../../../features/notifications/components/Not
 import { BrandingContext } from '@/app/providers/BrandingProvider';
 import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 import { AvatarDisplay } from '../AvatarDisplay';
-import { useEquipment } from '@/features/gamification/social/hooks/useEquipment';
+import { useEquippedVisuals } from '@/features/gamification/social/hooks/useEquippedVisuals';
 
 export interface GamifiedHeaderProps {
   user?: User | AuthUser;
@@ -56,22 +55,15 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
-  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
+  const logoIconUrl = branding?.config?.logoIconUrl ?? DEFAULT_BRANDING.logoIconUrl;
 
   // Equipped cosmetics (avatar, frame)
-  const { equippedItems } = useEquipment();
-  const equippedAvatar = equippedItems.find(
-    (e) => e.item?.metadata?.type === 'avatar',
-  );
-  const equippedFrame = equippedItems.find(
-    (e) => e.item?.metadata?.type === 'profile_frame',
-  );
+  const { avatar, frame } = useEquippedVisuals();
   const avatarSrc =
-    equippedAvatar?.item?.metadata?.asset_url ||
-    (user && 'avatar_url' in user ? user.avatar_url : null) ||
+    avatar?.src ||
+    (user && 'avatar_url' in user ? (user.avatar_url as string | undefined) : null) ||
     null;
-  const frameColor =
-    equippedFrame?.item?.metadata?.border_color || null;
+  const frameColor = frame?.borderColor || null;
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -88,13 +80,16 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
 
   // Use real gamification data or fallback to default values
   // Support both old (xp, ml, badges) and new (totalXP, mlCoins, achievements) field names for backward compatibility
+  // Use Record<string, unknown> for flexible field access since gamificationData
+  // may come in different shapes (old vs new field names)
+  const gd = gamificationData as Record<string, unknown> | null | undefined;
   const userStats: HeaderUserStats = {
     level: gamificationData?.level || 1,
-    xp: (gamificationData as any)?.totalXP || (gamificationData as any)?.xp || 0,
-    xpToNext: (gamificationData as any)?.xp_to_next || 100, // Note: not in UserGamificationData type yet
-    ml: (gamificationData as any)?.mlCoins || (gamificationData as any)?.ml || 0,
+    xp: (gd?.totalXP as number) || (gd?.xp as number) || 0,
+    xpToNext: (gd?.xp_to_next as number) || 100,
+    ml: (gd?.mlCoins as number) || (gd?.ml as number) || 0,
     rank: gamificationData?.rank || 'Detective Novato',
-    badges: (gamificationData as any)?.achievements || (gamificationData as any)?.badges || [],
+    badges: (gd?.achievements as string[]) || (gd?.badges as string[]) || [],
   };
 
   const xpProgress = (userStats.xp / userStats.xpToNext) * 100;
@@ -130,19 +125,19 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
           <div className="flex items-center space-x-6">
             <Link
               to="/dashboard"
-              className="flex items-center space-x-2 transition-opacity hover:opacity-90"
+              className="flex items-center space-x-3 transition-opacity hover:opacity-90"
             >
-              {logoUrl ? (
-                <img
-                  src={logoUrl}
-                  alt={platformName}
-                  className="h-9 w-9 rounded-md object-cover object-left"
-                />
+              {logoIconUrl ? (
+                <img src={logoIconUrl} alt="" className="h-10 w-10 object-contain" aria-hidden="true" />
               ) : (
                 <span className="text-2xl" aria-hidden="true">
                   🕵️‍♂️
                 </span>
               )}
+              <div className="hidden sm:block">
+                <p className="text-lg font-bold leading-tight text-white">GAMILIT</p>
+                <p className="text-xs font-medium leading-tight text-white/80">lee y gana</p>
+              </div>
               <span className="sr-only">{platformName}</span>
             </Link>
 
@@ -167,7 +162,7 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                     <Star className="h-5 w-5 text-yellow-400" aria-hidden="true" />
                     <span className="text-lg font-bold text-white">Lvl {userStats.level}</span>
                   </div>
-                  <div className="mt-1 h-2 w-24 overflow-hidden rounded-full bg-white/20">
+                  <div className="mt-1 h-2 w-24 overflow-hidden rounded-full bg-white/50">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${xpProgress}%` }}
@@ -260,6 +255,9 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                   src={avatarSrc}
                   name={user ? getUserFullName(user) : 'U'}
                   frameColor={frameColor}
+                  frameClass={frame?.cssClass}
+                  frameSrc={frame?.assetUrl}
+                  glowColor={avatar?.glowColor}
                   size="sm"
                 />
                 <div className="hidden text-left sm:block">
@@ -288,6 +286,9 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                           src={avatarSrc}
                           name={user ? getUserFullName(user) : 'U'}
                           frameColor={frameColor}
+                          frameClass={frame?.cssClass}
+                          frameSrc={frame?.assetUrl}
+                          glowColor={avatar?.glowColor}
                           size="md"
                         />
                         <div className="min-w-0 flex-1">

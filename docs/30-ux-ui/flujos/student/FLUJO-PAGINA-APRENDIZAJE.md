@@ -82,7 +82,7 @@ flowchart TD
 6. FE: mockProgress define progreso por modulo (PENDIENTE: reemplazar con API real)
 
 === Integracion futura con API ===
-7. FE: (PLANIFICADO) Hook useStudentProgress → GET /api/v1/progress/modules
+7. FE: (PLANIFICADO) Hook de progreso del estudiante → GET /api/v1/progress/modules (nota: el hook `useStudentProgress` del teacher portal fue removido en Teacher Portal Audit 2026-02-20; este flujo del student portal requiere un hook propio o usar `studentProgressApi` directamente)
 8. BE: (PLANIFICADO) ProgressController → ProgressService.getModuleProgress(userId)
 9. DB: (PLANIFICADO) SELECT FROM progress_tracking.exercise_submissions
      JOIN educational_content.modules

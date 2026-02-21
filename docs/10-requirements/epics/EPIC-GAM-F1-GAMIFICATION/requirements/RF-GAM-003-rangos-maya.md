@@ -1114,11 +1114,54 @@ ORDER BY
 
 ---
 
+## 🛡️ Resiliencia en Inicialización de Rangos
+
+### Arquitectura Trigger-First (ADR-012, ADR-016)
+
+El rango inicial **Ajaw** se crea automáticamente por el trigger DB `gamilit.initialize_user_stats()` al insertar un perfil en `auth_management.profiles`. Sin embargo, existe una ventana de race condition:
+
+1. Trigger DB crea `user_ranks` con Ajaw al INSERT en profiles
+2. Frontend llama `GET /rank-progress` inmediatamente después del login
+3. `RanksService.getCurrentRank()` busca `{ user_id, is_current: true }`
+4. Si no encuentra (timing), llama `initializeDefaultRank(userId)`
+
+### Manejo de Duplicate Key (23505)
+
+`initializeDefaultRank()` maneja el caso donde el trigger DB ya creó el registro:
+
+```typescript
+try {
+  const savedRank = await this.userRankRepo.save(newRank);
+  return savedRank;
+} catch (error: any) {
+  if (error?.code === '23505' || error?.driverError?.code === '23505') {
+    // Re-fetch el registro creado por el trigger DB
+    const existing = await this.userRankRepo.findOne({ where: { user_id: userId } });
+    if (existing) return existing;
+  }
+  throw error;
+}
+```
+
+**Patrón:** Try-save → catch unique_violation → re-fetch existing. Consistente con ADR-014 (nil-safety) y ADR-045 (clean architecture pragmática).
+
+### Comportamiento para Usuario Nuevo
+
+| Escenario | Resultado |
+|-----------|-----------|
+| Trigger exitoso + frontend consulta | Retorna rango Ajaw del trigger |
+| Trigger exitoso + race condition en save | Catch 23505, re-fetch y retorna Ajaw |
+| Trigger fallido + frontend consulta | `initializeDefaultRank()` crea Ajaw (self-healing) |
+| Usuario existente sin `is_current` | Re-marca el rango más reciente como current |
+
+---
+
 ## 📅 Historial de Cambios
 
 | Versión | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
+| 1.1 | 2026-02-20 | Claude Code | Documentación de resiliencia en inicialización (race condition 23505, self-healing) |
 
 ---
 

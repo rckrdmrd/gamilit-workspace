@@ -59,6 +59,12 @@ BEGIN
         RETURN;
     END IF;
 
+    -- Idempotency guard: skip if seed data already exists
+    IF EXISTS (SELECT 1 FROM notifications.notifications WHERE title = 'Logro Desbloqueado: Primeros Pasos' LIMIT 1) THEN
+        RAISE NOTICE 'Notifications seed data already exists, skipping insert';
+        RETURN;
+    END IF;
+
     INSERT INTO notifications.notifications (
         id,
         user_id,
@@ -78,7 +84,7 @@ BEGIN
 
     -- Achievement notification (read)
     (
-        '81111111-1111-1111-1111-111111111001'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         'achievement',
         'Logro Desbloqueado: Primeros Pasos',
@@ -102,7 +108,7 @@ BEGIN
 
     -- Assignment notification (sent, unread)
     (
-        '81111111-1111-1111-1111-111111111002'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         'assignment',
         'Nueva Tarea: Ejercicios Modulo 2',
@@ -126,7 +132,7 @@ BEGIN
 
     -- Mission notification (pending)
     (
-        '81111111-1111-1111-1111-111111111003'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         'mission',
         'Nueva Mision Disponible!',
@@ -150,7 +156,7 @@ BEGIN
 
     -- Social notification (friend request)
     (
-        '81111111-1111-1111-1111-111111111004'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         'social',
         'Nueva Solicitud de Amistad',
@@ -173,7 +179,7 @@ BEGIN
 
     -- System notification (urgent)
     (
-        '81111111-1111-1111-1111-111111111005'::uuid,
+        gen_random_uuid(),
         v_teacher_id,
         'system',
         'Mantenimiento Programado',
@@ -196,7 +202,7 @@ BEGIN
 
     -- Gamification notification (streak)
     (
-        '81111111-1111-1111-1111-111111111006'::uuid,
+        gen_random_uuid(),
         v_student3_id,
         'gamification',
         'Racha de 7 Dias!',
@@ -218,7 +224,7 @@ BEGIN
 
     -- Assignment reminder (low priority)
     (
-        '81111111-1111-1111-1111-111111111007'::uuid,
+        gen_random_uuid(),
         v_student1_id,
         'assignment',
         'Recordatorio: Tarea Proxima a Vencer',
@@ -240,7 +246,7 @@ BEGIN
 
     -- Failed notification
     (
-        '81111111-1111-1111-1111-111111111008'::uuid,
+        gen_random_uuid(),
         v_student2_id,
         'system',
         'Actualizacion de Perfil',
@@ -259,11 +265,7 @@ BEGIN
         jsonb_build_object('error', 'Email delivery failed', 'retry_count', 3)
     )
 
-    ON CONFLICT (id) DO UPDATE SET
-        status = EXCLUDED.status,
-        read_at = EXCLUDED.read_at,
-        sent_at = EXCLUDED.sent_at,
-        metadata = EXCLUDED.metadata;
+    ON CONFLICT DO NOTHING;
 
     RAISE NOTICE 'Notifications created successfully';
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useApprovals } from '../../hooks/useContentManagement';
@@ -21,13 +22,13 @@ export const ContentApprovalQueue: React.FC = () => {
       await approve(id);
     } catch (error) {
       console.error('Approval failed:', error);
-      alert('Approval failed');
+      toast.error('Approval failed');
     }
   };
 
   const handleReject = async (id: string) => {
     if (!rejectReason.trim()) {
-      alert('Please provide a rejection reason');
+      toast.error('Please provide a rejection reason');
       return;
     }
 
@@ -37,7 +38,7 @@ export const ContentApprovalQueue: React.FC = () => {
       setRejectReason('');
     } catch (error) {
       console.error('Rejection failed:', error);
-      alert('Rejection failed');
+      toast.error('Rejection failed');
     }
   };
 

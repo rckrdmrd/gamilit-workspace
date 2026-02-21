@@ -1,7 +1,5 @@
 /**
  * Teacher Module Interfaces
- *
- * Interfaces for Machine Learning integration (future implementation)
  */
 
-export * from './ml-predictor.interface';
+// TASK-2026-02-20-B5-1: Removed ml-predictor.interface.ts (placeholder, never used)

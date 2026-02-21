@@ -1,7 +1,7 @@
 # React Query Migration Guide
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-19
+**Version:** 1.1.0
+**Fecha:** 2026-02-21
 **Estado:** VIGENTE
 **Aplica a:** apps/frontend/src/
 **Prerequisite:** [ADR-013: Adopcion de React Query](../90-adr/ADR-013-react-query-adoption.md)
@@ -633,6 +633,40 @@ const { mutateAsync } = useMutation({
 });
 // Usage: try { await mutateAsync(data); navigate('/items'); } catch { ... }
 ```
+
+---
+
+## 9. Portal Migration Status
+
+### 9.1 Portals Migrated
+
+| Portal | Status | Hooks Migrated | Already RQ | Skipped (UI-only) | Notes |
+|--------|--------|----------------|------------|---------------------|-------|
+| Student | Complete | -- | -- | -- | First portal migrated |
+| Teacher | Complete | -- | -- | -- | Uses React Query for dashboard, classrooms, analytics |
+| Admin | Complete | 21 | 6 | 4 | Completed 2026-02-21 |
+
+### 9.2 Admin Portal Migration Details
+
+The admin portal migration was completed in full. Summary:
+
+- **21 hooks migrated** from `useState + useEffect` to `useQuery` / `useMutation` with `queryKey` factories.
+- **6 hooks already using React Query** -- no changes needed.
+- **4 UI-only hooks skipped** -- these manage client-side state only (no server state), so React Query does not apply.
+
+**Pattern used:** Each migrated hook followed the standard transformation:
+1. Remove `useState` for `data`, `loading`, and `error`.
+2. Remove `useEffect` that triggers initial fetch.
+3. Remove `useCallback` wrappers around API calls.
+4. Replace read operations with `useQuery` using hierarchical keys (e.g., `['admin', 'users', filters]`).
+5. Replace write operations with `useMutation` + `invalidateQueries` on success.
+6. Add `useApiError` for consistent error handling with toast notifications.
+
+### 9.3 Remaining Work
+
+| Portal | Status | Notes |
+|--------|--------|-------|
+| Parents | Pending | Small portal, low priority |
 
 ---
 

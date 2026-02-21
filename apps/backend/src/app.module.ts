@@ -137,6 +137,12 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
           __dirname + '/modules/educational/entities/**/*.entity{.ts,.js}',
           __dirname + '/modules/assignments/entities/**/*.entity{.ts,.js}',
           __dirname + '/modules/teacher/entities/teacher-content.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/resource-rating.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/resource-comment.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/resource-download.entity{.ts,.js}',
+          // FIX: Profile+Tenant needed by ResourceRating#teacher, ResourceComment#author, ResourceDownload @ManyToOne
+          __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+          __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),

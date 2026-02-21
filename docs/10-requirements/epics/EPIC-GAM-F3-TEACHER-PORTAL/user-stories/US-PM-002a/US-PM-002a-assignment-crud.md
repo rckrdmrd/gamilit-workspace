@@ -434,11 +434,11 @@ interface UseAssignmentsReturn {
 - `TeacherAssignments.tsx` - Gestión principal de asignaciones
 - Integrado con `useClassrooms` para selección de classroom
 
-### Hook Complementario: `useGrading`
+### Hook Complementario: ~~`useGrading`~~ (eliminado en Teacher Portal Audit 2026-02-20)
 
-**Ubicación:** `apps/frontend/src/apps/teacher/hooks/useGrading.ts`
+**Ubicación anterior:** ~~`apps/frontend/src/apps/teacher/hooks/useGrading.ts`~~
 
-Maneja la calificación de submissions con queue de pendientes.
+Funcionalidad de calificación de submissions migrada a `useManualReviews` (`apps/frontend/src/apps/teacher/hooks/useManualReviews.ts`) y `manualReviewApi` (`apps/frontend/src/shared/api/manualReviewApi.ts`).
 
 ### API Service: `assignmentsApi`
 

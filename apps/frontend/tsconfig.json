@@ -32,5 +32,6 @@
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src"],
+  "exclude": ["src/**/*.example.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

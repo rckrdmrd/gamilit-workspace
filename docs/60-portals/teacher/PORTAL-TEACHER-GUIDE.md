@@ -1,7 +1,7 @@
 # Guia de Desarrollo - Portal Teacher
 
 **Fecha de creacion:** 2025-11-29
-**Version:** 2.0.0
+**Version:** 3.0.0
 **Estado:** VIGENTE
 **Aplica a:** apps/frontend/src/apps/teacher/ + apps/backend/src/modules/teacher/
 
@@ -42,27 +42,27 @@ Todas las paginas usan el patron **PageShell** (ver seccion 3.1.1).
 
 | # | Archivo | Ruta | Descripcion | En nav |
 |---|---------|------|-------------|--------|
-| 1 | `TeacherDashboard.tsx` | `/teacher/dashboard` | Dashboard principal con estadisticas, aulas activas, alertas recientes y acciones rapidas | Si |
-| 2 | `TeacherClasses.tsx` | `/teacher/classes` | Gestion de aulas (crear, editar, archivar) con lista de classrooms del docente | Si |
-| 3 | `TeacherStudents.tsx` | `/teacher/students` | Lista y gestion de estudiantes por aula con indicadores de progreso y riesgo | Si |
-| 4 | `TeacherAssignments.tsx` | `/teacher/assignments` | Crear y gestionar asignaciones de ejercicios a aulas | Si |
-| 5 | `TeacherAlerts.tsx` | `/teacher/alerts` | Alertas de intervencion para estudiantes en riesgo, con prioridades y acciones | Si |
-| 6 | `TeacherAlertConfig.tsx` | `/teacher/alerts/config` | Configuracion de umbrales y preferencias para alertas de intervencion | Si |
-| 7 | `TeacherAnalytics.tsx` | `/teacher/analytics` | Graficas y metricas de rendimiento por aula y estudiante | Si |
-| 8 | `TeacherGamification.tsx` | `/teacher/gamification` | Panel de gamificacion: bonificaciones ML Coins, logros de aula, economia | Si |
-| 9 | `TeacherReports.tsx` | `/teacher/reports` | Generacion y descarga de reportes de progreso en PDF/Excel | Si |
-| 10 | `TeacherProgress.tsx` | `/teacher/progress` | Vista detallada de progreso por estudiante y por modulo | Si |
-| 11 | `TeacherMonitoring.tsx` | `/teacher/monitoring` | Monitoreo en tiempo real de actividad estudiantil en sesiones activas | Si |
-| 12 | `TeacherExerciseResponses.tsx` | `/teacher/exercise-responses` | Vista de respuestas de ejercicios con filtros por tipo, aula y estudiante | Si |
-| 13 | `TeacherReviewPanel.tsx` | `/teacher/review-panel` | Panel de revision manual para ejercicios M3-M5 con sistema de calificacion | Si |
-| 14 | `TeacherContentManagement.tsx` | `/teacher/content-management` | Gestion completa de contenidos educativos (crear, editar, publicar) | Si |
-| 15 | `TeacherSettings.tsx` | `/teacher/settings` | Configuracion del perfil, preferencias de ensenanza, notificaciones y privacidad | Si |
-| 16 | `TeacherCommunication.tsx` | `/teacher/communication` | Centro de mensajes para comunicacion con estudiantes y padres | No |
-| 17 | `TeacherContent.tsx` | `/teacher/content` | Gestion de recursos educativos compartidos (version anterior a ContentManagement) | No |
-| 18 | `TeacherNotifications.tsx` | `/teacher/notifications` | Centro de notificaciones con filtros, lectura masiva y conexion WebSocket | No |
-| 19 | `TeacherNotificationPreferences.tsx` | `/teacher/settings/notifications` | Preferencias de notificaciones por canal (in-app, email, push) | No |
+| 1 | `TeacherDashboardPage.tsx` | `/teacher/dashboard` | Dashboard principal con estadisticas, aulas activas, alertas recientes y acciones rapidas | Si |
+| 2 | `TeacherClassesPage.tsx` | `/teacher/classes` | Gestion de aulas (crear, editar, archivar) con lista de classrooms del docente | Si |
+| 3 | `TeacherStudentsPage.tsx` | `/teacher/students` | Lista y gestion de estudiantes por aula con indicadores de progreso y riesgo | Si |
+| 4 | `TeacherAssignmentsPage.tsx` | `/teacher/assignments` | Crear y gestionar asignaciones de ejercicios a aulas | Si |
+| 5 | `TeacherAlertsPage.tsx` | `/teacher/alerts` | Alertas de intervencion para estudiantes en riesgo, con prioridades y acciones | Si |
+| 6 | `TeacherAlertConfigPage.tsx` | `/teacher/alerts/config` | Configuracion de umbrales y preferencias para alertas de intervencion | Si |
+| 7 | `TeacherAnalyticsPage.tsx` | `/teacher/analytics` | Graficas y metricas de rendimiento por aula y estudiante | Si |
+| 8 | `TeacherGamificationPage.tsx` | `/teacher/gamification` | Panel de gamificacion: bonificaciones ML Coins, logros de aula, economia | Si |
+| 9 | `TeacherReportsPage.tsx` | `/teacher/reports` | Generacion y descarga de reportes de progreso en PDF/Excel | Si |
+| 10 | `TeacherProgressPage.tsx` | `/teacher/progress` | Vista detallada de progreso por estudiante y por modulo | Si |
+| 11 | `TeacherMonitoringPage.tsx` | `/teacher/monitoring` | Monitoreo en tiempo real de actividad estudiantil en sesiones activas | Si |
+| 12 | `TeacherExerciseResponsesPage.tsx` | `/teacher/exercise-responses` | Vista de respuestas de ejercicios con filtros por tipo, aula y estudiante | Si |
+| 13 | `TeacherReviewPanelPage.tsx` | `/teacher/review-panel` | Panel de revision manual para ejercicios M3-M5 con sistema de calificacion | Si |
+| 14 | `TeacherContentManagementPage.tsx` | `/teacher/content-management` | Gestion completa de contenidos educativos (crear, editar, publicar) | Si |
+| 15 | `TeacherSettingsPage.tsx` | `/teacher/settings` | Configuracion del perfil, preferencias de ensenanza, notificaciones y privacidad | Si |
+| 16 | `TeacherCommunicationPage.tsx` | `/teacher/communication` | Centro de mensajes para comunicacion con estudiantes y padres | Si |
+| 17 | `TeacherContentPage.tsx` | `/teacher/content` | Gestion de recursos educativos compartidos (version anterior a ContentManagement) | Si |
+| 18 | `TeacherNotificationsPage.tsx` | `/teacher/notifications` | Centro de notificaciones con filtros, lectura masiva y conexion WebSocket | Si |
+| 19 | `TeacherNotificationPreferencesPage.tsx` | `/teacher/settings/notifications` | Preferencias de notificaciones por canal (in-app, email, push) | No |
 
-**Nota:** Las 4 paginas marcadas "No" en la columna "En nav" existen como archivos y tienen rutas definidas, pero no aparecen en la navegacion lateral del portal. Son accesibles via URL directa o enlaces internos.
+**Nota:** La pagina 19 (NotificationPreferences) no aparece en la navegacion lateral del portal; es accesible via URL directa o enlace desde la pagina de Settings. Las demas 18 paginas tienen entrada en el sidebar.
 
 ### 2.2 Estructura de Carpetas
 
@@ -73,26 +73,26 @@ teacher/
 ├── index.ts                    # Barrel export principal
 ├── layouts/
 │   └── TeacherLayout.tsx       # Layout principal con navegacion
-├── pages/                      # Paginas del portal (19 paginas)
-│   ├── TeacherDashboard.tsx
-│   ├── TeacherClasses.tsx
-│   ├── TeacherStudents.tsx
-│   ├── TeacherAssignments.tsx
-│   ├── TeacherAlerts.tsx
-│   ├── TeacherAlertConfig.tsx
-│   ├── TeacherAnalytics.tsx
-│   ├── TeacherGamification.tsx
-│   ├── TeacherReports.tsx
-│   ├── TeacherCommunication.tsx       # Not in nav
-│   ├── TeacherContent.tsx             # Not in nav
-│   ├── TeacherContentManagement.tsx
-│   ├── TeacherProgress.tsx
-│   ├── TeacherMonitoring.tsx
-│   ├── TeacherExerciseResponses.tsx
-│   ├── TeacherReviewPanel.tsx
-│   ├── TeacherNotifications.tsx       # Not in nav
-│   ├── TeacherNotificationPreferences.tsx  # Not in nav
-│   └── TeacherSettings.tsx
+├── pages/                      # Paginas del portal (19 paginas, ADR-030 "Page" suffix)
+│   ├── TeacherDashboardPage.tsx
+│   ├── TeacherClassesPage.tsx
+│   ├── TeacherStudentsPage.tsx
+│   ├── TeacherAssignmentsPage.tsx
+│   ├── TeacherAlertsPage.tsx
+│   ├── TeacherAlertConfigPage.tsx
+│   ├── TeacherAnalyticsPage.tsx
+│   ├── TeacherGamificationPage.tsx
+│   ├── TeacherReportsPage.tsx
+│   ├── TeacherCommunicationPage.tsx
+│   ├── TeacherContentPage.tsx
+│   ├── TeacherContentManagementPage.tsx
+│   ├── TeacherProgressPage.tsx
+│   ├── TeacherMonitoringPage.tsx
+│   ├── TeacherExerciseResponsesPage.tsx
+│   ├── TeacherReviewPanelPage.tsx
+│   ├── TeacherNotificationsPage.tsx
+│   ├── TeacherNotificationPreferencesPage.tsx  # Not in sidebar
+│   └── TeacherSettingsPage.tsx
 ├── components/                 # Componentes organizados por dominio
 │   ├── shared/                 # Componentes compartidos del portal
 │   │   └── TeacherPageShell.tsx  # PageShell wrapper (ADR-046)
@@ -115,9 +115,8 @@ teacher/
 │   │   ├── NotificationsSettingsSection.tsx
 │   │   ├── PrivacySettingsSection.tsx
 │   │   └── index.ts
-│   ├── withTeacherLayout.tsx   # @deprecated — Use TeacherPageShell instead
 │   └── index.ts
-├── hooks/                      # Custom hooks (26 hooks)
+├── hooks/                      # Custom hooks (25 hooks)
 │   ├── useTeacherDashboard.ts
 │   ├── useTeacherPageSetup.ts  # Auth/gamification setup for PageShell
 │   ├── useClassrooms.ts
@@ -125,24 +124,26 @@ teacher/
 │   ├── useClassroomRealtime.ts
 │   ├── useClassroomsStats.ts
 │   ├── useAssignments.ts
-│   ├── useStudentProgress.ts
 │   ├── useStudentBlocking.ts
 │   ├── useStudentMonitoring.ts
 │   ├── useAnalytics.ts
 │   ├── useInterventionAlerts.ts
 │   ├── useAlertConfig.ts
-│   ├── useGrading.ts
 │   ├── useGrantBonus.ts
 │   ├── useEconomyAnalytics.ts
 │   ├── useStudentsEconomy.ts
 │   ├── useAchievementsStats.ts
-│   ├── useMasteryTracking.ts
-│   ├── useMissionStats.ts
 │   ├── useTeacherMessages.ts
+│   │   # NOTE: useGrading, useStudentProgress, useMasteryTracking, useMissionStats
+│   │   # were deleted in TEACHER-PORTAL-AUDIT (2026-02-20); functionality absorbed
+│   │   # into useManualReviews, useAnalytics, and manualReviewApi
 │   ├── useTeacherContent.ts
 │   ├── useExerciseResponses.ts
 │   ├── useManualReviews.ts
 │   ├── useManualReviewConfig.ts
+│   ├── useScheduledReports.ts
+│   ├── useSharedReports.ts
+│   ├── useSharedResources.ts
 │   └── index.ts
 ├── constants/                  # Constantes centralizadas
 │   ├── alertTypes.ts           # Tipos y prioridades de alertas
@@ -158,29 +159,38 @@ teacher/
 teacher/
 ├── teacher.module.ts           # Modulo NestJS principal
 ├── index.ts                    # Barrel exports
-├── controllers/                # 7 controllers
+├── controllers/                # 10 controllers
 │   ├── teacher.controller.ts           # Analytics, progress, insights
 │   ├── teacher-classrooms.controller.ts
+│   ├── teacher-assignments.controller.ts
 │   ├── teacher-grades.controller.ts
 │   ├── teacher-communication.controller.ts
 │   ├── teacher-content.controller.ts
+│   ├── alert-config.controller.ts
+│   ├── manual-review.controller.ts
 │   ├── intervention-alerts.controller.ts
 │   └── exercise-responses.controller.ts
-├── services/                   # 14 services
+├── services/                   # 21 services
 │   ├── teacher-dashboard.service.ts
 │   ├── teacher-classrooms-crud.service.ts
+│   ├── teacher-assignments.service.ts
 │   ├── student-progress.service.ts
 │   ├── analytics.service.ts
 │   ├── grading.service.ts
+│   ├── alert-config.service.ts
 │   ├── intervention-alerts.service.ts
 │   ├── student-risk-alert.service.ts    # CRON job
-│   ├── ml-predictor.service.ts          # Predicciones ML
 │   ├── reports.service.ts
+│   ├── scheduled-reports.service.ts
+│   ├── shared-reports.service.ts
+│   ├── teacher-reports.service.ts
 │   ├── bonus-coins.service.ts
 │   ├── teacher-messages.service.ts
 │   ├── teacher-content.service.ts
 │   ├── exercise-responses.service.ts
-│   └── student-blocking.service.ts
+│   ├── manual-review.service.ts
+│   ├── student-blocking.service.ts
+│   └── storage.service.ts
 ├── dto/                        # Data Transfer Objects
 │   ├── analytics.dto.ts
 │   ├── classroom.dto.ts
@@ -205,7 +215,6 @@ teacher/
 │   ├── teacher.guard.ts
 │   └── classroom-ownership.guard.ts
 ├── interfaces/
-│   └── ml-predictor.interface.ts
 └── __tests__/                  # Tests unitarios
 ```
 
@@ -244,14 +253,14 @@ teacher/
 
 #### 3.1.1 PageShell Pattern (ADR-046)
 
-All teacher pages use `TeacherPageShell` to wrap their content. This replaces the deprecated `withTeacherLayout` HOC. The PageShell internally calls `useTeacherPageSetup()` which centralizes auth, gamification data, and logout logic, then renders `TeacherLayout` around the page content.
+All teacher pages use `TeacherPageShell` to wrap their content. This replaced the former `withTeacherLayout` HOC (removed in Teacher Portal Audit 2026-02-20). The PageShell internally calls `useTeacherPageSetup()` which centralizes auth, gamification data, and logout logic, then renders `TeacherLayout` around the page content.
 
 ```typescript
 // Pattern: Page with TeacherPageShell
-// TeacherDashboard.tsx
+// TeacherDashboardPage.tsx
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
-export default function TeacherDashboard() {
+export default function TeacherDashboardPage() {
   const { stats, classrooms, isLoading, error } = useTeacherDashboard();
 
   if (isLoading) return <TeacherPageShell><DashboardSkeleton /></TeacherPageShell>;
@@ -268,20 +277,20 @@ export default function TeacherDashboard() {
 
 ```typescript
 // App.tsx — Simple lazy imports (no HOC wrapping)
-const TeacherDashboard = lazy(() => import('./apps/teacher/pages/TeacherDashboard'));
+const TeacherDashboardPage = lazy(() => import('@/apps/teacher/pages/TeacherDashboardPage'));
 
-<Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+<Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
 ```
 
-**Deprecated pattern (do NOT use for new pages):**
+**Removed pattern (withTeacherLayout was deleted in Teacher Portal Audit 2026-02-20):**
 
 ```typescript
-// DEPRECATED: withTeacherLayout HOC in App.tsx
-const TeacherDashboard = lazy(() =>
-  import('./pages/TeacherDashboard').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
+// REMOVED: withTeacherLayout HOC — file no longer exists in codebase
+// const TeacherDashboard = lazy(() =>
+//   import('./pages/TeacherDashboard').then(m => ({
+//     default: withTeacherLayout(m.default)
+//   }))
+// );
 ```
 
 See [ADR-046: PageShell Pattern](../../90-adr/ADR-046-pageshell-pattern.md) for the full rationale.
@@ -492,7 +501,6 @@ export class AnalyticsService {
 export class StudentRiskAlertService {
   constructor(
     private readonly interventionAlertsService: InterventionAlertsService,
-    private readonly mlPredictorService: MlPredictorService,
   ) {}
 
   @Cron('0 */6 * * *') // Cada 6 horas
@@ -500,7 +508,8 @@ export class StudentRiskAlertService {
     const students = await this.getActiveStudents();
 
     for (const student of students) {
-      const riskLevel = await this.mlPredictorService.predictRisk(student.id);
+      // Risk detection uses heuristic analysis (inactivity, declining scores, error patterns)
+      const riskLevel = await this.analyzeStudentRisk(student.id);
 
       if (riskLevel === 'high') {
         await this.interventionAlertsService.createAlert({
@@ -535,8 +544,8 @@ export default function TeacherSomePage() {
   );
 }
 
-// DON'T: Use withTeacherLayout HOC (deprecated)
-export default withTeacherLayout(TeacherSomePage);
+// DON'T: Use withTeacherLayout HOC (removed in Teacher Portal Audit 2026-02-20)
+// export default withTeacherLayout(TeacherSomePage);
 ```
 
 #### 4.1.2 Hooks
@@ -699,8 +708,8 @@ services/api/teacher/
 ├── analyticsApi.ts            # Analiticas
 ├── interventionAlertsApi.ts   # Alertas
 ├── alertConfigApi.ts          # Configuracion de alertas
-├── gradingApi.ts              # Calificaciones
 ├── bonusCoinsApi.ts           # Bonificaciones
+│   # NOTE: gradingApi.ts was removed (Teacher Portal Audit 2026-02-20), merged into assignmentsApi + manualReviewApi
 ├── exerciseResponsesApi.ts    # Respuestas
 ├── teacherMessagesApi.ts      # Comunicacion
 ├── teacherContentApi.ts       # Contenido
@@ -815,7 +824,7 @@ describe('useTeacherDashboard', () => {
 ### 8.1 Nueva Pagina
 
 - [ ] Crear archivo en `teacher/pages/TeacherXxx.tsx`
-- [ ] Wrap content with `<TeacherPageShell>` (NOT withTeacherLayout)
+- [ ] Wrap content with `<TeacherPageShell>`
 - [ ] Create hook in `teacher/hooks/useXxx.ts` with React Query
 - [ ] Add route in `App.tsx` with plain lazy import
 - [ ] Add navigation item in `TeacherLayout.tsx` (if applicable)
@@ -843,7 +852,7 @@ describe('useTeacherDashboard', () => {
 - [ ] Types alineados frontend/backend
 - [ ] Query keys descriptivas y en namespace `['teacher', ...]`
 - [ ] Invalidacion de cache correcta
-- [ ] TeacherPageShell used (NOT withTeacherLayout)
+- [ ] TeacherPageShell used (withTeacherLayout was removed 2026-02-20)
 
 ---
 
@@ -897,7 +906,7 @@ if (process.env.NODE_ENV === 'development') {
 | ADR | Relevancia |
 |-----|------------|
 | [ADR-013: React Query Adoption](../../90-adr/ADR-013-react-query-adoption.md) | Data fetching pattern used by all hooks |
-| [ADR-030: Convencion de Nombres](../../90-adr/ADR-030-convencion-nombres-paginas.md) | Page naming — "Page" suffix canonical (amended 2026-02-19; Teacher pages pending alignment) |
+| [ADR-030: Convencion de Nombres](../../90-adr/ADR-030-convencion-nombres-paginas.md) | Page naming — "Page" suffix canonical (amended 2026-02-19; Teacher pages aligned 2026-02-21) |
 | [ADR-046: PageShell Pattern](../../90-adr/ADR-046-pageshell-pattern.md) | Layout wrapping pattern replacing HOC |
 
 ### Guias Generales
@@ -915,6 +924,7 @@ if (process.env.NODE_ENV === 'development') {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 3.0.0 | 2026-02-21 | ADR-030 alignment: All 19 page files renamed with "Page" suffix (TeacherDashboard -> TeacherDashboardPage, etc.). 3 pages re-enabled in sidebar nav (Content, Communication, Notifications). Removed deleted withTeacherLayout.tsx from tree. Updated hooks note about 4 deleted hooks (TEACHER-PORTAL-AUDIT). Updated code examples and App.tsx references |
 | 2.0.0 | 2026-02-19 | Major update: Listed all 19 pages with descriptions and routes. Documented PageShell pattern (ADR-046) replacing withTeacherLayout HOC. Noted 4 removed-from-nav pages (Communication, Content, Notifications, NotificationPreferences). Updated hooks count to 26. Updated architecture section with TeacherPageShell in dependency diagram. Added React Query patterns and useApiError references. Added ADR references section. Updated checklists for new patterns |
 | 1.3.0 | 2026-02-18 | ADR-030 implementation: Removed "Page" suffix from all page files (TeacherAlertsPage -> TeacherAlerts, etc.). Phase 7 SRP component extractions: settings/ directory with 5 components (SaveButton, ProfileSettingsSection, TeachingPreferencesSection, NotificationsSettingsSection, PrivacySettingsSection); RecentReportsTable extracted to reports/ |
 | 1.2.0 | 2025-12-26 | Agregada carpeta constants/ (alertTypes.ts, manualReviewExercises.ts), referencias actualizadas |

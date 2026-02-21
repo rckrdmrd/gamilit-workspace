@@ -158,6 +158,46 @@ export interface CompleteReviewResponse {
   rewards: ReviewRewards | null;
 }
 
+/**
+ * Manual review configuration — modules and exercises that require manual review
+ * TASK-2026-02-20: Wired from backend GET /teacher/reviews/config/exercises
+ */
+export interface ManualReviewConfig {
+  modules: Array<{
+    id: string;
+    name: string;
+    number: number;
+  }>;
+  exercises: Array<{
+    id: string;
+    title: string;
+    exerciseType: string;
+    moduleId: string;
+    moduleName: string;
+    moduleNumber: number;
+  }>;
+}
+
+/**
+ * Request to create a new manual review
+ * TASK-2026-02-20: Matches backend CreateReviewDto
+ */
+export interface CreateReviewRequest {
+  submissionId: string;
+  rubricScores: Record<string, number>;
+  totalScore: number;
+  generalFeedback?: string;
+  detailedFeedback?: Record<string, unknown>;
+}
+
+/**
+ * Request to return a submission for student revision
+ * TASK-2026-02-20: Matches backend ReturnForRevisionDto
+ */
+export interface ReturnForRevisionRequest {
+  feedback: string;
+}
+
 // ============================================================================
 // API FUNCTIONS
 // ============================================================================
@@ -330,6 +370,53 @@ export const completeReview = async (
 };
 
 /**
+ * Get configuration of modules and exercises that require manual review
+ * TASK-2026-02-20: Replaces hardcoded data from manualReviewExercises.ts
+ *
+ * @returns Modules and exercises requiring manual review
+ */
+export const getManualReviewConfig = async (): Promise<ManualReviewConfig> => {
+  const { data } = await apiClient.get<ManualReviewConfig>(
+    API_ENDPOINTS.teacher.reviews.config,
+  );
+  return data;
+};
+
+/**
+ * Create a new manual review record for a submission
+ * TASK-2026-02-20: Wired from backend POST /teacher/reviews
+ *
+ * @param reviewData - Submission ID, rubric scores, total score, and optional feedback
+ * @returns Created review
+ */
+export const createReview = async (reviewData: CreateReviewRequest): Promise<ManualReview> => {
+  const { data } = await apiClient.post<ManualReview>(
+    API_ENDPOINTS.teacher.reviews.create,
+    reviewData,
+  );
+  return data;
+};
+
+/**
+ * Return a submission to the student for corrections with feedback
+ * TASK-2026-02-20: Wired from backend POST /teacher/reviews/:id/return
+ *
+ * @param reviewId - Review ID to return
+ * @param returnData - Feedback explaining why the submission is returned
+ * @returns Updated review with 'returned' status
+ */
+export const returnForRevision = async (
+  reviewId: string,
+  returnData: ReturnForRevisionRequest,
+): Promise<ManualReview> => {
+  const { data } = await apiClient.post<ManualReview>(
+    API_ENDPOINTS.teacher.reviews.return(reviewId),
+    returnData,
+  );
+  return data;
+};
+
+/**
  * Calculate total score from rubric evaluations
  *
  * @param rubric - Rubric criteria
@@ -419,9 +506,12 @@ export const manualReviewApi = {
   getPendingReviews,
   getMyReviews,  // TASK-2026-01-18-012
   getReviewById,
+  getManualReviewConfig,  // TASK-2026-02-20: B1
+  createReview,  // TASK-2026-02-20: B2
   startReview,
   updateReview,
   completeReview,
+  returnForRevision,  // TASK-2026-02-20: B3
   calculateTotalScore,
   validateEvaluations,
 };

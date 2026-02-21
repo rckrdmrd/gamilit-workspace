@@ -585,7 +585,7 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
       className={cn(
         'flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all',
         entry.isCurrentUser
-          ? 'border-2 border-detective-orange bg-detective-orange bg-opacity-10 shadow-lg'
+          ? 'border-2 border-detective-orange bg-detective-orange/10 shadow-lg'
           : 'bg-white hover:scale-[1.01] hover:shadow-md',
       )}
     >

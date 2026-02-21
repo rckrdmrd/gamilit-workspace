@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { Beaker, Play, Pause, Trophy, Users, CheckCircle } from 'lucide-react';
 
 interface Experiment {
@@ -116,27 +117,41 @@ export const ABTestingDashboard: React.FC = () => {
     );
   };
 
-  const handleDeclareWinner = (experimentId: string, variantId: string) => {
-    if (!window.confirm(`¿Declarar la variante ${variantId} como ganadora y finalizar el experimento?`)) return;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingWinner, setPendingWinner] = useState<{ experimentId: string; variantId: string } | null>(null);
 
+  const handleDeclareWinner = (experimentId: string, variantId: string) => {
+    setPendingWinner({ experimentId, variantId });
+    setShowConfirm(true);
+  };
+
+  const confirmDeclareWinner = () => {
+    if (!pendingWinner) return;
     setExperiments((prev) =>
       prev.map((exp) =>
-        exp.id === experimentId
+        exp.id === pendingWinner.experimentId
           ? {
               ...exp,
               status: 'completed' as const,
               endDate: new Date().toISOString(),
-              results: { ...exp.results!, winner: variantId },
+              results: { ...exp.results!, winner: pendingWinner.variantId },
             }
           : exp,
       ),
     );
+    setShowConfirm(false);
+    setPendingWinner(null);
   };
 
   const selectedExp = experiments.find((e) => e.id === selectedExperiment);
 
   return (
     <div className="space-y-6">
+      {/* Future Feature Banner */}
+      <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/20 px-4 py-3 text-sm font-medium text-yellow-300">
+        FUTURE FEATURE — Not yet connected to backend
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -460,6 +475,15 @@ export const ABTestingDashboard: React.FC = () => {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => { setShowConfirm(false); setPendingWinner(null); }}
+        onConfirm={confirmDeclareWinner}
+        title="Declarar ganador"
+        message={pendingWinner ? `¿Declarar la variante ${pendingWinner.variantId} como ganadora y finalizar el experimento?` : ''}
+        variant="warning"
+        confirmText="Declarar ganador"
+      />
     </div>
   );
 };

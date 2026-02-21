@@ -9,7 +9,7 @@ import {
   Min,
   Max,
 } from 'class-validator';
-import { ActivityProgress, GradingProgress } from '../entities/lti-grade-passback.entity';
+import { ActivityProgress, GradingProgress } from '../enums/lti-grade-passback.enums';
 
 /**
  * CreateLtiGradePassbackDto

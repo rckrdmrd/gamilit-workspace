@@ -96,14 +96,16 @@ export default function AdminUsersPage() {
           loading={mgmt.loading} organizations={create.organizations} isLoadingOrganizations={create.isLoadingOrganizations}
         />
 
-        {mgmt.error && (
-          <DetectiveCard>
-            <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
-              <p className="font-semibold">Error al cargar usuarios:</p>
-              <p>{mgmt.error}</p>
-            </div>
-          </DetectiveCard>
-        )}
+        <div aria-live="polite">
+          {mgmt.error && (
+            <DetectiveCard>
+              <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500" role="alert">
+                <p className="font-semibold">Error al cargar usuarios:</p>
+                <p>{mgmt.error}</p>
+              </div>
+            </DetectiveCard>
+          )}
+        </div>
 
         <UsersTable
           users={mgmt.users} loading={mgmt.loading} selectedUsers={mgmt.selectedUsers}

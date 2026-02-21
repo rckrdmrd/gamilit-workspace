@@ -17,6 +17,7 @@ import type { Source, AnalisisFuentesAnswers } from './analisisFuentesTypes';
 import type { SourceCredibility, FactCheckResult } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
@@ -29,8 +30,7 @@ interface ExerciseProps {
   userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onProgressUpdate?: (data: any) => void;
+  onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<{
@@ -109,10 +109,6 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
         answers: { ranking: currentRanking },
       });
 
-      console.log('📊 [AnalisisFuentes] Progress update sent:', {
-        analyzedSources: analyzedSources.length,
-        checkedClaims,
-      });
     }
   }, [analyzedSources, checkedClaims, sources.length, onProgressUpdate, startTime, currentRanking]);
 
@@ -225,7 +221,6 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       const sanitizedRanking = currentRanking.map((sourceId, idx) => {
         if (!sourceId || sourceId.trim() === '') {
           const fallbackId = `src-${idx + 1}`;
-          console.warn(`[AnalisisFuentes CORR-010] Regenerating missing sourceId at index ${idx}: ${fallbackId}`);
           return fallbackId;
         }
         return sourceId;
@@ -234,7 +229,6 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       // Validate after sanitization
       const invalidIds = sanitizedRanking.filter((id) => !id || id.trim() === '');
       if (invalidIds.length > 0) {
-        console.error('[AnalisisFuentes CORR-010] Still invalid IDs after sanitization:', invalidIds);
         setFeedback({
           type: 'error',
           title: 'Error de Validación',
@@ -245,15 +239,11 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
         return;
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[AnalisisFuentes CORR-010] Sanitized ranking:', sanitizedRanking);
-      }
-
       const answers: AnalisisFuentesAnswers = {
         ranking: sanitizedRanking,
       };
 
-      const response = await submitAsync(answers);
+      const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
       // CORR-AF-001 2026-01-07: Manejar ejercicios con revisión manual
       // Este ejercicio tiene requires_manual_grading=TRUE en BD
@@ -262,7 +252,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
           type: 'info',
           title: 'Análisis Enviado',
           message:
-            'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+            MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -299,12 +289,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [AnalisisFuentes] Submission successful:', {
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('[AnalisisFuentes] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

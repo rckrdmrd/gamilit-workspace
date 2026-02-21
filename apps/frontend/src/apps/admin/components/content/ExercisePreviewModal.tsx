@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Clock, Star, BookOpen, FileText, Tag, Calendar } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { Exercise } from '../../hooks/useContentManagement';
 
@@ -35,33 +36,6 @@ export const ExercisePreviewModal: React.FC<ExercisePreviewModalProps> = ({
   exercise,
   onClose,
 }) => {
-  // Handle escape key
-  React.useEffect(() => {
-    if (!isOpen) return;
-
-    const handleEscape = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose]);
-
-  // Prevent body scroll when modal is open
-  React.useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
   if (!isOpen || !exercise) return null;
 
   const difficulty = exercise.difficulty || 'facil';
@@ -70,24 +44,9 @@ export const ExercisePreviewModal: React.FC<ExercisePreviewModalProps> = ({
   const statusStyle = statusConfig[status] || statusConfig.draft;
   const typeLabel = exerciseTypeLabels[exercise.type || ''] || exercise.type || 'Sin tipo';
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={handleOverlayClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="exercise-preview-title"
-    >
-      <div
-        className="relative mx-4 max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-lg border border-detective-orange/30 bg-detective-bg shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="lg" className="border border-detective-orange/30 bg-detective-bg shadow-2xl p-0 overflow-hidden">
+      <div className="-mx-6 -my-4">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-detective-orange/20 bg-detective-bg-secondary px-6 py-4">
           <div className="flex-1 pr-4">
@@ -223,7 +182,7 @@ export const ExercisePreviewModal: React.FC<ExercisePreviewModalProps> = ({
           </DetectiveButton>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

@@ -35,12 +35,12 @@ export class RedisIoAdapter extends IoAdapter {
   private pubClient: RedisClientType | null = null;
   private subClient: RedisClientType | null = null;
   private isConnected = false;
-  private readonly corsOrigins: string[];
+  private readonly corsOrigins: string[] | ((origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => void);
   private readonly config: RedisAdapterConfig;
 
   constructor(
     app: INestApplicationContext,
-    corsOrigins: string[],
+    corsOrigins: string[] | ((origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => void),
     config?: Partial<RedisAdapterConfig>,
   ) {
     super(app);
@@ -168,6 +168,7 @@ export class RedisIoAdapter extends IoAdapter {
   /**
    * Create the Socket.IO server with Redis adapter if available
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createIOServer(port: number, options?: ServerOptions): any {
     const serverOptions: Partial<ServerOptions> = {
       ...options,

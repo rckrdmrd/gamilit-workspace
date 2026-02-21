@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Marco Calendario Tzolk'in - Decorative frame -->
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="96" stroke="#D4AF37" stroke-width="3" fill="none"/>
+  <circle cx="100" cy="100" r="90" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <!-- Inner ring (content area boundary) -->
+  <circle cx="100" cy="100" r="70" stroke="#D4AF37" stroke-width="2" fill="none"/>
+  <circle cx="100" cy="100" r="66" stroke="#8B4513" stroke-width="1" fill="none"/>
+  <!-- Calendar glyphs around the ring (20 day signs) -->
+  <g stroke="#D4AF37" stroke-width="1.5" fill="none">
+    <!-- Cardinal direction markers -->
+    <rect x="96" y="6" width="8" height="12" rx="1"/>
+    <rect x="96" y="182" width="8" height="12" rx="1"/>
+    <rect x="6" y="96" width="12" height="8" rx="1"/>
+    <rect x="182" y="96" width="12" height="8" rx="1"/>
+    <!-- Diagonal markers -->
+    <circle cx="30" cy="30" r="5"/>
+    <circle cx="170" cy="30" r="5"/>
+    <circle cx="30" cy="170" r="5"/>
+    <circle cx="170" cy="170" r="5"/>
+    <!-- Intermediate glyphs -->
+    <rect x="56" y="10" width="6" height="8" rx="1" transform="rotate(22.5 59 14)"/>
+    <rect x="138" y="10" width="6" height="8" rx="1" transform="rotate(-22.5 141 14)"/>
+    <rect x="10" y="56" width="8" height="6" rx="1" transform="rotate(-22.5 14 59)"/>
+    <rect x="182" y="56" width="8" height="6" rx="1" transform="rotate(22.5 186 59)"/>
+    <rect x="56" y="182" width="6" height="8" rx="1" transform="rotate(-22.5 59 186)"/>
+    <rect x="138" y="182" width="6" height="8" rx="1" transform="rotate(22.5 141 186)"/>
+    <rect x="10" y="138" width="8" height="6" rx="1" transform="rotate(22.5 14 141)"/>
+    <rect x="182" y="138" width="8" height="6" rx="1" transform="rotate(-22.5 186 141)"/>
+  </g>
+  <!-- Decorative dots between rings -->
+  <g fill="#D4AF37" opacity="0.5">
+    <circle cx="100" cy="74" r="1.5"/>
+    <circle cx="100" cy="126" r="1.5"/>
+    <circle cx="74" cy="100" r="1.5"/>
+    <circle cx="126" cy="100" r="1.5"/>
+  </g>
+</svg>

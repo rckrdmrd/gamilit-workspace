@@ -56,9 +56,8 @@ SELECT
   FLOOR(random() * 500000 + 100000)::BIGINT AS file_size_bytes,
   NOW() - (random() * interval '7 days') AS generated_at,
   NOW() - (random() * interval '7 days') AS created_at
-FROM auth_management.profiles t
-CROSS JOIN social_features.classrooms c
-WHERE t.role = 'admin_teacher'
+FROM (SELECT id, tenant_id FROM auth_management.profiles WHERE role = 'admin_teacher' ORDER BY created_at LIMIT 3) t
+CROSS JOIN (SELECT id, name FROM social_features.classrooms ORDER BY created_at LIMIT 2) c
 LIMIT 5
 ON CONFLICT DO NOTHING;
 
@@ -94,9 +93,8 @@ SELECT
   FLOOR(random() * 300000 + 50000)::BIGINT AS file_size_bytes,
   NOW() - (random() * interval '14 days') AS generated_at,
   NOW() - (random() * interval '14 days') AS created_at
-FROM auth_management.profiles t
-CROSS JOIN social_features.classrooms c
-WHERE t.role = 'admin_teacher'
+FROM (SELECT id, tenant_id FROM auth_management.profiles WHERE role = 'admin_teacher' ORDER BY created_at LIMIT 2) t
+CROSS JOIN (SELECT id, name FROM social_features.classrooms ORDER BY created_at LIMIT 2) c
 LIMIT 3
 ON CONFLICT DO NOTHING;
 
@@ -169,9 +167,8 @@ SELECT
   FLOOR(random() * 50000 + 10000)::BIGINT AS file_size_bytes,
   NOW() - (random() * interval '21 days') AS generated_at,
   NOW() - (random() * interval '21 days') AS created_at
-FROM auth_management.profiles t
-CROSS JOIN social_features.classrooms c
-WHERE t.role = 'admin_teacher'
+FROM (SELECT id, tenant_id FROM auth_management.profiles WHERE role = 'admin_teacher' ORDER BY created_at LIMIT 2) t
+CROSS JOIN (SELECT id, name FROM social_features.classrooms ORDER BY created_at LIMIT 2) c
 LIMIT 3
 ON CONFLICT DO NOTHING;
 

@@ -13,12 +13,12 @@
 | BLQ-02 | Agregar `JWT_REFRESH_SECRET` (>=32 chars) a `.env.production` del servidor | F4 | Sin este secreto, `main.ts` ejecuta `process.exit(1)` | PENDIENTE |
 | BLQ-03 | Crear `apps/frontend/.env.production` en servidor a partir del `.env.production.example` | F4 | Sin esto, `vite build` usa localhost y el validador rechaza | PENDIENTE |
 | BLQ-04 | Cambiar password de `admin@gamilit.com` en BD de produccion | F2 | `UPDATE auth.users SET encrypted_password = crypt('<nuevo>', gen_salt('bf',10)) WHERE email = 'admin@gamilit.com'` | PENDIENTE |
-| BLQ-05 | Eliminar sudo password de `database-master.sh` y limpiar historial git | F3 | Reemplazar `SUDO_PASS_DEV="2320"` por `"${GAMILIT_SUDO_PASSWORD:-}"`, luego `git filter-repo` | PENDIENTE |
-| BLQ-06 | Corregir URL de health check en `deploy-production.sh` | F6 | Cambiar `/api/health` a `/api/v1/health` (linea 434) | PENDIENTE |
-| BLQ-07 | Renumerar `17-user_purchases-demo.sql` a `18-` en PROD y `16-` a `18-` en STAGING | F1 | Renombrar archivos para eliminar prefijos duplicados | PENDIENTE |
-| BLQ-08 | Sincronizar `05-user_stats.sql` — copiar DEV v2.2 a PROD y STAGING | F1 | DEV tiene fix REC-009 (UUID), PROD/STAGING tienen v2.0 (TEXT) | PENDIENTE |
-| BLQ-09 | Eliminar `.env.database` y `.env.dev` del tracking git | F3 | `git rm --cached apps/database/.env.database apps/database/.env.dev` + agregar a .gitignore | PENDIENTE |
-| BLQ-10 | Corregir branch en `deploy-production.yml` de `main` a `master` | F6 | El deploy CI nunca se ejecuta por branch incorrecta | PENDIENTE |
+| BLQ-05 | Eliminar sudo password de `database-master.sh` y limpiar historial git | F3 | Reemplazar `SUDO_PASS_DEV="2320"` por `"${GAMILIT_SUDO_PASSWORD:-}"`, luego `git filter-repo` | **RESUELTO** (password reemplazado, git filter-repo pendiente en servidor) |
+| BLQ-06 | Corregir URL de health check en `deploy-production.sh` | F6 | Cambiar `/api/health` a `/api/v1/health` (linea 434) | **RESUELTO** |
+| BLQ-07 | Renumerar `17-user_purchases-demo.sql` a `18-` en PROD y `16-` a `18-` en STAGING | F1 | Renombrar archivos para eliminar prefijos duplicados | **RESUELTO** (Sprint Seed Homologation 2026-02-18) |
+| BLQ-08 | Sincronizar `05-user_stats.sql` — copiar DEV v2.2 a PROD y STAGING | F1 | DEV tiene fix REC-009 (UUID), PROD/STAGING tienen v2.0 (TEXT) | **RESUELTO** (Sprint Seed Homologation 2026-02-18) |
+| BLQ-09 | Eliminar `.env.database` y `.env.dev` del tracking git | F3 | `git rm --cached apps/database/.env.database apps/database/.env.dev` + agregar a .gitignore | **RESUELTO** |
+| BLQ-10 | Corregir branch en `deploy-production.yml` de `main` a `master` | F6 | El deploy CI nunca se ejecuta por branch incorrecta | **RESUELTO** |
 
 ---
 
@@ -26,17 +26,17 @@
 
 | # | Item | Fase | Accion | Estado |
 |---|------|:----:|--------|:------:|
-| ALT-01 | Hacer que tests bloqueen deploy en `deploy-production.sh` | F3/F6 | Cambiar `print_warning` a `print_error` + `exit 1` en lineas 228-239 | PENDIENTE |
+| ALT-01 | Hacer que tests bloqueen deploy en `deploy-production.sh` | F3/F6 | Cambiar `print_warning` a `print_error` + `return 1` en lineas 228-239 | **RESUELTO** |
 | ALT-02 | Reemplazar `vite preview` por Nginx para frontend en produccion | F4/F6 | Usar `apps/frontend/nginx.conf` existente; eliminar bloque frontend de PM2 | PENDIENTE |
-| ALT-03 | Agregar `process.send?.('ready')` en `main.ts` despues de `app.listen()` | F4/F6 | PM2 wait_ready espera timeout sin esta senial | PENDIENTE |
+| ALT-03 | Agregar `process.send?.('ready')` en `main.ts` despues de `app.listen()` | F4/F6 | PM2 wait_ready espera timeout sin esta senial | **RESUELTO** |
 | ALT-04 | Eliminar HTTP origins del CORS de produccion | F4 | Quitar `http://74.208.126.102:3005` y `http://74.208.126.102` de `.env.production` | PENDIENTE |
-| ALT-05 | Eliminar `env_file` del ecosystem.config.js (propiedad invalida PM2) | F4 | Eliminar lineas 65 y 114 | PENDIENTE |
-| ALT-06 | Eliminar `continue-on-error: true` del backend build en CI | F6 | `.github/workflows/deploy-production.yml:134` | PENDIENTE |
+| ALT-05 | Eliminar `env_file` del ecosystem.config.js (propiedad invalida PM2) | F4 | Eliminar lineas 65 y 114 | **RESUELTO** |
+| ALT-06 | Eliminar `continue-on-error: true` del backend build en CI | F6 | `.github/workflows/deploy-production.yml:134` | **RESUELTO** |
 | ALT-07 | Crear staging.conf para habilitar staging en init-database.sh | F1 | Copiar dev.conf, ajustar `ENV_SEEDS_DIR="seeds/staging"` y `ENV_LOAD_DEMO_DATA=false` | PENDIENTE |
 | ALT-08 | Completar STAGING con archivos `all\|core` faltantes (8+ archivos) | F1 | Copiar de PROD: admin_dashboard/*, auth/02-production-users, auth_management/02,04,06,07,08 | PENDIENTE |
 | ALT-09 | Eliminar PII real de DEV — crear seed sintetico `02-synthetic-users.sql` | F2 | Reemplazar `02-production-users.sql` en dev con datos faker | PENDIENTE |
 | ALT-10 | Versionar config Nginx del servidor en `apps/devops/` | F4 | Crear `apps/devops/config/nginx-production.conf` | PENDIENTE |
-| ALT-11 | Deshabilitar source maps en build de produccion | F4 | Cambiar `sourcemap: true` a `false` o `'hidden'` en `vite.config.ts:49` | PENDIENTE |
+| ALT-11 | Deshabilitar source maps en build de produccion | F4 | Cambiar a `sourcemap: process.env.NODE_ENV !== 'production'` en `vite.config.ts:49` | **RESUELTO** |
 | ALT-12 | Reordenar deploy: build ANTES de stop (reduce downtime a ~20s) | F6 | npm ci + build mientras servicios siguen corriendo, luego pm2 restart | PENDIENTE |
 | ALT-13 | Usar full pg_dump (pre-deploy-backup.sh) en vez de backup parcial | F6 | Reemplazar llamada a backup-production-data.sh por pre-deploy-backup.sh | PENDIENTE |
 | ALT-14 | Subir thresholds de validacion BD en prod.conf | F6 | Tablas: 64->150, Funciones: 60->160, Schemas: 9->15 | PENDIENTE |
@@ -98,11 +98,11 @@ Este track es independiente del checklist de deploy pero critico para seguridad 
 
 | Categoria | Total | Completados | % |
 |-----------|:-----:|:-----------:|:-:|
-| Bloqueantes | 10 | 0 | 0% |
-| Altos | 14 | 0 | 0% |
+| Bloqueantes | 10 | 6 | 60% |
+| Altos | 14 | 5 | 36% |
 | Medios | 12 | 0 | 0% |
 | Bajos | 5 | 0 | 0% |
-| **TOTAL** | **41** | **0** | **0%** |
+| **TOTAL** | **41** | **11** | **27%** |
 
 **Criterio de deploy:** Todos los items BLOQUEANTES deben estar en estado COMPLETADO antes de ejecutar deploy a produccion.
 

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Guerrero Jaguar - Maya warrior avatar -->
+  <circle cx="50" cy="50" r="48" fill="#1C1C1C"/>
+  <circle cx="50" cy="50" r="44" fill="#2D5016"/>
+  <!-- Head with headdress -->
+  <ellipse cx="50" cy="45" rx="18" ry="20" fill="#8B4513"/>
+  <!-- Jaguar spots on headdress -->
+  <circle cx="38" cy="32" r="3" fill="#D4AF37"/>
+  <circle cx="50" cy="28" r="3" fill="#D4AF37"/>
+  <circle cx="62" cy="32" r="3" fill="#D4AF37"/>
+  <!-- Eyes -->
+  <ellipse cx="43" cy="44" rx="4" ry="3" fill="#1C1C1C"/>
+  <ellipse cx="57" cy="44" rx="4" ry="3" fill="#1C1C1C"/>
+  <circle cx="44" cy="43" r="1.5" fill="#D4AF37"/>
+  <circle cx="58" cy="43" r="1.5" fill="#D4AF37"/>
+  <!-- Nose and mouth -->
+  <path d="M47 50 L50 53 L53 50" stroke="#1C1C1C" stroke-width="1.5" fill="none"/>
+  <!-- Feathered headdress -->
+  <path d="M30 30 Q35 15 50 12 Q65 15 70 30" stroke="#D4AF37" stroke-width="2" fill="none"/>
+  <path d="M34 28 L32 18" stroke="#2D5016" stroke-width="2"/>
+  <path d="M50 26 L50 14" stroke="#2D5016" stroke-width="2"/>
+  <path d="M66 28 L68 18" stroke="#2D5016" stroke-width="2"/>
+  <!-- Collar/necklace -->
+  <path d="M35 62 Q50 68 65 62" stroke="#D4AF37" stroke-width="3" fill="none"/>
+  <!-- Body silhouette -->
+  <path d="M35 62 L30 85 L70 85 L65 62" fill="#8B4513"/>
+  <!-- Jaguar pattern on body -->
+  <circle cx="42" cy="74" r="2" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="58" cy="74" r="2" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="50" cy="80" r="2" fill="#D4AF37" opacity="0.6"/>
+</svg>

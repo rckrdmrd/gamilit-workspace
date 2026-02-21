@@ -118,7 +118,7 @@ flowchart TD
 
 | Tipo | Archivo |
 |------|---------|
-| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherContentManagement.tsx` |
+| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherContentManagementPage.tsx` |
 | Hook | `apps/frontend/src/apps/teacher/hooks/useTeacherContent.ts` |
 | API Service | `apps/frontend/src/services/api/teacher/teacherContentApi.ts` |
 | Layout | `apps/frontend/src/apps/teacher/layouts/TeacherLayout.tsx` |
@@ -155,7 +155,7 @@ flowchart TD
 | Titulo obligatorio | FE + BE | El campo `title` es requerido para crear/editar contenido |
 | Tipo de contenido valido | FE + BE | Debe ser uno de: CUSTOM_EXERCISE, WORKSHEET, READING_MATERIAL, VIDEO_LESSON, PRESENTATION, QUIZ, ASSIGNMENT, RESOURCE_PACK |
 | Visibilidad valida | FE + BE | Debe ser: PRIVATE, CLASSROOM, SCHOOL, PUBLIC |
-| Dificultad valida | FE + BE | Debe ser: beginner, intermediate, advanced |
+| Dificultad valida | FE + BE | Debe ser: easy, medium, hard, expert (DDL CHECK constraint) |
 | Solo el creador puede editar | BE | El teacher solo puede gestionar sus propios contenidos |
 | Publicacion requiere campos completos | BE | Solo contenidos con titulo, tipo y visibilidad pueden publicarse |
 | Soft delete | BE + DB | La eliminacion es logica (deleted_at), no fisica |
@@ -185,7 +185,7 @@ flowchart TD
 
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
-| Frontend Pagina | `apps/frontend/src/apps/teacher/pages/TeacherContentManagement.tsx` | Componente principal, CRUD completo con modales |
+| Frontend Pagina | `apps/frontend/src/apps/teacher/pages/TeacherContentManagementPage.tsx` | Componente principal, CRUD completo con modales |
 | Frontend Hook | `apps/frontend/src/apps/teacher/hooks/useTeacherContent.ts` | Estado, filtros, paginacion, metodos CRUD |
 | Frontend API | `apps/frontend/src/services/api/teacher/teacherContentApi.ts` | Llamadas HTTP a endpoints /teacher/content |
 | Backend Controller | `apps/backend/src/modules/teacher/controllers/teacher-content.controller.ts` | Endpoints REST: GET, POST, PUT, DELETE, PATCH |

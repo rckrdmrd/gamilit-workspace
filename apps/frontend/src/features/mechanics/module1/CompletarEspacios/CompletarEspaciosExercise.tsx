@@ -84,10 +84,6 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         answers: { blanks: userAnswers },
       });
 
-      console.log('📊 [CompletarEspacios] Progress update sent:', {
-        answered: answeredCount,
-        totalBlanks: blanks.length,
-      });
     }
   }, [blanks, hintsUsed, usedWords, onProgressUpdate, answeredCount, startTime, exercise.id]);
 
@@ -178,11 +174,6 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         return;
       }
 
-      console.log('📝 [CompletarEspacios] Submitting with answers:', {
-        blankCount: Object.keys(answersObj).length,
-        totalBlanks: blanks.length,
-      });
-
       // Submit to backend API
       const response = await submitAsync({ blanks: answersObj });
 
@@ -207,11 +198,6 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [CompletarEspacios] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [CompletarEspacios] Submission error:', error);
       setFeedback({
@@ -340,9 +326,9 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
               </span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -369,9 +355,9 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
                   disabled={showResults}
                   className={`rounded-lg px-6 py-3 font-semibold transition-all ${
                     selectedWord === word
-                      ? 'scale-105 bg-blue-500 text-white shadow-lg'
-                      : 'border-2 border-detective-border bg-white text-detective-text hover:border-blue-400 hover:shadow-md'
-                  } ${showResults ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                      ? 'scale-105 bg-detective-orange/20 border-2 border-detective-orange text-detective-text shadow-lg'
+                      : 'border-2 border-detective-border bg-detective-card text-detective-text hover:border-blue-400 hover:shadow-md'
+                  } ${showResults ? 'cursor-not-allowed opacity-100' : 'cursor-pointer'}`}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}

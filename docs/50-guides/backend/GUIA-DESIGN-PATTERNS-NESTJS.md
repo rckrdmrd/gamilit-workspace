@@ -1011,7 +1011,7 @@ export class TypeOrmUserRepository implements IUserRepository {
 })
 ```
 
-En gamilit, 152 entities mapean a repositories via TypeORM `Repository<Entity>`, organizados en 10 datasources (uno por schema de PostgreSQL).
+En gamilit, 155 entities (156 classes) mapean a repositories via TypeORM `Repository<Entity>`, organizados en 10 datasources (uno por schema de PostgreSQL).
 
 ---
 
@@ -1065,7 +1065,7 @@ Exercise.Header = function ExerciseHeader() {
 
 ### 10.2 Custom Hooks como Strategy Pattern
 
-Los custom hooks de gamilit (102 hooks) implementan el patron Strategy para logica reutilizable:
+Los custom hooks de gamilit (127 hooks) implementan el patron Strategy para logica reutilizable:
 
 ```tsx
 // Hook como estrategia de autenticacion
@@ -1094,7 +1094,7 @@ function useExerciseLogic(exerciseType: ExerciseType) {
 
 ### 10.3 Zustand Slices como State Pattern
 
-gamilit usa 14 stores Zustand para estado de cliente. Las slices representan el patron State:
+gamilit usa 13 stores Zustand para estado de cliente. Las slices representan el patron State:
 
 ```tsx
 // Store con slices — patron State
@@ -1136,6 +1136,8 @@ React Query implementa Cache-Aside (Lazy Loading) para datos del servidor:
 
 ```tsx
 // Cache-Aside: Primero busca en cache, si no existe va al servidor
+// Nota: useStudentProgress fue removido (Teacher Portal Audit 2026-02-20).
+// Este ejemplo ilustra el patron Cache-Aside con nombre generico.
 function useStudentProgress(studentId: string) {
   return useQuery({
     queryKey: ['student-progress', studentId],
@@ -1167,9 +1169,9 @@ function useCompleteExercise() {
 | Patron | Implementacion en gamilit | Cantidad |
 |--------|--------------------------|----------|
 | Compound Components | Ejercicios, Dashboard, Formularios | ~15 conjuntos |
-| Custom Hooks (Strategy) | Hooks de feature, auth, gamificacion | 102 hooks |
-| Zustand (State) | Auth, UI, gamificacion, preferencias | 14 stores |
-| React Query (Cache-Aside) | Todos los datos del servidor | 52 API files, 662 calls |
+| Custom Hooks (Strategy) | Hooks de feature, auth, gamificacion | 127 hooks |
+| Zustand (State) | Auth, UI, gamificacion, preferencias | 13 stores |
+| React Query (Cache-Aside) | Todos los datos del servidor | 67 API files, ~575 calls |
 | Provider Pattern | AuthContext, ThemeProvider | 4 providers |
 
 ---

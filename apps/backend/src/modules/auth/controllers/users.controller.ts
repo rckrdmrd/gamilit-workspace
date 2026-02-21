@@ -152,7 +152,7 @@ export class UsersController {
     },
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getPreferences(@Request() req: AuthRequest): Promise<{ preferences: any }> {
+  async getPreferences(@Request() req: AuthRequest): Promise<{ preferences: Record<string, unknown> }> {
     const userId = req.user!.id;
     const preferences = await this.authService.getUserPreferences(userId);
     return { preferences };
@@ -185,8 +185,8 @@ export class UsersController {
   })
   async updatePreferences(
     @Request() req: AuthRequest,
-      @Body('preferences') preferences: any,
-  ): Promise<{ preferences: any }> {
+      @Body('preferences') preferences: Record<string, unknown>,
+  ): Promise<{ preferences: Record<string, unknown> }> {
     const userId = req.user!.id;
     const updatedPreferences = await this.authService.updateUserPreferences(
       userId,
@@ -228,7 +228,7 @@ export class UsersController {
   })
   async uploadAvatar(
     @Request() req: AuthRequest,
-      @UploadedFile() file: any,
+      @UploadedFile() file: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
   ): Promise<{ avatar_url: string }> {
     const userAuthId = req.user!.user_id || req.user!.id;
 

@@ -6,16 +6,17 @@
  *
  * @updated 2025-12-29 - Removed mock data, added fetchRecommendations and fetchActivities
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type {
   Friend,
   FriendRequest,
+  FriendRequestStatus,
   FriendRecommendation,
   FriendActivity,
+  ActivityType,
 } from '../types/friendsTypes';
+import type { RankType } from '@shared/components/base/RankBadge';
 import { friendsAPI } from '@/services/api/friendsAPI';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
@@ -102,7 +103,7 @@ export const useFriendsStore = create<FriendsStore>()(
             senderLevel: 1,
             receiverId: f.friendId,
             sentAt: f.createdAt, // Already a Date object from transformer
-            status: f.status as any,
+            status: f.status as FriendRequestStatus,
             message: undefined,
           }));
 
@@ -122,7 +123,7 @@ export const useFriendsStore = create<FriendsStore>()(
             userId: r.userId,
             username: r.username,
             avatar: r.avatar,
-            rank: r.rank as any,
+            rank: r.rank as RankType,
             level: r.level,
             mutualFriends: r.mutualFriends,
             commonInterests: r.commonInterests,
@@ -147,7 +148,7 @@ export const useFriendsStore = create<FriendsStore>()(
             userId: a.userId,
             username: '', // TODO: Join with user data
             avatar: '/avatars/default.png',
-            type: a.activityType as any,
+            type: a.activityType as ActivityType,
             description: a.description,
             timestamp: a.createdAt, // Already a Date object from transformer
             praised: false,

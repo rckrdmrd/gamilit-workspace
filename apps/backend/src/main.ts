@@ -27,24 +27,51 @@ async function bootstrap() {
   // CORS configuration - Supports multiple origins separated by comma
   // Default origins include frontend (3005) and backend (3006) for Swagger
   const corsOrigin = configService.get<string>('app.corsOrigin') || 'http://localhost:3005,http://localhost:3006';
-  const allowedOrigins = corsOrigin.split(',').map(origin => origin.trim());
+  const rawOrigins = corsOrigin.split(',').map(origin => origin.trim());
+
+  // ALT-04: In production, strip HTTP origins — only HTTPS allowed (ESTANDAR-SEGURIDAD)
+  // In development, all origins (HTTP and HTTPS) are permitted for local testing
+  const isDev = configService.get<string>('env.nodeEnv', 'development') !== 'production';
+  const allowedOrigins = isDev
+    ? rawOrigins
+    : rawOrigins.filter(origin => {
+        if (origin === '*') return true; // wildcard passes through
+        if (origin.startsWith('https://')) return true;
+        Logger.warn(`CORS: Dropping insecure HTTP origin in production: ${origin}`, 'Bootstrap');
+        return false;
+      });
+
+  // Safety: if all origins were filtered out in production, log an error
+  if (!isDev && allowedOrigins.length === 0) {
+    Logger.error(
+      'CORS: No HTTPS origins configured for production! Set CORS_ORIGIN with https:// URLs.',
+      'Bootstrap',
+    );
+  }
+
+  // In dev, auto-accept origins from LAN IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+  const lanOriginPattern = /^https?:\/\/(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.|localhost)/;
+
+  // Shared CORS origin validator — used by both HTTP CORS and WebSocket CORS
+  const corsOriginValidator = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (like mobile apps, Postman, curl, server-to-server)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    // Check if origin is in the allowed list, or is a LAN origin in dev mode
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*') ||
+        (isDev && lanOriginPattern.test(origin))) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️  CORS blocked request from origin: ${origin}`);
+      console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  };
 
   app.enableCors({
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      // Allow requests with no origin (like mobile apps, Postman, curl, server-to-server)
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      // Check if origin is in the allowed list
-      if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
-        callback(null, true);
-      } else {
-        console.warn(`⚠️  CORS blocked request from origin: ${origin}`);
-        console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: corsOriginValidator,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-tenant-id'],
@@ -53,7 +80,7 @@ async function bootstrap() {
   // FIX-BE-016-2026-01-29: Use unified Socket.IO adapter to prevent
   // "handleUpgrade() was called more than once" error with multiple gateways
   // 2026-02-03: Upgraded to RedisIoAdapter for horizontal scaling support
-  const redisIoAdapter = new RedisIoAdapter(app, allowedOrigins);
+  const redisIoAdapter = new RedisIoAdapter(app, corsOriginValidator);
 
   // Connect to Redis only if enabled (disabled in dev to avoid WSL2 svchost proxy issues)
   const redisEnabled = configService.get<boolean>('redis.enabled', true);
@@ -136,10 +163,10 @@ async function bootstrap() {
 
     const errors: string[] = [];
 
-    if (jwtSecret.length < 32 || jwtSecret.includes('change-in-production') || jwtSecret.includes('your-secret')) {
+    if (jwtSecret.length < 32 || jwtSecret.includes('not-for-production') || jwtSecret.includes('change-in-production') || jwtSecret.includes('your-secret')) {
       errors.push('JWT_SECRET must be at least 32 characters and not a placeholder');
     }
-    if (jwtRefreshSecret.length < 32 || jwtRefreshSecret.includes('change-in-production') || jwtRefreshSecret.includes('your-secret')) {
+    if (jwtRefreshSecret.length < 32 || jwtRefreshSecret.includes('not-for-production') || jwtRefreshSecret.includes('change-in-production') || jwtRefreshSecret.includes('your-secret')) {
       errors.push('JWT_REFRESH_SECRET must be at least 32 characters and not a placeholder');
     }
     if (jwtSecret === jwtRefreshSecret) {
@@ -157,6 +184,11 @@ async function bootstrap() {
   }
 
   await app.listen(port);
+
+  // Signal PM2 that the app is ready (required for wait_ready: true in ecosystem.config.js)
+  if (typeof process.send === 'function') {
+    process.send('ready');
+  }
 
   const socketStatus = redisConnected ? 'Redis (scalable)' : 'In-memory';
   const cronEnabled = (process.env.CRON_ENABLED || 'true').toLowerCase() !== 'false';

@@ -432,9 +432,9 @@ dominio: "Machine Learning y Data Science"
 estado: "ARCHIVED - No aplica a gamilit (plataforma educativa sin ML real)"
 
 nota: |
-  gamilit solo tiene heuristicas placeholder (v0.0.1-heuristic) en
-  ml-predictor.service.ts. "ML Coins" = "Maya Learning Coins" (moneda virtual).
-  Perfil archivado 2026-02-12.
+  gamilit tenia heuristicas placeholder en ml-predictor.service.ts (REMOVIDO Sprint 3,
+  TASK-2026-02-20-TEACHER-PORTAL-AUDIT). Risk detection ahora en StudentRiskAlertService.
+  "ML Coins" = "Maya Learning Coins" (moneda virtual). Perfil archivado 2026-02-12.
 
 no_asignar_si:
   - "Proyecto gamilit (sin componentes ML reales)"

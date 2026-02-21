@@ -179,7 +179,7 @@ export const MotivationalBanner = ({
       {/* Content */}
       <div className="relative z-10 flex items-center gap-4">
         {/* Icon */}
-        <div className="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0">
+        <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
           <span className="text-3xl">{message.emoji}</span>
         </div>
 

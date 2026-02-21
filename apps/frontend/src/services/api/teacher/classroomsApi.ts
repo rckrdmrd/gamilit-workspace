@@ -607,11 +607,38 @@ class ClassroomsAPI {
   ): Promise<StudentPermissionsResponse> {
     try {
       const { data } = await apiClient.get<StudentPermissionsResponse>(
-        `${API_ENDPOINTS.teacher.classroom(classroomId)}/students/${studentId}/permissions`,
+        API_ENDPOINTS.teacher.updateStudentPermissions(classroomId, studentId),
       );
       return data;
     } catch (error) {
       console.error('[ClassroomsAPI] Error fetching student permissions:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update granular permissions for a student in a classroom
+   *
+   * AUDIT-C3-B4: Added to wire backend PATCH endpoint
+   *
+   * @param classroomId - ID of the classroom
+   * @param studentId - ID of the student
+   * @param permissions - Permissions to update (merged with existing)
+   * @returns Promise<StudentPermissionsResponse> Updated student permissions
+   */
+  async updateStudentPermissions(
+    classroomId: string,
+    studentId: string,
+    permissions: Record<string, unknown>,
+  ): Promise<StudentPermissionsResponse> {
+    try {
+      const { data } = await apiClient.patch<StudentPermissionsResponse>(
+        API_ENDPOINTS.teacher.updateStudentPermissions(classroomId, studentId),
+        permissions,
+      );
+      return data;
+    } catch (error) {
+      console.error('[ClassroomsAPI] Error updating student permissions:', error);
       throw error;
     }
   }

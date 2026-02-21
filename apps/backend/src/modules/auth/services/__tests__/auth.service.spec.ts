@@ -25,6 +25,7 @@ import { UserAchievement } from '@/modules/gamification/entities/user-achievemen
 import { Achievement } from '@/modules/gamification/entities/achievement.entity';
 import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
+import { InventoryService } from '@/modules/gamification/services/inventory.service';
 import { createMockRepository } from '@/__mocks__/repositories.mock';
 import { createMockJwtService, TestDataFactory } from '@/__mocks__/services.mock';
 
@@ -45,6 +46,7 @@ describe('AuthService', () => {
   let achievementsRepository: ReturnType<typeof createMockRepository>;
   let _mlCoinsTransactionsRepository: ReturnType<typeof createMockRepository>;
   let _exerciseSubmissionsRepository: ReturnType<typeof createMockRepository>;
+  let _inventoryService: { initializeUserInventory: jest.Mock; getEquippedItems: jest.Mock; getEquippedItemsMap: jest.Mock; equipItem: jest.Mock; unequipItem: jest.Mock };
   let jwtService: ReturnType<typeof createMockJwtService>;
 
   // Test data
@@ -65,6 +67,7 @@ describe('AuthService', () => {
     achievementsRepository = createMockRepository<Achievement>();
     _mlCoinsTransactionsRepository = createMockRepository<MLCoinsTransaction>();
     _exerciseSubmissionsRepository = createMockRepository<ExerciseSubmission>();
+    _inventoryService = { initializeUserInventory: jest.fn(), getEquippedItems: jest.fn(), getEquippedItemsMap: jest.fn().mockResolvedValue({}), equipItem: jest.fn(), unequipItem: jest.fn() };
     jwtService = createMockJwtService();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -81,6 +84,7 @@ describe('AuthService', () => {
         { provide: getRepositoryToken(Achievement, 'gamification'), useValue: achievementsRepository },
         { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: _mlCoinsTransactionsRepository },
         { provide: getRepositoryToken(ExerciseSubmission, 'progress'), useValue: _exerciseSubmissionsRepository },
+        { provide: InventoryService, useValue: _inventoryService },
         { provide: JwtService, useValue: jwtService },
       ],
     }).compile();
@@ -164,10 +168,11 @@ describe('AuthService', () => {
       await service.register(registerDto);
 
       // Assert
+      // register() uses user.email (from saved user), not registerDto.email directly
       expect(profileRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           tenant_id: mockTenant.id,
-          email: registerDto.email,
+          email: mockUser.email,
         }),
       );
     });
@@ -310,14 +315,16 @@ describe('AuthService', () => {
     const mockRefreshToken = 'valid.refresh.token';
     const mockSession = {
       id: 'session-id',
-      user_id: mockUser.id,
+      user_id: mockProfile.id, // DB-125: session.user_id is profile.id
       refresh_token: 'hashed-refresh-token',
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
 
     beforeEach(() => {
-      jwtService.verify.mockReturnValue({ sub: mockUser.id, email: mockUser.email });
+      // DB-125: JWT sub is now profile.id, refreshToken() looks up profile first
+      jwtService.verify.mockReturnValue({ sub: mockProfile.id, email: mockUser.email });
       jwtService.sign.mockReturnValue('new.jwt.token');
+      profileRepository.findOne.mockResolvedValue(mockProfile as any);
       userRepository.findOne.mockResolvedValue(mockUser as any);
       sessionRepository.findOne.mockResolvedValue(mockSession as any);
       sessionRepository.save.mockResolvedValue(mockSession as any);
@@ -346,7 +353,8 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if user not found', async () => {
-      // Arrange
+      // Arrange - profile exists but user does not
+      profileRepository.findOne.mockResolvedValue(mockProfile as any);
       userRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert

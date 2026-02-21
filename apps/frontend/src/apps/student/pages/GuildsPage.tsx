@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/app/providers/AuthContext';
 import { Shield, Search, Target, Plus } from 'lucide-react';
+import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
 
 // Components
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { GuildStatsGrid } from '../components/guilds/GuildStatsGrid';
 import { DiscoverGuildsTab } from '../components/guilds/DiscoverGuildsTab';
 import { MyGuildTab } from '../components/guilds/MyGuildTab';
@@ -13,7 +13,6 @@ import { CreateGuildModal } from '../components/guilds/CreateGuildModal';
 
 // Hooks
 import { useGuilds } from '@/features/gamification/social/hooks/useGuilds';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -38,9 +37,7 @@ export default function GuildsPage() {
   const [activeTab, setActiveTab] = useState<TabType>(isInGuild ? 'my-guild' : 'discover');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
   const publicGuilds = getPublicGuilds();
   const recruitingGuilds = getRecruitingGuilds();
@@ -59,12 +56,15 @@ export default function GuildsPage() {
     }
   };
 
-  const handleLeaveGuild = async () => {
-    if (confirm('Are you sure you want to leave your guild?')) {
-      await leaveGuild();
-      setActiveTab('discover');
-    }
-  };
+  const handleLeaveGuild = useCallback(() => {
+    setShowLeaveConfirm(true);
+  }, []);
+
+  const handleConfirmLeave = useCallback(async () => {
+    await leaveGuild();
+    setShowLeaveConfirm(false);
+    setActiveTab('discover');
+  }, [leaveGuild]);
 
   const handleCreateGuild = async (data: { name: string; description: string; isPublic: boolean; requirements: { minLevel: number } }) => {
     await createGuild(data);
@@ -79,13 +79,7 @@ export default function GuildsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader
-        user={user ?? undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
+    <StudentPageShell>
       <main className="detective-container py-8">
         <div className="mb-8">
           <h1 className="mb-2 flex items-center gap-3 text-4xl font-bold text-detective-text">
@@ -106,7 +100,7 @@ export default function GuildsPage() {
 
         {/* Tabs */}
         <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto" role="tablist" aria-label="Secciones de gremios">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -114,6 +108,8 @@ export default function GuildsPage() {
               return (
                 <motion.button
                   key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
                   whileHover={!isDisabled ? { scale: 1.02 } : undefined}
                   whileTap={!isDisabled ? { scale: 0.98 } : undefined}
                   onClick={() => !isDisabled && setActiveTab(tab.id)}
@@ -146,6 +142,7 @@ export default function GuildsPage() {
         </div>
 
         {/* Tab Content */}
+        <div role="tabpanel" aria-live="polite">
         <AnimatePresence mode="wait">
           {activeTab === 'discover' && (
             <DiscoverGuildsTab
@@ -172,13 +169,25 @@ export default function GuildsPage() {
             />
           )}
         </AnimatePresence>
+        </div>
 
         <CreateGuildModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           onSubmit={handleCreateGuild}
         />
+
+        <ConfirmDialog
+          isOpen={showLeaveConfirm}
+          onClose={() => setShowLeaveConfirm(false)}
+          onConfirm={handleConfirmLeave}
+          title="Abandonar gremio"
+          message="¿Estás seguro de que deseas abandonar tu gremio? Perderás tu membresía y progreso en el gremio."
+          confirmText="Abandonar"
+          cancelText="Cancelar"
+          variant="danger"
+        />
       </main>
-    </div>
+    </StudentPageShell>
   );
 }

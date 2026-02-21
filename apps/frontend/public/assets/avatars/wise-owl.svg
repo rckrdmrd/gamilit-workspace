@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Wise Owl Avatar -->
+  <circle cx="50" cy="50" r="48" fill="#2D3748" stroke="#8B5CF6" stroke-width="2"/>
+  <!-- Body -->
+  <ellipse cx="50" cy="62" rx="22" ry="26" fill="#A0522D"/>
+  <!-- Belly -->
+  <ellipse cx="50" cy="68" rx="14" ry="16" fill="#DEB887"/>
+  <!-- Ear tufts -->
+  <path d="M32 32 L38 40 L28 42 Z" fill="#8B4513"/>
+  <path d="M68 32 L62 40 L72 42 Z" fill="#8B4513"/>
+  <!-- Eyes -->
+  <circle cx="42" cy="50" r="9" fill="#FFF8DC" stroke="#8B4513" stroke-width="1.5"/>
+  <circle cx="58" cy="50" r="9" fill="#FFF8DC" stroke="#8B4513" stroke-width="1.5"/>
+  <circle cx="42" cy="50" r="5" fill="#D4AF37"/>
+  <circle cx="58" cy="50" r="5" fill="#D4AF37"/>
+  <circle cx="42" cy="49" r="2" fill="#1C1C1C"/>
+  <circle cx="58" cy="49" r="2" fill="#1C1C1C"/>
+  <!-- Beak -->
+  <path d="M46 56 L50 62 L54 56 Z" fill="#FFB347"/>
+  <!-- Graduation cap -->
+  <rect x="34" y="33" width="32" height="3" rx="1" fill="#1C1C1C"/>
+  <path d="M38 33 L50 26 L62 33 Z" fill="#1C1C1C"/>
+  <circle cx="50" cy="26" r="2" fill="#D4AF37"/>
+</svg>

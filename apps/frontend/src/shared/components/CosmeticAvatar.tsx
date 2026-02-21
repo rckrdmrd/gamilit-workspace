@@ -1,0 +1,99 @@
+/**
+ * CosmeticAvatar Component
+ *
+ * Renders a user avatar with equipped cosmetic items (avatar skin, frame).
+ * Extracts cosmetic data from a batch equipped-items map and delegates
+ * rendering to the existing AvatarDisplay component.
+ *
+ * Usage:
+ *   <CosmeticAvatar
+ *     userId={user.id}
+ *     name={user.username}
+ *     fallbackAvatar={user.avatar}
+ *     equippedMap={batchEquippedData}
+ *     size="md"
+ *   />
+ *
+ * @see AvatarDisplay for the underlying avatar renderer
+ * @see inventory.api.ts getEquippedItemsBatch for the batch API
+ */
+
+import React from 'react';
+import { AvatarDisplay } from './AvatarDisplay';
+import type { EquippedItemsBatchMap } from '@/features/gamification/social/types/inventory.types';
+
+export interface CosmeticAvatarProps {
+  /** User ID to look up in the equippedMap */
+  userId: string;
+  /** User's display name (for initials fallback) */
+  name: string;
+  /** Fallback avatar URL when no cosmetic avatar is equipped */
+  fallbackAvatar?: string | null;
+  /** Batch equipped items map from getEquippedItemsBatch */
+  equippedMap?: EquippedItemsBatchMap | null;
+  /** Size variant */
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  className?: string;
+}
+
+/**
+ * Extract the avatar URL from equipped cosmetics, falling back to the
+ * user's default avatar if no cosmetic avatar is equipped.
+ */
+function resolveAvatarSrc(
+  userId: string,
+  fallbackAvatar?: string | null,
+  equippedMap?: EquippedItemsBatchMap | null,
+): string | null {
+  const userEquipped = equippedMap?.[userId];
+  // Look for cosmetic category names that represent avatars
+  const cosmeticAvatar =
+    userEquipped?.['avatar']?.assetUrl ||
+    userEquipped?.['cosmetics']?.assetUrl;
+
+  return cosmeticAvatar || fallbackAvatar || null;
+}
+
+/**
+ * Extract the frame border color from equipped cosmetics.
+ */
+function resolveFrameColor(
+  userId: string,
+  equippedMap?: EquippedItemsBatchMap | null,
+): string | null {
+  const userEquipped = equippedMap?.[userId];
+  const frameItem =
+    userEquipped?.['frame'] ||
+    userEquipped?.['profile'];
+
+  if (!frameItem) return null;
+
+  // Frame items store border color in data.border_color
+  const borderColor = frameItem.data?.border_color as string | undefined;
+  return borderColor || null;
+}
+
+export const CosmeticAvatar: React.FC<CosmeticAvatarProps> = ({
+  userId,
+  name,
+  fallbackAvatar,
+  equippedMap,
+  size = 'sm',
+  className,
+}) => {
+  const avatarSrc = resolveAvatarSrc(userId, fallbackAvatar, equippedMap);
+  const frameColor = resolveFrameColor(userId, equippedMap);
+
+  return (
+    <AvatarDisplay
+      src={avatarSrc}
+      name={name}
+      frameColor={frameColor}
+      size={size}
+      className={className}
+    />
+  );
+};
+
+CosmeticAvatar.displayName = 'CosmeticAvatar';

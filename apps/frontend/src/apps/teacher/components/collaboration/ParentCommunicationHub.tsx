@@ -4,8 +4,7 @@ import { MessageSquare, Send, FileText, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { teacherMessagesApi } from '@/services/api/teacher';
 
 interface ParentCommunicationHubProps {
   classroomId: string;
@@ -51,12 +50,11 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
 
     try {
       setSending(true);
-      await apiClient.post(API_ENDPOINTS.teacher.sendCommunication, {
-        classroom_id: classroomId,
-        recipient_type: 'parent',
+      await teacherMessagesApi.sendMessage({
         recipient_ids: selectedStudents,
         subject,
-        body,
+        content: body,
+        classroom_id: classroomId,
       });
       toast.success(`Mensajes enviados exitosamente a ${selectedStudents.length} padres`, {
         duration: 4000,
@@ -108,7 +106,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
                 className={`w-full rounded-lg p-3 text-left transition-colors ${
                   template === t.id
                     ? 'bg-detective-orange text-white'
-                    : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
+                    : 'bg-detective-bg-secondary text-detective-text hover:bg-detective-bg-secondary/80'
                 }`}
               >
                 {t.name}
@@ -165,7 +163,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
                 {students.map((student) => (
                   <label
                     key={student.id}
-                    className="flex cursor-pointer items-center gap-2 rounded bg-detective-bg-secondary p-2 hover:bg-opacity-80"
+                    className="flex cursor-pointer items-center gap-2 rounded bg-detective-bg-secondary p-2 hover:bg-detective-bg-secondary/80"
                   >
                     <input
                       type="checkbox"

@@ -1,7 +1,7 @@
 # Diferencias Dev (WSL) vs Prod (Servidor)
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-11
+**Version:** 1.1.0
+**Fecha:** 2026-02-20
 
 ---
 
@@ -11,18 +11,64 @@
 |---------|-------------------|----------------------|
 | Backend URL | http://localhost:3006 | https://74.208.126.102 (via Nginx:443) |
 | Frontend URL | http://localhost:3005 | https://74.208.126.102 (via Nginx:443) |
+| Frontend API Mode | **Proxy** (`VITE_API_HOST=proxy`) — URLs relativas via Vite dev server | **Absoluto** (`VITE_API_HOST=74.208.126.102:3006`) |
+| WebSocket | Auto-detecta `window.location.hostname:3006` | wss://74.208.126.102:3006 |
+| CORS LAN | Auto-acepta IPs privadas (192.168.x, 10.x, 172.16-31.x) | Solo whitelist explicita |
 | DB Host | Deterministico via `DB_HOST_MODE` + `npm run predev` (`wsl-ip` o `localhost`) | localhost |
 | DB Port | 5432 | 5432 |
 | DB Pool Max | 2 (WSL2 limitado) | 2 |
 | DB Timeout | 15000ms | 15000ms |
 | Redis | `REDIS_ENABLED=false` por defecto; si se habilita, `predev` alinea `REDIS_URL` al host resuelto | localhost:6379 |
-| WebSocket | ws://localhost:3006 | wss://74.208.126.102 |
 
 ## SSL/HTTPS
 
 - **Dev:** Sin SSL, HTTP directo en puertos 3005/3006
 - **Prod:** Nginx reverse proxy con SSL (self-signed o Let's Encrypt via Certbot)
 - **CORS:** Manejado SOLO por NestJS (NUNCA duplicar en Nginx)
+
+## Modo Proxy y Acceso LAN (Dev)
+
+En desarrollo, el frontend usa **modo proxy** (`VITE_API_HOST=proxy`) para permitir acceso desde cualquier dispositivo en la red local sin configuracion adicional.
+
+### Como Funciona
+
+```
+Dispositivo LAN → http://192.168.1.X:3005 (Vite dev server, host:true)
+                  ↓ /api/v1/* (URL relativa)
+                  Vite proxy (server-side) → http://localhost:3006
+                  ↓ respuesta
+                  ← Dispositivo LAN
+```
+
+1. `VITE_API_HOST=proxy` activa modo proxy en `api.config.ts`
+2. `API_BASE_URL` se construye como `/api/v1` (relativo, sin hostname)
+3. Vite dev server intercepta `/api/*` y lo redirige a `localhost:3006` (server-side)
+4. Como el proxy corre en el servidor, funciona para cualquier cliente independientemente de su IP
+
+### WebSocket en Modo Proxy
+
+WebSocket no puede usar proxy relativo, asi que usa `window.location.hostname:3006`:
+- Desde `localhost` → `ws://localhost:3006`
+- Desde `192.168.1.50` → `ws://192.168.1.50:3006` (conecta directo al backend)
+
+### CORS para Red Local
+
+En dev (`NODE_ENV !== 'production'`), el backend auto-acepta origenes de:
+- `192.168.x.x` (redes privadas clase C)
+- `10.x.x.x` (redes privadas clase A)
+- `172.16-31.x.x` (redes privadas clase B)
+- `localhost` (siempre en whitelist)
+
+En produccion, CORS es estrictamente por whitelist explicita (sin auto-accept).
+
+### Configuracion por Ambiente
+
+| Variable | Dev (proxy) | Prod (absoluto) |
+|----------|-------------|-----------------|
+| `VITE_API_HOST` | `proxy` | `74.208.126.102:3006` |
+| `VITE_WS_HOST` | (vacio) | `74.208.126.102:3006` |
+| `VITE_API_PROTOCOL` | `http` | `https` |
+| `VITE_WS_PROTOCOL` | `ws` | `wss` |
 
 ## Despliegue
 

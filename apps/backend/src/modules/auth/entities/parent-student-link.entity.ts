@@ -24,23 +24,9 @@ import {
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { Profile } from './profile.entity';
 import { ParentAccount } from './parent-account.entity';
+import { ParentRelationshipType, LinkStatus } from '@/modules/parents/enums/parent-student-link.enums';
 
-export enum ParentRelationshipType {
-  MOTHER = 'mother',
-  FATHER = 'father',
-  GUARDIAN = 'guardian',
-  TUTOR = 'tutor',
-  STEPPARENT = 'stepparent',
-  GRANDPARENT = 'grandparent',
-  OTHER = 'other',
-}
-
-export enum LinkStatus {
-  PENDING = 'pending',
-  ACTIVE = 'active',
-  SUSPENDED = 'suspended',
-  REVOKED = 'revoked',
-}
+export { ParentRelationshipType, LinkStatus };
 
 @Entity({ schema: DB_SCHEMAS.AUTH, name: DB_TABLES.AUTH.PARENT_STUDENT_LINKS })
 @Unique(['parentAccountId', 'studentId'])

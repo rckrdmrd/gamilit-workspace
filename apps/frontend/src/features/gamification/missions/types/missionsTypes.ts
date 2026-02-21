@@ -38,6 +38,10 @@ export interface MissionObjective {
   current: number;
   description?: string;
   modules_visited?: string[];
+  /** Required exercise type filter (e.g., 'crucigrama', 'detective_textual'). Only exercises of this type count toward the mission. */
+  required_exercise_type?: string;
+  /** Required module number filter (1-5). Only exercises from this module count toward the mission. */
+  required_module?: number;
 }
 
 /**

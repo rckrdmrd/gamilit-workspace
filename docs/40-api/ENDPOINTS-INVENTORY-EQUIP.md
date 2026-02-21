@@ -2,9 +2,9 @@
 
 > Contrato API para equipamiento cosmético de tienda visual.
 
-**Version:** 1.0.0  
-**Fecha:** 2026-02-17  
-**Modulo:** `gamification/inventory`  
+**Version:** 2.0.0
+**Fecha:** 2026-02-21
+**Modulo:** `gamification/inventory`
 **Auth:** JWT Bearer obligatorio.
 **Seguridad de datos:** RLS activo sobre `user_purchases` y `user_equipped_items`.
 
@@ -13,7 +13,7 @@
 ## 1. Alcance
 
 Este documento cubre los endpoints de:
-- Consulta de items equipados.
+- Consulta de items equipados (individual y batch).
 - Equipar item cosmético.
 - Quitar item equipado.
 
@@ -26,6 +26,12 @@ No cubre compra de items (`shop/purchase`) ni uso de consumibles.
 ### 2.1 GET `/gamification/inventory/equipped`
 
 Obtiene todos los items cosméticos equipados por el usuario autenticado.
+
+> **Nota:** El campo `item.metadata` en las respuestas se enriquece en tiempo de ejecucion
+> mediante `mergeVisualConfig()`, que copia claves visuales (`type`, `asset_url`, `border_color`,
+> `display_text`, `color`, `animated`, `animation`, `glow_color`, etc.) desde `item.effect_data`
+> hacia `item.metadata`. Los consumidores frontend deben leer exclusivamente de `metadata`
+> para rendering visual.
 
 #### Respuesta 200 (ejemplo)
 
@@ -42,8 +48,12 @@ Obtiene todos los items cosméticos equipados por el usuario autenticado.
       "name": "Aura Legendaria",
       "metadata": {
         "type": "profile_frame",
-        "render_mode": "css",
-        "css_class": "ring-4 ring-purple-500"
+        "asset_url": "/assets/frames/hieroglyphic.svg",
+        "border_color": "#CD853F",
+        "fallback": {
+          "render_mode": "css",
+          "css_class": "ring-2 ring-slate-400"
+        }
       }
     },
     "category": {
@@ -64,7 +74,7 @@ Equipa un item cosmético para la categoría del item.
 
 ```json
 {
-  "itemId": "80000001-0001-0000-0000-000000000001"
+  "item_id": "80000001-0001-0000-0000-000000000001"
 }
 ```
 
@@ -99,13 +109,13 @@ Equipa un item cosmético para la categoría del item.
 
 ### 2.3 POST `/gamification/inventory/unequip`
 
-Quita un item equipado por `itemId`.
+Quita un item equipado por `item_id`.
 
 #### Request body
 
 ```json
 {
-  "itemId": "80000001-0001-0000-0000-000000000001"
+  "item_id": "80000001-0001-0000-0000-000000000001"
 }
 ```
 
@@ -126,19 +136,59 @@ Quita un item equipado por `itemId`.
 
 ---
 
+### 2.4 GET `/gamification/inventory/equipped/batch`
+
+Obtiene items equipados para multiples usuarios en una sola consulta. Usado por leaderboards, listas de amigos, etc. para evitar N+1 queries.
+
+#### Query params
+
+| Param | Tipo | Requerido | Descripcion |
+|-------|------|-----------|-------------|
+| `userIds` | string | Si | IDs de usuarios separados por coma (max 50) |
+
+#### Ejemplo
+
+```
+GET /gamification/inventory/equipped/batch?userIds=id1,id2,id3
+```
+
+#### Respuesta 200 (ejemplo)
+
+```json
+{
+  "3b83f6d7-0f4c-4b9b-9a5f-d2ea8bc2f8d5": {
+    "frame": {
+      "itemId": "80000001-0001-0000-0000-000000000001",
+      "name": "Marco Jeroglifico",
+      "assetUrl": "/assets/frames/hieroglyphic.svg",
+      "type": "profile_frame",
+      "data": {
+        "type": "profile_frame",
+        "asset_url": "/assets/frames/hieroglyphic.svg",
+        "border_color": "#CD853F"
+      }
+    }
+  }
+}
+```
+
+> Si `userIds` esta vacio o no se envia, retorna `{}`.
+
+---
+
 ## 3. DTOs
 
 ### `EquipItemDto`
 
 ```json
 {
-  "itemId": "uuid"
+  "item_id": "uuid"
 }
 ```
 
 Reglas:
-- `itemId` obligatorio.
-- `itemId` debe ser UUID valido.
+- `item_id` obligatorio.
+- `item_id` debe ser UUID valido (`@IsUUID()`).
 
 ---
 
@@ -148,6 +198,11 @@ Reglas:
 - `apps/backend/src/modules/gamification/controllers/inventory.controller.ts`
 - `apps/backend/src/modules/gamification/services/inventory.service.ts`
 - `apps/backend/src/modules/gamification/dto/inventory/equip-item.dto.ts`
+- `apps/backend/src/modules/gamification/utils/visual-config.util.ts`
+
+### Frontend
+- `apps/frontend/src/features/gamification/social/api/inventory.api.ts`
+- `apps/frontend/src/features/gamification/social/types/inventory.types.ts`
 
 ### Datos
 - `gamification_system.shop_items`
@@ -156,4 +211,5 @@ Reglas:
 
 ### Flujos
 - `docs/30-ux-ui/flujos/student/FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md`
+- `docs/30-ux-ui/flujos/student/FLUJO-COMPRA-INVENTARIO-EQUIPAR.md`
 - `docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md`

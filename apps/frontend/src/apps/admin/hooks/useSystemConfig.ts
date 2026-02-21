@@ -1,90 +1,113 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useCallback } from 'react';
-import { adminAPI } from '@/services/api/adminAPI';
-import type { SystemConfig } from '@/services/api/adminTypes';
-
 /**
- * Hook for managing system configuration by category
+ * useSystemConfig Hook
+ *
+ * Hook for managing system configuration by category.
+ *
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
  *
  * @param category - Configuration category (general, email, notifications, security, maintenance)
  * @returns Configuration data, loading state, error, and update functions
+ *
+ * Updated: 2026-02-20 - Migrated to React Query
  */
+
+import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { adminAPI } from '@/services/api/adminAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
+import type { SystemConfig } from '@/services/api/adminTypes';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const systemConfigKeys = {
+  all: ['admin', 'system-config'] as const,
+  category: (category?: string) => ['admin', 'system-config', category] as const,
+};
+
+// ============================================================================
+// Hook
+// ============================================================================
+
 export function useSystemConfig(
   category?: 'general' | 'email' | 'notifications' | 'security' | 'maintenance',
 ) {
-  const [config, setConfig] = useState<Record<string, unknown> | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  /**
-   * Fetch configuration (by category or full config)
-   */
-  const fetchConfig = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      let data: any;
+  // ============================================================================
+  // QUERY
+  // ============================================================================
+
+  const configQuery = useQuery({
+    queryKey: systemConfigKeys.category(category),
+    queryFn: async () => {
+      let data: Record<string, unknown>;
       if (category) {
-        // Fetch by category
-        data = await adminAPI.settings.getCategoryConfig(category);
+        data = await adminAPI.settings.getCategoryConfig(category) as Record<string, unknown>;
       } else {
-        // Fetch full config
-        data = await adminAPI.settings.getConfig();
+        data = await adminAPI.settings.getConfig() as Record<string, unknown>;
       }
-      setConfig(data);
       return data;
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to fetch system configuration';
-      setError(errorMessage);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [category]);
+    },
+    enabled: false, // manual trigger via fetchConfig
+    staleTime: STALE_TIMES.SEMI_STATIC,
+  });
 
-  /**
-   * Update configuration (by category or full config)
-   */
+  // ============================================================================
+  // MUTATION
+  // ============================================================================
+
+  const updateMutation = useMutation({
+    mutationFn: async (values: Record<string, unknown>) => {
+      let data: Record<string, unknown>;
+      if (category) {
+        data = await adminAPI.settings.updateCategoryConfig(category, values) as Record<string, unknown>;
+      } else {
+        data = await adminAPI.settings.updateConfig(values as SystemConfig) as Record<string, unknown>;
+      }
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(systemConfigKeys.category(category), data);
+      queryClient.invalidateQueries({ queryKey: systemConfigKeys.all });
+    },
+  });
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
+  const fetchConfig = useCallback(async () => {
+    const result = await configQuery.refetch();
+    return result.data;
+  }, [configQuery]);
+
   const updateConfig = useCallback(
     async (values: Record<string, unknown>) => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        let data: any;
-        if (category) {
-          // Update by category
-          data = await adminAPI.settings.updateCategoryConfig(category, values);
-        } else {
-          // Update full config
-          data = await adminAPI.settings.updateConfig(values as SystemConfig);
-        }
-        setConfig(data);
-        return data;
-      } catch (err: unknown) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to update system configuration';
-        setError(errorMessage);
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+      return updateMutation.mutateAsync(values);
     },
-    [category],
+    [updateMutation],
   );
 
-  /**
-   * Reset local state
-   */
   const reset = useCallback(() => {
-    setConfig(null);
-    setError(null);
-  }, []);
+    queryClient.removeQueries({ queryKey: systemConfigKeys.category(category) });
+  }, [queryClient, category]);
+
+  // ============================================================================
+  // RETURN (unchanged interface)
+  // ============================================================================
 
   return {
-    config,
-    isLoading,
-    error,
+    config: configQuery.data ?? null,
+    isLoading: configQuery.isLoading || configQuery.isFetching || updateMutation.isPending,
+    error:
+      configQuery.error instanceof Error
+        ? configQuery.error.message
+        : updateMutation.error instanceof Error
+          ? updateMutation.error.message
+          : null,
     fetchConfig,
     updateConfig,
     reset,

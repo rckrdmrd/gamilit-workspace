@@ -13,7 +13,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { Assignment, AssignmentType } from '@modules/assignments/entities/assignment.entity';
+import { Assignment } from '@modules/assignments/entities/assignment.entity';
+import { AssignmentType } from '@modules/assignments/enums/assignment.enums';
 import { AssignmentSubmission, SubmissionStatus } from '@modules/assignments/entities/assignment-submission.entity';
 import { AssignmentExercise } from '@modules/assignments/entities/assignment-exercise.entity';
 import { AssignmentClassroom } from '@modules/social/entities/assignment-classroom.entity';

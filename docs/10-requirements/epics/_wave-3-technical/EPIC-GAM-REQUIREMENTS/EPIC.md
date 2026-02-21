@@ -30,8 +30,8 @@ Definicion completa de requerimientos funcionales y no funcionales para la plata
 | Capa | Componentes |
 |------|-------------|
 | Database | Modelo conceptual de 18 schemas |
-| Backend | Especificacion de 22 modulos y 899 endpoints |
-| Frontend | Wireframes de 4 portales, 68 paginas, 23 tipos de ejercicio |
+| Backend | Especificacion de 23 modulos y 905 endpoints |
+| Frontend | Wireframes de 4 portales, 70 paginas, 23 tipos de ejercicio |
 | DevOps | N/A |
 
 ## Dependencias

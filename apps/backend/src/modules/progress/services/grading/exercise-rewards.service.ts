@@ -30,7 +30,7 @@ import { UserStatsService } from '@/modules/gamification/services/user-stats.ser
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { MissionsService } from '@/modules/gamification/services/missions.service';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
-import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
+import { MissionTypeEnum } from '@/modules/gamification/enums/mission.enums';
 
 /**
  * Reward claim result

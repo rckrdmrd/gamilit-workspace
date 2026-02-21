@@ -276,8 +276,6 @@ export const submitExercise = async (
       powerupsUsed: [], // TODO: Add powerups support
     };
 
-    console.log('[submitExercise] Sending payload:', JSON.stringify(backendPayload, null, 2));
-
     const { data } = await apiClient.post<ApiResponse<SubmissionResponse>>(
       `/educational/exercises/${submission.mechanicId}/submit`,
       backendPayload,

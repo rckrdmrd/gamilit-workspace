@@ -15,12 +15,12 @@ Gamilit adopta desde su inicio la estructura canonica `apps/` que workspace-arch
 ```
 gamilit/
 ├── apps/
-│   ├── backend/           # NestJS 11 (22 modulos, 899 endpoints)
+│   ├── backend/           # NestJS 11 (23 modulos, 905 endpoints)
 │   ├── frontend/          # React 19 + Zustand + TailwindCSS
 │   ├── database/          # PostgreSQL 15 DDL (18 schemas, 169 tablas)
 │   ├── devops/            # Deployment scripts
 │   └── _MAP.md            # Indice de aplicaciones
-├── docs/                  # Documentacion del producto (6 secciones)
+├── docs/                  # Documentacion del producto (10 secciones)
 ├── orchestration/         # SIMCO local completo
 ├── CLAUDE.md              # Instrucciones para agentes
 └── README.md
@@ -46,7 +46,7 @@ gamilit/
 ├── apps/                  # MONOREPO (tracked en mismo repo GitHub)
 │   ├── backend/           # NestJS 11 API principal
 │   │   ├── src/
-│   │   │   ├── modules/   # 22 modulos (auth, users, modules, gamification...)
+│   │   │   ├── modules/   # 23 modulos (auth, users, modules, gamification...)
 │   │   │   ├── common/    # Utilidades compartidas
 │   │   │   └── main.ts
 │   │   ├── test/
@@ -54,9 +54,9 @@ gamilit/
 │   │   └── tsconfig.json
 │   ├── frontend/          # React 19 aplicacion web
 │   │   ├── src/
-│   │   │   ├── components/  # 475 componentes
-│   │   │   ├── pages/       # 68 paginas (4 portales)
-│   │   │   ├── stores/      # 14 stores Zustand
+│   │   │   ├── components/  # 580 componentes
+│   │   │   ├── pages/       # 70 paginas (4 portales)
+│   │   │   ├── stores/      # 13 stores Zustand
 │   │   │   └── App.tsx
 │   │   ├── package.json
 │   │   └── vite.config.ts
@@ -74,11 +74,14 @@ gamilit/
 │   ├── 20-architecture/
 │   ├── 30-ux-ui/
 │   ├── 40-api/
-│   ├── 40-standards/      # 9 estandares bundled
-│   └── 90-adr/            # 35+ ADRs
+│   ├── 40-standards/      # 17 estandares bundled
+│   ├── 50-guides/         # Guias de implementacion
+│   ├── 60-portals/        # Manuales de portales
+│   ├── 70-onboarding/     # Guias de onboarding
+│   └── 90-adr/            # 40+ ADRs
 ├── orchestration/         # Gobernanza local SIMCO
-│   ├── directivas/        # ~110 archivos SIMCO
-│   ├── agents/            # 42 perfiles de agente
+│   ├── directivas/        # ~63 archivos SIMCO activos (+13 archive)
+│   ├── agents/            # 28 perfiles full + 15 compact
 │   ├── inventarios/       # 8 YAMLs SSOT
 │   ├── tareas/            # Gestion de tareas
 │   └── templates/         # Templates reutilizables

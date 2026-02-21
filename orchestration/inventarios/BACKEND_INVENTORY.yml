@@ -2,30 +2,30 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "4.5.0"
-fecha: "2026-02-19"
+version: "5.1.0"
+fecha: "2026-02-21"  # Inventory validation 2026-02-21: services 173->172, DTOs 400->401 corrected
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
 auditoria: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
 
 # -------------------------------------------------------------------------------
-# RESUMEN (Verificado contra codigo 2026-02-12)
+# RESUMEN (Verificado contra codigo 2026-02-21)
 # -------------------------------------------------------------------------------
 
 resumen:
   modulos: 23             # 22 directorios + mail (transitivo)
-  entities: 155          # 155 archivos .entity.ts, 156 @Entity classes (+UserEquippedItem, +PendingUserInitialization)
-  dtos: 399              # 399 archivos .dto.ts en modules/ (+ ~5 en shared/dto/)
-  services: 173           # +1 PendingInitializationsCronService (REC-007)
+  entities: 156          # 156 archivos .entity.ts, 159 @Entity classes (+UserEquippedItem own file, +PendingUserInitialization, +ResourceRating, +ResourceComment, +ResourceDownload, message.entity has 2)
+  dtos: 401              # 401 *.dto.ts files in modules/. Verified 2026-02-21
+  services: 172           # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
   controllers: 108
-  endpoints: 905          # Verified 2026-02-19: +1 from auth controller updates (was 904)
+  endpoints: 912          # Verified 2026-02-21: 912 @Get/@Post/@Put/@Patch/@Delete across 108 controllers. +7 ResourceSharing on teacher-content.controller
   guards: 15
   decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
   interceptors: 6              # +1: tracing.interceptor.ts (new)
   pipes: 6                # 6 clases en 2 archivos .pipe.ts
   filters: 2              # 2 clases en 1 archivo .filter.ts
-  tests_files: 59         # Archivos .spec.ts (+2: module-boundaries.spec.ts, new specs)
+  tests_files: 61         # Verified 2026-02-21: 61 .spec.ts files
   tests_cases: 833        # Test cases (jest --verbose count)
 
 # -------------------------------------------------------------------------------
@@ -149,16 +149,16 @@ modulos:
 
   - nombre: "gamification"
     directorio: "modules/gamification"
-    entities: 21
+    entities: 22
     services: 18              # +1 inventory.service.ts
     controllers: 11           # +1 inventory.controller.ts
-    endpoints: 72             # +3 inventory endpoints
+    endpoints: 72             # +3 inventory endpoints, +4 batch equipment
     dtos: 39                  # +1 equip-item.dto.ts
     tests: 9
     estado: "95%"
     datasource: "gamification"
     schema: "gamification_system"
-    nota: "XP, rangos maya, achievements, ML coins, missions, leaderboard, store, comodines, peer challenges, skill ratings."
+    nota: "XP, rangos maya, achievements, ML coins, missions, leaderboard, store, comodines, peer challenges, skill ratings. user-equipped-item.entity.ts now own file (was class in user-purchase)."
     # Conceptos absorbidos: achievements, store, missions, leaderboard
 
   # === Social & Classrooms ===
@@ -225,16 +225,16 @@ modulos:
 
   - nombre: "teacher"
     directorio: "modules/teacher"
-    entities: 6
+    entities: 9
     services: 21
     controllers: 10
-    endpoints: 110
-    dtos: 22
+    endpoints: 117
+    dtos: 23
     tests: 4
     estado: "95%"
     datasource: "educational + progress + social + communication"
     schema: "educational_content + progress_tracking + social_features + communication"
-    nota: "Portal docente. 6 entity files con 7 @Entity classes (message.entity.ts tiene Message + MessageParticipant)."
+    nota: "Portal docente. 9 entity files con 10 @Entity classes (message.entity.ts tiene Message + MessageParticipant). +3 resource entities (ResourceRating, ResourceComment, ResourceDownload). +7 ResourceSharing endpoints. +1 shared-resource.dto.ts."
 
   - nombre: "parents"
     directorio: "modules/parents"
@@ -485,5 +485,5 @@ filters:
       archivo: "shared/filters/http-exception.filter.ts"
 
 # ===============================================================================
-# FIN BACKEND INVENTORY
+# FIN BACKEND INVENTORY v5.0.0
 # ===============================================================================

@@ -36,7 +36,7 @@ export enum MissionTemplateDifficultyEnum {
  *
  * @description Templates for generating missions with predefined configurations
  * @table gamification_system.mission_templates
- * @fields 19 campos según DDL
+ * @fields 20 campos según DDL
  *
  * Características:
  * - Templates configurables para misiones diarias, semanales, especiales y de aula
@@ -74,10 +74,10 @@ export class MissionTemplate {
   @Column({ type: 'text' })
     description!: string;
 
-  // Type and frequency
+  // Type and frequency — DDL uses VARCHAR(20) + CHECK constraint (not PG ENUM)
   @Column({
-    type: 'enum',
-    enum: MissionTemplateTypeEnum,
+    type: 'varchar',
+    length: 20,
   })
     type!: MissionTemplateTypeEnum;
 
@@ -102,9 +102,10 @@ export class MissionTemplate {
     badge_id!: string | null;
 
   // Configuration
+  // DDL uses VARCHAR(20) + CHECK constraint (not PG ENUM)
   @Column({
-    type: 'enum',
-    enum: MissionTemplateDifficultyEnum,
+    type: 'varchar',
+    length: 20,
     default: MissionTemplateDifficultyEnum.NORMAL,
   })
     difficulty!: MissionTemplateDifficultyEnum;
@@ -124,6 +125,9 @@ export class MissionTemplate {
 
   @Column({ type: 'integer', nullable: true })
     required_module!: number | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true, default: null })
+    required_exercise_type!: string | null;
 
   // Metadata
   @Column({ type: 'varchar', length: 50, nullable: true })

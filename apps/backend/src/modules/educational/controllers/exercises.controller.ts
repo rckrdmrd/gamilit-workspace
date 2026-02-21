@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Logger,
   Request,
   UseGuards,
   NotFoundException,
@@ -15,8 +16,8 @@ import {
   Optional,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { ExercisesService } from '../services';
 import {
   CreateExerciseDto,
@@ -29,7 +30,6 @@ import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
 import { ExerciseAnswerValidator } from '@/modules/progress/dto/answers/exercise-answer.validator';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
-import { Profile } from '@/modules/auth/entities';
 import { AuthRequest } from '@shared/types';
 
 /**
@@ -44,12 +44,12 @@ import { AuthRequest } from '@shared/types';
 @ApiTags('Educational - Exercises')
 @Controller(extractBasePath(API_ROUTES.EDUCATIONAL.BASE))
 export class ExercisesController {
+  private readonly logger = new Logger(ExercisesController.name);
+
   constructor(
     private readonly exercisesService: ExercisesService,
     private readonly exerciseSubmissionService: ExerciseSubmissionService,
     private readonly exerciseAttemptService: ExerciseAttemptService,
-    @InjectRepository(Profile, 'auth')
-    private readonly profileRepo: Repository<Profile>,
     @Optional()
     @InjectDataSource('educational')
     private readonly dataSource?: DataSource,
@@ -64,16 +64,7 @@ export class ExercisesController {
    * @throws NotFoundException if profile doesn't exist
    */
   private async getProfileId(profileId: string): Promise<string> {
-    const profile = await this.profileRepo.findOne({
-      where: { id: profileId },
-      select: ['id'],
-    });
-
-    if (!profile) {
-      throw new NotFoundException(`Profile not found: ${profileId}`);
-    }
-
-    return profile.id;
+    return this.exercisesService.validateProfileExists(profileId);
   }
 
   /**
@@ -90,7 +81,7 @@ export class ExercisesController {
    *
    * @note FE-061: Este método resuelve el workaround temporal
    */
-  private normalizeSubmitData(dto: SubmitExerciseDto, req: any): {
+  private normalizeSubmitData(dto: SubmitExerciseDto, req: any): { // eslint-disable-line @typescript-eslint/no-explicit-any
     userId: string;
     answers: Record<string, unknown>;
     timeSpentSeconds?: number;
@@ -116,7 +107,7 @@ export class ExercisesController {
       // Formato antiguo (compatibilidad)
       answers = dto.submitted_answers;
       // Log para detectar uso de formato antiguo
-      console.warn('[DEPRECATED] Client using old format "submitted_answers". Migrate to "answers".');
+      this.logger.warn('Client using old format "submitted_answers". Migrate to "answers".');
     } else {
       throw new BadRequestException(
         'Missing exercise answers. Provide either "answers" or "submitted_answers".',
@@ -230,7 +221,7 @@ export class ExercisesController {
     const userRole = req.user!.role;
 
     // GAP-C06: Aplicar RLS según el rol del usuario
-    let exercises: any[];
+    let exercises: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     if (userRole === 'student') {
       // Estudiantes: Solo ejercicios de sus classrooms asignados
@@ -963,35 +954,17 @@ export class ExercisesController {
       throw new NotFoundException(`Exercise ${exerciseId} not found`);
     }
 
-    // ========================================
-    // 3. PRE-SANITIZACIÓN (CORR-010 v5)
-    // ========================================
-    // CORR-010 FIX: Sanitize tribunal_opiniones at controller level
-    // This is defense-in-depth before the validator runs
+    // Defense-in-depth: sanitize tribunal_opiniones statementIds at controller level
     if (exercise.exercise_type === 'tribunal_opiniones') {
-      const answers = normalized.answers as any;
-      console.log('[CORR-010 CONTROLLER] Raw answers received:', {
-        hasEvaluations: !!answers?.evaluations,
-        evaluationsCount: answers?.evaluations?.length || 0,
-        answersKeys: Object.keys(answers || {}),
-      });
-
+      const answers = normalized.answers as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       if (answers?.evaluations && Array.isArray(answers.evaluations)) {
-        answers.evaluations = answers.evaluations.map((e: any, idx: number) => {
+        answers.evaluations = answers.evaluations.map((e: any, idx: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           const currentId = e?.statementId;
-          const needsFix = !currentId || (typeof currentId === 'string' && currentId.trim() === '');
-
-          if (needsFix) {
-            const fallbackId = `stmt-${idx + 1}`;
-            console.warn(`[CORR-010 CONTROLLER] Fixing empty statementId at index ${idx}: "${currentId}" -> "${fallbackId}"`);
-            return { ...e, statementId: fallbackId };
+          if (!currentId || (typeof currentId === 'string' && currentId.trim() === '')) {
+            return { ...e, statementId: `stmt-${idx + 1}` };
           }
           return e;
         });
-
-        console.log('[CORR-010 CONTROLLER] Sanitized evaluations:',
-          answers.evaluations.map((e: any, i: number) => ({ index: i, statementId: e.statementId }))
-        );
       }
     }
 
@@ -1003,13 +976,9 @@ export class ExercisesController {
         exercise.exercise_type,
         normalized.answers,
       );
-    } catch (error: any) {
+    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       // Log para debug
-      console.error('[VALIDATION ERROR]', {
-        exerciseId,
-        exerciseType: exercise.exercise_type,
-        error: error.message,
-      });
+      this.logger.error(`Validation error for exercise ${exerciseId} (${exercise.exercise_type}): ${error.message}`);
 
       throw error; // Re-throw para que NestJS maneje el 400
     }
@@ -1080,7 +1049,7 @@ export class ExercisesController {
     const feedback = validationData.feedback || '';
 
     // 6.3. Anti-farming: XP solo en primer acierto
-    const hasCorrectAttemptBefore = previousAttempts.some((attempt: any) => attempt.is_correct);
+    const hasCorrectAttemptBefore = previousAttempts.some((attempt: any) => attempt.is_correct); // eslint-disable-line @typescript-eslint/no-explicit-any
     const isFirstCorrectAttempt = !hasCorrectAttemptBefore && isCorrect;
 
     let xpEarned = 0;
@@ -1117,7 +1086,7 @@ export class ExercisesController {
     // Build answer review array from SQL results_per_question
     const resultsPerQuestion = details.results_per_question || details.results || [];
     const answerReview = Array.isArray(resultsPerQuestion)
-      ? resultsPerQuestion.map((r: any) => ({
+      ? resultsPerQuestion.map((r: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
           questionId: r.question_id || r.id || '',
           isCorrect: r.is_correct ?? false,
           userAnswer: r.user_answer ?? r.submitted ?? '',

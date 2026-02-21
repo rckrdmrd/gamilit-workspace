@@ -27,7 +27,7 @@ interface PowerUpBarProps {
 // ICON MAPPING
 // ============================================================================
 
-const iconMap: Record<string, React.ComponentType<any>> = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   lightbulb: Lightbulb,
   eye: Eye,
   'rotate-ccw': RotateCcw,

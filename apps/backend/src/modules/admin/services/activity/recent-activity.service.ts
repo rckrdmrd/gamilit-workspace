@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -22,6 +22,8 @@ import { AdminQueryBuilder } from '../query-builders/admin.query-builder';
  */
 @Injectable()
 export class RecentActivityService {
+  private readonly logger = new Logger(RecentActivityService.name);
+
   constructor(
     @InjectDataSource('auth')
     private readonly authConnection: DataSource,
@@ -80,7 +82,7 @@ export class RecentActivityService {
         [limit],
       );
 
-      return results.map((row: any) => ({
+      return results.map((row: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: row.id,
         user_id: row.user_id,
         email: row.email,
@@ -94,7 +96,7 @@ export class RecentActivityService {
           : row.created_at,
       }));
     } catch (error) {
-      console.error('Error fetching recent activity from view:', error);
+      this.logger.error(`Error fetching recent activity from view: ${error instanceof Error ? error.message : error}`);
       // Fallback to empty array if view doesn't exist or query fails
       return [];
     }
@@ -172,7 +174,7 @@ export class RecentActivityService {
         success: true, // All actions in DB are successful
       }));
     } catch (error) {
-      console.error('Error fetching recent actions:', error);
+      this.logger.error(`Error fetching recent actions: ${error instanceof Error ? error.message : error}`);
       // Return empty array on error to prevent UI breaking
       return [];
     }
@@ -201,7 +203,7 @@ export class RecentActivityService {
 
       return parseInt(result[0]?.count || '0', 10);
     } catch (error) {
-      console.error('Error fetching activity count:', error);
+      this.logger.error(`Error fetching activity count: ${error instanceof Error ? error.message : error}`);
       return 0;
     }
   }

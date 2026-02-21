@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Celebration Sticker -->
+  <!-- Confetti pieces -->
+  <rect x="20" y="15" width="6" height="3" rx="1" fill="#E74C3C" transform="rotate(25,23,16)"/>
+  <rect x="40" y="10" width="5" height="3" rx="1" fill="#3498DB" transform="rotate(-15,42,11)"/>
+  <rect x="65" y="12" width="6" height="3" rx="1" fill="#2ECC71" transform="rotate(40,68,13)"/>
+  <rect x="80" y="20" width="5" height="3" rx="1" fill="#F39C12" transform="rotate(-30,82,21)"/>
+  <rect x="15" y="35" width="4" height="3" rx="1" fill="#9B59B6" transform="rotate(60,17,36)"/>
+  <rect x="75" y="40" width="5" height="3" rx="1" fill="#E74C3C" transform="rotate(-45,77,41)"/>
+  <rect x="30" y="70" width="6" height="3" rx="1" fill="#3498DB" transform="rotate(35,33,71)"/>
+  <rect x="70" y="75" width="5" height="3" rx="1" fill="#2ECC71" transform="rotate(-20,72,76)"/>
+  <!-- Party popper -->
+  <path d="M50 85 L35 50 L42 48 L50 80 Z" fill="#F39C12"/>
+  <path d="M50 85 L65 50 L58 48 L50 80 Z" fill="#E67E22"/>
+  <!-- Explosion -->
+  <circle cx="50" cy="45" r="12" fill="#FFD700" opacity="0.3"/>
+  <polygon points="50,25 53,37 65,37 55,44 59,56 50,48 41,56 45,44 35,37 47,37" fill="#FFD700"/>
+  <!-- Sparkles -->
+  <circle cx="30" cy="25" r="2" fill="#FFD700"/>
+  <circle cx="70" cy="28" r="2.5" fill="#FFD700"/>
+  <circle cx="25" cy="55" r="1.5" fill="#E74C3C"/>
+  <circle cx="78" cy="58" r="2" fill="#8B5CF6"/>
+  <!-- Streamers -->
+  <path d="M38 48 Q25 35 20 45 Q15 55 10 50" stroke="#E74C3C" stroke-width="1.5" fill="none"/>
+  <path d="M62 48 Q75 35 80 45 Q85 55 90 50" stroke="#3498DB" stroke-width="1.5" fill="none"/>
+  <path d="M45 42 Q40 28 30 22" stroke="#2ECC71" stroke-width="1.5" fill="none"/>
+  <path d="M55 42 Q60 28 70 22" stroke="#9B59B6" stroke-width="1.5" fill="none"/>
+</svg>

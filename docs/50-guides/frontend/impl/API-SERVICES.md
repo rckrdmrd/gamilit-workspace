@@ -44,7 +44,7 @@ apps/frontend/src/services/api/
 │   ├── bonusCoinsApi.ts
 │   ├── classroomsApi.ts
 │   ├── exerciseResponsesApi.ts
-│   ├── gradingApi.ts
+│   # gradingApi.ts — REMOVED (eliminado en Teacher Portal Audit 2026-02-20, merged into assignmentsApi + manualReviewApi)
 │   ├── interventionAlertsApi.ts
 │   ├── reportsApi.ts
 │   ├── studentProgressApi.ts
@@ -279,17 +279,17 @@ interface PaginationParams {
 | GET | `getAttemptById(id)` | Detalle intento |
 | GET | `getStudentAttempts(studentId)` | Intentos por estudiante |
 
-### 5.7 gradingApi
+### 5.7 ~~gradingApi~~ (REMOVED)
 
-**Ubicacion:** `teacher/gradingApi.ts`
+> **Deprecation (2026-02-20):** `gradingApi` (`teacher/gradingApi.ts`) has been removed. Its grading endpoints were merged into `assignmentsApi` and `manualReviewApi` (`shared/api/manualReviewApi.ts`). Use those services instead.
 
-**Endpoints:**
-| Metodo | Funcion | Descripcion |
+**Former endpoints (now served by `assignmentsApi` / `manualReviewApi`):**
+| Metodo | Funcion | Migrated To |
 |--------|---------|-------------|
-| GET | `getSubmissions(params)` | Lista envios |
-| GET | `getSubmissionById(id)` | Detalle envio |
-| POST | `gradeSubmission(id, data)` | Calificar envio |
-| POST | `bulkGrade(data)` | Calificacion masiva |
+| GET | `getSubmissions(params)` | `assignmentsApi` |
+| GET | `getSubmissionById(id)` | `assignmentsApi` |
+| POST | `gradeSubmission(id, data)` | `manualReviewApi` |
+| POST | `bulkGrade(data)` | `manualReviewApi` |
 
 ### 5.8 interventionAlertsApi
 

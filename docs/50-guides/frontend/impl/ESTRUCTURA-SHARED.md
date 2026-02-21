@@ -1,7 +1,7 @@
 # Estructura de Código Compartido Frontend
 
-**Versión:** 1.0.0
-**Última Actualización:** 2025-11-28
+**Versión:** 1.1.0
+**Última Actualización:** 2026-02-21
 **Aplica a:** apps/frontend/src/shared/
 
 ---
@@ -17,9 +17,38 @@ La carpeta `shared/` contiene código reutilizable que no pertenece a ninguna fe
 ```
 shared/
 ├── components/               # Componentes UI reutilizables
-│   ├── ui/                   # Componentes base (Button, Input, Modal...)
-│   ├── layout/               # Layout components (Header, Sidebar, Footer)
-│   ├── feedback/             # Loading, Error, Empty states
+│   ├── base/                 # Componentes base temáticos
+│   │   ├── TabBar.tsx        # Tabs unificado (5 variantes, keyboard nav, ARIA)
+│   │   ├── DetectiveButton.tsx
+│   │   ├── DetectiveCard.tsx
+│   │   ├── ColorfulCard.tsx
+│   │   ├── EnhancedCard.tsx
+│   │   ├── InputDetective.tsx
+│   │   ├── ProgressBar.tsx
+│   │   ├── RankBadge.tsx
+│   │   ├── StatusBadge.tsx
+│   │   ├── Toast.tsx
+│   │   └── index.ts
+│   ├── common/               # Componentes comunes reutilizables
+│   │   ├── Modal.tsx         # Modal enhanced (animated, overlayClassName, contentClassName, ariaLabelledBy)
+│   │   ├── ConfirmDialog.tsx
+│   │   ├── DataTable.tsx
+│   │   ├── FeatureBadge.tsx
+│   │   ├── FormField.tsx
+│   │   └── index.ts
+│   ├── layout/               # Layout components (Header, Sidebar, Footer, GamifiedHeader)
+│   ├── feedback/             # Loading, Error, Empty, Save states
+│   │   ├── SaveButton.tsx    # Multi-status save button (idle/saving/saved/error)
+│   │   ├── ErrorMessage.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── ConfirmDialog.tsx
+│   │   └── index.ts
+│   ├── loading/              # Loading spinners and skeletons
+│   ├── Pagination.tsx        # 2 variantes: 'full' (page numbers, size selector) + 'simple' (prev/next)
+│   ├── Modal.tsx             # Legacy modal (simple wrapper)
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   ├── Input.tsx
 │   └── index.ts
 ├── hooks/                    # Custom hooks genéricos
 │   ├── useLocalStorage.ts
@@ -52,32 +81,50 @@ shared/
 
 ## Componentes UI Base
 
-### components/ui/
+### components/ (raíz)
+
+Componentes de uso directo, sin subdirectorio:
 
 ```
-components/ui/
-├── Button/
-│   ├── Button.tsx
-│   ├── Button.test.tsx
-│   └── index.ts
-├── Input/
-│   ├── Input.tsx
-│   ├── Input.test.tsx
-│   └── index.ts
-├── Modal/
-│   ├── Modal.tsx
-│   ├── ModalHeader.tsx
-│   ├── ModalBody.tsx
-│   ├── ModalFooter.tsx
-│   └── index.ts
-├── Card/
-├── Badge/
-├── Avatar/
-├── Tooltip/
-├── Dropdown/
-├── Tabs/
-├── Table/
-├── Pagination/
+components/
+├── Button.tsx            # Botón con variantes (primary, secondary, outline, ghost, danger)
+├── Card.tsx              # Tarjeta base
+├── Input.tsx             # Input estilizado
+├── Modal.tsx             # Modal legacy (wrapper simple)
+├── Pagination.tsx        # Paginación con 2 variantes: 'full' + 'simple'
+└── index.ts              # Barrel exports
+```
+
+### components/base/ — Componentes temáticos
+
+```
+components/base/
+├── TabBar.tsx            # 5 variantes: pills, underline, detective-pills, detective-underline, cards
+│                         # Keyboard nav (ArrowLeft/Right/Home/End), ARIA compliant
+├── StatusBadge.tsx       # Badge de estado multi-propósito
+├── DetectiveButton.tsx   # Botón con tema detective
+├── DetectiveCard.tsx     # Tarjeta con tema detective
+├── ColorfulCard.tsx      # Tarjeta con gradientes
+├── EnhancedCard.tsx      # Tarjeta mejorada
+├── InputDetective.tsx    # Input con tema detective
+├── ProgressBar.tsx       # Barra de progreso
+├── RankBadge.tsx         # Badge de rango maya
+├── Toast.tsx             # Notificación toast
+└── index.ts
+```
+
+### components/common/ — Componentes comunes reutilizables
+
+```
+components/common/
+├── Modal.tsx             # Modal enhanced con framer-motion
+│                         # Props: animated, overlayClassName, contentClassName, ariaLabelledBy
+│                         # Sizes: sm, md, lg, xl, 2xl, 4xl, 5xl, full
+│                         # Focus trap + ESC close + overlay click
+├── ConfirmDialog.tsx     # Dialogo de confirmación
+├── DataTable.tsx         # Tabla de datos genérica
+├── FeatureBadge.tsx      # Badge de feature flag
+├── FormField.tsx         # Campo de formulario
 └── index.ts
 ```
 
@@ -192,29 +239,27 @@ export const Header: React.FC = () => {
 
 ### components/feedback/
 
+```
+components/feedback/
+├── SaveButton.tsx        # Multi-status save button (idle/saving/saved/error)
+│                         # Uses framer-motion for status transitions
+│                         # Props: status (SaveStatus), onClick, idleLabel, idleIcon
+├── ErrorMessage.tsx      # Error display with optional retry
+├── EmptyState.tsx        # Empty state with icon, title, description, action
+├── ConfirmDialog.tsx     # Confirmation dialog with cancel/confirm
+└── index.ts
+```
+
 ```typescript
-// shared/components/loading/LoadingSpinner.tsx
-interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
+// shared/components/feedback/SaveButton.tsx
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+interface SaveButtonProps {
+  status: SaveStatus;
+  onClick: () => void;
+  idleLabel?: string;    // default: 'Guardar Cambios'
+  idleIcon?: ReactNode;
 }
-
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = 'md',
-  className,
-}) => {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-  };
-
-  return (
-    <div className={cn('animate-spin', sizeClasses[size], className)}>
-      <SpinnerIcon />
-    </div>
-  );
-};
 
 // shared/components/feedback/ErrorMessage.tsx
 interface ErrorMessageProps {

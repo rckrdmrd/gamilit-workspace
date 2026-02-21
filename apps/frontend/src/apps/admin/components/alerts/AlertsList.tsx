@@ -11,7 +11,8 @@
 
 import React from 'react';
 import { AlertCard } from './AlertCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { Pagination } from '@shared/components/Pagination';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { AlertTriangle } from 'lucide-react';
 import type { SystemAlert } from '@/services/api/adminTypes';
 
@@ -70,12 +71,12 @@ export const AlertsList: React.FC<AlertsListProps> = ({
   // Empty State
   if (!isLoading && alerts.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-700 bg-detective-bg-secondary p-12 text-center">
-        <AlertTriangle className="mx-auto mb-4 h-16 w-16 text-gray-500" />
-        <h3 className="mb-2 text-xl font-bold text-detective-text">No se encontraron alertas</h3>
-        <p className="text-detective-text-secondary">
-          No hay alertas que coincidan con los filtros seleccionados.
-        </p>
+      <div className="rounded-lg border border-gray-700 bg-detective-bg-secondary">
+        <EmptyState
+          icon={AlertTriangle}
+          title="No se encontraron alertas"
+          description="No hay alertas que coincidan con los filtros seleccionados."
+        />
       </div>
     );
   }
@@ -98,28 +99,18 @@ export const AlertsList: React.FC<AlertsListProps> = ({
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-gray-700 pt-4">
-          <div className="text-sm text-detective-text-secondary">
-            Página {pagination.page} de {pagination.totalPages} ({pagination.totalItems} alertas
-            totales)
-          </div>
-          <div className="flex gap-2">
-            <DetectiveButton
-              variant="secondary"
-              onClick={onPrevPage}
-              disabled={pagination.page === 1 || isLoading}
-            >
-              Anterior
-            </DetectiveButton>
-            <DetectiveButton
-              variant="secondary"
-              onClick={onNextPage}
-              disabled={pagination.page === pagination.totalPages || isLoading}
-            >
-              Siguiente
-            </DetectiveButton>
-          </div>
-        </div>
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={pagination.totalPages}
+          onPageChange={(page) => {
+            if (page < pagination.page) onPrevPage();
+            else if (page > pagination.page) onNextPage();
+          }}
+          totalItems={pagination.totalItems}
+          loading={isLoading}
+          variant="simple"
+          itemLabel="alertas totales"
+        />
       )}
     </div>
   );

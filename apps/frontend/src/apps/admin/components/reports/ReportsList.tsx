@@ -9,7 +9,10 @@
  */
 
 import React from 'react';
+import toast from 'react-hot-toast';
 import type { Report, ReportStatus } from '@/services/api/adminTypes';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
+import { DataTable, type Column } from '@/shared/components/common/DataTable';
 
 interface ReportsListProps {
   reports: Report[];
@@ -76,6 +79,8 @@ export function ReportsList({
 }: ReportsListProps) {
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
   const [downloadingId, setDownloadingId] = React.useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = React.useState<string | null>(null);
 
   const handleDownload = async (reportId: string) => {
     setDownloadingId(reportId);
@@ -86,14 +91,23 @@ export function ReportsList({
     }
   };
 
-  const handleDelete = async (reportId: string) => {
-    if (!confirm('¿Estás seguro de eliminar este reporte?')) return;
+  const handleDeleteRequest = (reportId: string) => {
+    setPendingDeleteId(reportId);
+    setShowDeleteConfirm(true);
+  };
 
-    setDeletingId(reportId);
+  const handleDeleteConfirm = async () => {
+    if (!pendingDeleteId) return;
+    setShowDeleteConfirm(false);
+    setDeletingId(pendingDeleteId);
     try {
-      await onDelete(reportId);
+      await onDelete(pendingDeleteId);
+      toast.success('Reporte eliminado correctamente');
+    } catch {
+      toast.error('Error al eliminar el reporte');
     } finally {
       setDeletingId(null);
+      setPendingDeleteId(null);
     }
   };
 
@@ -107,6 +121,153 @@ export function ReportsList({
       minute: '2-digit',
     });
   };
+
+  const SpinnerIcon = () => (
+    <svg
+      className="h-5 w-5 animate-spin"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </svg>
+  );
+
+  const columns: Column<Report>[] = [
+    {
+      key: 'type',
+      label: 'Tipo',
+      render: (report) => (
+        <div className="text-sm font-medium text-gray-900 dark:text-white">
+          {TYPE_LABELS[report.type] || report.type}
+        </div>
+      ),
+    },
+    {
+      key: 'format',
+      label: 'Formato',
+      render: (report) => (
+        <span
+          className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs
+                   font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+        >
+          {FORMAT_LABELS[report.format] || report.format.toUpperCase()}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Estado',
+      render: (report) => {
+        const statusConfig = STATUS_CONFIG[report.status];
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}
+          >
+            {statusConfig.label}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'created_at',
+      label: 'Fecha',
+      render: (report) => (
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          {formatDate(report.created_at)}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Acciones',
+      align: 'right',
+      render: (report) => {
+        const isDownloading = downloadingId === report.id;
+        const isDeleting = deletingId === report.id;
+
+        return (
+          <div className="flex items-center justify-end gap-2">
+            {/* Download Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDownload(report.id);
+              }}
+              disabled={report.status !== 'completed' || isDownloading || isDeleting}
+              className="text-detective-teal hover:text-detective-teal/80
+                       transition-colors disabled:cursor-not-allowed
+                       disabled:text-gray-400"
+              title={
+                report.status !== 'completed' ? 'Reporte no disponible' : 'Descargar'
+              }
+            >
+              {isDownloading ? (
+                <SpinnerIcon />
+              ) : (
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+              )}
+            </button>
+
+            {/* Delete Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteRequest(report.id);
+              }}
+              disabled={isDeleting || isDownloading}
+              className="text-red-600 transition-colors hover:text-red-800 disabled:cursor-not-allowed
+                       disabled:text-gray-400 dark:text-red-400
+                       dark:hover:text-red-300"
+              title="Eliminar"
+            >
+              {isDeleting ? (
+                <SpinnerIcon />
+              ) : (
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
@@ -175,164 +336,28 @@ export function ReportsList({
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700/50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                  Tipo
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                  Formato
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                  Estado
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                  Fecha
-                </th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-              {reports.map((report) => {
-                const statusConfig = STATUS_CONFIG[report.status];
-                const isDownloading = downloadingId === report.id;
-                const isDeleting = deletingId === report.id;
-
-                return (
-                  <tr key={report.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                    <td className="whitespace-nowrap px-4 py-3">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {TYPE_LABELS[report.type] || report.type}
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3">
-                      <span
-                        className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs
-                                 font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                      >
-                        {FORMAT_LABELS[report.format] || report.format.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}
-                      >
-                        {statusConfig.label}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      {formatDate(report.created_at)}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-medium">
-                      <div className="flex items-center justify-end gap-2">
-                        {/* Download Button */}
-                        <button
-                          onClick={() => handleDownload(report.id)}
-                          disabled={report.status !== 'completed' || isDownloading || isDeleting}
-                          className="text-detective-teal hover:text-detective-teal/80
-                                   transition-colors disabled:cursor-not-allowed
-                                   disabled:text-gray-400"
-                          title={
-                            report.status !== 'completed' ? 'Reporte no disponible' : 'Descargar'
-                          }
-                        >
-                          {isDownloading ? (
-                            <svg
-                              className="h-5 w-5 animate-spin"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="h-5 w-5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                              />
-                            </svg>
-                          )}
-                        </button>
-
-                        {/* Delete Button */}
-                        <button
-                          onClick={() => handleDelete(report.id)}
-                          disabled={isDeleting || isDownloading}
-                          className="text-red-600 transition-colors hover:text-red-800 disabled:cursor-not-allowed
-                                   disabled:text-gray-400 dark:text-red-400
-                                   dark:hover:text-red-300"
-                          title="Eliminar"
-                        >
-                          {isDeleting ? (
-                            <svg
-                              className="h-5 w-5 animate-spin"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="h-5 w-5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <DataTable<Report>
+          data={reports}
+          columns={columns}
+          loading={isLoading}
+          emptyMessage="No hay reportes generados"
+          hoverable
+          striped={false}
+        />
       )}
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setPendingDeleteId(null);
+        }}
+        onConfirm={handleDeleteConfirm}
+        title="Eliminar reporte"
+        message="¿Estás seguro de eliminar este reporte? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        variant="danger"
+      />
     </div>
   );
 }

@@ -119,7 +119,7 @@ export const useComodin = async (request: UseComodinRequest): Promise<UseComodin
  */
 export const getComodinInventory = async (userId: string): Promise<ComodinInventory> => {
   const { data } = await apiClient.get<ComodinInventory>(
-    `/gamification/users/${userId}/comodines/inventory`,
+    `/gamification/comodines/users/${userId}/inventory`,
   );
   return data;
 };
@@ -132,7 +132,7 @@ export const getComodinHistory = async (
   limit: number = 50,
 ): Promise<ComodinTransaction[]> => {
   const { data } = await apiClient.get<ComodinTransaction[]>(
-    `/gamification/users/${userId}/comodines/history`,
+    `/gamification/comodines/users/${userId}/history`,
     {
       params: { limit },
     },
@@ -145,7 +145,7 @@ export const getComodinHistory = async (
  */
 export const getComodinStats = async (userId: string): Promise<ComodinStats> => {
   const { data } = await apiClient.get<ComodinStats>(
-    `/gamification/users/${userId}/comodines/stats`,
+    `/gamification/comodines/users/${userId}/stats`,
   );
   return data;
 };

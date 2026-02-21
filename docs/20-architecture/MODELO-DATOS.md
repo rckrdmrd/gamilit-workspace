@@ -1,7 +1,7 @@
 # Modelo de Datos - GAMILIT
 
-**Version:** 1.2.0
-**Fecha:** 2026-02-16
+**Version:** 1.3.0
+**Fecha:** 2026-02-21
 
 ---
 
@@ -17,13 +17,13 @@
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 169 |
+| Tablas | 172 |
 | Views | 22 |
 | Materialized Views | 7 |
 | Functions | 183 |
 | Triggers | 67 (CREATE TRIGGER) / 126 (trigger functions) |
-| RLS Policies | 227 |
-| Foreign Keys | 298 |
+| RLS Policies | 237 (DDL) / 477 (runtime estimate) |
+| Foreign Keys | 299 |
 | ENUMs | 42 |
 
 ---
@@ -504,5 +504,5 @@ Para la lista completa de funciones DDL reales, consultar `apps/database/ddl/` p
 ---
 
 *GAMILIT - Modelo de Datos*
-*18 schemas, 169 tablas, 227 RLS policies*
+*18 schemas, 172 tablas, 237 DDL / 477 runtime RLS policies (estimated)*
 *PostgreSQL 15 con Row-Level Security*

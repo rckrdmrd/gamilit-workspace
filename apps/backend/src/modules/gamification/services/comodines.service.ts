@@ -64,7 +64,7 @@ export class ComodinesService {
    * //   { id: 'segunda_oportunidad', name: 'Segunda Oportunidad', cost: 40, ... }
    * // ]
    */
-  getCatalog(): any[] {
+  getCatalog(): Record<string, unknown>[] {
     return [
       {
         id: 'pistas',

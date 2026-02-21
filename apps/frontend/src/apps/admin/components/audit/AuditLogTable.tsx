@@ -7,13 +7,15 @@
  * @see US-AE-011 - Visor de Audit Logs
  */
 
-import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DataTable } from '@shared/components/common/DataTable';
+import type { Column } from '@shared/components/common/DataTable';
+import { Pagination } from '@shared/components/Pagination';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import {
   CheckCircle,
   XCircle,
-  ChevronLeft,
-  ChevronRight,
   Eye,
   RefreshCw,
   FileText,
@@ -60,6 +62,79 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
   onPageChange,
   onViewDetail,
 }) => {
+  /** Column definitions for the audit log table */
+  const auditColumns: Column<AuditLogEntry>[] = useMemo(
+    () => [
+      {
+        key: 'attemptedAt',
+        label: 'Fecha/Hora',
+        render: (log) => (
+          <span className="text-gray-300">{formatTableDate(log.attemptedAt)}</span>
+        ),
+      },
+      {
+        key: 'email',
+        label: 'Email',
+        render: (log) => <span className="text-gray-300">{log.email}</span>,
+      },
+      {
+        key: 'success',
+        label: 'Estado',
+        render: (log) =>
+          log.success ? (
+            <span className="inline-flex items-center gap-1 rounded-md bg-green-500/20 px-2 py-1 text-xs font-medium text-green-400">
+              <CheckCircle className="h-3 w-3" />
+              Exitoso
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-md bg-red-500/20 px-2 py-1 text-xs font-medium text-red-400">
+              <XCircle className="h-3 w-3" />
+              Fallido
+            </span>
+          ),
+      },
+      {
+        key: 'ipAddress',
+        label: 'IP',
+        render: (log) => (
+          <span className="font-mono text-gray-400">{log.ipAddress || 'N/A'}</span>
+        ),
+      },
+      {
+        key: 'failureReason',
+        label: 'Detalles',
+        render: (log) =>
+          log.failureReason ? (
+            <span
+              className="block max-w-xs truncate text-red-400"
+              title={log.failureReason}
+            >
+              {log.failureReason}
+            </span>
+          ) : (
+            <span className="text-gray-400">-</span>
+          ),
+      },
+      {
+        key: 'actions',
+        label: 'Acciones',
+        render: (log) => (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetail(log);
+            }}
+            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-detective-bg hover:text-blue-400"
+            title="Ver detalle"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
+        ),
+      },
+    ],
+    [onViewDetail],
+  );
+
   return (
     <DetectiveCard>
       {/* Error State */}
@@ -80,129 +155,40 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
 
       {/* Empty State */}
       {!isLoading && logs.length === 0 && !error && (
-        <div className="py-16 text-center">
-          <FileText className="mx-auto mb-4 h-16 w-16 text-gray-600" />
-          <h3 className="mb-2 text-lg font-semibold text-detective-text">
-            No se encontraron logs
-          </h3>
-          <p className="text-gray-400">
-            {activeFiltersCount > 0
+        <EmptyState
+          icon={FileText}
+          title="No se encontraron logs"
+          description={
+            activeFiltersCount > 0
               ? 'Intenta ajustar los filtros para ver mas resultados'
-              : 'Aun no hay registros de auditoria'}
-          </p>
-        </div>
+              : 'Aun no hay registros de auditoria'
+          }
+        />
       )}
 
       {/* Table */}
       {logs.length > 0 && (
         <>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Fecha/Hora
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Estado
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    IP
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Detalles
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log) => (
-                  <motion.tr
-                    key={log.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="border-b border-gray-800 transition-colors hover:bg-detective-bg-secondary"
-                  >
-                    <td className="px-4 py-3 text-sm text-gray-300">
-                      {formatTableDate(log.attemptedAt)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-300">{log.email}</td>
-                    <td className="px-4 py-3">
-                      {log.success ? (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-green-500/20 px-2 py-1 text-xs font-medium text-green-400">
-                          <CheckCircle className="h-3 w-3" />
-                          Exitoso
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-red-500/20 px-2 py-1 text-xs font-medium text-red-400">
-                          <XCircle className="h-3 w-3" />
-                          Fallido
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-sm text-gray-400">
-                      {log.ipAddress || 'N/A'}
-                    </td>
-                    <td className="max-w-xs px-4 py-3 text-sm text-gray-400">
-                      {log.failureReason ? (
-                        <span
-                          className="block truncate text-red-400"
-                          title={log.failureReason}
-                        >
-                          {log.failureReason}
-                        </span>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => onViewDetail(log)}
-                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-detective-bg hover:text-blue-400"
-                        title="Ver detalle"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            data={logs}
+            columns={auditColumns}
+            variant="detective"
+            striped={false}
+            rowKey={(log) => log.id}
+            emptyMessage="No se encontraron logs"
+          />
 
           {/* Pagination */}
-          <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-gray-800 pt-6 md:flex-row">
-            <div className="text-sm text-gray-400">
-              Mostrando {(page - 1) * pageSize + 1} a {Math.min(page * pageSize, total)} de{' '}
-              {total} registros
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => onPageChange(page - 1)}
-                disabled={page === 1}
-                className="flex items-center gap-1 rounded-lg bg-detective-bg-secondary px-3 py-2 text-gray-300 transition-colors hover:bg-detective-bg disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Anterior
-              </button>
-              <span className="px-4 py-2 text-sm text-gray-300">
-                Pagina {page} de {totalPages || 1}
-              </span>
-              <button
-                onClick={() => onPageChange(page + 1)}
-                disabled={page === totalPages || totalPages === 0}
-                className="flex items-center gap-1 rounded-lg bg-detective-bg-secondary px-3 py-2 text-gray-300 transition-colors hover:bg-detective-bg disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Siguiente
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            totalItems={total}
+            pageSize={pageSize}
+            variant="simple"
+            itemLabel="registros"
+            className="mt-6 border-gray-800 pt-6"
+          />
         </>
       )}
     </DetectiveCard>

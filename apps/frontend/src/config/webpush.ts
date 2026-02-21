@@ -68,7 +68,6 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
 
   try {
     const registration = await navigator.serviceWorker.register('/sw-push.js');
-    console.log('[WebPush] Service worker registered:', registration.scope);
     return registration;
   } catch (error) {
     console.error('[WebPush] Service worker registration failed:', error);
@@ -109,8 +108,6 @@ export const subscribeToPush = async (): Promise<string | null> => {
       applicationServerKey,
     });
 
-    console.log('[WebPush] Subscription obtained');
-
     // Return as JSON string (this is what we store as deviceToken)
     return JSON.stringify(subscription.toJSON());
   } catch (error) {
@@ -129,7 +126,6 @@ export const unsubscribeFromPush = async (): Promise<boolean> => {
 
     if (subscription) {
       await subscription.unsubscribe();
-      console.log('[WebPush] Unsubscribed successfully');
       return true;
     }
     return false;

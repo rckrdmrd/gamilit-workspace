@@ -934,7 +934,8 @@ describe('ModuleProgressService', () => {
 
       // Assert
       expect(result.difficulty_adjustment).toBe('increase');
-      expect(result.reasoning).toContain('High performance detected');
+      // TASK-2026-01-18: 'reasoning' field removed from return type, verify overall_performance instead
+      expect(result.overall_performance).toBe('excellent');
     });
 
     it('should recommend difficulty decrease for low performers', async () => {
@@ -960,7 +961,8 @@ describe('ModuleProgressService', () => {
 
       // Assert
       expect(result.difficulty_adjustment).toBe('decrease');
-      expect(result.reasoning).toContain('Additional practice recommended');
+      // TASK-2026-01-18: 'reasoning' field removed from return type, verify overall_performance instead
+      expect(result.overall_performance).toBe('struggling');
     });
 
     it('should recommend maintain for average performers', async () => {
@@ -986,7 +988,8 @@ describe('ModuleProgressService', () => {
 
       // Assert
       expect(result.difficulty_adjustment).toBe('maintain');
-      expect(result.reasoning).toContain('Continue with current difficulty level');
+      // TASK-2026-01-18: 'reasoning' field removed from return type, verify overall_performance instead
+      expect(result.overall_performance).toBe('good');
     });
 
     it('should handle user with no progress', async () => {

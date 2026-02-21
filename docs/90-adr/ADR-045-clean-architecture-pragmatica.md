@@ -13,9 +13,9 @@
 
 El backend de GAMILIT esta construido con NestJS 11 y TypeORM 0.3.x. La arquitectura actual sigue el patron estandar de NestJS:
 
-- **171 services** que contienen logica de negocio y acceden directamente a repositorios TypeORM.
-- **152 entities** que son clases TypeORM con decoradores ORM (`@Entity`, `@Column`, `@ManyToOne`).
-- **107 controllers** que reciben requests HTTP y delegan a services.
+- **173 services** que contienen logica de negocio y acceden directamente a repositorios TypeORM.
+- **155 entity files (156 @Entity classes)** que son clases TypeORM con decoradores ORM (`@Entity`, `@Column`, `@ManyToOne`).
+- **108 controllers** que reciben requests HTTP y delegan a services.
 - **399 DTOs** para validacion de entrada/salida.
 
 ### Problema
@@ -29,10 +29,10 @@ El equipo evaluo adoptar Clean Architecture (tambien conocida como Hexagonal Arc
 
 Implementar esto de golpe implicaria:
 
-- Refactorizar 171 services para separar logica de dominio de acceso a datos.
-- Duplicar 152 entities (una version dominio, otra ORM).
+- Refactorizar 173 services para separar logica de dominio de acceso a datos.
+- Duplicar 155 entity files (una version dominio, otra ORM).
 - Crear ~150+ interfaces de repositorio con sus implementaciones.
-- Riesgo de regresion masivo en un sistema con 901 endpoints en produccion activa.
+- Riesgo de regresion masivo en un sistema con 905 endpoints en produccion activa.
 
 ### Evaluacion
 
@@ -118,8 +118,8 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 - Facilidad para cambiar de ORM o framework.
 
 **Cons:**
-- Refactoring de 171 services, 152 entities.
-- Alto riesgo de regresion en sistema en produccion (901 endpoints).
+- Refactoring de 173 services, 155 entity files.
+- Alto riesgo de regresion en sistema en produccion (905 endpoints).
 - Duplicacion significativa de modelos.
 - Tiempo estimado: 3-4 sprints solo para la migracion.
 
@@ -193,7 +193,7 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 - [NestJS Documentation - Exception Filters](https://docs.nestjs.com/exception-filters)
 - [ADR-040: Adopcion de Arquitectura Monorepo](./ADR-040-monorepo-architecture.md)
 - [ADR-044: Estrategia Test Coverage](./ADR-044-test-coverage-strategy.md)
-- CLAUDE.md -- Stack: NestJS 11 + TypeORM 0.3.x, 171 services, 152 entities
+- CLAUDE.md -- Stack: NestJS 11 + TypeORM 0.3.x, 173 services, 155 entity files (156 classes)
 
 ---
 

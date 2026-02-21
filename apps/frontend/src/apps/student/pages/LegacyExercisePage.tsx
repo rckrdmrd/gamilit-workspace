@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
 import { TimerWidget } from '@shared/components/mechanics/TimerWidget';
 import { ProgressTracker } from '@shared/components/mechanics/ProgressTracker';
@@ -22,6 +22,7 @@ import {
   RotateCcw,
   Check,
 } from 'lucide-react';
+import { LoadingSpinner } from '@shared/components/loading';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { DifficultyLevel } from '@shared/types/educational.types';
 import {
@@ -80,7 +81,6 @@ interface ProgressUpdate {
 const loadMechanic = (mechanicType: string) => {
   // Validate mechanicType
   if (!mechanicType || typeof mechanicType !== 'string') {
-    console.error('Invalid mechanic type:', mechanicType);
     return null;
   }
 
@@ -185,16 +185,14 @@ export default function ExercisePage() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [startTime] = useState(new Date());
   // Backend returns hints as string[], not objects
   const [hints, setHints] = useState<string[]>([]);
   // FE-055: Store user's actual answers (not just progress metadata)
   const [userAnswers, setUserAnswers] = useState<any>(null);
 
-  const { user, logout } = useAuth();
-
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
-  const { gamificationData } = useUserGamification(user?.id);
+  const { user } = useAuth();
 
   // Power-ups hook
   const {
@@ -207,20 +205,16 @@ export default function ExercisePage() {
   } = useExercisePowerUps({
     exerciseId: exerciseId || '',
     userId: user?.id,
-    onHintReveal: (count) => {
-      console.log(`Power-up revealed ${count} hints`);
+    onHintReveal: (_count) => {
       // Hints will be automatically available through the effects.hintsRevealed
     },
-    onTimeExtension: (seconds) => {
-      console.log(`Power-up added ${seconds} seconds`);
+    onTimeExtension: (_seconds) => {
       // Time extension effect is tracked in powerUpEffects.timeExtension
     },
     onSecondChance: () => {
-      console.log('Second chance activated');
       // Second chance effect tracked in powerUpEffects.hasSecondChance
     },
     onVisionActivate: () => {
-      console.log('Vision power-up activated');
       // Vision effect tracked in powerUpEffects.visionActive
     },
   });
@@ -280,8 +274,6 @@ export default function ExercisePage() {
           is_active: exerciseData.is_active, // GAP-005: Preserve is_active field
         };
 
-        console.log('Mapped exercise:', mappedExercise);
-
         setExercise(mappedExercise);
 
         // Fetch hints for this exercise
@@ -303,9 +295,6 @@ export default function ExercisePage() {
 
         if (!isActiveExercise) {
           // Set UnderConstructionExercise component for inactive exercises
-          console.log(
-            'Exercise is inactive (is_active = false) - showing Under Construction component',
-          );
           setMechanicComponent(() => UnderConstructionExercise);
         } else {
           // Load dynamic component for active exercises
@@ -316,10 +305,7 @@ export default function ExercisePage() {
           }
         }
       } catch (error) {
-        console.error('Error loading exercise:', error);
-
         // Fallback to mock data if API fails
-        console.warn('API failed, using mock data as fallback');
         const mockExercise: ExerciseData = {
           id: exerciseId!,
           module_id: moduleId!,
@@ -367,8 +353,6 @@ export default function ExercisePage() {
   // Recover saved progress on mount
   useEffect(() => {
     if (recoveredData?.partialAnswers && !userAnswers) {
-      console.log('Recovering saved progress:', recoveredData);
-
       // Restore answers
       setUserAnswers(recoveredData.partialAnswers);
 
@@ -443,10 +427,7 @@ export default function ExercisePage() {
 
       setHasUnsavedChanges(false);
 
-      // Show brief success notification
-      console.log('Progress saved successfully');
     } catch (error) {
-      console.error('Error saving progress:', error);
 
       // Fallback to localStorage if API fails
       try {
@@ -458,9 +439,8 @@ export default function ExercisePage() {
           }),
         );
         setHasUnsavedChanges(false);
-        console.log('Progress saved locally');
       } catch (localError) {
-        console.error('Failed to save progress locally:', localError);
+        // Error handled silently
       }
     }
   };
@@ -470,7 +450,6 @@ export default function ExercisePage() {
 
     // FE-055: Validate that we have user answers before submitting
     if (!userAnswers) {
-      console.error('❌ [ExercisePage] Cannot submit: No user answers available');
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -484,18 +463,6 @@ export default function ExercisePage() {
       // Get used power-ups from hook
       const usedPowerUpsList = getUsedPowerUps();
 
-      // CORR-010 DEBUG: Log full payload to diagnose statementId issue
-      console.log('📤 [ExercisePage] Submitting exercise:', {
-        exerciseId,
-        payload: {
-          answers: userAnswers,
-          startedAt: startTime.getTime(),
-          hintsUsed: progress.hintsUsed || 0,
-          powerupsUsed: usedPowerUpsList || [],
-        },
-      });
-      console.log('📤 [ExercisePage CORR-010] Full userAnswers:', JSON.stringify(userAnswers, null, 2));
-
       // FE-055: Submit exercise with REAL user answers (not progress metadata)
       const result = await submitExercise(exerciseId, {
         answers: userAnswers, // ✅ FIXED: Send actual user answers
@@ -503,8 +470,6 @@ export default function ExercisePage() {
         hintsUsed: progress.hintsUsed || 0,
         powerupsUsed: usedPowerUpsList || [],
       });
-
-      console.log('✅ [ExercisePage] Submission result:', result);
 
       // FIX: Invalidate dashboard cache to update ranks, XP, and coins in real-time
       await syncAndInvalidate();
@@ -550,7 +515,6 @@ export default function ExercisePage() {
         setExercise({ ...exercise, completed: true });
       }
     } catch (error) {
-      console.error('Error submitting exercise:', error);
       setFeedback({
         type: 'error',
         title: 'Error al enviar',
@@ -560,18 +524,20 @@ export default function ExercisePage() {
     }
   };
 
-  const handleSkip = () => {
-    if (window.confirm('¿Estás seguro de que deseas omitir este ejercicio?')) {
-      // Priorizar module_id del ejercicio, luego moduleId del URL, luego dashboard
-      const targetModuleId = exercise?.module_id || (exercise as any)?.moduleId || moduleId;
-      if (targetModuleId && targetModuleId !== 'undefined') {
-        navigate(`/modules/${targetModuleId}`);
-      } else {
-        console.warn('[ExercisePage] No valid moduleId found, navigating to dashboard');
-        navigate('/dashboard');
-      }
+  const handleSkip = useCallback(() => {
+    setShowSkipConfirm(true);
+  }, []);
+
+  const handleConfirmSkip = useCallback(() => {
+    setShowSkipConfirm(false);
+    // Priorizar module_id del ejercicio, luego moduleId del URL, luego dashboard
+    const targetModuleId = exercise?.module_id || (exercise as any)?.moduleId || moduleId;
+    if (targetModuleId && targetModuleId !== 'undefined') {
+      navigate(`/modules/${targetModuleId}`);
+    } else {
+      navigate('/dashboard');
     }
-  };
+  }, [exercise, moduleId, navigate]);
 
   const handleComplete = () => {
     setFeedback({
@@ -599,14 +565,9 @@ export default function ExercisePage() {
         const progressUpdate = update as ProgressUpdate;
         setProgress((prev) => ({ ...prev, ...progressUpdate.progress }));
         setUserAnswers(progressUpdate.answers);
-        console.log('📤 [ExercisePage] Progress update received:', {
-          progress: progressUpdate.progress,
-          answersReceived: !!progressUpdate.answers,
-        });
       } else {
         // Old format (just progress) - maintain backward compatibility
         setProgress((prev) => ({ ...prev, ...(update as Partial<ExerciseProgress>) }));
-        console.log('⚠️ [ExercisePage] Old format progress update (no answers):', update);
       }
       setHasUnsavedChanges(true);
     },
@@ -629,6 +590,7 @@ export default function ExercisePage() {
   // RENDER HELPERS
   // ============================================================================
 
+  // @ts-expect-error Reserved for future use in exercise difficulty display
   const _getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'facil':
@@ -644,6 +606,7 @@ export default function ExercisePage() {
     }
   };
 
+  // @ts-expect-error Reserved for future use in exercise difficulty display
   const _getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
       case 'facil':
@@ -676,46 +639,24 @@ export default function ExercisePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader
-          user={user ?? undefined}
-          gamificationData={gamificationData}
-          onLogout={async () => {
-            await logout();
-            // No need to navigate - performLogout() handles redirect
-          }}
-        />
-
+      <StudentPageShell>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <DetectiveCard hoverable={false}>
-            <div className="flex items-center justify-center py-12">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              >
-                <Loader2 className="h-12 w-12 text-detective-orange" />
-              </motion.div>
+            <div className="flex flex-col items-center justify-center py-12">
+              <LoadingSpinner size="lg" className="mb-4" />
+              <p className="font-semibold text-detective-text">
+                Cargando ejercicio...
+              </p>
             </div>
-            <p className="mt-4 text-center font-semibold text-detective-text">
-              Cargando ejercicio...
-            </p>
           </DetectiveCard>
         </div>
-      </div>
+      </StudentPageShell>
     );
   }
 
   if (!exercise || !MechanicComponent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader
-          user={user ?? undefined}
-          gamificationData={gamificationData}
-          onLogout={async () => {
-            await logout();
-          }}
-        />
-
+      <StudentPageShell>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -732,7 +673,7 @@ export default function ExercisePage() {
             </DetectiveButton>
           </motion.div>
         </div>
-      </div>
+      </StudentPageShell>
     );
   }
 
@@ -740,15 +681,7 @@ export default function ExercisePage() {
   if (exercise.completed) {
     const targetModuleId = exercise.module_id || (exercise as any)?.moduleId || moduleId;
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader
-          user={user ?? undefined}
-          gamificationData={gamificationData}
-          onLogout={async () => {
-            await logout();
-          }}
-        />
-
+      <StudentPageShell>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -787,7 +720,7 @@ export default function ExercisePage() {
             </DetectiveCard>
           </motion.div>
         </div>
-      </div>
+      </StudentPageShell>
     );
   }
 
@@ -796,17 +729,7 @@ export default function ExercisePage() {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      {/* Header */}
-      <GamifiedHeader
-        user={user ?? undefined}
-        gamificationData={gamificationData}
-        onLogout={async () => {
-          await logout();
-          // No need to navigate - performLogout() handles redirect
-        }}
-      />
-
+    <StudentPageShell>
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Unified Exercise Header */}
@@ -1041,7 +964,6 @@ export default function ExercisePage() {
                 if (targetModuleId && targetModuleId !== 'undefined') {
                   navigate(`/modules/${targetModuleId}`);
                 } else {
-                  console.warn('[ExercisePage] No valid moduleId found after completion, navigating to dashboard');
                   navigate('/dashboard');
                 }
               }
@@ -1053,6 +975,18 @@ export default function ExercisePage() {
           />
         )}
       </AnimatePresence>
-    </div>
+
+      {/* Skip Exercise Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={showSkipConfirm}
+        onClose={() => setShowSkipConfirm(false)}
+        onConfirm={handleConfirmSkip}
+        title="Omitir ejercicio"
+        message="¿Estás seguro de que deseas omitir este ejercicio? Tu progreso no guardado se perderá."
+        confirmText="Omitir"
+        cancelText="Continuar ejercicio"
+        variant="warning"
+      />
+    </StudentPageShell>
   );
 }

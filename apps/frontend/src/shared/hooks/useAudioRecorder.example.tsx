@@ -6,6 +6,7 @@
  */
 
 import React, { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useAudioRecorder } from './useAudioRecorder';
 
 /**
@@ -210,7 +211,7 @@ export function AudioRecorderForm() {
     e.preventDefault();
 
     if (!audioBlob) {
-      alert('Por favor graba un audio primero');
+      toast.error('Por favor graba un audio primero');
       return;
     }
 
@@ -226,14 +227,14 @@ export function AudioRecorderForm() {
       });
 
       if (response.ok) {
-        alert('Audio enviado exitosamente!');
+        toast.success('Audio enviado exitosamente!');
         resetRecording();
       } else {
-        alert('Error al enviar el audio');
+        toast.error('Error al enviar el audio');
       }
     } catch (err) {
       console.error('Error:', err);
-      alert('Error de red');
+      toast.error('Error de red');
     }
   };
 

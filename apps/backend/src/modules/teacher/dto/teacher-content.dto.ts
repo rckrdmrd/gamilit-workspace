@@ -185,7 +185,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-    media_resources?: any[];
+    media_resources?: Record<string, unknown>[];
 
   @ApiPropertyOptional({
     description: 'Archivos adjuntos',
@@ -193,7 +193,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-    attachments?: any[];
+    attachments?: Record<string, unknown>[];
 
   @ApiPropertyOptional({
     description: 'IDs de aulas objetivo',

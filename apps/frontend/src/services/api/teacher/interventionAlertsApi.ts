@@ -93,28 +93,6 @@ export interface GetAlertsParams {
   include_dismissed?: boolean;
 }
 
-// ============================================================================
-// DEPRECATED ALIASES (for backwards compatibility - remove after 2025-12-08)
-// ============================================================================
-
-/** @deprecated Use StudentInterventionAlert instead */
-export type Alert = StudentInterventionAlert;
-
-/** @deprecated Use InterventionAlertType instead */
-export const AlertType = InterventionAlertType;
-export type AlertType = InterventionAlertType;
-
-/** @deprecated Use InterventionAlertSeverity instead */
-export const AlertSeverity = InterventionAlertSeverity;
-export type AlertSeverity = InterventionAlertSeverity;
-
-/** @deprecated Use InterventionAlertStatus instead */
-export const AlertStatus = InterventionAlertStatus;
-export type AlertStatus = InterventionAlertStatus;
-
-/** @deprecated Use InterventionAlertsListResponse instead */
-export type AlertsListResponse = InterventionAlertsListResponse;
-
 export interface ResolveAlertData {
   resolution_notes: string;
 }

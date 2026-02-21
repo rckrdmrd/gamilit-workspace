@@ -25,8 +25,6 @@
  * - Use Profile for: Profile pages, settings, detailed user information
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export interface User {
   // =====================================================
   // CORE IDENTIFIERS
@@ -271,7 +269,7 @@ export interface PreferencesConfig {
   timezone?: string;
   sound_enabled?: boolean;
   notifications_enabled?: boolean;
-  [key: string]: any; // Allow additional dynamic preferences
+  [key: string]: unknown; // Allow additional dynamic preferences
 }
 
 /**

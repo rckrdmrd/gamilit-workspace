@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { ExercisesController } from '../controllers/exercises.controller';
 import { ExercisesService } from '../services';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
+import { ExerciseAnswerValidator } from '@/modules/progress/dto/answers/exercise-answer.validator';
 import { Profile } from '@modules/auth/entities/profile.entity';
 
 describe('ExercisesController - Submit Endpoint', () => {
@@ -11,6 +12,15 @@ describe('ExercisesController - Submit Endpoint', () => {
 
   const mockExercisesService = {
     findOne: jest.fn(),
+    findById: jest.fn(),
+    findAll: jest.fn(),
+    findAllForStudent: jest.fn(),
+    findByModuleId: jest.fn(),
+    getHints: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    validateProfileExists: jest.fn().mockImplementation((id: string) => Promise.resolve(id)),
+    delete: jest.fn(),
     validateContentByExerciseType: jest.fn(),
   };
 
@@ -22,6 +32,12 @@ describe('ExercisesController - Submit Endpoint', () => {
     create: jest.fn(),
     save: jest.fn(),
     findOne: jest.fn(),
+    findByUserId: jest.fn(),
+    findByUserAndExercise: jest.fn(),
+  };
+
+  const mockDataSource = {
+    query: jest.fn(),
   };
 
   const mockProfileRepository = {
@@ -50,6 +66,10 @@ describe('ExercisesController - Submit Endpoint', () => {
           provide: getRepositoryToken(Profile, 'auth'),
           useValue: mockProfileRepository,
         },
+        {
+          provide: getDataSourceToken('educational'),
+          useValue: mockDataSource,
+        },
       ],
     }).compile();
 
@@ -64,6 +84,23 @@ describe('ExercisesController - Submit Endpoint', () => {
       user_id: '550e8400-e29b-41d4-a716-446655440000',
       full_name: 'Test Student',
     });
+
+    // Setup default mock for findById - return exercise that requires manual grading
+    // so the submit path delegates to exerciseSubmissionService.submitExercise
+    mockExercisesService.findById.mockResolvedValue({
+      id: '880e8400-e29b-41d4-a716-446655440000',
+      title: 'Test Exercise',
+      exercise_type: 'verdadero_falso',
+      requires_manual_grading: true,
+      passing_score: 70,
+      xp_reward: 50,
+      ml_coins_reward: 25,
+      hint_cost_ml_coins: 10,
+    });
+
+    // Mock ExerciseAnswerValidator.validate to skip answer structure validation
+    // since this is a controller unit test focused on submit flow, not answer validation
+    jest.spyOn(ExerciseAnswerValidator, 'validate').mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -131,25 +168,44 @@ describe('ExercisesController - Submit Endpoint', () => {
     });
 
     it('should handle exercise with perfect score (100%)', async () => {
-      // Arrange
-      const perfectScoreResponse = {
-        attemptId: 'aa0e8400-e29b-41d4-a716-446655440000',
-        exerciseId: exerciseId,
+      // Arrange: Use auto-grading path (requires_manual_grading: false)
+      mockExercisesService.findById.mockResolvedValueOnce({
+        id: exerciseId,
+        title: 'Test Exercise',
+        exercise_type: 'verdadero_falso',
+        requires_manual_grading: false,
+        passing_score: 70,
+        xp_reward: 200,
+        ml_coins_reward: 100,
+        hint_cost_ml_coins: 10,
+      });
+
+      // No previous attempts (first attempt)
+      mockExerciseAttemptService.findByUserAndExercise.mockResolvedValue([]);
+
+      // SQL validation returns perfect score
+      mockDataSource.query.mockResolvedValue([{
         score: 100,
-        isPerfect: true,
-        rankUp: null,
-        rewards: {
-          bonuses: [],
-          mlCoins: 100,
-          xp: 200,
-        },
+        feedback: 'Perfect score!',
+        details: { correct_questions: 3, total_questions: 3, results_per_question: [] },
+      }]);
+
+      // Save attempt returns the created attempt
+      mockExerciseAttemptService.create.mockResolvedValue({
+        id: 'aa0e8400-e29b-41d4-a716-446655440000',
+        score: 100,
+        is_correct: true,
+      });
+
+      // Use submitDto with 0 hints to trigger isPerfect = true (score === 100 && hintsUsed === 0)
+      const perfectSubmitDto = {
+        ...submitDto,
+        hints_used: 0,
+        comodines_used: [],
       };
-      mockExerciseSubmissionService.submitExercise.mockResolvedValue(
-        perfectScoreResponse,
-      );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, submitDto, mockRequest);
+      const result = await controller.submitExercise(exerciseId, perfectSubmitDto, mockRequest);
 
       // Assert
       expect(result.score).toBe(100);

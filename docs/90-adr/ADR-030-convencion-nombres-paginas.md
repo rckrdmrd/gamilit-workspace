@@ -31,7 +31,7 @@ Un analisis de consistencia (Track F) revelo que la decision original **solo se 
 | Parent | 4 | 4 | 0 | NO |
 | Root (src/pages/) | 5 | 5 | 0 | NO |
 
-**Resultado:** 46 de 68 paginas (~68%) retienen el sufijo "Page". Solo 19 paginas del Teacher portal (~28%) siguen la convencion original. La decision nunca fue implementada de forma completa.
+**Resultado:** 46 de 70 paginas (~66%) retienen el sufijo "Page". Solo 19 paginas del Teacher portal (~28%) siguen la convencion original. La decision nunca fue implementada de forma completa.
 
 ### Archivos que NO cumplen (ejemplos representativos)
 
@@ -54,7 +54,7 @@ Un analisis de consistencia (Track F) revelo que la decision original **solo se 
 
 ### Justificacion
 
-1. **Mayoria absoluta:** 46/68 paginas (~68%) ya usan el sufijo "Page". Migrar la mayoria hacia la minoria seria irrazonable.
+1. **Mayoria absoluta:** 46/70 paginas (~66%) ya usan el sufijo "Page". Migrar la mayoria hacia la minoria seria irrazonable.
 2. **Claridad explicita:** `AdminDashboardPage.tsx` es inmediatamente comprensible sin depender del contexto del directorio (e.g., al buscar en el editor, en imports, en stack traces).
 3. **Costo de migracion prohibitivo:** Renombrar 19 archivos Teacher + actualizar App.tsx routes, imports en componentes, barrel files, y tests es un cambio masivo con alto riesgo de regresion y sin beneficio funcional.
 4. **Consistencia real vs teorica:** La consistencia que importa es la que existe en el codigo. El codigo es consistente en "Page" suffix; la excepcion es Teacher.

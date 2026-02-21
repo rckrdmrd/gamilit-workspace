@@ -1,6 +1,10 @@
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { useStudentPageSetup } from '../../hooks/useStudentPageSetup';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
+import {
+  DelayedRewardsModal,
+  type DelayedRewardsData,
+} from '../exercise/DelayedRewardsModal';
 
 export interface StudentPageShellProps {
   children: ReactNode;
@@ -31,6 +35,30 @@ export interface StudentPageShellProps {
  */
 export function StudentPageShell({ children, showHeader = true }: StudentPageShellProps) {
   const { user, displayGamificationData, handleLogout } = useStudentPageSetup();
+  const [delayedRewards, setDelayedRewards] = useState<DelayedRewardsData | null>(null);
+  const [isDelayedRewardsOpen, setIsDelayedRewardsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleExerciseFeedback = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        data?: Record<string, unknown>;
+        message?: string;
+      }>;
+      const data = customEvent.detail?.data || {};
+      setDelayedRewards({
+        score: Number(data.score || 0),
+        xpEarned: Number(data.xpEarned || 0),
+        mlCoinsEarned: Number(data.mlCoinsEarned || 0),
+        message: customEvent.detail?.message,
+      });
+      setIsDelayedRewardsOpen(true);
+    };
+
+    window.addEventListener('gamilit:exercise:feedback', handleExerciseFeedback);
+    return () => {
+      window.removeEventListener('gamilit:exercise:feedback', handleExerciseFeedback);
+    };
+  }, []);
 
   return (
     <>
@@ -42,6 +70,11 @@ export function StudentPageShell({ children, showHeader = true }: StudentPageShe
         />
       )}
       {children}
+      <DelayedRewardsModal
+        isOpen={isDelayedRewardsOpen}
+        rewards={delayedRewards}
+        onClose={() => setIsDelayedRewardsOpen(false)}
+      />
     </>
   );
 }

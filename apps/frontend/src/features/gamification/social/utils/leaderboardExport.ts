@@ -6,6 +6,7 @@
  * - PDF export (basic implementation - can be enhanced with jsPDF)
  */
 
+import toast from 'react-hot-toast';
 import type { LeaderboardEntry } from '../types/leaderboardsTypes';
 import type { ExtendedLeaderboardType } from '../components/Leaderboards/EnhancedLeaderboardTabs';
 import type { TimePeriod, Metric } from '../components/Leaderboards/LeaderboardFilters';
@@ -213,7 +214,7 @@ export const exportToPDF = (options: ExportOptions): void => {
       }, 250);
     };
   } else {
-    alert('Por favor, permite las ventanas emergentes para exportar a PDF');
+    toast.error('Por favor, permite las ventanas emergentes para exportar a PDF');
   }
 };
 

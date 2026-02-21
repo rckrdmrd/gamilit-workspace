@@ -10,7 +10,7 @@ export const UserActivityMonitor: React.FC = () => {
   const { exportToCSV } = useExportData();
 
   const handleExport = () => {
-    exportToCSV(activities, 'user_activity');
+    exportToCSV(activities as unknown as Record<string, unknown>[], 'user_activity');
   };
 
   const topUsers = activities

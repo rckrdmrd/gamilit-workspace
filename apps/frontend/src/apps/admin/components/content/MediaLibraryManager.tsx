@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { useMediaLibrary } from '../../hooks/useContentManagement';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { Upload, Image, Video, Music, Trash2, Search, Tag, HardDrive } from 'lucide-react';
 
 export const MediaLibraryManager: React.FC = () => {
@@ -11,6 +14,9 @@ export const MediaLibraryManager: React.FC = () => {
   const [filterType, setFilterType] = useState<'all' | 'image' | 'video' | 'audio'>('all');
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -21,14 +27,14 @@ export const MediaLibraryManager: React.FC = () => {
       for (const file of Array.from(files)) {
         // Validate file size (max 10MB)
         if (file.size > 10 * 1024 * 1024) {
-          alert(`File ${file.name} exceeds 10MB limit`);
+          toast.error(`File ${file.name} exceeds 10MB limit`);
           continue;
         }
         await uploadFile(file);
       }
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Upload failed');
+      toast.error('Upload failed');
     } finally {
       setUploading(false);
       event.target.value = ''; // Reset input
@@ -37,15 +43,18 @@ export const MediaLibraryManager: React.FC = () => {
 
   const handleBulkDelete = async () => {
     if (selectedFiles.length === 0) return;
-    if (!confirm(`Delete ${selectedFiles.length} file(s)?`)) return;
 
-    try {
-      await bulkDelete(selectedFiles);
-      setSelectedFiles([]);
-    } catch (error) {
-      console.error('Bulk delete failed:', error);
-      alert('Bulk delete failed');
-    }
+    setConfirmMessage(`Delete ${selectedFiles.length} file(s)?`);
+    setPendingAction(() => async () => {
+      try {
+        await bulkDelete(selectedFiles);
+        setSelectedFiles([]);
+      } catch (error) {
+        console.error('Bulk delete failed:', error);
+        toast.error('Bulk delete failed');
+      }
+    });
+    setShowConfirm(true);
   };
 
   const toggleSelectFile = (id: string) => {
@@ -193,9 +202,12 @@ export const MediaLibraryManager: React.FC = () => {
       {/* Media Grid */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {filteredMedia.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-gray-400">
-            <Upload className="mx-auto mb-2 h-12 w-12" />
-            <p>No media files found</p>
+          <div className="col-span-full">
+            <EmptyState
+              icon={Upload}
+              title="No media files found"
+              description="Sube archivos para verlos aqui"
+            />
           </div>
         ) : (
           filteredMedia.map((file) => {
@@ -293,6 +305,18 @@ export const MediaLibraryManager: React.FC = () => {
           </div>
         </div>
       </DetectiveCard>
+
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => {
+          pendingAction?.();
+          setShowConfirm(false);
+        }}
+        title="Confirmar accion"
+        message={confirmMessage}
+        variant="danger"
+      />
     </div>
   );
 };

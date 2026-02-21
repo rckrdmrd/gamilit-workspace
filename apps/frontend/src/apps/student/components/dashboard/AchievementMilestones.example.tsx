@@ -51,7 +51,7 @@ const exampleMilestones = [
 ];
 
 // Ejemplo con milestones vacíos
-const emptyMilestones: any[] = [];
+const emptyMilestones: { id: string; title: string; description: string; progress: number; total: number; completed: boolean; reward: { xp: number; mlCoins: number }; icon: 'target' | 'trophy' | 'star' }[] = [];
 
 export const AchievementMilestonesExample: React.FC = () => {
   return (

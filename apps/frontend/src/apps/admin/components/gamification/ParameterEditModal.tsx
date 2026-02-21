@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { X, RotateCcw, AlertCircle } from 'lucide-react';
 import type { Parameter } from '@/services/api/schemas/adminSchemas';
 
@@ -34,6 +36,8 @@ export function ParameterEditModal({
   const [reason, setReason] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
   // Initialize new value when parameter changes
   useEffect(() => {
@@ -43,26 +47,6 @@ export function ParameterEditModal({
       setErrors([]);
     }
   }, [parameter]);
-
-  // Close modal on Esc key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // Trap focus in modal
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
 
   if (!isOpen || !parameter) return null;
 
@@ -126,13 +110,9 @@ export function ParameterEditModal({
   };
 
   /**
-   * Handle reset to default
+   * Execute the reset after confirmation
    */
-  const handleReset = async () => {
-    if (!confirm('¿Está seguro de restaurar este parámetro a su valor por defecto?')) {
-      return;
-    }
-
+  const executeReset = async () => {
     setIsSubmitting(true);
     try {
       await onReset(parameter.key);
@@ -144,6 +124,14 @@ export function ParameterEditModal({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  /**
+   * Handle reset to default - shows confirmation dialog
+   */
+  const handleReset = () => {
+    setPendingAction(() => executeReset);
+    setShowConfirm(true);
   };
 
   /**
@@ -173,13 +161,8 @@ export function ParameterEditModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="lg" className="bg-transparent shadow-none p-0">
+      <div className="-mx-6 -my-4">
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -324,6 +307,19 @@ export function ParameterEditModal({
           </div>
         </DetectiveCard>
       </div>
-    </div>
+
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => {
+          pendingAction?.();
+          setShowConfirm(false);
+        }}
+        title="Restaurar valor por defecto"
+        message="¿Está seguro de restaurar este parámetro a su valor por defecto?"
+        confirmText="Restaurar"
+        variant="warning"
+      />
+    </Modal>
   );
 }

@@ -169,7 +169,7 @@ export class AssignmentsService {
    */
   async patchAssignment(
     id: string,
-    patchDto: any,
+    patchDto: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     teacherId: string,
   ): Promise<Assignment> {
     // 1. Verify ownership
@@ -214,7 +214,7 @@ export class AssignmentsService {
         if (key === 'dueDate') {
           assignment.dueDate = new Date(patchDto.dueDate);
         } else {
-          (assignment as any)[key] = patchDto[key];
+          (assignment as any)[key] = patchDto[key]; // eslint-disable-line @typescript-eslint/no-explicit-any
         }
       }
     });
@@ -233,8 +233,9 @@ export class AssignmentsService {
    */
   async distributeAssignment(
     assignmentId: string,
-    dto: any,
+    dto: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     teacherId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     // 1. Verify ownership
     const assignment = await this.assignmentRepository.findOne({
@@ -245,7 +246,7 @@ export class AssignmentsService {
       throw new NotFoundException(`Assignment with ID ${assignmentId} not found or access denied`);
     }
 
-    const result: any = {
+    const result: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
       classroomsSuccess: 0,
       classroomsFailed: 0,
       studentsSuccess: 0,
@@ -389,8 +390,9 @@ export class AssignmentsService {
    */
   async duplicateAssignment(
     originalId: string,
-    dto: any,
+    dto: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     teacherId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     // 1. Get original assignment and verify ownership
     const original = await this.assignmentRepository.findOne({
@@ -417,7 +419,7 @@ export class AssignmentsService {
 
     const saved = await this.assignmentRepository.save(duplicate);
 
-    const response: any = {
+    const response: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
       id: saved.id,
       title: saved.title,
       originalId: originalId,
@@ -608,7 +610,7 @@ export class AssignmentsService {
     submission.feedback = dto.feedback || null;
     submission.gradedBy = teacherId;
     submission.gradedAt = new Date();
-    submission.status = 'graded' as any;
+    submission.status = 'graded' as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const graded = await this.submissionRepository.save(submission);
 
@@ -937,6 +939,7 @@ export class AssignmentsService {
   async findStudentAssignments(
     studentId: string,
     _filters?: { status?: string; classroomId?: string },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     // Get direct student assignments (without relation join - relations commented out)
     const studentAssignments = await this.assignmentStudentRepository.find({
@@ -1001,6 +1004,7 @@ export class AssignmentsService {
   async findStudentAssignmentById(
     assignmentStudentId: string,
     studentId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     // Get student assignment record
     const assignmentStudent = await this.assignmentStudentRepository.findOne({
@@ -1072,6 +1076,7 @@ export class AssignmentsService {
    * Get grades summary for a student
    * @param studentId - The student's user ID
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getStudentGradesSummary(studentId: string): Promise<any> {
     // Get all assignments for student
     const studentAssignments = await this.assignmentStudentRepository.find({

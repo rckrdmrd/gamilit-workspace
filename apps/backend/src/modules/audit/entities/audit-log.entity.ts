@@ -14,27 +14,10 @@ import {
   Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+import { ActorType, Severity, Status } from '../enums/audit-log.enums';
 
-export enum ActorType {
-  USER = 'user',
-  SYSTEM = 'system',
-  API = 'api',
-  CRON = 'cron',
-}
-
-export enum Severity {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-  CRITICAL = 'critical',
-}
-
-export enum Status {
-  SUCCESS = 'success',
-  FAILURE = 'failure',
-  PARTIAL = 'partial',
-}
+// Re-export for backward compatibility
+export { ActorType, Severity, Status } from '../enums/audit-log.enums';
 
 @Entity({ schema: DB_SCHEMAS.AUDIT, name: DB_TABLES.AUDIT.AUDIT_LOGS })
 @Index(['tenantId'])

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ActivityProgress, GradingProgress, PassbackStatus } from '../entities/lti-grade-passback.entity';
+import { ActivityProgress, GradingProgress, PassbackStatus } from '../enums/lti-grade-passback.enums';
 
 /**
  * LtiGradePassbackResponseDto

@@ -256,6 +256,7 @@ export class StudentFeaturesService extends FeatureBaseService {
   /**
    * Query student data from data warehouse
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async queryStudentData(studentId: string): Promise<any | null> {
     // First try to get from data warehouse dim_student
     const dwQuery = `
@@ -378,7 +379,7 @@ export class StudentFeaturesService extends FeatureBaseService {
   /**
    * Calculate profile completeness percentage
    */
-  private calculateProfileCompleteness(studentData: any): number {
+  private calculateProfileCompleteness(studentData: any): number { // eslint-disable-line @typescript-eslint/no-explicit-any
     const fields = [
       'display_name',
       'email',

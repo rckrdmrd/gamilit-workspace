@@ -96,7 +96,7 @@ Teacher clickea "Calificar" en submission
          │
          ▼
 ┌───────────────────┐
-│   useGrading()    │
+│ useManualReviews()│
 │   .gradeSubmission│
 └────────┬──────────┘
          │
@@ -217,8 +217,8 @@ CRON Job (cada 6 horas)
 │     ├──► Patron de errores                                            │
 │     │    Multiples intentos fallidos en mismo ejercicio               │
 │     │                                                                  │
-│     └──► ML Predictor (opcional)                                      │
-│          MlPredictorService.predictRisk(studentId)                    │
+│     └──► Heuristic risk analysis                                      │
+│          analyzeStudentRisk(studentId)                                │
 │                                                                        │
 │  3. Si riesgo detectado:                                              │
 │     │                                                                  │
@@ -452,9 +452,6 @@ export class AnalyticsService {
     private achievementRepo: Repository<UserAchievement>,
     @InjectRepository(MlCoinsTransaction, 'gamification')
     private transactionRepo: Repository<MlCoinsTransaction>,
-
-    // ML Predictions
-    private mlPredictorService: MlPredictorService,
   ) {}
 }
 ```
@@ -733,10 +730,10 @@ export class StudentProgressService {
 }
 
 // Frontend error handling
-export function useStudentProgress(studentId: string) {
+export function useAnalytics(classroomId: string) {
   return useQuery({
-    queryKey: ['teacher', 'students', studentId, 'progress'],
-    queryFn: () => studentProgressApi.getProgress(studentId),
+    queryKey: ['teacher', 'analytics', classroomId],
+    queryFn: () => analyticsApi.getClassroomAnalytics(classroomId),
     retry: (failureCount, error) => {
       // No retry en 4xx
       if (error.response?.status >= 400 && error.response?.status < 500) {

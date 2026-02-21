@@ -18,7 +18,7 @@ GAMILIT (Gamificacion Maya para la Lectoescritura en Tecnologia) es una **plataf
 STANDALONE_HEREDERO (Nivel 2A)
   |
   v
-gamilit (23 modulos, 169 tablas, 901 endpoints)
+gamilit (23 modulos, 169 tablas, 905 endpoints)
   |
   v
 shared/catalog/ (exporta patrones generalizables)
@@ -48,9 +48,9 @@ La baja comprension lectora y la falta de motivacion en actividades de lectura t
 
 ## 2. Alcance
 
-### 2.1 Modulos Totales: 22
+### 2.1 Modulos Totales: 23
 
-GAMILIT organiza sus 22 modulos en 4 categorias funcionales:
+GAMILIT organiza sus 23 modulos en 4 categorias funcionales:
 
 #### 2.1.1 Core Infrastructure (7)
 
@@ -112,7 +112,7 @@ GAMILIT esta disenado para el segmento educativo K-12 hispanohablante, incorpora
 El modelo de aislamiento por escuela implementa:
 
 - Toda tabla transaccional incluye columna `tenant_id`
-- Row-Level Security (RLS) activado en PostgreSQL para 207 policies
+- Row-Level Security (RLS) activado en PostgreSQL para 231 DDL / 471 runtime policies
 - 18 schemas modulares organizados por dominio funcional
 - Datos compartidos (contenido global) vs datos aislados (progreso, gamificacion)
 
@@ -208,7 +208,7 @@ El modelo de aislamiento por escuela implementa:
 |----|---------------|---------|
 | RNF-GAM-006 | Autenticacion | JWT con expiracion corta (15min) + refresh tokens (7d) |
 | RNF-GAM-007 | Autorizacion | RBAC con 4 roles academicos y permisos granulares |
-| RNF-GAM-008 | Aislamiento de datos | RLS en PostgreSQL para todas las tablas con tenant_id (207 policies) |
+| RNF-GAM-008 | Aislamiento de datos | RLS en PostgreSQL para todas las tablas con tenant_id (231 DDL / 471 runtime policies) |
 | RNF-GAM-009 | Validacion | DTOs con class-validator en todos los endpoints |
 | RNF-GAM-010 | CORS | Configurado por entorno, rate limiting 100 req/min |
 | RNF-GAM-011 | Contenido usuario | Sanitizacion de contenido generado por estudiantes |
@@ -245,7 +245,7 @@ El modelo de aislamiento por escuela implementa:
 |----|---------------|---------|
 | RNF-GAM-023 | Cobertura de tests | >= 80% unitarios, 833 tests activos |
 | RNF-GAM-024 | Documentacion API | OpenAPI/Swagger auto-generada y actualizada |
-| RNF-GAM-025 | Modularidad | 22 modulos NestJS independientes |
+| RNF-GAM-025 | Modularidad | 23 modulos NestJS independientes |
 | RNF-GAM-026 | Code standards | ESLint + Prettier, TypeScript strict mode |
 
 ---
@@ -274,8 +274,8 @@ El modelo de aislamiento por escuela implementa:
 | EPIC-GAM-REQUIREMENTS | Requerimientos y US | 13 | Documentacion | Completado |
 | EPIC-GAM-ARCHITECTURE | Diseno de Arquitectura | 13 | Documentacion | Completado |
 | EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 169 tablas | Completado |
-| EPIC-GAM-BACKEND | Backend NestJS | 34 | 22 modulos, 899 endpoints | Completado |
-| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 475 componentes | Completado |
+| EPIC-GAM-BACKEND | Backend NestJS | 34 | 23 modulos, 905 endpoints | Completado |
+| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 580 componentes | Completado |
 | EPIC-GAM-K8S | Kubernetes Setup | 8 | Deployment configs | En progreso |
 | EPIC-GAM-TESTING | Testing Completo | 13 | 833 tests | En progreso |
 | EPIC-GAM-DEVOPS | DevOps y CI/CD | 8 | Pipelines | En progreso |

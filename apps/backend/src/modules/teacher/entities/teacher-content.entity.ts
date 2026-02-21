@@ -73,10 +73,10 @@ export class TeacherContent {
 
   // Media and attachments
   @Column({ type: 'jsonb', name: 'media_resources', default: [] })
-    media_resources!: any[];
+    media_resources!: Record<string, unknown>[];
 
   @Column({ type: 'jsonb', nullable: true, default: [] })
-    attachments?: any[] | null;
+    attachments?: Record<string, unknown>[] | null;
 
   // Classroom assignment
   @Column({ type: 'jsonb', name: 'target_classrooms', default: [] })

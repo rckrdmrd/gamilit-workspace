@@ -87,7 +87,7 @@ export class PeerChallengesService {
     challenge_type?: string;
     created_by?: string;
   }): Promise<PeerChallenge[]> {
-    const where: any = {};
+    const where: Record<string, string> = {};
 
     if (filters?.status) {
       where.status = filters.status;

@@ -1134,3 +1134,13 @@ import { UserList, useUsers, User } from '@/features/users';
 ## Ver tambien
 
 - [PRINCIPIO-SEPARATION-OF-CONCERNS](../../orchestration/directivas/principios/PRINCIPIO-SEPARATION-OF-CONCERNS.md) - Principio de separacion de responsabilidades aplicado a frontend
+
+### Estandares frontend especificos (complementarios)
+
+Los siguientes estandares definen reglas detalladas para aspectos concretos del desarrollo frontend. Aplican como complemento a este documento:
+
+- [STANDARD-API.md](./STANDARD-API.md) -- Ubicacion canonica de APIs, React Query como estandar, error handling
+- [STANDARD-COMPONENT.md](./STANDARD-COMPONENT.md) -- Export patterns, props typing, React imports, file naming
+- [STANDARD-IMPORTS.md](./STANDARD-IMPORTS.md) -- Import order (5 grupos), path aliases, barrels, icon imports
+- [STANDARD-TYPES.md](./STANDARD-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
+- [STANDARD-UX-PATTERNS.md](./STANDARD-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, forms, confirmation dialogs

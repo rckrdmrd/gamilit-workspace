@@ -1,7 +1,7 @@
 import { IsEnum, IsString, IsOptional, IsObject, IsUUID, IsDate, IsNumber, Min, Max } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { MissionTypeEnum } from '../../entities/mission.entity';
+import { MissionTypeEnum } from '../../enums/mission.enums';
 
 /**
  * Mission Objective DTO

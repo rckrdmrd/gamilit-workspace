@@ -3,8 +3,6 @@
  *
  * Common TypeScript types and interfaces for API requests and responses
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // ============================================================================
 // GENERIC RESPONSE TYPES
 // ============================================================================
@@ -12,7 +10,7 @@
 /**
  * Standard API response wrapper
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data: T;
   message?: string;
@@ -211,7 +209,7 @@ export interface SortOption {
 /**
  * Bulk operation request
  */
-export interface BulkOperationRequest<T = any> {
+export interface BulkOperationRequest<T = unknown> {
   operation: 'create' | 'update' | 'delete';
   items: T[];
 }
@@ -259,7 +257,7 @@ export interface CachedResponse<T> {
 /**
  * Webhook payload
  */
-export interface WebhookPayload<T = any> {
+export interface WebhookPayload<T = unknown> {
   event: string;
   data: T;
   timestamp: string;

@@ -107,7 +107,7 @@ Cada ejercicio completado alimenta el motor de repeticion espaciada, que program
 - **Rechazada:** No escalable, bottleneck en maestros, latencia en feedback
 
 ### 4. Microservicios por tipo de ejercicio
-- **Rechazada:** Over-engineering para 22 modulos en monorepo, complejidad operativa innecesaria
+- **Rechazada:** Over-engineering para 23 modulos en monorepo, complejidad operativa innecesaria
 
 ---
 

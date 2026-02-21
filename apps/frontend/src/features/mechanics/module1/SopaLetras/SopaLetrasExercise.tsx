@@ -63,7 +63,6 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
       };
     });
 
-    console.log('🎮 [SopaLetras] Palabras inicializadas:', result);
     return result;
   }, [exercise.content.words]);
 
@@ -98,10 +97,6 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
         answers: userAnswers,
       });
 
-      console.log('📊 [SopaLetras] Progress update sent:', {
-        foundWords: userAnswers.words.length,
-        totalWords: words.length,
-      });
     }
   }, [words, hintsUsed, onProgressUpdate, startTime]);
 
@@ -119,8 +114,6 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
 
       if (!selectedWord) return;
 
-      console.log('🔍 [SopaLetras] Validando palabra:', selectedWord);
-
       // Usar la forma funcional de setState para evitar problemas de closure
       setWords((prevWords) => {
         // Buscar si coincide con alguna palabra conocida
@@ -128,18 +121,10 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
           const wordStr = String(w.word).toUpperCase();
           const isMatch =
             wordStr === selectedWord || wordStr === selectedWord.split('').reverse().join('');
-          if (isMatch) {
-            console.log('✅ [SopaLetras] Coincidencia encontrada:', wordStr, 'found:', w.found);
-          }
           return isMatch;
         });
 
         if (matchedWordIndex >= 0 && !prevWords[matchedWordIndex].found) {
-          console.log(
-            '🎯 [SopaLetras] Marcando palabra como encontrada:',
-            prevWords[matchedWordIndex].word,
-          );
-
           // Marcar la palabra como encontrada y guardar las posiciones de las celdas
           const updatedWords = [...prevWords];
           const wordToUpdate = { ...updatedWords[matchedWordIndex], found: true };
@@ -167,25 +152,15 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
           updatedWords[matchedWordIndex] = wordToUpdate;
 
           // Agregar las celdas de esta palabra a foundCells para mantenerlas resaltadas
-          console.log(
-            `➕ [SopaLetras] Agregando ${cells.length} celdas a foundCells para palabra: ${wordToUpdate.word}`,
-          );
-          setFoundCells((prev) => {
-            const newFoundCells = [...prev, ...cells];
-            console.log(`📊 [SopaLetras] Total foundCells ahora: ${newFoundCells.length}`);
-            return newFoundCells;
-          });
+          setFoundCells((prev) => [...prev, ...cells]);
 
           // Limpiar selección después de un breve delay para feedback visual
           setTimeout(() => setSelectedCells([]), 300);
 
           return updatedWords;
         } else if (matchedWordIndex >= 0) {
-          console.log('⚠️ [SopaLetras] Palabra ya encontrada previamente');
           // Limpiar selección si la palabra ya fue encontrada
           setTimeout(() => setSelectedCells([]), 200);
-        } else {
-          console.log('❌ [SopaLetras] No se encontró coincidencia');
         }
 
         return prevWords;
@@ -198,10 +173,8 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        console.log('⌨️ [SopaLetras] ESC presionado - Limpiando selección');
         setSelectedCells([]);
       } else if (e.key === 'Enter' && selectedCells.length > 0) {
-        console.log('⌨️ [SopaLetras] ENTER presionado - Validando selección');
         validateSelection(selectedCells);
       }
     };
@@ -212,8 +185,6 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
 
   const handleCellSelect = React.useCallback(
     (row: number, col: number) => {
-      console.log(`🖱️ [SopaLetras] Click en celda (${row}, ${col})`);
-
       // En sopa de letras, las celdas pueden ser reutilizadas cuando las palabras se cruzan
       // Solo verificamos que no esté ya seleccionada en la selección actual
       setSelectedCells((currentSelectedCells) => {
@@ -223,21 +194,10 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
         );
 
         if (isAlreadySelected) {
-          console.log('⚠️ [SopaLetras] Celda ya seleccionada en la selección actual, ignorando');
           return currentSelectedCells;
         }
 
         const newSelection = [...currentSelectedCells, { row, col }];
-
-        // Verificar si esta celda pertenece a una palabra ya encontrada
-        const isInFoundWord = foundCells.some((cell) => cell.row === row && cell.col === col);
-        if (isInFoundWord) {
-          console.log(
-            `💡 [SopaLetras] Celda está en palabra encontrada pero permitimos reutilización para cruces`,
-          );
-        }
-
-        console.log(`📝 [SopaLetras] Selección actual: ${newSelection.length} celdas`);
 
         return newSelection;
       });
@@ -246,16 +206,9 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   );
 
   const handleCheck = React.useCallback(async () => {
-    console.log('📋 [SopaLetras] handleCheck iniciado');
-
     // Validar selección actual antes de verificar
     setSelectedCells((currentCells) => {
       if (currentCells.length > 0) {
-        console.log(
-          '🔄 [SopaLetras] Validando selección pendiente:',
-          currentCells.length,
-          'celdas',
-        );
         validateSelection(currentCells);
       }
       return currentCells;
@@ -266,13 +219,6 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
       const currentWords = words;
       const foundWords = currentWords.filter((w) => w.found).length;
       const isComplete = foundWords === currentWords.length;
-
-      console.log('📊 [SopaLetras] Estado final:', {
-        foundWords,
-        totalWords: currentWords.length,
-        isComplete,
-        words: currentWords.map((w) => ({ word: w.word, found: w.found })),
-      });
 
       if (!isComplete) {
         setFeedback({
@@ -325,12 +271,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
         // Sync stores with backend (rewards already calculated and saved by backend)
         await syncAndInvalidate();
 
-        console.log('✅ [SopaLetras] Submission successful:', {
-          attemptId: response.attemptId,
-          score: response.score,
-          rewards: response.rewards,
-        });
-      } catch (error) {
+        } catch (error) {
         console.error('❌ [SopaLetras] Submission error:', error);
         setFeedback({
           type: 'error',
@@ -366,14 +307,12 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   // Handler para validar la selección actual (botón móvil)
   const handleValidateSelection = React.useCallback(() => {
     if (selectedCells.length > 0) {
-      console.log('📱 [SopaLetras] Botón validar presionado - Validando selección');
       validateSelection(selectedCells);
     }
   }, [selectedCells, validateSelection]);
 
   // Handler para cancelar la selección actual
   const handleCancelSelection = React.useCallback(() => {
-    console.log('📱 [SopaLetras] Botón cancelar presionado - Limpiando selección');
     setSelectedCells([]);
   }, []);
 
@@ -407,9 +346,9 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
               </span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

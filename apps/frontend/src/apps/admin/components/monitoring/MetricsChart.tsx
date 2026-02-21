@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -108,7 +107,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
         ticks: {
           color: '#9ca3af',
           font: { family: 'Courier New, monospace' },
-          callback: (value: any) => `${value}${unit}`,
+          callback: (value: string | number) => `${value}${unit}`,
         },
         grid: { color: '#374151' },
       },
@@ -121,7 +120,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
 
   return (
     <div className="h-64">
-      <Line data={chartData} options={options} />
+      <Line data={chartData} options={options as any} />
     </div>
   );
 };

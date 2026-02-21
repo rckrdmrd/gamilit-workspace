@@ -235,21 +235,23 @@ const TeacherAnalytics = lazy(() =>
 
 **Opción Recomendada:** B (HOC Pattern)
 
-**Razones:**
+> **NOTA (2026-02-20):** El HOC `withTeacherLayout` fue creado y posteriormente eliminado en el Teacher Portal Audit (2026-02-20). Se adopto el patron PageShell (ADR-046) como solucion definitiva. Todas las 19 paginas del Teacher portal ahora usan `TeacherPageShell`. Ver ADR-046 para detalles.
+
+**Razones originales:**
 1. Mantiene separación de responsabilidades
 2. Elimina duplicación sin perder funcionalidad
 3. Facilita futuros cambios de layout
 4. Patrón estándar en React
 
-**Plan de Ejecución:**
-1. Crear `withTeacherLayout.tsx` HOC
-2. Actualizar `routes.tsx` para usar HOC
-3. Eliminar archivos `*Page.tsx` (uno por uno con validación)
-4. Renombrar componentes si es necesario
-5. Ejecutar tests de navegación
+**Plan de Ejecución (COMPLETADO — evolucionó a PageShell pattern):**
+1. ~~Crear `withTeacherLayout.tsx` HOC~~ — Creado y luego eliminado (2026-02-20)
+2. ~~Actualizar `routes.tsx` para usar HOC~~ — Reemplazado por PageShell en cada pagina
+3. ~~Eliminar archivos `*Page.tsx`~~ — Invertido: "Page" suffix es ahora canonico (ADR-030 v2.0.0)
+4. ~~Renombrar componentes si es necesario~~
+5. ~~Ejecutar tests de navegación~~
 
 **Esfuerzo:** 6-8 horas
-**Prioridad:** P2 (Deuda técnica)
+**Prioridad:** P2 (Deuda técnica) — **RESUELTO**
 
 ---
 

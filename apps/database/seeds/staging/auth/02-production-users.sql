@@ -79,7 +79,7 @@ INSERT INTO auth.users (
 -- USUARIO 1: Jose Aguirre
 (
     'b017b792-b327-40dd-aefb-a80312776952'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'joseal.guirre34@gmail.com',
     '$2b$10$kb9yCB4Y2WBr2.Gth.wC9e8q8bnkZJ6O2X6kFSn.O4VK8d76Cr/xO',
@@ -94,7 +94,7 @@ INSERT INTO auth.users (
 -- USUARIO 2: Sergio Jimenez
 (
     '06a24962-e83d-4e94-aad7-ff69f20a9119'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'sergiojimenezesteban63@gmail.com',
     '$2b$10$8oPdKN15ndCqCOIt12SEO.2yx4D29kQEQGPCC5rtUYWu8Qp5L7/zW',
@@ -109,7 +109,7 @@ INSERT INTO auth.users (
 -- USUARIO 3: Hugo Gomez
 (
     '24e8c563-8854-43d1-b3c9-2f83e91f5a1e'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'Gomezfornite92@gmail.com',
     '$2b$10$FuEfoSA0jxvBI2f6odMJqux9Gpgvt7Zjk.plRhRatvK0ykkIXxbI.',
@@ -124,7 +124,7 @@ INSERT INTO auth.users (
 -- USUARIO 4: Hugo Aragón
 (
     'bf0d3e34-e077-43d1-9626-292f7fae2bd6'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'Aragon494gt54@icloud.com',
     '$2b$10$lE8M8qWUIsgYLwcHyRGvTOjxdykLVchRVifsMVqCRCZq3bEeXR.xG',
@@ -139,7 +139,7 @@ INSERT INTO auth.users (
 -- USUARIO 5: Azul Valentina
 (
     '2f5a9846-3393-40b2-9e87-0f29238c383f'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'blu3wt7@gmail.com',
     '$2b$10$gKRXQ.rmOePqsNKWdxABQuyIZike2oSsYpdfWpQdi5HHDWDUk.3u2',
@@ -154,7 +154,7 @@ INSERT INTO auth.users (
 -- USUARIO 6: Ricardo Lugo
 (
     '5e738038-1743-4aa9-b222-30171300ea9d'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'ricardolugo786@icloud.com',
     '$2b$10$YV1StKIdCPPED/Ft84zR2ONxj/VzzV7zOxjgwMSbDpd2hzvYOGtby',
@@ -169,7 +169,7 @@ INSERT INTO auth.users (
 -- USUARIO 7: Carlos Marban
 (
     '00c742d9-e5f7-4666-9597-5a8ca54d5478'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'marbancarlos916@gmail.com',
     '$2b$10$PfsKOsEEXpGA6YB6eXNBPePo6OV6Am1glUN6Mkunl64bK/ji6uttW',
@@ -184,7 +184,7 @@ INSERT INTO auth.users (
 -- USUARIO 8: Diego Colores
 (
     '33306a65-a3b1-41d5-a49d-47989957b822'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'diego.colores09@gmail.com',
     '$2b$10$rFlH9alBbgPGVEZMYIV8p.AkeZ30yRCVd5acasFjIt7fpCZhE6RuO',
@@ -199,7 +199,7 @@ INSERT INTO auth.users (
 -- USUARIO 9: Benjamin Hernandez
 (
     '7a6a973e-83f7-4374-a9fc-54258138115f'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'hernandezfonsecabenjamin7@gmail.com',
     '$2b$10$1E6gLqfMojNLYrSKIbatqOh0pHblZ3jWZwbcxTY/DCx7MGADToCVm',
@@ -214,7 +214,7 @@ INSERT INTO auth.users (
 -- USUARIO 10: Josue Reyes
 (
     'ccd7135c-0fea-4488-9094-9da52df1c98c'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'jr7794315@gmail.com',
     '$2b$10$Ej/Gwx8mGCWg4TnQSjh1r.QZLw/GkUANqXmz4bEfVaNF9E527L02C',
@@ -229,7 +229,7 @@ INSERT INTO auth.users (
 -- USUARIO 11: Fernando Barragan
 (
     '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'barraganfer03@gmail.com',
     '$2b$10$VJ8bS.ksyKpa7oG575r5YOWQYcq8vwmwTa8jMBkCv0dwskF04SHn2',
@@ -244,7 +244,7 @@ INSERT INTO auth.users (
 -- USUARIO 12: Marco Antonio Roman
 (
     '735235f5-260a-4c9b-913c-14a1efd083ea'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'roman.rebollar.marcoantonio1008@gmail.com',
     '$2b$10$l4eF8UoOB7D8LKDEzTigXOUO7EABhVdYCqknJ/lD6R4p8uF1R4I.W',
@@ -259,7 +259,7 @@ INSERT INTO auth.users (
 -- USUARIO 13: Rodrigo Guerrero
 (
     'ebe48628-5e44-4562-97b7-b4950b216247'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'rodrigoguerrero0914@gmail.com',
     '$2b$10$ihoy7HbOdlqU38zAddpTOuDO7Nqa8.Cr1dEQjCgMpdb30UwCIMhGW',
@@ -278,7 +278,7 @@ INSERT INTO auth.users (
 -- USUARIO 14: santiagoferrara78
 (
     'd089b1af-462f-4d2c-b0f5-d2528cec8506'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'santiagoferrara78@gmail.com',
     '$2b$10$Wjo3EENjiuddS9BwPMAW1OORZrZpU8ECP9zEXmd4Gvn7orwgjo8O2',
@@ -293,7 +293,7 @@ INSERT INTO auth.users (
 -- USUARIO 15: alexanserrv917
 (
     'b1cadf36-1f07-46b2-b63d-da72d9b54dc6'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'alexanserrv917@gmail.com',
     '$2b$10$8sT/ObLZUNmiu6CpbceHhenfc7E8zZml8AvB1HUiyOddSLqchggZ2',
@@ -308,7 +308,7 @@ INSERT INTO auth.users (
 -- USUARIO 16: aarizmendi434
 (
     'af4d8788-f8a8-4971-bb0d-2f48c150dfc2'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'aarizmendi434@gmail.com',
     '$2b$10$2BAG4EskBG0feGOIva6XyOCBtBJbKJE9h27GU6DmuBH3f.2iK6FoS',
@@ -323,7 +323,7 @@ INSERT INTO auth.users (
 -- USUARIO 17: ashernarcisobenitezpalomino
 (
     '26fbc469-10af-4fa3-bd65-e5498188cc4f'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'ashernarcisobenitezpalomino@gmail.com',
     '$2b$10$Bv5vo0GDeseWUWTt.5xV0O9nN93TRVN.vHRigs4vF/ww7Hbnjylam',
@@ -338,7 +338,7 @@ INSERT INTO auth.users (
 -- USUARIO 18: ra.alejandrobm
 (
     '74ed8c97-ec36-43aa-a1cc-b0c99e4be4e8'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'ra.alejandrobm@gmail.com',
     '$2b$10$QZId3lZBIzBulD7AZCeEKOiL0LBJRekGlQTGiacC70IDwDo2wx7py',
@@ -353,7 +353,7 @@ INSERT INTO auth.users (
 -- USUARIO 19: abdallahxelhaneriavega
 (
     'f4c46f46-3fb9-40bf-a52b-a8ad2e6a92e1'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'abdallahxelhaneriavega@gmail.com',
     '$2b$10$jQ4SquNUxIO70e7IBYqqLeUw1d.gSCleJ/cwinuWMVlW25a8.pRGG',
@@ -368,7 +368,7 @@ INSERT INTO auth.users (
 -- USUARIO 20: 09enriquecampos
 (
     '012adac4-8ffd-47bd-9248-f0c5851e981f'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     '09enriquecampos@gmail.com',
     '$2b$10$95c9hOplonbo/46O5UlPqummq.AIaGVIZ7YgBstSuOWPbgGersKxy',
@@ -383,7 +383,7 @@ INSERT INTO auth.users (
 -- USUARIO 21: johhkk22
 (
     '126b9257-7b0a-4bd6-9ab3-c505ee00e10a'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'johhkk22@gmail.com',
     '$2b$10$Bt6IZ19zuBkly.6QmmPWBeF0kfyVN/O/c3/9bqyUGup3gPZu14DGa',
@@ -398,7 +398,7 @@ INSERT INTO auth.users (
 -- USUARIO 22: edangiel4532
 (
     '9ac1746e-94a6-4efc-a961-951c015d416e'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'edangiel4532@gmail.com',
     '$2b$10$eZap9LmAws7VtY9sHnS17.RJkhIte5SUobIWaWpuTxTPKjbKgzK.6',
@@ -413,7 +413,7 @@ INSERT INTO auth.users (
 -- USUARIO 23: erickfranco462
 (
     '2d9f05d4-44dd-42cd-97aa-d57bd06fecd0'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'erickfranco462@gmail.com',
     '$2b$10$lNzkSO7zbBHQcJJui0O76.a2artcsZHari4Mgkjo4btGww.Wy9/iC',
@@ -428,7 +428,7 @@ INSERT INTO auth.users (
 -- USUARIO 24: gallinainsana
 (
     'aff5dcc6-32de-4769-9aaf-eda751fa0866'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'gallinainsana@gmail.com',
     '$2b$10$6y/FVa4LqyliI4PXuBxKpepTRwIIRWybFN0NhcAqRM.Kl/cnvXDMq',
@@ -443,7 +443,7 @@ INSERT INTO auth.users (
 -- USUARIO 25: leile5257
 (
     '0cda1645-83c5-445b-80b7-d0e4d436c00c'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'leile5257@gmail.com',
     '$2b$10$ZZX0.z30VPm7BsLF8bNVweQpRZ2ca/1EPlxdIZy0xNaCFugoKL0ci',
@@ -458,7 +458,7 @@ INSERT INTO auth.users (
 -- USUARIO 26: maximiliano.mejia367
 (
     '1364c463-88de-479b-a883-c0b7b362bcf8'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'maximiliano.mejia367@gmail.com',
     '$2b$10$iTfIWKh2ISvPys2bkK2LOOPI24ua7I47oT8dFxHHYW7AuztoZreQa',
@@ -473,7 +473,7 @@ INSERT INTO auth.users (
 -- USUARIO 27: fl432025
 (
     '547eb778-4782-4681-b198-c731bba36147'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'fl432025@gmail.com',
     '$2b$10$aGKv6yhAWwHb07m3N2DxJOXIn5omkP3t2QeSYblhcDo52pB2ZiFQi',
@@ -488,7 +488,7 @@ INSERT INTO auth.users (
 -- USUARIO 28: 7341023901m
 (
     '5fc06693-e408-4eab-a9a3-fcd5f4e01296'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     '7341023901m@gmail.com',
     '$2b$10$Z/HUBov20g..LZ6RDYax4.NcDuiFD/gn9Nrt7/OPCPBqCoTJUgr3C',
@@ -503,7 +503,7 @@ INSERT INTO auth.users (
 -- USUARIO 29: segurauriel235
 (
     '5d1839f6-b03f-4e12-b236-eca43f4674f2'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'segurauriel235@gmail.com',
     '$2b$10$IfdhPuUOModgrJT7bMfYkODZkXeTcaAReuCQf9BGpK1cT6GiP9UGu',
@@ -518,7 +518,7 @@ INSERT INTO auth.users (
 -- USUARIO 30: angelrabano11
 (
     '1b310708-6f24-4c6a-88c9-a11f7a7f9763'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'angelrabano11@gmail.com',
     '$2b$10$Sg6q4kErMvxRlZgWM9lCj.PfRg5sCQrwm763d7sfc3iaAUID7y436',
@@ -533,7 +533,7 @@ INSERT INTO auth.users (
 -- USUARIO 31: daliaayalareyes35
 (
     '3c613b0e-66f9-4640-a599-c9426d8edffb'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'daliaayalareyes35@gmail.com',
     '$2b$10$dd2SQeBqNIZpZWCGMIDu1O8U6MLpWnKF05w641MNOMzHDZ/U5glCe',
@@ -548,7 +548,7 @@ INSERT INTO auth.users (
 -- USUARIO 32: alexeimongam
 (
     '7ded133e-9b13-4467-9803-edb813f6a9a1'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'alexeimongam@gmail.com',
     '$2b$10$jyQrHAIj6SsnReQ45FrFlOnDgpZtabskpxPuOYgB/h.YPLyZhuld.',
@@ -563,7 +563,7 @@ INSERT INTO auth.users (
 -- USUARIO 33: davidocampovenegas
 (
     '4cc04f54-7771-462d-98aa-a94448bb6ff5'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'davidocampovenegas@gmail.com',
     '$2b$10$8COk10WE5.bXFJnAucEA0efcGQKU6KUXKV9N7n32ZX6aNKORs4McW',
@@ -578,7 +578,7 @@ INSERT INTO auth.users (
 -- USUARIO 34: zaid080809
 (
     'fbbe7d19-048c-45e4-8a9c-cf86d2098c35'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'zaid080809@gmail.com',
     '$2b$10$kdaUWR1BUqPRY7H8YkR.xuuDbqtLcvP5yKW.B0ooPlb.I6b/UU192',
@@ -593,7 +593,7 @@ INSERT INTO auth.users (
 -- USUARIO 35: ruizcruzabrahamfrancisco
 (
     '5b3d74e8-fd1a-4c80-96d2-24c54bfe90c4'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'ruizcruzabrahamfrancisco@gmail.com',
     '$2b$10$DXHr682C4/VpesiHa7fRrOjKceiWSDUSx.1LZTbsvuxpqCdMNh/Ii',
@@ -608,7 +608,7 @@ INSERT INTO auth.users (
 -- USUARIO 36: vituschinchilla
 (
     '615adf6e-dbf3-480f-a907-3cfb3a64c6d2'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'vituschinchilla@gmail.com',
     '$2b$10$dA8adTYlfhgqhZfACcQkFOCYjXdsmggXnIUluNDoh1zRFgQ6pq5O2',
@@ -627,7 +627,7 @@ INSERT INTO auth.users (
 -- USUARIO 37: bryan@betanzos.com
 (
     'bf445960-4c1f-4e29-8fb7-31667b183d7e'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'bryan@betanzos.com',
     '$2b$10$Xdfuf4Tfog9QKd1FRLL.7eAaD6tr2cXgPx1/L8xqT1kLLzNHzSM26',
@@ -642,7 +642,7 @@ INSERT INTO auth.users (
 -- USUARIO 38: loganalexander816
 (
     'd5fa4905-a78a-4040-8ad8-23220881c6a6'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'loganalexander816@gmail.com',
     '$2b$10$8zLduh/9L/priag.nujz5utuloO9RnNFFDGdKgI2UniFCOwocEPLq',
@@ -657,7 +657,7 @@ INSERT INTO auth.users (
 -- USUARIO 39: carlois1974
 (
     '71734c15-cdaa-431b-90f5-97a57e0316a8'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'carlois1974@gmail.com',
     '$2b$10$IfLfJ.q59DZgicR07ckSVOcrkkBJe42m1FECXxaoaodKYSo6uj5wW',
@@ -672,7 +672,7 @@ INSERT INTO auth.users (
 -- USUARIO 40: enriquecuevascbtis136
 (
     '1efe491d-98ef-4c02-acd1-3135f7289072'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'enriquecuevascbtis136@gmail.com',
     '$2b$10$9BX3OQMZmHruffBtN.3WPOFoyea6zgPd8i72DvhJ7vRAdqWKax6GS',
@@ -687,7 +687,7 @@ INSERT INTO auth.users (
 -- USUARIO 41: omarcitogonzalezzavaleta
 (
     '5ae21325-7450-4c37-82f1-3f9bcd7b6f45'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'omarcitogonzalezzavaleta@gmail.com',
     '$2b$10$RRk3DAgQdiikxVImFIMqquqB.TNpKs3E.RNFtt1rwwTzO24uShri.',
@@ -702,7 +702,7 @@ INSERT INTO auth.users (
 -- USUARIO 42: gustavobm2024cbtis
 (
     'a4d27774-8a51-4660-ad2f-81d0dfd3a5a7'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'gustavobm2024cbtis@gmail.com',
     '$2b$10$lg7KRUTPofcx4Rtyey8J7.XO0gmdBLCFIfK5uP08mqT0qUIl1aTJq',
@@ -717,7 +717,7 @@ INSERT INTO auth.users (
 -- USUARIO 43: marianaxsotoxt22
 (
     '6e30164a-78b0-49b0-bd21-23d7c6c03349'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'marianaxsotoxt22@gmail.com',
     '$2b$10$GQC9yTWiP2vP9GUp0gnhUeLjmw70EI4JQhfJBZbMOlCNXGXb/bt5O',
@@ -736,7 +736,7 @@ INSERT INTO auth.users (
 -- USUARIO 44: javiermar06 (2025-12-08)
 (
     '69681b09-5077-4f77-84cc-67606abd9755'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'javiermar06@hotmail.com',
     '$2b$10$3RHyXnR4BG3NaxP8Ez82FuiGDMNCG7GhNaOsMFigy3BpIVOzCqHMW',
@@ -751,7 +751,7 @@ INSERT INTO auth.users (
 -- USUARIO 45: ju188an (2025-12-17)
 (
     'f929d6df-8c29-461f-88f5-264facd879e9'::uuid,
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    gen_random_uuid(),
     'authenticated', NULL,
     'ju188an@gmail.com',
     '$2b$10$9vUERFnXApdfXuAI7DFve.aa8uDjI5bfm4CI75/EZ2cUre83RytKe',

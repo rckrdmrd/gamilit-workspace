@@ -12,7 +12,7 @@ import {
   ActivityProgress,
   GradingProgress,
   PassbackStatus,
-} from '../entities/lti-grade-passback.entity';
+} from '../enums/lti-grade-passback.enums';
 
 /**
  * UpdateLtiGradePassbackDto

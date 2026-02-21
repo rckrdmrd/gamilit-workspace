@@ -13,12 +13,8 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  ParentAccount,
-  NotificationFrequency,
-  ReportFormat,
-  RelationshipType,
-} from '@/modules/auth/entities/parent-account.entity';
+import { ParentAccount } from '@/modules/auth/entities/parent-account.entity';
+import { NotificationFrequency, ReportFormat, RelationshipType } from '@/modules/parents/enums/parent-account.enums';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 
 /**

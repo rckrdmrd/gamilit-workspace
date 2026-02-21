@@ -93,13 +93,6 @@ export function useStudentsEconomy(classroomId?: string): UseStudentsEconomyRetu
       setTotal(result.total);
     } catch (err: unknown) {
       console.error('[useStudentsEconomy] Error:', err);
-      // Fallback to mock data on error for demo purposes if enabled or distinct flag
-      if (FEATURE_FLAGS.USE_MOCK_DATA) {
-        setStudents(MOCK_STUDENTS);
-        setTotal(MOCK_STUDENTS.length);
-        setLoading(false);
-        return;
-      }
 
       const errorMessage =
         err instanceof Error ? err.message : 'Error al obtener datos de estudiantes';

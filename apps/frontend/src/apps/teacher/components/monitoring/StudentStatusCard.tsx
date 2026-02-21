@@ -178,7 +178,7 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
           </div>
           <div className="flex items-center gap-2">
             <div
-              className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${statusInfo.bgColor} border bg-opacity-10 ${statusInfo.color}`}
+              className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${statusInfo.bgColor}/10 border ${statusInfo.color}`}
             >
               <span className={statusInfo.textColor}>{statusInfo.icon}</span>
               <span className={`text-xs font-semibold ${statusInfo.textColor}`}>

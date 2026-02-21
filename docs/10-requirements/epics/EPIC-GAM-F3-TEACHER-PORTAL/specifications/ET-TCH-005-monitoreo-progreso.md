@@ -79,11 +79,11 @@ Sistema de monitoreo de progreso que permite a los maestros:
 
 | Hook | Path | Descripcion |
 |------|------|-------------|
-| `useStudentProgress` | `apps/frontend/src/apps/teacher/hooks/useStudentProgress.ts` | Hook de progreso de estudiantes |
+| ~~`useStudentProgress`~~ | ~~`apps/frontend/src/apps/teacher/hooks/useStudentProgress.ts`~~ | **Removed** — absorbed into `useAnalytics` and `studentProgressApi` hooks |
 | `useAnalytics` | `apps/frontend/src/apps/teacher/hooks/useAnalytics.ts` | Hook de analytics |
-| `useMasteryTracking` | `apps/frontend/src/apps/teacher/hooks/useMasteryTracking.ts` | Hook de mastery tracking |
+| ~~`useMasteryTracking`~~ | ~~`apps/frontend/src/apps/teacher/hooks/useMasteryTracking.ts`~~ | **Removed** — absorbed into `useAnalytics` |
 | `useAchievementsStats` | `apps/frontend/src/apps/teacher/hooks/useAchievementsStats.ts` | Hook de logros |
-| `useMissionStats` | `apps/frontend/src/apps/teacher/hooks/useMissionStats.ts` | Hook de misiones |
+| ~~`useMissionStats`~~ | ~~`apps/frontend/src/apps/teacher/hooks/useMissionStats.ts`~~ | **Removed** — absorbed into analytics hooks |
 
 ### API Frontend
 
@@ -102,7 +102,7 @@ Sistema de monitoreo de progreso que permite a los maestros:
 |----------|------|-------------|
 | `StudentProgressService` | `apps/backend/src/modules/teacher/services/student-progress.service.ts` | Servicio de progreso |
 | `AnalyticsService` | `apps/backend/src/modules/teacher/services/analytics.service.ts` | Servicio de analytics (con cache) |
-| `MlPredictorService` | `apps/backend/src/modules/teacher/services/ml-predictor.service.ts` | Predicciones ML |
+| ~~`MlPredictorService`~~ | ~~`apps/backend/src/modules/teacher/services/ml-predictor.service.ts`~~ | **Removed** — ML prediction was never implemented; at-risk detection uses rule-based logic in `StudentRiskAlertService` |
 
 ### Controladores
 
@@ -408,7 +408,7 @@ function isAtRisk(student: StudentStats): boolean {
 }
 ```
 
-### ML Predictor (Futuro)
+### ML Predictor (Removido — funcionalidad nunca implementada; heuristicas integradas en StudentRiskAlertService)
 
 ```typescript
 // Prediccion de riesgo de abandono

@@ -25,6 +25,8 @@ import {
   RequiredAchievementMissingError,
   InvalidQuantityError,
 } from '../errors/gamification.errors';
+import { NotificationService } from '../../notifications/services/notification.service';
+import { mergeVisualConfig } from '../utils/visual-config.util';
 
 /**
  * ShopService
@@ -58,6 +60,7 @@ export class ShopService {
     private readonly transactionRepository: Repository<MLCoinsTransaction>,
     @InjectRepository(UserAchievement, 'gamification')
     private readonly userAchievementRepository: Repository<UserAchievement>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   /**
@@ -106,7 +109,13 @@ export class ShopService {
       });
     }
 
-    return queryBuilder.orderBy('item.price', 'ASC').getMany();
+    const items = await queryBuilder.orderBy('item.price', 'ASC').getMany();
+
+    for (const item of items) {
+      mergeVisualConfig(item);
+    }
+
+    return items;
   }
 
   /**
@@ -127,6 +136,8 @@ export class ShopService {
     if (!item) {
       throw new ShopItemNotFoundError(itemId);
     }
+
+    mergeVisualConfig(item);
 
     return item;
   }
@@ -167,7 +178,7 @@ export class ShopService {
       throw new InvalidQuantityError();
     }
 
-    return this.shopItemRepository.manager.transaction(async (manager) => {
+    const purchaseResult = await this.shopItemRepository.manager.transaction(async (manager) => {
       const itemRepo = manager.getRepository(ShopItem);
       const purchaseRepo = manager.getRepository(UserPurchase);
       const userStatsRepo = manager.getRepository(UserStats);
@@ -307,6 +318,33 @@ export class ShopService {
         message: `Successfully purchased ${quantity}x ${item.name}`,
       };
     });
+
+    // Notificación no bloqueante para historial in-app de compras.
+    try {
+      await this.notificationService.create(
+        {
+          userId,
+          type: 'shop_purchase',
+          title: 'Compra realizada',
+          message: `Compraste ${quantity}x ${purchaseResult.item.name} por ${purchaseResult.price_paid} ML Coins.`,
+          data: {
+            purchaseId: purchaseResult.purchase_id,
+            itemId,
+            quantity,
+            pricePaid: purchaseResult.price_paid,
+            newBalance: purchaseResult.new_balance,
+          },
+          channels: ['in_app'],
+        },
+        { skipRateLimit: true },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to create shop purchase notification for user ${userId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    return purchaseResult;
   }
 
   /**
@@ -401,10 +439,22 @@ export class ShopService {
    * const purchases = await service.getUserPurchases(userId);
    */
   async getUserPurchases(userId: string): Promise<UserPurchase[]> {
-    return this.purchaseRepository.find({
+    const purchases = await this.purchaseRepository.find({
       where: { user_id: userId },
+      relations: ['item'],
       order: { purchased_at: 'DESC' },
     });
+
+    for (const purchase of purchases) {
+      // TypeORM 0.3.x dual mapping: @Column item_id + @ManyToOne @JoinColumn({ name: 'item_id' })
+      // When relations are loaded, item_id can be undefined. Backfill from the loaded relation.
+      if (!purchase.item_id && purchase.item?.id) {
+        purchase.item_id = purchase.item.id;
+      }
+      mergeVisualConfig(purchase.item);
+    }
+
+    return purchases;
   }
 
   /**
@@ -448,6 +498,10 @@ export class ShopService {
       is_available: item.is_available,
       stock: item.stock,
       is_consumable: item.is_consumable,
+      max_per_user: item.max_per_user ?? undefined,
+      duration_days: item.duration_days ?? undefined,
+      effect_data: item.effect_data ?? undefined,
+      metadata: item.metadata ?? undefined,
       requirements: {
         rank: item.required_rank,
         level: item.required_level,

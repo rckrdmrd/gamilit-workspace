@@ -17,7 +17,7 @@ import {
   IsEnum,
   Matches,
 } from 'class-validator';
-import { RelationshipType } from '@/modules/auth/entities/parent-account.entity';
+import { RelationshipType } from '@/modules/parents/enums/parent-account.enums';
 
 export class ParentRegisterDto {
   @ApiProperty({

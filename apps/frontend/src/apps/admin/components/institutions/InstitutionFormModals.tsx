@@ -124,7 +124,7 @@ export function InstitutionFormModals({
                 key={feature.key}
                 className={`flex items-center justify-between rounded-lg border p-4 ${
                   isAvailable
-                    ? 'cursor-pointer border-gray-700 bg-detective-bg-secondary hover:bg-opacity-80'
+                    ? 'cursor-pointer border-gray-700 bg-detective-bg-secondary hover:bg-detective-bg-secondary/80'
                     : 'cursor-not-allowed border-gray-800 bg-gray-900 opacity-50'
                 }`}
               >

@@ -156,4 +156,4 @@ export const mockMilestonesMixed = [
 ];
 
 // Estado vacío
-export const mockMilestonesEmpty: any[] = [];
+export const mockMilestonesEmpty: { id: string; title: string; description: string; progress: number; total: number; completed: boolean; reward: { xp: number; mlCoins: number }; icon: 'target' | 'trophy' | 'star' }[] = [];

@@ -10,8 +10,6 @@
  *
  * Especificación: orchestration/agentes/architecture-analyst/gap-analysis/ESTRATEGIA-MODULOS-4-5-EN-CONSTRUCCION.md
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -35,8 +33,8 @@ interface UnderConstructionExerciseProps {
   };
   // Optional props to maintain compatibility with Exercise component interface
   onComplete?: () => void;
-  onProgressUpdate?: (update: any) => void;
-  actionsRef?: React.MutableRefObject<any>;
+  onProgressUpdate?: (update: Record<string, unknown>) => void;
+  actionsRef?: React.MutableRefObject<Record<string, unknown>>;
 }
 
 export const UnderConstructionExercise: React.FC<UnderConstructionExerciseProps> = ({

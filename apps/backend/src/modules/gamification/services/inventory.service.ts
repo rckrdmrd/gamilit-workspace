@@ -6,11 +6,12 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, EntityManager } from 'typeorm';
+import { Repository, EntityManager, In } from 'typeorm';
 import { UserEquippedItem } from '../entities/user-equipped-item.entity';
 import { UserPurchase } from '../entities/user-purchase.entity';
 import { ShopItem } from '../entities/shop-item.entity';
 import { EquipItemDto } from '../dto/inventory/equip-item.dto';
+import { mergeVisualConfig } from '../utils/visual-config.util';
 
 @Injectable()
 export class InventoryService {
@@ -31,10 +32,18 @@ export class InventoryService {
    * @returns Lista de items equipados con relaciones cargadas
    */
   async getEquippedItems(userId: string): Promise<UserEquippedItem[]> {
-    return this.equippedRepo.find({
+    const equipped = await this.equippedRepo.find({
       where: { user_id: userId },
       relations: ['item', 'category'],
     });
+
+    for (const entry of equipped) {
+      if (entry.item) {
+        mergeVisualConfig(entry.item);
+      }
+    }
+
+    return equipped;
   }
 
   /**
@@ -71,12 +80,11 @@ export class InventoryService {
    * 4. Reemplaza cualquier item previo de la misma categoría.
    */
   async equipItem(userId: string, dto: EquipItemDto): Promise<UserEquippedItem> {
-    const { itemId } = dto;
+    const { item_id: itemId } = dto;
 
-    // 1. Validar existencia del item y categoría
+    // 1. Validar existencia del item (category_id is a plain column, no relation needed)
     const item = await this.itemRepo.findOne({
       where: { id: itemId },
-      relations: ['category'], // Necesitamos la categoría para la unicidad
     });
 
     if (!item) {
@@ -130,6 +138,43 @@ export class InventoryService {
         return await repo.save(newEquipped);
       }
     });
+  }
+
+  /**
+   * Get equipped items for multiple users in a single query.
+   * Returns a map of userId -> { categoryName: itemData }.
+   * Used by leaderboard, friends list, etc. to avoid N+1 queries.
+   */
+  async getEquippedItemsMapBatch(
+    userIds: string[],
+  ): Promise<Record<string, Record<string, { itemId: string; name: string; assetUrl?: string; type?: string; data: Record<string, unknown> }>>> {
+    if (!userIds.length) return {};
+
+    const equipped = await this.equippedRepo.find({
+      where: { user_id: In(userIds) },
+      relations: ['item', 'category'],
+    });
+
+    const result: Record<string, Record<string, { itemId: string; name: string; assetUrl?: string; type?: string; data: Record<string, unknown> }>> = {};
+
+    for (const eq of equipped) {
+      if (!eq.category || !eq.item) continue;
+
+      mergeVisualConfig(eq.item);
+
+      if (!result[eq.user_id]) {
+        result[eq.user_id] = {};
+      }
+      result[eq.user_id][eq.category.name] = {
+        itemId: eq.item.id,
+        name: eq.item.name,
+        assetUrl: eq.item.metadata?.asset_url as string | undefined,
+        type: eq.item.metadata?.type as string | undefined,
+        data: eq.item.metadata || {},
+      };
+    }
+
+    return result;
   }
 
   /**

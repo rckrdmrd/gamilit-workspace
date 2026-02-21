@@ -28,10 +28,10 @@ export const SystemHealthCard: React.FC<SystemHealthCardProps> = ({
           <span
             className={`rounded-full px-3 py-1 text-sm font-medium ${
               systemHealth.status === 'healthy'
-                ? 'bg-green-100 text-green-700'
+                ? 'bg-green-500/20 text-green-400'
                 : systemHealth.status === 'degraded'
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : 'bg-red-100 text-red-700'
+                  ? 'bg-yellow-500/20 text-yellow-400'
+                  : 'bg-red-500/20 text-red-400'
             }`}
           >
             {systemHealth.status === 'healthy'
@@ -83,7 +83,7 @@ export const SystemHealthCard: React.FC<SystemHealthCardProps> = ({
           </div>
           <div className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3">
             <span className="text-sm text-detective-text">Usuarios Activos (24h)</span>
-            <span className="text-sm font-medium text-blue-500">
+            <span className="text-sm font-medium text-detective-orange">
               {/* FIX-2025-01-07: activeUsers comes from metrics.activeSessions, not systemHealth */}
               {activeSessions ?? systemHealth.activeUsers ?? 0}
             </span>

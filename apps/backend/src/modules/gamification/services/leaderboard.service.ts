@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -68,6 +68,8 @@ export interface UserPositionResponse {
  */
 @Injectable()
 export class LeaderboardService {
+  private readonly logger = new Logger(LeaderboardService.name);
+
   constructor(
     @InjectRepository(UserStats, 'gamification')
     private readonly userStatsRepo: Repository<UserStats>,
@@ -101,7 +103,7 @@ export class LeaderboardService {
       }
     } catch (error) {
       // Si el cache falla, continuar sin caché
-      console.warn('Cache get failed:', error);
+      this.logger.warn(`Cache get failed: ${error instanceof Error ? error.message : error}`);
     }
 
     // TODO: Implementar filtrado por time period (this_week, this_month, etc.)
@@ -141,7 +143,7 @@ export class LeaderboardService {
       try {
         await this.cacheManager.set(cacheKey, emptyResult, 60000);
       } catch (error) {
-        console.warn('Cache set failed:', error);
+        this.logger.warn(`Cache set failed: ${error instanceof Error ? error.message : error}`);
       }
       return emptyResult;
     }
@@ -204,7 +206,7 @@ export class LeaderboardService {
       await this.cacheManager.set(cacheKey, result, 60000);
     } catch (error) {
       // Si el cache falla, continuar sin caché
-      console.warn('Cache set failed:', error);
+      this.logger.warn(`Cache set failed: ${error instanceof Error ? error.message : error}`);
     }
 
     return result;

@@ -44,7 +44,8 @@ El sistema de ejercicios es el núcleo educativo del Student Portal, permitiendo
 | ExerciseErrorState | `features/exercises/components/ExerciseErrorState.tsx` | Estado de error |
 | MechanicCompatWrapper | `features/exercises/components/MechanicCompatWrapper.tsx` | Compatibilidad con mecánicas legacy |
 | ExercisePageHeader | `apps/student/components/exercise/ExercisePageHeader.tsx` | Header con info del ejercicio (reutilizado) |
-| CompletionModal | `shared/components/mechanics/FeedbackModal.tsx` | Modal de feedback post-completación |
+| CompletionModal | `apps/student/components/exercise/CompletionModal.tsx` | Modal de feedback post-completación (WCAG 2.1 AA) — orquestador |
+| CompletionModalSections | `apps/student/components/exercise/CompletionModalSections.tsx` | Subcomponentes presentacionales: ScoreDisplay, Rewards, Stats, RankUp, Streak, Achievements |
 | PowerUpBar | `apps/student/components/PowerUpBar.tsx` | Barra de power-ups (legacy fallback) |
 
 ### 3.2 Props de Componentes Principales

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Save, Image as ImageIcon, BookOpen, Loader2, Eye, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -77,7 +78,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
         setFeedback({
           type: 'info',
           title: 'Diario Enviado',
-          message: 'Tu diario multimedia ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -99,11 +100,11 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);
@@ -332,8 +333,8 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                           const response = await mediaApi.uploadMedia(file, {
                             type: mediaType,
                             exerciseId,
-                            onProgress: (progress: number) => {
-                              console.log(`Uploading ${file.name}: ${progress}%`);
+                            onProgress: (_progress: number) => {
+                              // Upload progress tracking
                             }
                           });
 
@@ -347,8 +348,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
 
                         const uploadedFiles = await Promise.all(uploadPromises);
                         setCurrentMedia((prev) => [...prev, ...uploadedFiles]);
-                      } catch (error) {
-                        console.error('Error uploading media:', error);
+                      } catch (_error) {
                         setErrorMessage('Error al subir archivos multimedia. Intenta de nuevo.');
                       } finally {
                         setIsUploading(false);

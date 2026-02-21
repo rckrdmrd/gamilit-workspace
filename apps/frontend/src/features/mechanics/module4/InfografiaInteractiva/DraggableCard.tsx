@@ -18,7 +18,7 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({ id, title, content
 
   const style = {
     transform: CSS.Translate.toString(transform),
-    opacity: isCurrentlyDragging ? 0.5 : 1,
+    zIndex: isCurrentlyDragging ? 50 : 'auto' as React.CSSProperties['zIndex'],
   };
 
   return (
@@ -27,7 +27,7 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({ id, title, content
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className={`relative bg-gradient-to-br from-detective-blue to-detective-purple rounded-detective p-4 cursor-grab active:cursor-grabbing min-h-[120px] flex flex-col justify-center text-white shadow-detective-md transition-all ${
-          isCurrentlyDragging ? 'shadow-detective-lg ring-2 ring-detective-orange' : ''
+          isCurrentlyDragging ? 'shadow-detective-lg scale-105 ring-2 ring-detective-orange' : ''
         }`}
       >
         <div className="absolute top-2 left-2">

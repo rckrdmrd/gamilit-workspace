@@ -319,7 +319,7 @@ export class TeacherMessagesService {
       throw new BadRequestException('No hay estudiantes en este classroom');
     }
 
-    const recipientIds = students.map((s: any) => s.user_id);
+    const recipientIds = students.map((s: any) => s.user_id); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Usar sendMessage con tipo classroom_announcement
     return this.sendMessage(teacherId, tenantId, {
@@ -434,7 +434,7 @@ export class TeacherMessagesService {
       [teacherId],
     );
 
-    return conversations.map((c: any) => ({
+    return conversations.map((c: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
       conversation_id: c.conversation_id,
       other_user_id: c.other_user_id,
       other_user_name: c.other_user_name,
@@ -540,7 +540,7 @@ export class TeacherMessagesService {
    * @param message - Entity Message con recipients
    * @returns DTO de respuesta
    */
-  private mapToResponseDto(message: any): MessageResponseDto {
+  private mapToResponseDto(message: any): MessageResponseDto { // eslint-disable-line @typescript-eslint/no-explicit-any
     // ISS-SYNC-001: Actualizado para usar nombres de campos alineados con DDL
     // - type → messageType
     // - assignmentId → metadata.assignment_id

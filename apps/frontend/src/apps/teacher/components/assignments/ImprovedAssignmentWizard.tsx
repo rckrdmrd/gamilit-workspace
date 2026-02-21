@@ -274,7 +274,7 @@ export function ImprovedAssignmentWizard({
                         name="type"
                         value={value}
                         checked={data.type === value}
-                        onChange={(e) => setData({ ...data, type: e.target.value as any })}
+                        onChange={(e) => setData({ ...data, type: e.target.value as 'practice' | 'quiz' | 'exam' | 'homework' })}
                         className="hidden"
                       />
                       <Icon className="h-5 w-5 text-detective-orange" />
@@ -343,7 +343,7 @@ export function ImprovedAssignmentWizard({
                       className={`flex cursor-pointer items-center gap-3 rounded-lg p-4 transition-all ${
                         data.exercise_ids.includes(exercise.id)
                           ? 'border-2 border-detective-orange bg-detective-orange/10'
-                          : 'border-2 border-transparent bg-detective-bg-secondary hover:bg-opacity-80'
+                          : 'border-2 border-transparent bg-detective-bg-secondary hover:bg-detective-bg-secondary/80'
                       }`}
                     >
                       <input
@@ -437,7 +437,7 @@ export function ImprovedAssignmentWizard({
               </div>
 
               <div>
-                <label className="flex cursor-pointer items-center gap-3 rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-opacity-80">
+                <label className="flex cursor-pointer items-center gap-3 rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-detective-bg-secondary/80">
                   <input
                     type="checkbox"
                     checked={data.allow_powerups}

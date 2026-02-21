@@ -13,8 +13,6 @@
  * - Legend toggle
  * - Export chart image
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Line, Bar } from 'react-chartjs-2';
@@ -170,8 +168,8 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
             font: {
               size: 11,
             },
-            callback: function (value: any) {
-              return value.toLocaleString();
+            callback: function (value: string | number) {
+              return typeof value === 'number' ? value.toLocaleString() : value;
             },
           },
           beginAtZero: true,
@@ -186,9 +184,7 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
   // ============================================================================
 
   const handleExportChart = () => {
-    // This would export the chart as an image
-    // Implementation depends on the chart library
-    console.log('Export chart');
+    // TODO: Implement chart export as image
   };
 
   // ============================================================================
@@ -283,8 +279,9 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
           {/* Export button */}
           <button
             onClick={handleExportChart}
-            className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary p-2 transition-colors"
-            title="Export chart"
+            className="rounded-lg bg-detective-bg-secondary p-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            title="Proximamente"
+            disabled
           >
             <Download className="h-4 w-4" />
           </button>
@@ -315,9 +312,9 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
 
       {/* Chart */}
       <div className="h-80">
-        {chartType === 'line' && <Line data={chartData} options={chartOptions} />}
-        {chartType === 'bar' && <Bar data={chartData} options={chartOptions} />}
-        {chartType === 'both' && <Line data={chartData} options={chartOptions} />}
+        {chartType === 'line' && <Line data={chartData} options={chartOptions as any} />}
+        {chartType === 'bar' && <Bar data={chartData} options={chartOptions as any} />}
+        {chartType === 'both' && <Line data={chartData} options={chartOptions as any} />}
       </div>
     </DetectiveCard>
   );

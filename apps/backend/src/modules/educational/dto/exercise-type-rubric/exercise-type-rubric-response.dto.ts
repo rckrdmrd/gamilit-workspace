@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { RubricCriteria } from '../../entities/exercise-type-rubric.entity';
+import { RubricCriteria } from '../../enums/exercise-type-rubric.types';
 
 /**
  * ExerciseTypeRubricResponseDto

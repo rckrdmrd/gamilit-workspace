@@ -45,6 +45,13 @@ export default {
         'detective-danger': '#ef4444',
         'detective-neutral': '#6b7280',
 
+        // Backgrounds extra
+        'detective-bg-tertiary': '#fff7ed',
+
+        // Card & generic border
+        'detective-card': '#ffffff',
+        'detective-border': '#e5e7eb',
+
         // Borders
         'detective-border-light': '#f3f4f6',
         'detective-border-medium': '#e5e7eb',
@@ -79,7 +86,9 @@ export default {
       fontSize: {
         'detective-xs': ['0.75rem', { lineHeight: '1rem' }],
         'detective-sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'detective-small': ['0.8125rem', { lineHeight: '1.125rem' }],
         'detective-base': ['1rem', { lineHeight: '1.5rem' }],
+        'detective-subtitle': ['0.9375rem', { lineHeight: '1.375rem' }],
         'detective-lg': ['1.125rem', { lineHeight: '1.75rem' }],
         'detective-xl': ['1.25rem', { lineHeight: '1.75rem' }],
         'detective-2xl': ['1.5rem', { lineHeight: '2rem' }],

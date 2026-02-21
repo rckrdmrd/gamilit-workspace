@@ -189,7 +189,6 @@ export function useClassroomRealtime(
     socket.emit(SocketEvents.SUBSCRIBE_CLASSROOM, { classroomId }, (response: { success: boolean }) => {
       if (response?.success) {
         subscribedRoomsRef.current.add(classroomId);
-        console.log(`[useClassroomRealtime] Subscribed to classroom ${classroomId}`);
       }
     });
   }, []);
@@ -201,7 +200,6 @@ export function useClassroomRealtime(
     socket.emit(SocketEvents.UNSUBSCRIBE_CLASSROOM, { classroomId }, (response: { success: boolean }) => {
       if (response?.success) {
         subscribedRoomsRef.current.delete(classroomId);
-        console.log(`[useClassroomRealtime] Unsubscribed from classroom ${classroomId}`);
       }
     });
   }, []);
@@ -227,20 +225,17 @@ export function useClassroomRealtime(
     });
 
     socket.on('connect', () => {
-      console.log('[useClassroomRealtime] Connected');
       setIsConnecting(false);
       setIsConnected(true);
       setError(null);
     });
 
     socket.on(SocketEvents.AUTHENTICATED, () => {
-      console.log('[useClassroomRealtime] Authenticated');
       // Subscribe to all classrooms
       classroomIds.forEach((id) => subscribeToClassroom(socket, id));
     });
 
-    socket.on('disconnect', (reason) => {
-      console.log('[useClassroomRealtime] Disconnected:', reason);
+    socket.on('disconnect', (_reason) => {
       setIsConnected(false);
       subscribedRoomsRef.current.clear();
     });

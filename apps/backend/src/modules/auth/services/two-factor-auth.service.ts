@@ -3,6 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,6 +27,7 @@ import { TwoFactorToken, Profile } from '../entities';
  */
 @Injectable()
 export class TwoFactorAuthService {
+  private readonly logger = new Logger(TwoFactorAuthService.name);
   private readonly OTP_LENGTH = 6;
   private readonly OTP_EXPIRY_MINUTES = 10;
   private readonly MAX_ATTEMPTS = 5;
@@ -93,9 +95,8 @@ export class TwoFactorAuthService {
 
     await this.twoFactorRepository.save(twoFactorConfig);
 
-    // TODO: In production, send OTP via email/sms based on method
-    // For now, log it (remove in production!)
-    console.log(`[2FA SETUP] OTP for user ${userId}: ${otp}`);
+    // TODO: Send OTP via email/sms based on method (MailModule integration)
+    this.logger.debug(`2FA setup OTP generated for user ${userId} (method: ${method})`);
 
     return {
       message: `Código de verificación enviado a tu ${method === 'email' ? 'correo' : 'dispositivo'}`,
@@ -187,8 +188,8 @@ export class TwoFactorAuthService {
 
     await this.twoFactorRepository.save(config);
 
-    // TODO: Send OTP via configured method
-    console.log(`[2FA LOGIN] OTP for user ${userId}: ${otp}`);
+    // TODO: Send OTP via configured method (MailModule integration)
+    this.logger.debug(`2FA login OTP generated for user ${userId}`);
 
     return {
       message: 'Código de verificación enviado',
@@ -232,7 +233,13 @@ export class TwoFactorAuthService {
 
     // Check backup codes
     if (config.backup_codes_encrypted) {
-      const backupCodes: string[] = JSON.parse(config.backup_codes_encrypted);
+      let backupCodes: string[];
+      try {
+        backupCodes = JSON.parse(config.backup_codes_encrypted);
+      } catch {
+        this.logger.warn(`Corrupt backup codes for user ${config.user_id}`);
+        throw new BadRequestException('Invalid backup codes configuration');
+      }
       const index = backupCodes.indexOf(hashedCode);
 
       if (index !== -1) {
@@ -310,8 +317,8 @@ export class TwoFactorAuthService {
 
     await this.twoFactorRepository.save(config);
 
-    // TODO: Send OTP via configured method
-    console.log(`[2FA RESEND] OTP for user ${userId}: ${otp}`);
+    // TODO: Send OTP via configured method (MailModule integration)
+    this.logger.debug(`2FA resend OTP generated for user ${userId}`);
 
     return {
       message: 'Nuevo código enviado',

@@ -10,7 +10,7 @@ import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { of, throwError } from 'rxjs';
 import { AuditInterceptor } from '../interceptors/audit.interceptor';
 import { AuditService } from '../services/audit.service';
-import { Status } from '../entities/audit-log.entity';
+import { Status } from '../enums/audit-log.enums';
 
 describe('AuditInterceptor', () => {
   let interceptor: AuditInterceptor;

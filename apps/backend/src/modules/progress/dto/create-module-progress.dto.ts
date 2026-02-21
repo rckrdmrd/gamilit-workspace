@@ -113,7 +113,7 @@ export class CreateModuleProgressDto {
    */
   @IsOptional()
   @IsArray()
-    learning_path?: any[];
+    learning_path?: Record<string, unknown>[];
 
   /**
    * Notas del estudiante

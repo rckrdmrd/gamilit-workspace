@@ -4,22 +4,19 @@
  * Comprehensive hook for managing admin dashboard data with real-time updates.
  * Handles system health, metrics, recent actions, alerts, and user activity.
  *
- * Features:
- * - Real-time data fetching with configurable intervals
- * - Auto-refresh control (pause/resume)
- * - Alert management (dismiss, view details)
- * - Error handling and loading states
- * - Optimistic updates for better UX
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching. Uses refetchInterval to replace manual setInterval.
  *
  * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
- * - Now uses adminAPI.getSystemHealth() and adminAPI.getSystemMetrics()
- * - Alerts, actions, and activity endpoints not yet implemented in backend
+ * Updated: 2026-02-20 - Migrated to React Query
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import * as adminAPI from '@/services/api/adminAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type {
   SystemHealth as APISystemHealth,
   SystemMetrics as APISystemMetrics,
@@ -31,6 +28,23 @@ import type {
   SystemAlert,
   UserActivityData,
 } from '../types';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const dashboardKeys = {
+  all: ['admin', 'dashboard'] as const,
+  health: () => ['admin', 'dashboard', 'health'] as const,
+  metrics: () => ['admin', 'dashboard', 'metrics'] as const,
+  actions: () => ['admin', 'dashboard', 'actions'] as const,
+  alerts: () => ['admin', 'dashboard', 'alerts'] as const,
+  activity: () => ['admin', 'dashboard', 'activity'] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseAdminDashboardResult {
   // Data
@@ -68,407 +82,243 @@ interface RefreshIntervals {
   activity: number;
 }
 
-// LOW-001 FIX: Ajustados intervalos para reducir carga en servidor
 const DEFAULT_INTERVALS: RefreshIntervals = {
-  health: 30000, // 30 seconds (was 10s - too aggressive)
-  metrics: 60000, // 60 seconds (was 30s)
-  actions: 120000, // 2 minutes (was 60s)
-  alerts: 30000, // 30 seconds (was 5s - too aggressive)
-  activity: 300000, // 5 minutes (unchanged)
+  health: 30000,
+  metrics: 60000,
+  actions: 120000,
+  alerts: 30000,
+  activity: 300000,
 };
+
+// ============================================================================
+// Transform Helpers
+// ============================================================================
+
+function transformSystemHealth(apiHealth: APISystemHealth): SystemHealth {
+  const uptimeSeconds = apiHealth.uptime_seconds ?? 0;
+  const uptimePercentage = Math.min((uptimeSeconds / 86400) * 100, 100);
+
+  return {
+    status: apiHealth.status === 'down' ? 'critical' : apiHealth.status,
+    cpu: apiHealth.cpu?.usage_percent ?? 0,
+    memory: apiHealth.memory?.usage_percent ?? 0,
+    uptime: apiHealth.uptime_seconds ?? 0,
+    activeUsers: 0,
+    requestsPerMin: 0,
+    errorRate: 0,
+    database: apiHealth.database?.status ?? 'down',
+    apiUptime: uptimePercentage,
+    lastCheck: apiHealth.timestamp,
+  };
+}
+
+function transformSystemMetrics(apiMetrics: APISystemMetrics): SystemMetrics {
+  return {
+    totalUsers: apiMetrics.total_users ?? 0,
+    userGrowth: null,
+    totalOrganizations: apiMetrics.total_organizations ?? 0,
+    organizationGrowth: null,
+    activeSessions: apiMetrics.active_users_24h ?? 0,
+    flaggedContentCount: null,
+    systemUptime: 0,
+    storageUsed: null,
+    storageTotal: null,
+    avgResponseTime: apiMetrics.avg_response_time_ms ?? 0,
+  };
+}
+
+// ============================================================================
+// Hook
+// ============================================================================
 
 export function useAdminDashboard(
   customIntervals?: Partial<RefreshIntervals>,
 ): UseAdminDashboardResult {
-  // Merge custom intervals with defaults
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const intervals = { ...DEFAULT_INTERVALS, ...customIntervals };
+  const queryClient = useQueryClient();
 
-  // State management
-  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
-  const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
-  const [recentActions, setRecentActions] = useState<AdminAction[]>([]);
-  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
-  const [userActivity, setUserActivity] = useState<UserActivityData[]>([]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-
-  // Refs for interval management
-  const intervalsRef = useRef<{
-    health?: NodeJS.Timeout;
-    metrics?: NodeJS.Timeout;
-    actions?: NodeJS.Timeout;
-    alerts?: NodeJS.Timeout;
-    activity?: NodeJS.Timeout;
-  }>({});
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // ============================================================================
-  // API CALLS
+  // QUERIES
   // ============================================================================
 
-  /**
-   * Transform API SystemHealth to local SystemHealth format
-   * @see SystemHealthDto in backend for the actual response structure
-   * Updated: Fixed apiUptime conversion from seconds to percentage (P0)
-   */
-  const transformSystemHealth = (apiHealth: APISystemHealth): SystemHealth => {
-    // Convert uptime_seconds to uptime percentage
-    // Assuming 24h (86400 seconds) as 100% uptime baseline
-    const uptimeSeconds = apiHealth.uptime_seconds ?? 0;
-    const uptimePercentage = Math.min((uptimeSeconds / 86400) * 100, 100);
+  const healthQuery = useQuery({
+    queryKey: dashboardKeys.health(),
+    queryFn: async () => {
+      try {
+        const apiData = await adminAPI.getSystemHealth();
+        return transformSystemHealth(apiData);
+      } catch (err) {
+        console.error('Failed to fetch system health:', err);
+        return {
+          status: 'critical' as const,
+          cpu: 0,
+          memory: 0,
+          uptime: 0,
+          activeUsers: 0,
+          requestsPerMin: 0,
+          errorRate: 100,
+          database: 'down' as const,
+          apiUptime: 0,
+          lastCheck: new Date().toISOString(),
+        };
+      }
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: isPaused ? false : intervals.health,
+  });
 
-    return {
-      status: apiHealth.status === 'down' ? 'critical' : apiHealth.status,
-      cpu: apiHealth.cpu?.usage_percent ?? 0,
-      memory: apiHealth.memory?.usage_percent ?? 0,
-      uptime: apiHealth.uptime_seconds ?? 0,
-      // FIX-2025-01-07: activeUsers is not in SystemHealth response.
-      // Use metrics.activeSessions (from /admin/system/metrics) for active user count.
-      activeUsers: 0,
-      requestsPerMin: 0, // Not provided by current API
-      errorRate: 0, // Not provided by current API
-      database: apiHealth.database?.status ?? 'down',
-      apiUptime: uptimePercentage, // Now properly converted to percentage
-      lastCheck: apiHealth.timestamp,
-    };
-  };
-
-  /**
-   * Fetch system health status
-   * Updated: Now uses adminAPI.getSystemHealth()
-   */
-  const fetchSystemHealth = useCallback(async (): Promise<void> => {
-    try {
-      const apiData = await adminAPI.getSystemHealth();
-      const transformedData = transformSystemHealth(apiData);
-      setSystemHealth(transformedData);
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch system health:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch system health');
-
-      // Set fallback health data on error
-      setSystemHealth({
-        status: 'critical',
-        cpu: 0,
-        memory: 0,
-        uptime: 0,
-        activeUsers: 0,
-        requestsPerMin: 0,
-        errorRate: 100,
-        database: 'down',
-        apiUptime: 0,
-        lastCheck: new Date().toISOString(),
-      });
-    }
-  }, []);
-
-  /**
-   * Transform API SystemMetrics (snake_case from backend) to local SystemMetrics format
-   * @see SystemMetricsDto in apps/backend/src/modules/admin/dto/system/system-metrics.dto.ts
-   * Updated: Use null instead of 0 for unavailable data (P0)
-   */
-  const transformSystemMetrics = (apiMetrics: APISystemMetrics): SystemMetrics => {
-    return {
-      totalUsers: apiMetrics.total_users ?? 0,
-      userGrowth: null, // Not provided by backend - use null to show N/A
-      totalOrganizations: apiMetrics.total_organizations ?? 0,
-      organizationGrowth: null, // Not provided by backend - use null to show N/A
-      activeSessions: apiMetrics.active_users_24h ?? 0,
-      flaggedContentCount: null, // Not provided by backend - use null to show N/A
-      systemUptime: 0, // Use SystemHealth for uptime
-      storageUsed: null, // Not provided by backend - use null to show N/A
-      storageTotal: null, // Not provided by backend - use null to show N/A
-      avgResponseTime: apiMetrics.avg_response_time_ms ?? 0,
-    };
-  };
-
-  /**
-   * Fetch system metrics
-   * Updated: Now uses adminAPI.getSystemMetrics()
-   */
-  const fetchMetrics = useCallback(async (): Promise<void> => {
-    try {
+  const metricsQuery = useQuery({
+    queryKey: dashboardKeys.metrics(),
+    queryFn: async () => {
       const apiData = await adminAPI.getSystemMetrics();
-      const transformedData = transformSystemMetrics(apiData);
-      setMetrics(transformedData);
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch metrics:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch metrics');
-    }
-  }, []);
+      return transformSystemMetrics(apiData);
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: isPaused ? false : intervals.metrics,
+  });
 
-  /**
-   * Fetch recent admin actions
-   * Updated: Uses adminAPI.getRecentActions() (FE-062 / CORR-004)
-   * Endpoint: GET /admin/dashboard/actions/recent
-   * @see CORR-004 in orchestration/reportes/REPORTE-FINAL-CORRECCIONES-P0-COMPLETO-2025-11-24.md
-   */
-  const fetchRecentActions = useCallback(async (): Promise<void> => {
-    try {
-      const actions = await adminAPI.getRecentActions(10);
-      setRecentActions(actions);
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch recent actions:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch recent actions');
-      setRecentActions([]);
-    }
-  }, []);
+  const actionsQuery = useQuery({
+    queryKey: dashboardKeys.actions(),
+    queryFn: async () => {
+      try {
+        return await adminAPI.getRecentActions(10);
+      } catch (err) {
+        console.error('Failed to fetch recent actions:', err);
+        return [] as AdminAction[];
+      }
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+    refetchInterval: isPaused ? false : intervals.actions,
+  });
 
-  /**
-   * Fetch system alerts
-   * Updated: Uses adminAPI.getAlerts() (FE-062 / CORR-004)
-   * Endpoint: GET /admin/dashboard/alerts
-   * @see CORR-004 in orchestration/reportes/REPORTE-FINAL-CORRECCIONES-P0-COMPLETO-2025-11-24.md
-   */
-  const fetchAlerts = useCallback(async (): Promise<void> => {
-    try {
-      const alerts = await adminAPI.getAlerts();
+  const alertsQuery = useQuery({
+    queryKey: dashboardKeys.alerts(),
+    queryFn: async () => {
+      try {
+        const alerts = await adminAPI.getAlerts();
+        const sortedAlerts = alerts.sort((a, b) => {
+          const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+          const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+          if (severityDiff !== 0) return severityDiff;
+          return b.timestamp.getTime() - a.timestamp.getTime();
+        });
+        return sortedAlerts;
+      } catch (err) {
+        console.error('Failed to fetch alerts:', err);
+        return [] as SystemAlert[];
+      }
+    },
+    staleTime: STALE_TIMES.REALTIME,
+    refetchInterval: isPaused ? false : intervals.alerts,
+  });
 
-      // Sort by severity and timestamp
-      const sortedAlerts = alerts.sort((a, b) => {
-        const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-        const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
-        if (severityDiff !== 0) return severityDiff;
-        return b.timestamp.getTime() - a.timestamp.getTime();
-      });
-
-      setAlerts(sortedAlerts);
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch alerts:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch alerts');
-      setAlerts([]);
-    }
-  }, []);
-
-  /**
-   * Fetch user activity data
-   * Updated: Uses adminAPI.getUserActivity() (FE-062 / CORR-004)
-   * Endpoint: GET /admin/dashboard/analytics/user-activity
-   * @see CORR-004 in orchestration/reportes/REPORTE-FINAL-CORRECCIONES-P0-COMPLETO-2025-11-24.md
-   */
-  const fetchUserActivity = useCallback(async (): Promise<void> => {
-    try {
-      const activityData = await adminAPI.getUserActivity({
-        groupBy: 'day', // Default to daily
-      });
-      setUserActivity(activityData);
-      setError(null);
-    } catch (err) {
-      console.error('Failed to fetch user activity:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch user activity');
-      setUserActivity([]);
-    }
-  }, []);
+  const activityQuery = useQuery({
+    queryKey: dashboardKeys.activity(),
+    queryFn: async () => {
+      try {
+        return await adminAPI.getUserActivity({ groupBy: 'day' });
+      } catch (err) {
+        console.error('Failed to fetch user activity:', err);
+        return [] as UserActivityData[];
+      }
+    },
+    staleTime: STALE_TIMES.DYNAMIC,
+    refetchInterval: isPaused ? false : intervals.activity,
+  });
 
   // ============================================================================
-  // PUBLIC ACTIONS
+  // MUTATIONS
   // ============================================================================
 
-  /**
-   * Refresh system health
-   */
+  const dismissMutation = useMutation({
+    mutationFn: (alertId: string) =>
+      apiClient.patch(API_ENDPOINTS.admin.alertActions.suppress(alertId)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.alerts() });
+    },
+  });
+
+  // ============================================================================
+  // COMBINED STATE
+  // ============================================================================
+
+  const loading =
+    healthQuery.isLoading &&
+    metricsQuery.isLoading &&
+    actionsQuery.isLoading &&
+    alertsQuery.isLoading &&
+    activityQuery.isLoading;
+
+  const firstError =
+    metricsQuery.error ?? actionsQuery.error ?? activityQuery.error;
+
+  const error = firstError instanceof Error ? firstError.message : firstError ? String(firstError) : null;
+
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
+
   const refreshHealth = useCallback(async (): Promise<void> => {
-    await fetchSystemHealth();
+    await healthQuery.refetch();
     setLastUpdated(new Date());
-  }, [fetchSystemHealth]);
+  }, [healthQuery]);
 
-  /**
-   * Refresh metrics
-   */
   const refreshMetrics = useCallback(async (): Promise<void> => {
-    await fetchMetrics();
+    await metricsQuery.refetch();
     setLastUpdated(new Date());
-  }, [fetchMetrics]);
+  }, [metricsQuery]);
 
-  /**
-   * Refresh recent actions
-   */
   const refreshActions = useCallback(async (): Promise<void> => {
-    await fetchRecentActions();
+    await actionsQuery.refetch();
     setLastUpdated(new Date());
-  }, [fetchRecentActions]);
+  }, [actionsQuery]);
 
-  /**
-   * Refresh alerts
-   */
   const refreshAlerts = useCallback(async (): Promise<void> => {
-    await fetchAlerts();
+    await alertsQuery.refetch();
     setLastUpdated(new Date());
-  }, [fetchAlerts]);
+  }, [alertsQuery]);
 
-  /**
-   * Refresh user activity
-   */
   const refreshActivity = useCallback(async (): Promise<void> => {
-    await fetchUserActivity();
+    await activityQuery.refetch();
     setLastUpdated(new Date());
-  }, [fetchUserActivity]);
+  }, [activityQuery]);
 
-  /**
-   * Refresh all data
-   * Updated: Uses Promise.allSettled to prevent cascade failures (P0)
-   */
   const refreshAll = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    try {
-      const results = await Promise.allSettled([
-        fetchSystemHealth(),
-        fetchMetrics(),
-        fetchRecentActions(),
-        fetchAlerts(),
-        fetchUserActivity(),
-      ]);
+    await queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+    setLastUpdated(new Date());
+  }, [queryClient]);
 
-      // Process results - log failures but don't stop execution
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          const apiNames = [
-            'System Health',
-            'Metrics',
-            'Recent Actions',
-            'Alerts',
-            'User Activity',
-          ];
-          console.warn(`Failed to fetch ${apiNames[index]}:`, result.reason);
-        }
-      });
+  const dismissAlert = useCallback(
+    async (alertId: string): Promise<void> => {
+      await dismissMutation.mutateAsync(alertId);
+    },
+    [dismissMutation],
+  );
 
-      setLastUpdated(new Date());
-      setError(null);
-    } catch (err) {
-      console.error('Failed to refresh all data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to refresh data');
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchSystemHealth, fetchMetrics, fetchRecentActions, fetchAlerts, fetchUserActivity]);
-
-  /**
-   * Dismiss an alert
-   */
-  const dismissAlert = useCallback(async (alertId: string): Promise<void> => {
-    try {
-      // Optimistic update
-      setAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId ? { ...alert, dismissed: true, dismissedAt: new Date() } : alert,
-        ),
-      );
-
-      await apiClient.patch(API_ENDPOINTS.admin.alertActions.suppress(alertId));
-
-      // Remove dismissed alert after animation
-      setTimeout(() => {
-        setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
-      }, 300);
-    } catch (err) {
-      console.error('Failed to dismiss alert:', err);
-      // Revert optimistic update on error
-      setAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId ? { ...alert, dismissed: false, dismissedAt: undefined } : alert,
-        ),
-      );
-      throw err;
-    }
-  }, []);
-
-  // ============================================================================
-  // AUTO-REFRESH MANAGEMENT
-  // ============================================================================
-
-  /**
-   * Pause auto-refresh
-   */
   const pauseRefresh = useCallback((): void => {
     setIsPaused(true);
-
-    // Clear all intervals
-    Object.values(intervalsRef.current).forEach((interval) => {
-      if (interval) clearInterval(interval);
-    });
-    intervalsRef.current = {};
   }, []);
 
-  /**
-   * Resume auto-refresh
-   */
   const resumeRefresh = useCallback((): void => {
     setIsPaused(false);
-    // Intervals will be set up in useEffect
   }, []);
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
-
-  /**
-   * Initial data fetch
-   */
-  useEffect(() => {
-    refreshAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /**
-   * Set up auto-refresh intervals
-   */
-  useEffect(() => {
-    if (isPaused) return;
-
-    // Clear existing intervals
-    Object.values(intervalsRef.current).forEach((interval) => {
-      if (interval) clearInterval(interval);
-    });
-
-    // Set up new intervals
-    intervalsRef.current.health = setInterval(fetchSystemHealth, intervals.health);
-    intervalsRef.current.metrics = setInterval(fetchMetrics, intervals.metrics);
-    intervalsRef.current.actions = setInterval(fetchRecentActions, intervals.actions);
-    intervalsRef.current.alerts = setInterval(fetchAlerts, intervals.alerts);
-    intervalsRef.current.activity = setInterval(fetchUserActivity, intervals.activity);
-
-    // Cleanup on unmount
-    return () => {
-      Object.values(intervalsRef.current).forEach((interval) => {
-        if (interval) clearInterval(interval);
-      });
-    };
-  }, [
-    isPaused,
-    intervals,
-    fetchSystemHealth,
-    fetchMetrics,
-    fetchRecentActions,
-    fetchAlerts,
-    fetchUserActivity,
-  ]);
 
   // ============================================================================
   // RETURN
   // ============================================================================
 
   return {
-    // Data
-    systemHealth,
-    metrics,
-    recentActions,
-    alerts,
-    userActivity,
-
-    // State
+    systemHealth: healthQuery.data ?? null,
+    metrics: metricsQuery.data ?? null,
+    recentActions: actionsQuery.data ?? [],
+    alerts: alertsQuery.data ?? [],
+    userActivity: activityQuery.data ?? [],
     loading,
     error,
     lastUpdated,
-
-    // Actions
     refreshMetrics,
     refreshHealth,
     refreshActions,
@@ -476,8 +326,6 @@ export function useAdminDashboard(
     refreshActivity,
     refreshAll,
     dismissAlert,
-
-    // Auto-refresh control
     pauseRefresh,
     resumeRefresh,
     isPaused,

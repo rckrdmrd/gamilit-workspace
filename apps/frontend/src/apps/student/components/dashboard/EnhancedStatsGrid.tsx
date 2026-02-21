@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Target, Flame, Clock, Trophy, TrendingUp, Award, Zap, Star } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
+import { useEquippedVisuals } from '@/features/gamification/social/hooks/useEquippedVisuals';
 
 interface EnhancedStatsGridProps {
   stats: {
@@ -18,7 +18,7 @@ interface EnhancedStatsGridProps {
 }
 
 interface StatCardProps {
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
   subtitle?: string;
@@ -95,6 +95,8 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
   error,
   compact = false,
 }) => {
+  const { frame, badge } = useEquippedVisuals();
+
   // Handle error state
   if (error && !loading) {
     return (
@@ -157,7 +159,7 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
   };
 
   interface StatCard {
-    icon: React.ComponentType<any>;
+    icon: React.ComponentType<{ className?: string }>;
     label: string;
     value: string | number;
     subtitle: string;
@@ -279,8 +281,13 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
             className="flex items-center gap-2 rounded-full border border-yellow-200 bg-gradient-to-r from-yellow-100 to-orange-100 px-4 py-2"
+            style={frame?.borderColor ? { borderColor: frame.borderColor, borderWidth: 2 } : undefined}
           >
-            <Star className="h-4 w-4 text-yellow-600" />
+            {badge?.assetUrl ? (
+              <img src={badge.assetUrl} alt="" className="h-4 w-4" />
+            ) : (
+              <Star className="h-4 w-4 text-yellow-600" />
+            )}
             <span className="text-sm font-semibold text-yellow-800">
               {formatRank(stats.rankPosition)}
             </span>

@@ -35,12 +35,14 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Shield, Lock } from 'lucide-react';
 import { AdminPageShell } from '../components/shared';
 import { useRoles } from '../hooks/useRoles';
 import { useRolePermissions } from '../hooks/useRolePermissions';
 import { Card } from '@shared/components/Card';
 import { Button } from '@shared/components/Button';
 import { LoadingSpinner } from '@shared/components/loading';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { RolesTable, RoleEditor, RoleActionsMenu } from '../components/roles';
 import type { Permission } from '@/services/api/adminTypes';
 
@@ -143,8 +145,8 @@ export default function AdminRolesPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Roles y Permisos</h1>
-            <p className="mt-1 text-gray-600">
+            <h1 className="text-3xl font-bold text-detective-text">Roles y Permisos</h1>
+            <p className="mt-1 text-detective-text-secondary">
               Gestiona los roles del sistema y sus permisos granulares
             </p>
           </div>
@@ -167,7 +169,7 @@ export default function AdminRolesPage() {
         {/* Error Messages */}
         {rolesError && (
           <Card className="border-red-200 bg-red-50">
-            <div className="text-red-800">
+            <div className="text-red-800" role="alert">
               <strong>Error:</strong> {rolesError}
             </div>
           </Card>
@@ -175,7 +177,7 @@ export default function AdminRolesPage() {
 
         {permissionsError && (
           <Card className="border-red-200 bg-red-50">
-            <div className="text-red-800">
+            <div className="text-red-800" role="alert">
               <strong>Error:</strong> {permissionsError}
             </div>
           </Card>
@@ -184,17 +186,17 @@ export default function AdminRolesPage() {
         {/* Success Message */}
         {successMessage && (
           <Card className="border-green-200 bg-green-50">
-            <div className="text-green-800">
-              <strong>✓ Éxito:</strong> {successMessage}
+            <div className="text-green-800" aria-live="polite">
+              <strong>Exito:</strong> {successMessage}
             </div>
           </Card>
         )}
 
         {/* Loading State */}
         {rolesLoading && !roles.length && (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-12" aria-live="polite">
             <LoadingSpinner />
-            <span className="ml-3 text-gray-600">Cargando roles...</span>
+            <span className="ml-3 text-detective-text-secondary">Cargando roles...</span>
           </div>
         )}
 
@@ -202,11 +204,11 @@ export default function AdminRolesPage() {
         {!rolesLoading && roles.length > 0 && (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left Column - Roles List */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1" role="region" aria-label="Lista de roles">
               <Card>
-                <div className="border-b border-gray-200 p-4">
-                  <h2 className="text-xl font-semibold text-gray-900">Roles del Sistema</h2>
-                  <p className="mt-1 text-sm text-gray-600">{roles.length} roles totales</p>
+                <div className="border-b border-detective-border p-4">
+                  <h2 className="text-xl font-semibold text-detective-text">Roles del Sistema</h2>
+                  <p className="mt-1 text-sm text-detective-text-secondary">{roles.length} roles totales</p>
                 </div>
                 <div className="p-4">
                   <RolesTable
@@ -220,22 +222,22 @@ export default function AdminRolesPage() {
             </div>
 
             {/* Right Column - Empty State */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2" role="region" aria-label="Detalles del rol seleccionado">
               {!selectedRoleId && (
                 <Card>
-                  <div className="p-12 text-center text-gray-500">
-                    <div className="mb-4 text-6xl">🔐</div>
-                    <h3 className="mb-2 text-lg font-semibold text-gray-700">Selecciona un rol</h3>
-                    <p>Elige un rol de la lista para ver y editar sus permisos</p>
-                  </div>
+                  <EmptyState
+                    icon={Shield}
+                    title="Selecciona un rol"
+                    description="Elige un rol de la lista para ver y editar sus permisos"
+                  />
                 </Card>
               )}
 
               {selectedRoleId && permissionsLoading && (
                 <Card>
-                  <div className="flex items-center justify-center py-12">
+                  <div className="flex items-center justify-center py-12" aria-live="polite">
                     <LoadingSpinner />
-                    <span className="ml-3 text-gray-600">Cargando permisos...</span>
+                    <span className="ml-3 text-detective-text-secondary">Cargando permisos...</span>
                   </div>
                 </Card>
               )}
@@ -258,11 +260,11 @@ export default function AdminRolesPage() {
         {/* Empty State */}
         {!rolesLoading && roles.length === 0 && !rolesError && (
           <Card>
-            <div className="p-12 text-center text-gray-500">
-              <div className="mb-4 text-6xl">🔐</div>
-              <h3 className="mb-2 text-lg font-semibold text-gray-700">No hay roles disponibles</h3>
-              <p>No se encontraron roles en el sistema</p>
-            </div>
+            <EmptyState
+              icon={Lock}
+              title="No hay roles disponibles"
+              description="No se encontraron roles en el sistema"
+            />
           </Card>
         )}
       </div>

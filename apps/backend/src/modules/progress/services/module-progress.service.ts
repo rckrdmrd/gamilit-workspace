@@ -482,7 +482,7 @@ export class ModuleProgressService {
 
     // Priority 1: Continue modules in progress
     for (const p of inProgressModules) {
-      const moduleInfo = allModules.find((m: any) => m.id === p.module_id);
+      const moduleInfo = allModules.find((m: Record<string, unknown>) => m.id === p.module_id);
       if (moduleInfo) {
         recommendedModules.push({
           module_id: p.module_id,
@@ -527,7 +527,7 @@ export class ModuleProgressService {
     const lowScoreModules = completedModules.filter(p => (p.average_score || 0) < 70);
 
     for (const lowScore of lowScoreModules.slice(0, 3)) {
-      const moduleInfo = allModules.find((m: any) => m.id === lowScore.module_id);
+      const moduleInfo = allModules.find((m: Record<string, unknown>) => m.id === lowScore.module_id);
       if (moduleInfo) {
         areasForImprovement.push(moduleInfo.title);
       }
@@ -537,7 +537,7 @@ export class ModuleProgressService {
     let suggestedNextAction: string;
     if (inProgressModules.length > 0) {
       const firstInProgress = inProgressModules[0];
-      const moduleInfo = allModules.find((m: any) => m.id === firstInProgress.module_id);
+      const moduleInfo = allModules.find((m: Record<string, unknown>) => m.id === firstInProgress.module_id);
       suggestedNextAction = `Continúa con "${moduleInfo?.title || 'el módulo actual'}" - te falta ${100 - firstInProgress.progress_percentage}%`;
     } else if (recommendedModules.length > 0) {
       suggestedNextAction = `Comienza el módulo "${recommendedModules[0].module_title}"`;
@@ -611,7 +611,7 @@ export class ModuleProgressService {
     const moduleTitle = exercises[0]?.module_title || 'Unknown Module';
 
     // 3. Get all submissions for this user in this module's exercises
-    const exerciseIds = exercises.map((e: any) => e.id);
+    const exerciseIds = exercises.map((e: Record<string, unknown>) => e.id);
     const submissions = await this.exerciseSubmissionRepo
       .createQueryBuilder('sub')
       .where('sub.user_id = :userId', { userId })

@@ -383,7 +383,7 @@ export class ClassroomTeachersRestController {
   async listAllAssignments(
     @Query() query: ListAllAssignmentsQueryDto,
   ): Promise<{
-        data: any[];
+        data: Record<string, unknown>[];
         total: number;
         page: number;
         limit: number;
@@ -438,8 +438,8 @@ export class ClassroomTeachersRestController {
     @Body() dto: BulkAssignRestDto,
   ): Promise<{
         assigned: number;
-        successful: any[];
-        failed: any[];
+        successful: Record<string, unknown>[];
+        failed: Record<string, unknown>[];
       }> {
     return this.classroomAssignmentsService.bulkAssignPairs(
       dto.assignments,

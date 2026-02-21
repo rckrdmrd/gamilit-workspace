@@ -19,9 +19,9 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 | Metrica | Valor |
 |---------|-------|
 | **Paginas analizadas** | 27 (15 principales + 12 complementarias) |
-| **Componentes identificados** | 475 |
-| **Hooks personalizados** | 102 |
-| **APIs consumidas** | 52 API services |
+| **Componentes identificados** | 580 |
+| **Hooks personalizados** | 123 |
+| **APIs consumidas** | 66 API services |
 | **Mecanicas de ejercicios** | 30 (23 M1-M3 + 5 M4 + 2 M5 auxiliares) |
 | **Test coverage actual** | ~13% (meta: 40%) |
 | **Gaps de coherencia identificados** | 8 (2 resueltos, 4 documentados, 2 en backlog) |
@@ -58,7 +58,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 | Documento | Ubicacion | Descripcion |
 |-----------|-----------|-------------|
 | **Analisis Integral** | `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md` | Analisis completo de 27 paginas, 8 gaps identificados |
-| **Estandar Nomenclatura API** | `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md` | Estandar snake_case/camelCase con 100+ campos documentados |
+| **Estandar Nomenclatura API** | `docs/40-standards/ESTANDAR-NOMENCLATURA-API.md` | Estandar snake_case/camelCase con 100+ campos documentados |
 | **Especificaciones Mecanicas M1-M3** | `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M1-M3.md` | 23 mecanicas basicas documentadas |
 | **Especificaciones Mecanicas M4** | `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M4.md` | 5 mecanicas avanzadas documentadas |
 | **Especificaciones Mecanicas M5** | `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M5.md` | 2 mecanicas creativas documentadas |
@@ -74,8 +74,8 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 
 | Documento | Ubicacion | Descripcion |
 |-----------|-----------|-------------|
-| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 475 componentes, 102 hooks, 52 API services |
-| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 899 endpoints documentados |
+| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 580 componentes, 123 hooks, 66 API services |
+| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 905 endpoints documentados |
 
 ### Tarea Activa
 
@@ -88,7 +88,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 ## 📚 ESTRUCTURA DE DOCUMENTACIÓN
 
 ```
-docs/student-portal/
+docs/60-portals/student/specs/
 ├── README.md (este archivo)
 ├── gaps/
 │   ├── STUDENT-GAP-001-missions-rewards.md
@@ -596,7 +596,7 @@ docs/student-portal/
 
 **FASE 2 - Gaps Altos Resueltos:**
 - **GAP-SP-003:** CORREGIDO - Removido wrapping innecesario en achievements
-- **GAP-SP-004:** DOCUMENTADO - Creado estandar de nomenclatura API (`docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`)
+- **GAP-SP-004:** DOCUMENTADO - Creado estandar de nomenclatura API (`docs/40-standards/ESTANDAR-NOMENCLATURA-API.md`)
 - **GAP-SP-006:** PLANIFICADO - Plan de testing creado para incrementar coverage de 13% a 25%
 
 **FASE 3 - Optimizaciones:**
@@ -640,9 +640,9 @@ docs/student-portal/
 | Categoria | Cantidad | Detalle |
 |-----------|----------|---------|
 | **Paginas** | 27 | 15 principales + 12 complementarias |
-| **Componentes** | 463+ | UI, mecanicas, widgets |
-| **Hooks** | 12+ | Dashboard, ejercicios, gamificacion |
-| **APIs consumidas** | 25+ | Categorias de endpoints |
+| **Componentes** | 580 | UI, mecanicas, widgets |
+| **Hooks** | 123 | Dashboard, ejercicios, gamificacion |
+| **APIs consumidas** | 66 | API service files |
 | **Mecanicas** | 30 | 23 M1-M3 + 5 M4 + 2 M5 auxiliares |
 | **Test coverage** | ~13% | Meta: 40% |
 
@@ -753,14 +753,14 @@ docs/student-portal/
 ### Cómo Actualizar Esta Documentación
 
 **Al implementar PUT/POST endpoints (futuro):**
-1. Actualizar `docs/student-portal/gaps/STUDENT-GAP-008-backend-statistics.md`
+1. Actualizar `docs/60-portals/student/specs/gaps/STUDENT-GAP-008-backend-statistics.md`
 2. Actualizar [IMPLEMENTATIONS-2025-11-24.md](./inventory/IMPLEMENTATIONS-2025-11-24.md)
 3. Actualizar [DEPENDENCY-MATRIX.md](./dependencies/DEPENDENCY-MATRIX.md) con nuevos endpoints
 4. Actualizar estado en este README.md (Settings: 95% → 100%)
 
 **Al agregar tests:**
 1. Actualizar [IMPLEMENTATIONS-2025-11-24.md](./inventory/IMPLEMENTATIONS-2025-11-24.md#cobertura-de-testing)
-2. Crear `docs/student-portal/testing/TEST-COVERAGE.md`
+2. Crear `docs/60-portals/student/specs/testing/TEST-COVERAGE.md`
 
 ---
 
@@ -818,7 +818,7 @@ docs/student-portal/
 - `orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/`
 
 ### Documentacion Nueva (2026-01-20)
-- **Estandar de Nomenclatura:** `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`
+- **Estandar de Nomenclatura:** `docs/40-standards/ESTANDAR-NOMENCLATURA-API.md`
 - **Especificaciones Mecanicas M1-M3:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M1-M3.md`
 - **Especificaciones Mecanicas M4:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M4.md`
 - **Especificaciones Mecanicas M5:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M5.md`
@@ -829,8 +829,8 @@ docs/student-portal/
 - `docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
 
 ### Inventarios
-- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 463+ componentes
-- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 899 endpoints
+- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 580 componentes
+- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 905 endpoints
 - `orchestration/inventarios/DATABASE_INVENTORY.yml` - 16 schemas, 135+ tablas
 
 ### Codebase

@@ -4,12 +4,32 @@
  * Custom hook for fetching and managing audit logs (authentication attempts).
  * Provides filtering, pagination, and data transformation.
  *
+ * Migrated to React Query for automatic caching, deduplication,
+ * and background refetching.
+ *
  * Created for: AdminMonitoringPage - Logs Tab Implementation
+ * Updated: 2026-02-20 - Migrated to React Query
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getAuditLogs } from '@/services/api/adminAPI';
+import { STALE_TIMES } from '@/shared/constants/queryKeys';
 import type { AuditLogEntry, AuditLogFilters, PaginatedResponse } from '@/services/api/adminTypes';
+
+// ============================================================================
+// Query Key Factories
+// ============================================================================
+
+const auditLogsKeys = {
+  all: ['admin', 'audit-logs'] as const,
+  list: (filters: AuditLogFilters, page: number, limit: number) =>
+    ['admin', 'audit-logs', 'list', { ...filters, page, limit }] as const,
+};
+
+// ============================================================================
+// Types (unchanged for backward compatibility)
+// ============================================================================
 
 export interface UseAuditLogsParams {
   filters?: AuditLogFilters;
@@ -33,15 +53,6 @@ export interface UseAuditLogsResult {
 
 /**
  * Hook for managing audit logs
- *
- * @example
- * ```tsx
- * const { logs, isLoading, error, setFilters, setPage } = useAuditLogs({
- *   page: 1,
- *   pageSize: 20,
- *   autoFetch: true
- * });
- * ```
  */
 export function useAuditLogs(params?: UseAuditLogsParams): UseAuditLogsResult {
   const {
@@ -51,82 +62,59 @@ export function useAuditLogs(params?: UseAuditLogsParams): UseAuditLogsResult {
     autoFetch = true,
   } = params || {};
 
-  // State
-  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
-  const [pagination, setPagination] = useState({
-    page: initialPage,
-    totalPages: 0,
-    totalItems: 0,
-    limit: initialPageSize,
-  });
+  // Client-side filter/pagination state
   const [filters, setFiltersState] = useState<AuditLogFilters>(initialFilters);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [page, setPageState] = useState(initialPage);
+  const [pageSize] = useState(initialPageSize);
 
-  /**
-   * Fetch audit logs from API
-   */
-  const fetchLogs = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  // ============================================================================
+  // QUERY
+  // ============================================================================
 
-    try {
-      const response: PaginatedResponse<AuditLogEntry> = await getAuditLogs({
+  const query = useQuery({
+    queryKey: auditLogsKeys.list(filters, page, pageSize),
+    queryFn: async (): Promise<PaginatedResponse<AuditLogEntry>> => {
+      return getAuditLogs({
         ...filters,
-        page: pagination.page,
-        limit: pagination.limit,
+        page,
+        limit: pageSize,
       });
+    },
+    enabled: autoFetch,
+    staleTime: STALE_TIMES.DYNAMIC,
+  });
 
-      setLogs(response.items);
-      setPagination(response.pagination);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch audit logs';
-      setError(errorMessage);
-      console.error('[useAuditLogs] Error fetching logs:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filters, pagination.page, pagination.limit]);
+  // ============================================================================
+  // ACTIONS
+  // ============================================================================
 
-  /**
-   * Update filters and reset to page 1
-   */
   const setFilters = useCallback((newFilters: AuditLogFilters) => {
     setFiltersState(newFilters);
-    setPagination((prev) => ({ ...prev, page: 1 }));
+    setPageState(1); // Reset to page 1 when filters change
   }, []);
 
-  /**
-   * Update current page
-   */
-  const setPage = useCallback((page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+  const setPage = useCallback((newPage: number) => {
+    setPageState(newPage);
   }, []);
 
-  /**
-   * Manual refetch
-   */
   const refetch = useCallback(async () => {
-    await fetchLogs();
-  }, [fetchLogs]);
+    await query.refetch();
+  }, [query]);
 
-  /**
-   * Auto-fetch on mount and when dependencies change
-   */
-  useEffect(() => {
-    if (autoFetch) {
-      fetchLogs();
-    }
-  }, [fetchLogs, autoFetch]);
+  // ============================================================================
+  // RETURN
+  // ============================================================================
+
+  const pagination = query.data?.pagination;
 
   return {
-    logs,
-    total: pagination.totalItems,
-    page: pagination.page,
-    totalPages: pagination.totalPages,
-    pageSize: pagination.limit,
-    isLoading,
-    error,
+    logs: query.data?.items ?? [],
+    total: pagination?.totalItems ?? 0,
+    page: pagination?.page ?? page,
+    totalPages: pagination?.totalPages ?? 0,
+    pageSize: pagination?.limit ?? pageSize,
+    isLoading: query.isLoading,
+    error: query.error instanceof Error ? query.error.message : query.error ? String(query.error) : null,
     refetch,
     setFilters,
     setPage,

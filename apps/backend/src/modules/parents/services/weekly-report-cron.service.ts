@@ -18,7 +18,8 @@ import {
   ParentNotification,
   ParentNotificationStatus,
 } from '@/modules/auth/entities/parent-notification.entity';
-import { ParentAccount, ReportFormat } from '@/modules/auth/entities/parent-account.entity';
+import { ParentAccount } from '@/modules/auth/entities/parent-account.entity';
+import { ReportFormat } from '@/modules/parents/enums/parent-account.enums';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { WeeklyReportService } from './weekly-report.service';
 import { ParentAlertService } from './parent-alert.service';

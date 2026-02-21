@@ -5,7 +5,7 @@ import { mockTribunalData } from './tribunalOpinionesMockData';
  * Fetch Tribunal de Opiniones exercise data
  * Currently returns mock data, will be replaced with actual API call
  */
-export const fetchTribunal = async (exerciseId: string): Promise<TribunalOpinionesData> => {
+export const fetchTribunal = async (_exerciseId: string): Promise<TribunalOpinionesData> => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -13,7 +13,6 @@ export const fetchTribunal = async (exerciseId: string): Promise<TribunalOpinion
   // const response = await apiClient.get(`/exercises/${exerciseId}`);
   // return response.data;
 
-  console.log('[TribunalOpinionesAPI] Fetching exercise:', exerciseId);
   return mockTribunalData;
 };
 
@@ -22,12 +21,10 @@ export const fetchTribunal = async (exerciseId: string): Promise<TribunalOpinion
  * @deprecated Use submitExercise from progressAPI instead
  */
 export const submitTribunalAnswers = async (
-  exerciseId: string,
-  userId: string,
-  answers: unknown
+  _exerciseId: string,
+  _userId: string,
+  _answers: unknown
 ): Promise<{ success: boolean; score: number }> => {
-  console.log('[TribunalOpinionesAPI] Submitting answers:', { exerciseId, userId, answers });
-
   // This is deprecated - use submitExercise from progressAPI
   await new Promise(resolve => setTimeout(resolve, 300));
 

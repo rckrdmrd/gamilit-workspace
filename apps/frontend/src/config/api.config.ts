@@ -8,13 +8,11 @@
  * @date 2025-11-24
  * @version 1.0.0
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // ============================================================================
 // ENVIRONMENT VARIABLES
 // ============================================================================
 
-const API_HOST = import.meta.env.VITE_API_HOST;
+const API_HOST = import.meta.env.VITE_API_HOST || '';
 const API_PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const API_VERSION = import.meta.env.VITE_API_VERSION || 'v1';
 
@@ -23,10 +21,9 @@ const WS_PROTOCOL = import.meta.env.VITE_WS_PROTOCOL || 'ws';
 
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '30000');
 
-// Validación
-if (!API_HOST) {
-  throw new Error('VITE_API_HOST is required in .env file');
-}
+// Proxy mode: when API_HOST is empty or 'proxy', use relative URLs via Vite proxy.
+// This allows LAN clients to access the API without knowing the server IP.
+const USE_PROXY = !API_HOST || API_HOST === 'proxy';
 
 // ============================================================================
 // API CONFIGURATION
@@ -37,14 +34,18 @@ if (!API_HOST) {
  * Construido desde: PROTOCOL://HOST/api/VERSION
  * Ejemplo: http://localhost:3006/api/v1
  */
-export const API_BASE_URL = `${API_PROTOCOL}://${API_HOST}/api/${API_VERSION}`;
+export const API_BASE_URL = USE_PROXY
+  ? `/api/${API_VERSION}`
+  : `${API_PROTOCOL}://${API_HOST}/api/${API_VERSION}`;
 
 /**
  * WebSocket URL
  * Construido desde: WS_PROTOCOL://WS_HOST
  * Ejemplo: ws://localhost:3006
  */
-export const WS_BASE_URL = `${WS_PROTOCOL}://${WS_HOST}`;
+export const WS_BASE_URL = USE_PROXY
+  ? `${WS_PROTOCOL}://${window.location.hostname}:3006`
+  : `${WS_PROTOCOL}://${WS_HOST}`;
 
 /**
  * API Configuration Object
@@ -56,6 +57,7 @@ export const API_CONFIG = {
   version: API_VERSION,
   host: API_HOST,
   protocol: API_PROTOCOL,
+  useProxy: USE_PROXY,
 } as const;
 
 // ============================================================================
@@ -198,9 +200,9 @@ export const API_ENDPOINTS = {
     purchase: '/gamification/shop/purchase',
     shopItems: '/gamification/shop/items',
     shopItem: (itemId: string) => `/gamification/shop/items/${itemId}`,
-    inventory: (userId: string) => `/gamification/users/${userId}/comodines`,
+    inventory: (userId: string) => `/gamification/comodines/users/${userId}/inventory`,
     inventoryItem: (userId: string, itemId: string) =>
-      `/gamification/users/${userId}/comodines/${itemId}`,
+      `/gamification/comodines/users/${userId}/${itemId}`,
   },
 
   /**
@@ -278,14 +280,14 @@ export const API_ENDPOINTS = {
       pending: '/admin/content/pending',
       approve: (id: string) => `/admin/content/${id}/approve`,
       reject: (id: string) => `/admin/content/${id}/reject`,
-      history: '/admin/content/history',
+      history: '/admin/content/approval-history',
       list: '/admin/content',
       get: (id: string) => `/admin/content/${id}`,
 
       // Media library
       mediaLibrary: '/admin/content/media',
       deleteMedia: (id: string) => `/admin/content/media/${id}`,
-      createVersion: '/admin/content/versions',
+      createVersion: '/admin/content/version',
     },
 
     // Users Management (nested structure)
@@ -322,7 +324,7 @@ export const API_ENDPOINTS = {
     gamification: {
       settings: '/admin/gamification/settings',
       updateSettings: '/admin/gamification/settings',
-      previewChanges: '/admin/gamification/preview-changes',
+      previewChanges: '/admin/gamification/settings/preview',
       restoreDefaults: '/admin/gamification/restore-defaults',
     },
 
@@ -386,16 +388,16 @@ export const API_ENDPOINTS = {
       updateRole: '/admin/users/bulk/update-role',
     },
 
-    // Activity Logs (P1: Centralized 2025-12-28)
+    // ORPHAN: No backend endpoint — Activity Logs (P1: Centralized 2025-12-28)
     activity: '/admin/activity',
 
-    // Error Management (P1: Centralized 2025-12-28)
+    // ORPHAN: No backend endpoint — Error Management (P1: Centralized 2025-12-28)
     errors: {
       list: '/admin/errors',
       resolve: (errorId: string) => `/admin/errors/${errorId}/resolve`,
     },
 
-    // Assignments Export (P1: Centralized 2025-12-28)
+    // ORPHAN: No backend endpoint — Assignments Export (P1: Centralized 2025-12-28)
     assignments: {
       export: '/admin/assignments/export',
     },
@@ -409,7 +411,7 @@ export const API_ENDPOINTS = {
       delete: (key: string) => `/admin/feature-flags/${key}`,
     },
 
-    // Metrics shorthand (P1: Centralized 2025-12-28)
+    // ORPHAN: No backend endpoint — Metrics shorthand (P1: Centralized 2025-12-28)
     metrics: '/admin/metrics',
 
     // Alert Actions (P1: Centralized 2025-12-28)
@@ -443,6 +445,9 @@ export const API_ENDPOINTS = {
     createClassroom: '/teacher/classrooms',
     updateClassroom: (id: string) => `/teacher/classrooms/${id}`,
     deleteClassroom: (id: string) => `/teacher/classrooms/${id}`,
+    // AUDIT-C3-B4: Student permissions update endpoint
+    updateStudentPermissions: (classroomId: string, studentId: string) =>
+      `/teacher/classrooms/${classroomId}/students/${studentId}/permissions`,
 
     // Assignments
     assignments: '/teacher/assignments',
@@ -452,6 +457,7 @@ export const API_ENDPOINTS = {
     deleteAssignment: (assignmentId: string) => `/teacher/assignments/${assignmentId}`,
     assignmentSubmissions: (assignmentId: string) =>
       `/teacher/assignments/${assignmentId}/submissions`,
+    /** @deprecated AUDIT-C4-DUP5b: Alias of teacher.submissions.get(). Used by assignmentsApi. */
     submission: (submissionId: string) => `/teacher/submissions/${submissionId}`,
     gradeSubmission: (submissionId: string) => `/teacher/submissions/${submissionId}/feedback`,
     sendReminder: (assignmentId: string) => `/teacher/assignments/${assignmentId}/send-reminder`,
@@ -463,12 +469,14 @@ export const API_ENDPOINTS = {
     economyAnalytics: '/teacher/analytics/economy', // GAP-ST-005
     studentsEconomy: '/teacher/analytics/students-economy', // GAP-ST-006
     achievementsStats: '/teacher/analytics/achievements', // GAP-ST-007
-    generateReport: '/teacher/reports/generate',
-    reportStatus: (reportId: string) => `/teacher/reports/${reportId}/status`,
+    // AUDIT-C4-DUP5a: generateReport/reportStatus REMOVED — canonical location is teacher.reports.generate/download
+    // AUDIT-C3-B6: Assignment-level analytics endpoint
+    assignmentAnalytics: (assignmentId: string) => `/teacher/analytics/assignment/${assignmentId}`,
     studentInsights: (studentId: string) => `/teacher/students/${studentId}/insights`,
 
     // Grades & Reports
     grades: '/teacher/grades',
+    // AUDIT-C4-DUP5a: Canonical location for report URLs. Flat alias: teacher.generateReport
     reports: {
       list: '/teacher/reports',
       recent: '/teacher/reports/recent',
@@ -539,6 +547,15 @@ export const API_ENDPOINTS = {
       publish: (contentId: string) => `/teacher/content/${contentId}/publish`,
     },
 
+    // Shared Resources (ResourceSharingPanel)
+    resources: {
+      list: '/teacher/content/resources',
+      get: (resourceId: string) => `/teacher/content/resources/${resourceId}`,
+      rate: (resourceId: string) => `/teacher/content/resources/${resourceId}/rate`,
+      comments: (resourceId: string) => `/teacher/content/resources/${resourceId}/comments`,
+      download: (resourceId: string) => `/teacher/content/resources/${resourceId}/download`,
+    },
+
     // Manual Review (for modules 4 and 5)
     reviews: {
       pending: '/teacher/reviews/pending',
@@ -567,6 +584,7 @@ export const API_ENDPOINTS = {
     },
 
     // Submissions & Grading (P1-05: Centralized endpoints)
+    // AUDIT-C4-DUP5b: Canonical location. Flat alias: teacher.submission(id)
     submissions: {
       list: '/teacher/submissions',
       get: (submissionId: string) => `/teacher/submissions/${submissionId}`,
@@ -759,7 +777,7 @@ export const API_ENDPOINTS = {
  * @param path - Ruta relativa (puede ser string o función)
  * @returns URL completa
  */
-export function buildApiUrl(path: string | ((...args: any[]) => string), ...args: any[]): string {
+export function buildApiUrl(path: string | ((...args: string[]) => string), ...args: string[]): string {
   const relativePath = typeof path === 'function' ? path(...args) : path;
   return `${API_BASE_URL}${relativePath}`;
 }
@@ -813,16 +831,6 @@ export const HTTP_STATUS = {
 // ============================================================================
 // VALIDATION & LOGGING
 // ============================================================================
-
-if (import.meta.env.MODE === 'development') {
-  console.log('[API Config] Configuration loaded:', {
-    baseURL: API_BASE_URL,
-    wsURL: WS_BASE_URL,
-    version: API_VERSION,
-    host: API_HOST,
-    protocol: API_PROTOCOL,
-  });
-}
 
 // ============================================================================
 // DEFAULT EXPORT

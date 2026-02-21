@@ -21,15 +21,17 @@ import {
   AlertCircle,
   Play,
   BookOpen,
-  Loader2,
 } from 'lucide-react';
+import { LoadingSpinner } from '@shared/components/loading';
 
 // API
 import { studentAssignmentsAPI, type StudentAssignmentDetail } from '@/services/api/studentAssignmentsAPI';
 
+// Hooks
+import { useApiError } from '@shared/hooks';
+
 // Components
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { useAuth } from '@/features/auth/hooks/useAuth';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 
 // ============================================================================
 // STATUS CONFIGURATION
@@ -129,11 +131,10 @@ function ExerciseCard({ exercise, onStart, isGraded }: ExerciseCardProps) {
 export default function AssignmentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
   const [assignment, setAssignment] = useState<StudentAssignmentDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { error, handleError, clearError } = useApiError();
 
   // Fetch assignment detail
   useEffect(() => {
@@ -141,14 +142,13 @@ export default function AssignmentDetailPage() {
       if (!id) return;
 
       setIsLoading(true);
-      setError(null);
+      clearError();
 
       try {
         const data = await studentAssignmentsAPI.getAssignmentDetail(id);
         setAssignment(data);
       } catch (err) {
-        console.error('Failed to fetch assignment:', err);
-        setError('No se pudo cargar la tarea. Intenta de nuevo.');
+        handleError(err, 'No se pudo cargar la tarea');
       } finally {
         setIsLoading(false);
       }
@@ -173,10 +173,7 @@ export default function AssignmentDetailPage() {
   const isOverdue = dueDate && dueDate < new Date() && assignment?.status !== 'graded';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <GamifiedHeader user={user || undefined} onLogout={logout} />
-
+    <StudentPageShell>
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Back Button */}
@@ -191,7 +188,7 @@ export default function AssignmentDetailPage() {
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+            <LoadingSpinner size="lg" />
           </div>
         )}
 
@@ -342,6 +339,6 @@ export default function AssignmentDetailPage() {
           </motion.div>
         )}
       </main>
-    </div>
+    </StudentPageShell>
   );
 }

@@ -66,8 +66,8 @@ export function ModuleGridCardEnhanced({
     userId,
     userRango,
     completedModuleIds,
-    onAccessDenied: (reason: 'prerequisites' | 'rango' | 'both') => {
-      console.log('Module access denied:', reason);
+    onAccessDenied: (_reason: 'prerequisites' | 'rango' | 'both') => {
+      // Access denial handled by UI state
     },
   });
 

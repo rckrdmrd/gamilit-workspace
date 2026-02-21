@@ -115,5 +115,22 @@ export function validateEnv(config: Record<string, unknown>) {
     throw new Error(`Environment validation failed:\n${messages.join('\n')}`);
   }
 
+  // In production, require critical secrets (no insecure fallbacks)
+  if (validatedConfig.NODE_ENV === Environment.Production) {
+    const requiredSecrets: Array<[string, unknown]> = [
+      ['JWT_SECRET', config.JWT_SECRET],
+      ['JWT_REFRESH_SECRET', config.JWT_REFRESH_SECRET],
+      ['SESSION_SECRET', config.SESSION_SECRET],
+    ];
+    const missing = requiredSecrets
+      .filter(([, value]) => !value)
+      .map(([name]) => name);
+    if (missing.length > 0) {
+      throw new Error(
+        `Production requires these secrets to be set: ${missing.join(', ')}`,
+      );
+    }
+  }
+
   return validatedConfig;
 }

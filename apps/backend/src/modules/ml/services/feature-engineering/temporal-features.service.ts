@@ -22,6 +22,22 @@ import { DataSource } from 'typeorm';
 import { Feature, FeatureCategory } from '../../interfaces';
 import { FeatureBaseService } from './feature-base.service';
 
+/** Temporal data shape from SQL queries */
+interface TemporalData {
+  most_active_day: number;
+  most_active_hour: number;
+  morning_ratio: number;
+  afternoon_ratio: number;
+  evening_ratio: number;
+  night_ratio: number;
+  weekend_activity_percentage: number;
+  burst_ratio: number;
+  regularity_score: number;
+  activity_spread_days: number;
+  avg_gap_hours: number;
+  max_gap_days: number;
+}
+
 /**
  * Service for extracting temporal pattern features
  */
@@ -287,7 +303,7 @@ export class TemporalFeaturesService extends FeatureBaseService {
   private async queryTemporalData(
     studentId: string,
     dateRange: { start: Date; end: Date },
-  ): Promise<any> {
+  ): Promise<TemporalData> {
     const defaultData = this.getDefaultTemporalData();
 
     try {
@@ -431,7 +447,7 @@ export class TemporalFeaturesService extends FeatureBaseService {
   private async queryOperationalTemporal(
     studentId: string,
     dateRange: { start: Date; end: Date },
-  ): Promise<any> {
+  ): Promise<TemporalData> {
     const defaultData = this.getDefaultTemporalData();
 
     const query = `
@@ -495,7 +511,7 @@ export class TemporalFeaturesService extends FeatureBaseService {
   /**
    * Get default temporal data
    */
-  private getDefaultTemporalData(): any {
+  private getDefaultTemporalData(): TemporalData {
     return {
       most_active_day: 3, // Wednesday
       most_active_hour: 15, // 3 PM

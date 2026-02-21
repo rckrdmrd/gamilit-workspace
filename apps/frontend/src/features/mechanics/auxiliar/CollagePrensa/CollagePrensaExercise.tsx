@@ -48,10 +48,6 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
         answers: { elements },
       });
 
-      console.log('📊 [CollagePrensa] Progress update sent:', {
-        elementsCount: elements.length,
-        minRequired: minElements,
-      });
     }
   }, [elements, hintsUsed, onProgressUpdate, minElements, startTime]);
 
@@ -158,13 +154,7 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
 
       await syncAndInvalidate();
 
-      console.log('✅ [CollagePrensa] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
-      console.error('❌ [CollagePrensa] Submission error:', error);
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',

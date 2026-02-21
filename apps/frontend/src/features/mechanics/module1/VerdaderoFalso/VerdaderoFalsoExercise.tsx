@@ -65,10 +65,6 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         answers: { statements: userAnswers }, // BE-FE-064: Wrap in 'statements' key to match DTO
       });
 
-      console.log('📊 [VerdaderoFalso] Progress update sent:', {
-        answered: answeredCount,
-        totalQuestions: statements.length,
-      });
     }
   }, [statements, hintsUsed, onProgressUpdate, answeredCount, startTime, exercise.id]);
 
@@ -81,13 +77,6 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   };
 
   const handleCheck = async () => {
-    console.log('🔍 [VerdaderoFalso] handleCheck called - FILE VERSION: 2025-11-19-v2');
-    console.log('🔍 [VerdaderoFalso] Statements data types:', {
-      firstStatementId: statements[0]?.id,
-      idType: typeof statements[0]?.id,
-      sampleStatement: statements[0],
-    });
-
     const allAnswered = statements.every((s) => s.userAnswer !== null);
 
     if (!allAnswered) {
@@ -126,12 +115,6 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       // FE-044 FIX: Wrap in 'statements' key to match backend DTO
       const answersObj = { statements: statementsAnswers };
 
-      console.log('📝 [VerdaderoFalso] Submitting answers:', {
-        answersCount: Object.keys(statementsAnswers).length,
-        sampleIds: Object.keys(statementsAnswers).slice(0, 3),
-        payload: answersObj,
-      });
-
       // CORRECCION-004: Submit to progressAPI (API unificada)
       const response = await submitAsync(answersObj);
 
@@ -159,11 +142,6 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [VerdaderoFalso] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [VerdaderoFalso] Submission error:', error);
       setFeedback({
@@ -210,9 +188,9 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
               </span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -256,9 +234,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                           disabled={showResults}
                           className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
                             statement.userAnswer === true
-                              ? 'scale-105 bg-green-500 text-white shadow-lg'
+                              ? showResults
+                                ? 'bg-green-500/20 border-2 border-green-500 text-detective-text shadow-md'
+                                : 'scale-105 bg-green-500 text-white shadow-lg'
                               : 'bg-detective-bg-secondary text-detective-text hover:bg-green-100 hover:text-green-700'
-                          } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
+                          } ${showResults ? 'cursor-not-allowed opacity-100' : 'cursor-pointer'} flex items-center justify-center gap-2`}
                         >
                           <CheckCircle className="h-5 w-5" />
                           Verdadero
@@ -268,9 +248,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                           disabled={showResults}
                           className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
                             statement.userAnswer === false
-                              ? 'scale-105 bg-red-500 text-white shadow-lg'
+                              ? showResults
+                                ? 'bg-red-500/20 border-2 border-red-500 text-detective-text shadow-md'
+                                : 'scale-105 bg-red-500 text-white shadow-lg'
                               : 'bg-detective-bg-secondary text-detective-text hover:bg-red-100 hover:text-red-700'
-                          } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
+                          } ${showResults ? 'cursor-not-allowed opacity-100' : 'cursor-pointer'} flex items-center justify-center gap-2`}
                         >
                           <XCircle className="h-5 w-5" />
                           Falso
@@ -282,7 +264,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
-                          className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white bg-opacity-50 p-4"
+                          className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white/50 p-4"
                         >
                           <div className="flex items-start gap-2">
                             <div className="flex-shrink-0 text-2xl">{isCorrect ? '✅' : '❌'}</div>

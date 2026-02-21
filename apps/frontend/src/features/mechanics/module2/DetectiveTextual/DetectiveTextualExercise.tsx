@@ -148,12 +148,6 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     const content = exerciseFromPage?.content || exerciseFromPage?.mechanicData?.content;
 
     if (content?.passage && content?.questions && content.questions.length > 0) {
-      console.log('[DetectiveTextual] ✅ Using API data:', {
-        id: exerciseFromPage?.id,
-        title: exerciseFromPage?.title,
-        questionsCount: content.questions.length,
-      });
-
       // Map difficulty from backend format to component format
       const difficultyMap: Record<string, 'easy' | 'medium' | 'hard'> = {
         beginner: 'easy',
@@ -307,11 +301,6 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [DetectiveTextual] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [DetectiveTextual] Submission error:', error);
       setFeedback({
@@ -385,9 +374,9 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
               </span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

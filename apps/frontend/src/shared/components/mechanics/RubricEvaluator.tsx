@@ -90,7 +90,6 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
         };
       });
 
-      console.log('[RubricEvaluator] Initialized evaluations:', initializedEvaluations);
       return initializedEvaluations;
     });
 

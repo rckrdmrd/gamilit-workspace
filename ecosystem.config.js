@@ -61,9 +61,6 @@ module.exports = {
         PORT: 3006,
       },
 
-      // Archivo .env a cargar
-      env_file: './.env.production',
-
       // Logs
       error_file: '../../logs/backend-error.log',
       out_file: '../../logs/backend-out.log',
@@ -109,9 +106,6 @@ module.exports = {
         NODE_ENV: 'development',
         VITE_ENV: 'development',
       },
-
-      // Archivo .env a cargar
-      env_file: './.env.production',
 
       // Logs
       error_file: '../../logs/frontend-error.log',

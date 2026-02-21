@@ -1131,15 +1131,6 @@ const VerdaderoFalsoRenderer: React.FC<{
   // Soportar múltiples formatos: statements (frontend), answers (normalizado), o directo
   const rawAnswers = data.statements || data.answers || data;
 
-  // Debug: Log raw data to identify format issues
-  console.log('[VerdaderoFalsoRenderer] Raw data:', {
-    data,
-    correct,
-    rawAnswers,
-    dataKeys: Object.keys(data),
-    rawAnswersType: typeof rawAnswers,
-  });
-
   // Normalizar valores: convertir strings "true"/"false" a booleanos reales
   const answers: Record<string, boolean> = {};
   if (rawAnswers && typeof rawAnswers === 'object') {
@@ -1171,8 +1162,6 @@ const VerdaderoFalsoRenderer: React.FC<{
         {} as Record<string, boolean>,
       )
     : undefined;
-
-  console.log('[VerdaderoFalsoRenderer] Normalized:', { answers, correctAnswers });
 
   return (
     <div className="space-y-2">

@@ -8,7 +8,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
@@ -140,8 +140,10 @@ export class StudentRiskAlertService {
 
       const classroomIds = memberships.map(m => m.classroom_id);
 
-      // Get teacher IDs from classrooms
-      const classrooms = await this.classroomRepository.findByIds(classroomIds);
+      // Get teacher IDs from classrooms (B5-2: replaced deprecated findByIds)
+      const classrooms = classroomIds.length > 0
+        ? await this.classroomRepository.find({ where: { id: In(classroomIds) } })
+        : [];
       const teacherIds = [...new Set(classrooms.map(c => c.teacher_id).filter(Boolean))];
 
       const completionRate = insights.modules_total > 0
@@ -367,15 +369,19 @@ export class StudentRiskAlertService {
 
       const classroomIds = classrooms.map(c => c.id);
 
-      const memberships = await this.classroomMemberRepository.find({
-        where: { is_active: true },
-      });
+      // B5-3: Filter in DB instead of loading all members into memory
+      const memberships = classroomIds.length > 0
+        ? await this.classroomMemberRepository.find({
+            where: { is_active: true, classroom_id: In(classroomIds) },
+          })
+        : [];
 
-      const studentIds = memberships
-        .filter(m => classroomIds.includes(m.classroom_id))
-        .map(m => m.student_id);
+      const studentIds = [...new Set(memberships.map(m => m.student_id))];
 
-      students = await this.profileRepository.findByIds(studentIds);
+      // B5-2: Replaced deprecated findByIds with find + In()
+      students = studentIds.length > 0
+        ? await this.profileRepository.find({ where: { id: In(studentIds) } })
+        : [];
     } else {
       students = await this.profileRepository.find({
         where: { role: GamilityRoleEnum.STUDENT },

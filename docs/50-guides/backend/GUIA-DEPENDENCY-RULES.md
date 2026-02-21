@@ -420,7 +420,7 @@ export class GamificationListener {
 
 ## 5. Diagrama de Dependencias Permitidas entre Modulos gamilit
 
-El siguiente diagrama muestra las dependencias permitidas entre los 22 modulos principales. Las flechas indican "depende de" (A <- B significa "B depende de A").
+El siguiente diagrama muestra las dependencias permitidas entre los 23 modulos principales. Las flechas indican "depende de" (A <- B significa "B depende de A").
 
 ```
                     ┌──────────┐

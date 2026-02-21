@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Grid3X3 } from 'lucide-react';
@@ -17,7 +16,7 @@ import { useInvalidateDashboard } from '@/shared/hooks';
 export interface CrucigramaExerciseProps {
   exercise: CrucigramaData;
   onComplete?: () => void;
-  onSubmit?: (answers: any) => Promise<void>;
+  onSubmit?: (answers: Record<string, unknown>) => Promise<void>;
   onProgressUpdate?: (data: {
     progress: {
       currentStep: number;
@@ -156,10 +155,6 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
         answers: { clues: userAnswers },
       });
 
-      console.log('📊 [Crucigrama] Progress update sent:', {
-        completedClues: newCompleted.size,
-        totalClues: exercise.clues.length,
-      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grid, hintsUsed, exercise.clues, exercise.id, onProgressUpdate, startTime]);
@@ -242,11 +237,6 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      console.log('✅ [Crucigrama] Submission successful:', {
-        attemptId: response.attemptId,
-        score: response.score,
-        rewards: response.rewards,
-      });
     } catch (error) {
       console.error('❌ [Crucigrama] Submission error:', error);
       setFeedback({
@@ -295,9 +285,9 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
               </span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/30">
+            <div className="h-2 rounded-full bg-white/50">
               <div
-                className="h-full rounded-full bg-white transition-all duration-300"
+                className="h-full rounded-full bg-detective-gold transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

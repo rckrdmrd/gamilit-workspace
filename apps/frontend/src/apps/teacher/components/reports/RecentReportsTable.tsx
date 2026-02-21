@@ -181,7 +181,7 @@ export function RecentReportsTable({
                 className={`rounded-lg px-4 py-2 font-semibold transition-colors ${
                   filterType === 'all'
                     ? 'bg-detective-orange text-white'
-                    : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
+                    : 'bg-detective-bg-secondary text-detective-text hover:bg-detective-bg-secondary/80'
                 }`}
               >
                 Todos
@@ -194,7 +194,7 @@ export function RecentReportsTable({
                     className={`rounded-lg px-4 py-2 font-semibold transition-colors ${
                       filterType === type
                         ? 'bg-detective-orange text-white'
-                        : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
+                        : 'bg-detective-bg-secondary text-detective-text hover:bg-detective-bg-secondary/80'
                     }`}
                   >
                     {getReportTypeLabel(type)}

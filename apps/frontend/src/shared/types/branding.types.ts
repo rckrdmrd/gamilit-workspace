@@ -25,6 +25,9 @@ export interface BrandingConfig {
   /** URL to tenant's logo image (PNG, JPG, SVG supported) */
   logoUrl: string | null;
 
+  /** URL to tenant's logo icon (square, transparent background) */
+  logoIconUrl: string | null;
+
   /** URL to tenant's favicon (ICO, PNG supported) */
   faviconUrl: string | null;
 
@@ -104,8 +107,9 @@ export interface UploadAssetResponse {
  */
 export const DEFAULT_BRANDING: Omit<BrandingConfig, 'tenantId'> = {
   platformName: 'GAMILIT Platform',
-  logoUrl: '/logo-gamilit.jpeg',
-  faviconUrl: null,
+  logoUrl: '/logo-full.png',
+  logoIconUrl: '/logo-icon.png',
+  faviconUrl: '/favicon.ico',
   primaryColor: '#f97316',
   secondaryColor: '#ea580c',
   accentColor: '#f59e0b',

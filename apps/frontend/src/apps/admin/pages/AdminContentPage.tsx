@@ -48,7 +48,7 @@ export default function AdminContentPage() {
   const [selectedExercise, setSelectedExercise] = useState<PendingExercise | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
-  const handleError = useApiError();
+  const { handleError } = useApiError();
 
   const { pendingExercises, approveExercise, rejectExercise } = usePendingExercisesQuery();
   const tabs = buildTabs(pendingExercises.length);
@@ -112,11 +112,13 @@ export default function AdminContentPage() {
 
         <AdminTabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {activeTab === 'pending' && (
-          <PendingExercisesTab onPreview={handleOpenPreview} onReject={handleOpenReject} />
-        )}
-        {activeTab === 'media' && <MediaLibraryTab />}
-        {activeTab === 'versions' && <ContentVersionsTab />}
+        <div role="region" aria-label={`Contenido de pestana: ${tabs.find(t => t.id === activeTab)?.label ?? activeTab}`}>
+          {activeTab === 'pending' && (
+            <PendingExercisesTab onPreview={handleOpenPreview} onReject={handleOpenReject} />
+          )}
+          {activeTab === 'media' && <MediaLibraryTab />}
+          {activeTab === 'versions' && <ContentVersionsTab />}
+        </div>
       </div>
 
       <ContentPreviewModal

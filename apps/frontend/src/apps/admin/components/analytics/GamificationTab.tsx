@@ -13,13 +13,47 @@
 
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Award, Star, TrendingUp } from 'lucide-react';
+import { Award, Star, TrendingUp, BarChart3 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { DataTable, type Column } from '@shared/components/common/DataTable';
+import { EmptyState } from '@shared/components/feedback/EmptyState';
 import type { GamificationAnalytics } from '@/services/api/adminTypes';
 
 interface GamificationTabProps {
   gamification: GamificationAnalytics | null;
 }
+
+/** Row type for the ranks detail table (transformed from RankDistribution) */
+interface RankRow {
+  rango: string;
+  usuarios: number;
+  xp_promedio: number;
+  ejercicios_promedio: number;
+}
+
+/** Column definitions for Ranks Details table */
+const rankColumns: Column<RankRow>[] = [
+  {
+    key: 'rango',
+    label: 'Rango',
+    render: (row) => (
+      <span className="rounded-full bg-detective-orange/20 px-3 py-1 text-sm font-medium text-detective-orange">
+        {row.rango}
+      </span>
+    ),
+  },
+  {
+    key: 'usuarios',
+    label: 'Usuarios',
+    render: (row) => row.usuarios.toLocaleString('es-ES'),
+  },
+  {
+    key: 'xp_promedio',
+    label: 'XP Promedio',
+    render: (row) => row.xp_promedio.toLocaleString('es-ES'),
+  },
+  { key: 'ejercicios_promedio', label: 'Ejercicios Promedio' },
+];
 
 /**
  * GamificationTab Component
@@ -72,9 +106,11 @@ export function GamificationTab({ gamification }: GamificationTabProps) {
 
   if (!gamification) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-detective-text-secondary">No hay datos de gamificación disponibles</p>
-      </div>
+      <EmptyState
+        icon={Award}
+        title="No hay datos de gamificacion disponibles"
+        description="Los datos de gamificacion apareceran cuando haya actividad en el sistema"
+      />
     );
   }
 
@@ -143,9 +179,11 @@ export function GamificationTab({ gamification }: GamificationTabProps) {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-detective-text-secondary">
-            No hay datos de distribución de XP
-          </div>
+          <EmptyState
+            icon={BarChart3}
+            title="No hay datos de distribucion de XP"
+            className="h-[300px]"
+          />
         )}
       </DetectiveCard>
 
@@ -169,56 +207,23 @@ export function GamificationTab({ gamification }: GamificationTabProps) {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-detective-text-secondary">
-            No hay datos de distribución de rangos
-          </div>
+          <EmptyState
+            icon={Star}
+            title="No hay datos de distribucion de rangos"
+            className="h-[300px]"
+          />
         )}
       </DetectiveCard>
 
       {/* Ranks Details Table */}
       <DetectiveCard className="p-6">
         <h3 className="mb-4 text-xl font-bold text-detective-text">Detalles de Rangos</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-detective-border border-b">
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Rango
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Usuarios
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  XP Promedio
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-detective-text-secondary">
-                  Ejercicios Promedio
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {ranksData.map((rank) => (
-                <tr
-                  key={rank.rango}
-                  className="border-detective-border border-b transition-colors hover:bg-detective-bg-secondary"
-                >
-                  <td className="px-4 py-3">
-                    <span className="rounded-full bg-detective-orange/20 px-3 py-1 text-sm font-medium text-detective-orange">
-                      {rank.rango}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">
-                    {rank.usuarios.toLocaleString('es-ES')}
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">
-                    {rank.xp_promedio.toLocaleString('es-ES')}
-                  </td>
-                  <td className="px-4 py-3 text-detective-text">{rank.ejercicios_promedio}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable<RankRow>
+          data={ranksData}
+          columns={rankColumns}
+          striped={false}
+          emptyMessage="No hay datos de rangos"
+        />
       </DetectiveCard>
 
       {/* Levels Distribution Chart */}
@@ -241,9 +246,11 @@ export function GamificationTab({ gamification }: GamificationTabProps) {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-[300px] items-center justify-center text-detective-text-secondary">
-            No hay datos de distribución de niveles
-          </div>
+          <EmptyState
+            icon={TrendingUp}
+            title="No hay datos de distribucion de niveles"
+            className="h-[300px]"
+          />
         )}
       </DetectiveCard>
     </div>

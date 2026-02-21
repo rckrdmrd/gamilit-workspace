@@ -4,12 +4,22 @@
  * @module apps/student/components/profile/ProfileHero
  */
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Calendar, Camera } from 'lucide-react';
 import { RankBadge } from '@shared/components/base/RankBadge';
 import { StreakIndicator } from '@/features/gamification/components/StreakIndicator';
 import type { RankType } from '@shared/components/base/RankBadge';
 import type { ProfileStat } from './types';
+
+/** Cosmetic item data extracted from equipped items */
+interface CosmeticItemData {
+  name: string;
+  assetUrl?: string;
+  displayText?: string;
+  color?: string;
+  animated?: boolean;
+}
 
 interface ProfileHeroProps {
   user: {
@@ -22,14 +32,46 @@ interface ProfileHeroProps {
   rankType: RankType;
   stats: ProfileStat[];
   equippedFrameColor?: string;
+  equippedBackground?: CosmeticItemData;
+  equippedTitle?: CosmeticItemData;
+  equippedBadge?: CosmeticItemData;
   onAvatarClick: () => void;
 }
 
-export function ProfileHero({ user, rankType, stats, equippedFrameColor, onAvatarClick }: ProfileHeroProps) {
+export function ProfileHero({ user, rankType, stats, equippedFrameColor, equippedBackground, equippedTitle, equippedBadge, onAvatarClick }: ProfileHeroProps) {
+  const [avatarFailed, setAvatarFailed] = React.useState(false);
+  const [badgeFailed, setBadgeFailed] = React.useState(false);
+  const [bgFailed, setBgFailed] = React.useState(false);
+
+  // Preload background image and fallback gracefully
+  React.useEffect(() => {
+    if (!equippedBackground?.assetUrl) return;
+    const img = new Image();
+    img.src = equippedBackground.assetUrl;
+    img.onerror = () => setBgFailed(true);
+    setBgFailed(false);
+  }, [equippedBackground?.assetUrl]);
+
+  const backgroundStyle: React.CSSProperties =
+    equippedBackground?.assetUrl && !bgFailed
+      ? {
+          backgroundImage: `url(${equippedBackground.assetUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }
+      : {};
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-      <div className="rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 p-8 text-white shadow-xl">
-        <div className="flex flex-col items-center gap-6 md:flex-row">
+      <div
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 p-8 text-white shadow-xl"
+        style={backgroundStyle}
+      >
+        {/* Background overlay for readability when a background cosmetic is equipped */}
+        {equippedBackground?.assetUrl && !bgFailed && (
+          <div className="absolute inset-0 bg-black/40" />
+        )}
+        <div className="relative flex flex-col items-center gap-6 md:flex-row">
           {/* Avatar */}
           <div className="relative">
             <motion.div
@@ -42,8 +84,13 @@ export function ProfileHero({ user, rankType, stats, equippedFrameColor, onAvata
                 : { borderWidth: 4, borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.3)' }
               }
             >
-              {user?.avatar_url ? (
-                <img src={user.avatar_url} alt="Avatar" className="h-full w-full object-cover" />
+              {user?.avatar_url && !avatarFailed ? (
+                <img
+                  src={user.avatar_url}
+                  alt="Avatar"
+                  className="h-full w-full object-cover"
+                  onError={() => setAvatarFailed(true)}
+                />
               ) : (
                 <User className="h-16 w-16" />
               )}
@@ -59,7 +106,33 @@ export function ProfileHero({ user, rankType, stats, equippedFrameColor, onAvata
 
           {/* User Info */}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="mb-2 text-4xl font-bold">{user?.fullName || 'Detective'}</h1>
+            <div className="mb-2 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+              <h1 className="text-4xl font-bold">{user?.fullName || 'Detective'}</h1>
+              {equippedBadge && (
+                <span className="inline-flex items-center">
+                  {equippedBadge.assetUrl && !badgeFailed ? (
+                    <img
+                      src={equippedBadge.assetUrl}
+                      alt={equippedBadge.name}
+                      className="h-6 w-6"
+                      onError={() => setBadgeFailed(true)}
+                    />
+                  ) : (
+                    <span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white">
+                      {equippedBadge.name}
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+            {equippedTitle && (
+              <p
+                className="mb-1 text-sm font-semibold"
+                style={{ color: equippedTitle.color || '#FFD700' }}
+              >
+                {equippedTitle.displayText || equippedTitle.name}
+              </p>
+            )}
             <p className="mb-4 flex items-center justify-center gap-2 text-white/80 md:justify-start">
               <Mail className="h-4 w-4" />
               {user?.email}

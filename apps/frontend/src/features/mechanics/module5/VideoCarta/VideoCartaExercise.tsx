@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Video, Camera, Download, Send, Loader2, CheckCircle, Pause, Play, RotateCcw, ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
 import { useSectionedRecorder, VideoSection } from '@/shared/hooks/useSectionedRecorder';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mediaApi } from '@/shared/api/mediaApi';
@@ -89,7 +90,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         setFeedback({
           type: 'info',
           title: 'Video Carta Enviada',
-          message: 'Tu video carta ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -111,11 +112,11 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
       onComplete?.(result.score, timeSpent);
     },
-    onError: (err) => {
+    onError: (err: unknown) => {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
         score: 0,
       });
       setShowFeedback(true);
@@ -204,9 +205,8 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
       const uploadResult = await mediaApi.uploadMedia(file, {
         type: 'video',
         exerciseId,
-        onProgress: (progress) => {
+        onProgress: (_progress) => {
           // Could expose progress state if needed
-          console.log('Upload progress:', progress);
         }
       });
       
@@ -214,7 +214,6 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
       mediaId = uploadResult.id;
       
     } catch (error) {
-      console.error('Video upload failed:', error);
       // If upload fails, we might still want to try submitting with the blob URL (local fallback)
       // or show an error. For now, we'll try to proceed but log the error.
       // In a strict environment, we should stop and show feedback.
@@ -288,13 +287,13 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
             <div className="space-y-2 mt-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-white">Progreso Total</span>
-                <span className="text-white/80">
+                <span className="font-semibold text-white">
                   {Math.round(totalProgress)}%
                 </span>
               </div>
-              <div className="h-3 w-full rounded-full bg-white/30 overflow-hidden">
+              <div className="h-3 w-full rounded-full bg-white/50 overflow-hidden">
                 <div
-                  className="h-full bg-white transition-all duration-300"
+                  className="h-full bg-detective-gold transition-all duration-300"
                   style={{ width: `${totalProgress}%` }}
                 />
               </div>

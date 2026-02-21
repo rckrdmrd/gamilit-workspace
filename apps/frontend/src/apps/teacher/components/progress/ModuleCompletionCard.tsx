@@ -80,7 +80,7 @@ export function ModuleCompletionCard({ module, onClick }: ModuleCompletionCardPr
 
         {/* Completion Badge */}
         {completionPercentage === 100 && (
-          <div className="rounded-lg border border-green-500 bg-green-500 bg-opacity-10 p-2 text-center">
+          <div className="rounded-lg border border-green-500 bg-green-500/10 p-2 text-center">
             <span className="text-sm font-semibold text-green-500">Módulo Completado</span>
           </div>
         )}

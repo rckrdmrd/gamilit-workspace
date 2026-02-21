@@ -5,6 +5,10 @@
 **Estado:** VIGENTE
 **Contexto:** Estandarizacion de 30+ custom hooks
 
+**Estandares relacionados:**
+- [`STANDARD-API.md`](../../../40-standards/STANDARD-API.md) -- React Query como estandar, query key factories
+- [`STANDARD-COMPONENT.md`](../../../40-standards/STANDARD-COMPONENT.md) -- Export patterns para hooks
+
 ---
 
 ## 1. Principios Fundamentales

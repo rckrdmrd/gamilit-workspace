@@ -12,7 +12,8 @@ import { AdminPageShell } from '../components/shared/AdminPageShell';
 import { AdminTabBar } from '../components/shared/AdminTabBar';
 import type { AdminTab } from '../components/shared/AdminTabBar';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { Trophy, Star, Award, Coins, TrendingUp, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Trophy, Star, Award, Coins, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
+import { LoadingSpinner } from '@shared/components/loading';
 import type { MayaRankConfig, Parameter } from '@/services/api/schemas/adminSchemas';
 import {
   RanksTab,
@@ -97,9 +98,9 @@ export default function AdminGamificationPage() {
   if (isLoading) {
     return (
       <AdminPageShell>
-        <div className="flex h-96 items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange" />
+        <div className="flex h-96 items-center justify-center" aria-live="polite">
+          <div className="text-center" role="status">
+            <LoadingSpinner size="lg" className="mx-auto mb-4" />
             <p className="text-lg text-detective-text">Cargando configuracion de gamificacion...</p>
           </div>
         </div>
@@ -110,8 +111,8 @@ export default function AdminGamificationPage() {
   if (hasErrors) {
     return (
       <AdminPageShell>
-        <div className="flex h-96 items-center justify-center">
-          <div className="text-center">
+        <div className="flex h-96 items-center justify-center" aria-live="polite">
+          <div className="text-center" role="alert">
             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
             <h3 className="mb-2 text-lg font-bold text-detective-text">Error al cargar configuracion</h3>
             <p className="mb-4 text-detective-text-secondary">
@@ -150,6 +151,7 @@ export default function AdminGamificationPage() {
         <AdminTabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} variant="underline" />
 
         {/* Tab Content */}
+        <div role="region" aria-label={`Contenido de pestana: ${TABS.find(t => t.id === activeTab)?.label ?? activeTab}`}>
         {activeTab === 'ranks' && (
           <RanksTab ranks={validatedRanks} onEditRank={openRankModal} isLoading={ranksLoading} />
         )}
@@ -168,6 +170,7 @@ export default function AdminGamificationPage() {
         {activeTab === 'stats' && (
           <StatsTab stats={stats ?? null} parameters={safeParameters} isLoading={parametersLoading} />
         )}
+        </div>
       </div>
 
       {/* Modals */}

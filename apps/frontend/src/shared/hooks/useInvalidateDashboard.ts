@@ -59,61 +59,45 @@ export function useInvalidateDashboard(): UseInvalidateDashboardReturn {
   const { user } = useAuth(); // useAuth now uses selectors internally
 
   const syncAndInvalidate = async () => {
-    console.log('🔄 [useInvalidateDashboard] Starting sync and invalidate...');
+    // 1. Update Zustand stores in parallel
+    await Promise.all([
+      fetchUserProgress(),
+      fetchBalance(),
+    ]);
 
-    try {
-      // 1. Update Zustand stores in parallel
-      console.log('📦 [useInvalidateDashboard] Fetching Zustand stores...');
+    // 2. Invalidate React Query cache
+    // Using invalidateQueries instead of refetchQueries so queries refresh
+    // when user navigates back to dashboard (even if queries aren't active now)
+    if (user?.id) {
       await Promise.all([
-        fetchUserProgress(),
-        fetchBalance(),
+        // Invalidate dashboard queries (coins, rank, achievements, progress)
+        queryClient.invalidateQueries({
+          queryKey: ['dashboard', user.id],
+        }),
+
+        // Invalidate user modules queries (module list with progress)
+        queryClient.invalidateQueries({
+          queryKey: ['userModules', user.id],
+        }),
+
+        // Also invalidate the base keys to catch all related queries
+        queryClient.invalidateQueries({
+          queryKey: ['dashboard'],
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: ['userModules'],
+        }),
+
+        // Invalidate header gamification query (level, xp, ml, rank)
+        queryClient.invalidateQueries({
+          queryKey: ['userGamification', user.id],
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: ['userGamification'],
+        }),
       ]);
-      console.log('✅ [useInvalidateDashboard] Zustand stores updated');
-
-      // 2. Invalidate React Query cache
-      // Using invalidateQueries instead of refetchQueries so queries refresh
-      // when user navigates back to dashboard (even if queries aren't active now)
-      if (user?.id) {
-        console.log('🗑️ [useInvalidateDashboard] Invalidating React Query cache...');
-
-        await Promise.all([
-          // Invalidate dashboard queries (coins, rank, achievements, progress)
-          queryClient.invalidateQueries({
-            queryKey: ['dashboard', user.id],
-          }),
-
-          // Invalidate user modules queries (module list with progress)
-          queryClient.invalidateQueries({
-            queryKey: ['userModules', user.id],
-          }),
-
-          // Also invalidate the base keys to catch all related queries
-          queryClient.invalidateQueries({
-            queryKey: ['dashboard'],
-          }),
-
-          queryClient.invalidateQueries({
-            queryKey: ['userModules'],
-          }),
-
-          // Invalidate header gamification query (level, xp, ml, rank)
-          queryClient.invalidateQueries({
-            queryKey: ['userGamification', user.id],
-          }),
-
-          queryClient.invalidateQueries({
-            queryKey: ['userGamification'],
-          }),
-        ]);
-
-        console.log('✅ [useInvalidateDashboard] React Query cache invalidated');
-        console.log('🎉 [useInvalidateDashboard] Sync complete - dashboard will refresh');
-      } else {
-        console.warn('⚠️ [useInvalidateDashboard] No user ID found, skipping cache invalidation');
-      }
-    } catch (error) {
-      console.error('❌ [useInvalidateDashboard] Error during sync:', error);
-      throw error;
     }
   };
 

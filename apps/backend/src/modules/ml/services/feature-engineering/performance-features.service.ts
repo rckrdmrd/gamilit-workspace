@@ -26,6 +26,32 @@ import { DataSource } from 'typeorm';
 import { Feature, FeatureCategory } from '../../interfaces';
 import { FeatureBaseService } from './feature-base.service';
 
+/** Performance data shape from SQL queries */
+interface PerformanceData {
+  avg_score_7d: number;
+  avg_score_30d: number;
+  avg_score_all: number;
+  completion_rate_7d: number;
+  completion_rate_30d: number;
+  exercises_completed_total: number;
+  exercises_attempted_total: number;
+  exercises_failed_total: number;
+  avg_time_per_exercise: number;
+  perfect_score_count: number;
+  difficulty_easy_ratio: number;
+  difficulty_medium_ratio: number;
+  difficulty_hard_ratio: number;
+  score_variance: number;
+  improvement_trend: number;
+  hints_usage_rate: number;
+  first_attempt_success_rate: number;
+  module_1_progress: number;
+  module_2_progress: number;
+  module_3_progress: number;
+  module_4_progress: number;
+  module_5_progress: number;
+}
+
 /**
  * Service for extracting performance features from fact_exercise_completions
  */
@@ -353,7 +379,7 @@ export class PerformanceFeaturesService extends FeatureBaseService {
   private async queryPerformanceData(
     studentId: string,
     dateRange: { start: Date; end: Date },
-  ): Promise<any> {
+  ): Promise<PerformanceData> {
     const defaultData = this.getDefaultPerformanceData();
 
     try {
@@ -484,7 +510,7 @@ export class PerformanceFeaturesService extends FeatureBaseService {
           ]);
 
           if (trendResult && trendResult.length >= 2) {
-            const scores = trendResult.map((r: any) => parseFloat(r.avg_score) || 0);
+            const scores = trendResult.map((r: Record<string, unknown>) => parseFloat(String(r.avg_score)) || 0);
             data.improvement_trend = this.calculateTrendSlope(scores);
           } else {
             data.improvement_trend = 0;
@@ -519,7 +545,7 @@ export class PerformanceFeaturesService extends FeatureBaseService {
   private async queryOperationalPerformance(
     studentId: string,
     dateRange: { start: Date; end: Date },
-  ): Promise<any> {
+  ): Promise<PerformanceData> {
     const defaultData = this.getDefaultPerformanceData();
 
     const query = `
@@ -554,7 +580,7 @@ export class PerformanceFeaturesService extends FeatureBaseService {
   /**
    * Get default performance data
    */
-  private getDefaultPerformanceData(): any {
+  private getDefaultPerformanceData(): PerformanceData {
     return {
       avg_score_7d: 0,
       avg_score_30d: 0,

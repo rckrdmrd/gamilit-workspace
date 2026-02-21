@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { X, AlertTriangle, AlertCircle } from 'lucide-react';
 import type { Parameter } from '@/services/api/schemas/adminSchemas';
 
@@ -39,6 +41,8 @@ export function BulkUpdateDialog({
   const [reason, setReason] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -51,25 +55,6 @@ export function BulkUpdateDialog({
       setErrors([]);
     }
   }, [isOpen]);
-
-  // Close modal on Esc key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -123,19 +108,9 @@ export function BulkUpdateDialog({
   };
 
   /**
-   * Handle apply
+   * Execute the bulk update after confirmation
    */
-  const handleApply = async () => {
-    if (!validate()) return;
-
-    if (
-      !confirm(
-        `¿Está seguro de actualizar ${affectedCount} parámetros? Esta acción será permanente.`,
-      )
-    ) {
-      return;
-    }
-
+  const executeBulkUpdate = async () => {
     setIsSubmitting(true);
     try {
       const updates = previewChanges.map((change) => ({
@@ -155,6 +130,16 @@ export function BulkUpdateDialog({
   };
 
   /**
+   * Handle apply - validates and shows confirmation dialog
+   */
+  const handleApply = () => {
+    if (!validate()) return;
+
+    setPendingAction(() => executeBulkUpdate);
+    setShowConfirm(true);
+  };
+
+  /**
    * Get percentage change for multiplier
    */
   const getPercentageChange = (): string => {
@@ -165,13 +150,8 @@ export function BulkUpdateDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div
-        className="max-h-[90vh] w-full max-w-4xl overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="dialog-title"
-      >
+    <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="xl" className="bg-transparent shadow-none p-0 max-w-4xl">
+      <div className="-mx-6 -my-4">
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -406,6 +386,19 @@ export function BulkUpdateDialog({
           </div>
         </DetectiveCard>
       </div>
-    </div>
+
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => {
+          pendingAction?.();
+          setShowConfirm(false);
+        }}
+        title="Confirmar actualización masiva"
+        message={`¿Está seguro de actualizar ${affectedCount} parámetros? Esta acción será permanente.`}
+        confirmText="Aplicar"
+        variant="warning"
+      />
+    </Modal>
   );
 }

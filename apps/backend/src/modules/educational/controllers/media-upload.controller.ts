@@ -82,7 +82,7 @@ export class MediaUploadController {
   @ApiResponse({ status: 400, description: 'Archivo inválido o excede límite de tamaño' })
   async uploadFile(
     @Request() req: AuthRequest,
-    @UploadedFile() file: any,
+    @UploadedFile() file: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Express.Multer.File requires @types/multer
     @Body() dto: UploadMediaDto,
   ): Promise<MediaAttachment> {
     const userId = req.user!.profile?.id || req.user!.id;

@@ -1,7 +1,7 @@
 # Flujo Student - Equipamiento de Items Cosmeticos
 
-**Version:** 1.0.0  
-**Fecha:** 2026-02-17  
+**Version:** 1.1.0
+**Fecha:** 2026-02-21
 **Estado:** Activo
 
 ---
@@ -19,7 +19,7 @@ Flujo para equipar y quitar items cosmeticos (marcos, efectos de nombre, temas, 
 ```mermaid
 sequenceDiagram
     participant U as Student
-    participant FE as InventoryPage
+    participant FE as InventoryPage / ProfileInventoryTab
     participant BE as InventoryController
     participant DB as Database
 
@@ -69,7 +69,9 @@ sequenceDiagram
 
 ### Frontend
 - `apps/frontend/src/apps/student/pages/InventoryPage.tsx`
-- `apps/frontend/src/features/gamification/social/hooks/useInventory.ts`
+- `apps/frontend/src/apps/student/components/profile/ProfileInventoryTab.tsx`
+- `apps/frontend/src/features/gamification/social/hooks/useEquipment.ts` (equip/unequip mutations)
+- `apps/frontend/src/features/gamification/social/hooks/useInventoryData.ts` (cosmetics + power-ups queries)
 - `apps/frontend/src/features/gamification/social/api/inventory.api.ts`
 - `apps/frontend/src/features/gamification/social/types/inventory.types.ts`
 

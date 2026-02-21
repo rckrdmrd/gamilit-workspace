@@ -31,7 +31,7 @@ Diseno arquitectonico completo de la plataforma gamilit. Incluye la definicion d
 | Capa | Componentes |
 |------|-------------|
 | Database | 18 schemas: auth, users, tenants, modules, exercises, content, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports, notifications, settings |
-| Backend | Arquitectura modular NestJS (22 modulos), exercise engine, gamification engine, Socket.IO gateway |
+| Backend | Arquitectura modular NestJS (23 modulos), exercise engine, gamification engine, Socket.IO gateway |
 | Frontend | Arquitectura SPA React con routing multi-portal, Zustand state management, Socket.IO client |
 | DevOps | Estrategia de deployment definida |
 

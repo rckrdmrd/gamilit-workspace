@@ -7,26 +7,9 @@ import {
   Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
+import { CertificateStatus, CertificateType } from '@/modules/progress/enums/certificate.enums';
 
-/**
- * Certificate Status Enum
- */
-export enum CertificateStatus {
-  PENDING = 'pending',
-  ISSUED = 'issued',
-  REVOKED = 'revoked',
-  EXPIRED = 'expired',
-}
-
-/**
- * Certificate Type Enum
- */
-export enum CertificateType {
-  MODULE_COMPLETION = 'module_completion',
-  COURSE_COMPLETION = 'course_completion',
-  ACHIEVEMENT = 'achievement',
-  SKILL_MASTERY = 'skill_mastery',
-}
+export { CertificateStatus, CertificateType };
 
 /**
  * Certificate Entity (progress_tracking.certificates)

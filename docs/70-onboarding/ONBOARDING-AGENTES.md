@@ -76,8 +76,8 @@ ANTES de modificar archivo existente:
 ### 3. Coherencia entre Capas
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
-  DDL → Backend: Toda tabla DEBE tener entity (169 tablas = 152 entities)
-  Backend → Frontend: Endpoints documentados (899 endpoints)
+  DDL → Backend: Toda tabla DEBE tener entity (169 tablas = 155 entities (156 classes))
+  Backend → Frontend: Endpoints documentados (905 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = sincronizados
 ```
 
@@ -102,7 +102,7 @@ OBLIGATORIO: Edicion minima, verificar coherencia, documentar cambio
 gamilit-workspace/
 ├── CLAUDE.md                 ← Auto-cargado (punto de entrada)
 ├── apps/                     ← MONOREPO (single Git repo, NO submodules)
-│   ├── backend/              ← NestJS 11 (22 modulos, 899 endpoints)
+│   ├── backend/              ← NestJS 11 (23 modulos, 905 endpoints)
 │   │   └── src/modules/      ← @BACKEND
 │   ├── frontend/             ← React 19 + Zustand + TailwindCSS
 │   │   └── src/              ← @FRONTEND
