@@ -13,7 +13,7 @@
  * Created: 2026-01-25 - TASK-2026-01-25-001 (GAP-005.3)
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, Trash2, Edit, Info } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { Role } from '@/services/api/adminTypes';
@@ -24,11 +24,11 @@ export interface RoleActionsMenuProps {
   onRefresh?: () => void;
 }
 
-export const RoleActionsMenu: React.FC<RoleActionsMenuProps> = ({
+export const RoleActionsMenu = ({
   selectedRole,
   onEditPermissions,
   onRefresh: _onRefresh,
-}) => {
+}: RoleActionsMenuProps) => {
   const [showInfo, setShowInfo] = useState(false);
 
   const isSystemRole = selectedRole?.isSystem ?? false;

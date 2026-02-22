@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, type MutableRefObject, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, Eye, Save, Download, Send, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -11,7 +11,6 @@ import { DraggableCard } from './DraggableCard';
 import { DroppableZone } from './DroppableZone';
 import { InfografiaInteractivaData, InfoCard } from './infografiaInteractivaTypes';
 import {
-  calculateScore,
   saveProgress,
   FeedbackData,
   type DifficultyLevel,
@@ -38,12 +37,12 @@ interface ExerciseProps {
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: InfografiaInteractivaData;
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
       label: string;
-      icon?: React.ReactNode;
+      icon?: ReactNode;
       onClick: () => void;
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
@@ -109,7 +108,7 @@ const getDefaultExercise = (exerciseId: string, difficulty: string): InfografiaI
   backgroundImage: undefined,
 });
 
-export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
+export const InfografiaInteractivaExercise = ({
   exerciseId,
   onComplete,
   onExit,
@@ -118,7 +117,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   difficulty = 'medium',
   exercise,
   actionsRef,
-}) => {
+}: ExerciseProps) => {
   const defaultExercise = getDefaultExercise(exerciseId, difficulty);
   const currentExercise = exercise || defaultExercise;
   const [cards, setCards] = useState<InfoCard[]>(initialData?.cards || currentExercise.cards);
@@ -130,6 +129,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   const [timeSpent, setTimeSpent] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [useDragDrop, setUseDragDrop] = useState(true); // Toggle between modes
+  const [analysisAnswers, setAnalysisAnswers] = useState({ relationship: '', surprising: '', summary: '' });
 
   // Drag and Drop sensors with support for touch devices
   const sensors = useSensors(
@@ -147,57 +147,16 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   );
 
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-            type: 'info',
-            title: 'Infografía Enviada',
-            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Infografía Completada!',
-        message: 'Tu trabajo ha sido evaluado correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   const localActionsRef = useRef<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
       label: string;
-      icon?: React.ReactNode;
+      icon?: ReactNode;
       onClick: () => void;
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
@@ -279,35 +238,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     return () => clearInterval(interval);
   }, [cards, droppedCards, exerciseId]);
 
-  // Handle check/verification
-  const handleCheck = useCallback(async () => {
-    const revealedCount = cards.filter((c) => c.revealed).length;
-
-    if (revealedCount < cards.length) {
-      setFeedback({
-        type: 'error',
-        title: 'Exploración Incompleta',
-        message: `Has explorado ${revealedCount} de ${cards.length} elementos. Explora todos para completar.`,
-        showConfetti: false,
-      });
-      setShowFeedback(true);
-      return;
-    }
-
-    const score = calculateScore(cards.length, cards.length);
-
-    setFeedback({
-      type: 'success',
-      title: '¡Infografía Completada!',
-      message: `Has explorado todos los ${cards.length} elementos de la infografía. ¡Excelente trabajo!`,
-      score,
-      showConfetti: true,
-    });
-    setShowFeedback(true);
-  }, [cards]);
-
   // Update progress
-
   useEffect(() => {
     const progress = calculateProgress();
     const revealedCount = cards.filter((c) => c.revealed).length;
@@ -348,16 +279,8 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         },
       },
     });
-
-    // Auto-complete when all cards are revealed or dropped correctly
-    const allRevealed = useDragDrop
-      ? Object.keys(droppedCards).length === cards.length
-      : cards.every((c) => c.revealed);
-    if (allRevealed && !showFeedback) {
-      setTimeout(() => handleCheck(), 1000);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cards, droppedCards, useDragDrop, onProgressUpdate, startTime, showFeedback, handleCheck]);
+  }, [cards, droppedCards, useDragDrop, onProgressUpdate, startTime]);
 
   // Handle card click
   const handleCardClick = (cardId: string) => {
@@ -373,6 +296,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   const handleReset = () => {
     setCards(currentExercise.cards);
     setDroppedCards({});
+    setAnalysisAnswers({ relationship: '', surprising: '', summary: '' });
     setFeedback(null);
     setShowFeedback(false);
   };
@@ -423,7 +347,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
   // Handle submit
   // FIX: Transform data to match InfografiaInteractivaAnswerDto expected by backend
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
     const revealedCards = cards.filter((c) => c.revealed);
@@ -440,29 +364,72 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
       };
     });
 
-    submit({
-      // Primary format expected by InfografiaInteractivaAnswerDto
-      answers: dtoAnswers,
-      sections_explored: revealedCards.map((c) => c.id),
+    try {
+      const response = await submitAsync({
+        // Primary format expected by InfografiaInteractivaAnswerDto
+        answers: dtoAnswers,
+        sections_explored: revealedCards.map((c) => c.id),
+        analysis_questions: {
+          relationship: analysisAnswers.relationship.trim(),
+          surprising: analysisAnswers.surprising.trim(),
+          summary: analysisAnswers.summary.trim(),
+        },
+        synthesis: `${analysisAnswers.relationship.trim()} ${analysisAnswers.surprising.trim()} ${analysisAnswers.summary.trim()}`,
 
-      // Metadata for backwards compatibility
-      metadata: {
-        interactedElements: revealedCards.map((c) => c.id),
-        useDragDrop,
-        droppedCards,
-        completionPercentage,
-        totalCards: cards.length,
-        revealedCards: revealedCards.length,
-      },
-    });
+        // Metadata for backwards compatibility
+        metadata: {
+          interactedElements: revealedCards.map((c) => c.id),
+          useDragDrop,
+          droppedCards,
+          completionPercentage,
+          totalCards: cards.length,
+          revealedCards: revealedCards.length,
+        },
+      });
+      setIsSubmitted(true);
+      const elapsedTime = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Check for manual review (MUST include 'submitted')
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Infografía Enviada',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, elapsedTime);
+        return;
+      }
+
+      // Normal graded flow
+      setFeedback({
+        type: 'success',
+        title: '¡Infografía Completada!',
+        message: 'Tu trabajo ha sido evaluado correctamente.',
+        score: response.score,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(response.score, elapsedTime);
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    }
   };
 
   // Attach actions to ref
-
   useEffect(() => {
     resolvedActionsRef.current = {
       handleReset,
-      handleCheck,
       specificActions: [
         {
           label: 'Guardar',
@@ -531,7 +498,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
               <p className="mb-4 text-detective-sm text-detective-text-secondary">
                 Arrastra cada concepto a su zona correspondiente
               </p>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-2 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {cards.map((card, idx) => (
                   <motion.div
                     key={card.id}
@@ -556,7 +523,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
               <h2 className="mb-4 text-detective-lg font-bold text-detective-text">
                 Elementos Disponibles ({availableCards.length})
               </h2>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-2 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {availableCards.map((card, idx) => (
                   <motion.div
                     key={card.id}
@@ -592,7 +559,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
             <h2 className="mb-4 text-detective-lg font-bold text-detective-text">
               Elementos de la Infografía
             </h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
               {cards.map((card, idx) => (
                 <motion.div
                   key={card.id}
@@ -603,6 +570,83 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
                   <InteractiveCard card={card} onClick={() => handleCardClick(card.id)} />
                 </motion.div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Analysis Section - visible after all cards explored */}
+        {cards.every(c => c.revealed) && (
+          <div className="mb-6 rounded-detective-lg border-2 border-detective-blue bg-gradient-to-br from-blue-50 to-purple-50 p-3 sm:p-6">
+            <h2 className="mb-4 text-detective-2xl font-bold text-detective-blue">
+              Preguntas de Análisis
+            </h2>
+            <p className="mb-6 text-detective-sm text-detective-text-secondary">
+              Ahora que has explorado toda la infografía, responde estas preguntas:
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-detective-sm font-semibold text-detective-blue">
+                  1. ¿Qué relación existe entre los descubrimientos y el legado de Marie Curie? (min. 80 caracteres)
+                </label>
+                <textarea
+                  value={analysisAnswers.relationship}
+                  onChange={(e) => setAnalysisAnswers(prev => ({ ...prev, relationship: e.target.value }))}
+                  placeholder="Los descubrimientos de Marie Curie están relacionados con..."
+                  className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                  rows={3}
+                  maxLength={500}
+                />
+                <div className="mt-1 flex justify-between">
+                  <p className={`text-detective-sm ${analysisAnswers.relationship.trim().length >= 80 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                    {analysisAnswers.relationship.trim().length < 80
+                      ? `Faltan ${80 - analysisAnswers.relationship.trim().length} caracteres`
+                      : '✓ Completo'}
+                  </p>
+                  <p className="text-detective-sm text-detective-text-secondary">{analysisAnswers.relationship.length}/500</p>
+                </div>
+              </div>
+              <div>
+                <label className="mb-2 block text-detective-sm font-semibold text-detective-blue">
+                  2. ¿Cuál es el dato más sorprendente de la infografía? ¿Por qué? (min. 80 caracteres)
+                </label>
+                <textarea
+                  value={analysisAnswers.surprising}
+                  onChange={(e) => setAnalysisAnswers(prev => ({ ...prev, surprising: e.target.value }))}
+                  placeholder="El dato más sorprendente fue..."
+                  className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                  rows={3}
+                  maxLength={500}
+                />
+                <div className="mt-1 flex justify-between">
+                  <p className={`text-detective-sm ${analysisAnswers.surprising.trim().length >= 80 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                    {analysisAnswers.surprising.trim().length < 80
+                      ? `Faltan ${80 - analysisAnswers.surprising.trim().length} caracteres`
+                      : '✓ Completo'}
+                  </p>
+                  <p className="text-detective-sm text-detective-text-secondary">{analysisAnswers.surprising.length}/500</p>
+                </div>
+              </div>
+              <div>
+                <label className="mb-2 block text-detective-sm font-semibold text-detective-blue">
+                  3. Resume la información de la infografía en 3 oraciones (min. 100 caracteres)
+                </label>
+                <textarea
+                  value={analysisAnswers.summary}
+                  onChange={(e) => setAnalysisAnswers(prev => ({ ...prev, summary: e.target.value }))}
+                  placeholder="La infografía presenta..."
+                  className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                  rows={3}
+                  maxLength={500}
+                />
+                <div className="mt-1 flex justify-between">
+                  <p className={`text-detective-sm ${analysisAnswers.summary.trim().length >= 100 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                    {analysisAnswers.summary.trim().length < 100
+                      ? `Faltan ${100 - analysisAnswers.summary.trim().length} caracteres`
+                      : '✓ Completo'}
+                  </p>
+                  <p className="text-detective-sm text-detective-text-secondary">{analysisAnswers.summary.length}/500</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -625,6 +669,9 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
               (useDragDrop
                 ? Object.keys(droppedCards).length < cards.length
                 : !cards.every(c => c.revealed)) ||
+              analysisAnswers.relationship.trim().length < 80 ||
+              analysisAnswers.surprising.trim().length < 80 ||
+              analysisAnswers.summary.trim().length < 100 ||
               isSubmitting ||
               isSubmitted
             }

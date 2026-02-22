@@ -10,7 +10,6 @@
  * - Share rank button
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   TrendingUp,
@@ -60,13 +59,13 @@ const getIconByRank = (rank: number) => {
   return Target;
 };
 
-export const UserPositionCard: React.FC<UserPositionCardProps> = ({
+export const UserPositionCard = ({
   userEntry,
   pointsToNext,
   percentile,
   onShare,
-  className
-}) => {
+  className,
+}: UserPositionCardProps) => {
   const motivationalMessage = getMotivationalMessage(userEntry.rank, percentile);
   const gradient = getGradientByRank(userEntry.rank);
   const Icon = getIconByRank(userEntry.rank);

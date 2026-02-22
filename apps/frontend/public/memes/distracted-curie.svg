@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="500" viewBox="0 0 600 500">
+  <!-- Distracted Boyfriend: Marie Curie distraída por Radio, ignorando Física Teórica -->
+  <defs>
+    <style>
+      .meme-label { font-family: Impact, 'Arial Black', sans-serif; fill: #ffffff; text-transform: uppercase; }
+      .shadow-text { font-family: Impact, 'Arial Black', sans-serif; fill: #000000; opacity: 0.3; }
+    </style>
+  </defs>
+
+  <!-- Background - street scene -->
+  <rect width="600" height="500" fill="#87ceeb"/>
+  <!-- Buildings -->
+  <rect x="0" y="100" width="600" height="400" fill="#dfe6e9"/>
+  <rect x="0" y="150" width="200" height="350" fill="#b2bec3"/>
+  <rect x="400" y="120" width="200" height="380" fill="#636e72"/>
+  <!-- Street -->
+  <rect x="0" y="350" width="600" height="150" fill="#636e72"/>
+  <rect x="280" y="350" width="40" height="150" fill="#ffeaa7" opacity="0.4"/>
+
+  <!-- Character 1: "Física Teórica" (girlfriend, looking upset - right side) -->
+  <g transform="translate(460, 200)">
+    <!-- Body -->
+    <ellipse cx="0" cy="100" rx="35" ry="50" fill="#e17055"/>
+    <!-- Head -->
+    <circle cx="0" cy="30" r="35" fill="#ffeaa7"/>
+    <!-- Hair -->
+    <path d="M-35 20 Q-38 -15 -10 -15 Q5 -20 20 -15 Q38 -15 35 20" fill="#2d3436"/>
+    <!-- Face - upset/jealous -->
+    <circle cx="-10" cy="25" r="3" fill="#2d3436"/>
+    <circle cx="10" cy="25" r="3" fill="#2d3436"/>
+    <path d="M-12 42 Q0 38 12 42" stroke="#2d3436" stroke-width="2" fill="none"/>
+    <!-- Arms crossed -->
+    <line x1="-30" y1="80" x2="30" y2="80" stroke="#ffeaa7" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <!-- Label: Física Teórica -->
+  <rect x="390" y="310" width="160" height="36" rx="5" fill="rgba(0,0,0,0.7)"/>
+  <text x="470" y="334" text-anchor="middle" class="meme-label" font-size="16">FÍSICA TEÓRICA</text>
+
+  <!-- Character 2: Marie Curie (boyfriend, looking back - center) -->
+  <g transform="translate(280, 210)">
+    <!-- Body -->
+    <ellipse cx="0" cy="95" rx="35" ry="48" fill="#6c5ce7"/>
+    <!-- Head - turned left -->
+    <circle cx="-10" cy="28" r="35" fill="#ffeaa7"/>
+    <!-- Hair (period-appropriate updo) -->
+    <path d="M-45 18 Q-48 -20 -20 -22 Q0 -28 15 -22 Q28 -18 25 18" fill="#2d3436"/>
+    <ellipse cx="-5" cy="-20" rx="20" ry="10" fill="#2d3436"/>
+    <!-- Face - looking left with interest -->
+    <circle cx="-22" cy="22" r="3" fill="#2d3436"/>
+    <circle cx="-5" cy="22" r="3" fill="#2d3436"/>
+    <path d="M-25 38 Q-15 44 -5 38" stroke="#2d3436" stroke-width="2" fill="none"/>
+    <!-- Lab coat collar -->
+    <path d="M-20 60 L0 55 L20 60" stroke="#ffffff" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- Label: Marie Curie -->
+  <rect x="210" y="320" width="140" height="36" rx="5" fill="rgba(0,0,0,0.7)"/>
+  <text x="280" y="344" text-anchor="middle" class="meme-label" font-size="16">MARIE CURIE</text>
+
+  <!-- Character 3: "Radio" (the other woman, attractive - left side) -->
+  <g transform="translate(100, 190)">
+    <!-- Glowing aura -->
+    <circle cx="0" cy="70" r="70" fill="none" stroke="#00b894" stroke-width="3" opacity="0.4"/>
+    <circle cx="0" cy="70" r="85" fill="none" stroke="#00b894" stroke-width="1.5" opacity="0.2"/>
+    <!-- Body (glowing dress) -->
+    <ellipse cx="0" cy="100" rx="35" ry="50" fill="#00b894"/>
+    <!-- Head -->
+    <circle cx="0" cy="30" r="35" fill="#55efc4"/>
+    <!-- Glow particles -->
+    <circle cx="-30" cy="10" r="3" fill="#55efc4" opacity="0.6"/>
+    <circle cx="25" cy="50" r="2" fill="#55efc4" opacity="0.5"/>
+    <circle cx="-20" cy="90" r="3" fill="#55efc4" opacity="0.4"/>
+    <circle cx="30" cy="80" r="2" fill="#55efc4" opacity="0.6"/>
+    <!-- Face - attractive/confident -->
+    <circle cx="-10" cy="25" r="3" fill="#2d3436"/>
+    <circle cx="10" cy="25" r="3" fill="#2d3436"/>
+    <path d="M-10 40 Q0 48 10 40" stroke="#2d3436" stroke-width="2" fill="none"/>
+    <!-- Ra symbol -->
+    <text x="0" y="110" text-anchor="middle" font-size="18" fill="#ffffff" font-family="serif" font-weight="bold">Ra</text>
+  </g>
+
+  <!-- Label: Radio (el elemento) -->
+  <rect x="20" y="310" width="160" height="36" rx="5" fill="rgba(0,0,0,0.7)"/>
+  <text x="100" y="334" text-anchor="middle" class="meme-label" font-size="14">RADIO (ELEMENTO)</text>
+
+  <!-- Radioactive symbol decoration -->
+  <text x="50" y="420" font-size="24" opacity="0.3">☢️</text>
+  <text x="520" y="450" font-size="20" opacity="0.3">⚛️</text>
+
+  <!-- Bottom caption bar -->
+  <rect x="0" y="460" width="600" height="40" fill="rgba(0,0,0,0.8)"/>
+  <text x="300" y="485" text-anchor="middle" class="meme-label" font-size="14">CUANDO DESCUBRES UN NUEVO ELEMENTO Y YA NO TE IMPORTA LA FÍSICA PURA</text>
+
+  <!-- Watermark -->
+  <text x="300" y="498" text-anchor="middle" font-size="8" fill="#636e72" font-family="Arial, sans-serif">gamilit — Análisis de Memes</text>
+</svg>

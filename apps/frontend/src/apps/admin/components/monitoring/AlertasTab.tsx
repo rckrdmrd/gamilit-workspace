@@ -15,7 +15,7 @@
  * @date 2025-11-24
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -43,13 +43,13 @@ interface AlertasTabProps {
 /**
  * Alertas Tab Component
  */
-export const AlertasTab: React.FC<AlertasTabProps> = ({
+export const AlertasTab = ({
   alerts,
   stats,
   isLoading,
   onAcknowledge,
   onResolve,
-}) => {
+}: AlertasTabProps) => {
   const navigate = useNavigate();
   const [filterSeverity, setFilterSeverity] = useState<SystemAlertSeverity | 'all'>('all');
   const [actioningAlertId, setActioningAlertId] = useState<string | null>(null);

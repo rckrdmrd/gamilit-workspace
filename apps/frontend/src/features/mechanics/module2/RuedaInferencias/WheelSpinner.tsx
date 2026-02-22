@@ -5,16 +5,16 @@
  * @task FE-071
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { WheelSpinnerProps } from './ruedaInferenciasTypes';
 
-export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
+export const WheelSpinner = ({
   categories,
   isSpinning,
   onSpinComplete,
   usedCategoryIds,
-}) => {
+}: WheelSpinnerProps) => {
   const [rotation, setRotation] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const hasCalledOnComplete = useRef(false);
@@ -70,7 +70,7 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Wheel Container */}
-      <div className="relative w-80 h-80">
+      <div className="relative w-60 h-60 sm:w-80 sm:h-80">
         {/* Pointer */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-10">
           <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[25px] border-t-red-500 drop-shadow-lg" />
@@ -137,7 +137,7 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-lg shadow-lg p-6 border-4 border-blue-500 max-w-md"
+          className="bg-white rounded-lg shadow-lg p-3 sm:p-6 border-4 border-blue-500 max-w-md"
         >
           <div className="text-center">
             <div className="text-4xl mb-2">{categories[selectedIndex].icon}</div>

@@ -70,7 +70,7 @@ const getScoreColor = (score: number): string => {
 // MAIN COMPONENT
 // ============================================================================
 
-export const ResponsesTable: React.FC<ResponsesTableProps> = ({
+export const ResponsesTable = ({
   data,
   total,
   page,
@@ -79,7 +79,7 @@ export const ResponsesTable: React.FC<ResponsesTableProps> = ({
   onViewDetail,
   onPageChange,
   onSortChange,
-}) => {
+}: ResponsesTableProps) => {
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 

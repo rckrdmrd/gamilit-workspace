@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="500" viewBox="0 0 600 500">
+  <!-- Expanding Brain: Niveles de conocimiento sobre Marie Curie -->
+  <defs>
+    <style>
+      .brain-text { font-family: Impact, 'Arial Black', sans-serif; fill: #2d3436; text-transform: uppercase; }
+      .level-text { font-family: Arial, sans-serif; fill: #636e72; }
+    </style>
+    <radialGradient id="glow1"><stop offset="0%" stop-color="#dfe6e9"/><stop offset="100%" stop-color="#b2bec3"/></radialGradient>
+    <radialGradient id="glow2"><stop offset="0%" stop-color="#74b9ff"/><stop offset="100%" stop-color="#0984e3"/></radialGradient>
+    <radialGradient id="glow3"><stop offset="0%" stop-color="#a29bfe"/><stop offset="100%" stop-color="#6c5ce7"/></radialGradient>
+    <radialGradient id="glow4"><stop offset="0%" stop-color="#ffeaa7"/><stop offset="100%" stop-color="#fdcb6e"/></radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="500" fill="#f8f9fa"/>
+
+  <!-- Level 1 - Basic -->
+  <rect x="0" y="0" width="600" height="125" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1"/>
+  <!-- Small brain -->
+  <ellipse cx="520" cy="62" rx="30" ry="25" fill="url(#glow1)" stroke="#b2bec3" stroke-width="2"/>
+  <path d="M500 55 Q510 40 520 55 Q530 40 540 55" stroke="#b2bec3" stroke-width="1.5" fill="none"/>
+  <!-- Text -->
+  <text x="30" y="50" class="brain-text" font-size="16">"GANÓ UN NOBEL"</text>
+  <text x="30" y="80" class="level-text" font-size="13">Sabe que Marie Curie ganó el Premio Nobel</text>
+  <text x="30" y="100" class="level-text" font-size="11" fill="#b2bec3">Nivel: Wikipedia básica 📖</text>
+
+  <!-- Level 2 - Intermediate -->
+  <rect x="0" y="125" width="600" height="125" fill="#74b9ff" stroke="#0984e3" stroke-width="1" opacity="0.3"/>
+  <rect x="0" y="125" width="600" height="125" fill="rgba(116,185,255,0.2)"/>
+  <!-- Medium brain with rays -->
+  <ellipse cx="520" cy="187" rx="35" ry="30" fill="url(#glow2)" stroke="#0984e3" stroke-width="2"/>
+  <path d="M495 180 Q510 162 520 180 Q530 162 545 180" stroke="#0984e3" stroke-width="2" fill="none"/>
+  <line x1="520" y1="155" x2="520" y2="145" stroke="#0984e3" stroke-width="1.5"/>
+  <line x1="548" y1="175" x2="558" y2="170" stroke="#0984e3" stroke-width="1.5"/>
+  <line x1="492" y1="175" x2="482" y2="170" stroke="#0984e3" stroke-width="1.5"/>
+  <!-- Text -->
+  <text x="30" y="170" class="brain-text" font-size="16">"GANÓ DOS NOBELES"</text>
+  <text x="30" y="200" class="level-text" font-size="13">Física (1903) y Química (1911). Primera mujer.</text>
+  <text x="30" y="220" class="level-text" font-size="11" fill="#0984e3">Nivel: Estudiante aplicado 🎓</text>
+
+  <!-- Level 3 - Advanced -->
+  <rect x="0" y="250" width="600" height="125" fill="rgba(162,155,254,0.2)" stroke="#6c5ce7" stroke-width="1"/>
+  <!-- Large brain with more rays -->
+  <ellipse cx="520" cy="312" rx="40" ry="35" fill="url(#glow3)" stroke="#6c5ce7" stroke-width="2"/>
+  <path d="M490 305 Q505 282 520 305 Q535 282 550 305" stroke="#6c5ce7" stroke-width="2" fill="none"/>
+  <line x1="520" y1="275" x2="520" y2="260" stroke="#6c5ce7" stroke-width="2"/>
+  <line x1="555" y1="295" x2="570" y2="285" stroke="#6c5ce7" stroke-width="2"/>
+  <line x1="485" y1="295" x2="470" y2="285" stroke="#6c5ce7" stroke-width="2"/>
+  <line x1="555" y1="325" x2="568" y2="335" stroke="#6c5ce7" stroke-width="2"/>
+  <line x1="485" y1="325" x2="472" y2="335" stroke="#6c5ce7" stroke-width="2"/>
+  <!-- Text -->
+  <text x="30" y="295" class="brain-text" font-size="16">"SUS NOTAS AÚN SON</text>
+  <text x="30" y="317" class="brain-text" font-size="16">RADIOACTIVAS"</text>
+  <text x="30" y="345" class="level-text" font-size="13">Sus cuadernos están en cajas de plomo en París</text>
+  <text x="30" y="363" class="level-text" font-size="11" fill="#6c5ce7">Nivel: Historiador curioso 🔬</text>
+
+  <!-- Level 4 - Galaxy Brain -->
+  <rect x="0" y="375" width="600" height="125" fill="rgba(253,203,110,0.3)" stroke="#f39c12" stroke-width="1"/>
+  <!-- Galaxy brain with explosion -->
+  <ellipse cx="520" cy="437" rx="48" ry="42" fill="url(#glow4)" stroke="#f39c12" stroke-width="2"/>
+  <path d="M485 430 Q500 400 520 430 Q540 400 555 430" stroke="#f39c12" stroke-width="2.5" fill="none"/>
+  <!-- Explosion rays -->
+  <line x1="520" y1="393" x2="520" y2="375" stroke="#f39c12" stroke-width="2.5"/>
+  <line x1="563" y1="415" x2="580" y2="400" stroke="#f39c12" stroke-width="2.5"/>
+  <line x1="477" y1="415" x2="460" y2="400" stroke="#f39c12" stroke-width="2.5"/>
+  <line x1="563" y1="455" x2="578" y2="470" stroke="#f39c12" stroke-width="2.5"/>
+  <line x1="477" y1="455" x2="462" y2="470" stroke="#f39c12" stroke-width="2.5"/>
+  <!-- Stars -->
+  <text x="480" y="400" font-size="12">✨</text>
+  <text x="555" y="465" font-size="12">✨</text>
+  <text x="490" y="475" font-size="10">⭐</text>
+  <!-- Text -->
+  <text x="30" y="418" class="brain-text" font-size="16">"DONÓ SUS PREMIOS</text>
+  <text x="30" y="440" class="brain-text" font-size="16">NOBEL A LA CIENCIA"</text>
+  <text x="30" y="468" class="level-text" font-size="13">Usó el dinero para fundar institutos de investigación</text>
+  <text x="30" y="486" class="level-text" font-size="11" fill="#f39c12">Nivel: Iluminado total 🌟</text>
+
+  <!-- Watermark -->
+  <text x="300" y="497" text-anchor="middle" font-size="9" fill="#b2bec3" font-family="Arial, sans-serif">gamilit — Análisis de Memes</text>
+</svg>

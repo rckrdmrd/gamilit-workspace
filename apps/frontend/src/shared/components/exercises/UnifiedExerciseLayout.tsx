@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { DetectiveCard } from '../base/DetectiveCard';
 import { ExerciseGradientHeader } from '../mechanics/ExerciseGradientHeader';
@@ -10,13 +10,13 @@ export interface UnifiedExerciseLayoutProps {
     /** Description or instruction for the exercise */
     description?: string;
     /** Icon to display in the header */
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     /** Content to display in the header actions area */
-    headerActions?: React.ReactNode;
+    headerActions?: ReactNode;
     /** Additional content to render inside the header (e.g. progress bar) */
-    headerChildren?: React.ReactNode;
+    headerChildren?: ReactNode;
     /** Main content of the exercise */
-    children: React.ReactNode;
+    children: ReactNode;
     /** Custom class for the wrapper */
     className?: string;
     /** Variant of the DetectiveCard */
@@ -35,7 +35,7 @@ export interface UnifiedExerciseLayoutProps {
  * Standard layout for all exercises in the platform.
  * Integrates ExerciseGradientHeader and DetectiveCard for a consistent look.
  */
-export const UnifiedExerciseLayout: React.FC<UnifiedExerciseLayoutProps> = ({
+export const UnifiedExerciseLayout = ({
     title,
     description,
     icon,
@@ -47,7 +47,7 @@ export const UnifiedExerciseLayout: React.FC<UnifiedExerciseLayoutProps> = ({
     cardPadding = 'lg',
     gradientClassName,
     difficulty,
-}) => {
+}: UnifiedExerciseLayoutProps) => {
 
     // Map difficulty to border colors if needed, or use in header
     const difficultyBorderColor = {
@@ -57,7 +57,7 @@ export const UnifiedExerciseLayout: React.FC<UnifiedExerciseLayoutProps> = ({
     };
 
     return (
-        <div className={cn('mx-auto max-w-4xl space-y-6 p-4', className)}>
+        <div className={cn('mx-auto max-w-4xl space-y-3 sm:space-y-6 p-2 sm:p-4', className)}>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

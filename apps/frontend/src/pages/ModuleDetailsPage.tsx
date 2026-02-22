@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, AlertCircle, BookOpen, Clock, TrendingUp, Target } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -30,7 +30,7 @@ import {
  *
  * Route: /progress/modules/:moduleId
  */
-export const ModuleDetailsPage: React.FC = () => {
+export const ModuleDetailsPage = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
   const { user, logout } = useAuth();
   const navigate = useNavigate();

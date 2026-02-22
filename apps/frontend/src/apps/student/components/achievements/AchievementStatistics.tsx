@@ -4,7 +4,8 @@
  * ~180 lines
  */
 
-import React from 'react';
+
+
 import { motion } from 'framer-motion';
 import { TrendingUp, Clock, Award, Target, Sparkles, Trophy, Flame, Star } from 'lucide-react';
 import type { AchievementStatisticsData as AchievementStats } from './types';
@@ -13,7 +14,7 @@ interface AchievementStatisticsProps {
   statistics: AchievementStats;
 }
 
-export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({ statistics }) => {
+export const AchievementStatistics = ({ statistics }: AchievementStatisticsProps) => {
   // Category icons
   const categoryIcons = {
     progress: TrendingUp,

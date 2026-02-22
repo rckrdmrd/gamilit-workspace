@@ -10,7 +10,7 @@
  * - Responsive design (stacks on mobile)
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Medal, Award, TrendingUp } from 'lucide-react';
 import type { LeaderboardEntry } from '../../types/leaderboardsTypes';
@@ -289,7 +289,7 @@ const Confetti = ({ show }: { show: boolean }) => {
   );
 };
 
-export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ topThree, className }) => {
+export const LeaderboardPodium = ({ topThree, className }: LeaderboardPodiumProps) => {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {

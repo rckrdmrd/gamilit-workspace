@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link2 } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -11,12 +11,12 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
+export const EmparejamientoExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: EmparejamientoExerciseProps) => {
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
 
   const [cards, setCards] = useState(exercise.cards.sort(() => Math.random() - 0.5));
@@ -31,7 +31,7 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
   const { syncAndInvalidate } = useInvalidateDashboard();
 
   // FE-055: Notify parent of progress updates WITH user answers
-  React.useEffect(() => {
+  useEffect(() => {
     if (onProgressUpdate) {
       const matched = cards.filter((c) => c.isMatched).length;
       const totalPairs = cards.length / 2;

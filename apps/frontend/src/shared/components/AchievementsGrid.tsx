@@ -1,4 +1,3 @@
-import React from 'react';
 import { Trophy, Award, Medal, Star, Lock } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { SkeletonAchievement } from '@shared/components/loading';
@@ -33,10 +32,10 @@ const getAchievementIcon = (userAchievement: UserAchievement) => {
  * AchievementCard Component
  * Individual achievement card with progress and status
  */
-const AchievementCard: React.FC<{
+const AchievementCard = ({ userAchievement, onClick }: {
   userAchievement: UserAchievement;
   onClick?: (userAchievement: UserAchievement) => void;
-}> = ({ userAchievement, onClick }) => {
+}) => {
   const isLocked = userAchievement.status === AchievementStatusEnum.LOCKED;
   const isCompleted = userAchievement.status === AchievementStatusEnum.EARNED || userAchievement.status === AchievementStatusEnum.CLAIMED;
   const achievement = userAchievement.achievement;
@@ -144,12 +143,12 @@ const AchievementCard: React.FC<{
  * />
  * ```
  */
-export const AchievementsGrid: React.FC<AchievementsGridProps> = ({
+export const AchievementsGrid = ({
   achievements,
   isLoading = false,
   maxDisplay,
   onAchievementClick,
-}) => {
+}: AchievementsGridProps) => {
   // Loading state
   if (isLoading) {
     return (

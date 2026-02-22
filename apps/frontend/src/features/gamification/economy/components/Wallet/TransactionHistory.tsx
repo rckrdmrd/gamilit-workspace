@@ -13,10 +13,10 @@ interface TransactionHistoryProps {
   showFilters?: boolean;
 }
 
-export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
+export const TransactionHistory = ({
   limit = 20,
   showFilters = true,
-}) => {
+}: TransactionHistoryProps) => {
   const { transactions, formatTransactionAmount, getTransactionColor } = useTransactions();
   // Filter by CATEGORY ('earn' | 'spend'), not specific type
   const [filterCategory, setFilterCategory] = useState<TransactionCategory | 'all'>('all');

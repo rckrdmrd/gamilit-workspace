@@ -940,6 +940,37 @@ Para convertir un componente que usa Tailwind generico al tema detective.
 | Skeleton Family | `apps/frontend/src/shared/components/loading/SkeletonCard.tsx` |
 | Base barrel export | `apps/frontend/src/shared/components/base/index.ts` |
 
+### Patrones Responsivos (Mobile-First)
+
+**Breakpoint principal:** `sm:` (640px) — cubre todos los telefonos en portrait.
+
+**Patron estandar aplicado en 38 archivos de ejercicios + componentes compartidos:**
+
+| Tipo | Mobile (base) | Desktop (sm:) | Ejemplo |
+|------|---------------|---------------|---------|
+| Padding grande | `p-3` | `sm:p-6` | Contenedores de ejercicio, cards |
+| Padding medio | `p-2` | `sm:p-4` | Sub-secciones, botones de opcion |
+| Texto titulo | `text-xl` | `sm:text-2xl` | Headers de ejercicio, titulos |
+| Texto grande | `text-3xl` | `sm:text-6xl` | Contadores, timers prominentes |
+| Gaps | `gap-2` | `sm:gap-4` | Flex/grid containers |
+| Gaps grandes | `gap-3` | `sm:gap-6` | Grids de perspectivas, cards |
+| Grids | `grid-cols-1` | `sm:grid-cols-3` | FeedbackModal stats, score grids |
+| Heights fijos | `h-[400px]` | `sm:h-[600px]` | Chat containers, canvas |
+| Min-heights | `min-h-[350px]` | `sm:min-h-[600px]` | Comic canvas, areas de dibujo |
+| Sidebars | `w-full` | `sm:w-80` | QuizTikTok sidebar |
+| Botones grandes | `px-4 py-2` | `sm:px-8 sm:py-4` | Submit, CTA buttons |
+| Iconos | `h-8 w-8` | `sm:h-10 sm:w-10` | Header icons, avatars |
+
+**Reglas:**
+1. **Solo cambios CSS** — nunca modificar logica TypeScript para responsividad
+2. **Nunca eliminar clases** — solo agregar prefijos `sm:`
+3. **Inline styles → Tailwind** — convertir `style={{ height: '600px' }}` a `h-[400px] sm:h-[600px]`
+4. **cn() utility** de `@shared/utils/cn` soporta merge condicional de clases responsivas
+
+**Viewports de prueba:** 375px (iPhone SE), 414px (iPhone Plus), 768px (tablet)
+
+---
+
 ### Alcance de uso en el codebase
 
 | Patron | Archivos que lo usan | Ocurrencias totales |

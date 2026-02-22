@@ -2,30 +2,28 @@ import {
   IsArray,
   IsString,
   IsObject,
+  IsOptional,
   ArrayMinSize,
+  MinLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
  * NavegacionHipertextualAnswerDto
  *
  * @description DTO para validar las respuestas del ejercicio "Navegación Hipertextual".
- * El estudiante navega por una red de contenidos hipertextuales y recopila información
- * a través de diferentes rutas. Se registra el camino seguido y la información encontrada.
+ * El estudiante navega por una red de contenidos hipertextuales, recopila información
+ * y responde preguntas de reflexión evaluadas por el maestro.
  *
  * @example
  * ```json
  * {
  *   "path": ["node_inicio", "node_historia", "node_impacto", "node_conclusion"],
- *   "information_found": {
- *     "node_historia": {
- *       "fact_1": "La alfabetización digital surge en los años 90",
- *       "fact_2": "Paul Gilster acuñó el término en 1997"
- *     },
- *     "node_impacto": {
- *       "statistic": "85% de los empleos requieren habilidades digitales",
- *       "example": "Casos de éxito en educación digital"
- *     }
+ *   "information_found": { ... },
+ *   "summary": "Durante mi navegación aprendí que la alfabetización digital...",
+ *   "reflection_questions": {
+ *     "alternative_route": "Habría tomado una ruta diferente empezando por...",
+ *     "most_important": "La información más importante fue..."
  *   }
  * }
  * ```
@@ -50,14 +48,29 @@ export class NavegacionHipertextualAnswerDto {
     example: {
       node_historia: {
         fact_1: 'La alfabetización digital surge en los años 90',
-        fact_2: 'Paul Gilster acuñó el término en 1997',
-      },
-      node_impacto: {
-        statistic: '85% de los empleos requieren habilidades digitales',
-        example: 'Casos de éxito en educación digital',
       },
     },
   })
   @IsObject({ message: 'information_found must be an object' })
     information_found: Record<string, unknown>;
+
+  @ApiPropertyOptional({
+    description: 'Resumen de lo aprendido durante la navegación (mínimo 150 caracteres)',
+    example: 'Durante mi navegación aprendí que la alfabetización digital surgió en los años 90 y que Paul Gilster acuñó el término. Las habilidades digitales son fundamentales para el empleo moderno.',
+  })
+  @IsOptional()
+  @IsString({ message: 'summary must be a string' })
+  @MinLength(150, { message: 'summary must be at least 150 characters' })
+    summary?: string;
+
+  @ApiPropertyOptional({
+    description: 'Respuestas a preguntas de reflexión sobre la navegación',
+    example: {
+      alternative_route: 'Habría tomado una ruta diferente empezando por el nodo de impacto...',
+      most_important: 'La información más importante fue sobre las habilidades digitales...',
+    },
+  })
+  @IsOptional()
+  @IsObject({ message: 'reflection_questions must be an object' })
+    reflection_questions?: Record<string, string>;
 }

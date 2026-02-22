@@ -1,7 +1,7 @@
 -- =====================================================
 -- Seed: gamification_system.achievements (Collection Category)
 -- Description: Logros de coleccion — REC-011
--- Environment: STAGING
+-- Environment: DEV
 -- Dependencies: gamification_system.achievement_categories
 -- Order: 20
 -- Created: 2026-02-18

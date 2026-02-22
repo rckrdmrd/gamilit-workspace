@@ -13,7 +13,7 @@
  * Created: 2025-12-05 - US-ADMIN-P2-001
  */
 
-import React from 'react';
+import type { ReactElement } from 'react';
 import type { Role } from '@/services/api/adminTypes';
 
 interface RolesTableProps {
@@ -28,7 +28,7 @@ export function RolesTable({
   selectedRoleId,
   onSelectRole,
   loading = false,
-}: RolesTableProps): React.ReactElement {
+}: RolesTableProps): ReactElement {
 
   if (loading) {
     return (

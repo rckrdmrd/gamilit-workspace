@@ -4,7 +4,6 @@
  * Visualization of progression history with timeline view.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Award, Star, Target } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -73,11 +72,11 @@ const formatRelativeDate = (date: Date): string => {
 /**
  * ProgressTimeline Component
  */
-export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
+export const ProgressTimeline = ({
   limit = 10,
   showAll = false,
   className = '',
-}) => {
+}: ProgressTimelineProps) => {
   const progressionHistory = useRanksStore((state) => state.progressionHistory);
 
   // Sort history by timestamp (most recent first)

@@ -3,7 +3,6 @@
  * Celebration modal when achievement is unlocked
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -96,11 +95,11 @@ interface AchievementUnlockModalProps {
   showConfetti?: boolean;
 }
 
-export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
+export const AchievementUnlockModal = ({
   achievement,
   onClose,
   showConfetti = false,
-}) => {
+}: AchievementUnlockModalProps) => {
   if (!achievement) return null;
 
   const IconComponent = achievementIconMap[achievement.icon] || Award;

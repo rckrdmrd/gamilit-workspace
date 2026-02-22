@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Star, MessageSquare, CheckCircle, AlertTriangle } from 'lucide-react';
 import { RubricCriterion, RubricEvaluation, calculateTotalScore, validateEvaluations } from '@/shared/api/manualReviewApi';
 
@@ -25,7 +25,7 @@ export interface RubricEvaluatorProps {
  * - Add general feedback
  * - See real-time total score calculation
  */
-export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
+export const RubricEvaluator = ({
   rubric,
   initialEvaluations = [],
   generalFeedback: initialGeneralFeedback = '',
@@ -33,7 +33,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   onValidation,
   readOnly = false,
   className = '',
-}) => {
+}: RubricEvaluatorProps) => {
   const [evaluations, setEvaluations] = useState<RubricEvaluation[]>(initialEvaluations ?? []);
   // Ensure generalFeedback is never null (fallback to empty string)
   const [generalFeedback, setGeneralFeedback] = useState(initialGeneralFeedback ?? '');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import { Puzzle, GripVertical, RotateCcw } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -13,14 +13,14 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
+export const PuzzleContextoExercise = ({
   exercise = mockPuzzleData,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: PuzzleContextoExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -230,7 +230,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       >
         {/* Objective */}
         {exercise.description && (
-          <div className="rounded-lg border border-detective-border bg-white/95 p-4 shadow-sm mb-6">
+          <div className="rounded-lg border border-detective-border bg-white/95 p-2 sm:p-4 shadow-sm mb-6">
             <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
             <p className="text-detective-base text-detective-text">{exercise.description}</p>
           </div>
@@ -238,7 +238,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
         {/* Instructions */}
         {exercise.instructions && (
-          <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4 mb-6">
+          <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-2 sm:p-4 mb-6">
             <p className="text-detective-sm leading-relaxed text-detective-text">
               <strong>Instrucciones:</strong> {exercise.instructions}
             </p>
@@ -265,7 +265,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
                 <motion.div
                   whileHover={!showResults ? { scale: 1.02 } : {}}
                   whileTap={!showResults ? { scale: 0.98 } : {}}
-                  className={`flex items-center gap-3 rounded-detective border-2 p-4 transition-all ${getFragmentStyle(
+                  className={`flex items-center gap-3 rounded-detective border-2 p-2 sm:p-4 transition-all ${getFragmentStyle(
                     fragment,
                     index,
                   )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
@@ -289,7 +289,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
             Inferencia Actual
           </h3>
-          <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
+          <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-3 sm:p-6">
             <p className="text-detective-base italic leading-relaxed text-detective-text">
               "{currentInference}"
             </p>
@@ -302,7 +302,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
             <h3 className="mb-3 text-detective-lg font-semibold text-detective-success">
               Inferencia Correcta
             </h3>
-            <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-6">
+            <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-3 sm:p-6">
               <p className="text-detective-base font-medium leading-relaxed text-detective-text">
                 "{exercise.completeInference}"
               </p>

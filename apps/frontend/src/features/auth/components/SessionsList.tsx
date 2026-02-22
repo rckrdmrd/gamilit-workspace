@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Monitor, Smartphone, Tablet, X, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { authAPI } from '../api/authAPI';
@@ -7,7 +7,7 @@ import { es } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 
-export const SessionsList: React.FC = () => {
+export const SessionsList = () => {
   const queryClient = useQueryClient();
   const [confirmRevoke, setConfirmRevoke] = useState<{ open: boolean; sessionId: string | null }>({ open: false, sessionId: null });
 

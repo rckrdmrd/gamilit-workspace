@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import type { DragEvent, ChangeEvent } from 'react';
 import { Upload, X, FileImage, FileAudio, FileVideo, File as FileIcon, CheckCircle, AlertCircle } from 'lucide-react';
 import { mediaApi, MediaType, MediaAttachmentResponse, formatFileSize, detectMediaType } from '@/shared/api/mediaApi';
 
@@ -35,7 +36,7 @@ interface FileWithStatus {
  * Reusable component for uploading multimedia files (images, audio, video)
  * with drag & drop, preview, progress tracking, and validation.
  */
-export const MediaUploader: React.FC<MediaUploaderProps> = ({
+export const MediaUploader = ({
   acceptedTypes,
   maxSize,
   maxFiles = 5,
@@ -45,7 +46,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   onError,
   className = '',
   disabled = false,
-}) => {
+}: MediaUploaderProps) => {
   const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -199,24 +200,24 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   /**
    * Handle drag events
    */
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
+  const handleDragEnter = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!disabled) setIsDragging(true);
   }, [disabled]);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -229,7 +230,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   /**
    * Handle file input change
    */
-  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     handleFiles(e.target.files);
     // Reset input so same file can be selected again
     e.target.value = '';

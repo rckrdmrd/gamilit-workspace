@@ -1,11 +1,10 @@
-import React from 'react';
 import { Check, X } from 'lucide-react';
 
 interface PermissionMatrixProps {
   role: string;
 }
 
-export const PermissionMatrix: React.FC<PermissionMatrixProps> = ({ role }) => {
+export const PermissionMatrix = ({ role }: PermissionMatrixProps) => {
   const permissions = [
     { name: 'Ver contenido', student: true, teacher: true, admin: true },
     { name: 'Crear ejercicios', student: false, teacher: true, admin: true },

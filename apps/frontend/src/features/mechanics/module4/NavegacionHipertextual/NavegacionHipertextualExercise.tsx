@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BookOpen, Navigation, CheckCircle, Send, Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -12,13 +12,13 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 
-export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
+export const NavegacionHipertextualExercise = ({
   exerciseId,
   onComplete,
   onProgressUpdate,
   initialData,
   exercise,
-}) => {
+}: ExerciseProps) => {
   // State management
   const [currentNodeId, setCurrentNodeId] = useState(
     initialData?.currentNodeId || exercise?.startNodeId || '',
@@ -32,72 +32,20 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [timePerDocument, setTimePerDocument] = useState<Record<string, number>>({});
   const [nodeStartTime, setNodeStartTime] = useState<Date>(new Date());
+  const [reflections, setReflections] = useState({ summary: '', alternative_route: '', most_important: '' });
 
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-            type: 'info',
-            title: 'Navegación Enviada',
-            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Navegación Completada!',
-        message: 'Tu trabajo ha sido evaluado correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   const currentNode = exercise?.nodes?.find((n: HypertextNode) => n.id === currentNodeId);
-
-  // Calculate score
-  const calculateScore = () => {
-    if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return 0;
-    const uniqueVisited = new Set(visitedNodes).size;
-    const totalNodes = exercise.nodes.length;
-    const targetReached = visitedNodes.includes(exercise.targetNodeId);
-    const explorationScore = (uniqueVisited / totalNodes) * 60;
-    const targetScore = targetReached ? 40 : 0;
-    return Math.round(explorationScore + targetScore);
-  };
 
   // Progress tracking
   // FIX: Send answers in DTO format (path, information_found) for ExercisePage.tsx submit button
   useEffect(() => {
     if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return;
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    const score = calculateScore();
     const uniqueVisited = new Set(visitedNodes).size;
 
     // Build information_found in DTO format
@@ -119,7 +67,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
       progress: {
         currentStep: uniqueVisited,
         totalSteps: exercise.nodes.length,
-        score,
+        score: 0,
         hintsUsed: 0,
         timeSpent,
       },
@@ -168,18 +116,11 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     setCurrentNodeId(targetId);
     setVisitedNodes((prev) => [...prev, targetId]);
     setNodeStartTime(new Date());
-
-    if (targetId === exercise?.targetNodeId) {
-      // Target reached, show success after delay
-      setTimeout(() => {
-        handleCheck();
-      }, 500);
-    }
   };
 
   // Handle submit
   // FIX: Transform data to match NavegacionHipertextualAnswerDto expected by backend
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
     // Build information_found object with data collected from each visited node
@@ -199,49 +140,65 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
       }
     });
 
-    // Submit in DTO format
-    submit({
-      // Primary format expected by NavegacionHipertextualAnswerDto
-      path: visitedNodes,
-      information_found,
+    try {
+      // Submit in DTO format
+      const response = await submitAsync({
+        // Primary format expected by NavegacionHipertextualAnswerDto
+        path: visitedNodes,
+        information_found,
+        summary: reflections.summary.trim(),
+        reflection_questions: {
+          alternative_route: reflections.alternative_route.trim(),
+          most_important: reflections.most_important.trim(),
+        },
 
-      // Metadata for backwards compatibility and context
-      metadata: {
-        documentsVisited: uniqueVisited,
-        timePerDocument,
-        targetReached: visitedNodes.includes(exercise?.targetNodeId || ''),
-        totalNodesExplored: uniqueVisited.length,
-        totalNodesAvailable: exercise?.nodes?.length || 0,
-      },
-    });
-  };
+        // Metadata for backwards compatibility and context
+        metadata: {
+          documentsVisited: uniqueVisited,
+          timePerDocument,
+          targetReached: visitedNodes.includes(exercise?.targetNodeId || ''),
+          totalNodesExplored: uniqueVisited.length,
+          totalNodesAvailable: exercise?.nodes?.length || 0,
+        },
+      });
+      setIsSubmitted(true);
+      const elapsedTime = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
 
-  // Check/Verify handler
-  const handleCheck = () => {
-    if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return;
+      // Check for manual review (MUST include 'submitted')
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Navegación Enviada',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, elapsedTime);
+        return;
+      }
 
-    const score = calculateScore();
-    const uniqueVisited = new Set(visitedNodes).size;
-    const targetReached = visitedNodes.includes(exercise.targetNodeId || '');
-
-    if (!targetReached) {
+      // Normal graded flow
       setFeedback({
-        type: 'info',
-        title: 'Objetivo no alcanzado',
-        message: `Has visitado ${uniqueVisited} de ${exercise.nodes.length} nodos. Continúa navegando hasta encontrar el objetivo.`,
+        type: 'success',
+        title: '¡Navegación Completada!',
+        message: 'Tu trabajo ha sido evaluado correctamente.',
+        score: response.score,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
       });
       setShowFeedback(true);
-      return;
+      onComplete?.(response.score, elapsedTime);
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
     }
-
-    setFeedback({
-      type: 'success',
-      title: '¡Objetivo Alcanzado!',
-      message: `¡Excelente navegación! Has explorado el hipertexto y encontrado el destino.`,
-      score: score,
-      showConfetti: true,
-    });
-    setShowFeedback(true);
   };
 
   if (!exercise || !exercise.nodes || exercise.nodes.length === 0) {
@@ -282,7 +239,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-detective-text-secondary">Nodos visitados</p>
-                <p className="text-2xl font-bold text-detective-text">
+                <p className="text-xl sm:text-2xl font-bold text-detective-text">
                   {new Set(visitedNodes).size} / {exercise.nodes.length}
                 </p>
               </div>
@@ -295,12 +252,96 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
             </div>
           </DetectiveCard>
 
+          {/* Reflection Section - visible after reaching target */}
+          {visitedNodes.includes(exercise.targetNodeId) && (
+            <DetectiveCard variant="default" padding="lg">
+              <h3 className="mb-4 text-detective-lg font-bold text-detective-text">
+                Preguntas de Reflexión
+              </h3>
+              <p className="mb-4 text-detective-sm text-detective-text-secondary">
+                Ahora que has completado la navegación, responde las siguientes preguntas:
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-detective-sm font-semibold text-detective-blue">
+                    1. Resume lo que aprendiste durante la navegación (min. 150 caracteres)
+                  </label>
+                  <textarea
+                    value={reflections.summary}
+                    onChange={(e) => setReflections(prev => ({ ...prev, summary: e.target.value }))}
+                    placeholder="Durante mi navegación aprendí que..."
+                    className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                    rows={4}
+                    maxLength={1000}
+                  />
+                  <div className="mt-1 flex justify-between">
+                    <p className={`text-detective-sm ${reflections.summary.trim().length >= 150 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                      {reflections.summary.trim().length < 150
+                        ? `Faltan ${150 - reflections.summary.trim().length} caracteres`
+                        : '✓ Completo'}
+                    </p>
+                    <p className="text-detective-sm text-detective-text-secondary">{reflections.summary.length}/1000</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-2 block text-detective-sm font-semibold text-detective-blue">
+                    2. ¿Qué ruta alternativa habrías tomado y por qué? (min. 80 caracteres)
+                  </label>
+                  <textarea
+                    value={reflections.alternative_route}
+                    onChange={(e) => setReflections(prev => ({ ...prev, alternative_route: e.target.value }))}
+                    placeholder="Si pudiera navegar de nuevo, tomaría una ruta diferente..."
+                    className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                    rows={3}
+                    maxLength={500}
+                  />
+                  <div className="mt-1 flex justify-between">
+                    <p className={`text-detective-sm ${reflections.alternative_route.trim().length >= 80 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                      {reflections.alternative_route.trim().length < 80
+                        ? `Faltan ${80 - reflections.alternative_route.trim().length} caracteres`
+                        : '✓ Completo'}
+                    </p>
+                    <p className="text-detective-sm text-detective-text-secondary">{reflections.alternative_route.length}/500</p>
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-2 block text-detective-sm font-semibold text-detective-blue">
+                    3. ¿Cuál fue la información más importante que encontraste? (min. 80 caracteres)
+                  </label>
+                  <textarea
+                    value={reflections.most_important}
+                    onChange={(e) => setReflections(prev => ({ ...prev, most_important: e.target.value }))}
+                    placeholder="La información más importante fue..."
+                    className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                    rows={3}
+                    maxLength={500}
+                  />
+                  <div className="mt-1 flex justify-between">
+                    <p className={`text-detective-sm ${reflections.most_important.trim().length >= 80 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                      {reflections.most_important.trim().length < 80
+                        ? `Faltan ${80 - reflections.most_important.trim().length} caracteres`
+                        : '✓ Completo'}
+                    </p>
+                    <p className="text-detective-sm text-detective-text-secondary">{reflections.most_important.length}/500</p>
+                  </div>
+                </div>
+              </div>
+            </DetectiveCard>
+          )}
+
           {/* Submit Button */}
           <DetectiveCard variant="default" padding="md">
             <DetectiveButton
               variant="primary"
               onClick={handleSubmit}
-              disabled={!visitedNodes.includes(exercise.targetNodeId) || isSubmitting || isSubmitted}
+              disabled={
+                !visitedNodes.includes(exercise.targetNodeId) ||
+                reflections.summary.trim().length < 150 ||
+                reflections.alternative_route.trim().length < 80 ||
+                reflections.most_important.trim().length < 80 ||
+                isSubmitting ||
+                isSubmitted
+              }
               className="w-full"
             >
               {isSubmitting ? (
@@ -337,7 +378,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
               const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-              onComplete(calculateScore(), timeSpent);
+              onComplete(0, timeSpent);
             }
           }}
           onRetry={() => {

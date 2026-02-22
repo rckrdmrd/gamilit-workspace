@@ -11,7 +11,6 @@
  * @since Phase 3 - Exercise System Restructuring
  */
 
-import React from 'react';
 import { Star } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
@@ -22,7 +21,7 @@ import { useExerciseContext } from '../context/ExerciseContext';
 import { ConsumablesPanel } from './ConsumablesPanel';
 import { ActionsPanel } from './ActionsPanel';
 
-export const ExerciseSidebar: React.FC = () => {
+export const ExerciseSidebar = () => {
   const {
     exercise,
     progress,

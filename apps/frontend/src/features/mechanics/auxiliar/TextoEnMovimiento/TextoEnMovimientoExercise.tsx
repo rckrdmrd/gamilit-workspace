@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Type, Play, Settings, Trash2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -41,12 +41,12 @@ const DEFAULT_ANIMATIONS: AnimationConfig[] = [
 
 const DEFAULT_COLORS = ['#f97316', '#1e3a8a', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
 
-export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps> = ({
+export const TextoEnMovimientoExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: TextoEnMovimientoExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');

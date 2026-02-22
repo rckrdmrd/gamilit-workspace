@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
@@ -37,7 +37,7 @@ interface VariantStats {
   avgEngagement: number;
 }
 
-export const ABTestingDashboard: React.FC = () => {
+export const ABTestingDashboard = () => {
   const [experiments, setExperiments] = useState<Experiment[]>([
     {
       id: '1',
@@ -147,9 +147,9 @@ export const ABTestingDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Future Feature Banner */}
-      <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/20 px-4 py-3 text-sm font-medium text-yellow-300">
-        FUTURE FEATURE — Not yet connected to backend
+      {/* Demo Data Banner */}
+      <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/20 px-4 py-3 text-sm font-medium text-yellow-300" role="status">
+        Datos de demostración — Esta funcionalidad no está conectada al backend. Los datos mostrados son ilustrativos.
       </div>
 
       {/* Header */}

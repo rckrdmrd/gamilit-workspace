@@ -1,4 +1,3 @@
-import React from 'react';
 import { Trophy, Lock, CheckCircle, Gift } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { resolveLucideIcon } from '@shared/utils/iconResolver';
@@ -84,12 +83,12 @@ const getStatus = (userAchievement?: UserAchievement): AchievementStatus => {
  * - Hidden achievements display as mystery
  * - Click handler for modal/detail view
  */
-export const AchievementCard: React.FC<AchievementCardProps> = ({
+export const AchievementCard = ({
   achievement,
   userAchievement,
   onClick,
   className,
-}) => {
+}: AchievementCardProps) => {
   const status = getStatus(userAchievement);
   const progress = userAchievement?.progress || 0;
   const isLocked = status === 'locked';

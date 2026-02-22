@@ -4,13 +4,12 @@
  * @description Display battle results and rewards (EXT-009)
  */
 
-import React from 'react';
 import { useBattle } from '../hooks/useBattle';
 
 /**
  * BattleResults Component
  */
-export const BattleResults: React.FC = () => {
+export const BattleResults = () => {
   const { battleResult, userId, showResults, setShowResults, reset } = useBattle();
 
   if (!showResults || !battleResult) {

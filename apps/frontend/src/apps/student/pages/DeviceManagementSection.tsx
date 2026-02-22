@@ -7,7 +7,7 @@
  * @version 1.0 (2025-01-13) - Initial implementation for FE-054
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
@@ -27,7 +27,7 @@ const DEVICE_TYPE_LABELS: Record<string, string> = {
   web: 'Web',
 };
 
-export const DeviceManagementSection: React.FC = () => {
+export const DeviceManagementSection = () => {
   const { devices, devicesLoading, fetchDevices, updateDeviceName, deleteDevice } =
     useNotificationsStore();
 

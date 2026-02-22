@@ -3,7 +3,7 @@
  * Toast notification for achievement unlocks
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Award,
@@ -89,7 +89,7 @@ const achievementIconMap: Record<string, LucideIcon> = {
   gem: Gem,
 };
 
-export const AchievementNotification: React.FC = () => {
+export const AchievementNotification = () => {
   const { recentUnlocks, dismissNotification } = useAchievements();
 
   useEffect(() => {

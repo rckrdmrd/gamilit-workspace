@@ -1,7 +1,7 @@
 # Flujo Student - Logros y Misiones (Claim Rewards)
 
-**Version:** 2.0.0
-**Fecha:** 2026-02-18
+**Version:** 2.1.0
+**Fecha:** 2026-02-21
 **Estado:** Activo
 **Tarea:** TASK-2026-02-18-ANALISIS-MISIONES-LOGROS
 
@@ -28,7 +28,11 @@ flowchart TD
         fetchMissions --> checkActive{Hay misiones activas?}
         checkActive -->|Si| showMissions[MostrarMisiones]
         checkActive -->|No| generate[Backend genera desde templates]
-        generate --> showMissions
+        generate -->|daily/weekly: status=in_progress| showMissions
+        showMissions --> cardClick[Click en MissionCard]
+        cardClick --> detailModal[MissionDetailModal: detalle completo]
+        detailModal -->|exercise_id?| navExercise[Navegar a /exercises/:id]
+        detailModal -->|sin exercise_id| progress
     end
 
     subgraph ClaimFlow
@@ -89,8 +93,11 @@ Al crear un perfil, el DB trigger `trg_initialize_user_stats` invoca `gamilit.in
 ### Generacion On-Demand
 
 Cuando el usuario pide misiones (`findByTypeAndUser`) y no hay activas:
-- **Daily:** Selecciona 3 templates aleatorios (filtrado por nivel y activos)
-- **Weekly:** Selecciona 2 templates aleatorios
+- **Daily:** Selecciona 3 templates aleatorios (filtrado por nivel y activos) → status inicial `in_progress`
+- **Weekly:** Selecciona 2 templates aleatorios → status inicial `in_progress`
+- **exercise_id:** Se propaga desde `mission_templates.exercise_id` a `missions.exercise_id` al crear
+
+> **Cambio v2.1.0:** Las misiones daily/weekly se crean directamente como `in_progress` (no requieren "Iniciar Mision"). Las misiones special siguen creándose como `active`.
 
 ---
 
@@ -152,6 +159,30 @@ El cron `reconcile-pending-achievement-claims` (cada 5 min) busca achievements c
 
 ---
 
+## 7b. Navegacion por exercise_id y MissionDetailModal (v2.1.0)
+
+### exercise_id en Misiones
+
+Las tablas `mission_templates` y `missions` ahora incluyen `exercise_id UUID` (FK a `educational_content.exercises`). Cuando un template tiene exercise_id definido, la mision generada hereda el vinculo.
+
+**Prioridad de navegacion:**
+1. Si `mission.exercise_id` → navegar directo a `/exercises/:exercise_id`
+2. Si `mission.type === 'special'` con `required_module` → navegar al modulo
+3. Fallback → hub de aprendizaje
+
+### MissionDetailModal
+
+Al hacer click en cualquier MissionCard se abre un modal con:
+- Descripcion completa (sin truncar)
+- Progreso individual por objetivo con barras
+- Recompensas (ML Coins + XP)
+- Timer con urgencia
+- Boton de accion contextual (Iniciar/Ir al Ejercicio/Reclamar/Completado)
+
+**Componente:** `features/gamification/missions/components/MissionDetailModal.tsx`
+
+---
+
 ## 8. Trazabilidad
 
 ### Frontend
@@ -159,6 +190,7 @@ El cron `reconcile-pending-achievement-claims` (cada 5 min) busca achievements c
 - `apps/frontend/src/apps/student/pages/MissionsPage.tsx`
 - `apps/frontend/src/features/gamification/missions/hooks/useMissions.ts`
 - `apps/frontend/src/services/api/gamification/gamificationAPI.ts` (canonical)
+- `apps/frontend/src/features/gamification/missions/components/MissionDetailModal.tsx`
 
 ### Backend
 - `apps/backend/src/modules/gamification/services/achievements.service.ts` — deteccion + claim
@@ -192,4 +224,4 @@ El cron `reconcile-pending-achievement-claims` (cada 5 min) busca achievements c
 
 ---
 
-*Generado: 2026-02-18 | Sistema SIMCO v4.3.0*
+*Generado: 2026-02-21 | Sistema SIMCO v4.3.0*

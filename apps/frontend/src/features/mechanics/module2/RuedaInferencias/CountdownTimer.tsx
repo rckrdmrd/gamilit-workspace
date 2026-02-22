@@ -5,17 +5,17 @@
  * @task FE-071
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 import type { CountdownTimerProps } from './ruedaInferenciasTypes';
 
-export const CountdownTimer: React.FC<CountdownTimerProps> = ({
+export const CountdownTimer = ({
   duration,
   isRunning,
   onComplete,
   onTick,
   variant = 'default',
-}) => {
+}: CountdownTimerProps) => {
   const [remaining, setRemaining] = useState(duration);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
   const styles = variantStyles[currentVariant];
 
   return (
-    <div className={`bg-white rounded-lg shadow-md border-2 ${styles.border} p-4`}>
+    <div className={`bg-white rounded-lg shadow-md border-2 ${styles.border} p-2 sm:p-4`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
           <span className="font-semibold text-detective-text">Tiempo Restante</span>
         </div>
         <div
-          className={`text-2xl font-bold ${styles.text} ${
+          className={`text-lg sm:text-2xl font-bold ${styles.text} ${
             currentVariant === 'danger' && isRunning ? 'animate-pulse' : ''
           }`}
         >

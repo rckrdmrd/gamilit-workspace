@@ -1,10 +1,10 @@
-import React from 'react';
+import { type MouseEvent } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { AnnotationMarker } from './AnnotationMarker';
 import { MemeAnnotation } from './analisisMemesTypes';
 
-export const MemeAnnotator: React.FC<{ memeUrl: string; annotations: MemeAnnotation[]; onAddAnnotation: (x: number, y: number) => void; isAddingMode: boolean }> = ({ memeUrl, annotations, onAddAnnotation, isAddingMode }) => {
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+export const MemeAnnotator = ({ memeUrl, annotations, onAddAnnotation, isAddingMode }: { memeUrl: string; annotations: MemeAnnotation[]; onAddAnnotation: (x: number, y: number) => void; isAddingMode: boolean }) => {
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (isAddingMode) {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 100;

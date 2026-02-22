@@ -1,4 +1,4 @@
-import React from 'react';
+import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
 import {
   ProfileSettingsForm,
   type ProfileFormData,
@@ -27,16 +27,16 @@ interface AccountState {
 
 interface ProfileSettingsSectionProps {
   profile: ProfileState;
-  setProfile: React.Dispatch<React.SetStateAction<ProfileState>>;
+  setProfile: Dispatch<SetStateAction<ProfileState>>;
   account: AccountState;
-  setAccount: React.Dispatch<React.SetStateAction<AccountState>>;
+  setAccount: Dispatch<SetStateAction<AccountState>>;
   showPassword: boolean;
-  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPassword: Dispatch<SetStateAction<boolean>>;
   isUploading: boolean;
   uploadProgress: number;
   saveStatus: SaveStatus;
   handleSave: () => void;
-  handleAvatarUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAvatarUpload: (e: ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: () => void;
 }
 

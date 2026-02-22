@@ -4,7 +4,7 @@
  * ~320 lines
  */
 
-import React, { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Modal } from '@shared/components/common/Modal';
 import {
@@ -37,7 +37,7 @@ interface AchievementDetailModalProps {
   hasPrevious?: boolean;
 }
 
-export const AchievementDetailModal: React.FC<AchievementDetailModalProps> = ({
+export const AchievementDetailModal = ({
   achievement,
   isOpen,
   onClose,
@@ -45,8 +45,8 @@ export const AchievementDetailModal: React.FC<AchievementDetailModalProps> = ({
   onPrevious,
   hasNext,
   hasPrevious,
-}) => {
-  const [copied, setCopied] = React.useState(false);
+}: AchievementDetailModalProps) => {
+  const [copied, setCopied] = useState(false);
 
   // Note: ESC key and scroll lock are handled by Modal component
 

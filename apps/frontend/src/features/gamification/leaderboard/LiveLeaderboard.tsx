@@ -33,7 +33,8 @@
  *   - 'completion' -> socialAPI.getGlobalLeaderboard() (fallback)
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import type { ElementType } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown,
@@ -98,7 +99,7 @@ export interface LiveLeaderboardProps {
 interface TabConfig {
   type: LeaderboardTypeVariant;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   description: string;
   sortKey: keyof LeaderboardEntry;
 }
@@ -142,7 +143,7 @@ const TABS: TabConfig[] = [
 // UTILITY FUNCTIONS
 // ============================================================================
 
-const getRankIcon = (rank: number): React.ElementType | null => {
+const getRankIcon = (rank: number): ElementType | null => {
   if (rank === 1) return Crown;
   if (rank === 2) return Medal;
   if (rank === 3) return Trophy;
@@ -329,7 +330,7 @@ interface TypeSelectorProps {
   onTypeChange: (type: LeaderboardTypeVariant) => void;
 }
 
-const TypeSelector: React.FC<TypeSelectorProps> = ({ selectedType, onTypeChange }) => {
+const TypeSelector = ({ selectedType, onTypeChange }: TypeSelectorProps) => {
   return (
     <div className="scrollbar-thin scrollbar-thumb-detective-orange scrollbar-track-gray-200 flex gap-2 overflow-x-auto pb-2">
       {TABS.map((tab) => {
@@ -392,7 +393,7 @@ interface UserRankCardProps {
   type: LeaderboardTypeVariant;
 }
 
-const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
+const UserRankCard = ({ userEntry, type }: UserRankCardProps) => {
   const gradient = getRankColor(userEntry.rank);
   const Icon = getRankIcon(userEntry.rank) || Award;
   const score = getScoreForType(userEntry, type);
@@ -564,12 +565,12 @@ interface LeaderboardEntryRowProps {
   onUserClick?: (userId: string) => void;
 }
 
-const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
+const LeaderboardEntryRow = ({
   entry,
   type,
   index,
   onUserClick,
-}) => {
+}: LeaderboardEntryRowProps) => {
   const RankIcon = getRankIcon(entry.rank);
   const isTopThree = entry.rank <= 3;
   const score = getScoreForType(entry, type);
@@ -681,7 +682,7 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
 // MAIN COMPONENT
 // ============================================================================
 
-export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
+export const LiveLeaderboard = ({
   userId,
   initialType = 'detective',
   autoRefresh = true,
@@ -689,7 +690,7 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
   itemsPerPage = 20,
   onUserClick,
   className,
-}) => {
+}: LiveLeaderboardProps) => {
   const [selectedType, setSelectedType] = useState<LeaderboardTypeVariant>(initialType);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(false);

@@ -9,7 +9,7 @@
  * - Tracks hints/powerups for anti-cheat
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -70,11 +70,11 @@ export interface VerdaderoFalsoExerciseProps {
 // COMPONENT
 // ============================================================================
 
-export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
+export const VerdaderoFalsoExercise = ({
   exercise,
   onComplete,
   onProgressUpdate: _onProgressUpdate,
-}) => {
+}: VerdaderoFalsoExerciseProps) => {
   // State for user answers (NO correctAnswer validation locally)
   const [statements, setStatements] = useState<VerdaderoFalsoStatement[]>(
     exercise.statements.map((stmt) => ({ ...stmt, userAnswer: null })),
@@ -281,11 +281,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                     </div>
 
                     {/* Answer Buttons */}
-                    <div className="ml-11 flex gap-4">
+                    <div className="ml-0 sm:ml-11 flex gap-2 sm:gap-4">
                       <button
                         onClick={() => handleAnswer(statement.id, true)}
                         disabled={showResults}
-                        className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
+                        className={`flex-1 rounded-lg px-3 py-2 sm:px-6 sm:py-3 font-semibold transition-all ${
                           statement.userAnswer === true
                             ? 'scale-105 bg-green-500 text-white shadow-lg'
                             : 'bg-detective-bg-secondary text-detective-text hover:bg-green-100 hover:text-green-700'
@@ -297,7 +297,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                       <button
                         onClick={() => handleAnswer(statement.id, false)}
                         disabled={showResults}
-                        className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
+                        className={`flex-1 rounded-lg px-3 py-2 sm:px-6 sm:py-3 font-semibold transition-all ${
                           statement.userAnswer === false
                             ? 'scale-105 bg-red-500 text-white shadow-lg'
                             : 'bg-detective-bg-secondary text-detective-text hover:bg-red-100 hover:text-red-700'

@@ -8,7 +8,7 @@
  * @see ET-WL-004-css-runtime-variables.md
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { type ChangeEvent, useState, useRef, useEffect } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import {
   isValidHexColor,
@@ -52,7 +52,7 @@ interface ColorPickerProps {
  * />
  * ```
  */
-export const ColorPicker: React.FC<ColorPickerProps> = ({
+export const ColorPicker = ({
   label,
   value,
   onChange,
@@ -60,7 +60,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   presetColors = PRESET_COLORS,
   disabled = false,
   error,
-}) => {
+}: ColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const [inputError, setInputError] = useState<string | null>(null);
@@ -86,7 +86,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   /**
    * Handle hex input change
    */
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
 
     // Auto-add # prefix if missing
@@ -127,7 +127,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   /**
    * Handle native color input change
    */
-  const handleNativeColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNativeColorChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newColor = e.target.value.toLowerCase();
     setInputValue(newColor);
     setInputError(null);

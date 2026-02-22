@@ -1,4 +1,5 @@
-import React from 'react';
+
+
 import { Clock, User, AlertCircle, RefreshCw, CheckCircle, PlayCircle } from 'lucide-react';
 import { ManualReview } from '@/shared/api/manualReviewApi';
 import { formatDistanceToNow } from 'date-fns';
@@ -20,13 +21,13 @@ export interface ReviewListProps {
  *
  * Displays a list of pending reviews for teachers.
  */
-export const ReviewList: React.FC<ReviewListProps> = ({
+export const ReviewList = ({
   reviews,
   loading,
   error,
   onSelectReview,
   onRefresh,
-}) => {
+}: ReviewListProps) => {
   /**
    * Format date for display
    */

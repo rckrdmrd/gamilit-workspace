@@ -25,7 +25,8 @@
  * ```
  */
 
-import React, { useContext } from 'react';
+import { useContext } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
@@ -75,7 +76,7 @@ export interface SidebarModuleProgress {
   id: string;
   title: string;
   subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   progress: number;
   isUnlocked: boolean;
   isCompleted: boolean;
@@ -254,18 +255,6 @@ const getNavigationItems = (
       icon: 'Trophy',
     },
     {
-      id: 'content',
-      label: 'Gestión de Contenido',
-      path: '/teacher/content',
-      icon: 'BookOpen',
-    },
-    {
-      id: 'communication',
-      label: 'Comunicación',
-      path: '/teacher/communication',
-      icon: 'MessageSquare',
-    },
-    {
       id: 'analytics',
       label: 'Analiticas',
       path: '/teacher/analytics',
@@ -414,11 +403,11 @@ const IconMap = {
 /**
  * Badge component for module completion status
  */
-const Badge: React.FC<{
+const Badge = ({ variant = 'default', size = 'md', children }: {
   variant?: 'success' | 'default';
   size?: 'sm' | 'md';
-  children: React.ReactNode;
-}> = ({ variant = 'default', size = 'md', children }) => {
+  children: ReactNode;
+}) => {
   const variantClasses = {
     success: 'bg-green-100 text-green-700 border-green-200',
     default: 'bg-gray-100 text-gray-700 border-gray-200',
@@ -445,12 +434,12 @@ const Badge: React.FC<{
 /**
  * Progress bar component with animation
  */
-const ProgressBar: React.FC<{
+const ProgressBar = ({ value, size = 'md', variant = 'detective', showPercentage: _showPercentage = true }: {
   value: number;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'detective' | 'success';
   showPercentage?: boolean;
-}> = ({ value, size = 'md', variant = 'detective', showPercentage: _showPercentage = true }) => {
+}) => {
   const sizeClasses = {
     sm: 'h-1.5',
     md: 'h-2',
@@ -483,7 +472,7 @@ const ProgressBar: React.FC<{
  * and detective theme styling. Features smooth animations and responsive
  * mobile overlay.
  */
-export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
+export const GamilitSidebar = ({
   isOpen,
   onClose,
   currentPath = '/dashboard',
@@ -491,7 +480,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
   onNavigate,
   className,
   userRole = 'student',
-}) => {
+}: GamilitSidebarProps) => {
   const branding = useContext(BrandingContext);
   const logoIconUrl = branding?.config?.logoIconUrl ?? DEFAULT_BRANDING.logoIconUrl;
   const navigationItems = getNavigationItems(userRole);

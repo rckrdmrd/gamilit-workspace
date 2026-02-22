@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, Sparkles } from 'lucide-react';
 import type { AchievementData } from '../../hooks/useDashboardData';
@@ -45,7 +45,7 @@ export function AchievementToast({
   const colors = rarityColors[achievement.rarity];
   const AchievementIcon = resolveLucideIcon(achievement.icon, 'trophy');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(onClose, 5000);
     return () => clearTimeout(timer);
   }, [onClose]);

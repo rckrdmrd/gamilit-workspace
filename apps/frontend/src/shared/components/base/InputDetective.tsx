@@ -1,12 +1,13 @@
-import React from 'react';
+import { forwardRef } from 'react';
+import type { InputHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@shared/utils/cn';
 
-export interface InputDetectiveProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputDetectiveProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   success?: string;
   helperText?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   inputSize?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'error' | 'success' | 'warning';
 }
@@ -24,7 +25,7 @@ const variantStyles = {
   warning: 'input-detective-warning',
 };
 
-export const InputDetective = React.forwardRef<HTMLInputElement, InputDetectiveProps>(
+export const InputDetective = forwardRef<HTMLInputElement, InputDetectiveProps>(
   (
     {
       label,

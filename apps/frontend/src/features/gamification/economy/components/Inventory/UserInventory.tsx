@@ -8,7 +8,7 @@ import { useInventory } from '../../hooks/useInventory';
 import { InventoryItem } from './InventoryItem';
 import type { ShopCategory } from '../../types/economyTypes';
 
-export const UserInventory: React.FC = () => {
+export const UserInventory = () => {
   const { inventory, inventoryCount, isEmpty, inventoryStats, searchInventory } = useInventory();
 
   const [searchQuery, setSearchQuery] = useState('');

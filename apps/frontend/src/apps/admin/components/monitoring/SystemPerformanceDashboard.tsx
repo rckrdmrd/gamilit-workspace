@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { MetricsChart } from './MetricsChart';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
@@ -16,12 +16,12 @@ import {
 interface MetricCardProps {
   label: string;
   value: string | number;
-  icon: React.ReactNode;
+  icon: ReactNode;
   status: 'healthy' | 'warning' | 'critical';
   subtitle?: string;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({ label, value, icon, status, subtitle }) => {
+const MetricCard = ({ label, value, icon, status, subtitle }: MetricCardProps) => {
   const statusColors = {
     healthy: 'text-green-500',
     warning: 'text-yellow-500',
@@ -55,7 +55,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, icon, status, sub
   );
 };
 
-export const SystemPerformanceDashboard: React.FC = () => {
+export const SystemPerformanceDashboard = () => {
   const { metrics, history, loading, error, refresh } = useSystemMetrics(30000);
   const [autoRefresh, setAutoRefresh] = useState(true);
 

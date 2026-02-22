@@ -1,4 +1,3 @@
-import React from 'react';
 import { CheckCircle, XCircle, AlertCircle, HelpCircle, Shield } from 'lucide-react';
 import { Claim, FactCheckResult } from './verificadorFakeNewsTypes';
 
@@ -8,11 +7,11 @@ interface FactCheckDashboardProps {
   onVerifyClaim: (claimId: string) => void;
 }
 
-export const FactCheckDashboard: React.FC<FactCheckDashboardProps> = ({
+export const FactCheckDashboard = ({
   claims,
   results,
   onVerifyClaim,
-}) => {
+}: FactCheckDashboardProps) => {
   const getVerdictIcon = (verdict: FactCheckResult['verdict']) => {
     switch (verdict) {
       case 'true':

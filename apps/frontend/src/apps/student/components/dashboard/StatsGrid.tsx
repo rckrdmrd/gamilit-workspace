@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, BookOpen, TrendingUp, Flame } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -17,7 +17,7 @@ interface StatsGridProps {
 }
 
 interface StatCardProps {
-  icon: React.ElementType;
+  icon: ElementType;
   value: string | number;
   label: string;
   gradient: string;
@@ -25,14 +25,14 @@ interface StatCardProps {
   index: number;
 }
 
-const StatCard: React.FC<StatCardProps> = ({
+const StatCard = ({
   icon: Icon,
   value,
   label,
   gradient,
   iconColor,
   index,
-}) => {
+}: StatCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -94,7 +94,7 @@ const StatCard: React.FC<StatCardProps> = ({
   );
 };
 
-export const StatsGrid: React.FC<StatsGridProps> = ({ stats, loading, error }) => {
+export const StatsGrid = ({ stats, loading, error }: StatsGridProps) => {
   // Format time from minutes to hours and minutes
   const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import {
   Target,
@@ -61,8 +61,8 @@ interface MissionCardProps {
   onMissionClick?: (missionId: string) => void;
 }
 
-const MissionCard: React.FC<MissionCardProps> = ({ mission, index, onMissionClick }) => {
-  const getMissionIcon = (): React.ElementType => {
+const MissionCard = ({ mission, index, onMissionClick }: MissionCardProps) => {
+  const getMissionIcon = (): ElementType => {
     if (mission.icon) {
       return resolveLucideIcon(mission.icon, 'target');
     }
@@ -303,7 +303,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, index, onMissionClic
   );
 };
 
-const MissionSkeleton: React.FC = () => (
+const MissionSkeleton = () => (
   <EnhancedCard variant="warning" hover={false} padding="md">
     <div className="mb-3 flex items-start justify-between">
       <div className="flex flex-1 items-center gap-2">
@@ -330,12 +330,12 @@ const MissionSkeleton: React.FC = () => (
   </EnhancedCard>
 );
 
-export const MissionsPanel: React.FC<MissionsPanelProps> = ({
+export const MissionsPanel = ({
   missions,
   loading,
   error,
   onMissionClick,
-}) => {
+}: MissionsPanelProps) => {
   // Handle error state
   if (error && !loading) {
     return (

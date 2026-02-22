@@ -1,54 +1,41 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, type MutableRefObject, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { Image, Plus, Trash2, Save, Send, Loader2, CheckCircle } from 'lucide-react';
+import { Image, Plus, Trash2, Save, Send, Loader2, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
-import { MemeAnnotator } from './MemeAnnotator';
-import { AnalisisMemesData, MemeAnnotation } from './analisisMemesTypes';
 import {
   calculateScore,
   saveProgress,
-  FeedbackData,
-  type DifficultyLevel,
 } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
-interface ProgressData {
-  progress: {
-    currentStep: number;
-    totalSteps: number;
-    score: number;
-    hintsUsed: number;
-    timeSpent: number;
-  };
-  answers: Record<string, unknown>;
-}
+import { MemeAnnotator } from './MemeAnnotator';
+import type { AnalisisMemesData, MemeAnnotation, MemeItem, AnalisisMemesProgressData, AnalisisMemesExerciseState } from './analisisMemesTypes';
+import type { FeedbackData, DifficultyLevel } from '@shared/components/mechanics/mechanicsTypes';
 
-interface ExerciseProps {
+/** Props for the AnalisisMemes exercise component */
+interface AnalisisMemesExerciseProps {
   exerciseId: string;
   userId?: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (data: ProgressData) => void;
-  initialData?: ExerciseState;
+  onProgressUpdate?: (data: AnalisisMemesProgressData) => void;
+  initialData?: AnalisisMemesExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: AnalisisMemesData;
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
       label: string;
-      icon?: React.ReactNode;
+      icon?: ReactNode;
       onClick: () => void;
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
   }>;
-}
-
-interface ExerciseState {
-  annotations: MemeAnnotation[];
 }
 
 const defaultExercise: AnalisisMemesData = {
@@ -59,12 +46,29 @@ const defaultExercise: AnalisisMemesData = {
   estimatedTime: 600,
   topic: 'Análisis de textos digitales',
   hints: [],
-  memeUrl: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect fill="#e5e7eb" width="600" height="400"/><text x="300" y="200" text-anchor="middle" fill="#6b7280" font-size="16">Imagen del meme</text></svg>')}`,
-  memeTitle: 'Meme sobre Marie Curie',
+  memeUrl: '/memes/marie-curie-glowing.svg',
+  memeTitle: 'Drake Hotline Bling: Marie Curie',
   expectedAnnotations: [],
+  memes: [
+    { id: 'meme1', imageUrl: '/memes/marie-curie-glowing.svg', format: 'Drake Hotline Bling' },
+    { id: 'meme2', imageUrl: '/memes/expanding-brain-curie.svg', format: 'Expanding Brain' },
+    { id: 'meme3', imageUrl: '/memes/distracted-curie.svg', format: 'Distracted Boyfriend' },
+    { id: 'meme4', imageUrl: '/memes/change-my-mind-curie.svg', format: 'Change My Mind' },
+    { id: 'meme5', imageUrl: '/memes/one-does-not-simply-curie.svg', format: 'One Does Not Simply' },
+    { id: 'meme6', imageUrl: '/memes/this-is-fine-curie.svg', format: 'This Is Fine' },
+  ],
 };
 
-export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
+/**
+ * Análisis de Memes Exercise — Module 4: Textos Digitales y Multimediales
+ *
+ * Students analyze meme images by placing annotations identifying text, context,
+ * humor, and critical elements. Supports multi-meme navigation with prev/next
+ * controls when the exercise contains multiple memes.
+ *
+ * Requires manual grading (requiresManualReview = true).
+ */
+export const AnalisisMemesExercise = ({
   exerciseId,
   onComplete,
   onExit,
@@ -72,7 +76,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   initialData,
   exercise = defaultExercise,
   actionsRef,
-}) => {
+}: AnalisisMemesExerciseProps) => {
   const [annotations, setAnnotations] = useState<MemeAnnotation[]>(initialData?.annotations || []);
   const [isAdding, setIsAdding] = useState(false);
   const [editingAnnotation, setEditingAnnotation] = useState<MemeAnnotation | null>(null);
@@ -81,59 +85,33 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentMemeIndex, setCurrentMemeIndex] = useState(0);
+
+  // Multi-meme support: derive meme list and current meme
+  const memeList: MemeItem[] = useMemo(() => {
+    if (exercise.memes && exercise.memes.length > 0) return exercise.memes;
+    // Fallback: single meme from memeUrl
+    return [{ id: exercise.id, imageUrl: exercise.memeUrl, format: exercise.memeTitle || '' }];
+  }, [exercise.memes, exercise.id, exercise.memeUrl, exercise.memeTitle]);
+
+  const currentMeme = memeList[currentMemeIndex];
+  const currentMemeUrl = currentMeme?.imageUrl || exercise.memeUrl;
+  const currentMemeTitle = currentMeme?.format
+    ? `${currentMeme.format}: ${exercise.title}`
+    : exercise.memeTitle;
+  const hasMultipleMemes = memeList.length > 1;
 
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-          type: 'info',
-          title: 'Análisis Enviado',
-          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Análisis Completado!',
-        message: 'Tu análisis ha sido evaluado correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   const localActionsRef = useRef<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
       label: string;
-      icon?: React.ReactNode;
+      icon?: ReactNode;
       onClick: () => void;
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
@@ -290,7 +268,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
 
   // Handle submit
   // FIX: Transform data to match AnalisisMemesAnswerDto expected by backend
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
     // Transform annotations to DTO format: { x, y, text } (without id/category)
@@ -305,22 +283,64 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
       .map((a) => `[${a.category.toUpperCase()}] ${a.text}`)
       .join('. ');
 
-    submit({
-      // Primary format expected by AnalisisMemesAnswerDto
-      annotations: dtoAnnotations,
-      analysis: {
-        message: analysisMessage || 'Análisis del meme sobre Marie Curie',
-      },
+    try {
+      const response = await submitAsync({
+        // Primary format expected by AnalisisMemesAnswerDto
+        annotations: dtoAnnotations,
+        analysis: {
+          message: analysisMessage || 'Análisis del meme sobre Marie Curie',
+        },
 
-      // Metadata for backwards compatibility and context
-      metadata: {
-        memeId: exercise.id,
-        memeTitle: exercise.memeTitle || exercise.title,
-        fullAnnotations: annotations, // Include category info for grading
-        selectedCategories: [...new Set(annotations.map((a) => a.category))],
-        annotationCount: annotations.length,
-      },
-    });
+        // Metadata for backwards compatibility and context
+        metadata: {
+          memeId: currentMeme?.id || exercise.id,
+          memeTitle: currentMemeTitle || exercise.title,
+          memeFormat: currentMeme?.format,
+          currentMemeIndex,
+          totalMemes: memeList.length,
+          fullAnnotations: annotations, // Include category info for grading
+          selectedCategories: [...new Set(annotations.map((a) => a.category))],
+          annotationCount: annotations.length,
+        },
+      });
+      setIsSubmitted(true);
+      const elapsedTime = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Check for manual review (MUST include 'submitted')
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Análisis Enviado',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, elapsedTime);
+        return;
+      }
+
+      // Normal graded flow
+      setFeedback({
+        type: 'success',
+        title: '¡Análisis Completado!',
+        message: 'Tu análisis ha sido evaluado correctamente.',
+        score: response.score,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(response.score, elapsedTime);
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    }
   };
 
   // Attach actions to ref
@@ -365,8 +385,36 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
         }
         cardPadding="lg"
       >
+        {/* Multi-meme navigation */}
+        {hasMultipleMemes && (
+          <div className="mb-4 flex items-center justify-between rounded-detective border-2 border-detective-border bg-detective-bg-secondary p-3">
+            <DetectiveButton
+              variant="secondary"
+              icon={<ChevronLeft className="h-4 w-4" />}
+              onClick={() => setCurrentMemeIndex((prev) => Math.max(0, prev - 1))}
+              disabled={currentMemeIndex === 0}
+            >
+              Anterior
+            </DetectiveButton>
+            <span className="text-detective-sm font-medium text-detective-text">
+              Meme {currentMemeIndex + 1} de {memeList.length}
+              {currentMeme?.format && (
+                <span className="ml-2 text-detective-text-secondary">— {currentMeme.format}</span>
+              )}
+            </span>
+            <DetectiveButton
+              variant="secondary"
+              onClick={() => setCurrentMemeIndex((prev) => Math.min(memeList.length - 1, prev + 1))}
+              disabled={currentMemeIndex === memeList.length - 1}
+            >
+              Siguiente
+              <ChevronRight className="h-4 w-4" />
+            </DetectiveButton>
+          </div>
+        )}
+
         <MemeAnnotator
-          memeUrl={exercise.memeUrl}
+          memeUrl={currentMemeUrl}
           annotations={annotations}
           onAddAnnotation={handleAddAnnotation}
           isAddingMode={isAdding}
@@ -385,7 +433,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="rounded-detective border-2 border-detective-border p-4 transition-colors hover:border-detective-orange"
+                  className="rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-colors hover:border-detective-orange"
                 >
                   {editingAnnotation?.id === annotation.id ? (
                     <div className="space-y-3">

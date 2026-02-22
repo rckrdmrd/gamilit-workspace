@@ -16,7 +16,7 @@
  * @module shared/components/base/TabBar
  */
 
-import type { ElementType } from 'react';
+import type { ElementType, KeyboardEvent, ReactNode } from 'react';
 import { useRef, useCallback } from 'react';
 import { cn } from '@shared/utils/cn';
 
@@ -32,7 +32,7 @@ export interface TabDefinition<T extends string = string> {
   /** Tooltip text for the badge (cards variant only) */
   badgeTooltip?: string;
   /** Icon as React node (student/teacher) or lucide-react ElementType (admin) */
-  icon?: React.ReactNode | ElementType;
+  icon?: ReactNode | ElementType;
   /** Optional description text (cards and detective-underline variants) */
   description?: string;
   /** Whether this tab is disabled */
@@ -58,7 +58,7 @@ export interface TabBarProps<T extends string = string> {
  * ElementType icons need to be instantiated: <Icon />.
  * ReactNode icons are rendered directly: {icon}.
  */
-function isElementType(icon: React.ReactNode | ElementType): icon is ElementType {
+function isElementType(icon: ReactNode | ElementType): icon is ElementType {
   return typeof icon === 'function' || (typeof icon === 'object' && icon !== null && '$$typeof' in icon && (icon as Record<string, unknown>).$$typeof === Symbol.for('react.forward_ref'));
 }
 
@@ -66,9 +66,9 @@ function isElementType(icon: React.ReactNode | ElementType): icon is ElementType
  * Renders an icon, handling both ElementType and ReactNode patterns.
  */
 function renderIcon(
-  icon: React.ReactNode | ElementType | undefined,
+  icon: ReactNode | ElementType | undefined,
   iconClassName?: string,
-): React.ReactNode {
+): ReactNode {
   if (!icon) return null;
   if (isElementType(icon)) {
     const Icon = icon;
@@ -91,7 +91,7 @@ export function TabBar<T extends string = string>({
   const tabListRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: KeyboardEvent) => {
       const enabledTabs = tabs.filter((t) => !t.disabled);
       const currentIndex = enabledTabs.findIndex((t) => t.id === activeTab);
       let nextIndex = currentIndex;

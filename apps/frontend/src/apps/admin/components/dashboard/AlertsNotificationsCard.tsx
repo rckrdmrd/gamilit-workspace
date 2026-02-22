@@ -21,11 +21,11 @@ interface AlertsNotificationsCardProps {
  * Shows up to 5 alerts sorted by severity, or a flagged-content fallback + empty state.
  * Extracted from AdminDashboardPage inline rendering.
  */
-export const AlertsNotificationsCard: React.FC<AlertsNotificationsCardProps> = ({
+export const AlertsNotificationsCard = ({
   alerts,
   flaggedContentCount,
   onDismissAlert,
-}) => {
+}: AlertsNotificationsCardProps) => {
   return (
     <DetectiveCard>
       <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-detective-text">

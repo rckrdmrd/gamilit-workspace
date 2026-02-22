@@ -4,7 +4,6 @@
  * Shown when the exercise is already completed.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check } from 'lucide-react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
@@ -12,7 +11,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useExerciseContext } from '../context/ExerciseContext';
 
-export const ExerciseCompletedState: React.FC = () => {
+export const ExerciseCompletedState = () => {
   const { user, gamificationData, logout, navigateBack } = useExerciseContext();
 
   return (

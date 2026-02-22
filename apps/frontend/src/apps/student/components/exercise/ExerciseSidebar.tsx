@@ -3,7 +3,7 @@
  * Collapsible sidebar with power-ups, hints, progress, and stats
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -36,7 +36,7 @@ interface ExerciseSidebarProps {
   className?: string;
 }
 
-export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
+export const ExerciseSidebar = ({
   isOpen,
   onToggle,
   availableCoins,
@@ -48,7 +48,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
   onOpenHints,
   onUsePowerUp,
   className = '',
-}) => {
+}: ExerciseSidebarProps) => {
   const { getAvailablePowerUps, getActivePowerUps, applyPowerUp } = usePowerUps();
   const [activeTab, setActiveTab] = useState<'powerups' | 'hints' | 'progress' | 'stats'>(
     'powerups',

@@ -64,8 +64,8 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 |---------|------------|
 | **exercise_type** | Tipo especifico de ejercicio (ej: crucigrama, detective_textual). 23 tipos en total. |
 | **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 30 mecanicas. |
-| **Evaluacion Automatica** | Ejercicios evaluados por el sistema (M1, M2, Quiz TikTok de M4). |
-| **Evaluacion Manual** | Ejercicios que requieren revision por maestro (M3, M4 parcial, M5). |
+| **Evaluacion Automatica** | Ejercicios evaluados por el sistema (M1, M2). No hay auto-scoring en M3-M5. |
+| **Evaluacion Manual** | Ejercicios que requieren revision por maestro (todos los de M3, M4 y M5, incluyendo Quiz TikTok). |
 | **Spaced Repetition** | Motor de repeticion espaciada para reforzar aprendizaje. |
 
 ### Evaluacion

@@ -5,7 +5,6 @@
  * IMPL-006: Updated icon map to include all achievement icons
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -96,7 +95,7 @@ const iconMap: Record<string, LucideIcon> = {
   'gem': Gem,
 };
 
-export const ProgressTreeVisualizer: React.FC = () => {
+export const ProgressTreeVisualizer = () => {
   const { getAchievementsByCategory } = useAchievements();
 
   const categories = [

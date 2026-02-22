@@ -11,7 +11,7 @@ interface InventoryItemProps {
   index: number;
 }
 
-export const InventoryItem: React.FC<InventoryItemProps> = ({ item, index }) => {
+export const InventoryItem = ({ item, index }: InventoryItemProps) => {
   const rarityColors = {
     common: 'border-rarity-common bg-rarity-common/5',
     rare: 'border-rarity-rare bg-rarity-rare/5',

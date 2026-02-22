@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, createElement } from 'react';
 import { Reorder } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -14,12 +14,12 @@ import { useInvalidateDashboard } from '@/shared/hooks';
 // Re-export TimelineExerciseProps for use by parent components
 export type { TimelineExerciseProps };
 
-export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
+export const TimelineExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: TimelineExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -36,7 +36,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
   // Frontend only tracks that user has ordered the events, not if they're correct
 
   // FE-055: Notify parent of progress updates WITH user answers
-  React.useEffect(() => {
+  useEffect(() => {
     if (onProgressUpdate) {
       const userOrder = events.map((e) => e.id);
 
@@ -132,7 +132,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
         specificActions: [
           {
             label: 'Mezclar',
-            icon: React.createElement(Shuffle, { className: 'w-4 h-4' }),
+            icon: createElement(Shuffle, { className: 'w-4 h-4' }),
             onClick: handleShuffle,
             variant: 'blue' as const,
           },

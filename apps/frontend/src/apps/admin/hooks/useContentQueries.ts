@@ -14,6 +14,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import * as adminAPI from '@/services/api/adminAPI';
+import educationalAPI from '@/services/api/educationalAPI';
+import type { CreateModulePayload } from '@/services/api/educationalAPI';
+import type { Module } from '@shared/types';
 import type { MediaItem, ContentVersion } from '../types';
 import toast from 'react-hot-toast';
 
@@ -62,6 +65,7 @@ const CONTENT_QUERY_KEYS = {
   allVersions: () => ['admin', 'content', 'versions'] as const,
   approvals: () => ['admin', 'content', 'approvals'] as const,
   exercises: () => ['admin', 'content', 'exercises'] as const,
+  modules: () => ['admin', 'educational', 'modules'] as const,
 };
 
 // ============================================================================
@@ -649,6 +653,50 @@ export function useLegacyExercises(options: UseLegacyExercisesOptions = {}) {
     refresh: async () => {
       await query.refetch();
     },
+  };
+}
+
+// ============================================================================
+// useModulesQuery
+// ============================================================================
+
+export interface UseModulesQueryOptions {
+  enabled?: boolean;
+}
+
+/**
+ * React Query hook for fetching and creating educational modules.
+ * Used by the exercise builder wizard to populate the module dropdown.
+ */
+export function useModulesQuery(options: UseModulesQueryOptions = {}) {
+  const { enabled = true } = options;
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: CONTENT_QUERY_KEYS.modules(),
+    queryFn: () => educationalAPI.getModules(),
+    enabled,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (payload: CreateModulePayload) => educationalAPI.createModule(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.modules() });
+      toast.success('Modulo creado correctamente');
+    },
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || 'Error al crear modulo');
+    },
+  });
+
+  return {
+    modules: (query.data ?? []) as Module[],
+    isLoading: query.isLoading,
+    createModule: createMutation.mutateAsync,
+    isCreating: createMutation.isPending,
   };
 }
 

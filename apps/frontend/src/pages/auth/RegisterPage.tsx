@@ -16,7 +16,7 @@
  * ```
  */
 
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import RegisterForm from '@/features/auth/components/RegisterForm';
 import { BrandingContext } from '@/app/providers/BrandingProvider';
@@ -25,7 +25,7 @@ import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 /**
  * RegisterPage Component
  */
-export const RegisterPage: React.FC = () => {
+export const RegisterPage = () => {
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
   const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;

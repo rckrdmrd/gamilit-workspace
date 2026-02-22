@@ -40,7 +40,6 @@ export interface AnalisisFuentesActions {
   getState: () => AnalisisFuentesState;
   reset: () => void;
   validate: () => Promise<void>;
-  analyzeSource?: (sourceId: string) => Promise<void>;
 }
 
 // Standardized Exercise Props Interface (Module 1 Pattern)
@@ -60,5 +59,6 @@ export interface AnalisisFuentesExerciseProps {
 // Answers format for backend submission (matches AnalisisFuentesAnswersDto)
 export interface AnalisisFuentesAnswers {
   ranking: string[]; // Array of source IDs ordered by credibility (most credible first)
+  justification: string; // Student's explanation of their ranking criteria (min 100 chars)
   startedAt?: string; // ISO 8601 timestamp when exercise was started
 }

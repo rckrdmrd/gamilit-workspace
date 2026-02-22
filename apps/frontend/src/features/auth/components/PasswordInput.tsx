@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { InputDetective, InputDetectiveProps } from '@shared/components/base/InputDetective';
 import { PasswordStrengthMeter } from './PasswordStrengthMeter';
@@ -12,13 +12,13 @@ interface PasswordInputProps extends Omit<InputDetectiveProps, 'type' | 'icon'> 
  * Input especializado para contraseñas
  * Incluye toggle de visibilidad y medidor de fortaleza opcional
  */
-export const PasswordInput: React.FC<PasswordInputProps> = ({
+export const PasswordInput = ({
   value,
   onChange,
   showStrengthMeter = false,
   showCriteria = true,
   ...props
-}) => {
+}: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {

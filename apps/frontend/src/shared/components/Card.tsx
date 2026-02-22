@@ -1,21 +1,21 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@shared/utils/cn';
 
 interface CardProps {
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
+  header?: ReactNode;
+  footer?: ReactNode;
   variant?: 'default' | 'bordered' | 'elevated';
   className?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card = ({
   header,
   footer,
   variant = 'default',
   className,
   children
-}) => {
+}: CardProps) => {
   const variantStyles = {
     default: 'bg-white rounded-lg',
     bordered: 'bg-white rounded-lg border border-gray-200',

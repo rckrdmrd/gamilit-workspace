@@ -11,10 +11,10 @@ interface ShopNavigationProps {
   onSelectCategory: (category: ShopCategory | 'all') => void;
 }
 
-export const ShopNavigation: React.FC<ShopNavigationProps> = ({
+export const ShopNavigation = ({
   selectedCategory,
   onSelectCategory,
-}) => {
+}: ShopNavigationProps) => {
   const categories = [
     { id: 'all' as const, name: 'All Items', icon: Store, color: 'detective-text' },
     { id: 'cosmetics' as const, name: 'Cosmetics', icon: Palette, color: 'detective-orange' },

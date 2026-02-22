@@ -7,7 +7,6 @@
  * @date 2025-11-24
  */
 
-import React from 'react';
 import { School, ChevronDown } from 'lucide-react';
 
 interface Classroom {
@@ -22,12 +21,12 @@ interface ClassroomSelectorProps {
   isLoading?: boolean;
 }
 
-export const ClassroomSelector: React.FC<ClassroomSelectorProps> = ({
+export const ClassroomSelector = ({
   classrooms,
   selectedClassroomId,
   onSelect,
   isLoading = false,
-}) => {
+}: ClassroomSelectorProps) => {
   return (
     <div className="relative">
       <label

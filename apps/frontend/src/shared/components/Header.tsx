@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Menu, User, LogOut, Settings, Bell, ChevronDown } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import type { User as UserType } from '@/shared/types/auth.types';
@@ -34,7 +34,7 @@ interface HeaderProps {
  * />
  * ```
  */
-export const Header: React.FC<HeaderProps> = ({ user, onLogout, onMenuToggle }) => {
+export const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

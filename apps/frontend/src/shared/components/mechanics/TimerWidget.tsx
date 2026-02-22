@@ -1,11 +1,9 @@
 /**
  * Timer Widget Component
  * Displays elapsed time for exercises
- *
- * TODO: Stub component - needs full implementation
  */
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 
 export interface TimerWidgetProps {
@@ -14,14 +12,14 @@ export interface TimerWidgetProps {
   showSeconds?: boolean;
 }
 
-export const TimerWidget: React.FC<TimerWidgetProps> = ({
+export const TimerWidget = ({
   startTime,
   isPaused = false,
   showSeconds = true,
-}) => {
-  const [elapsedTime, setElapsedTime] = React.useState(0);
+}: TimerWidgetProps) => {
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
@@ -45,10 +43,18 @@ export const TimerWidget: React.FC<TimerWidgetProps> = ({
     return `${minutes} min`;
   };
 
+  const formattedTime = formatTime(elapsedTime);
+
   return (
-    <div className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg">
-      <Clock className="w-4 h-4" />
-      <span className="text-sm font-medium">{formatTime(elapsedTime)}</span>
+    <div
+      role="timer"
+      aria-label={`Tiempo transcurrido: ${formattedTime}`}
+      aria-live="polite"
+      aria-atomic="true"
+      className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-2 py-1 sm:px-3 sm:py-2 rounded-lg"
+    >
+      <Clock className="w-4 h-4" aria-hidden="true" />
+      <span className="text-sm font-medium">{formattedTime}</span>
     </div>
   );
 };

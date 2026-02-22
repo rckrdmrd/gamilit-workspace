@@ -4,7 +4,7 @@
  * @description UI for finding opponents and joining battles (EXT-009)
  */
 
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useBattle } from '../hooks/useBattle';
 import type { MatchmakingPreferences } from '../types/battleTypes';
 
@@ -24,7 +24,7 @@ const DIFFICULTY_OPTIONS = [
 /**
  * BattleMatchmaking Component
  */
-export const BattleMatchmaking: React.FC = () => {
+export const BattleMatchmaking = () => {
   const {
     isSearching,
     queueStatus,

@@ -251,11 +251,27 @@ class AnalyticsAPI {
    */
   async getClassroomAnalytics(query?: GetAnalyticsQueryDto): Promise<ClassroomAnalytics> {
     try {
-      const { data } = await apiClient.get<ClassroomAnalytics>(
+      const { data } = await apiClient.get(
         API_ENDPOINTS.teacher.analytics,
         { params: query },
       );
-      return data;
+      // FIX B-001: Backend returns { analytics: {...}, scoreDistribution: [...] }
+      // Frontend expects flat ClassroomAnalytics. Transform here.
+      const analytics = data.analytics ?? data;
+      return {
+        classroom_id: data.classroom_id ?? query?.classroom_id ?? '',
+        average_score: analytics.average_score ?? 0,
+        completion_rate: analytics.average_completion_rate ?? analytics.completion_rate ?? 0,
+        engagement_rate: analytics.active_students && analytics.total_students
+          ? Math.round((analytics.active_students / analytics.total_students) * 100)
+          : 0,
+        module_stats: analytics.module_stats ?? [],
+        student_performance: analytics.student_performance ?? [],
+        average_time_on_task: analytics.total_time_spent_minutes ?? 0,
+        first_attempt_success_rate: analytics.first_attempt_success_rate ?? 0,
+        most_used_exercises: analytics.most_used_exercises ?? [],
+        activity_heatmap: analytics.activity_heatmap ?? [],
+      };
     } catch (error) {
       console.error('[AnalyticsAPI] Error fetching classroom analytics:', error);
       throw error;
@@ -292,11 +308,26 @@ class AnalyticsAPI {
    */
   async getEngagementMetrics(query?: GetEngagementMetricsDto): Promise<EngagementMetrics> {
     try {
-      const { data } = await apiClient.get<EngagementMetrics>(
+      const { data } = await apiClient.get(
         API_ENDPOINTS.teacher.engagementMetrics,
         { params: query },
       );
-      return data;
+      // FIX B-001: Backend returns { time_range, engagement_metrics: {...}, classrooms: [...] }
+      // Frontend expects flat EngagementMetrics. Transform here.
+      const metrics = data.engagement_metrics ?? data;
+      return {
+        period: data.time_range ?? query?.period ?? 'daily',
+        dau: metrics.daily_active_users ?? 0,
+        wau: metrics.weekly_active_users ?? 0,
+        session_duration_avg: metrics.session_duration_avg ?? 0,
+        sessions_per_user: metrics.average_submissions_per_student ?? 0,
+        feature_usage: metrics.feature_usage ?? [],
+        comparison_previous_period: metrics.comparison_previous_period ?? {
+          dau_change: 0,
+          wau_change: 0,
+          engagement_change: 0,
+        },
+      };
     } catch (error) {
       console.error('[AnalyticsAPI] Error fetching engagement metrics:', error);
       throw error;

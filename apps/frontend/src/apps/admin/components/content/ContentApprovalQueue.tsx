@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -12,7 +12,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 
-export const ContentApprovalQueue: React.FC = () => {
+export const ContentApprovalQueue = () => {
   const { approvals, loading, approve, reject } = useApprovals();
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');

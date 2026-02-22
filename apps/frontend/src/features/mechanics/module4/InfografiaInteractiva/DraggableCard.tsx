@@ -1,4 +1,4 @@
-import React from 'react';
+import { type CSSProperties } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
@@ -11,14 +11,14 @@ interface DraggableCardProps {
   isDragging?: boolean;
 }
 
-export const DraggableCard: React.FC<DraggableCardProps> = ({ id, title, content, isDragging: _isDragging }) => {
+export const DraggableCard = ({ id, title, content, isDragging: _isDragging }: DraggableCardProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging: isCurrentlyDragging } = useDraggable({
     id,
   });
 
   const style = {
     transform: CSS.Translate.toString(transform),
-    zIndex: isCurrentlyDragging ? 50 : 'auto' as React.CSSProperties['zIndex'],
+    zIndex: isCurrentlyDragging ? 50 : 'auto' as CSSProperties['zIndex'],
   };
 
   return (

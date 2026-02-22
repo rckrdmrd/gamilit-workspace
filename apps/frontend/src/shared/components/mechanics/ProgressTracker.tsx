@@ -1,11 +1,8 @@
 /**
  * Progress Tracker Component
  * Shows progress through exercise steps
- *
- * TODO: Stub component - needs full implementation
  */
 
-import React from 'react';
 import { Check } from 'lucide-react';
 
 /**
@@ -22,34 +19,49 @@ export interface ProgressTrackerProps {
   variant?: string;
 }
 
-export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
+export const ProgressTracker = ({
   currentStep,
   totalSteps,
   stepLabels,
-}) => {
+}: ProgressTrackerProps) => {
   const percentage = (currentStep / totalSteps) * 100;
 
   return (
     <div className="w-full">
       {/* Progress bar */}
-      <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+      <div
+        role="progressbar"
+        aria-label={`Progreso del ejercicio: paso ${currentStep} de ${totalSteps}`}
+        aria-valuenow={currentStep}
+        aria-valuemin={1}
+        aria-valuemax={totalSteps}
+        className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-2"
+      >
         <div
+          aria-hidden="true"
           className="absolute left-0 top-0 h-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-300"
           style={{ width: `${percentage}%` }}
         />
       </div>
 
       {/* Step indicators */}
-      <div className="flex justify-between items-center">
+      <ol className="flex justify-between items-center list-none p-0 m-0" aria-label="Pasos del ejercicio">
         {Array.from({ length: totalSteps }, (_, i) => {
           const step = i + 1;
           const isCompleted = step <= currentStep;
           const isCurrent = step === currentStep;
+          const stepLabel = stepLabels?.[i];
+          const stateLabel = isCompleted
+            ? 'completado'
+            : isCurrent
+            ? 'actual'
+            : 'pendiente';
 
           return (
-            <div key={step} className="flex flex-col items-center">
+            <li key={step} className="flex flex-col items-center">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                aria-label={`Paso ${step}${stepLabel ? `: ${stepLabel}` : ''} — ${stateLabel}`}
+                className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all ${
                   isCompleted
                     ? 'bg-green-500 text-white'
                     : isCurrent
@@ -57,17 +69,17 @@ export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
                     : 'bg-gray-300 text-gray-600'
                 }`}
               >
-                {isCompleted ? <Check className="w-4 h-4" /> : step}
+                {isCompleted ? <Check className="w-4 h-4" aria-hidden="true" /> : step}
               </div>
-              {stepLabels && stepLabels[i] && (
+              {stepLabel && (
                 <span className="text-xs text-gray-600 mt-1">
-                  {stepLabels[i]}
+                  {stepLabel}
                 </span>
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Activity, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { mockEconomicMetrics, mockInterventionTriggers } from '../../mockData/economyMockData';
 
-export const EconomicDashboard: React.FC = () => {
+export const EconomicDashboard = () => {
   const metrics = mockEconomicMetrics;
   const triggers = mockInterventionTriggers;
 

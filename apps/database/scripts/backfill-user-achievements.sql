@@ -30,12 +30,20 @@ BEGIN
       CASE
         WHEN a.conditions->'requirements'->>'exercises_completed' IS NOT NULL
           THEN (a.conditions->'requirements'->>'exercises_completed')::int
-        WHEN a.conditions->'requirements'->>'streak_days' IS NOT NULL
-          THEN (a.conditions->'requirements'->>'streak_days')::int
-        WHEN a.conditions->'requirements'->>'perfect_scores' IS NOT NULL
-          THEN (a.conditions->'requirements'->>'perfect_scores')::int
+        WHEN a.conditions->'requirements'->>'consecutive_days' IS NOT NULL
+          THEN (a.conditions->'requirements'->>'consecutive_days')::int
+        WHEN a.conditions->'requirements'->>'perfect_exercises' IS NOT NULL
+          THEN (a.conditions->'requirements'->>'perfect_exercises')::int
         WHEN a.conditions->'requirements'->>'modules_completed' IS NOT NULL
           THEN (a.conditions->'requirements'->>'modules_completed')::int
+        WHEN a.conditions->'requirements'->>'times_completed' IS NOT NULL
+          THEN (a.conditions->'requirements'->>'times_completed')::int
+        WHEN a.conditions->'requirements'->>'analyses_completed' IS NOT NULL
+          THEN (a.conditions->'requirements'->>'analyses_completed')::int
+        WHEN a.conditions->'requirements'->>'social_activities' IS NOT NULL
+          THEN (a.conditions->'requirements'->>'social_activities')::int
+        WHEN a.conditions->'requirements'->>'classrooms_joined' IS NOT NULL
+          THEN (a.conditions->'requirements'->>'classrooms_joined')::int
         WHEN a.conditions->'requirements'->>'count' IS NOT NULL
           THEN (a.conditions->'requirements'->>'count')::int
         ELSE 1

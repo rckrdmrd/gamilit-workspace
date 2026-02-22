@@ -6,7 +6,7 @@
  * @component
  */
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { SystemAlert } from '@/services/api/adminTypes';
@@ -18,17 +18,17 @@ interface AcknowledgeAlertModalProps {
   onConfirm: (note?: string) => Promise<void>;
 }
 
-export const AcknowledgeAlertModal: React.FC<AcknowledgeAlertModalProps> = ({
+export const AcknowledgeAlertModal = ({
   alert,
   isOpen,
   onClose,
   onConfirm,
-}) => {
+}: AcknowledgeAlertModalProps) => {
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);

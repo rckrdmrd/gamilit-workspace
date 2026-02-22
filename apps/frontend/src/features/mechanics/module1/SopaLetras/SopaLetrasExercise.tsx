@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, type MutableRefObject } from 'react';
 import { Check, X, Search } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -24,18 +24,18 @@ export interface SopaLetrasExerciseProps {
     };
     answers: Record<string, unknown>;
   }) => void;
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
 }
 
-export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
+export const SopaLetrasExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: SopaLetrasExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -44,7 +44,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
 
   // FE-059: Initialize words from words list only (wordsPositions field is sanitized)
   // User will discover positions by selecting cells in the grid
-  const initialWords: WordPosition[] = React.useMemo(() => {
+  const initialWords: WordPosition[] = useMemo(() => {
     const wordsList = exercise.content.words || [];
 
     const result = wordsList.map((item: string | any) => {
@@ -75,7 +75,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   const [hintsUsed] = useState(0);
 
   // FE-055: Notify parent of progress updates WITH user answers
-  React.useEffect(() => {
+  useEffect(() => {
     if (onProgressUpdate) {
       const foundWords = words.filter((w) => w.found).length;
 
@@ -101,7 +101,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   }, [words, hintsUsed, onProgressUpdate, startTime]);
 
   // Función para validar si las celdas seleccionadas forman una palabra válida
-  const validateSelection = React.useCallback(
+  const validateSelection = useCallback(
     (cells: { row: number; col: number }[]) => {
       if (cells.length === 0) return;
 
@@ -183,7 +183,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedCells, validateSelection]);
 
-  const handleCellSelect = React.useCallback(
+  const handleCellSelect = useCallback(
     (row: number, col: number) => {
       // En sopa de letras, las celdas pueden ser reutilizadas cuando las palabras se cruzan
       // Solo verificamos que no esté ya seleccionada en la selección actual
@@ -205,7 +205,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
     [foundCells],
   );
 
-  const handleCheck = React.useCallback(async () => {
+  const handleCheck = useCallback(async () => {
     // Validar selección actual antes de verificar
     setSelectedCells((currentCells) => {
       if (currentCells.length > 0) {
@@ -286,7 +286,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validateSelection, words, user, exercise.id]);
 
-  const handleReset = React.useCallback(() => {
+  const handleReset = useCallback(() => {
     setWords(initialWords);
     setSelectedCells([]);
     setFoundCells([]); // Limpiar también las celdas encontradas
@@ -305,19 +305,19 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   }, [actionsRef, handleReset, handleCheck]);
 
   // Handler para validar la selección actual (botón móvil)
-  const handleValidateSelection = React.useCallback(() => {
+  const handleValidateSelection = useCallback(() => {
     if (selectedCells.length > 0) {
       validateSelection(selectedCells);
     }
   }, [selectedCells, validateSelection]);
 
   // Handler para cancelar la selección actual
-  const handleCancelSelection = React.useCallback(() => {
+  const handleCancelSelection = useCallback(() => {
     setSelectedCells([]);
   }, []);
 
   // Obtener la palabra formada por las celdas seleccionadas (para mostrar preview)
-  const selectedWord = React.useMemo(() => {
+  const selectedWord = useMemo(() => {
     if (selectedCells.length === 0) return '';
     return selectedCells
       .map((cell) => exercise.content.grid[cell.row]?.[cell.col])

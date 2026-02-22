@@ -27,10 +27,6 @@ BEGIN
         RETURN NEW;
     END IF;
 
-    IF NEW.xp_earned <= 0 THEN
-        RETURN NEW;
-    END IF;
-
     -- Evitar re-disparos cuando el status o is_correct no cambiaron
     IF OLD.status IS NOT DISTINCT FROM NEW.status
        AND OLD.is_correct IS NOT DISTINCT FROM NEW.is_correct THEN
@@ -41,9 +37,15 @@ BEGIN
     UPDATE gamification_system.user_stats
     SET
         exercises_completed = exercises_completed + 1,
-        total_xp = total_xp + NEW.xp_earned,
-        ml_coins = ml_coins + NEW.ml_coins_earned,
-        ml_coins_earned_total = ml_coins_earned_total + NEW.ml_coins_earned,
+        perfect_scores = CASE WHEN NEW.score = 100 THEN perfect_scores + 1 ELSE perfect_scores END,
+        total_xp = total_xp + COALESCE(NEW.xp_earned, 0),
+        ml_coins = ml_coins + COALESCE(NEW.ml_coins_earned, 0),
+        ml_coins_earned_total = ml_coins_earned_total + COALESCE(NEW.ml_coins_earned, 0),
+        average_score = COALESCE((
+            SELECT AVG(score)::numeric(5,2)
+            FROM progress_tracking.exercise_submissions
+            WHERE user_id = NEW.user_id AND is_correct = true AND status IN ('graded', 'reviewed')
+        ), 0),
         last_activity_at = gamilit.now_mexico(),
         updated_at = gamilit.now_mexico()
     WHERE user_id = NEW.user_id;
@@ -54,17 +56,21 @@ BEGIN
             user_id,
             tenant_id,
             exercises_completed,
+            perfect_scores,
             total_xp,
             ml_coins,
             ml_coins_earned_total,
+            average_score,
             last_activity_at
         ) VALUES (
             NEW.user_id,
             '00000000-0000-0000-0000-000000000000'::UUID,
             1,
-            NEW.xp_earned,
-            100 + NEW.ml_coins_earned, -- Balance inicial de 100
-            NEW.ml_coins_earned,
+            CASE WHEN NEW.score = 100 THEN 1 ELSE 0 END,
+            COALESCE(NEW.xp_earned, 0),
+            100 + COALESCE(NEW.ml_coins_earned, 0), -- Balance inicial de 100
+            COALESCE(NEW.ml_coins_earned, 0),
+            NEW.score,
             gamilit.now_mexico()
         );
     END IF;

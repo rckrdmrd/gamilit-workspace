@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Image, Type, Plus, Trash2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -10,12 +10,12 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
+export const CollagePrensaExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: CollagePrensaExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');

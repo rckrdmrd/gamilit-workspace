@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type MutableRefObject, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -20,18 +20,18 @@ export interface CompletarEspaciosExerciseProps {
   exercise: CompletarEspaciosData;
   onComplete?: () => void;
   onProgressUpdate?: (data: CompletarEspaciosProgressData) => void;
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
 }
 
-export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps> = ({
+export const CompletarEspaciosExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: CompletarEspaciosExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -229,8 +229,8 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
   }, [actionsRef, handleReset, handleCheck]);
 
   // Split text into segments with blanks
-  const renderTextWithBlanks = (): React.ReactNode[] => {
-    const segments: React.ReactNode[] = [];
+  const renderTextWithBlanks = (): ReactNode[] => {
+    const segments: ReactNode[] = [];
     const parts = exercise.text.split('___');
 
     parts.forEach((part, index) => {
@@ -341,12 +341,12 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         </div>
 
         {/* Word Bank */}
-        <div className="mb-6 rounded-lg border border-detective-blue/10 bg-white p-6">
+        <div className="mb-6 rounded-lg border border-detective-blue/10 bg-white p-3 sm:p-6">
           <div className="mb-4 flex items-center gap-3">
             <Sparkles className="h-6 w-6 text-yellow-500" />
             <h3 className="text-lg font-bold text-detective-text">Banco de Palabras</h3>
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
             <AnimatePresence>
               {availableWords.map((word) => (
                 <motion.button

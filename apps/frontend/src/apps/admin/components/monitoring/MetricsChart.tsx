@@ -1,4 +1,3 @@
-import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -32,13 +31,13 @@ interface MetricsChartProps {
   unit?: string;
 }
 
-export const MetricsChart: React.FC<MetricsChartProps> = ({
+export const MetricsChart = ({
   data,
   label,
   color = '#f97316',
   threshold,
   unit = '',
-}) => {
+}: MetricsChartProps) => {
   const chartData = {
     labels: data.map((d) =>
       new Date(d.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useResponsiveLayout, useKeyboardShortcuts } from '../../hooks/useResponsiveLayout';
@@ -6,8 +6,8 @@ import { BottomNavigation } from './BottomNavigation';
 import { useNavigate } from 'react-router-dom';
 
 interface ResponsiveLayoutProps {
-  children: React.ReactNode;
-  sidebar?: React.ReactNode;
+  children: ReactNode;
+  sidebar?: ReactNode;
   showBottomNav?: boolean;
 }
 
@@ -18,7 +18,7 @@ export function ResponsiveLayout({
 }: ResponsiveLayoutProps) {
   const layout = useResponsiveLayout();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -30,7 +30,7 @@ export function ResponsiveLayout({
   });
 
   // Auto-close sidebar on mobile when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     if (layout.isMobile && sidebarOpen) {
       const handleClickOutside = () => setSidebarOpen(false);
       document.addEventListener('click', handleClickOutside);
@@ -197,7 +197,7 @@ export function DashboardGrid({
   children,
   className = '',
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }) {
   return (
@@ -212,8 +212,8 @@ export function DashboardSection({
   className = '',
 }: {
   title?: string;
-  children: React.ReactNode;
-  action?: React.ReactNode;
+  children: ReactNode;
+  action?: ReactNode;
   className?: string;
 }) {
   return (

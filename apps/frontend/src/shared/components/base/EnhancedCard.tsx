@@ -14,12 +14,13 @@
  * - Click handler support
  */
 
-import React from 'react';
+import { forwardRef } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
 export interface EnhancedCardProps {
-  children: React.ReactNode;
+  children: ReactNode;
   variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
   hover?: boolean;
   className?: string;
@@ -61,7 +62,7 @@ const paddingStyles = {
   lg: 'p-8',
 };
 
-export const EnhancedCard = React.forwardRef<HTMLDivElement, EnhancedCardProps>(
+export const EnhancedCard = forwardRef<HTMLDivElement, EnhancedCardProps>(
   (
     {
       children,

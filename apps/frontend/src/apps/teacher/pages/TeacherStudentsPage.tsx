@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getPerformanceLevelFromScore } from '@shared/utils/format.util';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DataTable, Column } from '@shared/components/common/DataTable';
 import { EmptyState } from '@shared/components/feedback';
-import { useApiError } from '@shared/hooks';
 import {
   Users,
   TrendingUp,
@@ -14,6 +14,7 @@ import {
   SortAsc,
   SortDesc,
 } from 'lucide-react';
+import { LoadingSpinner } from '@shared/components/loading';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { classroomsApi } from '@services/api/teacher';
 import { StudentDetailModal } from '../components/monitoring/StudentDetailModal';
@@ -32,13 +33,16 @@ interface StudentExtended {
   /** FIX-2026-01-25: last_active puede ser null si el estudiante no tiene actividad */
   last_active: string | null;
   score_average: number;
+  // FIX M-005: Optional fields from API (may not be present in all responses)
+  time_spent_minutes?: number;
+  exercises_completed?: number;
+  exercises_total?: number;
 }
 
 type SortField = 'student_name' | 'average_score' | 'completion_rate' | 'last_active';
 type SortDirection = 'asc' | 'desc';
 
 export default function TeacherStudentsPage() {
-  const [students, setStudents] = useState<StudentExtended[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<StudentExtended | null>(null);
   const [selectedStudentMonitoring, setSelectedStudentMonitoring] =
     useState<StudentMonitoring | null>(null);
@@ -48,69 +52,60 @@ export default function TeacherStudentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('student_name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [loading, setLoading] = useState(false);
-  const { error, handleError: handleApiError, clearError } = useApiError();
 
-  // Fetch classrooms using custom hook
+  // Fetch classrooms using custom hook (already React Query)
   const { classrooms, loading: classroomsLoading } = useClassrooms();
 
-  // Fetch students from all classrooms
-  useEffect(() => {
-    const fetchStudents = async () => {
-      if (!classrooms || classrooms.length === 0) {
-        setStudents([]);
-        return;
-      }
+  // FIX M-004: Migrate to React Query — replaces legacy useEffect with N+1 pattern
+  const classroomIds = useMemo(
+    () => (classrooms ?? []).map((c) => c.id).sort().join(','),
+    [classrooms],
+  );
 
-      try {
-        setLoading(true);
-        clearError();
+  const studentsQuery = useQuery({
+    queryKey: ['teacher', 'students', 'all', classroomIds],
+    queryFn: async () => {
+      if (!classrooms || classrooms.length === 0) return [];
 
-        // Fetch students from all classrooms in parallel
-        const allStudentsPromises = classrooms.map(async (classroom) => {
-          try {
-            // Call real API for each classroom (returns PaginatedResponse)
-            const response = await classroomsApi.getClassroomStudents(classroom.id);
-            const classroomStudents = response.data;
+      const allStudentsPromises = classrooms.map(async (classroom) => {
+        try {
+          const response = await classroomsApi.getClassroomStudents(classroom.id);
+          return response.data.map((student) => ({
+            student_id: student.user_id || student.id,
+            student_name: student.full_name,
+            email: student.email || 'N/A',
+            average_score: student.score_average,
+            completion_rate: student.progress_percentage,
+            performance_level: getPerformanceLevelFromScore(student.score_average),
+            classroom_name: classroom.name,
+            classroom_id: classroom.id,
+            last_active: student.last_activity,
+            score_average: student.score_average,
+            time_spent_minutes: student.time_spent_minutes,
+            exercises_completed: student.exercises_completed,
+            exercises_total: student.exercises_total,
+          }));
+        } catch {
+          return [];
+        }
+      });
 
-            // Enrich student data with classroom information
-            // API returns user_id (not id) per StudentInClassroomDto
-            return classroomStudents.map((student) => ({
-              student_id: student.user_id || student.id,
-              student_name: student.full_name,
-              email: student.email || 'N/A',
-              average_score: student.score_average,
-              completion_rate: student.progress_percentage,
-              performance_level: getPerformanceLevelFromScore(student.score_average),
-              classroom_name: classroom.name,
-              classroom_id: classroom.id,
-              last_active: student.last_activity,
-              score_average: student.score_average,
-            }));
-          } catch (err) {
-            handleApiError(err, `Error al cargar estudiantes del aula ${classroom.name}`);
-            return [];
-          }
-        });
+      const studentsArrays = await Promise.all(allStudentsPromises);
+      return studentsArrays.flat() as StudentExtended[];
+    },
+    enabled: !!classrooms && classrooms.length > 0,
+    staleTime: 5 * 60 * 1000,
+  });
 
-        const studentsArrays = await Promise.all(allStudentsPromises);
-        const allStudents = studentsArrays.flat();
-
-        setStudents(allStudents);
-        setLoading(false);
-      } catch (err) {
-        handleApiError(err, 'Error al cargar estudiantes');
-        setLoading(false);
-      }
-    };
-
-    fetchStudents();
-  }, [classrooms]);
+  const students = studentsQuery.data ?? [];
+  const loading = studentsQuery.isLoading;
+  const error = studentsQuery.error;
 
   const viewStudentDetail = (student: StudentExtended) => {
     setSelectedStudent(student);
 
     // Crear objeto StudentMonitoring desde los datos ya disponibles
+    // FIX M-005: Use data from API response when available instead of stub zeros
     const studentMonitoring: StudentMonitoring = {
       id: student.student_id,
       full_name: student.student_name,
@@ -121,9 +116,9 @@ export default function TeacherStudentsPage() {
       last_activity: student.last_active,
       progress_percentage: student.completion_rate,
       score_average: student.average_score,
-      time_spent_minutes: 0,
-      exercises_completed: 0,
-      exercises_total: 0,
+      time_spent_minutes: student.time_spent_minutes ?? 0,
+      exercises_completed: student.exercises_completed ?? 0,
+      exercises_total: student.exercises_total ?? 0,
     };
 
     setSelectedStudentMonitoring(studentMonitoring);
@@ -471,18 +466,16 @@ export default function TeacherStudentsPage() {
 
         {/* Loading State */}
         {(loading || classroomsLoading) && (
-          <div className="py-8 text-center" aria-live="polite">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange" role="status">
-              <span className="sr-only">Cargando</span>
-            </div>
-            <p className="mt-4 text-detective-text-secondary">Cargando estudiantes...</p>
+          <div className="flex flex-col items-center justify-center py-20" aria-live="polite">
+            <LoadingSpinner size="lg" className="mb-4" />
+            <p className="text-detective-text-secondary">Cargando estudiantes...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && (
           <div className="mb-4 rounded-lg border border-red-500 bg-red-500/20 p-4" role="alert">
-            <p className="text-red-500">{error}</p>
+            <p className="text-red-500">{error.message}</p>
           </div>
         )}
 

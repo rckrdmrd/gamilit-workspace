@@ -4,7 +4,7 @@
  * Preview of recent achievements with filtering and link to full page
  */
 
-import React, { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Award, Trophy, Lock, CheckCircle, ArrowRight, Sparkles, Coins, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -62,7 +62,7 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
     })
     .slice(0, 6);
 
-  const filters: { id: FilterType; label: string; icon: React.ReactNode }[] = [
+  const filters: { id: FilterType; label: string; icon: ReactNode }[] = [
     { id: 'all', label: 'Todos', icon: <Trophy className="h-4 w-4" /> },
     { id: 'recent', label: 'Recientes', icon: <Sparkles className="h-4 w-4" /> },
     { id: 'rare', label: 'Raros', icon: <Award className="h-4 w-4" /> },

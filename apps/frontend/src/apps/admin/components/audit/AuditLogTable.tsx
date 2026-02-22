@@ -7,7 +7,7 @@
  * @see US-AE-011 - Visor de Audit Logs
  */
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DataTable } from '@shared/components/common/DataTable';
 import type { Column } from '@shared/components/common/DataTable';
@@ -50,7 +50,7 @@ function formatTableDate(dateString: string): string {
   });
 }
 
-export const AuditLogTable: React.FC<AuditLogTableProps> = ({
+export const AuditLogTable = ({
   logs,
   page,
   pageSize,
@@ -61,7 +61,7 @@ export const AuditLogTable: React.FC<AuditLogTableProps> = ({
   activeFiltersCount,
   onPageChange,
   onViewDetail,
-}) => {
+}: AuditLogTableProps) => {
   /** Column definitions for the audit log table */
   const auditColumns: Column<AuditLogEntry>[] = useMemo(
     () => [

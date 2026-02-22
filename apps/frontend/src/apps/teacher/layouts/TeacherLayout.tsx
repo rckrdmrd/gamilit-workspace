@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext, type ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
@@ -9,7 +9,7 @@ import { BrandingContext } from '@/app/providers/BrandingProvider';
 import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 interface TeacherLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   user?: UserType | AuthUser;
   gamificationData?: UserGamificationData | null;
   organizationName?: string;
@@ -33,13 +33,13 @@ interface TeacherLayoutProps {
  * </TeacherLayout>
  * ```
  */
-export const TeacherLayout: React.FC<TeacherLayoutProps> = ({
+export const TeacherLayout = ({
   children,
   user,
   gamificationData,
   organizationName,
   onLogout,
-}) => {
+}: TeacherLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();

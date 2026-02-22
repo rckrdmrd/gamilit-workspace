@@ -11,7 +11,7 @@
  * @component
  */
 
-import React from 'react';
+import type { ChangeEvent } from 'react';
 import { Filter, RefreshCw, Calendar } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type {
@@ -28,13 +28,13 @@ interface AlertFiltersProps {
   isLoading?: boolean;
 }
 
-export const AlertFilters: React.FC<AlertFiltersProps> = ({
+export const AlertFilters = ({
   filters,
   onFiltersChange,
   onRefresh,
   isLoading,
-}) => {
-  const handleSeverityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+}: AlertFiltersProps) => {
+  const handleSeverityChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     onFiltersChange({
       ...filters,
@@ -43,7 +43,7 @@ export const AlertFilters: React.FC<AlertFiltersProps> = ({
     });
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     onFiltersChange({
       ...filters,
@@ -52,7 +52,7 @@ export const AlertFilters: React.FC<AlertFiltersProps> = ({
     });
   };
 
-  const handleAlertTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleAlertTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     onFiltersChange({
       ...filters,
@@ -61,7 +61,7 @@ export const AlertFilters: React.FC<AlertFiltersProps> = ({
     });
   };
 
-  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateFromChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({
       ...filters,
       date_from: e.target.value || undefined,
@@ -69,7 +69,7 @@ export const AlertFilters: React.FC<AlertFiltersProps> = ({
     });
   };
 
-  const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateToChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({
       ...filters,
       date_to: e.target.value || undefined,

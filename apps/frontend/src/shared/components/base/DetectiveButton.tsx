@@ -1,14 +1,15 @@
-import React from 'react';
+import { forwardRef } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
-export interface DetectiveButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface DetectiveButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'gold' | 'blue' | 'green' | 'purple' | 'danger' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  icon?: React.ReactNode;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  icon?: ReactNode;
   as?: 'button' | 'a' | 'span';
 }
 
@@ -30,7 +31,7 @@ const variantStyles = {
   ghost: 'text-detective-orange hover:bg-detective-bg',
 };
 
-const LoadingSpinner: React.FC<{ className?: string }> = ({ className }) => (
+const LoadingSpinner = ({ className }: { className?: string }) => (
   <svg
     className={cn('animate-spin h-4 w-4', className)}
     xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +55,7 @@ const LoadingSpinner: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-export const DetectiveButton = React.forwardRef<HTMLButtonElement, DetectiveButtonProps>(
+export const DetectiveButton = forwardRef<HTMLButtonElement, DetectiveButtonProps>(
   (
     {
       variant = 'primary',

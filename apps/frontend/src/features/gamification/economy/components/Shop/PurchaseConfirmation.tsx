@@ -11,10 +11,10 @@ interface PurchaseConfirmationProps {
   onClose?: () => void;
 }
 
-export const PurchaseConfirmation: React.FC<PurchaseConfirmationProps> = ({
+export const PurchaseConfirmation = ({
   isOpen = true,
   onClose = () => {},
-}) => {
+}: PurchaseConfirmationProps) => {
   return (
     <Modal
       isOpen={isOpen}

@@ -6,7 +6,7 @@
  * Uses the shared DataTable with detective variant for admin dark theme.
  */
 
-import React from 'react';
+import { useEffect } from 'react';
 import { Search, UserCheck, UserX, Trash2, Key } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DataTable, type Column } from '@shared/components/common/DataTable';
@@ -14,7 +14,7 @@ import { useUserManagement } from '../../hooks/useUserManagement';
 import { getDetectiveRoleName, getDetectiveRoleBadge } from '@shared/utils/detectiveRoles';
 import type { SystemUser } from '../../types';
 
-export const UserManagementTable: React.FC = () => {
+export const UserManagementTable = () => {
   const {
     users,
     loading,
@@ -26,7 +26,7 @@ export const UserManagementTable: React.FC = () => {
     setFilters,
   } = useUserManagement();
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

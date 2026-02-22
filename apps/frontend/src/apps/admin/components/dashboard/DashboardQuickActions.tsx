@@ -14,7 +14,7 @@ interface DashboardQuickActionsProps {
  * Uses useNavigate internally for route navigation.
  * Extracted from AdminDashboardPage inline rendering.
  */
-export const DashboardQuickActions: React.FC<DashboardQuickActionsProps> = ({ metrics }) => {
+export const DashboardQuickActions = ({ metrics }: DashboardQuickActionsProps) => {
   const navigate = useNavigate();
 
   return (

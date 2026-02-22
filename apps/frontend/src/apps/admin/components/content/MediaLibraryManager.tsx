@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -7,7 +7,7 @@ import { useMediaLibrary } from '../../hooks/useContentManagement';
 import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { Upload, Image, Video, Music, Trash2, Search, Tag, HardDrive } from 'lucide-react';
 
-export const MediaLibraryManager: React.FC = () => {
+export const MediaLibraryManager = () => {
   const { media, loading, storageUsed, storageLimit, uploadFile, deleteFile, bulkDelete } =
     useMediaLibrary();
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,7 +18,7 @@ export const MediaLibraryManager: React.FC = () => {
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 

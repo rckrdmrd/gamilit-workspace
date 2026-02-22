@@ -7,7 +7,7 @@
  * @date 2025-11-24
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 
 interface Student {
@@ -23,12 +23,12 @@ interface StudentSearchProps {
   placeholder?: string;
 }
 
-export const StudentSearch: React.FC<StudentSearchProps> = ({
+export const StudentSearch = ({
   students,
   onSelect,
   isLoading = false,
   placeholder = 'Buscar estudiante...',
-}) => {
+}: StudentSearchProps) => {
   const [query, setQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);

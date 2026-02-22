@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import type {
@@ -67,12 +67,12 @@ const SORT_OPTIONS: Array<{
  * - Clear all filters button
  * - Responsive layout (stacks vertically on mobile)
  */
-export const AchievementFilter: React.FC<AchievementFilterProps> = ({
+export const AchievementFilter = ({
   currentFilter,
   onFilterChange,
   className,
-}) => {
-  const [searchInput, setSearchInput] = React.useState(currentFilter.searchQuery || '');
+}: AchievementFilterProps) => {
+  const [searchInput, setSearchInput] = useState(currentFilter.searchQuery || '');
 
   /**
    * Handle category change
@@ -117,7 +117,7 @@ export const AchievementFilter: React.FC<AchievementFilterProps> = ({
   /**
    * Handle search input change (debounced)
    */
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchInput(value);
 

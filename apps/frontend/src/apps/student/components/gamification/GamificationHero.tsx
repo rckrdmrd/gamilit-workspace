@@ -5,7 +5,7 @@
  * Features animations and gradient backgrounds following detective theme
  */
 
-import React from 'react';
+import { useEffect } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { Coins, Zap, TrendingUp, Award, Star } from 'lucide-react';
 import { MAYA_RANKS as MAYA_RANKS_SSOT, type MayaRank } from '@/shared/constants/ranks.constants';
@@ -67,7 +67,7 @@ export function GamificationHero({
     damping: 30,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     coinsSpring.set(mlCoins);
     xpSpring.set(currentXP);
   }, [mlCoins, currentXP, coinsSpring, xpSpring]);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Trophy, Gift, Lock, CheckCircle, Loader } from 'lucide-react';
 import { Modal } from './common/Modal';
 import { cn } from '@shared/utils/cn';
@@ -59,13 +59,13 @@ const getStatus = (userAchievement?: UserAchievement): AchievementStatus => {
  * - Loading state for claim action
  * - Success/error feedback
  */
-export const AchievementModal: React.FC<AchievementModalProps> = ({
+export const AchievementModal = ({
   achievement,
   userAchievement,
   isOpen,
   onClose,
   onClaimRewards,
-}) => {
+}: AchievementModalProps) => {
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimError, setClaimError] = useState<string | null>(null);
 

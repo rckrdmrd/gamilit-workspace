@@ -9,7 +9,7 @@
  * @since CORR-009
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 /**
  * Representa un paso en el camino de navegacion
@@ -75,7 +75,7 @@ const extractDomain = (url: string): string => {
   }
 };
 
-export const NavigationPathViewer: React.FC<NavigationPathViewerProps> = ({
+export const NavigationPathViewer = ({
   steps,
   researchQuestion,
   finalAnswer,
@@ -84,7 +84,7 @@ export const NavigationPathViewer: React.FC<NavigationPathViewerProps> = ({
   onStepSelect,
   readOnly: _readOnly = true,
   className = '',
-}) => {
+}: NavigationPathViewerProps) => {
   const [selectedStep, setSelectedStep] = useState<NavigationStep | null>(null);
   const [viewMode, setViewMode] = useState<'timeline' | 'tree'>('timeline');
 

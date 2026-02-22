@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ComponentType } from 'react';
 import {
   PlayCircle,
   CheckCircle,
@@ -35,11 +35,11 @@ interface ExerciseAttemptCardProps {
  * @param attempts - Exercise attempts (optional)
  * @param onStart - Start/continue handler
  */
-export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
+export const ExerciseAttemptCard = ({
   exercise,
   attempts = [],
   onStart,
-}) => {
+}: ExerciseAttemptCardProps) => {
   // Helper functions to format score and attempt count
   const formatScore = (score: number, maxScore: number) => {
     return `${score}/${maxScore}`;
@@ -64,7 +64,7 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
 
   // Get icon for exercise type
   const getExerciseIcon = (type: ExerciseType) => {
-    const iconMap: Partial<Record<ExerciseType, React.ComponentType<{ className?: string }>>> = {
+    const iconMap: Partial<Record<ExerciseType, ComponentType<{ className?: string }>>> = {
       [ExerciseType.CRUCIGRAMA]: ListChecks,
       [ExerciseType.LINEA_TIEMPO]: FileText,
       [ExerciseType.SOPA_LETRAS]: Code,

@@ -1,4 +1,5 @@
-import React from 'react';
+import { forwardRef } from 'react';
+import type { ElementType } from 'react';
 import { cn } from '@shared/utils/cn';
 import {
   CheckCircle2,
@@ -56,7 +57,7 @@ const statusConfig: Record<
     bg: string;
     text: string;
     border: string;
-    icon: React.ElementType;
+    icon: ElementType;
     defaultLabel: string;
   }
 > = {
@@ -192,7 +193,7 @@ const iconSizes = {
   lg: 'w-4 h-4',
 };
 
-export const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
+export const StatusBadge = forwardRef<HTMLSpanElement, StatusBadgeProps>(
   ({ status, className, showIcon = true, size = 'md', label }, ref) => {
     const config = statusConfig[status];
     const Icon = config.icon;

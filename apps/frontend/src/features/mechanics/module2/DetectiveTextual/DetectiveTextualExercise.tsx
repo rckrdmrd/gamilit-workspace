@@ -5,7 +5,7 @@
  * FIX 2024-11-29: Ahora carga datos desde el API en lugar de usar mock data
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, CheckCircle2, Circle, Book } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -34,16 +34,16 @@ interface QuestionCardProps {
   isCorrect?: boolean;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({
+const QuestionCard = ({
   question,
   questionNumber,
   selectedOption,
   onSelectOption,
   showFeedback = false,
   isCorrect = false,
-}) => {
+}: QuestionCardProps) => {
   return (
-    <div className="rounded-lg border border-detective-blue/20 bg-white p-6 shadow-md">
+    <div className="rounded-lg border border-detective-blue/20 bg-white p-3 sm:p-6 shadow-md">
       {/* Question Header */}
       <div className="mb-4 flex items-start gap-3">
         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-blue font-semibold text-white">
@@ -125,14 +125,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 /**
  * Main Detective Textual Exercise Component
  */
-export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> = ({
+export const DetectiveTextualExercise = ({
   exerciseId: propExerciseId,
   exercise: exerciseFromPage,
   onComplete,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: DetectiveTextualExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
 
@@ -384,7 +384,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
         }
       >
         {/* Reading Passage */}
-        <div className="rounded-lg border-2 border-detective-blue/20 bg-gradient-to-br from-amber-50 to-orange-50 p-6 mb-6">
+        <div className="rounded-lg border-2 border-detective-blue/20 bg-gradient-to-br from-amber-50 to-orange-50 p-3 sm:p-6 mb-6">
           <div className="mb-3 flex items-center gap-2 text-detective-blue">
             <Book className="h-5 w-5" />
             <h3 className="text-lg font-semibold">Pasaje de Lectura</h3>

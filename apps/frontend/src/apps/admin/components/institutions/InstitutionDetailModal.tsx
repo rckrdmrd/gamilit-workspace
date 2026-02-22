@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InstitutionStats, InstitutionStatsData } from './InstitutionStats';
@@ -39,7 +39,7 @@ interface InstitutionDetailModalProps {
  *
  * @component
  */
-export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
+export const InstitutionDetailModal = ({
   isOpen,
   institution,
   stats,
@@ -47,7 +47,7 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
   onClose,
   onEdit,
   onManageFeatures,
-}) => {
+}: InstitutionDetailModalProps) => {
   const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {

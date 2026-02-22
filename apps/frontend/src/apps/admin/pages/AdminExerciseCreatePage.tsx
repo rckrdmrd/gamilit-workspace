@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect, type FC } from 'react';
+import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -13,6 +14,7 @@ import {
   Settings,
   Eye,
   Check,
+  Loader2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AdminPageShell } from '../components/shared/AdminPageShell';
@@ -38,10 +40,11 @@ import {
   PodcastArgumentativoConfig,
   TribunalOpinionesConfig,
 } from '../components/exercise-builder/type-configs';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
-import { CONTENT_QUERY_KEYS } from '../hooks/useContentQueries';
+import { CONTENT_QUERY_KEYS, useModulesQuery } from '../hooks/useContentQueries';
+import { getExercise } from '@/services/api/educationalAPI';
 import type { ExerciseFormData } from '../types/exercise-builder.types';
 
 export type { ExerciseFormData } from '../types/exercise-builder.types';
@@ -53,7 +56,7 @@ const STEPS = [
   { id: 4, label: 'Vista Previa', icon: Eye },
 ];
 
-const TYPE_CONFIG_MAP: Record<string, React.FC<{ config: Record<string, unknown>; onChange: (c: Record<string, unknown>) => void }>> = {
+const TYPE_CONFIG_MAP: Record<string, FC<{ config: Record<string, unknown>; onChange: (c: Record<string, unknown>) => void }>> = {
   completar_espacios: CompletarEspaciosConfig,
   crucigrama: CrucigramaConfig,
   emparejamiento: EmparejamientoConfig,
@@ -102,6 +105,16 @@ const DIFFICULTY_MAP: Record<ExerciseFormData['difficulty'], string> = {
 };
 
 /**
+ * Reverse map: backend difficulty → frontend difficulty
+ */
+const DIFFICULTY_REVERSE_MAP: Record<string, ExerciseFormData['difficulty']> = {
+  beginner: 'beginner',
+  intermediate: 'intermediate',
+  advanced: 'advanced',
+  proficient: 'expert',
+};
+
+/**
  * Converts camelCase ExerciseFormData to snake_case backend payload
  * matching the educational_content.exercises table schema.
  *
@@ -131,9 +144,45 @@ function buildExercisePayload(formData: ExerciseFormData, isActive: boolean) {
 }
 
 export default function AdminExerciseCreatePage() {
+  const { id: exerciseId } = useParams<{ id: string }>();
+  const isEditMode = !!exerciseId;
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<ExerciseFormData>(initialFormData);
+  const [formInitialized, setFormInitialized] = useState(false);
   const queryClient = useQueryClient();
+  const { modules } = useModulesQuery();
+
+  // Fetch exercise data when in edit mode
+  const exerciseQuery = useQuery({
+    queryKey: ['admin', 'exercise', exerciseId],
+    queryFn: () => getExercise(exerciseId!),
+    enabled: isEditMode,
+  });
+
+  // Populate form when exercise data loads
+  useEffect(() => {
+    if (exerciseQuery.data && !formInitialized) {
+      const ex = exerciseQuery.data as unknown as Record<string, unknown>;
+      const difficultyRaw = (ex.difficulty || ex.difficulty_level || 'beginner') as string;
+      setFormData({
+        title: (ex.title as string) || '',
+        description: (ex.description as string) || '',
+        instructions: (ex.instructions as string) || '',
+        moduleId: (ex.module_id as string) || '',
+        difficulty: DIFFICULTY_REVERSE_MAP[difficultyRaw] || 'beginner',
+        estimatedTime: (ex.estimated_time_minutes as number) || (ex.estimatedTime as number) || 10,
+        howToSolve: (ex.how_to_solve as string) || '',
+        recommendedStrategy: (ex.recommended_strategy as string) || '',
+        pedagogicalNotes: (ex.pedagogical_notes as string) || '',
+        exerciseType: ((ex.exercise_type || ex.type) as string) || '',
+        typeConfig: (ex.config as Record<string, unknown>) || (ex.content as Record<string, unknown>) || {},
+        xpReward: (ex.xp_reward as number) || 50,
+        mlCoinsReward: (ex.ml_coins_reward as number) || 10,
+        hintsAllowed: (ex.enable_hints as boolean) ? 3 : 0,
+      });
+      setFormInitialized(true);
+    }
+  }, [exerciseQuery.data, formInitialized]);
 
   // Mutation for creating exercises via POST /api/v1/educational/exercises
   const createExerciseMutation = useMutation({
@@ -146,7 +195,19 @@ export default function AdminExerciseCreatePage() {
     },
   });
 
-  const saving = createExerciseMutation.isPending;
+  // Mutation for updating exercises via PATCH /api/v1/educational/exercises/:id
+  const updateExerciseMutation = useMutation({
+    mutationFn: async (payload: Record<string, unknown>) => {
+      const response = await apiClient.patch(API_ENDPOINTS.educational.exercise(exerciseId!), payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.exercises() });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'exercise', exerciseId] });
+    },
+  });
+
+  const saving = createExerciseMutation.isPending || updateExerciseMutation.isPending;
 
   const updateField = <K extends keyof ExerciseFormData>(key: K, value: ExerciseFormData[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -182,8 +243,12 @@ export default function AdminExerciseCreatePage() {
   const handleSaveDraft = async () => {
     try {
       const payload = buildExercisePayload(formData, false);
-      await createExerciseMutation.mutateAsync(payload);
-      toast.success('Borrador guardado exitosamente');
+      if (isEditMode) {
+        await updateExerciseMutation.mutateAsync(payload);
+      } else {
+        await createExerciseMutation.mutateAsync(payload);
+      }
+      toast.success(isEditMode ? 'Borrador actualizado exitosamente' : 'Borrador guardado exitosamente');
     } catch (error: unknown) {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message
@@ -195,8 +260,12 @@ export default function AdminExerciseCreatePage() {
   const handleSubmitForReview = async () => {
     try {
       const payload = buildExercisePayload(formData, true);
-      await createExerciseMutation.mutateAsync(payload);
-      toast.success('Ejercicio enviado para revision');
+      if (isEditMode) {
+        await updateExerciseMutation.mutateAsync(payload);
+      } else {
+        await createExerciseMutation.mutateAsync(payload);
+      }
+      toast.success(isEditMode ? 'Ejercicio actualizado exitosamente' : 'Ejercicio enviado para revision');
     } catch (error: unknown) {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message
@@ -207,14 +276,29 @@ export default function AdminExerciseCreatePage() {
 
   const TypeConfigComponent = TYPE_CONFIG_MAP[formData.exerciseType];
 
+  if (isEditMode && exerciseQuery.isLoading) {
+    return (
+      <AdminPageShell>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-detective-orange" />
+          <span className="ml-3 text-detective-text-secondary">Cargando ejercicio...</span>
+        </div>
+      </AdminPageShell>
+    );
+  }
+
   return (
     <AdminPageShell>
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-detective-text">Crear Ejercicio</h1>
+        <h1 className="text-3xl font-bold text-detective-text">
+          {isEditMode ? 'Editar Ejercicio' : 'Crear Ejercicio'}
+        </h1>
         <p className="mt-1 text-detective-text-secondary">
-          Asistente paso a paso para crear un nuevo ejercicio educativo
+          {isEditMode
+            ? 'Modifica los datos del ejercicio existente'
+            : 'Asistente paso a paso para crear un nuevo ejercicio educativo'}
         </p>
       </div>
 
@@ -286,6 +370,7 @@ export default function AdminExerciseCreatePage() {
             <ExerciseTypeSelector
               selectedType={formData.exerciseType}
               moduleFilter={formData.moduleId}
+              modules={modules}
               onSelect={(typeId) => {
                 updateField('exerciseType', typeId);
                 updateField('typeConfig', {});
@@ -334,7 +419,7 @@ export default function AdminExerciseCreatePage() {
                   onClick={handleSaveDraft}
                   loading={saving}
                 >
-                  Guardar Borrador
+                  {isEditMode ? 'Guardar Cambios (Borrador)' : 'Guardar Borrador'}
                 </DetectiveButton>
                 <DetectiveButton
                   variant="primary"
@@ -342,7 +427,7 @@ export default function AdminExerciseCreatePage() {
                   onClick={handleSubmitForReview}
                   loading={saving}
                 >
-                  Enviar a Revision
+                  {isEditMode ? 'Guardar y Publicar' : 'Enviar a Revision'}
                 </DetectiveButton>
               </>
             )}

@@ -1,11 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
 import { GamificationOverlay } from '@/features/gamification/components/GamificationOverlay';
 
 interface ProtectedRouteProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   allowedRoles?: string[];
   redirectTo?: string;
 }
@@ -55,11 +55,11 @@ interface ProtectedRouteProps {
  * } />
  * ```
  */
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+export const ProtectedRoute = ({
   children,
   allowedRoles,
   redirectTo = '/login',
-}) => {
+}: ProtectedRouteProps) => {
   // Using Zustand store directly for HMR resilience (no Provider dependency)
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -73,10 +73,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Show loading spinner while checking authentication status
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50" role="status" aria-live="polite">
         <div className="text-center">
-          <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-orange-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-orange-600" aria-hidden="true"></div>
+          <p className="mt-4 text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -99,9 +99,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // User is authenticated and has required role (if specified)
+  const isParent = user?.role === 'parent';
+
   return (
     <>
-      <GamificationOverlay />
+      {!isParent && <GamificationOverlay />}
       {children}
     </>
   );
@@ -117,7 +119,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
  * <Route path="/unauthorized" element={<UnauthorizedPage />} />
  * ```
  */
-export const UnauthorizedPage: React.FC = () => {
+export const UnauthorizedPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="max-w-md px-4 text-center">

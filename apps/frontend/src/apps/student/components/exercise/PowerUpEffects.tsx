@@ -3,7 +3,7 @@
  * Visual effects for power-up activations
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap,
@@ -29,11 +29,11 @@ interface PowerUpEffectsProps {
   duration?: number;
 }
 
-export const PowerUpEffects: React.FC<PowerUpEffectsProps> = ({
+export const PowerUpEffects = ({
   effectType,
   onComplete,
   duration = 2000,
-}) => {
+}: PowerUpEffectsProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {

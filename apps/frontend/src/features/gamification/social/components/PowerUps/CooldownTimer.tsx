@@ -2,7 +2,7 @@
  * CooldownTimer Component
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 
 interface CooldownTimerProps {
@@ -10,7 +10,7 @@ interface CooldownTimerProps {
   onComplete?: () => void;
 }
 
-export const CooldownTimer: React.FC<CooldownTimerProps> = ({ cooldownEndsAt, onComplete }) => {
+export const CooldownTimer = ({ cooldownEndsAt, onComplete }: CooldownTimerProps) => {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {

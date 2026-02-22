@@ -82,6 +82,26 @@ export class ExerciseFeedbackDto {
 }
 
 /**
+ * Achievement desbloqueado al completar ejercicio
+ */
+export class UnlockedAchievementDto {
+  @ApiProperty({ description: 'ID del achievement', example: '90000001-0000-0000-0000-000000000001' })
+    id!: string;
+
+  @ApiProperty({ description: 'Nombre del achievement', example: 'Primeros Pasos' })
+    name!: string;
+
+  @ApiProperty({ description: 'Descripción del achievement', example: 'Completa tu primer ejercicio' })
+    description!: string;
+
+  @ApiProperty({ description: 'Icono del achievement', example: 'footprints' })
+    icon!: string;
+
+  @ApiProperty({ description: 'Rareza del achievement', example: 'common' })
+    rarity!: string;
+}
+
+/**
  * SubmitExerciseResponseDto
  *
  * @description Respuesta del endpoint POST /exercises/:id/submit
@@ -150,6 +170,13 @@ export class SubmitExerciseResponseDto {
     required: false,
   })
     rankUp?: RankUpDto | null;
+
+  @ApiProperty({
+    description: 'Achievements desbloqueados con este ejercicio',
+    type: [UnlockedAchievementDto],
+    required: false,
+  })
+    achievements?: UnlockedAchievementDto[];
 
   // BUG-M3-SUBMIT-001 FIX 2026-01-07: Campos para ejercicios con revisión manual
   @ApiProperty({

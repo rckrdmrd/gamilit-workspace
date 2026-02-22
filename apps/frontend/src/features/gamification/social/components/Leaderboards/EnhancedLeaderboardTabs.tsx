@@ -10,7 +10,7 @@
  * - Responsive design
  */
 
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, School, Users, GraduationCap, Shield } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -20,7 +20,7 @@ export type ExtendedLeaderboardType = 'global' | 'school' | 'grade' | 'friends' 
 interface TabConfig {
   type: ExtendedLeaderboardType;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   description: string;
 }
 
@@ -64,12 +64,12 @@ const tabs: TabConfig[] = [
   },
 ];
 
-export const EnhancedLeaderboardTabs: React.FC<EnhancedLeaderboardTabsProps> = ({
+export const EnhancedLeaderboardTabs = ({
   selectedType,
   onTypeChange,
   counts = {},
   className,
-}) => {
+}: EnhancedLeaderboardTabsProps) => {
   return (
     <div className={cn('relative', className)}>
       {/* Tabs Container */}

@@ -3,7 +3,6 @@
  * Main layout wrapper for leaderboard display
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { LeaderboardEntry } from './LeaderboardEntry';
 import type { LeaderboardEntry as Entry } from '../../types/leaderboardsTypes';
@@ -17,11 +16,11 @@ interface LeaderboardLayoutProps {
   equippedMap?: EquippedItemsBatchMap | null;
 }
 
-export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
+export const LeaderboardLayout = ({
   entries,
   showTopThree = true,
   equippedMap,
-}) => {
+}: LeaderboardLayoutProps) => {
   const topThree = showTopThree ? entries.slice(0, 3) : [];
   const remaining = showTopThree ? entries.slice(3) : entries;
 

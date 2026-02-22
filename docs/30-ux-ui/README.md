@@ -35,14 +35,14 @@ Diseno de experiencia de usuario e interfaz.
 - Asignacion de ejercicios
 - Revision manual de ejercicios
 - Reportes de progreso
-- Comunicacion con padres
+- Alertas de intervencion
 
 **Componentes clave:**
-- Vista de aulas (19 paginas)
+- Vista de aulas (16 paginas)
 - Calendario de asignaciones
 - Sistema de calificacion
 - Analytics de progreso
-- Mensajeria interna
+- Resource sharing entre docentes
 
 #### 3. Portal Administrador (~90%)
 **Objetivo:** Configuracion y gestion del sistema
@@ -85,8 +85,8 @@ Diseno de experiencia de usuario e interfaz.
 - **Componentes:** TailwindCSS 4.x custom
 
 **Framework UI:** TailwindCSS 4.x
-**Componentes:** 580 componentes React
-**Responsivo:** Mobile-first design
+**Componentes:** 590 componentes React
+**Responsivo:** Mobile-first design (38 ejercicios + componentes compartidos con patrones sm: breakpoint)
 
 ### Flujos de Usuario
 
@@ -129,9 +129,23 @@ Diseno de experiencia de usuario e interfaz.
 
 ---
 
+## Recursos Educativos (Media)
+
+Algunos ejercicios requieren recursos multimedia servidos desde `apps/frontend/public/`:
+
+| Tipo | Ubicacion | Ejercicio | Cantidad |
+|------|-----------|-----------|----------|
+| SVG Memes | `public/memes/*.svg` | M4: Analisis de Memes | 6 (600x500px, flat design) |
+| Audio MP3 | `public/audio/*.mp3` | Auxiliar: Comprension Auditiva | 1 (~2 min, gTTS español) |
+| Script | `public/audio/narration-script.txt` | (referencia para regenerar audio) | 1 |
+
+**Adapters:** Los recursos se vinculan via `content` JSON en BD. Los adapters en `exerciseAdapter.ts` mapean los campos del JSON a las props que cada componente espera (`memeUrl`, `audioUrl`, etc.).
+
+---
+
 ## Referencias
 
 **Design System:** apps/frontend/src/styles/
 **Componentes:** apps/frontend/src/components/
 
-580 componentes React documentados en orchestration/inventarios/FRONTEND_INVENTORY.yml
+592 componentes React documentados en orchestration/inventarios/FRONTEND_INVENTORY.yml

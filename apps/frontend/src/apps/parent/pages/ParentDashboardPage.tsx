@@ -10,8 +10,8 @@
  * @created 2026-01-27
  */
 
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Modal } from '@shared/components/common/Modal';
 import { useParentStore } from '@/features/parent/store/parentStore';
@@ -26,12 +26,10 @@ import {
   Clock,
   Plus,
   LogOut,
-  Settings,
-  ChevronRight,
   AlertCircle,
 } from 'lucide-react';
 
-export const ParentDashboardPage: React.FC = () => {
+export const ParentDashboardPage = () => {
   const navigate = useNavigate();
   const {
     account,
@@ -91,10 +89,9 @@ export const ParentDashboardPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* Notifications */}
-              <Link
-                to="/parent/notifications"
-                className="relative p-2 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded-full transition-colors"
+              {/* Notifications (decorative — no dedicated page) */}
+              <span
+                className="relative p-2 text-gray-600 rounded-full"
                 aria-label={`Notificaciones${unreadNotifications > 0 ? ` (${unreadNotifications} sin leer)` : ''}`}
               >
                 <Bell className="w-5 h-5" />
@@ -103,16 +100,7 @@ export const ParentDashboardPage: React.FC = () => {
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </span>
                 )}
-              </Link>
-
-              {/* Settings */}
-              <Link
-                to="/parent/settings"
-                className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="Configuracion"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
+              </span>
 
               {/* Logout */}
               <button
@@ -295,12 +283,9 @@ export const ParentDashboardPage: React.FC = () => {
             <section role="region" aria-label="Actividad reciente">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900">Actividad Reciente</h2>
-                <Link
-                  to="/parent/activity"
-                  className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
-                >
-                  Ver todo <ChevronRight className="w-4 h-4" />
-                </Link>
+                <span className="text-sm text-gray-400 flex items-center gap-1">
+                  Actividad Reciente
+                </span>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm divide-y">
@@ -347,12 +332,9 @@ export const ParentDashboardPage: React.FC = () => {
             <section role="region" aria-label="Tareas proximas">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900">Tareas Proximas</h2>
-                <Link
-                  to="/parent/assignments"
-                  className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
-                >
-                  Ver todo <ChevronRight className="w-4 h-4" />
-                </Link>
+                <span className="text-sm text-gray-400 flex items-center gap-1">
+                  Tareas Proximas
+                </span>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm divide-y">
@@ -415,12 +397,12 @@ export const ParentDashboardPage: React.FC = () => {
 };
 
 // Link Student Modal Component
-const LinkStudentModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const LinkStudentModal = ({ onClose }: { onClose: () => void }) => {
   const { linkStudent, isLoading, error } = useParentStore();
   const [studentCode, setStudentCode] = useState('');
   const [relationshipType, setRelationshipType] = useState('father');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       await linkStudent({

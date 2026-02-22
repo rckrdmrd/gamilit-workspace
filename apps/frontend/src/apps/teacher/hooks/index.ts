@@ -14,7 +14,6 @@ export { useAssignments } from './useAssignments';
 export { useInterventionAlerts } from './useInterventionAlerts';
 export { useStudentBlocking, BlockType } from './useStudentBlocking'; // US-PM-006
 export { useAlertConfig, AlertConfigType } from './useAlertConfig'; // US-PM-007
-export { useTeacherMessages } from './useTeacherMessages';
 export { useGrantBonus } from './useGrantBonus';
 export { useEconomyAnalytics } from './useEconomyAnalytics'; // GAP-ST-005
 export { useStudentsEconomy } from './useStudentsEconomy'; // GAP-ST-006
@@ -50,7 +49,6 @@ export type {
   CreateAlertConfigDto,
   UpdateAlertConfigDto,
 } from './useAlertConfig'; // US-PM-007
-export type { UseTeacherMessagesReturn, MessageFilters } from './useTeacherMessages';
 export type { UseGrantBonusReturn } from './useGrantBonus';
 export type { UseScheduledReportsReturn } from './useScheduledReports'; // Scheduled Reports
 export type { UseSharedReportsReturn } from './useSharedReports'; // Shared Reports between teachers

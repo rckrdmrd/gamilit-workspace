@@ -10,6 +10,7 @@ CREATE TABLE gamification_system.missions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     user_id uuid NOT NULL,
     template_id uuid NOT NULL,
+    exercise_id uuid DEFAULT NULL,
     title text NOT NULL,
     description text,
     mission_type text NOT NULL,
@@ -43,6 +44,7 @@ CREATE INDEX idx_missions_template_id ON gamification_system.missions(template_i
 CREATE INDEX idx_missions_type ON gamification_system.missions(mission_type);
 CREATE INDEX idx_missions_user_id ON gamification_system.missions(user_id);
 CREATE INDEX idx_missions_user_type_status ON gamification_system.missions(user_id, mission_type, status);
+CREATE INDEX idx_missions_exercise_id ON gamification_system.missions(exercise_id) WHERE exercise_id IS NOT NULL;
 
 -- Foreign Keys
 ALTER TABLE ONLY gamification_system.missions
@@ -50,6 +52,9 @@ ALTER TABLE ONLY gamification_system.missions
 
 ALTER TABLE ONLY gamification_system.missions
     ADD CONSTRAINT missions_template_id_fkey FOREIGN KEY (template_id) REFERENCES gamification_system.mission_templates(id);
+
+ALTER TABLE ONLY gamification_system.missions
+    ADD CONSTRAINT missions_exercise_id_fkey FOREIGN KEY (exercise_id) REFERENCES educational_content.exercises(id) ON DELETE SET NULL;
 
 -- Triggers
 -- NOTE: Trigger missions_updated_at movido a archivo separado
@@ -62,6 +67,7 @@ COMMENT ON COLUMN gamification_system.missions.objectives IS 'JSON array of obje
 COMMENT ON COLUMN gamification_system.missions.rewards IS 'JSON object with ml_coins, xp, and optional items';
 COMMENT ON COLUMN gamification_system.missions.status IS 'Mission lifecycle status';
 COMMENT ON COLUMN gamification_system.missions.progress IS 'Overall completion percentage (0-100)';
+COMMENT ON COLUMN gamification_system.missions.exercise_id IS 'Optional FK to a specific exercise. Propagated from mission_templates.exercise_id on mission creation.';
 
 -- Permissions
 ALTER TABLE gamification_system.missions OWNER TO gamilit_user;

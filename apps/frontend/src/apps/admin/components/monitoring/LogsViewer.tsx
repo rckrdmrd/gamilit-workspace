@@ -13,7 +13,7 @@
  * - Export to CSV (optional)
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -34,7 +34,7 @@ import type { AuditLogFilters } from '@/services/api/adminTypes';
 /**
  * LogsViewer Component
  */
-export const LogsViewer: React.FC = () => {
+export const LogsViewer = () => {
   // State for filters
   const [filters, setFilters] = useState<AuditLogFilters>({
     success: undefined,

@@ -12,7 +12,6 @@
  * - Manual refresh button
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity,
@@ -34,11 +33,11 @@ interface AdminDashboardHeroProps {
   onRefresh?: () => void;
 }
 
-export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
+export const AdminDashboardHero = ({
   health,
   loading = false,
   onRefresh,
-}) => {
+}: AdminDashboardHeroProps) => {
   // ============================================================================
   // HELPERS
   // ============================================================================

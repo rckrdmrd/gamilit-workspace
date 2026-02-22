@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { cn } from '@shared/utils/cn';
@@ -46,12 +47,12 @@ interface HeaderUserStats {
   badges: string[];
 }
 
-export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
+export const GamifiedHeader = ({
   user,
   onLogout,
   gamificationData,
   organizationName,
-}) => {
+}: GamifiedHeaderProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
@@ -94,7 +95,7 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
 
   const xpProgress = (userStats.xp / userStats.xpToNext) * 100;
 
-  const badgeIcons: { [key: string]: React.ElementType } = {
+  const badgeIcons: { [key: string]: ElementType } = {
     first_case: Trophy,
     streak_master: Zap,
     logic_champion: Crown,

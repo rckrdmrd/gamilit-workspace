@@ -1,8 +1,8 @@
 # MECANICAS EDUCATIVAS - FRONTEND
 
 **Proyecto:** GAMILIT - Plataforma Educativa Gamificada
-**Version:** 1.0
-**Fecha:** 2025-12-23
+**Version:** 1.1
+**Fecha:** 2026-02-21 (actualizado: evaluacion M3-M5 exclusivamente por maestro)
 **Auditoria:** Comparacion documentacion vs implementacion
 
 ---
@@ -69,6 +69,7 @@
 ## MODULO 3: COMPRENSION CRITICA Y VALORATIVA
 
 **Ubicacion:** `features/mechanics/module3/`
+**Evaluacion:** Todos los ejercicios M3 son evaluados exclusivamente por el maestro (teacher-grade). No hay auto-scoring ni interaccion con IA.
 
 ### Mecanicas Oficiales (5) - Todas Implementadas
 
@@ -80,11 +81,20 @@
 | Podcast Argumentativo | PodcastArgumentativo/ | PodcastArgumentativoExercise.tsx | ✅ Implementado |
 | Matriz Perspectivas | MatrizPerspectivas/ | MatrizPerspectivasExercise.tsx | ✅ Implementado |
 
+### Descripcion de Mecanicas M3
+
+- **Tribunal Opiniones:** Estudiante emite veredicto escrito con justificacion argumentada. Sin IA.
+- **Debate Digital:** Ensayo estructurado donde el estudiante escribe postura y argumentos. No es un chat con IA — es escritura libre evaluada por el maestro.
+- **Analisis Fuentes:** Estudiante evalua credibilidad de fuentes con justificacion escrita. Sin llamadas a `analyzeSourceCredibility` ni servicios de IA.
+- **Podcast Argumentativo:** Grabacion de audio + transcripcion. Revision manual por maestro.
+- **Matriz Perspectivas:** Perspectivas pre-cargadas en los datos del ejercicio. El estudiante redacta analisis comparativo. Sin llamadas a `generatePerspectives` ni servicios de IA.
+
 ---
 
 ## MODULO 4: LECTURA DIGITAL Y MULTIMODAL
 
 **Ubicacion:** `features/mechanics/module4/`
+**Evaluacion:** Todos los ejercicios M4 son evaluados exclusivamente por el maestro (teacher-grade). No hay auto-scoring (`calculateScore()` eliminado), no hay interaccion con IA.
 
 ### Mecanicas Oficiales (5) - Todas Implementadas
 
@@ -95,6 +105,14 @@
 | Quiz TikTok | QuizTikTok/ | QuizTikTokExercise.tsx | ✅ Implementado |
 | Navegacion Hipertextual | NavegacionHipertextual/ | NavegacionHipertextualExercise.tsx | ✅ Implementado |
 | Analisis Memes | AnalisisMemes/ | AnalisisMemesExercise.tsx | ✅ Implementado |
+
+### Descripcion de Mecanicas M4
+
+- **Verificador Fake News:** Estudiante analiza articulos y escribe justificacion de veracidad. Sin `analyzeArgument` ni scoring automatico.
+- **Quiz TikTok:** Seleccion de respuestas con justificacion escrita obligatoria (textarea). Revision manual por maestro — no es auto-graded.
+- **Navegacion Hipertextual:** Exploracion de documentos hipertextuales + seccion de reflexion escrita. Evaluado por maestro.
+- **Infografia Interactiva:** Exploracion de infografia + reflexion escrita. Evaluado por maestro.
+- **Analisis Memes:** Analisis textual de elementos visuales (intencionalidad, contexto, critica). Evaluado por maestro.
 
 ### Mecanicas Removidas (4)
 
@@ -111,6 +129,7 @@ Las siguientes mecanicas estaban en el enum pero fueron removidas:
 ## MODULO 5: PRODUCCION Y EXPRESION LECTORA
 
 **Ubicacion:** `features/mechanics/module5/`
+**Evaluacion:** Todos los ejercicios M5 son evaluados exclusivamente por el maestro (teacher-grade). No hay auto-scoring ni interaccion con IA.
 
 ### Mecanicas Oficiales (3) - Todas Implementadas
 
@@ -124,7 +143,7 @@ Las siguientes mecanicas estaban en el enum pero fueron removidas:
 
 ### Caracteristicas M5
 
-- **Evaluacion:** Requiere revision manual del docente
+- **Evaluacion:** Requiere revision manual del docente (teacher-grade exclusivo, sin IA)
 - **Entrega:** Proyecto creativo
 - **Tiempo:** Sin limite estricto
 - **Rubrica:** Evaluacion cualitativa
@@ -248,9 +267,9 @@ export enum ExerciseType {
 |--------|-------------|------------------|
 | M1 | +2 extras | Documentar extras |
 | M2 | +1 extra | Documentar extra |
-| M3 | ✅ Match | Ninguna |
-| M4 | 4 removidas | Documentar decision |
-| M5 | ✅ Match | Ninguna |
+| M3 | ✅ Match, teacher-grade | Ninguna |
+| M4 | 4 removidas, teacher-grade | Documentar decision |
+| M5 | ✅ Match, teacher-grade | Ninguna |
 
 ---
 

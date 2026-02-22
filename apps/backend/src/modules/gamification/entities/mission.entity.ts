@@ -53,6 +53,9 @@ export class Mission {
   @Column({ type: 'uuid' })
     template_id!: string;
 
+  @Column({ type: 'uuid', nullable: true, default: null })
+    exercise_id!: string | null;
+
   @Column({ type: 'text' })
     title!: string;
 

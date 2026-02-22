@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -6,7 +6,7 @@ import { useExercises, Exercise } from '../../hooks/useContentManagement';
 import { ExercisePreviewModal } from './ExercisePreviewModal';
 import { Plus, Edit, Copy, Trash2, Eye, Save, X } from 'lucide-react';
 
-export const ExerciseContentEditor: React.FC = () => {
+export const ExerciseContentEditor = () => {
   const { exercises, loading, createExercise, updateExercise, deleteExercise, duplicateExercise } =
     useExercises();
   const [editingExercise, setEditingExercise] = useState<Partial<Exercise> | null>(null);

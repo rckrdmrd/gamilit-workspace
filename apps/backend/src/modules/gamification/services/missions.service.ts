@@ -116,10 +116,12 @@ export class MissionsService {
     userId: string,
     template: MissionTemplate,
     endDate: Date,
+    initialStatus: MissionStatusEnum = MissionStatusEnum.ACTIVE,
   ): Promise<Mission> {
     const mission = this.missionsRepo.create({
       user_id: userId,
       template_id: template.id,
+      exercise_id: template.exercise_id || null,
       title: template.name,
       description: template.description,
       mission_type: template.type as unknown as MissionTypeEnum,
@@ -135,7 +137,7 @@ export class MissionsService {
         ml_coins: template.ml_coins_reward,
         xp: template.xp_reward,
       } as MissionRewards,
-      status: MissionStatusEnum.ACTIVE,
+      status: initialStatus,
       progress: 0,
       start_date: new Date(),
       end_date: endDate,
@@ -247,7 +249,7 @@ export class MissionsService {
     // Crear misiones desde los templates seleccionados
     const missions: Mission[] = [];
     for (const template of selectedTemplates) {
-      const mission = await this.createMissionFromTemplate(profileId, template, endOfDay);
+      const mission = await this.createMissionFromTemplate(profileId, template, endOfDay, MissionStatusEnum.IN_PROGRESS);
       missions.push(mission);
     }
 
@@ -319,7 +321,7 @@ export class MissionsService {
     // Crear misiones desde los templates seleccionados
     const missions: Mission[] = [];
     for (const template of selectedTemplates) {
-      const mission = await this.createMissionFromTemplate(profileId, template, endOfWeek);
+      const mission = await this.createMissionFromTemplate(profileId, template, endOfWeek, MissionStatusEnum.IN_PROGRESS);
       missions.push(mission);
     }
 

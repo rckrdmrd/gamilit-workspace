@@ -2,14 +2,14 @@
  * PowerUpShop Component
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as Icons from 'lucide-react';
 import { usePowerUps } from '../../hooks/usePowerUps';
 import { PowerUpCard } from './PowerUpCard';
 import { PowerUpUsageModal } from './PowerUpUsageModal';
 import type { PowerUp } from '../../types/powerUpsTypes';
 
-export const PowerUpShop: React.FC = () => {
+export const PowerUpShop = () => {
   const { powerUps, userMlCoins, purchasePowerUp, canAffordPowerUp } = usePowerUps();
   const [selectedPowerUp, setSelectedPowerUp] = useState<PowerUp | null>(null);
   const [showModal, setShowModal] = useState(false);

@@ -283,7 +283,7 @@ export enum AchievementTypeEnum {
  * Tipos de mensajes del sistema de comunicación Teacher-Student
  * @context Teacher Portal - Communication feature
  * @version 1.0
- * @synchronized-with frontend/services/api/teacher/teacherMessagesApi.ts
+ * @synchronized-with frontend/apps/teacher/types/index.ts
  */
 export enum MessageTypeEnum {
   /** Mensaje directo entre profesor y estudiante */

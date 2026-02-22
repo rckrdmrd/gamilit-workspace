@@ -1,10 +1,10 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@shared/utils/cn';
 
 interface UserStatsCardProps {
   title: string;
   value: number | string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   subtitle?: string;
   color?: 'blue' | 'purple' | 'yellow' | 'green' | 'red' | 'indigo';
   trend?: 'up' | 'down' | 'neutral';
@@ -79,7 +79,7 @@ const colorClasses = {
  * />
  * ```
  */
-export const UserStatsCard: React.FC<UserStatsCardProps> = ({
+export const UserStatsCard = ({
   title,
   value,
   icon,
@@ -87,7 +87,7 @@ export const UserStatsCard: React.FC<UserStatsCardProps> = ({
   color = 'blue',
   trend,
   className,
-}) => {
+}: UserStatsCardProps) => {
   const colors = colorClasses[color];
 
   const getTrendIcon = () => {

@@ -7,7 +7,7 @@
  * @version 1.0.0
  * @since Phase 3 - Exercise System Restructuring
  */
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -29,7 +29,7 @@ const LoadingFallback = () => (
   </DetectiveCard>
 );
 
-export const ExerciseLoader: React.FC = () => {
+export const ExerciseLoader = () => {
   const {
     MechanicComponent,
     adaptedExercise,

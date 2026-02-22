@@ -224,22 +224,6 @@ export interface ReportConfig {
   };
 }
 
-export interface CommunicationMessage {
-  id: string;
-  recipient_type: 'parent' | 'student' | 'group';
-  recipient_ids: string[];
-  subject: string;
-  body: string;
-  template_id?: string;
-  sent_at: string;
-  read_by: string[];
-  attachments?: Array<{
-    name: string;
-    url: string;
-    type: string;
-  }>;
-}
-
 export interface SharedResource {
   id: string;
   title: string;

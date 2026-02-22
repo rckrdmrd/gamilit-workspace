@@ -133,7 +133,7 @@ export class AchievementsController {
     status: 404,
     description: 'Achievement no encontrado',
   })
-  async getAchievementById(@Param('id') id: string) {
+  async getAchievementById(@Param('id', ParseUUIDPipe) id: string) {
     return this.achievementsService.findById(id);
   }
 
@@ -200,7 +200,7 @@ export class AchievementsController {
     status: 404,
     description: 'Usuario no encontrado',
   })
-  async getUserAchievements(@Param('userId') userId: string) {
+  async getUserAchievements(@Param('userId', ParseUUIDPipe) userId: string) {
     // FIX: CORR-005 - Usar nuevo metodo que retorna todos los logros con progreso
     // FIX: GAP-SP-003 - Remover wrapper innecesario { data: result }
     // El TransformResponseInterceptor ya envuelve la respuesta en { success, data, ... }
@@ -282,8 +282,8 @@ export class AchievementsController {
     description: 'Usuario o achievement no encontrado',
   })
   async grantAchievement(
-  @Param('userId') userId: string,
-    @Param('achievementId') achievementId: string,
+  @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
     @Body() grantDto: GrantAchievementDto,
   ) {
     // Asegurar que los IDs del DTO coincidan con los parámetros
@@ -336,7 +336,7 @@ export class AchievementsController {
     status: 404,
     description: 'Usuario no encontrado',
   })
-  async getAchievementSummary(@Param('userId') userId: string) {
+  async getAchievementSummary(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.achievementsService.getUserAchievementStats(userId);
   }
 
@@ -398,8 +398,8 @@ export class AchievementsController {
     description: 'Achievement no encontrado para el usuario',
   })
   async getAchievementProgress(
-    @Param('userId') userId: string,
-    @Param('achievementId') achievementId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
   ) {
     return this.achievementsService.checkProgress(userId, achievementId);
   }
@@ -461,8 +461,8 @@ export class AchievementsController {
     description: 'Achievement no encontrado',
   })
   async unlockAchievement(
-    @Param('userId') userId: string,
-    @Param('achievementId') achievementId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
   ) {
     const grantDto = new GrantAchievementDto();
     grantDto.user_id = userId;
@@ -534,8 +534,8 @@ export class AchievementsController {
     description: 'Achievement no encontrado para el usuario',
   })
   async claimAchievement(
-  @Param('userId') userId: string,
-    @Param('achievementId') achievementId: string,
+  @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('achievementId', ParseUUIDPipe) achievementId: string,
   ) {
     return this.achievementsService.claimRewards(userId, achievementId);
   }

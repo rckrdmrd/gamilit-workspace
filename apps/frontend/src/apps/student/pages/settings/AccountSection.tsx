@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Eye, EyeOff, Key, Check, Loader2 } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
@@ -14,7 +14,7 @@ interface AccountSectionProps {
   user: User;
 }
 
-export const AccountSection: React.FC<AccountSectionProps> = ({ user }) => {
+export const AccountSection = ({ user }: AccountSectionProps) => {
   const { handleError } = useApiError();
   const [passwordStatus, setPasswordStatus] = useState<SaveStatus>('idle');
   const [showCurrentPw, setShowCurrentPw] = useState(false);

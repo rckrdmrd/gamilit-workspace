@@ -1,3 +1,4 @@
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import {
   Bell,
@@ -14,7 +15,7 @@ import {
 import { cn } from '@shared/utils/cn';
 
 // Notification type icons mapping for admin
-const notificationIcons: Record<string, React.ElementType> = {
+const notificationIcons: Record<string, ElementType> = {
   system_announcement: Megaphone,
   security_alert: Shield,
   user_activity: Users,
@@ -64,11 +65,11 @@ export interface NotificationItemProps {
   onDelete: (id: string) => void;
 }
 
-export const NotificationItem: React.FC<NotificationItemProps> = ({
+export const NotificationItem = ({
   notification,
   onMarkAsRead,
   onDelete,
-}) => {
+}: NotificationItemProps) => {
   const Icon = notificationIcons[notification.type] || Bell;
   const isUnread = notification.status === 'unread';
 

@@ -46,7 +46,7 @@ BEGIN
     END IF;
 
     IF v_admin_id IS NULL THEN
-        RAISE NOTICE 'No admin profile found, skipping marie_curie_content seed';
+        RAISE NOTICE 'No admin profile found, skipping marie_curie_contents seed';
         RETURN;
     END IF;
 

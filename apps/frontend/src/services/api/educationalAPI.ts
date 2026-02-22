@@ -264,6 +264,21 @@ function transformExercises(backendExercises: Record<string, unknown>[]): Exerci
   return backendExercises.map(transformExercise);
 }
 
+/**
+ * Payload for creating a new module
+ */
+export interface CreateModulePayload {
+  title: string;
+  order_index: number;
+  description?: string;
+  module_code?: string;
+  difficulty_level?: 'beginner' | 'intermediate' | 'advanced' | 'proficient';
+  status?: 'draft' | 'published';
+  xp_reward?: number;
+  ml_coins_reward?: number;
+  estimated_duration_minutes?: number;
+}
+
 // ============================================================================
 // MODULES API FUNCTIONS
 // ============================================================================
@@ -307,6 +322,35 @@ export const getModule = async (moduleId: string): Promise<Module> => {
     // Backend returns module directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<Module>(API_ENDPOINTS.educational.module(moduleId));
 
+    return data;
+  } catch (error) {
+    throw handleAPIError(error);
+  }
+};
+
+/**
+ * Create a new module
+ *
+ * @param payload - Module data
+ * @returns Created module
+ */
+export const createModule = async (payload: CreateModulePayload): Promise<Module> => {
+  try {
+    if (FEATURE_FLAGS.USE_MOCK_DATA) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return {
+        id: `mock-${Date.now()}`,
+        title: payload.title,
+        order_index: payload.order_index,
+        description: payload.description,
+        module_code: payload.module_code,
+        status: payload.status || 'draft',
+        xp_reward: payload.xp_reward,
+        ml_coins_reward: payload.ml_coins_reward,
+      };
+    }
+
+    const { data } = await apiClient.post<Module>(API_ENDPOINTS.educational.modules, payload);
     return data;
   } catch (error) {
     throw handleAPIError(error);
@@ -966,6 +1010,7 @@ export default {
   // Modules
   getModules,
   getModule,
+  createModule,
   checkModuleAccess,
   getUserModules,
 

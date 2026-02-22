@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, Coins, Zap, Share2, ArrowRight } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
@@ -31,9 +31,9 @@ export function CelebrationModal({
   onContinue,
   onShare,
 }: CelebrationModalProps) {
-  const [showConfetti, setShowConfetti] = React.useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       setShowConfetti(true);
       const timer = setTimeout(() => setShowConfetti(false), 3000);

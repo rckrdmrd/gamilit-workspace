@@ -16,7 +16,7 @@
  * @see ET-WL-004-css-runtime-variables.md
  */
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -57,7 +57,7 @@ const BrandingContext = createContext<BrandingContextValue | undefined>(undefine
  * </AuthProvider>
  * ```
  */
-export const BrandingProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const BrandingProvider = ({ children }: PropsWithChildren) => {
   const { user } = useAuth();
 
   // State

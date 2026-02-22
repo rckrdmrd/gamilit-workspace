@@ -238,6 +238,8 @@ export default function TeacherNotificationPreferencesPage() {
                   {/* In-App Toggle */}
                   <div className="flex items-center justify-center">
                     <button
+                      role="switch"
+                      aria-checked={getPreference(type.key, 'inAppEnabled')}
                       onClick={() => handleToggle(type.key, 'inAppEnabled')}
                       disabled={savingType === type.key}
                       className={cn(
@@ -256,6 +258,8 @@ export default function TeacherNotificationPreferencesPage() {
                   {/* Email Toggle */}
                   <div className="flex items-center justify-center">
                     <button
+                      role="switch"
+                      aria-checked={getPreference(type.key, 'emailEnabled')}
                       onClick={() => handleToggle(type.key, 'emailEnabled')}
                       disabled={savingType === type.key}
                       className={cn(
@@ -274,6 +278,8 @@ export default function TeacherNotificationPreferencesPage() {
                   {/* Push Toggle */}
                   <div className="flex items-center justify-center">
                     <button
+                      role="switch"
+                      aria-checked={getPreference(type.key, 'pushEnabled')}
                       onClick={() => handleToggle(type.key, 'pushEnabled')}
                       disabled={savingType === type.key || !pushEnabled}
                       className={cn(

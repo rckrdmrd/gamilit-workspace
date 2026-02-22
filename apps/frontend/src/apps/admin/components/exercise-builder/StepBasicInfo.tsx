@@ -1,13 +1,9 @@
+import { useState } from 'react';
+import { Plus, Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import type { ExerciseFormData } from '../../types/exercise-builder.types';
-
-const MODULE_OPTIONS = [
-  { id: 'module-1', name: 'M1 - Comprension Literal' },
-  { id: 'module-2', name: 'M2 - Comprension Inferencial' },
-  { id: 'module-3', name: 'M3 - Comprension Critica' },
-  { id: 'module-4', name: 'M4 - Literacidad Digital' },
-  { id: 'module-5', name: 'M5 - Produccion Textual' },
-];
+import { useModulesQuery } from '../../hooks/useContentQueries';
+import { CreateModuleModal } from './CreateModuleModal';
 
 const DIFFICULTY_OPTIONS = [
   { id: 'beginner', name: 'Principiante', color: 'bg-green-500/20 text-green-400' },
@@ -22,6 +18,11 @@ interface StepBasicInfoProps {
 }
 
 export function StepBasicInfo({ formData, updateField }: StepBasicInfoProps) {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const { modules, isLoading: modulesLoading } = useModulesQuery();
+
+  const sortedModules = [...modules].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+
   return (
     <div className="space-y-6">
       {/* Core Info */}
@@ -67,18 +68,36 @@ export function StepBasicInfo({ formData, updateField }: StepBasicInfoProps) {
           {/* Module */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-400">Modulo *</label>
-            <select
-              className="input-detective w-full"
-              value={formData.moduleId}
-              onChange={(e) => updateField('moduleId', e.target.value)}
-            >
-              <option value="">Seleccionar modulo...</option>
-              {MODULE_OPTIONS.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
+            {modulesLoading ? (
+              <div className="flex items-center gap-2 py-2 text-gray-400">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm">Cargando modulos...</span>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <select
+                  className="input-detective w-full flex-1"
+                  value={formData.moduleId}
+                  onChange={(e) => updateField('moduleId', e.target.value)}
+                >
+                  <option value="">Seleccionar modulo...</option>
+                  {sortedModules.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.module_code ? `${m.module_code} - ` : ''}{m.title}{m.status === 'draft' ? ' (Borrador)' : ''}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-1 rounded-lg border border-detective-border bg-detective-card px-3 py-2 text-sm text-detective-orange hover:bg-detective-orange/10 transition-colors"
+                  title="Crear nuevo modulo"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Nuevo</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Difficulty */}
@@ -215,6 +234,15 @@ export function StepBasicInfo({ formData, updateField }: StepBasicInfoProps) {
           </div>
         </div>
       </DetectiveCard>
+
+      <CreateModuleModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onModuleCreated={(newModule) => {
+          updateField('moduleId', newModule.id);
+        }}
+        existingModuleCount={modules.length}
+      />
     </div>
   );
 }

@@ -129,6 +129,9 @@ export class MissionTemplate {
   @Column({ type: 'varchar', length: 50, nullable: true, default: null })
     required_exercise_type!: string | null;
 
+  @Column({ type: 'uuid', nullable: true, default: null })
+    exercise_id!: string | null;
+
   // Metadata
   @Column({ type: 'varchar', length: 50, nullable: true })
     icon!: string | null;

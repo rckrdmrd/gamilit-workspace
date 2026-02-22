@@ -23,14 +23,14 @@ export interface NotificationFiltersProps {
   onTypeFilterChange: (type: string) => void;
 }
 
-export const NotificationFilters: React.FC<NotificationFiltersProps> = ({
+export const NotificationFilters = ({
   statusFilter,
   typeFilter,
   availableTypes,
   showFilters,
   onStatusFilterChange,
   onTypeFilterChange,
-}) => (
+}: NotificationFiltersProps) => (
   <AnimatePresence>
     {showFilters && (
       <motion.div

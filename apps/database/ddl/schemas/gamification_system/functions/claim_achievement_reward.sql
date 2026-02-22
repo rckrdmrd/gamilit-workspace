@@ -20,14 +20,21 @@ DECLARE
     v_current_balance INTEGER;
     v_new_balance INTEGER;
 BEGIN
-    -- Verificar que el usuario tiene el logro
+    -- Verificar que el usuario tiene el logro (con lock para evitar race conditions)
     SELECT * INTO v_user_achievement
     FROM gamification_system.user_achievements
     WHERE user_id = p_user_id
-    AND achievement_id = p_achievement_id;
+    AND achievement_id = p_achievement_id
+    FOR UPDATE;
 
     IF NOT FOUND THEN
         RETURN QUERY SELECT false, 0, 0, 'Usuario no tiene este logro'::VARCHAR;
+        RETURN;
+    END IF;
+
+    -- Verificar que el logro ha sido completado
+    IF v_user_achievement.is_completed IS NOT TRUE THEN
+        RETURN QUERY SELECT false, 0, 0, 'El logro no ha sido completado aún'::VARCHAR;
         RETURN;
     END IF;
 
@@ -50,10 +57,15 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Marcar recompensa como reclamada
+    -- Marcar recompensa como reclamada y registrar lo otorgado
     -- CORR-P1-002: Cambiado de reward_claimed_at (no existe) a rewards_claimed (BOOLEAN)
+    -- F2-P03: Populate rewards_received JSONB para auditoría e historial
     UPDATE gamification_system.user_achievements
-    SET rewards_claimed = TRUE
+    SET rewards_claimed = TRUE,
+        rewards_received = jsonb_build_object(
+            'xp', COALESCE((v_achievement.rewards->>'xp')::INTEGER, v_achievement.points_value, 0),
+            'ml_coins', v_achievement.ml_coins_reward
+        )
     WHERE user_id = p_user_id
     AND achievement_id = p_achievement_id;
 

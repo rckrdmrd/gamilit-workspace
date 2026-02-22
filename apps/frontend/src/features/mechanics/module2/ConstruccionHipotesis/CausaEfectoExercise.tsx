@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type DragEvent } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, GripVertical } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -11,12 +11,12 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
+export const CausaEfectoExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: CausaEfectoExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -76,7 +76,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   // Scoring is now done server-side via backend API
 
   // Drag handlers
-  const handleDragStart = (e: React.DragEvent, consequenceId: string) => {
+  const handleDragStart = (e: DragEvent, consequenceId: string) => {
     if (validated) return;
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('consequenceId', consequenceId);
@@ -88,7 +88,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
     setDragOverCause(null);
   };
 
-  const handleDragOver = (e: React.DragEvent, causeId: string) => {
+  const handleDragOver = (e: DragEvent, causeId: string) => {
     if (validated) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -99,7 +99,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
     setDragOverCause(null);
   };
 
-  const handleDrop = (e: React.DragEvent, causeId: string) => {
+  const handleDrop = (e: DragEvent, causeId: string) => {
     if (validated) return;
     e.preventDefault();
     const consequenceId = e.dataTransfer.getData('consequenceId');
@@ -257,7 +257,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
         }
       >
         {/* Instructions */}
-        <div className="rounded border-l-4 border-amber-400 bg-amber-50 p-4 mb-6">
+        <div className="rounded border-l-4 border-amber-400 bg-amber-50 p-2 sm:p-4 mb-6">
           <p className="mb-2 text-detective-sm font-semibold leading-relaxed text-detective-text">
             Como funciona:
           </p>
@@ -280,7 +280,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           {/* LEFT: Causes (drop zones) */}
           <div className="space-y-4">
             <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-blue">
-              <span className="text-2xl">←</span> CAUSAS (Suelta aqui)
+              <span className="text-xl sm:text-2xl">←</span> CAUSAS (Suelta aqui)
             </h3>
             {causes.map((cause, idx) => {
               const matchedConsequences = matches[cause.id] || [];
@@ -295,7 +295,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                   onDragOver={(e) => handleDragOver(e, cause.id)}
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, cause.id)}
-                  className={`rounded-lg border-2 bg-white p-4 transition-all ${
+                  className={`rounded-lg border-2 bg-white p-2 sm:p-4 transition-all ${
                     isDragOver ? 'scale-105 border-orange-500 bg-orange-50' : 'border-blue-300'
                   } ${!validated ? 'min-h-[120px]' : ''}`}
                 >
@@ -356,7 +356,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           {/* RIGHT: Consequences (draggable) */}
           <div className="space-y-4">
             <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-orange">
-              CONSECUENCIAS (Arrastra) <span className="text-2xl">→</span>
+              CONSECUENCIAS (Arrastra) <span className="text-xl sm:text-2xl">→</span>
             </h3>
             <div className="space-y-3">
               {consequences.map((consequence, idx) => {
@@ -377,7 +377,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                       draggable={!validated}
                       onDragStart={(e) => handleDragStart(e, consequence.id)}
                       onDragEnd={handleDragEnd}
-                      className={`cursor-move rounded-lg border-2 p-4 transition-all ${
+                      className={`cursor-move rounded-lg border-2 p-2 sm:p-4 transition-all ${
                         isDragging
                           ? 'scale-105 shadow-lg ring-2 ring-detective-orange'
                           : 'border-detective-border bg-white hover:border-orange-400 hover:shadow-md'

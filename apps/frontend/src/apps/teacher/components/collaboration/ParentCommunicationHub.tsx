@@ -4,7 +4,7 @@ import { MessageSquare, Send, FileText, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
-import { teacherMessagesApi } from '@/services/api/teacher';
+import { apiClient } from '@/services/api/apiClient';
 
 interface ParentCommunicationHubProps {
   classroomId: string;
@@ -50,7 +50,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
 
     try {
       setSending(true);
-      await teacherMessagesApi.sendMessage({
+      await apiClient.post('/teacher/messages', {
         recipient_ids: selectedStudents,
         subject,
         content: body,

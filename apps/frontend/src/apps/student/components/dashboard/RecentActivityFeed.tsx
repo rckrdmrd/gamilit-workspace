@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import {
   CheckCircle,
@@ -17,7 +17,7 @@ interface ActivityItem {
   description: string;
   timestamp: string;
   points?: number;
-  icon: React.ElementType;
+  icon: ElementType;
   color: string;
 }
 

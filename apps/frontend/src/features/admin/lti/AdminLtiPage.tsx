@@ -15,7 +15,7 @@
  * @see EXT-007
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, type ElementType } from 'react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '@/apps/admin/layouts/AdminLayout';
@@ -51,7 +51,7 @@ function StatsCard({
 }: {
   title: string;
   value: number;
-  icon: React.ElementType;
+  icon: ElementType;
   color: string;
 }) {
   return (

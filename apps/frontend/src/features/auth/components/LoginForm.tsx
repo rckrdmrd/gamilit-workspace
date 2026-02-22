@@ -16,7 +16,7 @@
  * @requires react-hook-form, zod, @hookform/resolvers
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
@@ -58,10 +58,10 @@ interface LoginFormProps {
  * />
  * ```
  */
-export const LoginForm: React.FC<LoginFormProps> = ({
+export const LoginForm = ({
   onSuccess,
   showForgotPassword = true,
-}) => {
+}: LoginFormProps) => {
   const navigate = useNavigate();
   const { login, error: authError, clearError, isAuthenticated, user } = useAuth();
 

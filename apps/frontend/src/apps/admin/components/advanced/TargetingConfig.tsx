@@ -10,7 +10,6 @@
  * Created: 2025-12-05 - FE-ADMIN-011-016 (Sprint P2-B)
  */
 
-import React from 'react';
 import { Users, Check } from 'lucide-react';
 
 interface TargetingConfigProps {
@@ -26,11 +25,11 @@ const AVAILABLE_ROLES = [
   { value: 'super_admin', label: 'Super Admins', description: 'System administrators' },
 ];
 
-export const TargetingConfig: React.FC<TargetingConfigProps> = ({
+export const TargetingConfig = ({
   targetRoles,
   onChange,
   className = '',
-}) => {
+}: TargetingConfigProps) => {
   const isAllSelected = targetRoles.length === AVAILABLE_ROLES.length;
 
   const handleToggleAll = () => {

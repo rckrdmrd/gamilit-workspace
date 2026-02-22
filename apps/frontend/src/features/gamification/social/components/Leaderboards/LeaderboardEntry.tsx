@@ -2,7 +2,6 @@
  * LeaderboardEntry Component
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import type { LeaderboardEntry as Entry } from '../../types/leaderboardsTypes';
@@ -29,7 +28,7 @@ const getRankIcon = (rank: number) => {
   return Icons.User;
 };
 
-export const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ entry, index, equippedMap }) => {
+export const LeaderboardEntry = ({ entry, index, equippedMap }: LeaderboardEntryProps) => {
   const RankIcon = getRankIcon(entry.rank);
   const isTopThree = entry.rank <= 3;
 

@@ -19,7 +19,7 @@
  * P2-001: Types consolidation - Tipo derivado para notificaciones
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Award, Star, Zap } from 'lucide-react';
 import type { Achievement as BaseAchievement } from '@shared/types/achievement.types';
 
@@ -92,14 +92,14 @@ const RARITY_LABELS = {
   legendary: 'Legendario',
 };
 
-export const AchievementNotification: React.FC<AchievementNotificationProps> = ({
+export const AchievementNotification = ({
   achievement,
   onDismiss,
   autoDismiss = true,
   dismissDelay = 5000,
   showConfetti = true,
   playSound = false,
-}) => {
+}: AchievementNotificationProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [progress, setProgress] = useState(100);
 
@@ -312,11 +312,11 @@ interface AchievementQueueProps {
   maxVisible?: number;
 }
 
-export const AchievementQueue: React.FC<AchievementQueueProps> = ({
+export const AchievementQueue = ({
   achievements,
   onAchievementsCleared,
   maxVisible = 3,
-}) => {
+}: AchievementQueueProps) => {
   const [queue, setQueue] = useState<Achievement[]>([]);
   const [visible, setVisible] = useState<Achievement[]>([]);
 

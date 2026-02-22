@@ -8,13 +8,13 @@
  * @created 2026-01-27
  */
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useParentStore } from '@/features/parent/store/parentStore';
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from 'lucide-react';
 
-export const ParentLoginPage: React.FC = () => {
+export const ParentLoginPage = () => {
   const navigate = useNavigate();
   const { login, isLoading, error, clearError } = useParentStore();
 
@@ -22,7 +22,7 @@ export const ParentLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();
 

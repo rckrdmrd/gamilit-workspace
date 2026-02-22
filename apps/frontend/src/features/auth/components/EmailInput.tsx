@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, CheckCircle2 } from 'lucide-react';
 import { InputDetective, InputDetectiveProps } from '@shared/components/base/InputDetective';
 import { validateEmail } from '@shared/utils/validation';
@@ -11,13 +11,13 @@ interface EmailInputProps extends Omit<InputDetectiveProps, 'type' | 'icon'> {
  * Input especializado para emails
  * Incluye validación visual y feedback instantáneo
  */
-export const EmailInput: React.FC<EmailInputProps> = ({
+export const EmailInput = ({
   value,
   onChange,
   showValidation = true,
   error,
   ...props
-}) => {
+}: EmailInputProps) => {
   const [isValid, setIsValid] = useState(false);
   const emailValue = typeof value === 'string' ? value : '';
 

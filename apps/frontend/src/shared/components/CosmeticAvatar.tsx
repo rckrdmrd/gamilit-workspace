@@ -18,7 +18,6 @@
  * @see inventory.api.ts getEquippedItemsBatch for the batch API
  */
 
-import React from 'react';
 import { AvatarDisplay } from './AvatarDisplay';
 import type { EquippedItemsBatchMap } from '@/features/gamification/social/types/inventory.types';
 
@@ -74,14 +73,14 @@ function resolveFrameColor(
   return borderColor || null;
 }
 
-export const CosmeticAvatar: React.FC<CosmeticAvatarProps> = ({
+export const CosmeticAvatar = ({
   userId,
   name,
   fallbackAvatar,
   equippedMap,
   size = 'sm',
   className,
-}) => {
+}: CosmeticAvatarProps) => {
   const avatarSrc = resolveAvatarSrc(userId, fallbackAvatar, equippedMap);
   const frameColor = resolveFrameColor(userId, equippedMap);
 

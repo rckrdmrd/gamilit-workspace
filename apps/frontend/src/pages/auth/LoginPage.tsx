@@ -15,7 +15,7 @@
  * ```
  */
 
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import LoginForm from '@/features/auth/components/LoginForm';
@@ -25,7 +25,7 @@ import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 /**
  * LoginPage Component
  */
-export const LoginPage: React.FC = () => {
+export const LoginPage = () => {
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
   const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;

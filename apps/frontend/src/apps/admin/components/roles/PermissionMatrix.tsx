@@ -13,7 +13,7 @@
  * Created: 2025-12-05 - US-ADMIN-P2-001
  */
 
-import React from 'react';
+import type { ReactElement } from 'react';
 import type { Permission } from '@/services/api/adminTypes';
 
 interface PermissionMatrixProps {
@@ -26,7 +26,7 @@ export function PermissionMatrix({
   permissions,
   onTogglePermission,
   disabled = false,
-}: PermissionMatrixProps): React.ReactElement {
+}: PermissionMatrixProps): ReactElement {
 
   // ============================================================================
   // HELPERS

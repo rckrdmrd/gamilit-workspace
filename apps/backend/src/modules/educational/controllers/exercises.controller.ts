@@ -29,6 +29,7 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
 import { ExerciseAnswerValidator } from '@/modules/progress/dto/answers/exercise-answer.validator';
+import { AchievementsService } from '@/modules/gamification/services/achievements.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { AuthRequest } from '@shared/types';
 
@@ -50,6 +51,7 @@ export class ExercisesController {
     private readonly exercisesService: ExercisesService,
     private readonly exerciseSubmissionService: ExerciseSubmissionService,
     private readonly exerciseAttemptService: ExerciseAttemptService,
+    private readonly achievementsService: AchievementsService,
     @Optional()
     @InjectDataSource('educational')
     private readonly dataSource?: DataSource,
@@ -1075,7 +1077,36 @@ export class ExercisesController {
     });
 
     // ========================================
-    // 7. RESPUESTA ENRIQUECIDA
+    // 7. DETECCIÓN DE ACHIEVEMENTS
+    // ========================================
+    let newAchievements: { id: string; name: string; description: string; icon: string; rarity: string }[] = [];
+    if (isCorrect) {
+      try {
+        const earnedAchievements = await this.achievementsService.detectAndGrantEarned(profileId);
+        newAchievements = earnedAchievements
+          .filter(ua => ua.achievement != null)
+          .map(ua => {
+            const ach = ua.achievement!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+            return {
+              id: ach.id,
+              name: ach.name,
+              description: ach.description || '',
+              icon: ach.icon || 'trophy',
+              rarity: ach.rarity || 'common',
+            };
+          });
+        if (newAchievements.length > 0) {
+          this.logger.log(`Granted ${newAchievements.length} achievement(s) to user ${profileId}`);
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error detecting achievements for user ${profileId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+
+    // ========================================
+    // 8. RESPUESTA ENRIQUECIDA
     // ========================================
 
     // Extract per-question details from SQL validation result
@@ -1112,6 +1143,7 @@ export class ExercisesController {
       },
       isFirstCorrectAttempt: isFirstCorrectAttempt,
       rankUp: null, // TODO: Detectar rank up desde user_stats
+      achievements: newAchievements.length > 0 ? newAchievements : undefined,
     };
   }
 }

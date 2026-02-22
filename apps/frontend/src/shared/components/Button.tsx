@@ -1,12 +1,13 @@
-import React from 'react';
+import { forwardRef } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@shared/utils/cn';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
 }
 
 /**
@@ -29,7 +30,7 @@ const sizeStyles = {
   lg: 'px-6 py-3 text-lg',
 };
 
-const LoadingSpinner: React.FC<{ className?: string }> = ({ className }) => (
+const LoadingSpinner = ({ className }: { className?: string }) => (
   <svg
     className={cn('animate-spin h-4 w-4', className)}
     xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +53,7 @@ const LoadingSpinner: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       variant = 'primary',

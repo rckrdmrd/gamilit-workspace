@@ -1,13 +1,14 @@
-import React from 'react';
+import { forwardRef } from 'react';
+import type { HTMLAttributes, ReactNode, ElementType, Ref, KeyboardEvent, MouseEvent } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
-export interface DetectiveCardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DetectiveCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'gold' | 'exercise' | 'mystery' | 'info' | 'success' | 'danger';
-  children: React.ReactNode;
+  children: ReactNode;
   hoverable?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  as?: React.ElementType;
+  as?: ElementType;
 }
 
 const variantStyles = {
@@ -28,7 +29,7 @@ const paddingStyles = {
   xl: 'p-10',
 };
 
-export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps>(
+export const DetectiveCard = forwardRef<HTMLDivElement, DetectiveCardProps>(
   (
     {
       variant = 'default',
@@ -65,7 +66,7 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
 
     return (
       <Component
-        ref={ref as React.Ref<HTMLDivElement>}
+        ref={ref as Ref<HTMLDivElement>}
         onClick={onClick}
         className={cn(
           // Variant styles from detective-theme.css
@@ -81,10 +82,10 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={
           isClickable
-            ? (e: React.KeyboardEvent<HTMLDivElement>) => {
+            ? (e: KeyboardEvent<HTMLDivElement>) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
+                  onClick?.(e as unknown as MouseEvent<HTMLDivElement>);
                 }
               }
             : undefined

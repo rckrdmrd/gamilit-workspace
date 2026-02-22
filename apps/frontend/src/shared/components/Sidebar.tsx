@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
@@ -23,7 +24,7 @@ interface SidebarProps {
 interface NavItem {
   label: string;
   path: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   badge?: string | number;
 }
 
@@ -98,7 +99,7 @@ const secondaryItems: NavItem[] = [
  * />
  * ```
  */
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;

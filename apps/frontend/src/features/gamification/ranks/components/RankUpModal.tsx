@@ -6,7 +6,7 @@
  * Custom confetti particles and staggered animations are kept inside.
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, Trophy, Sparkles, ChevronRight } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -23,7 +23,7 @@ export interface RankUpModalProps {
 /**
  * Confetti Particle Component
  */
-const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
+const ConfettiParticle = ({ delay }: { delay: number }) => {
   const colors = ['#60a5fa', '#4ade80', '#fb923c', '#a78bfa', '#f59e0b'];
   const color = colors[Math.floor(Math.random() * colors.length)];
   const startX = Math.random() * 100;
@@ -57,7 +57,7 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
 /**
  * RankUpModal Component
  */
-export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => {
+export const RankUpModal = ({ isOpen, onClose }: RankUpModalProps) => {
   const { closeRankUpModal } = useProgression();
   const { currentRank, previousRank, prestigeLevel } = useRank();
 

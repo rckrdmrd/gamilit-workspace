@@ -28,7 +28,7 @@ Esta guia proporciona **ejemplos detallados de respuestas** para cada ejercicio 
 - **ACEPTABLE (50-79 puntos):** Respuestas parcialmente correctas con algunos errores menores
 - **INCORRECTA (0-49 puntos):** Respuestas con errores significativos o informacion incorrecta
 
-**NOTA IMPORTANTE:** Los ejercicios del Modulo 4 (excepto Quiz TikTok) **requieren revision manual** por un docente. El sistema solo valida la estructura de las respuestas, no su calidad.
+**NOTA IMPORTANTE:** **Todos** los ejercicios del Modulo 4 **requieren revision manual** por un docente (`requires_manual_grading = true`). El sistema solo valida la estructura de las respuestas, no su calidad.
 
 **Audiencia:** QA testers, desarrolladores frontend/backend, docentes, demos
 
@@ -354,7 +354,7 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 **Tiempo estimado:** 5 minutos (10 segundos por pregunta)
 **Puntos maximos:** 100
 **Puntos de aprobacion:** 70
-**Requiere revision manual:** No (evaluacion automatica)
+**Requiere revision manual:** Si (revision por docente)
 **Intentos maximos:** 5
 
 ### Configuracion del Ejercicio
@@ -364,7 +364,9 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
     "timeLimit": 10,
     "swipeInterface": true,
     "quickFeedback": true,
-    "sharable": true
+    "sharable": true,
+    "requiresJustification": true,
+    "minJustificationLength": 30
 }
 ```
 
@@ -376,93 +378,116 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 | 2 | Cuantos Premios Nobel gano? | 1, 2, 3, 4 | **1** | 2 |
 | 3 | Que elemento nombro por su pais? | Radio, Curio, Polonio, Francio | **2** | Polonio |
 
-### RESPUESTA EXCELENTE (100 puntos)
+**NOTA:** El estudiante debe seleccionar una opcion Y escribir una justificacion escrita (minimo 30 caracteres) para cada respuesta. La calificacion final la asigna el docente.
+
+### RESPUESTA EXCELENTE (95-100 puntos)
 
 ```json
 {
     "answers": [1, 1, 2],
+    "justifications": [
+        "Marie Curie nacio como Maria Sklodowska en Varsovia, capital de Polonia, en 1867. Se mudo a Paris para estudiar en la Sorbona.",
+        "Marie Curie gano exactamente 2 Premios Nobel: Fisica en 1903 y Quimica en 1911. Es la unica persona en ganar en dos ciencias distintas.",
+        "El polonio fue nombrado en honor a Polonia (Polska), el pais natal de Marie Curie. Fue descubierto en 1898 junto con el radio."
+    ],
     "time_per_question": [6.2, 4.8, 7.1]
 }
 ```
 
-**Scoring automatico:**
-- 3/3 correctas = 100 puntos
-- Tiempo promedio: 6.03 segundos (dentro del limite)
+**Evaluacion por docente:**
+- 3/3 selecciones correctas
+- Justificaciones detalladas con contexto historico
+- Demuestra comprension profunda, no solo memorizacion
 
 **Feedback del sistema:**
-> "Perfecto! 3/3 respuestas correctas. Conoces muy bien los datos sobre Marie Curie. 100/100 puntos + 100 XP."
+> "Respuesta registrada. Un docente evaluara tu trabajo y tus justificaciones."
 
 ---
 
-### RESPUESTA ACEPTABLE (67 puntos)
+### RESPUESTA ACEPTABLE (65-79 puntos)
 
 ```json
 {
     "answers": [1, 1, 0],
+    "justifications": [
+        "Nacio en Varsovia porque era polaca, no francesa como muchos creen.",
+        "Gano 2 premios, uno de Fisica y otro de Quimica segun el articulo.",
+        "El radio fue nombrado por la radiacion que emitia segun lo que lei."
+    ],
     "time_per_question": [8.9, 5.2, 9.8]
 }
 ```
 
-**Scoring automatico:**
-- Pregunta 1: Correcto (indice 1 = Varsovia)
-- Pregunta 2: Correcto (indice 1 = 2)
-- Pregunta 3: Incorrecto (indice 0 = Radio, correcto era 2 = Polonio)
-- 2/3 correctas = 67 puntos
+**Evaluacion por docente:**
+- Pregunta 1: Correcto (indice 1 = Varsovia), justificacion aceptable
+- Pregunta 2: Correcto (indice 1 = 2), justificacion basica pero valida
+- Pregunta 3: Incorrecto (indice 0 = Radio, correcto era 2 = Polonio), justificacion incorrecta
+- 2/3 selecciones correctas, justificaciones parciales
 
 **Feedback del sistema:**
-> "Bien! 2/3 respuestas correctas. El elemento que nombro por Polonia es el POLONIO (Polska = Polonia). 67/100 puntos."
+> "Respuesta registrada. Un docente evaluara tu trabajo y tus justificaciones."
 
 ---
 
-### RESPUESTA INCORRECTA (0-33 puntos)
+### RESPUESTA INCORRECTA (0-49 puntos)
+
+**Escenario 1: Selecciones incorrectas con justificaciones vacias o muy cortas**
 
 ```json
 {
     "answers": [0, 2, 3],
+    "justifications": [
+        "Porque si",
+        "Creo que son 3",
+        "No se"
+    ],
     "time_per_question": [10.0, 10.0, 10.0]
 }
 ```
 
-**Scoring automatico:**
-- Pregunta 1: Incorrecto (indice 0 = Paris, correcto era 1 = Varsovia)
-- Pregunta 2: Incorrecto (indice 2 = 3, correcto era 1 = 2)
-- Pregunta 3: Incorrecto (indice 3 = Francio, correcto era 2 = Polonio)
-- 0/3 correctas = 0 puntos
-- Tiempos al limite sugieren que adivino
+**Validacion fallida:**
+> "Cada justificacion debe tener al menos 30 caracteres. Las justificaciones 1, 2 y 3 no cumplen el requisito minimo."
+
+**Escenario 2: Selecciones incorrectas con justificaciones que cumplen longitud minima**
+
+```json
+{
+    "answers": [0, 2, 3],
+    "justifications": [
+        "Creo que nacio en Paris porque vivia ahi y trabajaba en la Sorbona.",
+        "Creo que gano 3 premios Nobel porque era muy inteligente y trabajadora.",
+        "Francio porque suena a Francia y ella vivio en Francia toda su vida."
+    ],
+    "time_per_question": [10.0, 10.0, 10.0]
+}
+```
+
+**Evaluacion por docente:**
+- 0/3 selecciones correctas
+- Justificaciones demuestran confusion y falta de comprension
+- Tiempos al limite sugieren poca reflexion
 
 **Feedback del sistema:**
-> "0/3 respuestas correctas. Marie Curie nacio en VARSOVIA, gano 2 Premios Nobel, y nombro al POLONIO por su pais natal Polonia. 0/100 puntos. Te quedan 4 intentos."
+> "Respuesta registrada. Un docente evaluara tu trabajo y tus justificaciones."
 
 ---
 
-### Validacion Backend (Automatica)
+### Validacion Backend
 
-```javascript
-const correctAnswers = [1, 1, 2];
-
-function validateQuizTikTok(userAnswers) {
-    if (!Array.isArray(userAnswers) || userAnswers.length === 0) {
-        return { valid: false, error: 'answers debe ser un array no vacio' };
-    }
-
-    let correct = 0;
-    for (let i = 0; i < Math.min(userAnswers.length, correctAnswers.length); i++) {
-        if (typeof userAnswers[i] !== 'number' || userAnswers[i] < 0) {
-            return { valid: false, error: `Respuesta ${i+1} debe ser un numero >= 0` };
-        }
-        if (userAnswers[i] === correctAnswers[i]) {
-            correct++;
-        }
-    }
-
-    const score = Math.round((correct / correctAnswers.length) * 100);
-    return {
-        valid: true,
-        score: score,
-        correctCount: correct,
-        totalCount: correctAnswers.length
-    };
-}
+```sql
+SELECT * FROM educational_content.validate_module4_module5_answer(
+    'quiz_tiktok',
+    '{
+        "answers": [1, 1, 2],
+        "justifications": [
+            "Marie Curie nacio en Varsovia, capital de Polonia, en 1867.",
+            "Gano 2 Premios Nobel: Fisica en 1903 y Quimica en 1911.",
+            "El polonio fue nombrado en honor a Polonia, su pais natal."
+        ]
+    }'::jsonb,
+    100
+);
+-- Resultado: is_valid=TRUE, requires_manual_review=TRUE
 ```
 
 ---
@@ -800,7 +825,7 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 
 - [ ] Verificador Fake News: Valida array claims_verified con estructura correcta
 - [ ] Infografia: Valida answers{} y sections_explored[]
-- [ ] Quiz TikTok: Scoring automatico funciona correctamente (0/33/67/100)
+- [ ] Quiz TikTok: Valida answers[] con justifications[] (min 30 chars cada una), requiere revision manual
 - [ ] Navegacion: Valida path[] con minimo 2 elementos
 - [ ] Memes: Valida annotations[] y analysis{} con message
 
@@ -830,23 +855,26 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 }
 ```
 
-**Test Case 4.3: Quiz TikTok - Scoring automatico**
+**Test Case 4.3: Quiz TikTok - Revision manual con justificaciones**
 ```json
 {
     "exerciseId": "uuid-quiz-tiktok",
     "answers": {
-        "answers": [1, 1, 2]
+        "answers": [1, 1, 2],
+        "justifications": [
+            "Marie Curie nacio en Varsovia, capital de Polonia, en 1867.",
+            "Gano 2 Premios Nobel: Fisica en 1903 y Quimica en 1911.",
+            "El polonio fue nombrado en honor a Polonia, su pais natal."
+        ]
     }
 }
 ```
 **Respuesta esperada:**
 ```json
 {
-    "score": 100,
-    "passed": true,
-    "correctCount": 3,
-    "totalCount": 3,
-    "requiresManualReview": false
+    "structureValid": true,
+    "requiresManualReview": true,
+    "message": "Respuesta registrada. Un docente evaluara tu trabajo y tus justificaciones."
 }
 ```
 
@@ -866,10 +894,10 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
    - Extraer datos de visualizaciones
    - Responder preguntas basadas en graficos
 
-3. **Quiz TikTok (2 min):**
-   - Mostrar interfaz de 10 segundos
-   - Demostrar feedback inmediato
-   - Mostrar scoring automatico
+3. **Quiz TikTok (3 min):**
+   - Mostrar interfaz de seleccion con temporizador
+   - Demostrar campo de justificacion escrita (min 30 chars)
+   - Mostrar que la respuesta queda pendiente de revision por docente
 
 4. **Navegacion Hipertextual (3 min):**
    - Mostrar pregunta de investigacion
@@ -892,6 +920,30 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 | Veredictos | 0-1 correcto | 2 correctos | Todos correctos | Todos correctos + justificacion |
 | Evidencia | Ausente | Presente pero vaga | Clara y relevante | Detallada con fuentes |
 | Fuentes | No citadas | Fuentes dudosas | Fuentes confiables | Multiples fuentes verificables |
+
+**Infografia Interactiva (Revision Manual):**
+
+| Criterio | 0-25 | 26-50 | 51-75 | 76-100 |
+|----------|------|-------|-------|--------|
+| Respuestas | Incorrectas o ausentes | 1 correcta basica | Ambas correctas | Correctas + detalle |
+| Exploracion | 0 secciones | 1 seccion | 2 secciones | Todas las secciones |
+| Conexion visual-textual | No demuestra | Parcial | Clara | Sofisticada con sintesis |
+
+**Quiz TikTok (Revision Manual):**
+
+| Criterio | 0-25 | 26-50 | 51-75 | 76-100 |
+|----------|------|-------|-------|--------|
+| Selecciones | 0 correctas | 1 correcta | 2 correctas | 3/3 correctas |
+| Justificaciones | Ausentes o <30 chars | Presentes pero genericas | Correctas y relevantes | Detalladas con contexto historico |
+| Comprension | No demuestra | Memorizacion basica | Conexion con contenido | Analisis critico del tema |
+
+**Navegacion Hipertextual (Revision Manual):**
+
+| Criterio | 0-25 | 26-50 | 51-75 | 76-100 |
+|----------|------|-------|-------|--------|
+| Ruta | 1 paso o ninguno | Ruta larga e ineficiente | Ruta razonable | Ruta optima (3 pasos) |
+| Informacion | No encontrada | 1-2 datos basicos | Datos principales | Completa y detallada |
+| Sintesis | Ausente | Copia literal | Resumen basico | Sintesis propia con conexiones |
 
 **Analisis de Memes (Revision Manual):**
 
@@ -933,7 +985,7 @@ Esta guia proporciona **ejemplos exhaustivos** de respuestas en 3 niveles de cal
 - **Docentes:** Entender criterios de evaluacion para revision manual
 - **Testing API:** Verificar endpoints de validacion y scoring
 
-**IMPORTANTE:** Solo el Quiz TikTok tiene evaluacion automatica. Los otros 4 ejercicios del Modulo 4 requieren revision manual por un docente.
+**IMPORTANTE:** Los 5 ejercicios del Modulo 4 (`verificador_fake_news`, `infografia_interactiva`, `quiz_tiktok`, `navegacion_hipertextual`, `analisis_memes`) requieren revision manual por un docente (`requires_manual_grading = true`). El sistema valida la estructura de las respuestas pero no asigna puntuacion final.
 
 ---
 

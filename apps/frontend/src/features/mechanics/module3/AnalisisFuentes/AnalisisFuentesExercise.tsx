@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type MutableRefObject } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileSearch,
   ExternalLink,
-  Shield,
-  AlertTriangle,
   ArrowUp,
   ArrowDown,
   Trophy,
@@ -12,9 +10,8 @@ import {
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
-import { fetchSources, analyzeSource, checkClaim } from './analisisFuentesAPI';
+import { fetchSources } from './analisisFuentesAPI';
 import type { Source, AnalisisFuentesAnswers } from './analisisFuentesTypes';
-import type { SourceCredibility, FactCheckResult } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
@@ -33,47 +30,37 @@ interface ExerciseProps {
   onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
 }
 
 interface ExerciseState {
-  analyzedSources: string[];
-  checkedClaims: number;
   currentScore: number;
 }
 
-export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
+export const AnalisisFuentesExercise = ({
   exerciseId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: ExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exerciseId);
 
   const [sources, setSources] = useState<Source[]>([]);
-  const [selectedSource, setSelectedSource] = useState<Source | null>(null);
-  const [analysis, setAnalysis] = useState<SourceCredibility | null>(null);
-  const [claim, setClaim] = useState('');
-  const [factCheck, setFactCheck] = useState<FactCheckResult | null>(null);
   const [loading, setLoading] = useState(true);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [analyzedSources, setAnalyzedSources] = useState<string[]>(
-    initialData?.analyzedSources || [],
-  );
-  const [checkedClaims, setCheckedClaims] = useState(initialData?.checkedClaims || 0);
   const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentRanking, setCurrentRanking] = useState<string[]>([]);
+  const [justification, setJustification] = useState('');
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
   useEffect(() => {
@@ -87,7 +74,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
     }, 30000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analyzedSources, checkedClaims, currentScore]);
+  }, [currentScore]);
 
   // FE-055 & FE-059: Update progress with user answers
   useEffect(() => {
@@ -95,22 +82,21 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
     setTimeSpent(elapsed);
 
     if (onProgressUpdate) {
-      const totalTasks = sources.length + 3; // Sources to analyze + 3 claims to check
-      const completedTasks = analyzedSources.length + checkedClaims;
+      const totalSteps = sources.length;
+      const completedTasks = currentRanking.length > 0 ? 1 : 0;
 
       onProgressUpdate({
         progress: {
           currentStep: completedTasks,
-          totalSteps: totalTasks,
+          totalSteps,
           score: 0,
           hintsUsed: 0,
           timeSpent: elapsed,
         },
-        answers: { ranking: currentRanking },
+        answers: { ranking: currentRanking, justification },
       });
-
     }
-  }, [analyzedSources, checkedClaims, sources.length, onProgressUpdate, startTime, currentRanking]);
+  }, [sources.length, onProgressUpdate, startTime, currentRanking, justification]);
 
   const loadSources = async () => {
     try {
@@ -125,51 +111,10 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
 
   const saveProgress = () => {
     const state: ExerciseState = {
-      analyzedSources,
-      checkedClaims,
       currentScore,
     };
     // Save using shared utility
     saveProgressUtil(exerciseId, state);
-  };
-
-  // FE-059 NOTE: This component uses AI services (analyzeSource, checkClaim) for real-time analysis
-  // Unlike other exercises, it doesn't rely on stored "correct answers" in the exercise data
-  // The SourceAnalysis.credibilityScore field is sanitized in exercise data
-  // but analysis.credibilityScore (from SourceCredibility/AI) is a runtime calculation
-  // TODO: When integrating with backend, backend should perform source analysis or store rankings
-  const handleAnalyze = async (source: Source) => {
-    setSelectedSource(source);
-    setAnalyzing(true);
-    try {
-      const result = await analyzeSource(source.url);
-      setAnalysis(result);
-
-      // Track analyzed source
-      if (!analyzedSources.includes(source.id)) {
-        setAnalyzedSources([...analyzedSources, source.id]);
-        // FE-059: Local scoring will be replaced with backend scoring
-        const newScore = currentScore + 10;
-        setCurrentScore(newScore);
-      }
-    } finally {
-      setAnalyzing(false);
-    }
-  };
-
-  const handleFactCheck = async () => {
-    if (!claim.trim()) return;
-    setAnalyzing(true);
-    try {
-      const result = await checkClaim(claim);
-      setFactCheck(result);
-      setCheckedClaims(checkedClaims + 1);
-      const newScore = currentScore + (result.isAccurate ? 15 : 5);
-      setCurrentScore(newScore);
-      setClaim('');
-    } finally {
-      setAnalyzing(false);
-    }
   };
 
   const moveSourceUp = (sourceId: string) => {
@@ -195,7 +140,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
     if (!user?.id) {
       setFeedback({
         type: 'error',
-        title: 'Error de Autenticación',
+        title: 'Error de Autenticaci\u00f3n',
         message: 'Debes estar autenticado para enviar el ejercicio.',
       });
       setShowFeedback(true);
@@ -231,8 +176,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       if (invalidIds.length > 0) {
         setFeedback({
           type: 'error',
-          title: 'Error de Validación',
-          message: 'Algunos IDs de fuentes son inválidos. Intenta reiniciar el ejercicio.',
+          title: 'Error de Validaci\u00f3n',
+          message: 'Algunos IDs de fuentes son inv\u00e1lidos. Intenta reiniciar el ejercicio.',
         });
         setShowFeedback(true);
         setIsSubmitting(false);
@@ -241,16 +186,17 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
 
       const answers: AnalisisFuentesAnswers = {
         ranking: sanitizedRanking,
+        justification: justification.trim(),
       };
 
       const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
-      // CORR-AF-001 2026-01-07: Manejar ejercicios con revisión manual
+      // CORR-AF-001 2026-01-07: Manejar ejercicios con revisi\u00f3n manual
       // Este ejercicio tiene requires_manual_grading=TRUE en BD
-      if (response.status === 'pending_review' || response.requiresManualReview) {
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
         setFeedback({
           type: 'info',
-          title: 'Análisis Enviado',
+          title: 'An\u00e1lisis Enviado',
           message:
             MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
@@ -264,16 +210,16 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
         return;
       }
 
-      // Extraer rewards de la respuesta (solo si no requiere revisión manual)
+      // Extraer rewards de la respuesta (solo si no requiere revisi\u00f3n manual)
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
       // Create feedback based on response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect
-          ? '¡Excelente Análisis!'
+          ? '\u00a1Excelente An\u00e1lisis!'
           : response.score >= 70
-            ? '¡Buen Trabajo!'
+            ? '\u00a1Buen Trabajo!'
             : 'Sigue Practicando',
         message:
           response.feedback?.overall ||
@@ -289,7 +235,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-    } catch (error) {
+    } catch (_error) {
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
@@ -302,14 +248,9 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   };
 
   const handleReset = () => {
-    setAnalyzedSources([]);
-    setCheckedClaims(0);
     setCurrentScore(0);
-    setSelectedSource(null);
-    setAnalysis(null);
-    setFactCheck(null);
-    setClaim('');
     setCurrentRanking(sources.map((s) => s.id));
+    setJustification('');
     setShowFeedback(false);
   };
 
@@ -335,160 +276,67 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   return (
     <>
       <UnifiedExerciseLayout
-        title="Análisis de Fuentes"
-        description="Evalúa la credibilidad de fuentes sobre Marie Curie"
+        title="An\u00e1lisis de Fuentes"
+        description="Eval\u00faa la credibilidad de fuentes sobre Marie Curie"
         icon={<FileSearch className="h-8 w-8" />}
         cardPadding="lg"
       >
         <div className="space-y-6">
-          {/* Sources and Analysis Grid */}
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Available Sources */}
-            <div className="rounded-detective border-2 border-detective-border-light bg-white p-6">
-              <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
-                Fuentes Disponibles
-              </h3>
-              <div className="space-y-4">
-                {sources.map((source) => (
-                  <motion.div
-                    key={source.id}
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => handleAnalyze(source)}
-                    className={`shadow-detective-sm hover:shadow-detective-md cursor-pointer rounded-lg border-2 bg-white p-4 transition-all ${
-                      analyzedSources.includes(source.id)
-                        ? 'border-detective-orange'
-                        : 'border-transparent'
-                    }`}
-                  >
-                    <div className="mb-2 flex items-start justify-between">
-                      <h4 className="text-detective-base font-semibold">{source.title}</h4>
-                      <ExternalLink className="h-4 w-4 text-detective-orange" />
-                    </div>
-                    <p className="mb-2 text-detective-xs text-detective-text-secondary">
-                      {source.url}
-                    </p>
-                    <p className="text-detective-sm text-detective-text">{source.excerpt}</p>
-                    <span className="mt-2 inline-block rounded bg-detective-bg px-2 py-1 text-detective-xs">
-                      {source.type}
-                    </span>
-                    {analyzedSources.includes(source.id) && (
-                      <span className="ml-2 mt-2 inline-block rounded bg-detective-success/10 px-2 py-1 text-detective-xs text-detective-success">
-                        ✓ Analizada
-                      </span>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Credibility Analysis */}
-            {selectedSource && analysis && (
-              <div className="rounded-detective border-2 border-detective-border-light bg-white p-6">
-                <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
-                  Análisis de Credibilidad
-                </h3>
-                <div className="space-y-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <h4 className="text-detective-base font-semibold">{selectedSource.title}</h4>
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-detective-gold" />
-                      <span className="text-2xl font-bold text-detective-orange">
-                        {Math.round(analysis.credibilityScore * 100)}%
-                      </span>
-                    </div>
+          {/* Available Sources */}
+          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6">
+            <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
+              Fuentes Disponibles
+            </h3>
+            <div className="space-y-4">
+              {sources.map((source) => (
+                <div
+                  key={source.id}
+                  className="shadow-detective-sm rounded-lg border-2 border-transparent bg-white p-4"
+                >
+                  <div className="mb-2 flex items-start justify-between">
+                    <h4 className="text-detective-base font-semibold">{source.title}</h4>
+                    <ExternalLink className="h-4 w-4 text-detective-orange" />
                   </div>
-                  <div className="space-y-3">
-                    <div>
-                      <span className="text-detective-sm font-medium">Nivel de Sesgo:</span>
-                      <span className="ml-2 rounded bg-detective-bg-secondary px-3 py-1 text-detective-sm">
-                        {analysis.biasLevel}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-detective-sm font-medium">Reporte Factual:</span>
-                      <span className="ml-2 rounded bg-detective-bg-secondary px-3 py-1 text-detective-sm">
-                        {analysis.factualReporting}
-                      </span>
-                    </div>
-                    {analysis.warnings.length > 0 && (
-                      <div>
-                        <h5 className="mb-2 flex items-center gap-2 text-detective-sm font-semibold">
-                          <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                          Advertencias
-                        </h5>
-                        <ul className="space-y-1">
-                          {analysis.warnings.map((w, idx) => (
-                            <li key={idx} className="text-detective-xs text-yellow-800">
-                              • {w}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {analysis.strengths.length > 0 && (
-                      <div>
-                        <h5 className="mb-2 text-detective-sm font-semibold">Fortalezas</h5>
-                        <ul className="space-y-1">
-                          {analysis.strengths.map((s, idx) => (
-                            <li key={idx} className="text-detective-xs text-detective-success">
-                              • {s}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
+                  <p className="mb-2 text-detective-xs text-detective-text-secondary">
+                    {source.url}
+                  </p>
+                  <p className="text-detective-sm text-detective-text">{source.excerpt}</p>
+                  <span className="mt-2 inline-block rounded bg-detective-bg px-2 py-1 text-detective-xs">
+                    {source.type}
+                  </span>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
 
-          {/* Fact Checker */}
-          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-6">
+          {/* Justification Section */}
+          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6">
             <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
-              Verificador de Afirmaciones
+              Justificaci\u00f3n del Ranking
             </h3>
-            <div className="mb-4 flex gap-3">
-              <input
-                type="text"
-                value={claim}
-                onChange={(e) => setClaim(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleFactCheck()}
-                placeholder="Ingresa una afirmación sobre Marie Curie..."
-                className="flex-1 rounded-detective-lg border border-detective-border-medium px-4 py-3 focus:outline-none focus:ring-2 focus:ring-detective-orange"
-              />
-              <DetectiveButton
-                variant="primary"
-                onClick={handleFactCheck}
-                disabled={!claim.trim() || analyzing}
-                loading={analyzing}
-              >
-                Verificar
-              </DetectiveButton>
+            <p className="mb-4 text-detective-sm text-detective-text-secondary">
+              Explica por qu\u00e9 ordenaste las fuentes de esta manera. \u00bfQu\u00e9 criterios usaste para determinar la credibilidad de cada fuente? (m\u00ednimo 100 caracteres)
+            </p>
+            <textarea
+              value={justification}
+              onChange={(e) => setJustification(e.target.value)}
+              placeholder="Orden\u00e9 las fuentes de esta manera porque..."
+              className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+              rows={5}
+              maxLength={1000}
+            />
+            <div className="mt-1 flex justify-between">
+              <p className={`text-detective-sm ${justification.trim().length >= 100 ? 'text-detective-success' : 'text-detective-danger'}`}>
+                {justification.trim().length < 100
+                  ? `Faltan ${100 - justification.trim().length} caracteres`
+                  : '\u2713 Completo'}
+              </p>
+              <p className="text-detective-sm text-detective-text-secondary">{justification.length}/1000</p>
             </div>
-            {factCheck && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`rounded-detective-lg p-4 ${
-                  factCheck.isAccurate
-                    ? 'border-2 border-green-400 bg-detective-success/10'
-                    : 'border-2 border-red-400 bg-detective-danger/10'
-                }`}
-              >
-                <h4 className="mb-2 font-semibold">
-                  {factCheck.isAccurate ? '✓ Afirmación Precisa' : '✗ Afirmación Inexacta'}
-                </h4>
-                <p className="mb-3 text-detective-sm">{factCheck.explanation}</p>
-                <div className="text-detective-xs">
-                  <strong>Confianza:</strong> {Math.round(factCheck.confidence * 100)}%
-                </div>
-              </motion.div>
-            )}
           </div>
 
           {/* Ranking Section */}
-          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-6">
+          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6">
             <div className="mb-4 flex items-center gap-3">
               <Trophy className="h-6 w-6 text-detective-gold" />
               <h3 className="text-detective-lg font-semibold text-detective-blue">
@@ -496,8 +344,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
               </h3>
             </div>
             <p className="mb-4 text-detective-sm text-detective-text-secondary">
-              Ordena las fuentes de más creíble (arriba) a menos creíble (abajo). Este ranking se
-              enviará al completar el ejercicio.
+              Ordena las fuentes de m\u00e1s cre\u00edble (arriba) a menos cre\u00edble (abajo). Este ranking se
+              enviar\u00e1 al completar el ejercicio.
             </p>
             <div className="space-y-3">
               {currentRanking.map((sourceId, index) => {
@@ -510,8 +358,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                     animate={{ opacity: 1 }}
                     className="flex items-center gap-3 rounded-lg border border-detective-border bg-detective-bg p-4"
                   >
-                    <div className="flex min-w-[80px] items-center gap-2">
-                      <span className="text-2xl font-bold text-detective-orange">#{index + 1}</span>
+                    <div className="flex min-w-[60px] sm:min-w-[80px] items-center gap-2">
+                      <span className="text-xl sm:text-2xl font-bold text-detective-orange">#{index + 1}</span>
                     </div>
                     <div className="flex-1">
                       <h4 className="text-detective-base font-semibold">{source.title}</h4>
@@ -524,7 +372,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                         onClick={() => moveSourceUp(sourceId)}
                         disabled={index === 0}
                         className="hover:bg-detective-blue-dark rounded-lg bg-detective-blue p-2 text-white transition-all disabled:cursor-not-allowed disabled:opacity-30"
-                        title="Mover arriba (más creíble)"
+                        title="Mover arriba (m\u00e1s cre\u00edble)"
                       >
                         <ArrowUp className="h-4 w-4" />
                       </button>
@@ -532,7 +380,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                         onClick={() => moveSourceDown(sourceId)}
                         disabled={index === currentRanking.length - 1}
                         className="rounded-lg bg-detective-orange p-2 text-white transition-all hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:opacity-30"
-                        title="Mover abajo (menos creíble)"
+                        title="Mover abajo (menos cre\u00edble)"
                       >
                         <ArrowDown className="h-4 w-4" />
                       </button>
@@ -556,7 +404,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
             <DetectiveButton
               variant="primary"
               onClick={handleComplete}
-              disabled={isSubmitting}
+              disabled={isSubmitting || justification.trim().length < 100}
               loading={isSubmitting}
             >
               {isSubmitting ? 'Enviando...' : 'Completar Ejercicio'}

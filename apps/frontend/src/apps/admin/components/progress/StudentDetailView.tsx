@@ -7,7 +7,6 @@
  * @date 2025-11-24
  */
 
-import React from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { User, Award, TrendingUp, Flame, BookOpen, CheckCircle, Target } from 'lucide-react';
 import type { StudentProgress } from '@/services/api/adminTypes';
@@ -17,10 +16,10 @@ interface StudentDetailViewProps {
   isLoading: boolean;
 }
 
-export const StudentDetailView: React.FC<StudentDetailViewProps> = ({
+export const StudentDetailView = ({
   studentProgress,
   isLoading,
-}) => {
+}: StudentDetailViewProps) => {
   if (isLoading) {
     return (
       <div className="space-y-4">

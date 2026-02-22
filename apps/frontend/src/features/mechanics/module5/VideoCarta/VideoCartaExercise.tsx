@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Video, Camera, Download, Send, Loader2, CheckCircle, Pause, Play, RotateCcw, ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
 import { useSectionedRecorder, VideoSection } from '@/shared/hooks/useSectionedRecorder';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { mediaApi } from '@/shared/api/mediaApi';
+import { uploadMedia } from '@/shared/api/mediaApi';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 
 interface ProgressData {
@@ -35,12 +35,12 @@ const VIDEO_SECTIONS: VideoSection[] = [
   { id: 'closing', name: 'Cierre', duration: 15, prompt: 'Despedida y agradecimiento' },
 ];
 
-export const VideoCartaExercise: React.FC<ExerciseProps> = ({
+export const VideoCartaExercise = ({
   exerciseId = 'video-carta-default',
   onComplete,
   onProgressUpdate,
   onExit
-}) => {
+}: ExerciseProps) => {
   const [filter, setFilter] = useState('none');
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
@@ -78,50 +78,9 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   } = useSectionedRecorder(VIDEO_SECTIONS);
 
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-          type: 'info',
-          title: 'Video Carta Enviada',
-          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Video Carta Completada!',
-        message: 'Tu video carta ha sido evaluada correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   const filters = [
     { id: 'none', name: 'Sin filtro', class: '' },
@@ -197,35 +156,30 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
     let uploadedUrl = videoUrl;
     let mediaId: string | undefined;
 
+    // Upload video first
     try {
       setIsUploading(true);
-      
-      // Upload video using mediaApi
-      const file = new File([videoBlob], `video-carta-${exerciseId}.webm`, { type: 'video/webm' });
-      const uploadResult = await mediaApi.uploadMedia(file, {
+
+      const file = new File([videoBlob], `video-carta-${exerciseId}-${Date.now()}.webm`, { type: 'video/webm' });
+      const uploadResult = await uploadMedia(file, {
         type: 'video',
         exerciseId,
-        onProgress: (_progress) => {
-          // Could expose progress state if needed
-        }
       });
-      
+
       uploadedUrl = uploadResult.url;
       mediaId = uploadResult.id;
-      
-    } catch (error) {
-      // If upload fails, we might still want to try submitting with the blob URL (local fallback)
-      // or show an error. For now, we'll try to proceed but log the error.
-      // In a strict environment, we should stop and show feedback.
+    } catch (_uploadError) {
       setFeedback({
         type: 'error',
-        title: 'Error de subida',
-        message: 'No se pudo subir el video al servidor. Verifica tu conexión.',
-        score: 0
+        title: 'Error al Subir Video',
+        message: 'No se pudo subir el video al servidor. Verifica tu conexión e intenta de nuevo.',
+        score: 0,
       });
       setShowFeedback(true);
       setIsUploading(false);
       return;
+    } finally {
+      setIsUploading(false);
     }
 
     // FIX: Transform data to match VideoCartaAnswerDto expected by backend
@@ -240,29 +194,70 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
       };
     });
 
-    submit({
-      // Primary format expected by VideoCartaAnswerDto
-      video_url: uploadedUrl || '',
-      sections: dtoSections,
+    try {
+      const response = await submitAsync({
+        // Primary format expected by VideoCartaAnswerDto
+        video_url: uploadedUrl || '',
+        sections: dtoSections,
 
-      // Metadata for backwards compatibility and manual review context
-      metadata: {
-        videoDuration: duration,
-        videoSize: videoBlob.size,
-        hasVideo: true,
-        message: 'Video carta sobre Marie Curie',
-        uploadedMediaId: mediaId,
-        allSectionsCompleted,
-        sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
-          id,
-          completed: data.completed,
-          duration: data.duration,
-          prompt: sections.find((s) => s.id === id)?.prompt,
-        })),
-      },
-    });
-    
-    setIsUploading(false);
+        // Metadata for backwards compatibility and manual review context
+        metadata: {
+          videoDuration: duration,
+          videoSize: videoBlob.size,
+          hasVideo: true,
+          message: 'Video carta sobre Marie Curie',
+          uploadedMediaId: mediaId,
+          allSectionsCompleted,
+          sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
+            id,
+            completed: data.completed,
+            duration: data.duration,
+            prompt: sections.find((s) => s.id === id)?.prompt,
+          })),
+        },
+      });
+
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Verificar si está pendiente de revisión manual
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Video Carta Enviada',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          score: undefined,
+          showConfetti: false,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+          pendingReview: true,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, timeSpent);
+        return;
+      }
+
+      // Flujo normal cuando ya está evaluado
+      const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
+      setFeedback({
+        type: 'success',
+        title: '¡Video Carta Completada!',
+        message: 'Tu video carta ha sido evaluada correctamente.',
+        score: response.score,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(response.score, timeSpent);
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (error instanceof Error ? error.message : null) || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    }
   };
 
   const formatDuration = (seconds: number) => {
@@ -300,7 +295,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
             </div>
 
             {/* Sections Overview */}
-            <div className="mt-4 grid grid-cols-4 gap-2">
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
               {sections.map((section, index) => {
                 const recording = sectionRecordings.get(section.id);
                 const isCurrent = index === currentSectionIndex;
@@ -334,7 +329,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             {!isSupported && (
-              <div className="rounded-detective bg-detective-danger/10 border-2 border-red-300 p-6 shadow-card">
+              <div className="rounded-detective bg-detective-danger/10 border-2 border-red-300 p-3 sm:p-6 shadow-card">
                 <p className="text-detective-danger font-medium">
                   Tu navegador no soporta grabación de video. Por favor usa Chrome, Firefox, Edge o Safari actualizado.
                 </p>
@@ -342,14 +337,14 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
             )}
 
             {recorderError && (
-              <div className="rounded-detective bg-detective-danger/10 border-2 border-red-300 p-6 shadow-card">
+              <div className="rounded-detective bg-detective-danger/10 border-2 border-red-300 p-3 sm:p-6 shadow-card">
                 <h3 className="font-bold text-detective-danger mb-2">{recorderError.message}</h3>
                 <p className="text-detective-danger text-sm">{recorderError.userAction}</p>
               </div>
             )}
 
             {!videoUrl ? (
-              <div className="rounded-detective bg-white p-6 shadow-card">
+              <div className="rounded-detective bg-white p-3 sm:p-6 shadow-card">
                 {/* Current Section Info */}
                 {currentSection && (
                   <div className="mb-4 rounded-xl border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-blue-50 p-4">
@@ -429,7 +424,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       <button
                         onClick={() => startRecording()}
                         disabled={!isSupported}
-                        className="flex items-center gap-2 rounded-detective bg-red-600 px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 rounded-detective bg-red-600 px-4 py-2 sm:px-8 sm:py-4 text-lg font-medium text-white transition-colors hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                       >
                         <Camera className="h-6 w-6" />
                         Iniciar Grabación
@@ -438,14 +433,14 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       <>
                         <button
                           onClick={resumeRecording}
-                          className="flex items-center gap-2 rounded-detective bg-green-600 px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-green-700"
+                          className="flex items-center gap-2 rounded-detective bg-green-600 px-4 py-2 sm:px-8 sm:py-4 text-lg font-medium text-white transition-colors hover:bg-green-700"
                         >
                           <Play className="h-6 w-6" />
                           Reanudar
                         </button>
                         <button
                           onClick={stopRecording}
-                          className="flex items-center gap-2 rounded-detective bg-detective-text px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-detective-text/90"
+                          className="flex items-center gap-2 rounded-detective bg-detective-text px-4 py-2 sm:px-8 sm:py-4 text-lg font-medium text-white transition-colors hover:bg-detective-text/90"
                         >
                           ⏹ Detener
                         </button>
@@ -454,14 +449,14 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       <>
                         <button
                           onClick={pauseRecording}
-                          className="flex items-center gap-2 rounded-detective bg-yellow-600 px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-yellow-700"
+                          className="flex items-center gap-2 rounded-detective bg-yellow-600 px-4 py-2 sm:px-8 sm:py-4 text-lg font-medium text-white transition-colors hover:bg-yellow-700"
                         >
                           <Pause className="h-6 w-6" />
                           Pausar
                         </button>
                         <button
                           onClick={stopRecording}
-                          className="flex items-center gap-2 rounded-detective bg-detective-text px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-detective-text/90"
+                          className="flex items-center gap-2 rounded-detective bg-detective-text px-4 py-2 sm:px-8 sm:py-4 text-lg font-medium text-white transition-colors hover:bg-detective-text/90"
                         >
                           ⏹ Detener
                         </button>
@@ -496,7 +491,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="space-y-4 rounded-detective bg-white p-6 shadow-card">
+              <div className="space-y-4 rounded-detective bg-white p-3 sm:p-6 shadow-card">
                 <video src={videoUrl} controls playsInline className="w-full rounded-detective" />
 
                 {/* Recording Summary */}
@@ -585,7 +580,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-detective bg-white p-6 shadow-card">
+            <div className="rounded-detective bg-white p-3 sm:p-6 shadow-card">
               <h3 className="mb-4 font-bold text-detective-text">Filtros de Video</h3>
               <div className="space-y-2">
                 {filters.map((f) => (
@@ -604,7 +599,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
               </div>
             </div>
 
-            <div className="rounded-detective border-2 border-detective-orange/20 bg-detective-bg-secondary p-6">
+            <div className="rounded-detective border-2 border-detective-orange/20 bg-detective-bg-secondary p-3 sm:p-6">
               <h3 className="mb-3 font-bold text-detective-text">💡 Guía de Secciones:</h3>
               <div className="space-y-3">
                 {sections.map((section, index) => {

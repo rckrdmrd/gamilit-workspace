@@ -14,7 +14,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, type ChangeEvent, type ReactNode } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import {
   X,
@@ -219,7 +219,7 @@ const hasMultimediaContent = (exerciseType: string): boolean => {
 /**
  * Video Player Component
  */
-const VideoPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) => {
+const VideoPlayer = ({ url, title }: { url: string; title?: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -256,7 +256,7 @@ const VideoPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) 
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = (e: ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
     if (videoRef.current) {
       videoRef.current.currentTime = time;
@@ -325,7 +325,7 @@ const VideoPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) 
 /**
  * Audio Player Component
  */
-const AudioPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) => {
+const AudioPlayer = ({ url, title }: { url: string; title?: string }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -354,7 +354,7 @@ const AudioPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) 
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = (e: ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
     if (audioRef.current) {
       audioRef.current.currentTime = time;
@@ -411,7 +411,7 @@ const AudioPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) 
 /**
  * Image Gallery Component
  */
-const ImageGallery: React.FC<{ images: string[]; title?: string }> = ({ images, title }) => {
+const ImageGallery = ({ images, title }: { images: string[]; title?: string }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
@@ -501,10 +501,10 @@ const ImageGallery: React.FC<{ images: string[]; title?: string }> = ({ images, 
  * Multimedia Content Section
  * Renders all multimedia content found in the answer
  */
-const MultimediaContent: React.FC<{
+const MultimediaContent = ({ answerData, exerciseType }: {
   answerData: Record<string, unknown>;
   exerciseType: string;
-}> = ({ answerData, exerciseType }) => {
+}) => {
   const mediaContent = extractMediaContent(answerData);
 
   if (mediaContent.length === 0 && !hasMultimediaContent(exerciseType)) {
@@ -585,11 +585,11 @@ const MultimediaContent: React.FC<{
 // SUB-COMPONENTS
 // ============================================================================
 
-const InfoCard: React.FC<{
-  icon: React.ReactNode;
+const InfoCard = ({ icon, title, children }: {
+  icon: ReactNode;
   title: string;
-  children: React.ReactNode;
-}> = ({ icon, title, children }) => {
+  children: ReactNode;
+}) => {
   return (
     <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-4">
       <div className="mb-3 flex items-center gap-2">
@@ -603,12 +603,12 @@ const InfoCard: React.FC<{
   );
 };
 
-const MetricBadge: React.FC<{
-  icon: React.ReactNode;
+const MetricBadge = ({ icon, label, value, color = 'bg-blue-50 text-blue-700 border-blue-200' }: {
+  icon: ReactNode;
   label: string;
   value: string | number;
   color?: string;
-}> = ({ icon, label, value, color = 'bg-blue-50 text-blue-700 border-blue-200' }) => {
+}) => {
   return (
     <div className={`flex items-center gap-3 rounded-lg border p-3 ${color}`}>
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80">
@@ -622,11 +622,11 @@ const MetricBadge: React.FC<{
   );
 };
 
-const AnswerComparison: React.FC<{
+const AnswerComparison = ({ studentAnswer, correctAnswer, exerciseType }: {
   studentAnswer: Record<string, unknown>;
   correctAnswer: Record<string, unknown>;
   exerciseType?: string;
-}> = ({ studentAnswer, correctAnswer, exerciseType }) => {
+}) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {/* Respuesta del Estudiante */}
@@ -662,7 +662,7 @@ const AnswerComparison: React.FC<{
   );
 };
 
-const LoadingState: React.FC = () => {
+const LoadingState = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="mb-4 h-16 w-16 animate-spin rounded-full border-4 border-detective-orange border-t-transparent" />
@@ -671,7 +671,7 @@ const LoadingState: React.FC = () => {
   );
 };
 
-const ErrorState: React.FC<{ message: string }> = ({ message }) => {
+const ErrorState = ({ message }: { message: string }) => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
@@ -687,11 +687,11 @@ const ErrorState: React.FC<{ message: string }> = ({ message }) => {
 // MAIN COMPONENT
 // ============================================================================
 
-export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
+export const ResponseDetailModal = ({
   attemptId,
   open,
   onClose,
-}) => {
+}: ResponseDetailModalProps) => {
   const navigate = useNavigate();
   const { data: attempt, isLoading, error } = useAttemptDetail(attemptId, open);
 

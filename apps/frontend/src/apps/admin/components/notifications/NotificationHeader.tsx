@@ -12,14 +12,14 @@ export interface NotificationHeaderProps {
   onMarkAllAsRead: () => void;
 }
 
-export const NotificationHeader: React.FC<NotificationHeaderProps> = ({
+export const NotificationHeader = ({
   unreadCount,
   isRefreshing,
   showFilters,
   onRefresh,
   onToggleFilters,
   onMarkAllAsRead,
-}) => (
+}: NotificationHeaderProps) => (
   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div className="flex items-center gap-3">
       <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">

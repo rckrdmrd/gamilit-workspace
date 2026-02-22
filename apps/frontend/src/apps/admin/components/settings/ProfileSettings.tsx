@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { profileAPI } from '@/services/api/profileAPI';
@@ -7,7 +7,7 @@ import { useApiError } from '@shared/hooks';
 import { Camera, Save, Loader2, Check, Key, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 
-export const ProfileSettings: React.FC = () => {
+export const ProfileSettings = () => {
     const { user } = useAuth();
     const { handleError } = useApiError();
 
@@ -56,7 +56,7 @@ export const ProfileSettings: React.FC = () => {
         }
     };
 
-    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !user?.id) return;
 

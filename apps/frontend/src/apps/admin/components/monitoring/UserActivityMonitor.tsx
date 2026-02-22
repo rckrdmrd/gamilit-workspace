@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useUserActivity, useExportData } from '../../hooks/useAdminData';
 import { Users, Clock, Download, Filter, MapPin } from 'lucide-react';
 
-export const UserActivityMonitor: React.FC = () => {
+export const UserActivityMonitor = () => {
   const [filters, setFilters] = useState({ role: '', dateFrom: '', action: '' });
   const { activities, onlineUsers, activeSessions, loading } = useUserActivity(filters);
   const { exportToCSV } = useExportData();

@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
+import { InputDetective } from '@shared/components/base/InputDetective';
 import { useApiError } from '@shared/hooks';
 import toast from 'react-hot-toast';
 import {
@@ -26,8 +27,10 @@ import {
   AlertCircle,
   RefreshCw,
   Target,
+  AlertTriangle,
 } from 'lucide-react';
 import { LoadingSpinner } from '@shared/components/loading';
+import { EmptyState } from '@shared/components/feedback';
 import { useAssignments } from '../hooks/useAssignments';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { ImprovedAssignmentWizard } from '../components/assignments/ImprovedAssignmentWizard';
@@ -35,6 +38,7 @@ import { AssignmentCard } from '../components/assignments/AssignmentCard';
 import { SubmissionsModal } from '../components/assignments/SubmissionsModal';
 import { GradeSubmissionModal } from '../components/dashboard/GradeSubmissionModal';
 import type { Assignment, Submission, DashboardSubmission, GradeSubmissionData } from '../types';
+import type { UpdateAssignmentDto } from '@services/api/teacher';
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 /** Data shape received from ImprovedAssignmentWizard onComplete callback */
@@ -55,6 +59,8 @@ export default function TeacherAssignmentsPage() {
     loading,
     error,
     createAssignment: createAssignmentAPI,
+    updateAssignment: updateAssignmentAPI,
+    deleteAssignment: deleteAssignmentAPI,
     getSubmissions: getSubmissionsAPI,
     gradeSubmission: gradeSubmissionAPI,
     sendReminder: sendReminderAPI,
@@ -68,12 +74,19 @@ export default function TeacherAssignmentsPage() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isSubmissionsModalOpen, setIsSubmissionsModalOpen] = useState(false);
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   // Data states
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [selectedSubmission, setSelectedSubmission] = useState<DashboardSubmission | null>(null);
   const [submissionsLoading, setSubmissionsLoading] = useState(false);
+
+  // Edit form state
+  const [editForm, setEditForm] = useState<UpdateAssignmentDto>({});
+  const [editSaving, setEditSaving] = useState(false);
+  const [deleteSaving, setDeleteSaving] = useState(false);
 
   // Get classroom ID from selected classroom or first available
   const classroomId = selectedClassroom?.id ?? classrooms[0]?.id;
@@ -179,6 +192,64 @@ export default function TeacherAssignmentsPage() {
       toast.success(result.message);
     } catch (err: unknown) {
       handleError(err, 'Error al enviar recordatorio');
+    }
+  };
+
+  /**
+   * Open edit modal for an assignment
+   */
+  const handleEditAssignment = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setEditForm({
+      title: assignment.title,
+      description: '',
+      type: (assignment.type as UpdateAssignmentDto['type']) || 'practice',
+      due_date: assignment.dueDate || assignment.end_date || '',
+    });
+    setIsEditModalOpen(true);
+  };
+
+  /**
+   * Submit assignment edit
+   */
+  const handleSubmitEdit = async () => {
+    if (!selectedAssignment) return;
+    setEditSaving(true);
+    try {
+      await updateAssignmentAPI(selectedAssignment.id, editForm);
+      toast.success('Asignación actualizada correctamente');
+      setIsEditModalOpen(false);
+      setSelectedAssignment(null);
+    } catch (err: unknown) {
+      handleError(err, 'Error al actualizar la asignación');
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  /**
+   * Open delete confirmation for an assignment
+   */
+  const handleDeleteAssignment = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  /**
+   * Confirm assignment deletion
+   */
+  const handleConfirmDelete = async () => {
+    if (!selectedAssignment) return;
+    setDeleteSaving(true);
+    try {
+      await deleteAssignmentAPI(selectedAssignment.id);
+      toast.success('Asignación eliminada correctamente');
+      setIsDeleteConfirmOpen(false);
+      setSelectedAssignment(null);
+    } catch (err: unknown) {
+      handleError(err, 'Error al eliminar la asignación');
+    } finally {
+      setDeleteSaving(false);
     }
   };
 
@@ -309,19 +380,15 @@ export default function TeacherAssignmentsPage() {
 
         {/* Empty State */}
         {!loading && !error && assignments.length === 0 && (
-          <DetectiveCard>
-            <div className="py-16 text-center">
-              <Target className="mx-auto mb-4 h-20 w-20 text-detective-text-secondary opacity-50" />
-              <h3 className="mb-2 text-xl font-bold text-detective-text">No hay asignaciones</h3>
-              <p className="mb-6 text-detective-text-secondary">
-                Comienza creando tu primera asignación para los estudiantes
-              </p>
-              <DetectiveButton variant="primary" onClick={() => setIsWizardOpen(true)}>
-                <Plus className="h-5 w-5" />
-                Crear Primera Asignación
-              </DetectiveButton>
-            </div>
-          </DetectiveCard>
+          <EmptyState
+            icon={Target}
+            title="No hay asignaciones"
+            description="Comienza creando tu primera asignación para los estudiantes"
+            action={{
+              label: 'Crear Primera Asignación',
+              onClick: () => setIsWizardOpen(true),
+            }}
+          />
         )}
 
         {/* Assignments Grid */}
@@ -333,6 +400,8 @@ export default function TeacherAssignmentsPage() {
                 assignment={assignment}
                 onViewSubmissions={handleViewSubmissions}
                 onSendReminder={handleSendReminder}
+                onEdit={handleEditAssignment}
+                onDelete={handleDeleteAssignment}
               />
             ))}
           </div>
@@ -377,6 +446,117 @@ export default function TeacherAssignmentsPage() {
         submission={selectedSubmission}
         onSubmit={handleSubmitGrade}
       />
+
+      {/* Edit Assignment Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedAssignment(null);
+        }}
+        title="Editar Asignación"
+        size="lg"
+      >
+        <div className="space-y-4 p-2">
+          <InputDetective
+            label="Título"
+            value={editForm.title || ''}
+            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+            placeholder="Título de la asignación"
+          />
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-detective-text" id="edit-type-label">Tipo</label>
+            <select
+              value={editForm.type || 'practice'}
+              onChange={(e) =>
+                setEditForm({ ...editForm, type: e.target.value as UpdateAssignmentDto['type'] })
+              }
+              aria-labelledby="edit-type-label"
+              className="border-detective-border w-full rounded-lg border bg-detective-bg-secondary px-3 py-2 text-detective-text transition-colors focus:border-detective-orange focus:outline-none focus:ring-1 focus:ring-detective-orange"
+            >
+              <option value="practice">Práctica</option>
+              <option value="quiz">Quiz</option>
+              <option value="exam">Examen</option>
+              <option value="homework">Tarea</option>
+            </select>
+          </div>
+
+          <InputDetective
+            label="Fecha Límite"
+            type="datetime-local"
+            value={editForm.due_date ? editForm.due_date.slice(0, 16) : ''}
+            onChange={(e) => setEditForm({ ...editForm, due_date: e.target.value })}
+          />
+
+          <div className="flex justify-end gap-3 pt-4">
+            <DetectiveButton
+              variant="secondary"
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setSelectedAssignment(null);
+              }}
+              disabled={editSaving}
+            >
+              Cancelar
+            </DetectiveButton>
+            <DetectiveButton
+              variant="primary"
+              onClick={handleSubmitEdit}
+              disabled={editSaving || !editForm.title?.trim()}
+            >
+              {editSaving ? 'Guardando...' : 'Guardar Cambios'}
+            </DetectiveButton>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => {
+          setIsDeleteConfirmOpen(false);
+          setSelectedAssignment(null);
+        }}
+        title="Eliminar Asignación"
+        size="md"
+      >
+        <div className="space-y-4 p-2">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-500" />
+            <div>
+              <p className="text-detective-text">
+                ¿Estás seguro de que deseas eliminar la asignación{' '}
+                <strong>{selectedAssignment?.title}</strong>?
+              </p>
+              <p className="mt-2 text-sm text-detective-text-secondary">
+                Esta acción eliminará la asignación y todas las entregas asociadas. No se puede
+                deshacer.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <DetectiveButton
+              variant="secondary"
+              onClick={() => {
+                setIsDeleteConfirmOpen(false);
+                setSelectedAssignment(null);
+              }}
+              disabled={deleteSaving}
+            >
+              Cancelar
+            </DetectiveButton>
+            <DetectiveButton
+              variant="danger"
+              onClick={handleConfirmDelete}
+              disabled={deleteSaving}
+            >
+              {deleteSaving ? 'Eliminando...' : 'Eliminar'}
+            </DetectiveButton>
+          </div>
+        </div>
+      </Modal>
       </div>
     </TeacherPageShell>
   );

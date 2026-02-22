@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Users,
   UserCheck,
@@ -40,7 +39,7 @@ interface InstitutionStatsProps {
  *
  * @component
  */
-export const InstitutionStats: React.FC<InstitutionStatsProps> = ({ stats, loading }) => {
+export const InstitutionStats = ({ stats, loading }: InstitutionStatsProps) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

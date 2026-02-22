@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ComponentType } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Flame, Clock, Trophy, TrendingUp, Award, Zap, Star } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -18,7 +18,7 @@ interface EnhancedStatsGridProps {
 }
 
 interface StatCardProps {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
   subtitle?: string;
@@ -28,7 +28,7 @@ interface StatCardProps {
   loading: boolean;
 }
 
-const StatCard: React.FC<StatCardProps> = ({
+const StatCard = ({
   icon: Icon,
   label,
   value,
@@ -37,7 +37,7 @@ const StatCard: React.FC<StatCardProps> = ({
   bgColor,
   delay,
   loading,
-}) => {
+}: StatCardProps) => {
   if (loading) {
     return (
       <EnhancedCard variant="default" hover={false} padding="md">
@@ -89,12 +89,12 @@ const StatCard: React.FC<StatCardProps> = ({
   );
 };
 
-export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: boolean }> = ({
+export const EnhancedStatsGrid = ({
   stats,
   loading,
   error,
   compact = false,
-}) => {
+}: EnhancedStatsGridProps & { compact?: boolean }) => {
   const { frame, badge } = useEquippedVisuals();
 
   // Handle error state
@@ -159,7 +159,7 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
   };
 
   interface StatCard {
-    icon: React.ComponentType<{ className?: string }>;
+    icon: ComponentType<{ className?: string }>;
     label: string;
     value: string | number;
     subtitle: string;

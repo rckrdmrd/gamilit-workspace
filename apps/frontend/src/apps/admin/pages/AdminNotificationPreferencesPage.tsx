@@ -226,6 +226,8 @@ export default function AdminNotificationPreferencesPage() {
                   {(['inAppEnabled', 'emailEnabled', 'pushEnabled'] as const).map((channel) => (
                     <div key={channel} className="flex items-center justify-center">
                       <button
+                        role="switch"
+                        aria-checked={getPreference(type.key, channel)}
                         onClick={() => handleToggle(type.key, channel)}
                         disabled={savingType === type.key || (channel === 'pushEnabled' && !pushEnabled)}
                         className={cn(

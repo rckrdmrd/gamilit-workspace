@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -34,13 +34,29 @@ const EXERCISE_TYPES: ExerciseType[] = [
   { id: 'matriz_perspectivas', name: 'Matriz de Perspectivas', description: 'Analiza un tema desde multiples puntos de vista', moduleId: 'module-3', moduleName: 'Critica', icon: '\u{1F4CA}', complexity: 'complex' },
   { id: 'podcast_argumentativo', name: 'Podcast Argumentativo', description: 'Estructura un argumento tipo podcast', moduleId: 'module-3', moduleName: 'Critica', icon: '\u{1F399}\uFE0F', complexity: 'complex' },
   { id: 'tribunal_opiniones', name: 'Tribunal de Opiniones', description: 'Juzga un caso evaluando evidencia y argumentos', moduleId: 'module-3', moduleName: 'Critica', icon: '\u2696\uFE0F', complexity: 'complex' },
+  // Module 4 - Lectura Digital (9 types)
+  { id: 'verificador_fake_news', name: 'Verificador de Fake News', description: 'Analiza noticias para detectar informacion falsa', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F50D}', complexity: 'complex' },
+  { id: 'infografia_interactiva', name: 'Infografia Interactiva', description: 'Explora y analiza infografias con elementos interactivos', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F4CA}', complexity: 'medium' },
+  { id: 'quiz_tiktok', name: 'Quiz TikTok', description: 'Evalua contenido de redes sociales con formato dinamico', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F4F1}', complexity: 'simple' },
+  { id: 'navegacion_hipertextual', name: 'Navegacion Hipertextual', description: 'Navega documentos con hipervinculos para extraer informacion', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F310}', complexity: 'medium' },
+  { id: 'analisis_memes', name: 'Analisis de Memes', description: 'Interpreta y evalua el mensaje detras de memes', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F923}', complexity: 'medium' },
+  { id: 'resena_critica', name: 'Resena Critica', description: 'Escribe una resena critica de contenido digital', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F4DD}', complexity: 'complex' },
+  { id: 'chat_literario', name: 'Chat Literario', description: 'Dialoga sobre textos literarios en formato chat', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F4AC}', complexity: 'medium' },
+  { id: 'email_formal', name: 'Email Formal', description: 'Redacta correos electronicos formales correctamente', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F4E7}', complexity: 'medium' },
+  { id: 'ensayo_argumentativo', name: 'Ensayo Argumentativo', description: 'Estructura un ensayo con argumentos solidos', moduleId: 'module-4', moduleName: 'Digital', icon: '\u{1F4C4}', complexity: 'complex' },
+  // Module 5 - Produccion Creativa (3 types)
+  { id: 'diario_multimedia', name: 'Diario Multimedia', description: 'Crea entradas de diario con texto, imagenes y audio', moduleId: 'module-5', moduleName: 'Creativa', icon: '\u{1F4D3}', complexity: 'medium' },
+  { id: 'comic_digital', name: 'Comic Digital', description: 'Disena una historieta digital con paneles y dialogos', moduleId: 'module-5', moduleName: 'Creativa', icon: '\u{1F4DA}', complexity: 'complex' },
+  { id: 'video_carta', name: 'Video Carta', description: 'Produce una video carta con guion y narrativa visual', moduleId: 'module-5', moduleName: 'Creativa', icon: '\u{1F3AC}', complexity: 'complex' },
 ];
 
-const MODULE_TABS = [
+const DEFAULT_MODULE_TABS = [
   { id: 'all', label: 'Todos' },
   { id: 'module-1', label: 'M1 Literal' },
   { id: 'module-2', label: 'M2 Inferencial' },
   { id: 'module-3', label: 'M3 Critica' },
+  { id: 'module-4', label: 'M4 Digital' },
+  { id: 'module-5', label: 'M5 Creativa' },
 ];
 
 const COMPLEXITY_COLORS: Record<string, string> = {
@@ -59,14 +75,71 @@ export interface ExerciseTypeSelectorProps {
   selectedType: string;
   moduleFilter: string;
   onSelect: (typeId: string) => void;
+  modules?: Array<{ id: string; title: string; module_code?: string; order_index: number }>;
 }
 
 export function ExerciseTypeSelector({
   selectedType,
   moduleFilter,
   onSelect,
+  modules,
 }: ExerciseTypeSelectorProps) {
-  const [activeTab, setActiveTab] = useState(moduleFilter || 'all');
+  // Map real module UUIDs to logical IDs used by EXERCISE_TYPES ("module-1", "module-2", etc.)
+  const uuidToLogicalId = useMemo(() => {
+    const map = new Map<string, string>();
+    if (modules) {
+      for (const mod of modules) {
+        map.set(mod.id, `module-${mod.order_index}`);
+      }
+    }
+    return map;
+  }, [modules]);
+
+  // Resolve moduleFilter (UUID from Step 1) to logical ID for tab matching
+  const resolvedFilter = useMemo(() => {
+    if (!moduleFilter) return 'all';
+    return uuidToLogicalId.get(moduleFilter) || moduleFilter;
+  }, [moduleFilter, uuidToLogicalId]);
+
+  const [activeTab, setActiveTab] = useState(resolvedFilter);
+
+  // Sync active tab when user changes module in Step 1 and returns to Step 2
+  useEffect(() => {
+    setActiveTab(resolvedFilter);
+  }, [resolvedFilter]);
+
+  // Generate tabs dynamically: known tabs from EXERCISE_TYPES + extra tabs for new modules
+  const moduleTabs = useMemo(() => {
+    if (!modules || modules.length === 0) return DEFAULT_MODULE_TABS;
+
+    // Start with "Todos"
+    const tabs: Array<{ id: string; label: string }> = [{ id: 'all', label: 'Todos' }];
+
+    // Collect logical module IDs that have exercise types defined
+    const knownLogicalIds = new Set(EXERCISE_TYPES.map((t) => t.moduleId));
+
+    // Add tabs for modules that have exercise types (use EXERCISE_TYPES data for label)
+    const addedLogicalIds = new Set<string>();
+    for (const type of EXERCISE_TYPES) {
+      if (!addedLogicalIds.has(type.moduleId)) {
+        addedLogicalIds.add(type.moduleId);
+        tabs.push({ id: type.moduleId, label: `${type.moduleName}` });
+      }
+    }
+
+    // Add extra tabs for new modules whose logical ID isn't covered by EXERCISE_TYPES
+    for (const mod of modules) {
+      const logicalId = `module-${mod.order_index}`;
+      if (!knownLogicalIds.has(logicalId)) {
+        const label = mod.module_code
+          ? `${mod.module_code.replace('MOD-', 'M')}`
+          : mod.title.substring(0, 15);
+        tabs.push({ id: logicalId, label });
+      }
+    }
+
+    return tabs;
+  }, [modules]);
 
   const filteredTypes = useMemo(() => {
     if (activeTab === 'all') return EXERCISE_TYPES;
@@ -79,7 +152,7 @@ export function ExerciseTypeSelector({
 
       {/* Module Filter Tabs */}
       <div className="mb-6 flex flex-wrap gap-2">
-        {MODULE_TABS.map((tab) => (
+        {moduleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -96,6 +169,16 @@ export function ExerciseTypeSelector({
       </div>
 
       {/* Types Grid */}
+      {filteredTypes.length === 0 ? (
+        <div className="rounded-xl border-2 border-dashed border-gray-700 p-8 text-center">
+          <p className="text-gray-400">
+            Este modulo aun no tiene tipos de ejercicio asignados.
+          </p>
+          <p className="mt-1 text-sm text-gray-500">
+            Selecciona &quot;Todos&quot; para ver todos los tipos disponibles.
+          </p>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredTypes.map((type) => {
           const isSelected = selectedType === type.id;
@@ -134,6 +217,7 @@ export function ExerciseTypeSelector({
           );
         })}
       </div>
+      )}
     </DetectiveCard>
   );
 }

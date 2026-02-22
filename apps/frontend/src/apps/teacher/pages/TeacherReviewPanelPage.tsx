@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { ClipboardList, Search, Filter, Clock, CheckCircle, List, AlertCircle } from 'lucide-react';
 import { ManualReview, ReviewStatus } from '@/shared/api/manualReviewApi';
@@ -19,20 +19,20 @@ interface StatusTabProps {
   status: StatusFilter;
   label: string;
   count: number;
-  icon: React.ReactNode;
+  icon: ReactNode;
   isActive: boolean;
   onClick: () => void;
   variant: 'pending' | 'in_progress' | 'completed' | 'all';
 }
 
-const StatusTab: React.FC<StatusTabProps> = ({
+const StatusTab = ({
   label,
   count,
   icon,
   isActive,
   onClick,
   variant,
-}) => {
+}: StatusTabProps) => {
   const baseClasses = 'flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border-2';
 
   const variantClasses = {

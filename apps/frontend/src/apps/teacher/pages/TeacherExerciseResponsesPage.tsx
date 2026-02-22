@@ -15,7 +15,7 @@
  * @route /teacher/responses
  */
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { motion } from 'framer-motion';
 import { FileText, TrendingUp, CheckCircle, XCircle } from 'lucide-react';
@@ -29,7 +29,7 @@ import type { GetAttemptsQuery, AttemptResponse } from '@services/api/teacher';
 // SUB-COMPONENTS
 // ============================================================================
 
-const PageHeader: React.FC = () => {
+const PageHeader = () => {
   return (
     <div className="mb-8">
       <div className="mb-2 flex items-center gap-3">
@@ -45,12 +45,12 @@ const PageHeader: React.FC = () => {
   );
 };
 
-const StatsCard: React.FC<{
-  icon: React.ReactNode;
+const StatsCard = ({ icon, label, value, color }: {
+  icon: ReactNode;
   label: string;
   value: string | number;
   color: string;
-}> = ({ icon, label, value, color }) => {
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -70,7 +70,7 @@ const StatsCard: React.FC<{
   );
 };
 
-const StatsGrid: React.FC<{ total: number; data: AttemptResponse[] }> = ({ total, data }) => {
+const StatsGrid = ({ total, data }: { total: number; data: AttemptResponse[] }) => {
   const correctCount = data.filter((attempt) => attempt.is_correct).length;
   const incorrectCount = data.filter((attempt) => !attempt.is_correct).length;
   const avgScore =

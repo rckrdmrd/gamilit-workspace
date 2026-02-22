@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { CrucigramaClue as CrucigramaClueType } from './crucigramaTypes';
@@ -11,11 +10,11 @@ export interface CrucigramaClueProps {
   direction?: 'horizontal' | 'vertical' | 'all';
 }
 
-export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
+export const CrucigramaClue = ({
   clues,
   completedClues,
   direction = 'all'
-}) => {
+}: CrucigramaClueProps) => {
   // Filter clues based on direction
   const getFilteredClues = () => {
     if (direction === 'all') {
@@ -39,7 +38,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
         <h3 className="text-lg font-bold mb-4 text-detective-text capitalize">
           {direction === 'horizontal' ? 'Horizontales' : 'Verticales'}
         </h3>
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+        <div className="space-y-3 max-h-60 sm:max-h-96 overflow-y-auto">
           {directionClues.map((clue, index) => {
             const isCompleted = completedClues.has(clue.id);
             return (
@@ -49,7 +48,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 className={cn(
-                  'flex items-start gap-3 p-3 rounded-lg transition-colors',
+                  'flex items-start gap-1.5 sm:gap-3 p-2 sm:p-3 rounded-lg transition-colors',
                   isCompleted ? 'bg-detective-success/10' : 'bg-detective-bg'
                 )}
               >
@@ -85,7 +84,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
       <h3 className="text-lg font-bold mb-4 text-detective-text">
         Pistas del Crucigrama
       </h3>
-      <div className="space-y-4 max-h-[600px] overflow-y-auto">
+      <div className="space-y-4 max-h-60 sm:max-h-[600px] overflow-y-auto">
         {/* Horizontales */}
         {filteredClues.horizontal && filteredClues.horizontal.length > 0 && (
           <div>
@@ -102,7 +101,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
                     className={cn(
-                      'flex items-start gap-3 p-2 rounded-lg transition-colors',
+                      'flex items-start gap-1.5 sm:gap-3 p-2 sm:p-3 rounded-lg transition-colors',
                       isCompleted ? 'bg-detective-success/10' : 'bg-detective-bg'
                     )}
                   >
@@ -147,7 +146,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
                     className={cn(
-                      'flex items-start gap-3 p-2 rounded-lg transition-colors',
+                      'flex items-start gap-1.5 sm:gap-3 p-2 sm:p-3 rounded-lg transition-colors',
                       isCompleted ? 'bg-detective-success/10' : 'bg-detective-bg'
                     )}
                   >

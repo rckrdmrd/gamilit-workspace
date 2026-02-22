@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -15,7 +15,7 @@ interface Version {
   content: Record<string, unknown>;
 }
 
-export const ContentVersionControl: React.FC = () => {
+export const ContentVersionControl = () => {
   // Mock data - replace with actual API calls
   const [versions] = useState<Version[]>([
     {

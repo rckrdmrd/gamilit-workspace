@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Globe, School, Users } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { TabBar } from '@shared/components/base/TabBar';
@@ -42,12 +42,12 @@ const BASE_TABS: Omit<TabDefinition<LeaderboardType>, 'badge'>[] = [
  * - Keyboard navigation (Arrow keys, Home, End) via TabBar
  * - Mobile responsive (horizontal scroll if needed)
  */
-export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({
+export const LeaderboardTabs = ({
   activeTab,
   onTabChange,
   counts,
   className,
-}) => {
+}: LeaderboardTabsProps) => {
   const tabs: TabDefinition<LeaderboardType>[] = useMemo(
     () =>
       BASE_TABS.map((tab) => ({

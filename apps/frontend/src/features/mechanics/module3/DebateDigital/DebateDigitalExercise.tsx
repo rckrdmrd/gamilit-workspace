@@ -1,19 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, Loader2, Bot, User } from 'lucide-react';
+import { useState, useEffect, type MutableRefObject } from 'react';
+import { motion } from 'framer-motion';
+import { FileText, Loader2 } from 'lucide-react';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
-import { sendDebateMessage } from './debateDigitalAPI';
 import { debateTopic } from './debateDigitalMockData';
-import type { DebateMessage, DebateDigitalAnswers } from './debateDigitalTypes';
-import { calculateTimeBonus } from '@/shared/utils/scoring';
+import type { DebateDigitalAnswers } from './debateDigitalTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
+
+interface EssaySections {
+  thesis: string;
+  arguments_for: string;
+  counterarguments: string;
+  conclusion: string;
+}
 
 interface ExerciseProps {
   exerciseId: string;
@@ -22,34 +27,79 @@ interface ExerciseProps {
   onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
 }
 
 interface ExerciseState {
-  messages: DebateMessage[];
-  currentScore: number;
-  totalMessages: number;
+  essaySections: EssaySections;
+  userPosition: 'a_favor' | 'en_contra' | null;
 }
 
-export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
+const SECTION_CONFIG = [
+  {
+    key: 'thesis' as const,
+    label: 'Tesis',
+    placeholder: 'Define tu posicion principal sobre el tema del debate...',
+    minChars: 50,
+    maxChars: 500,
+    rows: 3,
+    description: 'Define tu posicion principal',
+  },
+  {
+    key: 'arguments_for' as const,
+    label: 'Argumentos a Favor',
+    placeholder: 'Presenta al menos 2 argumentos que respalden tu posicion. Cada argumento debe estar bien fundamentado...',
+    minChars: 100,
+    maxChars: 1000,
+    rows: 5,
+    description: 'Presenta al menos 2 argumentos que respalden tu posicion',
+  },
+  {
+    key: 'counterarguments' as const,
+    label: 'Contraargumentos',
+    placeholder: 'Que diria alguien en contra de tu posicion? Anticipa las objeciones y responde a ellas...',
+    minChars: 80,
+    maxChars: 800,
+    rows: 4,
+    description: 'Que diria alguien en contra de tu posicion?',
+  },
+  {
+    key: 'conclusion' as const,
+    label: 'Conclusion',
+    placeholder: 'Sintetiza tu posicion final integrando tus argumentos y los contraargumentos que consideraste...',
+    minChars: 80,
+    maxChars: 800,
+    rows: 4,
+    description: 'Sintesis final de tu posicion',
+  },
+];
+
+export const DebateDigitalExercise = ({
   exerciseId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: ExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exerciseId);
 
-  const [messages, setMessages] = useState<DebateMessage[]>(initialData?.messages || []);
-  const [input, setInput] = useState('');
-  const [aiTyping, setAiTyping] = useState(false);
-  const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
+  const [essaySections, setEssaySections] = useState<EssaySections>(
+    initialData?.essaySections || {
+      thesis: '',
+      arguments_for: '',
+      counterarguments: '',
+      conclusion: '',
+    },
+  );
+  const [userPosition, setUserPosition] = useState<'a_favor' | 'en_contra' | null>(
+    initialData?.userPosition || null,
+  );
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
@@ -60,116 +110,76 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
     null,
   );
   const [isPendingReview, setIsPendingReview] = useState(false);
-  const [userPosition, setUserPosition] = useState<'a_favor' | 'en_contra' | 'neutral'>('neutral');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  useEffect(() => {
-    // Add initial AI message if starting fresh
-    if (messages.length === 0) {
-      const aiIntro: DebateMessage = {
-        id: `msg-${Date.now()}`,
-        sender: 'ai',
-        text: 'Hola, soy tu oponente en este debate. Defenderé la posición de que la fama benefició la investigación de Marie Curie, dándole acceso a financiación y colaboraciones internacionales. ¿Cuál es tu argumento inicial?',
-        timestamp: new Date(),
-      };
-      setMessages([aiIntro]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Auto-save progress every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      saveProgress();
+      setSaveStatus('saving');
+      try {
+        saveProgress();
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } catch (_error) {
+        setSaveStatus('error');
+      }
     }, 30000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, currentScore]);
+  }, [essaySections, userPosition]);
 
   // Update progress with answers
   useEffect(() => {
-    const userMessages = messages.filter((m) => m.sender === 'user');
-    const targetMessages = 5; // Minimum messages for completion
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
+
+    const completedSections = SECTION_CONFIG.filter(
+      (sec) => essaySections[sec.key].trim().length >= sec.minChars,
+    ).length;
 
     if (onProgressUpdate) {
       onProgressUpdate({
         progress: {
-          currentStep: userMessages.length,
-          totalSteps: targetMessages,
+          currentStep: (userPosition ? 1 : 0) + completedSections,
+          totalSteps: 5, // position + 4 sections
           score: 0,
           hintsUsed: 0,
           timeSpent: elapsed,
         },
         answers: {
           position: userPosition,
-          arguments: userMessages.map((m) => m.text),
-          messageCount: userMessages.length,
+          sections: essaySections,
+          completedSections,
         },
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, userPosition]);
+  }, [essaySections, userPosition]);
 
   const saveProgress = () => {
     const state: ExerciseState = {
-      messages,
-      currentScore,
-      totalMessages: messages.length,
+      essaySections,
+      userPosition,
     };
     saveProgressUtil(exerciseId, state);
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || aiTyping) return;
+  const allSectionsMeetMinimum = SECTION_CONFIG.every(
+    (sec) => essaySections[sec.key].trim().length >= sec.minChars,
+  );
 
-    const userMsg: DebateMessage = {
-      id: `msg-${Date.now()}`,
-      sender: 'user',
-      text: input,
-      timestamp: new Date(),
-    };
+  const canSubmit = userPosition !== null && allSectionsMeetMinimum;
 
-    setMessages((prev) => [...prev, userMsg]);
-    setInput('');
-    setAiTyping(true);
-
-    // Calculate score based on message quality
-    const messageScore = Math.min(20, input.trim().split(' ').length); // Word count bonus
-    setCurrentScore((prev) => prev + messageScore);
-
-    try {
-      const response = await sendDebateMessage(input, 'scientificSharing');
-      const aiMsg: DebateMessage = {
-        id: `msg-${Date.now() + 1}`,
-        sender: 'ai',
-        text: response.message,
-        timestamp: new Date(),
-        argumentStrength: response.argumentScore,
-      };
-      setMessages((prev) => [...prev, aiMsg]);
-    } catch (_error) {
-      // Error handled silently
-    } finally {
-      setAiTyping(false);
-    }
+  const handleSectionChange = (key: keyof EssaySections, value: string) => {
+    setEssaySections((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleComplete = async () => {
-    // ✅ FIX COR-010: Validar que se seleccionó una posición antes de completar
-    if (userPosition === 'neutral') {
-      return; // El mensaje de advertencia ya se muestra en UI
+    if (!userPosition) {
+      return;
     }
 
-    // Validate minimum participation
-    const userMessages = messages.filter((m) => m.sender === 'user');
-    if (userMessages.length < 3) {
-      setShowFeedback(true);
+    if (!allSectionsMeetMinimum) {
       return;
     }
 
@@ -183,25 +193,28 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
 
     try {
       // Prepare answers in the format expected by backend
-      // userPosition is now tracked via state (CORRECCION-005)
       const answers: DebateDigitalAnswers = {
         position: userPosition,
-        response: userMessages.map((m) => m.text).join('\n\n'), // Concatenate all user messages
-        arguments: userMessages.map((m) => m.text),
-        messageCount: userMessages.length,
+        response: `TESIS:\n${essaySections.thesis}\n\nARGUMENTOS A FAVOR:\n${essaySections.arguments_for}\n\nCONTRAARGUMENTOS:\n${essaySections.counterarguments}\n\nCONCLUSION:\n${essaySections.conclusion}`,
+        arguments: [
+          essaySections.thesis,
+          essaySections.arguments_for,
+          essaySections.counterarguments,
+          essaySections.conclusion,
+        ],
+        messageCount: 4,
       };
 
       // Submit to backend
       const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
-      // CORRECCION-001: Verificar si requiere revision manual del maestro
+      // Verificar si requiere revision manual del maestro
       if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
         setIsPendingReview(true);
-        setBackendScore(null); // No mostrar score aun
+        setBackendScore(null);
         setBackendFeedback(MANUAL_REVIEW_PENDING_SHORT_MESSAGE);
-        setBackendRewards(null); // No mostrar rewards prematuramente
+        setBackendRewards(null);
 
-        // Sync pero sin mostrar rewards
         await syncAndInvalidate();
 
         setShowFeedback(true);
@@ -211,53 +224,42 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       // Flujo normal: ejercicio auto-calificado
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
-      // Store backend response for feedback modal
       setBackendScore(response.score);
       setBackendFeedback(response.feedback?.overall || null);
       setBackendRewards({ xp: rewards.xp, mlCoins: rewards.mlCoins });
       setIsPendingReview(false);
 
-      // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
 
-      // Show feedback with backend response
       setShowFeedback(true);
 
-      // Call onComplete callback with score and time
       if (onComplete && response.score >= 70) {
         const finalTimeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
         onComplete(response.score, finalTimeSpent);
       }
-    } catch (error) {
-      // Reset backend data on error
+    } catch (_error) {
       setBackendScore(null);
       setBackendFeedback(null);
       setBackendRewards(null);
-      // Still show feedback modal with local score calculation
       setShowFeedback(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const calculateFinalScore = () => {
-    const userMessages = messages.filter((m) => m.sender === 'user').length;
-    const baseScore = currentScore;
-    const participationBonus = Math.min(30, userMessages * 5);
-    const timeBonus = calculateTimeBonus(startTime, new Date(), 20, 120);
-    return Math.min(100, baseScore + participationBonus + timeBonus);
-  };
-
   const handleReset = () => {
-    const aiIntro: DebateMessage = {
-      id: `msg-${Date.now()}`,
-      sender: 'ai',
-      text: 'Hola, soy tu oponente en este debate. Defenderé la posición de que la fama benefició la investigación de Marie Curie, dándole acceso a financiación y colaboraciones internacionales. ¿Cuál es tu argumento inicial?',
-      timestamp: new Date(),
-    };
-    setMessages([aiIntro]);
-    setInput('');
-    setCurrentScore(0);
+    setEssaySections({
+      thesis: '',
+      arguments_for: '',
+      counterarguments: '',
+      conclusion: '',
+    });
+    setUserPosition(null);
+    setShowFeedback(false);
+    setBackendScore(null);
+    setBackendFeedback(null);
+    setBackendRewards(null);
+    setIsPendingReview(false);
   };
 
   // Attach actions ref
@@ -271,15 +273,20 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionsRef]);
 
-  const userMessageCount = messages.filter((m) => m.sender === 'user').length;
-
   return (
     <>
       <UnifiedExerciseLayout
         title="Debate Digital"
         description={debateTopic.title}
-        icon={<MessageCircle className="h-6 w-6" />}
+        icon={<FileText className="h-6 w-6" />}
         gradientClassName="from-detective-blue to-detective-orange"
+        headerActions={
+          <div className="text-sm">
+            {saveStatus === 'saving' && <span className="text-white/90">Guardando...</span>}
+            {saveStatus === 'saved' && <span className="text-green-200">Guardado</span>}
+            {saveStatus === 'error' && <span className="text-red-200">Error al guardar</span>}
+          </div>
+        }
         headerChildren={
           <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm mt-3">
             <p className="font-medium text-white/95">{debateTopic.question}</p>
@@ -288,12 +295,23 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
         cardPadding="lg"
       >
         <div className="space-y-6">
-          {/* CORRECCION-005: Seleccion de posicion del usuario */}
+          {/* Context */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-detective-lg bg-blue-50 p-3 sm:p-4 border border-detective-border-light"
+          >
+            <p className="text-detective-sm text-detective-text-secondary">
+              {debateTopic.context}
+            </p>
+          </motion.div>
+
+          {/* Position Selector */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-detective-lg bg-detective-bg p-4 border border-detective-border-light"
+            className="rounded-detective-lg bg-detective-bg p-2 sm:p-4 border border-detective-border-light"
           >
             <p className="text-detective-sm font-medium text-detective-text mb-3">
               Selecciona tu posicion en el debate:
@@ -313,102 +331,73 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
               >
                 En Contra
               </DetectiveButton>
-              <DetectiveButton
-                variant={userPosition === 'neutral' ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setUserPosition('neutral')}
-              >
-                Neutral
-              </DetectiveButton>
             </div>
-            {userPosition === 'neutral' && (
+            {userPosition === null && (
               <p className="text-detective-xs text-detective-text-secondary mt-2">
-                Selecciona una posicion antes de comenzar el debate.
+                Selecciona una posicion antes de escribir tu ensayo.
               </p>
             )}
           </motion.div>
 
-          {/* Chat Container */}
-          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white">
-            <div className="flex flex-col" style={{ height: '600px' }}>
-              {/* Messages Area */}
-              <div className="flex-1 space-y-4 overflow-y-auto p-6">
-                <AnimatePresence>
-                  {messages.map((msg) => (
-                    <motion.div
-                      key={msg.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[70%] rounded-lg p-4 ${msg.sender === 'user'
-                            ? 'bg-detective-orange text-white'
-                            : 'bg-detective-bg-secondary text-detective-text'
-                          }`}
-                      >
-                        <div className="mb-2 flex items-center gap-2">
-                          {msg.sender === 'user' ? (
-                            <User className="h-4 w-4" />
-                          ) : (
-                            <Bot className="h-4 w-4" />
-                          )}
-                          <span className="text-detective-xs font-semibold">
-                            {msg.sender === 'user' ? 'Tú' : 'IA Oponente'}
-                          </span>
-                        </div>
-                        <p className="text-detective-sm">{msg.text}</p>
-                        {msg.argumentStrength && (
-                          <div className="mt-2 text-detective-xs opacity-75">
-                            Fuerza del argumento: {Math.round(msg.argumentStrength * 100)}%
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {aiTyping && (
+          {/* Essay Sections */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="rounded-detective-lg border-2 border-detective-blue bg-gradient-to-br from-blue-50 to-purple-50 p-3 sm:p-6"
+          >
+            <h2 className="mb-4 flex items-center gap-2 text-detective-2xl font-bold text-detective-blue">
+              <FileText className="h-6 w-6" />
+              Ensayo Argumentativo
+            </h2>
+            <p className="mb-6 text-detective-base text-detective-text-secondary">
+              Desarrolla tu ensayo completando las 4 secciones. Cada seccion tiene un minimo de caracteres requerido.
+            </p>
+
+            <div className="space-y-6">
+              {SECTION_CONFIG.map((section, idx) => {
+                const value = essaySections[section.key];
+                const charCount = value.trim().length;
+                const meetsMinimum = charCount >= section.minChars;
+
+                return (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex justify-start"
+                    key={section.key}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.1 }}
                   >
-                    <div className="rounded-lg bg-detective-bg-secondary p-4">
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-detective-sm">IA está escribiendo...</span>
-                      </div>
+                    <label className="mb-1 block text-detective-base font-semibold text-detective-blue">
+                      {idx + 1}. {section.label}
+                    </label>
+                    <p className="mb-2 text-detective-xs text-detective-text-secondary">
+                      {section.description}
+                    </p>
+                    <textarea
+                      value={value}
+                      onChange={(e) => handleSectionChange(section.key, e.target.value)}
+                      placeholder={section.placeholder}
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      rows={section.rows}
+                      maxLength={section.maxChars}
+                    />
+                    <div className="mt-1 flex justify-between">
+                      <p
+                        className={`text-detective-sm ${meetsMinimum ? 'text-detective-success' : 'text-detective-danger'}`}
+                      >
+                        {charCount < section.minChars
+                          ? `Faltan ${section.minChars - charCount} caracteres (min. ${section.minChars})`
+                          : 'Completo'}
+                      </p>
+                      <p className="text-detective-sm text-detective-text-secondary">
+                        {value.length}/{section.maxChars}
+                      </p>
                     </div>
                   </motion.div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Input Area */}
-              <div className="border-t bg-white p-4">
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Escribe tu argumento..."
-                    className="flex-1 rounded-detective-lg border border-detective-border-medium px-4 py-3 focus:outline-none focus:ring-2 focus:ring-detective-orange"
-                    disabled={aiTyping}
-                  />
-                  <DetectiveButton
-                    variant="primary"
-                    onClick={handleSend}
-                    disabled={!input.trim() || aiTyping}
-                    icon={<Send className="h-5 w-5" />}
-                  >
-                    Enviar
-                  </DetectiveButton>
-                </div>
-              </div>
+                );
+              })}
             </div>
-          </div>
+          </motion.div>
 
           {/* Action Buttons */}
           <div className="mt-6 flex justify-center gap-4">
@@ -417,15 +406,23 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
                 Salir
               </DetectiveButton>
             )}
-            <DetectiveButton variant="gold" onClick={handleReset}>
+            <DetectiveButton variant="gold" onClick={handleReset} disabled={isSubmitting}>
               Reiniciar
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
               onClick={handleComplete}
-              disabled={userMessageCount < 3 || isSubmitting || userPosition === 'neutral'}
+              disabled={!canSubmit || isSubmitting}
+              loading={isSubmitting}
             >
-              {isSubmitting ? 'Enviando...' : 'Completar Ejercicio'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                'Completar Ejercicio'
+              )}
             </DetectiveButton>
           </div>
         </div>
@@ -443,36 +440,29 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
                 : backendScore >= 70
                   ? 'partial'
                   : 'error'
-              : userMessageCount >= 5
-                ? 'success'
-                : 'partial',
+              : 'info',
           title: isPendingReview
             ? 'Ejercicio Enviado'
             : backendScore !== null
               ? backendScore >= 90
-                ? '¡Excelente Debate!'
+                ? 'Excelente Ensayo!'
                 : backendScore >= 70
-                  ? 'Buen Debate'
+                  ? 'Buen Ensayo'
                   : 'Sigue Practicando'
-              : userMessageCount >= 5
-                ? '¡Excelente Debate!'
-                : 'Buen Debate',
+              : 'Ensayo Enviado',
           message:
             backendFeedback ||
-            `Has participado con ${userMessageCount} argumento(s) obteniendo ${currentScore} puntos.`,
-          score: isPendingReview ? undefined : (backendScore !== null ? backendScore : calculateFinalScore()),
-          showConfetti: isPendingReview ? false : (backendScore !== null ? backendScore >= 90 : userMessageCount >= 5),
-          // Agregar rewards si están disponibles (no mostrar en pending review)
+            'Tu ensayo argumentativo ha sido enviado para revision.',
+          score: isPendingReview ? undefined : (backendScore !== null ? backendScore : undefined),
+          showConfetti: isPendingReview ? false : (backendScore !== null ? backendScore >= 90 : false),
           xpEarned: isPendingReview ? 0 : (backendRewards?.xp || 0),
           mlCoinsEarned: isPendingReview ? 0 : (backendRewards?.mlCoins || 0),
           pendingReview: isPendingReview,
         }}
         onClose={() => {
           setShowFeedback(false);
-          // Note: onComplete is already called in handleComplete when backend response is successful
-          if (backendScore === null && userMessageCount >= 3 && !isPendingReview) {
-            // Fallback: call onComplete with local score if backend submission failed
-            onComplete?.(calculateFinalScore(), timeSpent);
+          if (backendScore !== null && backendScore >= 70 && !isPendingReview) {
+            onComplete?.(backendScore, timeSpent);
           }
         }}
         onRetry={isPendingReview ? undefined : handleReset}

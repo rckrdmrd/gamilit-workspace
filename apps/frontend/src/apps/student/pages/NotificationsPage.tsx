@@ -13,7 +13,7 @@
  * Route: /student/notifications
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -46,7 +46,7 @@ import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
 import { cn } from '@shared/utils/cn';
 
 // Notification type icons mapping
-const notificationIcons: Record<string, React.ElementType> = {
+const notificationIcons: Record<string, ElementType> = {
   achievement_unlocked: Trophy,
   rank_promoted: TrendingUp,
   mission_completed: Target,

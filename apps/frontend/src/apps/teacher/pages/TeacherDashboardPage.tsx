@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { TabBar, type TabDefinition } from '@shared/components/base/TabBar';
@@ -23,23 +23,47 @@ import {
 import { DashboardStatsSection } from '../components/dashboard/DashboardStatsSection';
 import { DashboardClassroomsList } from '../components/dashboard/DashboardClassroomsList';
 import { DashboardRecentActivity } from '../components/dashboard/DashboardRecentActivity';
-
-// Tab panel components
-import { StudentMonitoringPanel } from '../components/monitoring/StudentMonitoringPanel';
-import { AssignmentCreator } from '../components/assignments/AssignmentCreator';
-import { ClassProgressDashboard } from '../components/progress/ClassProgressDashboard';
-import { InterventionAlertsPanel } from '../components/alerts/InterventionAlertsPanel';
-import { LearningAnalyticsDashboard } from '../components/analytics/LearningAnalyticsDashboard';
-import { PerformanceInsightsPanel } from '../components/analytics/PerformanceInsightsPanel';
-import { ReportGenerator } from '../components/reports/ReportGenerator';
-import { ParentCommunicationHub } from '../components/collaboration/ParentCommunicationHub';
-import { ResourceSharingPanel } from '../components/collaboration/ResourceSharingPanel';
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 // Hooks
 import { useTeacherDashboard } from '../hooks/useTeacherDashboard';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { useDashboardData } from '../hooks/useDashboardData';
+
+// Tab panel components (lazy-loaded for code splitting)
+const StudentMonitoringPanel = lazy(() =>
+  import('../components/monitoring/StudentMonitoringPanel').then(m => ({ default: m.StudentMonitoringPanel }))
+);
+const AssignmentCreator = lazy(() =>
+  import('../components/assignments/AssignmentCreator').then(m => ({ default: m.AssignmentCreator }))
+);
+const ClassProgressDashboard = lazy(() =>
+  import('../components/progress/ClassProgressDashboard').then(m => ({ default: m.ClassProgressDashboard }))
+);
+const InterventionAlertsPanel = lazy(() =>
+  import('../components/alerts/InterventionAlertsPanel').then(m => ({ default: m.InterventionAlertsPanel }))
+);
+const LearningAnalyticsDashboard = lazy(() =>
+  import('../components/analytics/LearningAnalyticsDashboard').then(m => ({ default: m.LearningAnalyticsDashboard }))
+);
+const PerformanceInsightsPanel = lazy(() =>
+  import('../components/analytics/PerformanceInsightsPanel').then(m => ({ default: m.PerformanceInsightsPanel }))
+);
+const ReportGenerator = lazy(() =>
+  import('../components/reports/ReportGenerator').then(m => ({ default: m.ReportGenerator }))
+);
+const ParentCommunicationHub = lazy(() =>
+  import('../components/collaboration/ParentCommunicationHub').then(m => ({ default: m.ParentCommunicationHub }))
+);
+const ResourceSharingPanel = lazy(() =>
+  import('../components/collaboration/ResourceSharingPanel').then(m => ({ default: m.ResourceSharingPanel }))
+);
+
+const TabLoadingFallback = () => (
+  <div className="flex items-center justify-center py-12">
+    <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-orange-600" />
+  </div>
+);
 
 type TabType =
   | 'overview'
@@ -152,28 +176,44 @@ export default function TeacherDashboardPage() {
             )}
 
             {activeTab === 'monitoring' && selectedClassroomId && (
-              <StudentMonitoringPanel classroomId={selectedClassroomId} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <StudentMonitoringPanel classroomId={selectedClassroomId} />
+              </Suspense>
             )}
             {activeTab === 'assignments' && selectedClassroomId && (
-              <AssignmentCreator classroomId={selectedClassroomId} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <AssignmentCreator classroomId={selectedClassroomId} />
+              </Suspense>
             )}
             {activeTab === 'progress' && selectedClassroomId && (
-              <ClassProgressDashboard classroomId={selectedClassroomId} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <ClassProgressDashboard classroomId={selectedClassroomId} />
+              </Suspense>
             )}
             {activeTab === 'alerts' && selectedClassroomId && (
-              <InterventionAlertsPanel classroomId={selectedClassroomId} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <InterventionAlertsPanel classroomId={selectedClassroomId} />
+              </Suspense>
             )}
             {activeTab === 'analytics' && selectedClassroomId && (
-              <LearningAnalyticsDashboard classroomId={selectedClassroomId} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <LearningAnalyticsDashboard classroomId={selectedClassroomId} />
+              </Suspense>
             )}
             {activeTab === 'insights' && selectedClassroomId && (
-              <PerformanceInsightsPanel classroomId={selectedClassroomId} students={allStudents} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <PerformanceInsightsPanel classroomId={selectedClassroomId} students={allStudents} />
+              </Suspense>
             )}
             {activeTab === 'reports' && selectedClassroomId && (
-              <ReportGenerator classroomId={selectedClassroomId} students={allStudents} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <ReportGenerator classroomId={selectedClassroomId} students={allStudents} />
+              </Suspense>
             )}
             {activeTab === 'communication' && selectedClassroomId && (
-              <ParentCommunicationHub classroomId={selectedClassroomId} students={allStudents} />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <ParentCommunicationHub classroomId={selectedClassroomId} students={allStudents} />
+              </Suspense>
             )}
 
             {!selectedClassroomId && activeTab !== 'overview' && activeTab !== 'resources' && (
@@ -186,7 +226,11 @@ export default function TeacherDashboardPage() {
               </DetectiveCard>
             )}
 
-            {activeTab === 'resources' && <ResourceSharingPanel />}
+            {activeTab === 'resources' && (
+              <Suspense fallback={<TabLoadingFallback />}>
+                <ResourceSharingPanel />
+              </Suspense>
+            )}
           </>
         )}
       </main>

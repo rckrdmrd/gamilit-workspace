@@ -10,7 +10,6 @@
  * @component
  */
 
-import React from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { AlertTriangle, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import type { AlertsStats as AlertsStatsType } from '@/services/api/adminTypes';
@@ -20,7 +19,7 @@ interface AlertsStatsProps {
   isLoading?: boolean;
 }
 
-export const AlertsStats: React.FC<AlertsStatsProps> = ({ stats, isLoading }) => {
+export const AlertsStats = ({ stats, isLoading }: AlertsStatsProps) => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

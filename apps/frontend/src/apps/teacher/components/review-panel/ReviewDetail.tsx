@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { X, Save, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
@@ -49,7 +49,7 @@ export interface ReviewDetailProps {
  * - Save progress
  * - Complete and submit review
  */
-export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) => {
+export const ReviewDetail = ({ review, onClose }: ReviewDetailProps) => {
   const [evaluations, setEvaluations] = useState<RubricEvaluation[]>(review.evaluations || []);
   const [generalFeedback, setGeneralFeedback] = useState(review.generalFeedback || '');
   const [_totalScore, setTotalScore] = useState(review.totalScore || 0);

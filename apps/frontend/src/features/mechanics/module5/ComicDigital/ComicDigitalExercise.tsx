@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Image, Type, MessageSquare, Download, Send, Loader2, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
@@ -44,12 +44,12 @@ interface ExerciseProps {
 // FIX GAP-MED-005: Constante para número mínimo de paneles requeridos
 const MIN_PANELS_REQUIRED = 6;
 
-export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
+export const ComicDigitalExercise = ({
   exerciseId = 'comic-digital-default',
   onComplete,
   onProgressUpdate,
   onExit: _onExit
-}) => {
+}: ExerciseProps) => {
   const [panels, setPanels] = useState<ComicPanel[]>([]);
   const [selectedPanel, setSelectedPanel] = useState<string | null>(null);
   const [selectedBackground, setSelectedBackground] = useState('lab');
@@ -60,49 +60,9 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-          type: 'info',
-          title: 'Cómic Enviado',
-          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Cómic Completado!',
-        message: 'Tu cómic digital ha sido evaluado correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   // Progress tracking
   // FIX: Send answers in DTO format (panels with panelNumber, dialogue, narration) for ExercisePage.tsx submit button
@@ -200,7 +160,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
     ));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // FIX GAP-MED-005: Validar mínimo de paneles requeridos
     if (!exerciseId || isSubmitting || isSubmitted || panels.length < MIN_PANELS_REQUIRED) return;
 
@@ -232,27 +192,70 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
       };
     });
 
-    submit({
-      // Primary format expected by ComicDigitalAnswerDto
-      panels: dtoPanels,
+    try {
+      const response = await submitAsync({
+        // Primary format expected by ComicDigitalAnswerDto
+        panels: dtoPanels,
 
-      // Metadata for backwards compatibility and context
-      metadata: {
-        title,
-        originalPanels: panels.map((panel) => ({
-          id: panel.id,
-          layout: panel.layout,
-          text: panel.text,
-          speechBubblesCount: panel.speechBubbles.length,
-          speechBubbles: panel.speechBubbles.map((bubble) => ({
-            text: bubble.text,
-            type: bubble.type,
+        // Metadata for backwards compatibility and context
+        metadata: {
+          title,
+          originalPanels: panels.map((panel) => ({
+            id: panel.id,
+            layout: panel.layout,
+            text: panel.text,
+            speechBubblesCount: panel.speechBubbles.length,
+            speechBubbles: panel.speechBubbles.map((bubble) => ({
+              text: bubble.text,
+              type: bubble.type,
+            })),
           })),
-        })),
-        totalPanels: panels.length,
-        totalSpeechBubbles: panels.reduce((acc, panel) => acc + panel.speechBubbles.length, 0),
-      },
-    });
+          totalPanels: panels.length,
+          totalSpeechBubbles: panels.reduce((acc, panel) => acc + panel.speechBubbles.length, 0),
+        },
+      });
+
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Verificar si está pendiente de revisión manual
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Cómic Enviado',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          score: undefined,
+          showConfetti: false,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+          pendingReview: true,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, timeSpent);
+        return;
+      }
+
+      // Flujo normal cuando ya está evaluado
+      const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
+      setFeedback({
+        type: 'success',
+        title: '¡Cómic Completado!',
+        message: 'Tu cómic digital ha sido evaluado correctamente.',
+        score: response.score,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(response.score, timeSpent);
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (error instanceof Error ? error.message : null) || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    }
   };
 
   return (
@@ -331,7 +334,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
         }
       >
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
+          <div className="bg-white rounded-detective shadow-card p-3 sm:p-6 space-y-4">
             <h3 className="font-bold text-detective-text">Herramientas</h3>
 
             <div>
@@ -396,12 +399,12 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
             )}
           </div>
 
-          <div className="lg:col-span-3 bg-white rounded-detective shadow-card p-6">
+          <div className="lg:col-span-3 bg-white rounded-detective shadow-card p-3 sm:p-6">
             <div className="mb-4 text-center">
               <h2 className="text-2xl font-bold text-detective-text">{title}</h2>
             </div>
 
-            <div className="space-y-4 border-4 border-detective-text p-4 rounded-detective bg-white min-h-[600px]">
+            <div className="space-y-4 border-4 border-detective-text p-4 rounded-detective bg-white min-h-[350px] sm:min-h-[600px]">
               {panels.map((panel, index) => {
                 const bgClass = backgrounds.find(b => b.id === selectedBackground)?.color || 'bg-detective-bg';
                 return (

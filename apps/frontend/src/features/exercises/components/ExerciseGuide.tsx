@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, BookOpen, Lightbulb, Target, GraduationCap } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -55,21 +56,21 @@ interface ExerciseGuideProps {
 interface Section {
   id: string;
   title: string;
-  icon: React.ElementType;
+  icon: ElementType;
   content?: string;
   bgColor: string;
   iconColor: string;
   borderColor: string;
 }
 
-export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
+export const ExerciseGuide = ({
   objective,
   how_to_solve,
   recommended_strategy,
   pedagogical_notes,
   defaultExpanded = false,
   className = '',
-}) => {
+}: ExerciseGuideProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   // Build sections array from available content

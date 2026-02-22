@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useHealthStatus } from '../../hooks/useSystemMetrics';
 import { CheckCircle, XCircle, AlertCircle, Database, Server, Zap, Globe } from 'lucide-react';
@@ -8,20 +8,20 @@ interface HealthCheckProps {
   status: 'healthy' | 'degraded' | 'down';
   latency?: number;
   details?: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   uptime?: number;
 }
 
 type HealthStatus = 'healthy' | 'degraded' | 'down';
 
-const HealthCheck: React.FC<HealthCheckProps> = ({
+const HealthCheck = ({
   name,
   status,
   latency,
   details,
   icon,
   uptime,
-}) => {
+}: HealthCheckProps) => {
   const statusConfig = {
     healthy: {
       icon: <CheckCircle className="h-5 w-5" />,
@@ -82,7 +82,7 @@ const HealthCheck: React.FC<HealthCheckProps> = ({
   );
 };
 
-export const SystemHealthIndicators: React.FC = () => {
+export const SystemHealthIndicators = () => {
   const { health, loading } = useHealthStatus();
 
   if (loading) {

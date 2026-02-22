@@ -13,10 +13,10 @@ interface SystemHealthCardProps {
  * Displays: overall status badge, API backend, database, CPU, memory, and active users.
  * Extracted from AdminDashboardPage inline rendering.
  */
-export const SystemHealthCard: React.FC<SystemHealthCardProps> = ({
+export const SystemHealthCard = ({
   systemHealth,
   activeSessions,
-}) => {
+}: SystemHealthCardProps) => {
   return (
     <DetectiveCard>
       <div className="mb-4 flex items-center justify-between">

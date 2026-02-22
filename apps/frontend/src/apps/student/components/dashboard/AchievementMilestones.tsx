@@ -1,4 +1,5 @@
-import React from 'react';
+
+
 import { motion } from 'framer-motion';
 import { Target, Trophy, Star, Coins, Zap } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -27,10 +28,10 @@ const iconMap = {
   star: Star,
 };
 
-const MilestoneCard: React.FC<{ milestone: Milestone; index: number }> = ({
+const MilestoneCard = ({
   milestone,
   index,
-}) => {
+}: { milestone: Milestone; index: number }) => {
   const Icon = iconMap[milestone.icon];
   const progressPercentage = (milestone.progress / milestone.total) * 100;
   const isCompleted = milestone.completed;
@@ -152,9 +153,9 @@ const MilestoneCard: React.FC<{ milestone: Milestone; index: number }> = ({
   );
 };
 
-export const AchievementMilestones: React.FC<AchievementMilestonesProps> = ({
+export const AchievementMilestones = ({
   milestones,
-}) => {
+}: AchievementMilestonesProps) => {
   if (!milestones || milestones.length === 0) {
     return (
       <motion.div

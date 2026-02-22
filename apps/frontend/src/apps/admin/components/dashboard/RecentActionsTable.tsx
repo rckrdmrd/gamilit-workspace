@@ -13,7 +13,7 @@
  * - Details modal
  * - Export to CSV
  */
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   CheckCircle,
   XCircle,
@@ -37,10 +37,10 @@ interface RecentActionsTableProps {
 type SortField = 'timestamp' | 'adminName' | 'action' | 'targetType';
 type SortOrder = 'asc' | 'desc';
 
-export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
+export const RecentActionsTable = ({
   actions,
   loading = false,
-}) => {
+}: RecentActionsTableProps) => {
   // State
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');

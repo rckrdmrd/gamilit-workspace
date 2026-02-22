@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle, XCircle } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -10,12 +10,12 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProps> = ({
+export const LecturaInferencialExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: LecturaInferencialExerciseProps) => {
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
 
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
@@ -236,7 +236,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
         }
       >
         {/* Reading Passage */}
-        <div className="rounded-detective border-2 border-amber-200 bg-amber-50 p-6 mb-6">
+        <div className="rounded-detective border-2 border-amber-200 bg-amber-50 p-3 sm:p-6 mb-6">
           <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
             Pasaje de Lectura
           </h3>
@@ -257,7 +257,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: qIdx * 0.1 }}
-                className="rounded-detective border-2 border-detective-border-light bg-white p-6"
+                className="rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6"
               >
                 {/* Question Header */}
                 <div className="mb-4 flex items-start justify-between">
@@ -315,7 +315,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                       >
                         <div className="flex items-center gap-3">
                           <div
-                            className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
+                            className={`flex h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
                               showCorrectness && isCorrect
                                 ? 'border-detective-success bg-green-500'
                                 : showCorrectness && isSelected && !isCorrect

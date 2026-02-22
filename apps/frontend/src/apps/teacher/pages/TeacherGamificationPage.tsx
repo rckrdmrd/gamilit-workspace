@@ -237,6 +237,9 @@ export default function TeacherGamificationPage() {
         { duration: 5000 },
       );
 
+      // FIX M-009: Refresh student list after successful bonus grant
+      refetchStudents();
+
       handleCloseModal();
     } catch (err: unknown) {
       handleError(err, 'Error al otorgar bonus');

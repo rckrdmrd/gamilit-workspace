@@ -102,6 +102,7 @@ export const FeedbackModal = ({
       className="overflow-visible"
       contentClassName="custom"
       ariaLabelledBy="feedback-title"
+      ariaDescribedBy="feedback-message"
     >
       {/* Confetti Effect */}
       <AnimatePresence>
@@ -137,7 +138,7 @@ export const FeedbackModal = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className={`text-2xl font-bold mb-2 ${getColor()}`}
+            className={`text-xl sm:text-2xl font-bold mb-2 ${getColor()}`}
           >
             {feedback.title}
           </motion.h2>
@@ -178,7 +179,7 @@ export const FeedbackModal = ({
               transition={{ delay: 0.4 }}
               className="mb-6"
             >
-              <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                 {feedback.score !== undefined && (
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <div className="text-blue-600 font-semibold">Puntos</div>
@@ -213,7 +214,7 @@ export const FeedbackModal = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-200"
+              className="mb-6 p-2 sm:p-4 bg-blue-50 rounded-lg border-2 border-blue-200"
             >
               <div className="flex items-start gap-3">
                 <Clock className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
@@ -248,7 +249,7 @@ export const FeedbackModal = ({
               </h4>
               <div className="space-y-3 max-h-80 overflow-y-auto">
                 {feedback.details.map((detail: { categoryUsed?: string; score: number; maxScore: number; feedback: string; keywordsFound?: string[]; keywordsExpected?: string[] }, idx: number) => (
-                  <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div key={idx} className="bg-gray-50 p-2 sm:p-4 rounded-lg border border-gray-200">
                     {/* Header con puntuación */}
                     <div className="flex justify-between items-center mb-3">
                       <div>

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { User, Clock, Target, TrendingUp, Activity, BookOpen } from 'lucide-react';
 import type { StudentMonitoring } from '../../types';
@@ -12,7 +13,7 @@ type StatusInfo = {
   bgColor: string;
   textColor: string;
   label: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   description: string;
 };
 

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Send, Save, Image as ImageIcon, BookOpen, Loader2, Eye, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
-import { mediaApi } from '@/shared/api/mediaApi';
+import { uploadMedia } from '@/shared/api/mediaApi';
 
 interface UploadedFile {
   id: string;
@@ -45,12 +45,12 @@ interface ExerciseProps {
 // FIX GAP-MED-005: Constante para número mínimo de entradas requeridas
 const MIN_ENTRIES_REQUIRED = 5;
 
-export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
+export const DiarioMultimediaExercise = ({
   exerciseId = 'diario-multimedia-default',
   onComplete,
   onProgressUpdate,
   onExit: _onExit
-}) => {
+}: ExerciseProps) => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [currentTitle, setCurrentTitle] = useState('');
   const [currentContent, setCurrentContent] = useState('');
@@ -66,50 +66,9 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   const diaryContentRef = useRef<HTMLTextAreaElement>(null);
 
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-          type: 'info',
-          title: 'Diario Enviado',
-          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Diario Completado!',
-        message: 'Tu diario multimedia ha sido evaluado correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   // Progress tracking
   // FIX: Send answers in DTO format (entries with id/date/content/wordCount + totalWords) for ExercisePage.tsx submit button
@@ -208,7 +167,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
     setCurrentContent(newText);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // FIX GAP-MED-005: Validar mínimo de entradas requeridas
     if (!exerciseId || isSubmitting || isSubmitted || entries.length < MIN_ENTRIES_REQUIRED) return;
 
@@ -232,19 +191,62 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
 
     const totalWords = dtoEntries.reduce((sum, e) => sum + (e.wordCount || 0), 0);
 
-    submit({
-      // Primary format expected by DiarioMultimediaAnswerDto
-      entries: dtoEntries,
-      totalEntries: entries.length,
-      totalWords,
-      submittedAt: new Date().toISOString(),
+    try {
+      const response = await submitAsync({
+        // Primary format expected by DiarioMultimediaAnswerDto
+        entries: dtoEntries,
+        totalEntries: entries.length,
+        totalWords,
+        submittedAt: new Date().toISOString(),
 
-      // Metadata for backwards compatibility
-      metadata: {
-        totalMediaFiles: entries.reduce((acc, entry) => acc + entry.media.length, 0),
-        privateEntries: entries.filter((e) => e.isPrivate).length,
-      },
-    });
+        // Metadata for backwards compatibility
+        metadata: {
+          totalMediaFiles: entries.reduce((acc, entry) => acc + entry.media.length, 0),
+          privateEntries: entries.filter((e) => e.isPrivate).length,
+        },
+      });
+
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Verificar si está pendiente de revisión manual
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Diario Enviado',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          score: undefined,
+          showConfetti: false,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+          pendingReview: true,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, timeSpent);
+        return;
+      }
+
+      // Flujo normal cuando ya está evaluado
+      const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
+      setFeedback({
+        type: 'success',
+        title: '¡Diario Completado!',
+        message: 'Tu diario multimedia ha sido evaluado correctamente.',
+        score: response.score,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(response.score, timeSpent);
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (error instanceof Error ? error.message : null) || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    }
   };
 
   return (
@@ -257,7 +259,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
-            <div className="space-y-4 rounded-detective bg-white p-6 shadow-card">
+            <div className="space-y-4 rounded-detective bg-white p-3 sm:p-6 shadow-card">
               <div>
                 <label className="mb-2 block font-medium text-detective-text">
                   Título de la entrada:
@@ -330,7 +332,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                           else if (file.type.startsWith('audio/')) mediaType = 'audio';
 
                           // Subir a mediaApi
-                          const response = await mediaApi.uploadMedia(file, {
+                          const response = await uploadMedia(file, {
                             type: mediaType,
                             exerciseId,
                             onProgress: (_progress: number) => {
@@ -399,7 +401,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
             </div>
 
             {showPreview && (currentTitle || currentContent) && (
-              <div className="rounded-detective bg-white p-6 shadow-card">
+              <div className="rounded-detective bg-white p-3 sm:p-6 shadow-card">
                 <h3 className="mb-2 text-xl font-bold text-detective-text">Vista Previa</h3>
                 <div className="border-t border-detective-border pt-4">
                   <h2 className="mb-2 text-2xl font-bold text-detective-text">{currentTitle}</h2>
@@ -436,11 +438,11 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-detective bg-white p-6 shadow-card">
+            <div className="rounded-detective bg-white p-3 sm:p-6 shadow-card">
               <h3 className="mb-4 font-bold text-detective-text">
                 Mis Entradas ({entries.length})
               </h3>
-              <div className="max-h-[600px] space-y-3 overflow-y-auto">
+              <div className="max-h-[400px] sm:max-h-[600px] space-y-3 overflow-y-auto">
                 {entries.map((entry) => (
                   <div
                     key={entry.id}
@@ -474,7 +476,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
               </div>
             </div>
 
-            <div className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white shadow-lg">
+            <div className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 p-3 sm:p-6 text-white shadow-lg">
               <h3 className="mb-2 text-xl font-bold">Estadísticas</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -495,7 +497,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
             </div>
 
             {/* Submit Button */}
-            <div className="rounded-detective bg-white p-6 shadow-card">
+            <div className="rounded-detective bg-white p-3 sm:p-6 shadow-card">
               <button
                 onClick={handleSubmit}
                 disabled={entries.length < MIN_ENTRIES_REQUIRED || isSubmitting || isSubmitted}

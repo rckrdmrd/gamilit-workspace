@@ -9,7 +9,7 @@
  * - Assign multiple classrooms to teacher
  */
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -58,7 +58,7 @@ export function TeacherClassroomsTab() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     const trimmedId = teacherId.trim();
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { motion } from 'framer-motion';
 import { CheckCircle, Circle } from 'lucide-react';
@@ -13,13 +12,13 @@ interface DroppableZoneProps {
   droppedCard?: InfoCard;
 }
 
-export const DroppableZone: React.FC<DroppableZoneProps> = ({
+export const DroppableZone = ({
   id,
   title,
   isCorrect,
   isOccupied,
   droppedCard,
-}) => {
+}: DroppableZoneProps) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
   });

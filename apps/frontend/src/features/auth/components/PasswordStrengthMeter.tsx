@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 import { validatePasswordStrength, getPasswordCriteria } from '@shared/utils/validation';
@@ -12,10 +11,10 @@ interface PasswordStrengthMeterProps {
  * Componente que muestra la fortaleza de una contraseña
  * Incluye barra de progreso visual y lista de criterios
  */
-export const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
+export const PasswordStrengthMeter = ({
   password,
   showCriteria = true
-}) => {
+}: PasswordStrengthMeterProps) => {
   if (!password) return null;
 
   const strength = validatePasswordStrength(password);
@@ -85,7 +84,7 @@ interface CriteriaItemProps {
   text: string;
 }
 
-const CriteriaItem: React.FC<CriteriaItemProps> = ({ met, text }) => {
+const CriteriaItem = ({ met, text }: CriteriaItemProps) => {
   return (
     <div className="flex items-center gap-2">
       {met ? (

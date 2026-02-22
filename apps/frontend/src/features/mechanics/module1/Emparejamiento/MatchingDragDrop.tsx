@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
@@ -10,7 +10,7 @@ const DraggableItem = ({
   onDragStart,
   onDragEnd,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   id?: string;
   variant?: string;
   isConnected?: boolean;
@@ -32,7 +32,7 @@ const DropZone = ({
   onDrop,
   isCorrect,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   onDrop?: () => void;
   isCorrect?: boolean | null;
   isEmpty?: boolean;
@@ -78,7 +78,7 @@ export interface MatchingDragDropProps {
   groupBLabel?: string;
 }
 
-export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
+export const MatchingDragDrop = ({
   pairs,
   connections,
   onConnect,
@@ -86,7 +86,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
   showFeedback = false,
   groupALabel = 'Grupo A',
   groupBLabel = 'Grupo B',
-}) => {
+}: MatchingDragDropProps) => {
   const [draggingItemId, setDraggingItemId] = useState<string | null>(null);
   void draggingItemId; // Marked as intentionally unused
 

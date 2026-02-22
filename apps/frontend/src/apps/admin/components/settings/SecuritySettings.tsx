@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSystemConfig } from '../../hooks/useSystemConfig';
 import { toast } from 'react-hot-toast';
@@ -41,7 +41,7 @@ interface SecuritySettingsForm {
  *
  * Updated: 2025-11-29 - Expanded with 4 security sections
  */
-export const SecuritySettings: React.FC = () => {
+export const SecuritySettings = () => {
   const { config, isLoading, fetchConfig, updateConfig } = useSystemConfig('security');
   const {
     register,

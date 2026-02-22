@@ -8,7 +8,6 @@
  * Feedback display for exercise results with animations
  */
 
-import React from 'react';
 import { CheckCircle, XCircle, Info, AlertTriangle, Zap, Coins } from 'lucide-react';
 import type { ExerciseFeedback as FeedbackType } from '../types/exercise.types';
 
@@ -46,12 +45,12 @@ const FEEDBACK_STYLES = {
   },
 };
 
-export const ExerciseFeedback: React.FC<ExerciseFeedbackProps> = ({
+export const ExerciseFeedback = ({
   feedback,
   explanation,
   onClose,
   showActions = true,
-}) => {
+}: ExerciseFeedbackProps) => {
   const styles = FEEDBACK_STYLES[feedback.type];
 
   return (

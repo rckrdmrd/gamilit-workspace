@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -29,7 +29,7 @@ import type { ModuleProgress, ProgressSummary } from '@/shared/types/progress.ty
  * - getUserProgress: All module progress
  * - getModules: All modules
  */
-export const MyProgressPage: React.FC = () => {
+export const MyProgressPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 

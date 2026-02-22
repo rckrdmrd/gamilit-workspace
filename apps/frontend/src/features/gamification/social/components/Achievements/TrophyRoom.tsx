@@ -3,12 +3,11 @@
  * Gallery view of unlocked achievements
  */
 
-import React from 'react';
 import * as Icons from 'lucide-react';
 import { useAchievements } from '../../hooks/useAchievements';
 import { AchievementCard } from './AchievementCard';
 
-export const TrophyRoom: React.FC = () => {
+export const TrophyRoom = () => {
   const { unlockedAchievements } = useAchievements();
 
   const legendaryAchievements = unlockedAchievements.filter((a) => a.rarity === 'legendary');

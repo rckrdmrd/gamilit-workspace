@@ -13,7 +13,8 @@
  * @see SETTINGS-003 - Avatar Upload Implementation
  */
 
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
+import type { ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Loader2, AlertCircle, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -51,7 +52,7 @@ export interface AvatarUploadProps {
 // COMPONENT
 // ============================================================================
 
-export const AvatarUpload: React.FC<AvatarUploadProps> = ({
+export const AvatarUpload = ({
   userId,
   currentAvatarUrl,
   displayName,
@@ -62,7 +63,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   maxSizeMB = 5,
   disabled = false,
   showInstructions = true,
-}) => {
+}: AvatarUploadProps) => {
   // ============================================================================
   // STATE
   // ============================================================================
@@ -137,7 +138,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   // HANDLERS
   // ============================================================================
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 

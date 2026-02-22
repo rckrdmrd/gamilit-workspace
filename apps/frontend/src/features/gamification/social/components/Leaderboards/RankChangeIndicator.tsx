@@ -10,7 +10,7 @@
  * - Animation on mount
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react';
 import type { RankChange } from '../../types/leaderboardsTypes';
@@ -85,14 +85,14 @@ const getTooltipMessage = (change: number, changeType: RankChange): string => {
   }
 };
 
-export const RankChangeIndicator: React.FC<RankChangeIndicatorProps> = ({
+export const RankChangeIndicator = ({
   change,
   changeType,
   showLabel = true,
   size = 'md',
   className,
-  tooltipPosition = 'top'
-}) => {
+  tooltipPosition = 'top',
+}: RankChangeIndicatorProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const Icon = getChangeIcon(changeType);
   const color = getChangeColor(changeType);

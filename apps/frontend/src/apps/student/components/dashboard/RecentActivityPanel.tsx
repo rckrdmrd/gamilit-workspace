@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity,
@@ -49,7 +49,7 @@ interface ActivityCardProps {
   index: number;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ activity, index }) => {
+const ActivityCard = ({ activity, index }: ActivityCardProps) => {
   const getActivityIcon = () => {
     if (activity.icon) return activity.icon;
 
@@ -119,7 +119,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, index }) => {
   };
 
   const formatRewards = () => {
-    const rewards: React.ReactNode[] = [];
+    const rewards: ReactNode[] = [];
     if (activity.metadata?.xp) {
       rewards.push(
         <span key="xp" className="inline-flex items-center gap-1 text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full">
@@ -229,7 +229,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, index }) => {
   );
 };
 
-const ActivitySkeleton: React.FC = () => (
+const ActivitySkeleton = () => (
   <EnhancedCard variant="info" hover={false} padding="md">
     <div className="flex items-start gap-3">
       <div className="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
@@ -246,12 +246,12 @@ const ActivitySkeleton: React.FC = () => (
   </EnhancedCard>
 );
 
-export const RecentActivityPanel: React.FC<RecentActivityPanelProps> = ({
+export const RecentActivityPanel = ({
   activities,
   loading,
   error,
   maxItems = 5
-}) => {
+}: RecentActivityPanelProps) => {
   // Handle error state
   if (error && !loading) {
     return (

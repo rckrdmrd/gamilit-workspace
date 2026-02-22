@@ -28,7 +28,7 @@
  * @see @shared/hooks/useFocusTrap
  */
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Confetti from 'react-confetti';
 import { Modal } from '@shared/components/common/Modal';
@@ -93,7 +93,7 @@ interface CompletionModalProps {
   };
 }
 
-export const CompletionModal: React.FC<CompletionModalProps> = ({
+export const CompletionModal = ({
   isOpen,
   success,
   score,
@@ -110,7 +110,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
   onNextExercise,
   rankUp,
   streakInfo,
-}) => {
+}: CompletionModalProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addXP, checkRankUp } = useProgression();

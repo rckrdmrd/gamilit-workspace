@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { ChevronLeft, ChevronRight, Check, Calendar, Settings, Users } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
@@ -94,7 +94,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
       {/* Progress Steps */}
       <div className="flex items-center justify-between">
         {[1, 2, 3].map((s) => (
-          <React.Fragment key={s}>
+          <Fragment key={s}>
             <div
               className={`flex items-center justify-center w-10 h-10 rounded-full font-bold ${
                 s === step
@@ -113,7 +113,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
                 }`}
               />
             )}
-          </React.Fragment>
+          </Fragment>
         ))}
       </div>
 

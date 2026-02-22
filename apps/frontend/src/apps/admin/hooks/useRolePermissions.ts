@@ -8,6 +8,7 @@
  *
  * Created: 2025-11-24 - AdminRolesPage Backend Integration
  * Updated: 2026-02-20 - Migrated to React Query
+ * Updated: 2026-02-21 - Fix #36: Replaced __none__ antipattern with dynamic roleId param
  */
 import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -94,7 +95,7 @@ const rolePermissionsKeys = {
 };
 
 // ============================================================================
-// Types (unchanged for backward compatibility)
+// Types
 // ============================================================================
 
 export interface UseRolePermissionsResult {
@@ -115,26 +116,27 @@ export interface UseRolePermissionsResult {
 // Hook
 // ============================================================================
 
-export function useRolePermissions(): UseRolePermissionsResult {
+export function useRolePermissions(roleId?: string | null): UseRolePermissionsResult {
   const queryClient = useQueryClient();
 
-  // We need to track the current roleId for the query
-  // Using a manual approach since roleId is dynamic (set by fetchRolePermissions)
-  const activeRoleQuery = useQuery({
-    queryKey: rolePermissionsKeys.detail('__none__'),
-    queryFn: async () => null as RolePermissions | null,
-    enabled: false, // disabled by default
+  const roleQuery = useQuery({
+    queryKey: rolePermissionsKeys.detail(roleId || ''),
+    queryFn: async () => {
+      const backendData = await adminAPI.getRolePermissions(roleId!);
+      return transformBackendResponse(backendData);
+    },
+    enabled: !!roleId,
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ roleId, permissions }: { roleId: string; permissions: Permission[] }) => {
-      const backendData = await adminAPI.updateRolePermissions(roleId, permissions);
-      return { backendData, roleId };
+    mutationFn: async ({ roleId: rid, permissions }: { roleId: string; permissions: Permission[] }) => {
+      const backendData = await adminAPI.updateRolePermissions(rid, permissions);
+      return { backendData, roleId: rid };
     },
-    onSuccess: ({ backendData, roleId }) => {
+    onSuccess: ({ backendData, roleId: rid }) => {
       const frontendData = transformBackendResponse(backendData);
       if (frontendData) {
-        queryClient.setQueryData(rolePermissionsKeys.detail(roleId), frontendData);
+        queryClient.setQueryData(rolePermissionsKeys.detail(rid), frontendData);
       }
     },
   });
@@ -144,24 +146,22 @@ export function useRolePermissions(): UseRolePermissionsResult {
   // ============================================================================
 
   const fetchRolePermissions = useCallback(
-    async (roleId: string): Promise<void> => {
-      if (!roleId) {
-        return;
-      }
-
-      const backendData = await adminAPI.getRolePermissions(roleId);
-      const frontendData = transformBackendResponse(backendData);
-
-      if (frontendData) {
-        queryClient.setQueryData(rolePermissionsKeys.detail(roleId), frontendData);
-      }
+    async (rid: string): Promise<void> => {
+      if (!rid) return;
+      await queryClient.fetchQuery({
+        queryKey: rolePermissionsKeys.detail(rid),
+        queryFn: async () => {
+          const backendData = await adminAPI.getRolePermissions(rid);
+          return transformBackendResponse(backendData);
+        },
+      });
     },
     [queryClient],
   );
 
   const updatePermissions = useCallback(
-    async (roleId: string, permissions: Permission[]): Promise<void> => {
-      if (!roleId) {
+    async (rid: string, permissions: Permission[]): Promise<void> => {
+      if (!rid) {
         throw new Error('roleId es requerido para actualizar permisos');
       }
 
@@ -169,7 +169,7 @@ export function useRolePermissions(): UseRolePermissionsResult {
         throw new Error('permissions debe ser un array');
       }
 
-      await updateMutation.mutateAsync({ roleId, permissions });
+      await updateMutation.mutateAsync({ roleId: rid, permissions });
     },
     [updateMutation],
   );
@@ -178,24 +178,21 @@ export function useRolePermissions(): UseRolePermissionsResult {
     queryClient.removeQueries({ queryKey: rolePermissionsKeys.all });
   }, [queryClient]);
 
-  // Get the most recent role permissions from cache
-  // We look for any cached data under rolePermissionsKeys
-  const cachedKeys = queryClient.getQueriesData<RolePermissions>({
-    queryKey: rolePermissionsKeys.all,
-  });
-  const latestPermissions = cachedKeys.length > 0 ? cachedKeys[cachedKeys.length - 1][1] : null;
-
   // ============================================================================
   // RETURN
   // ============================================================================
 
   return {
     // Data
-    rolePermissions: latestPermissions ?? null,
+    rolePermissions: roleQuery.data ?? null,
 
     // State
-    loading: activeRoleQuery.isLoading || updateMutation.isPending,
-    error: updateMutation.error instanceof Error ? updateMutation.error.message : null,
+    loading: roleQuery.isLoading || updateMutation.isPending,
+    error: roleQuery.error instanceof Error
+      ? roleQuery.error.message
+      : updateMutation.error instanceof Error
+        ? updateMutation.error.message
+        : null,
 
     // Operations
     fetchRolePermissions,

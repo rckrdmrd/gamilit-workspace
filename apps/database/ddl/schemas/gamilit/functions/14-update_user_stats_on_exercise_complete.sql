@@ -32,10 +32,18 @@ BEGIN
     -- Actualizar estadísticas del usuario
     UPDATE gamification_system.user_stats
     SET
-        exercises_completed = exercises_completed + 1,
+        exercises_completed = CASE WHEN v_is_correct THEN exercises_completed + 1 ELSE exercises_completed END,
+        perfect_scores = CASE WHEN v_is_correct AND NEW.score = 100 THEN perfect_scores + 1 ELSE perfect_scores END,
         total_xp = total_xp + v_xp_earned,
         ml_coins = ml_coins + v_coins_earned,                          -- FIX: ml_coins, no ml_coins_balance
         ml_coins_earned_total = ml_coins_earned_total + v_coins_earned, -- FIX: tracking total earned
+        average_score = CASE WHEN v_is_correct THEN
+            COALESCE((
+                SELECT AVG(score)::numeric(5,2)
+                FROM progress_tracking.exercise_attempts
+                WHERE user_id = NEW.user_id AND is_correct = true
+            ), 0)
+        ELSE average_score END,
         last_activity_at = gamilit.now_mexico(),
         updated_at = gamilit.now_mexico()
     WHERE user_id = NEW.user_id;
@@ -46,17 +54,21 @@ BEGIN
             user_id,
             tenant_id,
             exercises_completed,
+            perfect_scores,
             total_xp,
             ml_coins,                                                   -- FIX: ml_coins, no ml_coins_balance
             ml_coins_earned_total,
+            average_score,
             last_activity_at
         ) VALUES (
             NEW.user_id,
             '00000000-0000-0000-0000-000000000000'::UUID,
-            1,
+            CASE WHEN v_is_correct THEN 1 ELSE 0 END,
+            CASE WHEN v_is_correct AND NEW.score = 100 THEN 1 ELSE 0 END,
             v_xp_earned,
             100 + v_coins_earned, -- Balance inicial de 100
             v_coins_earned,
+            CASE WHEN v_is_correct THEN NEW.score ELSE 0 END,
             gamilit.now_mexico()
         );
     END IF;

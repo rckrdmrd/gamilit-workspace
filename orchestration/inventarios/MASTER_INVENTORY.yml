@@ -35,7 +35,7 @@ metricas:
     rls_policies: 251            # 251 ^CREATE POLICY in rls-policies/*.sql (37 files). Verified 2026-02-21. +10 resource-sharing-policies, +3 teacher_reports. Note: ~143 additional inline policies in table files
     foreign_keys: 299            # +1 missions_template_id_fkey (REC-009)
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
-    seeds: 92                    # 92 pipeline entries, 0 errores, 0 excluidos. UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups
+    seeds: 93                    # 93 pipeline entries (+1 07-exercises-auxiliar.sql), 0 errores, 0 excluidos. UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups
     scripts:                     # Key database scripts
       - "recreate-database.sh"         # Main recreate (--env dev|prod --force)
       - "recreate-database-dev.sh"     # Wrapper DEV
@@ -57,16 +57,20 @@ metricas:
     tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 590              # Verified 2026-02-21: find -name "*.tsx" excl tests/stories/examples/_testing
-    hooks: 127                        # Verified 2026-02-21: find use*.ts excl user*/tests. +useCompletionAnimations, +useSharedResources, +useGamificationSocket, +useBatchEquipment, +useTeacherContent, +useTeacherMessages, +useAnalytics(teacher), +useExerciseState
-    paginas: 70                       # 70 activas + 1 legacy
+    componentes_tsx: 576              # Verified 2026-02-21: find .tsx excl tests/stories/examples/legacy/testing
+    hooks: 128                        # Verified 2026-02-21: find use*.ts excl tests + type files
+    paginas: 67                       # Verified 2026-02-21: find *Page.tsx excl tests/legacy
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
-    api_service_files: 67             # Verified 2026-02-21: 45 in services/api (excl infra/index) + 19 features + 2 shared + 1 NotificationService(deprecated)
+    api_service_files: 65             # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0)
     api_calls_total: 580              # ~580: +resourceSharingApi calls over previous 575
     portales: 4
     mecanicas_ejercicio: 30           # 30 mecanicas unicas de ejercicio
-    routes: 73                        # 73 <Route path=> definitions en App.tsx (verified 2026-02-21)
+    routes: 70                        # 73 - 3 routes removed (teacher communication, content, content-management)
     type_files: 49                    # 49 archivos type definition
+    recursos_multimedia:
+      meme_svgs: 6                   # public/memes/*.svg (Marie Curie, flat design 600x500px)
+      audio_mp3: 1                   # public/audio/marie-curie-biografia.mp3 (~2min gTTS)
+      ejercicios_con_recursos: 2     # analisis_memes (6 SVGs), comprension_auditiva (1 MP3)
     tests_frontend: 236               # +23 CompletionModal accessibility tests, +51 USE_PROXY tests (api.config.test.ts)
 
   calidad:
@@ -76,7 +80,7 @@ metricas:
     cobertura_target: "80%"
     mock_only_services: 8           # mechanicsAPI, aiServiceAPI + 6 module-specific mechanics APIs (all MOCK-ONLY)
     dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
-    lint_warnings: 71               # Reduced from 911 to 71 (MQ-007: `any` type reduction)
+    lint_warnings: 104              # 104 warnings (0 errors). Previously 71 — increase from teacher portal re-enable + mobile fixes
 
 # -------------------------------------------------------------------------------
 # PORTALES

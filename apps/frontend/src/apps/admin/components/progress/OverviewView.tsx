@@ -7,7 +7,6 @@
  * @date 2025-11-24
  */
 
-import React from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { Users, FileCheck, Target, Clock, TrendingUp, BookOpen, BarChart3 } from 'lucide-react';
@@ -18,7 +17,7 @@ interface OverviewViewProps {
   isLoading: boolean;
 }
 
-export const OverviewView: React.FC<OverviewViewProps> = ({ overview, isLoading }) => {
+export const OverviewView = ({ overview, isLoading }: OverviewViewProps) => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

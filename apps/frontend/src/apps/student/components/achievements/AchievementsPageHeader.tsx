@@ -4,7 +4,8 @@
  * ~150 lines
  */
 
-import React from 'react';
+
+
 import { motion } from 'framer-motion';
 import { Trophy, Sparkles, Coins, Zap, Award, TrendingUp } from 'lucide-react';
 import type { AchievementStatistics } from './types';
@@ -13,7 +14,7 @@ interface AchievementsPageHeaderProps {
   statistics: AchievementStatistics;
 }
 
-export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({ statistics }) => {
+export const AchievementsPageHeader = ({ statistics }: AchievementsPageHeaderProps) => {
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },

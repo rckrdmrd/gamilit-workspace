@@ -1,4 +1,5 @@
-import React from 'react';
+import { Fragment } from 'react';
+import type { ReactNode } from 'react';
 import {
   FileText,
   CheckCircle,
@@ -48,12 +49,12 @@ interface ExerciseContentRendererProps {
  * />
  * ```
  */
-export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = ({
+export const ExerciseContentRenderer = ({
   exerciseType,
   answerData,
   correctAnswer,
   showComparison = false,
-}) => {
+}: ExerciseContentRendererProps) => {
   // Renderizar según tipo de ejercicio
   switch (exerciseType) {
     case 'podcast_argumentativo':
@@ -174,7 +175,7 @@ export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = (
  * Renderiza respuestas del ejercicio Podcast Argumentativo
  * Muestra el tema seleccionado, guión y archivo de audio
  */
-const PodcastRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const PodcastRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const topicId = data.topicId as string;
   const script = data.script as string;
   const audioUrl = data.audioUrl as string | undefined;
@@ -228,7 +229,7 @@ const PodcastRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) 
  * Muestra el ranking de credibilidad de fuentes ordenado
  * Formato: { ranking: ["src-3", "src-1", "src-2"] }
  */
-const AnalisisFuentesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const AnalisisFuentesRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const ranking = (data.ranking || []) as string[];
   const startedAt = data.startedAt as string | undefined;
 
@@ -302,7 +303,7 @@ const AnalisisFuentesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ 
  * Muestra las respuestas a las 3 preguntas de análisis
  * Formato: { questions: { q1: "respuesta1", q2: "respuesta2", q3: "respuesta3" } }
  */
-const MatrizPerspectivasRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const MatrizPerspectivasRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const questions = (data.questions || {}) as Record<string, string>;
 
   const questionLabels: Record<string, string> = {
@@ -344,7 +345,7 @@ const MatrizPerspectivasRenderer: React.FC<{ data: Record<string, unknown> }> = 
  * Muestra la posición, argumentos y mensajes del debate
  * Formato: { position: 'a_favor'|'en_contra'|'neutral', response: string, arguments: string[], messageCount: number }
  */
-const DebateDigitalRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const DebateDigitalRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const position = data.position as string;
   const response = data.response as string;
   const args = (data.arguments || []) as string[];
@@ -413,7 +414,7 @@ const DebateDigitalRenderer: React.FC<{ data: Record<string, unknown> }> = ({ da
  * Muestra las evaluaciones de afirmaciones con clasificación y veredicto
  * Formato: { evaluations: [{ statementId, classification, verdict, justification? }] }
  */
-const TribunalOpinionesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const TribunalOpinionesRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const evaluations = (data.evaluations || []) as Array<{
     statementId: string;
     classification: string;
@@ -477,7 +478,7 @@ const TribunalOpinionesRenderer: React.FC<{ data: Record<string, unknown> }> = (
  * Muestra claims verificados con evidencia
  * Formato: { claims_verified: [...], verifiedClaims: [...], metadata: {...} }
  */
-const VerificadorFakeNewsRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const VerificadorFakeNewsRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const claimsVerified = (data.claims_verified || data.verifiedClaims || []) as Array<{
     claim_id?: string;
     claim?: string;
@@ -547,7 +548,7 @@ const VerificadorFakeNewsRenderer: React.FC<{ data: Record<string, unknown> }> =
  * Muestra respuestas con historial de swipes
  * Formato: { answers: number[], swipeHistory: number[], score: number }
  */
-const QuizTikTokRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const QuizTikTokRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const answers = (data.answers || []) as number[];
   const swipeHistory = (data.swipeHistory || []) as number[];
   const score = data.score as number | undefined;
@@ -607,7 +608,7 @@ const QuizTikTokRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
  * Muestra el camino de navegación e información encontrada
  * Formato: { path: string[], information_found: {...}, metadata: {...} }
  */
-const NavegacionHipertextualRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const NavegacionHipertextualRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const path = (data.path || []) as string[];
   const informationFound = (data.information_found || {}) as Record<string, {
     title?: string;
@@ -633,14 +634,14 @@ const NavegacionHipertextualRenderer: React.FC<{ data: Record<string, unknown> }
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {path.map((node, idx) => (
-            <React.Fragment key={idx}>
+            <Fragment key={idx}>
               <span className="inline-flex items-center px-3 py-1 rounded-lg bg-teal-100 text-teal-800 text-sm font-medium">
                 {node}
               </span>
               {idx < path.length - 1 && (
                 <span className="text-teal-400">→</span>
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </div>
       </div>
@@ -688,7 +689,7 @@ const NavegacionHipertextualRenderer: React.FC<{ data: Record<string, unknown> }
  * Muestra anotaciones sobre el meme
  * Formato: { annotations: [...], analysis: {...}, metadata: {...} }
  */
-const AnalisisMemesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const AnalisisMemesRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const annotations = (data.annotations || []) as Array<{
     x?: number;
     y?: number;
@@ -764,7 +765,7 @@ const AnalisisMemesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ da
  * Muestra secciones exploradas y respuestas
  * Formato: { answers: {...}, sections_explored: string[], metadata: {...} }
  */
-const InfografiaInteractivaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const InfografiaInteractivaRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const answers = (data.answers || {}) as Record<string, {
     title?: string;
     content?: string;
@@ -852,7 +853,7 @@ const InfografiaInteractivaRenderer: React.FC<{ data: Record<string, unknown> }>
  * Muestra entradas del diario con contenido y mood
  * Formato: { entries: [...], totalEntries: number, totalWords: number, metadata: {...} }
  */
-const DiarioMultimediaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const DiarioMultimediaRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const entries = (data.entries || []) as Array<{
     id?: string;
     date?: string;
@@ -946,7 +947,7 @@ const DiarioMultimediaRenderer: React.FC<{ data: Record<string, unknown> }> = ({
  * Muestra paneles del cómic con diálogos
  * Formato: { panels: [...], metadata: {...} }
  */
-const ComicDigitalRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const ComicDigitalRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const panels = (data.panels || []) as Array<{
     panelNumber?: number;
     dialogue?: string;
@@ -1027,7 +1028,7 @@ const ComicDigitalRenderer: React.FC<{ data: Record<string, unknown> }> = ({ dat
  * Muestra video y secciones completadas
  * Formato: { video_url: string, sections: [...], metadata: {...} }
  */
-const VideoCartaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const VideoCartaRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const videoUrl = data.video_url as string | undefined;
   const sections = (data.sections || []) as Array<{
     title?: string;
@@ -1123,11 +1124,11 @@ const VideoCartaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
  * - { answers: { "1": true, "2": false } } - formato normalizado
  * - { "1": true, "2": false } - formato directo
  */
-const VerdaderoFalsoRenderer: React.FC<{
+const VerdaderoFalsoRenderer = ({ data, correct, showComparison }: {
   data: Record<string, unknown>;
   correct?: Record<string, unknown>;
   showComparison: boolean;
-}> = ({ data, correct, showComparison }) => {
+}) => {
   // Soportar múltiples formatos: statements (frontend), answers (normalizado), o directo
   const rawAnswers = data.statements || data.answers || data;
 
@@ -1201,11 +1202,11 @@ const VerdaderoFalsoRenderer: React.FC<{
  * Renderiza respuestas del ejercicio Completar Espacios
  * Muestra las palabras ingresadas con comparación opcional
  */
-const CompletarEspaciosRenderer: React.FC<{
+const CompletarEspaciosRenderer = ({ data, correct, showComparison }: {
   data: Record<string, unknown>;
   correct?: Record<string, unknown>;
   showComparison: boolean;
-}> = ({ data, correct, showComparison }) => {
+}) => {
   const blanks = (data.blanks || data) as Record<string, string>;
   const correctBlanks = correct?.blanks as Record<string, string> | undefined;
 
@@ -1242,7 +1243,7 @@ const CompletarEspaciosRenderer: React.FC<{
  * Renderiza respuestas del ejercicio Crucigrama
  * Muestra las palabras completadas en formato de grid
  */
-const CrucigramaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const CrucigramaRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const words = (data.words || data.answers || {}) as Record<string, string>;
 
   return (
@@ -1267,7 +1268,7 @@ const CrucigramaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
  * Renderiza respuestas del ejercicio Sopa de Letras
  * Muestra las palabras encontradas como tags
  */
-const SopaLetrasRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const SopaLetrasRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const foundWords = (data.foundWords || data.words || []) as string[];
 
   return (
@@ -1291,7 +1292,7 @@ const SopaLetrasRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
  * Renderiza respuestas del ejercicio Mapa Conceptual
  * Muestra las conexiones entre nodos
  */
-const MapaConceptualRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const MapaConceptualRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const connections = (data.connections || data.nodes || []) as Array<{
     from?: string;
     to?: string;
@@ -1324,7 +1325,7 @@ const MapaConceptualRenderer: React.FC<{ data: Record<string, unknown> }> = ({ d
  * Renderiza respuestas del ejercicio Timeline
  * Muestra los eventos en orden cronológico
  */
-const TimelineRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const TimelineRenderer = ({ data }: { data: Record<string, unknown> }) => {
   const events = (data.events || data.order || []) as Array<{
     id?: string;
     position?: number;
@@ -1356,11 +1357,11 @@ const TimelineRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data })
  * Renderiza respuestas del ejercicio Emparejamiento
  * Muestra los pares que el estudiante conectó
  */
-const EmparejamientoRenderer: React.FC<{
+const EmparejamientoRenderer = ({ data, correct, showComparison }: {
   data: Record<string, unknown>;
   correct?: Record<string, unknown>;
   showComparison: boolean;
-}> = ({ data, correct, showComparison }) => {
+}) => {
   // El formato de respuesta es { matches: { questionId: answerId } }
   const matches = (data.matches || data) as Record<string, string>;
   const correctMatches = (correct?.matches || correct) as Record<string, string> | undefined;
@@ -1420,11 +1421,11 @@ const EmparejamientoRenderer: React.FC<{
  * Renderiza respuestas de ejercicios de opción múltiple
  * Usado para ejercicios del Módulo 2 (inferenciales)
  */
-const MultipleChoiceRenderer: React.FC<{
+const MultipleChoiceRenderer = ({ data, correct, showComparison }: {
   data: Record<string, unknown>;
   correct?: Record<string, unknown>;
   showComparison: boolean;
-}> = ({ data, correct, showComparison }) => {
+}) => {
   const answers = data as Record<string, string | number>;
   const correctAnswers = correct as Record<string, string | number> | undefined;
 
@@ -1460,7 +1461,7 @@ const MultipleChoiceRenderer: React.FC<{
  * Renderiza respuestas de ejercicios basados en texto
  * Usado para ejercicios del Módulo 3 (críticos/argumentativos)
  */
-const TextResponseRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+const TextResponseRenderer = ({ data }: { data: Record<string, unknown> }) => {
   return (
     <div className="space-y-4">
       {Object.entries(data).map(([key, value]) => (
@@ -1481,11 +1482,11 @@ const TextResponseRenderer: React.FC<{ data: Record<string, unknown> }> = ({ dat
  * TASK-2026-01-18-013: SmartFieldRenderer - Renderiza un campo individual de forma inteligente
  * Detecta el tipo de dato y lo presenta de la mejor manera posible
  */
-const SmartFieldRenderer: React.FC<{
+const SmartFieldRenderer = ({ fieldKey, value, depth = 0 }: {
   fieldKey: string;
   value: unknown;
   depth?: number;
-}> = ({ fieldKey, value, depth = 0 }) => {
+}) => {
   // Formatear el nombre del campo para mostrar
   const formatFieldName = (key: string): string => {
     return key
@@ -1512,7 +1513,7 @@ const SmartFieldRenderer: React.FC<{
   };
 
   // Renderizar valor según su tipo
-  const renderValue = (): React.ReactNode => {
+  const renderValue = (): ReactNode => {
     // Null/undefined
     if (value === null || value === undefined) {
       return <span className="text-gray-400 italic text-sm">Sin respuesta</span>;
@@ -1679,10 +1680,10 @@ const SmartFieldRenderer: React.FC<{
 /**
  * TASK-2026-01-18-013: SmartObjectRenderer - Renderiza un objeto completo de forma inteligente
  */
-const SmartObjectRenderer: React.FC<{
+const SmartObjectRenderer = ({ data, depth = 0 }: {
   data: Record<string, unknown>;
   depth?: number;
-}> = ({ data, depth = 0 }) => {
+}) => {
   if (!data || Object.keys(data).length === 0) {
     return <span className="text-gray-400 italic text-sm">Sin datos</span>;
   }
@@ -1712,10 +1713,10 @@ const SmartObjectRenderer: React.FC<{
  * TASK-2026-01-18-013: Completamente reescrito para usar SmartObjectRenderer
  * Muestra las respuestas de forma inteligente y legible
  */
-const FallbackRenderer: React.FC<{ data: Record<string, unknown>; exerciseType?: string }> = ({
+const FallbackRenderer = ({
   data,
   exerciseType,
-}) => {
+}: { data: Record<string, unknown>; exerciseType?: string }) => {
   // Si no hay datos o están vacíos
   if (!data || Object.keys(data).length === 0) {
     return (

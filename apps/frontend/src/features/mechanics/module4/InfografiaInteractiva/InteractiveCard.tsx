@@ -1,9 +1,8 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InfoCard } from './infografiaInteractivaTypes';
 import { Eye, EyeOff } from 'lucide-react';
 
-export const InteractiveCard: React.FC<{ card: InfoCard; onClick: () => void }> = ({ card, onClick }) => (
+export const InteractiveCard = ({ card, onClick }: { card: InfoCard; onClick: () => void }) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}

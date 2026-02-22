@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -12,12 +12,12 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
+export const VerdaderoFalsoExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: VerdaderoFalsoExerciseProps) => {
   const { user } = useAuth(); // Get authenticated user
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -228,11 +228,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                       </div>
 
                       {/* Answer Buttons */}
-                      <div className="ml-11 flex gap-4">
+                      <div className="ml-0 sm:ml-11 flex gap-2 sm:gap-4">
                         <button
                           onClick={() => handleAnswer(statement.id, true)}
                           disabled={showResults}
-                          className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
+                          className={`flex-1 rounded-lg px-3 py-2 sm:px-6 sm:py-3 font-semibold transition-all ${
                             statement.userAnswer === true
                               ? showResults
                                 ? 'bg-green-500/20 border-2 border-green-500 text-detective-text shadow-md'
@@ -246,7 +246,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                         <button
                           onClick={() => handleAnswer(statement.id, false)}
                           disabled={showResults}
-                          className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
+                          className={`flex-1 rounded-lg px-3 py-2 sm:px-6 sm:py-3 font-semibold transition-all ${
                             statement.userAnswer === false
                               ? showResults
                                 ? 'bg-red-500/20 border-2 border-red-500 text-detective-text shadow-md'

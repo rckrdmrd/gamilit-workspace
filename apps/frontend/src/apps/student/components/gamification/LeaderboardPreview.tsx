@@ -7,7 +7,7 @@
  *                       or fetches from useLeaderboards hook for real data integration.
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import {
   Trophy,
@@ -75,7 +75,7 @@ export function LeaderboardPreview({ position, topThree: propTopThree }: Leaderb
   const navigate = useNavigate();
   const [filter, setFilter] = useState<LeaderboardFilter>('global');
 
-  const filters: { id: LeaderboardFilter; label: string; icon: React.ReactNode }[] = [
+  const filters: { id: LeaderboardFilter; label: string; icon: ReactNode }[] = [
     { id: 'global', label: 'Global', icon: <Globe className="h-4 w-4" /> },
     { id: 'school', label: 'Escuela', icon: <School className="h-4 w-4" /> },
     { id: 'grade', label: 'Grado', icon: <Users className="h-4 w-4" /> },

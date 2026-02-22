@@ -2,31 +2,30 @@ import {
   IsObject,
   IsArray,
   IsString,
+  IsOptional,
   ArrayMinSize,
+  MinLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
  * InfografiaInteractivaAnswerDto
  *
  * @description DTO para validar las respuestas del ejercicio "Infografía Interactiva".
- * El estudiante debe interactuar con diferentes secciones de la infografía y proporcionar
- * respuestas a las preguntas o actividades asociadas a cada sección.
+ * El estudiante interactúa con las secciones de la infografía y responde preguntas
+ * de análisis evaluadas por el maestro.
  *
  * @example
  * ```json
  * {
- *   "answers": {
- *     "section_1": {
- *       "question_1": "La alfabetización digital implica...",
- *       "question_2": "Tres competencias clave son..."
- *     },
- *     "section_2": {
- *       "interactive_element": "clicked",
- *       "response": "Los datos personales incluyen..."
- *     }
+ *   "answers": { ... },
+ *   "sections_explored": ["card-1", "card-2", "card-3"],
+ *   "analysis_questions": {
+ *     "relationship": "Los descubrimientos de Marie Curie están relacionados con...",
+ *     "surprising": "El dato más sorprendente fue que...",
+ *     "summary": "La infografía muestra tres aspectos principales..."
  *   },
- *   "sections_explored": ["section_1", "section_2", "section_3"]
+ *   "synthesis": "En resumen, Marie Curie revolucionó la ciencia al descubrir..."
  * }
  * ```
  */
@@ -35,14 +34,7 @@ export class InfografiaInteractivaAnswerDto {
     description:
       'Respuestas del estudiante organizadas por sección o elemento interactivo',
     example: {
-      section_1: {
-        question_1: 'La alfabetización digital implica...',
-        question_2: 'Tres competencias clave son...',
-      },
-      section_2: {
-        interactive_element: 'clicked',
-        response: 'Los datos personales incluyen...',
-      },
+      'card-1': { title: 'Descubrimientos', revealed: true },
     },
   })
   @IsObject({ message: 'answers must be an object' })
@@ -51,7 +43,7 @@ export class InfografiaInteractivaAnswerDto {
   @ApiProperty({
     description:
       'Lista de IDs de secciones exploradas por el estudiante (mínimo 1)',
-    example: ['section_1', 'section_2', 'section_3'],
+    example: ['card-1', 'card-2', 'card-3'],
     minItems: 1,
   })
   @IsArray({ message: 'sections_explored must be an array' })
@@ -60,4 +52,25 @@ export class InfografiaInteractivaAnswerDto {
   })
   @IsString({ each: true, message: 'each section ID must be a string' })
     sections_explored: string[];
+
+  @ApiPropertyOptional({
+    description: 'Respuestas a preguntas de análisis sobre la infografía (mínimo 50 caracteres cada una)',
+    example: {
+      relationship: 'Los descubrimientos de Marie Curie están directamente relacionados con su legado...',
+      surprising: 'El dato más sorprendente fue que sus investigaciones salvaron millones de vidas...',
+      summary: 'La infografía presenta tres aspectos clave de la vida de Marie Curie...',
+    },
+  })
+  @IsOptional()
+  @IsObject({ message: 'analysis_questions must be an object' })
+    analysis_questions?: Record<string, string>;
+
+  @ApiPropertyOptional({
+    description: 'Síntesis final del contenido de la infografía (mínimo 100 caracteres)',
+    example: 'En resumen, Marie Curie revolucionó la ciencia al descubrir el polonio y el radio...',
+  })
+  @IsOptional()
+  @IsString({ message: 'synthesis must be a string' })
+  @MinLength(100, { message: 'synthesis must be at least 100 characters' })
+    synthesis?: string;
 }

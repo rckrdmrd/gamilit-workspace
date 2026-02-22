@@ -4,7 +4,7 @@
  * @module apps/student/components/profile/ProfileHero
  */
 
-import React from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Calendar, Camera } from 'lucide-react';
 import { RankBadge } from '@shared/components/base/RankBadge';
@@ -39,12 +39,12 @@ interface ProfileHeroProps {
 }
 
 export function ProfileHero({ user, rankType, stats, equippedFrameColor, equippedBackground, equippedTitle, equippedBadge, onAvatarClick }: ProfileHeroProps) {
-  const [avatarFailed, setAvatarFailed] = React.useState(false);
-  const [badgeFailed, setBadgeFailed] = React.useState(false);
-  const [bgFailed, setBgFailed] = React.useState(false);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+  const [badgeFailed, setBadgeFailed] = useState(false);
+  const [bgFailed, setBgFailed] = useState(false);
 
   // Preload background image and fallback gracefully
-  React.useEffect(() => {
+  useEffect(() => {
     if (!equippedBackground?.assetUrl) return;
     const img = new Image();
     img.src = equippedBackground.assetUrl;
@@ -52,7 +52,7 @@ export function ProfileHero({ user, rankType, stats, equippedFrameColor, equippe
     setBgFailed(false);
   }, [equippedBackground?.assetUrl]);
 
-  const backgroundStyle: React.CSSProperties =
+  const backgroundStyle: CSSProperties =
     equippedBackground?.assetUrl && !bgFailed
       ? {
           backgroundImage: `url(${equippedBackground.assetUrl})`,

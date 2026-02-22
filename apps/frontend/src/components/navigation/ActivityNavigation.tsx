@@ -16,7 +16,7 @@
  * - Keyboard shortcuts (arrow keys)
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Home, Check, Lock, Play } from 'lucide-react';
 
 interface Activity {
@@ -52,7 +52,7 @@ const ACTIVITY_LABELS = {
   assessment: 'Evaluación',
 };
 
-export const ActivityNavigation: React.FC<ActivityNavigationProps> = ({
+export const ActivityNavigation = ({
   moduleTitle,
   activities,
   currentActivityId,
@@ -60,7 +60,7 @@ export const ActivityNavigation: React.FC<ActivityNavigationProps> = ({
   onBackToModule,
   showProgress = true,
   enableKeyboardNav = true,
-}) => {
+}: ActivityNavigationProps) => {
   // Find current activity index
   const currentIndex = activities.findIndex((a) => a.id === currentActivityId);
   const currentActivity = activities[currentIndex];

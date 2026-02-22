@@ -8,7 +8,7 @@
  * @created 2026-01-27
  */
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useParentStore } from '@/features/parent/store/parentStore';
@@ -23,7 +23,7 @@ const RELATIONSHIP_OPTIONS = [
   { value: RelationshipType.OTHER, label: 'Otro' },
 ];
 
-export const ParentRegisterPage: React.FC = () => {
+export const ParentRegisterPage = () => {
   const navigate = useNavigate();
   const { register, isLoading, error, clearError } = useParentStore();
 
@@ -74,7 +74,7 @@ export const ParentRegisterPage: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();
 

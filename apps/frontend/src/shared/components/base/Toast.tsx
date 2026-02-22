@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, AlertCircle, Info, X } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -17,7 +18,7 @@ export interface ToastProps {
 
 const toastStyles: Record<
   ToastType,
-  { bg: string; border: string; icon: React.ElementType; iconColor: string }
+  { bg: string; border: string; icon: ElementType; iconColor: string }
 > = {
   success: {
     bg: 'bg-green-50',
@@ -45,14 +46,14 @@ const toastStyles: Record<
   },
 };
 
-export const Toast: React.FC<ToastProps> = ({
+export const Toast = ({
   id,
   type,
   title,
   message,
   duration = 5000,
   onClose,
-}) => {
+}: ToastProps) => {
   const style = toastStyles[type];
   const Icon = style.icon;
 
@@ -125,10 +126,10 @@ const positionStyles = {
   'bottom-left': 'bottom-4 left-4 items-start',
 };
 
-export const ToastContainer: React.FC<ToastContainerProps> = ({
+export const ToastContainer = ({
   toasts,
   position = 'top-right',
-}) => {
+}: ToastContainerProps) => {
   return (
     <div
       className={cn('fixed z-[9999] flex flex-col gap-3', positionStyles[position])}
@@ -146,9 +147,9 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({
 
 // Hook for managing toasts
 export const useToast = () => {
-  const [toasts, setToasts] = React.useState<ToastProps[]>([]);
+  const [toasts, setToasts] = useState<ToastProps[]>([]);
 
-  const showToast = React.useCallback((toast: Omit<ToastProps, 'id' | 'onClose'>) => {
+  const showToast = useCallback((toast: Omit<ToastProps, 'id' | 'onClose'>) => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const newToast: ToastProps = {
       ...toast,
@@ -162,11 +163,11 @@ export const useToast = () => {
     return id;
   }, []);
 
-  const removeToast = React.useCallback((id: string) => {
+  const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const clearAllToasts = React.useCallback(() => {
+  const clearAllToasts = useCallback(() => {
     setToasts([]);
   }, []);
 

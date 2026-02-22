@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp, Calendar, Building2, X } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { UserManagementFilters } from '../../types';
@@ -10,12 +10,12 @@ export interface UserAdvancedFiltersProps {
   isLoadingOrganizations?: boolean;
 }
 
-export const UserAdvancedFilters: React.FC<UserAdvancedFiltersProps> = ({
+export const UserAdvancedFilters = ({
   filters,
   onFiltersChange,
   organizations,
   isLoadingOrganizations = false,
-}) => {
+}: UserAdvancedFiltersProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Count active advanced filters

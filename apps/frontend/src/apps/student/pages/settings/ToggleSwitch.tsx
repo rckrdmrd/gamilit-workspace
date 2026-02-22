@@ -1,4 +1,5 @@
-import React from 'react';
+
+
 import { cn } from '@shared/utils/cn';
 
 interface ToggleSwitchProps {
@@ -8,12 +9,12 @@ interface ToggleSwitchProps {
   description?: string;
 }
 
-export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+export const ToggleSwitch = ({
   checked,
   onChange,
   label,
   description,
-}) => (
+}: ToggleSwitchProps) => (
   <label className="flex cursor-pointer items-start justify-between rounded-lg bg-detective-bg p-4 transition-colors hover:bg-orange-50">
     <div className="flex-1 pr-4">
       <p className="font-medium text-detective-text">{label}</p>

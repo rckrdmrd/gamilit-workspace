@@ -16,7 +16,48 @@ import {
   Crown,
   Flame,
   Award,
+  Footprints,
+  Trophy,
+  Target,
+  BookOpen,
+  Brain,
+  Lightbulb,
+  Medal,
+  Shield,
+  Rocket,
+  Gem,
+  type LucideIcon,
 } from 'lucide-react';
+
+// Map achievement icon name strings (from DB) to actual Lucide components
+const ICON_MAP: Record<string, LucideIcon> = {
+  footprints: Footprints,
+  trophy: Trophy,
+  target: Target,
+  book_open: BookOpen,
+  bookopen: BookOpen,
+  brain: Brain,
+  lightbulb: Lightbulb,
+  medal: Medal,
+  shield: Shield,
+  rocket: Rocket,
+  gem: Gem,
+  star: Star,
+  crown: Crown,
+  flame: Flame,
+  award: Award,
+  zap: Zap,
+};
+
+function getAchievementIcon(iconName: string) {
+  const IconComponent = ICON_MAP[iconName.toLowerCase()];
+  if (IconComponent) {
+    return <IconComponent className="h-8 w-8" />;
+  }
+  // Fallback: try rendering as emoji, or use Award as default
+  if (iconName.length <= 2) return <span>{iconName}</span>;
+  return <Award className="h-8 w-8" />;
+}
 
 // ─── Types ──────────────────────────────────────────
 
@@ -269,7 +310,7 @@ export function AchievementsList({ achievements }: AchievementsListProps) {
             className={`bg-gradient-to-r ${getRarityColor(display.rarity)} rounded-detective p-4 text-white`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-3xl">{display.icon}</span>
+              <span className="text-3xl">{getAchievementIcon(display.icon)}</span>
               <div className="flex-1">
                 <p className="font-bold">{display.name}</p>
                 <p className="text-sm text-white/95">{display.description}</p>

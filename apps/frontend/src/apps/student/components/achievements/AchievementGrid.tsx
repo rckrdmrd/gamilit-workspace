@@ -4,7 +4,8 @@
  * ~200 lines
  */
 
-import React from 'react';
+
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Sparkles, Lock, Trophy } from 'lucide-react';
 import { AchievementCard } from '@/features/gamification/social/components/Achievements/AchievementCard';
@@ -16,11 +17,11 @@ interface AchievementGridProps {
   onAchievementClick: (achievement: Achievement) => void;
 }
 
-export const AchievementGrid: React.FC<AchievementGridProps> = ({
+export const AchievementGrid = ({
   achievements,
   loading = false,
   onAchievementClick,
-}) => {
+}: AchievementGridProps) => {
   // Stagger animation for grid items
   const containerVariants = {
     hidden: { opacity: 0 },

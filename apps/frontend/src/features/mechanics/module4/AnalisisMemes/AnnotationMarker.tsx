@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MemeAnnotation } from './analisisMemesTypes';
 import { MessageCircle } from 'lucide-react';
 
-export const AnnotationMarker: React.FC<{ annotation: MemeAnnotation }> = ({ annotation }) => {
+export const AnnotationMarker = ({ annotation }: { annotation: MemeAnnotation }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (

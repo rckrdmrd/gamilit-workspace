@@ -8,7 +8,7 @@
  * - ML Coins balance display
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ElementType } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShoppingBag,
@@ -61,7 +61,7 @@ export default function ShopPage() {
 
   // Dynamic categories from API
   const categories = useMemo(() => {
-    const iconMap: Record<string, React.ElementType> = {
+    const iconMap: Record<string, ElementType> = {
       cosmetics: Palette,
       profile: Users,
       guild: Crown,

@@ -24,6 +24,7 @@ CREATE TABLE gamification_system.mission_templates (
     max_level integer,
     required_module integer,
     required_exercise_type character varying(50) DEFAULT NULL,
+    exercise_id uuid DEFAULT NULL,
     icon character varying(50),
     color character varying(20),
     metadata jsonb DEFAULT '{}'::jsonb,
@@ -50,10 +51,14 @@ CREATE INDEX idx_mission_templates_active ON gamification_system.mission_templat
 CREATE INDEX idx_mission_templates_category ON gamification_system.mission_templates(category);
 CREATE INDEX idx_mission_templates_difficulty ON gamification_system.mission_templates(difficulty);
 CREATE INDEX idx_mission_templates_exercise_type ON gamification_system.mission_templates(required_exercise_type) WHERE required_exercise_type IS NOT NULL;
+CREATE INDEX idx_mission_templates_exercise_id ON gamification_system.mission_templates(exercise_id) WHERE exercise_id IS NOT NULL;
 
 -- Foreign Keys
 ALTER TABLE ONLY gamification_system.mission_templates
     ADD CONSTRAINT mission_templates_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY gamification_system.mission_templates
+    ADD CONSTRAINT mission_templates_exercise_id_fkey FOREIGN KEY (exercise_id) REFERENCES educational_content.exercises(id) ON DELETE SET NULL;
 
 -- Note: badge_id FK commented out until badges table is created
 -- ALTER TABLE ONLY gamification_system.mission_templates
@@ -71,6 +76,7 @@ COMMENT ON COLUMN gamification_system.mission_templates.is_active IS 'Whether te
 COMMENT ON COLUMN gamification_system.mission_templates.priority IS 'Priority for selection (higher = more likely to be selected)';
 COMMENT ON COLUMN gamification_system.mission_templates.required_exercise_type IS 'Required exercise type for exercise-linked missions (e.g., crucigrama, detective_textual). NULL = any exercise counts';
 COMMENT ON COLUMN gamification_system.mission_templates.metadata IS 'Additional JSON configuration data';
+COMMENT ON COLUMN gamification_system.mission_templates.exercise_id IS 'Optional FK to a specific exercise. When set, the mission links directly to this exercise.';
 
 -- Permissions
 ALTER TABLE gamification_system.mission_templates OWNER TO gamilit_user;

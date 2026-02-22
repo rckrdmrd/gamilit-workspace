@@ -36,12 +36,12 @@ const getGradeColor = (grade: string): string => {
   }
 };
 
-export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
+export const GradeSubmissionModal = ({
   isOpen,
   onClose,
   submission,
   onSubmit,
-}) => {
+}: GradeSubmissionModalProps) => {
   const [scores, setScores] = useState<Record<string, number>>({});
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,12 +53,17 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
   const handleClose = () => {
     if (!isSubmitting) {
       setScores({});
+      setDirectScore(0);
       setFeedback('');
       setSubmitStatus('idle');
       setErrorMessage('');
       onClose();
     }
   };
+
+  // FIX M-002: Support direct overall score when answers are empty
+  const [directScore, setDirectScore] = useState<number>(0);
+  const hasAnswers = submission ? submission.answers.length > 0 : false;
 
   const handleScoreChange = (exerciseId: string, value: number, maxPoints: number) => {
     const clampedValue = Math.max(0, Math.min(maxPoints, value));
@@ -67,6 +72,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
 
   const calculateTotalScore = (): number => {
     if (!submission) return 0;
+    if (!hasAnswers) return directScore;
     return submission.answers.reduce((total, answer) => {
       return total + (scores[answer.exerciseId] ?? 0);
     }, 0);
@@ -80,12 +86,14 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
   const handleSubmit = async () => {
     if (!submission) return;
 
-    // Validate all exercises are graded
-    const allGraded = submission.answers.every((answer) => scores[answer.exerciseId] !== undefined);
-    if (!allGraded) {
-      setErrorMessage('Please grade all exercises before submitting');
-      setSubmitStatus('error');
-      return;
+    // Validate all exercises are graded (only when answers exist)
+    if (hasAnswers) {
+      const allGraded = submission.answers.every((answer) => scores[answer.exerciseId] !== undefined);
+      if (!allGraded) {
+        setErrorMessage('Por favor califica todos los ejercicios antes de enviar');
+        setSubmitStatus('error');
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -206,8 +214,44 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
 
                 {/* Answers and Scoring */}
                 <div className="mb-6 space-y-4">
-                  <h3 className="text-lg font-bold text-gray-800">Exercise Responses</h3>
-                  {submission.answers.map((answer, index) => (
+                  <h3 className="text-lg font-bold text-gray-800">
+                    {hasAnswers ? 'Respuestas de Ejercicios' : 'Calificación Directa'}
+                  </h3>
+
+                  {/* FIX M-002: Direct score input when no per-exercise answers */}
+                  {!hasAnswers && (
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                      <p className="mb-3 text-sm text-gray-600">
+                        No hay respuestas individuales por ejercicio. Ingresa la calificación total directamente.
+                      </p>
+                      <div className="flex items-center gap-4">
+                        <label className="text-sm font-semibold text-gray-700">Puntuación:</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max={maxScore}
+                          value={directScore || ''}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            setDirectScore(Math.max(0, Math.min(maxScore, val)));
+                          }}
+                          placeholder="0"
+                          className="w-24 rounded-lg border border-gray-300 px-3 py-2 text-center font-bold focus:border-transparent focus:ring-2 focus:ring-purple-500"
+                        />
+                        <span className="text-sm text-gray-600">/ {maxScore} puntos</span>
+                        <div className="ml-4 h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                          <div
+                            className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+                            style={{
+                              width: `${maxScore > 0 ? (directScore / maxScore) * 100 : 0}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {hasAnswers && submission.answers.map((answer, index) => (
                     <div
                       key={answer.exerciseId}
                       className="rounded-xl border border-gray-200 bg-gray-50 p-5"
@@ -258,6 +302,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                   ))}
                 </div>
 
+
                 {/* Feedback */}
                 <div className="mb-6">
                   <label className="mb-2 block text-sm font-semibold text-gray-700">
@@ -290,6 +335,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
 
                   {submitStatus === 'error' && (
                     <motion.div
+                      role="alert"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}

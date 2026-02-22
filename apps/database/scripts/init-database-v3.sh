@@ -837,6 +837,7 @@ load_seeds() {
         "$SEEDS_DIR/educational_content/04-exercises-module3.sql"
         "$SEEDS_DIR/educational_content/05-exercises-module4.sql"
         "$SEEDS_DIR/educational_content/06-exercises-module5.sql"
+        "$SEEDS_DIR/educational_content/07-exercises-auxiliar.sql"
         "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql"
         "$SEEDS_DIR/content_management/01-marie-curie-bio.sql"
         "$SEEDS_DIR/content_management/02-media-files.sql"

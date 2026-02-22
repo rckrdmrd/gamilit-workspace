@@ -1,4 +1,5 @@
-import React from 'react';
+
+
 import { useNavigate } from 'react-router-dom';
 import {
     Clock,
@@ -35,13 +36,13 @@ interface ExercisePageHeaderProps {
     className?: string;
 }
 
-export const ExercisePageHeader: React.FC<ExercisePageHeaderProps> = ({
+export const ExercisePageHeader = ({
     exercise,
     autoSaveStatus = 'idle',
     lastSavedAt,
     hasUnsavedChanges = false,
     className,
-}) => {
+}: ExercisePageHeaderProps) => {
     const navigate = useNavigate();
 
     const getDifficultyColor = (difficulty: string) => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSystemConfig } from '../../hooks/useSystemConfig';
 import { toast } from 'react-hot-toast';
@@ -17,7 +17,7 @@ interface GeneralSettingsForm {
  *
  * Updated: 2025-11-29 - Applied detective theme consistency
  */
-export const GeneralSettings: React.FC = () => {
+export const GeneralSettings = () => {
   const { config, isLoading, fetchConfig, updateConfig } = useSystemConfig('general');
   const {
     register,

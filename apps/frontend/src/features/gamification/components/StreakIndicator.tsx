@@ -5,7 +5,6 @@
  * Shows in profile/header to motivate daily engagement
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Trophy, Zap } from 'lucide-react';
 import { useProgression } from '@/features/gamification/ranks/hooks/useProgression';
@@ -17,11 +16,11 @@ interface StreakIndicatorProps {
   showDetails?: boolean;
 }
 
-export const StreakIndicator: React.FC<StreakIndicatorProps> = ({
+export const StreakIndicator = ({
   variant = 'compact',
   className,
   showDetails = true,
-}) => {
+}: StreakIndicatorProps) => {
   // Get user progress from store
   const { activityStreak: currentStreak } = useProgression();
   const maxStreak = 0; // TODO: Add maxStreak to useProgression hook

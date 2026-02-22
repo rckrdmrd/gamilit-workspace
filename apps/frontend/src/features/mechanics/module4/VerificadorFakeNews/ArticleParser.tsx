@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FileText, Search, AlertTriangle } from 'lucide-react';
 import { NewsArticle } from './verificadorFakeNewsTypes';
 
@@ -8,11 +8,11 @@ interface ArticleParserProps {
   highlightedClaims: Array<{ start: number; end: number; verified?: boolean }>;
 }
 
-export const ArticleParser: React.FC<ArticleParserProps> = ({
+export const ArticleParser = ({
   article,
   onClaimSelect,
   highlightedClaims,
-}) => {
+}: ArticleParserProps) => {
   const [selectedText, setSelectedText] = useState('');
   const [selectionRange, setSelectionRange] = useState<{ start: number; end: number } | null>(null);
 
@@ -97,11 +97,11 @@ export const ArticleParser: React.FC<ArticleParserProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
+    <div className="bg-white rounded-detective shadow-card p-3 sm:p-6 space-y-4">
       <div className="flex items-start gap-3 border-b border-detective-border pb-4">
         <FileText className="w-6 h-6 text-detective-orange flex-shrink-0 mt-1" />
         <div className="flex-1">
-          <h2 className="text-2xl font-bold text-detective-text mb-2">{article.title}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-detective-text mb-2">{article.title}</h2>
           <div className="flex items-center gap-4 text-sm text-detective-text-secondary">
             <span className="font-medium">{article.source}</span>
             <span>{article.date}</span>

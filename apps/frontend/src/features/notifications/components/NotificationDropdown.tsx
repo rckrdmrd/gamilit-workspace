@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNotificationsStore } from '../store/notificationsStore';
 import type { Notification } from '@/services/api/notificationsAPI';
 import './NotificationDropdown.css';
@@ -7,7 +7,7 @@ interface NotificationDropdownProps {
   onClose: () => void;
 }
 
-export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) => {
+export const NotificationDropdown = ({ onClose }: NotificationDropdownProps) => {
   // Using Zustand selectors to prevent unnecessary re-renders
   const notifications = useNotificationsStore((state) => state.notifications) ?? [];
   const isLoading = useNotificationsStore((state) => state.isLoading);

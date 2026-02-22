@@ -33,7 +33,7 @@ function formatDetailDate(dateString: string): string {
   });
 }
 
-export const LogDetailModal: React.FC<LogDetailModalProps> = ({ log, onClose }) => {
+export const LogDetailModal = ({ log, onClose }: LogDetailModalProps) => {
   return (
     <Modal
       isOpen={!!log}

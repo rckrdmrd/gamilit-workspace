@@ -1,4 +1,3 @@
-import { generateAIDebateResponse } from '../../shared/aiService';
-export const sendDebateMessage = async (message: string, topic: string) => {
-  return generateAIDebateResponse(message, topic);
-};
+// AI debate responses removed - exercise now uses structured essay format
+// evaluated exclusively by teacher
+export {};

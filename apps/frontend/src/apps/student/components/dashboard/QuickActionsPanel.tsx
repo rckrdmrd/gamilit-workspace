@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, Trophy, Target, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 interface QuickAction {
   id: string;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   path: string;
   color: string;
   bgColor: string;

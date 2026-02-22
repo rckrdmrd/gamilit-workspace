@@ -8,7 +8,7 @@
  * @since US-PM-007
  */
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import {
   Bell,
@@ -36,7 +36,7 @@ import { ThresholdUnit } from '../../../services/api/teacher/alertConfigApi';
 /**
  * Alert type icons
  */
-const ALERT_ICONS: Record<AlertConfigType, React.ReactNode> = {
+const ALERT_ICONS: Record<AlertConfigType, ReactNode> = {
   [AlertConfigType.NO_ACTIVITY]: <Clock className="h-6 w-6" />,
   [AlertConfigType.LOW_SCORE]: <TrendingDown className="h-6 w-6" />,
   [AlertConfigType.DECLINING_TREND]: <Activity className="h-6 w-6" />,

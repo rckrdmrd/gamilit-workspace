@@ -18,6 +18,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import type {
+  Mission,
   MissionStatus,
   MissionType,
 } from '@/features/gamification/missions/types/missionsTypes';
@@ -28,6 +29,7 @@ import { MissionTabs } from '@/features/gamification/missions/components/Mission
 import { MissionGrid } from '@/features/gamification/missions/components/MissionGrid';
 import { ActiveMissionTracker } from '@/features/gamification/missions/components/ActiveMissionTracker';
 import { RewardsPreview } from '@/features/gamification/missions/components/RewardsPreview';
+import { MissionDetailModal } from '@/features/gamification/missions/components/MissionDetailModal';
 
 // Hooks
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
@@ -39,11 +41,17 @@ export default function MissionsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  // Mission detail modal state
+  const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
+
   // Dashboard invalidation hook - FIX: Invalidate cache after claiming missions
   const { syncAndInvalidate } = useInvalidateDashboard();
 
   // User modules for resolving required_module (integer) to module UUID
   const { modules: userModules } = useUserModules();
+
+  // Handle card click to show detail modal
+  const handleCardClick = (mission: Mission) => setSelectedMission(mission);
 
   // Get tab from URL or default to 'daily'
   const tabFromUrl = (searchParams.get('tab') as MissionType) || 'daily';
@@ -107,7 +115,16 @@ export default function MissionsPage() {
   const navigateToMissionExercise = useCallback(
     (missionId: string) => {
       const mission = allMissions.find((m) => m.id === missionId);
-      if (!mission || mission.type !== 'special') return;
+      if (!mission) return;
+
+      // Priority 1: Direct exercise link via exercise_id
+      if (mission.exercise_id) {
+        navigate(`/exercises/${mission.exercise_id}`);
+        return;
+      }
+
+      // Priority 2: Only special missions with constraints navigate to modules
+      if (mission.type !== 'special') return;
 
       // Extract exercise constraints from the first objective
       const firstObjective = mission.objectives?.[0];
@@ -151,9 +168,11 @@ export default function MissionsPage() {
       trackMission(missionId);
       toast.success('Mision iniciada! Buena suerte');
 
-      // For special missions, navigate to the appropriate module/exercise
+      // Navigate to exercise if mission has a direct exercise link or exercise constraints
       const mission = allMissions.find((m) => m.id === missionId);
-      if (mission?.type === 'special') {
+      if (mission?.exercise_id) {
+        navigate(`/exercises/${mission.exercise_id}`);
+      } else if (mission?.type === 'special') {
         const firstObjective = mission.objectives?.[0];
         if (firstObjective?.required_module || firstObjective?.required_exercise_type) {
           navigateToMissionExercise(missionId);
@@ -273,6 +292,7 @@ export default function MissionsPage() {
               onClaimReward={handleClaimReward}
               onTrackMission={trackMission}
               onGoToExercise={handleGoToExercise}
+              onCardClick={handleCardClick}
               isTracked={isTracked}
               emptyMessage={getEmptyMessage()}
             />
@@ -293,6 +313,16 @@ export default function MissionsPage() {
           <RewardsPreview summary={rewardsSummary} currentTab={currentTab} />
         )}
       </div>
+
+      {/* Mission Detail Modal */}
+      <MissionDetailModal
+        mission={selectedMission}
+        isOpen={!!selectedMission}
+        onClose={() => setSelectedMission(null)}
+        onStart={handleStartMission}
+        onClaim={handleClaimReward}
+        onGoToExercise={handleGoToExercise}
+      />
 
       {/* Bottom Spacing */}
       <div className="h-16" />

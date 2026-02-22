@@ -17,13 +17,13 @@ interface CoinBalanceWidgetProps {
   className?: string;
 }
 
-export const CoinBalanceWidget: React.FC<CoinBalanceWidgetProps> = ({
+export const CoinBalanceWidget = ({
   balance,
   size = 'medium',
   showLabel = true,
   animated = true,
   className = '',
-}) => {
+}: CoinBalanceWidgetProps) => {
   const animatedBalance = useSpring(0, {
     stiffness: 100,
     damping: 30,

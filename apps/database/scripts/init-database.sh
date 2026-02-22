@@ -1122,6 +1122,7 @@ load_seeds() {
         "educational_content/04-exercises-module3.sql|all|core"
         "educational_content/05-exercises-module4.sql|all|core"
         "educational_content/06-exercises-module5.sql|all|core"
+        "educational_content/07-exercises-auxiliar.sql|all|core"
         "educational_content/07-assessment-rubrics.sql|all|core"
         "educational_content/05-assignments.sql|all|core"
         "educational_content/08-difficulty_criteria.sql|all|core"

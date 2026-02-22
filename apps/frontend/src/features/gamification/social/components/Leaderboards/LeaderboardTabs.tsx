@@ -3,7 +3,7 @@
  * Tab navigation for different leaderboard types
  */
 
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, School, Users, GraduationCap, UsersRound } from 'lucide-react';
 import type { LeaderboardType } from '../../types/leaderboardsTypes';
@@ -14,7 +14,7 @@ interface LeaderboardTabsProps {
   hasClassroom?: boolean;
 }
 
-const tabs: { type: LeaderboardType; label: string; icon: React.ElementType }[] = [
+const tabs: { type: LeaderboardType; label: string; icon: ElementType }[] = [
   { type: 'global', label: 'Global', icon: Globe },
   { type: 'school', label: 'Escuela', icon: School },
   { type: 'grade', label: 'Grado', icon: GraduationCap },
@@ -22,11 +22,11 @@ const tabs: { type: LeaderboardType; label: string; icon: React.ElementType }[] 
   { type: 'friends', label: 'Amigos', icon: Users },
 ];
 
-export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({
+export const LeaderboardTabs = ({
   selectedType,
   onTypeChange,
   hasClassroom = true,
-}) => {
+}: LeaderboardTabsProps) => {
   // Filter tabs based on classroom availability
   const visibleTabs = tabs.filter((tab) => {
     if (tab.type === 'classroom' && !hasClassroom) {

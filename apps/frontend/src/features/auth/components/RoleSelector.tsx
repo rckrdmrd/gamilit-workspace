@@ -1,4 +1,3 @@
-import React from 'react';
 import { Shield, User, UserCog } from 'lucide-react';
 
 interface RoleSelectorProps {
@@ -6,7 +5,7 @@ interface RoleSelectorProps {
   onSelect: (role: string) => void;
 }
 
-export const RoleSelector: React.FC<RoleSelectorProps> = ({ selectedRole, onSelect }) => {
+export const RoleSelector = ({ selectedRole, onSelect }: RoleSelectorProps) => {
   const roles = [
     { id: 'student', name: 'Estudiante', icon: User, color: 'blue' },
     { id: 'admin_teacher', name: 'Profesor/Admin', icon: UserCog, color: 'green' },

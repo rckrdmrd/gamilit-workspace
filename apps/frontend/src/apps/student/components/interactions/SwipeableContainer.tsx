@@ -1,10 +1,10 @@
-import React from 'react';
+import { useState, type ReactNode } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 import { useSwipeableElement } from '../../hooks/useSwipeGesture';
 
 interface SwipeableContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
   onSwipeUp?: () => void;
@@ -27,8 +27,8 @@ export function SwipeableContainer({
   onRefresh,
 }: SwipeableContainerProps) {
   const controls = useAnimation();
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const [pullDistance, setPullDistance] = React.useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
 
   const { elementRef, isSwiping } = useSwipeableElement({
     onSwipeLeft,

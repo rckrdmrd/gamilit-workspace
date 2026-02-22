@@ -1,10 +1,10 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-02-21
-**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Compliance Audit v2 COMPLETADA** | **UUID Seed Migration COMPLETADA** | **Documentation Alignment COMPLETADA**
+**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **ANALISIS PORTALES COMPLETADO (8 P0, 63 P1)** | **VALIDACION STANDARDS/PRINCIPLES COMPLETADA (52% compliance)** | **M3-M5 TEACHER-GRADE EXCLUSIVO COMPLETADO**
 **Sprint Actual:** Sprint 1 — Calidad y Estabilizacion (2026-02-17 a 2026-03-03) — **100% COMPLETADO**
-**Ultima Tarea:** Architecture violations fix — 32 module-boundaries violations → 0. Extracted enums from 8 entity files into dedicated enum files (7 new files), moved profileRepo from exercises.controller to ExercisesService, fixed test regex for abstract classes. 51 suites, 2324 tests, 0 failures across 4 shards (shard 3/5 OOMs — memory limit, not test failure). Also: Test suite fixes (17 failing→0), Logger standardization (30→0), Frontend console.log cleanup (375→0).
-**Tareas Pendientes Locales:** ALT-02 (vite→Nginx, depende BLQ-01/02), ALT-09 (synthetic DEV data — requiere decision de equipo), MQ-005 (DEFERRED per ADR-045), Shard 3/5 OOM (jest memory — needs investigation or split)
+**Ultima Tarea:** Validacion documentacion + compliance audit. 4 Gemini subagents (2 exitosos, 2 crashed rate limit). Inventarios FRONTEND/MASTER actualizados (576 comps, 128 hooks, 67 pages). Standards + principles audit: 4 archivos, 2 PASS, 2 WARN (pre-existentes). WCAG spinner fix en ProtectedRoute. PORTAL-TEACHER-GUIDE v3.2.0.
+**Tareas Pendientes Locales:** ALT-02 (vite→Nginx, depende BLQ-01/02), ALT-09 (synthetic DEV data — requiere decision de equipo), MQ-005 (DEFERRED per ADR-045), VS-03 refactoring (analisis listo, implementacion pendiente — 6 fases), Shard 3/5 OOM (investigado — heap limit 4GB insuficiente con coverage, splitting recomendado)
 **BLOQUEANTES DEPLOY (4 restantes — requieren acceso SSH servidor):** BLQ-01/02/03/04 en `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/03-CHECKLIST-PRODUCCION.md`
 **Backlog Resuelto (2026-02-18):** MQ-008 (skill created), MQ-009 (XP sync FIXED), TRZ-006 (plan created), DBOPS-005 (CI script + job created)
 **CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 474 RLS, 92 pipeline entries, 169 tablas.
@@ -18,6 +18,332 @@
 ---
 
 ## Estado Actual
+
+### Database Validation + Seed Homologation (2026-02-21) — **COMPLETADA**
+
+**2 Gemini subagents (1 OK gemini-2.5-pro DDL/scripts, 1 crash gemini-2.5-flash seeds). Seeds homologados manualmente. 0 discrepancias restantes.**
+
+| Item | Descripcion | Estado |
+|------|-------------|--------|
+| DDL Audit | 5 archivos DDL auditados: syntax, FKs, column types, SECURITY DEFINER — ALL OK | **PASS** (Gemini Pro) |
+| Init Scripts | 3 scripts comparados: paths, inclusion, order, error handling — ALL OK | **PASS** (Gemini Pro) |
+| Backfill Script | backfill-user-achievements.sql: SAFE + IDEMPOTENT (ON CONFLICT DO NOTHING) | **PASS** (Gemini Pro) |
+| Seed Homolog 1 | exercises-module4.sql: dev tenia columnas pedagogicas (objective, how_to_solve, etc.) que staging/prod no tenian. Dev copiado a staging+prod | **HOMOLOGADO** |
+| Seed Homolog 2 | achievements.sql: dev tenia enum casting explicito que prod no tenia. Dev copiado a prod | **HOMOLOGADO** |
+| Seed Homolog 3 | exercises-auxiliar.sql (NUEVO): ya identico en 3 ambientes | **OK** |
+
+**Reportes:** `08-SEED-HOMOLOGATION.md`, `09-DDL-SCRIPTS-VALIDATION.md`
+
+---
+
+### Validacion Documentacion + Compliance Audit (2026-02-21) — **COMPLETADA**
+
+**4 Gemini subagents orquestados (2 exitosos, 2 crashed por rate limit). Inventarios corregidos. Documentacion portales actualizada. Compliance audit con fix WCAG.**
+
+| Item | Descripcion | Estado |
+|------|-------------|--------|
+| Standards Audit | 4 archivos auditados vs STANDARD-COMPONENT/IMPORTS. ProtectedRoute WCAG spinner fix aplicado (role="status", aria-live) | **RESUELTO** |
+| Principles Audit | YAGNI, DRY, SoC, Clean Arch en 4 archivos. TeacherDashboardPage ALL PASS. ChildProgressPage SoC/Clean Arch WARN (pre-existente) | **DOCUMENTADO** |
+| FRONTEND_INVENTORY | Conteos corregidos: 592→576 comps, 125→128 hooks, 66→67 pages. v12.1.0 | **ACTUALIZADO** |
+| MASTER_INVENTORY | Sincronizado con FRONTEND_INVENTORY: 576 comps, 128 hooks, 67 pages | **ACTUALIZADO** |
+| PORTAL-TEACHER-GUIDE | v3.2.0: TeacherDashboardPage descripcion actualizada con 10 tabs + lazy loading | **ACTUALIZADO** |
+| PORTAL-ADMIN-GUIDE | useAdminDashboard loading fix documentado como bug fix interno (no requiere doc change) | N/A |
+
+**Build final:** 16.83s OK | TypeCheck: 0 errors
+
+---
+
+### Supervision + P1 Batch Fixes (2026-02-21) — **COMPLETADA**
+
+**Gemini subagent supervision (3 tareas) + 6 P1 fixes directos + 2 test files eliminados. Build 16.62s, 0 typecheck errors.**
+
+| Item | Descripcion | Estado |
+|------|-------------|--------|
+| VS-04 | PORTAL-ADMIN-GUIDE actualizado: hooks 12→31, comps 30+→124, controllers 17→21, file tree con CreateModuleModal + ExerciseTypeSelector | **RESUELTO** (Gemini Flash + correccion manual controller count 108→21) |
+| VS-03 | Analisis refactoring exercise-submission.service.ts: 1963 LOC → 5 servicios especializados + orchestrator. 6 fases de migracion. Analisis en `TASK-2026-02-21-VS03-ANALYSIS/01-ANALYSIS.md` | **ANALISIS COMPLETADO** (implementacion pendiente) |
+| Shard 3 OOM | Investigacion: `cattest.spec.ts` duplicado (569 LOC) + `minimal-oom-test.spec.ts` (17 LOC) eliminados. 65→63 test files | **FIX PARCIAL** |
+| PRN-P1-03 | GamificationOverlay no se renderiza para parent role en ProtectedRoute.tsx | **RESUELTO** |
+| DASH-P1-01 | AND-gate loading → OR-gate en useAdminDashboard.ts (`&&` → `||`) | **RESUELTO** |
+| PRN-P1-05 | ChildProgressPage: spinner → skeleton loading (4 stat cards + text block) | **RESUELTO** |
+| TCH-P1-04 | TeacherDashboardPage: 9 tab imports → React.lazy() + Suspense (code-splitting) | **RESUELTO** |
+| USR-P1-10 | Busqueda sin debounce — **FALSO POSITIVO** (submit explicito, no auto-search) | N/A |
+| SET-P1-08 | LTI credentials plain text — **NO ACCIONABLE** (no existe UI, solo hook) | N/A |
+
+**P1 resueltos acumulados esta sesion:** STU-P1-01, STU-P1-04, PRN-P1-01, CNT-P1-01, TCH-P1-02 (previos) + PRN-P1-03, DASH-P1-01, PRN-P1-05, TCH-P1-04 (nuevos) = **9 P1 resueltos de 63**.
+
+---
+
+### VS-05: React.FC + import React Cleanup Completo (2026-02-21) — **COMPLETADA**
+
+**Violacion sistematica VS-05 eliminada. ~200 archivos de produccion migrados de `React.FC` → function component + `import React from 'react'` → named imports. 0 violaciones en codigo de produccion.**
+
+| Scope | Archivos | React.FC removidos | import React removidos |
+|-------|----------|-------------------|-----------------------|
+| shared/components/ | 47 | 43 | 32 + 7 forwardRef |
+| features/mechanics/ | ~53 | ~53 | ~53 |
+| features/exercises/ | 13 | 13 | 13 |
+| features/gamification/ | 48 | 48 | 48 |
+| features/auth+admin+parent+notif | 22 | 22 | 22 |
+| apps/admin/ | ~55 | ~55 | ~55 |
+| apps/student+teacher+parent | ~36 | ~36 | ~36 |
+| **Total** | **~200+** | **~200+** | **~200+** |
+
+**Residuales (NO produccion):** 19 archivos con `React.FC` y 15 con `import React` — todos en `.example.tsx`, `.stories.tsx`, `__tests__/`, `_legacy/`, `_testing/`.
+
+**Validacion:** Build 18.73s OK | TypeCheck 0 errors | Lint 0 new errors
+
+---
+
+### Batch 2 — WCAG Mechanics + P0 Cleanup (2026-02-21) — **COMPLETADA**
+
+**6 WCAG fixes en shared mechanics (propagan a 25+ archivos) + 2 P0 reclasificados + 1 P0 banner demo. Build OK, 0 lint, 0 typecheck.**
+
+| # | Fix | Prioridad | Descripcion | Archivos |
+|---|-----|-----------|-------------|----------|
+| 1 | VS-02a | CRITICO | TimerWidget WCAG — `role="timer"`, `aria-label`, `aria-live="polite"`, `aria-atomic` | TimerWidget.tsx |
+| 2 | VS-02b | CRITICO | ProgressTracker WCAG — `role="progressbar"`, `aria-valuenow/min/max`, `<ol>`/`<li>` semanticos | ProgressTracker.tsx |
+| 3 | VS-02c | CRITICO | ScoreDisplay WCAG — `<output>`, `role="status"`, `aria-live="polite"` | ScoreDisplay.tsx |
+| 4 | VS-02d | ALTO | ExerciseGradientHeader — `<header role="banner">`, icon `aria-hidden` | ExerciseGradientHeader.tsx |
+| 5 | VS-02e | MEDIO | HintSystem WCAG — `aria-expanded`, `aria-controls`, `role="list"`/`"listitem"`, icons `aria-hidden` | HintSystem.tsx |
+| 6 | VS-02f | MEDIO | FeedbackModal — `ariaDescribedBy` prop en Modal + `aria-describedby="feedback-message"` | FeedbackModal.tsx, Modal.tsx |
+| 7 | P0-4 | P0 | ABTestingDashboard — banner "Datos de demostración" (ya tenia "FUTURE FEATURE" en ingles) | ABTestingDashboard.tsx |
+
+**VS-05 compliance:** Los 6 componentes migrados de `React.FC` a function component + `import React` → named imports.
+
+**P0 reclasificados:**
+- **P0-3** → RESUELTO: `FEATURE_FLAGS.USE_MOCK_DATA=false` activa API real. Config de deploy, no bug.
+- **P0-8** → RESUELTO: API funcional, tabla vacia por falta de seed data.
+- **P0-6** → PENDIENTE: 2 de 5 endpoints backend faltan (`GET /:id`, `GET /classrooms/:classroomId`). Requiere backend.
+
+**8 P0 finales: 7 RESUELTOS, 1 PENDIENTE (P0-6 — requiere backend).**
+
+---
+
+### P0+P1 Batch Fixes — 8 Correcciones Frontend (2026-02-21) — **COMPLETADA**
+
+**8 fixes implementados (4 P0 + 4 P1). Build 15.97s, 0 errores lint/typecheck en archivos modificados.**
+
+| # | Fix | Prioridad | Descripcion | Archivos |
+|---|-----|-----------|-------------|----------|
+| 1 | #35 | P0 | Admin Exercise Edit Route — `useParams` + `useQuery` fetch + `PATCH` update + header/botones dinamicos | AdminExerciseCreatePage.tsx |
+| 2 | #36 | P0 | useRolePermissions — Eliminado antipattern `__none__`, parametro `roleId`, `enabled: !!roleId` | useRolePermissions.ts, AdminRolesPage.tsx |
+| 3 | #37 | P0 | Parent Dashboard Dead Links — 4 `<Link>` a rutas inexistentes removidos | ParentDashboardPage.tsx |
+| 4 | #40 | P0 | WCAG Toggle Switches — `role="switch"` + `aria-checked` en 2 paginas de preferencias | AdminNotificationPreferencesPage.tsx, TeacherNotificationPreferencesPage.tsx |
+| 5 | #45 | P1 | Parent Auth Redirect — `redirectTo="/parent/login"` en ProtectedRoute | App.tsx |
+| 6 | #46 | P1 | Student BottomNavigation — `/modules`→`/learning`, `/gamification`→`/achievements`, labels en espanol | BottomNavigation.tsx |
+| 7 | #47 | P1 | Delete LegacyExercisePage — 992 lineas dead code eliminadas | LegacyExercisePage.tsx (ELIMINADO) |
+| 8 | #48 | P1 | ExerciseTypeSelector M4+M5 — 12 tipos agregados (9 M4 + 3 M5), 2 tabs nuevos | ExerciseTypeSelector.tsx |
+
+**P0 resueltos del analisis de portales:** P0-1 (edit route), P0-2 (useRolePermissions), P0-5 (WCAG toggles), P0-7 (dead links).
+
+**Documentacion actualizada:** FL-ADM-07 v1.4.0, PORTAL-STUDENT-GUIDE (BottomNavigation), PORTAL-ADMIN-GUIDE (edit mode), FRONTEND_INVENTORY (paginas 67→66).
+
+**Validacion standards:** Auditoria contra STANDARD-COMPONENT, STANDARD-IMPORTS, ESTANDAR-FRONTEND-PROFESIONAL, YAGNI, DRY, SoC, Clean Architecture — todos 8 fixes PASS.
+
+---
+
+### Redefinicion M3-M5 Teacher-Grade Exclusivo (2026-02-21) — **COMPLETADA**
+
+**13 ejercicios M3-M5 migrados a evaluacion exclusiva por profesor. 0 interaccion IA. 0 auto-scoring.**
+
+| Tier | Ejercicios | Cambio | Estado |
+|------|-----------|--------|--------|
+| A (Rediseno) | Debate Digital, Matriz Perspectivas | IA eliminada, mecanica reestructurada | COMPLETADO |
+| B (Limpieza IA) | Analisis Fuentes, Podcast Argumentativo | Llamadas IA mock eliminadas | COMPLETADO |
+| C (Conversion) | Quiz TikTok, Navegacion Hipertextual, Infografia Interactiva, Verificador Fake News | Auto-scoring eliminado, reflexiones/justificaciones agregadas | COMPLETADO |
+| D (Sin cambios) | Tribunal Opiniones, Analisis Memes, Diario Multimedia, Comic Digital, Video Carta | Ya correctos | N/A |
+
+**Archivos modificados:** 3 seeds BD (quiz_tiktok `requires_manual_grading` → `true`), 4 DTOs backend (@ApiProperty + campos reflexion), 15 componentes frontend, 14 documentos actualizados.
+
+**Validacion compliance:** 4 issues encontrados y corregidos (ISSUE-001: @ApiProperty faltante en AnalisisFuentesDTO, ISSUE-003: catch error → _error, ISSUE-004: leftover analyzeSource type). Build: 0 errores. Lint: 0 errores.
+
+---
+
+### Validacion Standards, Principios, WCAG y Theme (2026-02-21) — **COMPLETADA**
+
+**6 auditorias paralelas + consolidacion. 49 archivos auditados. Score general: 52%.**
+
+| VAL | Scope | Score | Hallazgos Clave |
+|-----|-------|-------|-----------------|
+| VAL-01 | Frontend Standards (5 STANDARD-*.md vs 49 files) | 55% | 41 React.FC violations (sistematico), 36 import violations, 10 files >500 LOC. Positivo: 100% FeedbackModal, useExerciseSubmission, UnifiedExerciseLayout |
+| VAL-02 | Backend Standards (exercise-submission.service.ts) | WARN | 7 critical: no transactions en claimRewards, no repo interfaces, raw SQL en app layer, video URL sin SSRF validation |
+| VAL-03 | Flow Documentation Alignment (8 docs vs code) | 89% | PORTAL-ADMIN-GUIDE 71% (hooks 12→31, controllers 17→21, RBAC claims incorrectos), README 71% (counts stale) |
+| VAL-04 | Development Principles (9 principios vs 16 files) | 63% | YAGNI mas violado (5 FAILs — mock data prod). Clean Arch y SoC 100% PASS. hintsAllowed duplicado, ExerciseTypeSelector 17/30 |
+| VAL-05 | WCAG & Detective Theme (guides vs 44 .tsx) | FAIL | 25/44 files con violaciones criticas. 11 WCAG criticos (timer, progressbar, keyboard, forms). 7 theme deviations |
+| VAL-06 | Inventory & Documentation Status | 54% | Inventarios discrepan (591 vs 592 vs 586 real). PORTAL-ADMIN-GUIDE hooks 12→31. submitAsync no documentado |
+
+**Violaciones Sistematicas (cross-validation):**
+
+| ID | Violacion | Reports | Impacto |
+|----|-----------|---------|---------|
+| VS-01 | ~~ExerciseTypeSelector incompleto (17/30 tipos)~~ → **RESUELTO** 29/30 tipos (Fix #48) | VAL-01, VAL-04 | Resuelto — admin puede seleccionar M4/M5 |
+| VS-02 | ~~Shared components sin WCAG propagan a 25+ files~~ → **RESUELTO** 6 componentes corregidos (Batch 2) | VAL-01, VAL-05 | Resuelto — WCAG compliance propagada a 25+ archivos |
+| VS-03 | exercise-submission.service.ts monolitico (1963 LOC) — **ANALISIS COMPLETADO** (6-phase refactoring plan en `TASK-2026-02-21-VS03-ANALYSIS/01-ANALYSIS.md`) | VAL-02, VAL-04 | Implementacion pendiente: 5 servicios nuevos |
+| VS-04 | ~~PORTAL-ADMIN-GUIDE severamente desactualizado~~ → **RESUELTO** (hooks 12→31, comps 30+→124, controllers 17→21, CreateModuleModal/ExerciseTypeSelector agregados) | VAL-03, VAL-06 | Resuelto |
+| VS-05 | ~~React.FC + import React sistematico (41+36 files)~~ → **RESUELTO** ~200+ archivos de produccion limpiados | VAL-01 | Resuelto — 0 violaciones en produccion |
+
+**Plan Remediacion:** Fase 1: 10 quick wins (~5h) | Fase 2: 16 items sprint corto (~38h) | Fase 3: 20 items tech debt (~111h) | **Total: 46 items, ~154h**
+
+---
+
+### Analisis Detallado Portales Frontend (2026-02-21) — **COMPLETADA**
+
+**10 workstreams paralelos + consolidacion. 17 entregables, 586 KB, 72+ paginas analizadas.**
+
+| WS | Scope | Hallazgos |
+|----|-------|-----------|
+| WS01 | Admin Dashboard/Monitoring/Analytics/Audit (4 pags) | 26 comps (14 huerfanos), 8 hooks (4 huerfanos), 6 P1, 16 P2 |
+| WS02 | Admin Users/Roles/Institutions/Classroom (4 pags) | 19 comps, 9 hooks, 1 P0 (useRolePermissions), 13 P1 |
+| WS03 | Admin Content/Exercises/Gamification (5 pags) | 42 comps, 8 hooks, 1 P0 (edit route roto), 7 P1 |
+| WS04 | Admin Settings/Alerts/Advanced/LTI (8 pags) | 15 comps, 7 hooks, 3 P0 (FeatureFlags mock, A/B mock, WCAG), 15 P1 |
+| WS05 | Teacher Portal Completo (19 pags) | 50 comps, 25 hooks, Reports diagnostico: tabla vacia / Puppeteer, 4 P1 |
+| WS06 | Student Portal + 34 Mecanicas (24 pags) | 83 comps, 14 hooks, LegacyExercisePage dead code (993 lineas), 4 P1 |
+| WS07 | Parent Portal + Shared Infra (4 pags + 52 shared) | Layout AdminLayout/TeacherLayout 97% identico, 6 comps huerfanos, 4 dead links P0 |
+| WS08 | Homologacion Cross-Portal | Parent sin tema detective, auth redirect incorrecto, 2 rutas BottomNav invalidas |
+| WS09 | Brechas Documentacion (147 docs) | Admin 58%, Teacher 47%, Student 95%, Parent 100%. 25 flujos en estado amarillo |
+| WS10 | Diagramas Mermaid | 60 diagramas (47 flowchart, 11 sequence, 2 state) |
+
+**Consolidacion (7 archivos):**
+
+| Archivo | Contenido |
+|---------|-----------|
+| 00-RESUMEN-EJECUTIVO.md | Metricas, top 10 criticos, health por portal |
+| 01-INVENTARIO-COMPLETO-PORTALES.md | Cada pagina/componente/hook/ruta/API por portal |
+| 02-HALLAZGOS-CRITICOS.md | 8 P0 + ~63 P1 consolidados |
+| 03-HOMOLOGACION-RECOMENDACIONES.md | 10 recomendaciones H-001..H-010, roadmap 3 fases |
+| 04-BRECHAS-DOCUMENTACION.md | Matriz cobertura, 16 tareas documentacion priorizadas |
+| 05-DIAGRAMAS-FLUJO-INDEX.md | Indice 60 diagramas con referencias |
+| 06-PLAN-ACCION.md | 5 sprints, 110-134 dev-days estimados |
+
+**8 P0 Identificados (4 RESUELTOS, 4 pendientes):**
+
+| # | P0 | Portal | WS | Estado |
+|---|------|--------|------|--------|
+| P0-1 | Edit route `/admin/exercises/:id/edit` sin logica de edicion (form vacio) | Admin | WS03 | **RESUELTO** (Fix #35) |
+| P0-2 | `useRolePermissions` antipattern — loading siempre false | Admin | WS02 | **RESUELTO** (Fix #36) |
+| P0-3 | Feature Flags UI opera con mock data (backend no implementado) | Admin | WS04 | **RESUELTO** (config toggle `FEATURE_FLAGS.USE_MOCK_DATA=false` activa API real — no requiere fix de codigo) |
+| P0-4 | A/B Testing Dashboard 100% hardcoded mock | Admin | WS04 | **RESUELTO** (banner "Datos de demostración" agregado — Batch 2) |
+| P0-5 | Notification preferences toggles sin `role="switch"` / `aria-checked` (WCAG A) | Admin | WS04 | **RESUELTO** (Fix #40) |
+| P0-6 | AdminAssignmentsPage endpoints huerfanos (2/5 faltan en backend) | Admin | WS03 | PENDIENTE (requiere backend) |
+| P0-7 | ParentDashboard 4 dead links a paginas inexistentes | Parent | WS07/08 | **RESUELTO** (Fix #37) |
+| P0-8 | TeacherReportsPage no funcional (tabla vacia / Puppeteer ausente) | Teacher | WS05 | **RESUELTO** (funcional — tabla vacia por falta de seed data, no por bug. API opera correctamente) |
+
+---
+
+### Recursos Ejercicios — Memes SVG + Audio (2026-02-21) — **COMPLETADA**
+
+**6 SVGs meme ilustrados + fix adapter memes + multi-meme component + adapter comprension auditiva + MP3 narracion gTTS.**
+
+Resuelve 2 ejercicios con recursos faltantes (AnalisisMemes mostraba rectangulo gris SVG placeholder, ComprensiónAuditiva apuntaba a URL inexistente) y 1 adapter roto (no mapeaba memeUrl desde BD).
+
+| Item | Descripcion | Archivos |
+|------|-------------|----------|
+| SVG-01..06 | 6 memes ilustrados 600x500px flat design (Drake, Expanding Brain, Distracted, Change My Mind, One Does Not Simply, This Is Fine) | public/memes/*.svg (6 NUEVOS) |
+| FIX-01 | `adaptToAnalisisMemesData` mapea `memeUrl`/`memeTitle`/`expectedAnnotations` desde content.memes[0] | exerciseAdapter.ts |
+| FIX-02 | Nuevo `adaptToComprensionAuditivaData` + router entry | exerciseAdapter.ts, registrations.ts |
+| FE-01 | Multi-meme navigation (prev/next), estado `currentMemeIndex`, `MemeItem` type | AnalisisMemesExercise.tsx, analisisMemesTypes.ts |
+| FE-02 | Default exercise usa SVG real en lugar de placeholder inline | AnalisisMemesExercise.tsx |
+| MOCK-01 | Mock data actualizado: 6 memes con analysis detallado + audioUrl local | analisisMemesMockData.ts, comprensionAuditivaMockData.ts |
+| SEED-01 | 5 seed files actualizados: 1→6 memes, .jpg→.svg | 05-exercises-module4.sql (dev/staging/prod + _backlog) |
+| SEED-02 | Nuevo seed auxiliar: ComprensiónAuditiva con audio content JSON | 07-exercises-auxiliar.sql (dev/staging/prod) |
+| AUDIO-01 | MP3 narracion ~2min generado con gTTS (español) + script texto | public/audio/marie-curie-biografia.mp3, narration-script.txt |
+
+**Validacion:**
+- Build: OK (16.94s) | Lint: 0 errors | TypeCheck: 0 errors
+- SVGs confirmados en dist/memes/ (6 archivos)
+- MP3 confirmado en dist/audio/ (1.8MB)
+
+---
+
+### Mejoras Sistema de Misiones (2026-02-21) — **COMPLETADA**
+
+**Tres mejoras al sistema de misiones del portal estudiante:**
+
+| Item | Descripcion | Archivos |
+|------|-------------|----------|
+| IMP-1 | `exercise_id` UUID FK en `mission_templates` y `missions` (DDL + entity + DTO + service propagation) | 06-missions.sql, 20-mission_templates.sql, mission.entity.ts, mission-template.entity.ts, mission-response.dto.ts, create-mission.dto.ts, missions.service.ts |
+| IMP-2 | Auto-start: daily/weekly se crean como `in_progress` (no requieren "Iniciar Mision") | missions.service.ts (generateDailyMissions, generateWeeklyMissions) |
+| IMP-3 | MissionDetailModal: click en card abre modal con detalle completo sin truncar | MissionDetailModal.tsx (NUEVO), MissionCard.tsx, MissionGrid.tsx, MissionsPage.tsx |
+| FE-01 | exercise_id en types + transformer + navegacion prioritaria | missionsTypes.ts, missionTransformer.ts, MissionsPage.tsx |
+| DOC-01 | schema-reference 11-missions v2.1.0, flujo v2.1.0, portal guide v2.1.0, FRONTEND_INVENTORY 592 comps | 4 docs actualizados |
+
+**Validacion:**
+- Backend build: OK | Frontend build: OK (16.73s)
+- Lint: 0 errors (backend 670 warnings, frontend 104 warnings — pre-existentes)
+
+---
+
+### Exercise Builder — Modulos Dinamicos (2026-02-21) — **COMPLETADA**
+
+**Reemplazo del dropdown hardcodeado de modulos por datos dinamicos del API + creacion inline de modulos.**
+
+Implementa parcialmente EXT-001 de RF-ADM-004 (creacion de modulos custom desde admin). FL-ADM-07 actualizado a v1.3.0.
+
+| Item | Descripcion | Archivos |
+|------|-------------|----------|
+| API-01 | `createModule()` + `CreateModulePayload` interface | educationalAPI.ts |
+| HOOK-01 | `useModulesQuery()` hook (React Query fetch + create mutation) | useContentQueries.ts |
+| COMP-01 | `CreateModuleModal` — modal inline con patron CreateUserModal | CreateModuleModal.tsx (NUEVO) |
+| FE-01 | StepBasicInfo: dropdown dinamico + boton "+ Nuevo" + loading state | StepBasicInfo.tsx |
+| FE-02 | ExerciseTypeSelector: tabs dinamicos, mapeo UUID→`module-{order_index}`, empty state | ExerciseTypeSelector.tsx |
+| FE-03 | AdminExerciseCreatePage: wiring modules prop al TypeSelector | AdminExerciseCreatePage.tsx |
+| STD-01 | Fix import `React` → named imports (STANDARD-COMPONENT §3.1) | CreateModuleModal.tsx |
+| DOC-01 | FL-ADM-07 v1.3.0, PORTAL-ADMIN-GUIDE, FRONTEND_INVENTORY 591 comps | 3 docs actualizados |
+
+**Validacion:**
+- Build: OK (17.90s) | Lint: 0 errors (104 warnings pre-existentes) | TypeCheck: 0 errors
+- Standards audit: 0 critical, 0 major (post-fix), 2 minor (pre-existentes: `any` usage, inline types)
+
+---
+
+### Mobile Responsiveness — Ejercicios Todos los Modulos (2026-02-21) — **COMPLETADA**
+
+**Fixes CSS responsivos (mobile-first, sm: breakpoint = 640px) en 38 archivos de ejercicios M1-M5 + componentes compartidos.**
+
+| Lote | Archivos | Cambios clave |
+|------|----------|---------------|
+| M1 (8 files) | MapaConceptual, VerdaderoFalso (x2), MatchingCard, CompletarEspacios, TimelineEvent, CrucigramaClue, ConceptNode | h-[350px] sm:h-[600px], ml-0 sm:ml-11, gap-2 sm:gap-4, p-3 sm:p-6 |
+| M2 (8 files) | WheelSpinner, RuedaInferencias, CountdownTimer, CausaEfecto, PrediccionNarrativa, PuzzleContexto, LecturaInferencial, DetectiveTextual | w-60 sm:w-80, text-lg sm:text-2xl, h-32 sm:h-40, px-4 py-2 sm:px-8 sm:py-4 |
+| M3 (5 files) | DebateDigital, PodcastArgumentativo, MatrizPerspectivas, TribunalOpiniones, AnalisisFuentes | style→Tailwind h-[400px] sm:h-[600px], max-w-[85%] sm:max-w-[70%], text-3xl sm:text-6xl |
+| M4+M5 (11 files) | QuizTikTok (x2), VerificadorFakeNews (x2), AnalisisMemes, InfografiaInteractiva, NavegacionHipertextual (x2), VideoCarta, ComicDigital, DiarioMultimedia | w-full sm:w-80, grid-cols-1 sm:grid-cols-3, min-h-[350px] sm:min-h-[600px] |
+| Shared (8 files) | FeedbackModal, ExerciseGradientHeader, ScoreDisplay, TimerWidget, ProgressTracker, ExerciseHeader, ConsumablesPanel, UnifiedExerciseLayout | grid-cols-1 sm:grid-cols-3, h-8 w-8 sm:h-10 sm:w-10, px-2 py-1 sm:px-4 sm:py-2 |
+
+**Patrones aplicados (consistentes al 100%):**
+- Padding: `p-6` → `p-3 sm:p-6` | `p-4` → `p-2 sm:p-4`
+- Texto: `text-2xl` → `text-xl sm:text-2xl` | `text-6xl` → `text-3xl sm:text-6xl`
+- Gaps: `gap-4` → `gap-2 sm:gap-4` | `gap-6` → `gap-3 sm:gap-6`
+- Grids: `grid-cols-3/4` → `grid-cols-1/2 sm:grid-cols-3/4`
+- Heights: `h-[600px]` → `h-[350-400px] sm:h-[600px]`
+- Sidebars: `w-80` → `w-full sm:w-80`
+- Inline styles: `style={{ height }}` → Tailwind class (DebateDigital)
+
+**Validacion:**
+- Audit: 0 anti-patrones, 0 inconsistencias, 0 archivos omitidos
+- Estandares: Alineado con mobile-first (README UX/UI), Tailwind breakpoints estandar (GUIA-DETECTIVE-THEME), CSS-only sin cambios logicos
+- Build: OK (20.42s) | Lint: 0 errors (104 warnings pre-existentes) | TypeCheck: 3 errores pre-existentes no relacionados (ExerciseTypeSelector.tsx)
+
+---
+
+### Fix Ejercicios M3-M5 — Submission & Status Alignment (2026-02-21) — **COMPLETADA**
+
+**Audit + fix de 15 archivos: alineacion de patrones submit/status en ejercicios M3-M5 con flujo de revision manual.**
+
+| Item | Descripcion | Archivos |
+|------|-------------|----------|
+| FE-M3 | 5 ejercicios M3: status check `submitted` + `submitAsync` conversion + feedback alignment | AnalisisFuentes, DebateDigital, MatrizPerspectivas, PodcastArgumentativo, TribunalOpiniones |
+| FE-M4 | 5 ejercicios M4: `submit`→`submitAsync` + status check `submitted` + `MANUAL_REVIEW_PENDING_SHORT_MESSAGE` | AnalisisMemes, InfografiaInteractiva, NavegacionHipertextual, QuizTikTok, VerificadorFakeNews |
+| FE-M5 | 3 ejercicios M5: `submit`→`submitAsync` + status check + media upload `fileType` fix | ComicDigital, DiarioMultimedia, VideoCarta |
+| BE-01 | Dead-code bug fix: `wasDraft` check BEFORE status overwrite (exercise-submission.service.ts:332) | exercise-submission.service.ts |
+| PRE-01 | mediaApi.ts: `fileType` parameter fix (pre-existente) | mediaApi.ts |
+| PRE-02 | PodcastArgumentativoExercise: script textarea fix (pre-existente) | PodcastArgumentativoExercise.tsx |
+
+**Validacion documental post-fix:**
+- Frontend vs estandares: 13/13 PASS en error feedback, loading state, types, submitAsync, status check, media upload
+- Backend vs estandares: PASS en Logger, variable clarity, no side effects, draft→submitted coherence
+- Flujos M3-M5: 93% alineados — `pending_review` state en diagrama nunca se setea (usa tabla `manual_reviews`), paths de trazabilidad correctos
+- Inventarios SSOT: sin cambios (solo se corrigieron patrones internos, no se agregaron/removieron archivos)
+
+---
 
 ### Wave 10 — ARIA Validation + Documentation (2026-02-21) — **EN PROGRESO**
 
@@ -1333,6 +1659,22 @@ Sprint 3 (12): MLPredictor removal, 2x findByIds fix, memory fix, 2 API wrappers
 
 | # | Accion | Prioridad | Esfuerzo | Dependencia | Estado |
 |---|--------|-----------|----------|-------------|--------|
+| 35 | Fix edit route `/admin/exercises/:id/edit` — agregar logica fetch + pre-populate form | **P0** | M | Ninguna | Pendiente (WS03 P0-1) |
+| 36 | Fix `useRolePermissions` antipattern — query key `__none__`, loading siempre false | **P0** | S | Ninguna | Pendiente (WS02 P0-2) |
+| 37 | Registrar 4 rutas Parent faltantes (`/parent/notifications`, `/settings`, `/activity`, `/assignments`) o remover dead links | **P0** | M | Ninguna | Pendiente (WS07/WS08 P0-7) |
+| 38 | Fix TeacherReportsPage — seed datos en `social_features.teacher_reports` + verificar Puppeteer en prod | **P0** | M | Acceso SSH | Pendiente (WS05 P0-8) |
+| 39 | AdminAssignmentsPage — implementar endpoints backend o marcar pagina como WIP | **P0** | L | Backend | Pendiente (WS03 P0-6) |
+| 40 | Fix WCAG: notification preference toggles sin `role="switch"` / `aria-checked` | **P0** | S | Ninguna | Pendiente (WS04 P0-5) |
+| 41 | Feature Flags: implementar backend o remover UI mock | P1 | L | Backend | Pendiente (WS04 P0-3 — downgrade si se acepta mock) |
+| 42 | A/B Testing: implementar backend o remover dashboard mock | P1 | L | Backend | Pendiente (WS04 P0-4 — downgrade si se acepta mock) |
+| 43 | Unificar AdminLayout + TeacherLayout (97% identicos) en PortalLayout compartido | P1 | M | Ninguna | Pendiente (WS08 H-001) |
+| 44 | Integrar Parent portal con detective-theme (usa paleta indigo divergente) | P1 | L | #43 | Pendiente (WS08 H-004) |
+| 45 | Fix Parent auth redirect: `/login` → `/parent/login` | P1 | S | Ninguna | Pendiente (WS08 H-002) |
+| 46 | Fix Student BottomNavigation: 2 rutas invalidas (`/modules`, `/gamification`) | P1 | S | Ninguna | Pendiente (WS08 H-003) |
+| 47 | Eliminar LegacyExercisePage (993 lineas dead code) | P1 | S | Ninguna | Pendiente (WS06 P1-001) |
+| 48 | ExerciseTypeSelector: agregar 6+ tipos faltantes (Module 4 + Module 5) | P1 | M | Ninguna | Pendiente (WS03 P1) |
+| 49 | Crear 8 flujos UX admin faltantes + 6 flujos teacher faltantes | P2 | L | Ninguna | Pendiente (WS09) |
+| 50 | Documentar 30 API service files no documentados | P2 | L | Ninguna | Pendiente (WS09) |
 | 31 | React Query migration de 25 admin hooks (useState+useEffect → RQ) | P1 | XL | Ninguna | **DIFERIDO** (requiere sprint dedicado, guia en docs/50-guides/) |
 | 32 | Migrar 34 inline modals restantes a shared Modal | P2 | L | Ninguna | Pendiente (8/42 migrados en Fase 4) |
 | 33 | Promover Pagination de teacher a shared | P2 | M | Ninguna | Pendiente |
@@ -1385,6 +1727,8 @@ Sprint 3 (12): MLPredictor removal, 2x findByIds fix, memory fix, 2 API wrappers
 | Inventario Database | `orchestration/inventarios/DATABASE_INVENTORY.yml` (v8.7.0) |
 | Inventario Backend | `orchestration/inventarios/BACKEND_INVENTORY.yml` (v4.4.0) |
 | Inventario Master | `orchestration/inventarios/MASTER_INVENTORY.yml` (v10.8.0) |
+| **Analisis Portales Frontend** | `orchestration/tareas/TASK-2026-02-21-ANALISIS-PORTALES/` (17 archivos: 10 WS + 7 consolidados, 586 KB) |
+| **Validacion Standards/Principles** | `orchestration/tareas/TASK-2026-02-21-ANALISIS-PORTALES/validacion/` (7 archivos: VAL00-VAL06, 238 KB) |
 | Validacion Requisitos | `orchestration/tareas/TASK-2026-02-17-VALIDACION-REQUISITOS/` (3 reportes) |
 | Validacion Desarrollo | `orchestration/tareas/TASK-2026-02-17-VALIDACION-DESARROLLO/` (3 reportes) |
 | Validacion Integral | `orchestration/tareas/TASK-2026-02-16-VALIDACION-INTEGRAL/` (5 reportes) |

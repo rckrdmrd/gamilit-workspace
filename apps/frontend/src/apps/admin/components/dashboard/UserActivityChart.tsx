@@ -13,7 +13,7 @@
  * - Legend toggle
  * - Export chart image
  */
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Line, Bar } from 'react-chartjs-2';
 import {
@@ -52,7 +52,7 @@ interface UserActivityChartProps {
 
 type ChartType = 'line' | 'bar' | 'both';
 
-export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, loading = false }) => {
+export const UserActivityChart = ({ data, loading = false }: UserActivityChartProps) => {
   const [chartType, setChartType] = useState<ChartType>('both');
   const [showLegend, setShowLegend] = useState(true);
 

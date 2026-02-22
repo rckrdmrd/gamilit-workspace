@@ -5,7 +5,7 @@
  * TODO: Stub component - needs full implementation with react-confetti
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary';
 
@@ -25,13 +25,13 @@ export interface ConfettiCelebrationProps {
   onComplete?: () => void;
 }
 
-export const ConfettiCelebration: React.FC<ConfettiCelebrationProps> = ({
+export const ConfettiCelebration = ({
   isActive,
   show: showProp,
   rarity: _rarity = 'common', // Default rarity, reserved for future use
   duration = 3000,
   onComplete,
-}) => {
+}: ConfettiCelebrationProps) => {
   // Use 'show' prop if provided, otherwise fall back to 'isActive'
   const active = showProp ?? isActive ?? false;
   const [showState, setShowState] = useState(false);

@@ -7,7 +7,7 @@ import { TrendingDown, PieChart } from 'lucide-react';
 import { mockSpendingCategoryData } from '../../mockData/economyMockData';
 import { useEconomyStore } from '../../store/economyStore';
 
-export const SpendingAnalytics: React.FC = () => {
+export const SpendingAnalytics = () => {
   const stats = useEconomyStore((state) => state.getEconomyStats());
   const data = mockSpendingCategoryData;
 

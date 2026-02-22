@@ -5,7 +5,7 @@
  * Uses the shared DataTable with detective variant for admin dark theme.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Building, Eye, Edit, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -15,7 +15,7 @@ import type { StatusType } from '@shared/components/base/StatusBadge';
 import { useOrganizations } from '../../hooks/useOrganizations';
 import type { Organization } from '../../types';
 
-export const OrganizationsTable: React.FC = () => {
+export const OrganizationsTable = () => {
   const { organizations, loading } = useOrganizations();
   const [searchTerm, setSearchTerm] = useState('');
 

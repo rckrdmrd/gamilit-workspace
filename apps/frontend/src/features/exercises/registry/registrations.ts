@@ -34,6 +34,7 @@ import {
   adaptToDiarioMultimediaData,
   adaptToComicDigitalData,
   adaptToVideoCartaData,
+  adaptToComprensionAuditivaData,
   adaptToBaseExercise,
 } from '@shared/utils/exerciseAdapter';
 
@@ -231,7 +232,7 @@ registerExercise('collage_prensa', {
 
 registerExercise('comprension_auditiva', {
   loader: () => import('@/features/mechanics/auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise'),
-  adapter: adaptToBaseExercise,
+  adapter: adaptToComprensionAuditivaData,
   meta: { displayName: 'Comprensión Auditiva', module: 0, category: 'auxiliar', icon: 'headphones' },
 });
 

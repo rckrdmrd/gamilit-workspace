@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -34,7 +34,7 @@ interface EconomicEvent {
   active: boolean;
 }
 
-export const EconomicInterventionPanel: React.FC = () => {
+export const EconomicInterventionPanel = () => {
   const [stats] = useState<EconomyStats>({
     totalCoinsInCirculation: 2500000,
     averageUserBalance: 1250,

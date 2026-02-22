@@ -3,7 +3,7 @@
  * Shows currently active power-ups
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Clock, Sparkles, type LucideIcon } from 'lucide-react';
 import { usePowerUps } from '../../hooks/usePowerUps';
@@ -15,7 +15,7 @@ const iconMap: Record<string, LucideIcon> = {
   Sparkles,
 };
 
-export const ActivePowerUps: React.FC = () => {
+export const ActivePowerUps = () => {
   const { getActivePowerUps } = usePowerUps();
   const [activePowerUps, setActivePowerUps] = useState(getActivePowerUps());
 

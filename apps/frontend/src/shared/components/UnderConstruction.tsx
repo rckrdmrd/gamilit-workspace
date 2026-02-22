@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { Construction, CheckCircle, ArrowLeft } from 'lucide-react';
@@ -87,7 +87,7 @@ interface UnderConstructionProps {
  *   upcomingFeatures={["Crear usuario", "Editar usuario"]}
  * />
  */
-export const UnderConstruction: React.FC<UnderConstructionProps> = ({
+export const UnderConstruction = ({
   title = 'En Construcción',
   description,
   message,
@@ -99,7 +99,7 @@ export const UnderConstruction: React.FC<UnderConstructionProps> = ({
   onBack,
   variant = 'page',
   icon,
-}) => {
+}: UnderConstructionProps) => {
   const navigate = useNavigate();
 
   // Support both new and legacy props
@@ -110,9 +110,9 @@ export const UnderConstruction: React.FC<UnderConstructionProps> = ({
   const displayFeatures = features || upcomingFeatures;
 
   // Get the icon component
-  const getIcon = (): React.ComponentType<{ className?: string }> => {
+  const getIcon = (): ComponentType<{ className?: string }> => {
     if (icon && icon in Icons) {
-      const IconComponent = Icons[icon as keyof typeof Icons] as React.ComponentType<{
+      const IconComponent = Icons[icon as keyof typeof Icons] as ComponentType<{
         className?: string;
       }>;
       return IconComponent;

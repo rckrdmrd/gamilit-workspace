@@ -5,14 +5,14 @@
  * Displays log entries with syntax highlighting for JSON data.
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useSystemLogs } from '../../hooks/useSystemLogs';
 import type { SystemLog } from '../../types';
 
-export const SystemLogsViewer: React.FC = () => {
+export const SystemLogsViewer = () => {
   const [selectedLevels, setSelectedLevels] = useState<string[]>(['error', 'warning', 'critical']);
   const [autoScroll, setAutoScroll] = useState(false);
 

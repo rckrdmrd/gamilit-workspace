@@ -1,4 +1,4 @@
-import React from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ClipboardCheck, MessageSquare } from 'lucide-react';
@@ -22,7 +22,7 @@ interface NotificationsState {
 
 interface NotificationsSettingsSectionProps {
   notifications: NotificationsState;
-  setNotifications: React.Dispatch<React.SetStateAction<NotificationsState>>;
+  setNotifications: Dispatch<SetStateAction<NotificationsState>>;
   saveStatus: SaveStatus;
   handleSave: () => void;
   navigate: (path: string) => void;

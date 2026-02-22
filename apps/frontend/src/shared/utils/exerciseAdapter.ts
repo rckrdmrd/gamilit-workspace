@@ -747,15 +747,23 @@ export const adaptToNavegacionHipertextualData = (exercise: ExerciseData): any =
 /**
  * Adapts ExerciseData to AnalisisMemesData format
  * Module 4 - Meme analysis
+ *
+ * Maps content.memes[0].imageUrl → memeUrl for the component, plus passes
+ * the full memes array for multi-meme navigation support.
+ * @returns AnalisisMemesData (typed as any per adapter pattern — see eslint-disable L5)
  */
 export const adaptToAnalisisMemesData = (exercise: ExerciseData): any => {
   const base = adaptToBaseExercise(exercise);
   const content = exercise.mechanicData?.content || {};
+  const firstMeme = content.memes?.[0];
 
   return {
     ...base,
     description: exercise.description || '',
     hints: exercise.mechanicData?.hints || [],
+    memeUrl: firstMeme?.imageUrl || '',
+    memeTitle: firstMeme?.format ? `${firstMeme.format}: ${base.title}` : base.title,
+    expectedAnnotations: [],
     memes: content.memes || [],
     analysisQuestions: content.questions || [],
   };
@@ -818,6 +826,34 @@ export const adaptToVideoCartaData = (exercise: ExerciseData): any => {
     recipient: content.recipient || {},
     filters: content.filters || [],
     config: exercise.mechanicData?.config || {},
+  };
+};
+
+// ============================================================================
+// AUXILIARY ADAPTERS
+// ============================================================================
+
+/**
+ * Adapts ExerciseData to ComprensiónAuditivaData format
+ * Auxiliary - Listening comprehension with timed questions
+ *
+ * Maps content.audioUrl, content.questions[] and audio metadata.
+ * @returns ComprensiónAuditivaData (typed as any per adapter pattern — see eslint-disable L5)
+ */
+export const adaptToComprensionAuditivaData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    audioUrl: content.audioUrl || '',
+    audioTitle: content.audioTitle || base.title,
+    audioDuration: content.audioDuration || 180,
+    questions: content.questions || [],
+    maxReplays: content.maxReplays,
+    transcriptAvailable: content.transcriptAvailable,
   };
 };
 
@@ -893,6 +929,13 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
     return adaptToComicDigitalData(exercise);
   } else if (type.includes('video_carta')) {
     return adaptToVideoCartaData(exercise);
+  }
+
+  // ========================================
+  // AUXILIARY MECHANICS
+  // ========================================
+  else if (type.includes('comprension_auditiva') || type.includes('comprensión_auditiva')) {
+    return adaptToComprensionAuditivaData(exercise);
   }
 
   // Default: return base exercise data

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { cn } from '@shared/utils/cn';
 
 export interface AvatarDisplayProps {
@@ -36,7 +37,7 @@ const sizeConfig = {
  * 3. Frame support: SVG overlay > CSS class > border color (priority chain)
  * 4. Optional glow effect via box-shadow
  */
-export const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
+export const AvatarDisplay = ({
   src,
   name,
   frameColor,
@@ -45,7 +46,7 @@ export const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
   glowColor,
   size = 'sm',
   className,
-}) => {
+}: AvatarDisplayProps) => {
   const [imgError, setImgError] = useState(false);
   const [frameImgError, setFrameImgError] = useState(false);
   const cfg = sizeConfig[size];
@@ -54,7 +55,7 @@ export const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
   const showFrameOverlay = !!frameSrc && !frameImgError;
 
   // Priority: frameSrc (SVG overlay) > frameClass (CSS) > frameColor (border)
-  const frameStyle: React.CSSProperties = {};
+  const frameStyle: CSSProperties = {};
   if (!showFrameOverlay && !frameClass && frameColor) {
     frameStyle.borderColor = frameColor;
     frameStyle.borderWidth = cfg.border;

@@ -4,7 +4,7 @@
  * Prestige interface with confirmation modal and benefits preview.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Award, RefreshCw, AlertCircle, Check } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
@@ -19,7 +19,7 @@ export interface PrestigeSystemProps {
 /**
  * PrestigeSystem Component
  */
-export const PrestigeSystem: React.FC<PrestigeSystemProps> = ({ className = '' }) => {
+export const PrestigeSystem = ({ className = '' }: PrestigeSystemProps) => {
   const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);

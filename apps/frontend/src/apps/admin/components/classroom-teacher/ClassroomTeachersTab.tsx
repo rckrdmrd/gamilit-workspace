@@ -10,7 +10,7 @@
  * - Remove teacher from classroom
  */
 
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -59,7 +59,7 @@ export function ClassroomTeachersTab() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     const trimmedId = classroomId.trim();
 

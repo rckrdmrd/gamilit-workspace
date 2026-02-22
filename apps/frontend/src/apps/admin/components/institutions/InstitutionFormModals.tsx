@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
@@ -51,15 +52,15 @@ export function InstitutionFormModals({
   isDeleteDialogOpen, onCloseDeleteDialog, onDeleteOrg,
   selectedOrg, formData, onFormDataChange, isSubmitting,
 }: InstitutionFormModalsProps) {
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     onFormDataChange({ ...formData, name: e.target.value });
   };
 
-  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleSlugChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     onFormDataChange({ ...formData, slug: e.target.value });
   };
 
-  const handlePlanChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handlePlanChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     onFormDataChange({ ...formData, plan: e.target.value as PlanType });
   };
 

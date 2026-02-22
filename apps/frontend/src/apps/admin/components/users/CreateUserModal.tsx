@@ -5,7 +5,7 @@
  * @see US-AE-010 - Crear Usuarios desde Admin
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactElement, type FormEvent } from 'react';
 import { X, UserPlus, Mail, Building2, GraduationCap, Loader2, Copy, Check } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
@@ -57,7 +57,7 @@ export function CreateUserModal({
   onSubmit,
   organizations,
   isLoadingOrganizations = false,
-}: CreateUserModalProps): React.ReactElement | null {
+}: CreateUserModalProps): ReactElement | null {
   // Form state
   const [formData, setFormData] = useState<CreateUserFormData>({
     email: '',
@@ -91,7 +91,7 @@ export function CreateUserModal({
   }, [isOpen, organizations]);
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);

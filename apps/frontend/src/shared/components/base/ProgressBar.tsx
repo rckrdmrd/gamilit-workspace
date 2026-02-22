@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
@@ -23,7 +23,7 @@ const variantStyles = {
   xp: 'progress-xp', // Uses detective-theme.css
 };
 
-export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
+export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
   (
     {
       progress,

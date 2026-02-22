@@ -1,7 +1,6 @@
-import React from 'react';
 import { AlertTriangle, CheckCircle, XCircle, Info } from 'lucide-react';
 
-export const SecurityEventsList: React.FC = () => {
+export const SecurityEventsList = () => {
   const mockEvents = [
     { id: '1', type: 'success', message: 'Login exitoso desde IP conocida', time: '5 min ago' },
     { id: '2', type: 'warning', message: 'Intento de login fallido', time: '15 min ago' },

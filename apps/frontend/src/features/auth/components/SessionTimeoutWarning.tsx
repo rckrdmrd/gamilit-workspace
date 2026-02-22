@@ -1,4 +1,3 @@
-import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 
@@ -7,7 +6,7 @@ interface SessionTimeoutWarningProps {
   onExtend: () => void;
 }
 
-export const SessionTimeoutWarning: React.FC<SessionTimeoutWarningProps> = ({ minutesLeft, onExtend }) => {
+export const SessionTimeoutWarning = ({ minutesLeft, onExtend }: SessionTimeoutWarningProps) => {
   return (
     <div className="fixed bottom-4 right-4 max-w-md bg-white border-2 border-orange-400 rounded-lg shadow-lg p-4">
       <div className="flex items-start gap-3">

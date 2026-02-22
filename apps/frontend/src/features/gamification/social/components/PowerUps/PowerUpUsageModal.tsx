@@ -2,7 +2,6 @@
  * PowerUpUsageModal Component
  */
 
-import React from 'react';
 import { Zap, Coins, AlertTriangle, type LucideIcon } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
 import type { PowerUp } from '../../types/powerUpsTypes';
@@ -23,14 +22,14 @@ interface PowerUpUsageModalProps {
   canAfford?: boolean;
 }
 
-export const PowerUpUsageModal: React.FC<PowerUpUsageModalProps> = ({
+export const PowerUpUsageModal = ({
   isOpen = true,
   powerUp,
   action,
   onConfirm,
   onCancel,
   canAfford = true,
-}) => {
+}: PowerUpUsageModalProps) => {
   const Icon = iconMap[powerUp.icon] || Zap;
 
   return (

@@ -1,7 +1,7 @@
 # Guia de Desarrollo - Portal Teacher
 
 **Fecha de creacion:** 2025-11-29
-**Version:** 3.0.0
+**Version:** 3.1.0
 **Estado:** VIGENTE
 **Aplica a:** apps/frontend/src/apps/teacher/ + apps/backend/src/modules/teacher/
 
@@ -17,11 +17,9 @@ El Portal Teacher es la interfaz principal para docentes en GAMILIT. Proporciona
 - **Seguimiento de Estudiantes:** Progreso, desempeno, alertas, bloqueo
 - **Asignaciones:** Crear y gestionar tareas/ejercicios
 - **Revision Manual:** Panel de revision para ejercicios M3-M5
-- **Comunicacion:** Mensajes, anuncios y feedback a estudiantes
 - **Analitica:** Dashboards, insights de aprendizaje, economia de aula
 - **Gamificacion:** Bonificaciones, logros, misiones, economia de aula
 - **Monitoreo:** Seguimiento en tiempo real de actividad estudiantil
-- **Contenido:** Gestion de recursos y contenidos educativos
 - **Reportes:** Generacion de informes PDF/Excel
 - **Configuracion:** Perfil, preferencias de ensenanza, notificaciones, privacidad
 
@@ -36,13 +34,13 @@ El Portal Teacher es la interfaz principal para docentes en GAMILIT. Proporciona
 
 ## 2. Arquitectura
 
-### 2.1 Paginas del Portal (19 paginas)
+### 2.1 Paginas del Portal (16 paginas)
 
 Todas las paginas usan el patron **PageShell** (ver seccion 3.1.1).
 
 | # | Archivo | Ruta | Descripcion | En nav |
 |---|---------|------|-------------|--------|
-| 1 | `TeacherDashboardPage.tsx` | `/teacher/dashboard` | Dashboard principal con estadisticas, aulas activas, alertas recientes y acciones rapidas | Si |
+| 1 | `TeacherDashboardPage.tsx` | `/teacher/dashboard` | Dashboard principal con 10 tabs (overview, monitoring, assignments, progress, alerts, analytics, insights, reports, communication, resources). 9 tabs usan `React.lazy()` + `Suspense` para code-splitting | Si |
 | 2 | `TeacherClassesPage.tsx` | `/teacher/classes` | Gestion de aulas (crear, editar, archivar) con lista de classrooms del docente | Si |
 | 3 | `TeacherStudentsPage.tsx` | `/teacher/students` | Lista y gestion de estudiantes por aula con indicadores de progreso y riesgo | Si |
 | 4 | `TeacherAssignmentsPage.tsx` | `/teacher/assignments` | Crear y gestionar asignaciones de ejercicios a aulas | Si |
@@ -55,14 +53,11 @@ Todas las paginas usan el patron **PageShell** (ver seccion 3.1.1).
 | 11 | `TeacherMonitoringPage.tsx` | `/teacher/monitoring` | Monitoreo en tiempo real de actividad estudiantil en sesiones activas | Si |
 | 12 | `TeacherExerciseResponsesPage.tsx` | `/teacher/exercise-responses` | Vista de respuestas de ejercicios con filtros por tipo, aula y estudiante | Si |
 | 13 | `TeacherReviewPanelPage.tsx` | `/teacher/review-panel` | Panel de revision manual para ejercicios M3-M5 con sistema de calificacion | Si |
-| 14 | `TeacherContentManagementPage.tsx` | `/teacher/content-management` | Gestion completa de contenidos educativos (crear, editar, publicar) | Si |
-| 15 | `TeacherSettingsPage.tsx` | `/teacher/settings` | Configuracion del perfil, preferencias de ensenanza, notificaciones y privacidad | Si |
-| 16 | `TeacherCommunicationPage.tsx` | `/teacher/communication` | Centro de mensajes para comunicacion con estudiantes y padres | Si |
-| 17 | `TeacherContentPage.tsx` | `/teacher/content` | Gestion de recursos educativos compartidos (version anterior a ContentManagement) | Si |
-| 18 | `TeacherNotificationsPage.tsx` | `/teacher/notifications` | Centro de notificaciones con filtros, lectura masiva y conexion WebSocket | Si |
-| 19 | `TeacherNotificationPreferencesPage.tsx` | `/teacher/settings/notifications` | Preferencias de notificaciones por canal (in-app, email, push) | No |
+| 14 | `TeacherSettingsPage.tsx` | `/teacher/settings` | Configuracion del perfil, preferencias de ensenanza, notificaciones y privacidad | Si |
+| 15 | `TeacherNotificationsPage.tsx` | `/teacher/notifications` | Centro de notificaciones con filtros, lectura masiva y conexion WebSocket | Si |
+| 16 | `TeacherNotificationPreferencesPage.tsx` | `/teacher/settings/notifications` | Preferencias de notificaciones por canal (in-app, email, push) | No |
 
-**Nota:** La pagina 19 (NotificationPreferences) no aparece en la navegacion lateral del portal; es accesible via URL directa o enlace desde la pagina de Settings. Las demas 18 paginas tienen entrada en el sidebar.
+**Nota:** La pagina 16 (NotificationPreferences) no aparece en la navegacion lateral del portal; es accesible via URL directa o enlace desde la pagina de Settings. Las demas 15 paginas tienen entrada en el sidebar. Las paginas `TeacherCommunicationPage`, `TeacherContentManagementPage` y `TeacherContentPage` fueron eliminadas en v3.1.0 (funcionalidad de comunicacion no aplica al rol teacher; gestion de contenido es responsabilidad del portal admin).
 
 ### 2.2 Estructura de Carpetas
 
@@ -73,7 +68,7 @@ teacher/
 ├── index.ts                    # Barrel export principal
 ├── layouts/
 │   └── TeacherLayout.tsx       # Layout principal con navegacion
-├── pages/                      # Paginas del portal (19 paginas, ADR-030 "Page" suffix)
+├── pages/                      # Paginas del portal (16 paginas, ADR-030 "Page" suffix)
 │   ├── TeacherDashboardPage.tsx
 │   ├── TeacherClassesPage.tsx
 │   ├── TeacherStudentsPage.tsx
@@ -83,9 +78,6 @@ teacher/
 │   ├── TeacherAnalyticsPage.tsx
 │   ├── TeacherGamificationPage.tsx
 │   ├── TeacherReportsPage.tsx
-│   ├── TeacherCommunicationPage.tsx
-│   ├── TeacherContentPage.tsx
-│   ├── TeacherContentManagementPage.tsx
 │   ├── TeacherProgressPage.tsx
 │   ├── TeacherMonitoringPage.tsx
 │   ├── TeacherExerciseResponsesPage.tsx
@@ -106,7 +98,6 @@ teacher/
 │   │   └── RecentReportsTable.tsx
 │   ├── responses/              # Respuestas de ejercicios
 │   ├── review-panel/           # Panel de revision manual
-│   ├── communication/          # Mensajes y anuncios
 │   ├── collaboration/          # Compartir recursos
 │   ├── settings/               # Componentes de configuracion
 │   │   ├── SaveButton.tsx
@@ -116,7 +107,7 @@ teacher/
 │   │   ├── PrivacySettingsSection.tsx
 │   │   └── index.ts
 │   └── index.ts
-├── hooks/                      # Custom hooks (25 hooks)
+├── hooks/                      # Custom hooks (23 hooks)
 │   ├── useTeacherDashboard.ts
 │   ├── useTeacherPageSetup.ts  # Auth/gamification setup for PageShell
 │   ├── useClassrooms.ts
@@ -133,11 +124,11 @@ teacher/
 │   ├── useEconomyAnalytics.ts
 │   ├── useStudentsEconomy.ts
 │   ├── useAchievementsStats.ts
-│   ├── useTeacherMessages.ts
 │   │   # NOTE: useGrading, useStudentProgress, useMasteryTracking, useMissionStats
 │   │   # were deleted in TEACHER-PORTAL-AUDIT (2026-02-20); functionality absorbed
-│   │   # into useManualReviews, useAnalytics, and manualReviewApi
-│   ├── useTeacherContent.ts
+│   │   # into useManualReviews, useAnalytics, and manualReviewApi.
+│   │   # useTeacherMessages and useTeacherContent were deleted in v3.1.0
+│   │   # (Communication and Content pages removed from teacher portal).
 │   ├── useExerciseResponses.ts
 │   ├── useManualReviews.ts
 │   ├── useManualReviewConfig.ts
@@ -159,13 +150,13 @@ teacher/
 teacher/
 ├── teacher.module.ts           # Modulo NestJS principal
 ├── index.ts                    # Barrel exports
-├── controllers/                # 10 controllers
+├── controllers/                # 10 controllers (communication + content still exist in backend)
 │   ├── teacher.controller.ts           # Analytics, progress, insights
 │   ├── teacher-classrooms.controller.ts
 │   ├── teacher-assignments.controller.ts
 │   ├── teacher-grades.controller.ts
-│   ├── teacher-communication.controller.ts
-│   ├── teacher-content.controller.ts
+│   ├── teacher-communication.controller.ts  # Backend retained; frontend removed
+│   ├── teacher-content.controller.ts        # Backend retained; frontend page removed (resource sharing stays)
 │   ├── alert-config.controller.ts
 │   ├── manual-review.controller.ts
 │   ├── intervention-alerts.controller.ts
@@ -694,8 +685,8 @@ export class GrantBonusDto {
 | POST | `/teacher/bonus-coins` | Otorgar bonificacion | TeacherGuard |
 | GET | `/teacher/exercise-responses` | Respuestas de ejercicios | TeacherGuard |
 | POST | `/teacher/grades/:submissionId` | Calificar submission | TeacherGuard |
-| GET | `/teacher/messages` | Mensajes enviados | TeacherGuard |
-| POST | `/teacher/messages` | Enviar mensaje | TeacherGuard |
+| PUT | `/teacher/assignments/:id` | Actualizar asignacion | TeacherGuard |
+| DELETE | `/teacher/assignments/:id` | Eliminar asignacion | TeacherGuard |
 
 ### 5.2 Frontend API Services
 
@@ -711,8 +702,13 @@ services/api/teacher/
 ├── bonusCoinsApi.ts           # Bonificaciones
 │   # NOTE: gradingApi.ts was removed (Teacher Portal Audit 2026-02-20), merged into assignmentsApi + manualReviewApi
 ├── exerciseResponsesApi.ts    # Respuestas
-├── teacherMessagesApi.ts      # Comunicacion
-├── teacherContentApi.ts       # Contenido
+│   # NOTE: teacherMessagesApi.ts and teacherContentApi.ts were removed in v3.1.0
+│   # (Communication and Content pages eliminated from teacher portal).
+│   # Resource sharing endpoints remain accessible via resourceSharingApi.ts.
+├── manualReviewApi.ts         # Revision manual
+├── scheduledReportsApi.ts     # Reportes programados
+├── sharedReportsApi.ts        # Reportes compartidos
+├── resourceSharingApi.ts      # Compartir recursos entre teachers
 └── index.ts                   # Barrel export
 ```
 
@@ -924,6 +920,8 @@ if (process.env.NODE_ENV === 'development') {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 3.2.0 | 2026-02-21 | Performance: TeacherDashboardPage 9 tab panel imports converted to React.lazy() + Suspense for code-splitting. Tab loading fallback spinner added. Dashboard description updated to reflect 10-tab architecture |
+| 3.1.0 | 2026-02-21 | Cleanup: Removed 3 pages (TeacherCommunicationPage, TeacherContentManagementPage, TeacherContentPage) — Communication not applicable to teacher role, Content Management is admin responsibility. Removed 2 hooks (useTeacherMessages, useTeacherContent) and 2 API services (teacherMessagesApi, teacherContentApi). Removed communication/ components directory. Portal now has 16 pages, 23 hooks. Updated endpoints table with edit/delete assignment endpoints. Updated folder structure and API services listing |
 | 3.0.0 | 2026-02-21 | ADR-030 alignment: All 19 page files renamed with "Page" suffix (TeacherDashboard -> TeacherDashboardPage, etc.). 3 pages re-enabled in sidebar nav (Content, Communication, Notifications). Removed deleted withTeacherLayout.tsx from tree. Updated hooks note about 4 deleted hooks (TEACHER-PORTAL-AUDIT). Updated code examples and App.tsx references |
 | 2.0.0 | 2026-02-19 | Major update: Listed all 19 pages with descriptions and routes. Documented PageShell pattern (ADR-046) replacing withTeacherLayout HOC. Noted 4 removed-from-nav pages (Communication, Content, Notifications, NotificationPreferences). Updated hooks count to 26. Updated architecture section with TeacherPageShell in dependency diagram. Added React Query patterns and useApiError references. Added ADR references section. Updated checklists for new patterns |
 | 1.3.0 | 2026-02-18 | ADR-030 implementation: Removed "Page" suffix from all page files (TeacherAlertsPage -> TeacherAlerts, etc.). Phase 7 SRP component extractions: settings/ directory with 5 components (SaveButton, ProfileSettingsSection, TeachingPreferencesSection, NotificationsSettingsSection, PrivacySettingsSection); RecentReportsTable extracted to reports/ |

@@ -10,7 +10,7 @@
  * - Achievements showcase
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Coins, Zap, Flame, Activity, BarChart3, TrendingUp, Backpack } from 'lucide-react';
 
@@ -35,7 +35,7 @@ import type { ProfileStat } from '@/apps/student/components/profile/types';
 
 type TabId = 'overview' | 'stats' | 'history' | 'achievements' | 'inventory';
 
-const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
+const TABS: { id: TabId; label: string; icon: ElementType }[] = [
   { id: 'overview', label: 'Vista General', icon: Activity },
   { id: 'stats', label: 'Estadisticas', icon: BarChart3 },
   { id: 'history', label: 'Historial de Rangos', icon: TrendingUp },

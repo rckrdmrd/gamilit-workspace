@@ -1,0 +1,36 @@
+Narration Script: La Vida de Marie Curie
+Duration: ~3 minutes (approximately 450 words at moderate pace)
+Language: Spanish (Latin American)
+Voice: Female, educational tone, clear diction
+---
+
+Marie Curie nació el 7 de noviembre de 1867 en Varsovia, Polonia, con el nombre de Maria Salomea Sklodowska. Desde muy joven, mostró una inteligencia excepcional y una pasión insaciable por el conocimiento.
+
+En aquella época, las universidades polacas no admitían mujeres, así que Maria asistió a la Universidad Flotante, una institución clandestina. En 1891, a los 24 años, se mudó a París para estudiar en la prestigiosa Universidad de la Sorbona, donde adoptó el nombre francés de Marie.
+
+En París, Marie conoció a Pierre Curie, un brillante físico francés. Se casaron en 1895 y comenzaron una colaboración científica que cambiaría el mundo para siempre. Juntos, trabajaron en un laboratorio improvisado, investigando los misteriosos rayos que emitían ciertos minerales.
+
+En 1898, Marie y Pierre hicieron dos descubrimientos extraordinarios. Primero, identificaron un nuevo elemento al que llamaron Polonio, en honor a la patria de Marie. Poco después, descubrieron otro elemento aún más radioactivo: el Radio. Marie acuñó el término "radioactividad" para describir este fenómeno.
+
+En 1903, Marie Curie hizo historia al convertirse en la primera mujer en recibir el Premio Nobel. Compartió el Nobel de Física con su esposo Pierre y con Henri Becquerel, por sus investigaciones sobre la radiación.
+
+Trágicamente, Pierre murió en un accidente en 1906. Marie, devastada pero determinada, continuó su trabajo. Asumió la cátedra de Pierre en la Sorbona, convirtiéndose en la primera mujer profesora de esa universidad.
+
+En 1911, Marie recibió un segundo Premio Nobel, esta vez en Química, por el aislamiento del radio puro. Se convirtió así en la primera persona en ganar dos Premios Nobel en diferentes disciplinas científicas, un logro que muy pocos han igualado desde entonces.
+
+Durante la Primera Guerra Mundial, Marie desarrolló unidades móviles de rayos X, conocidas como "petites Curies", que permitían a los médicos del frente localizar balas y fracturas en los soldados heridos. Se estima que estas unidades ayudaron a más de un millón de soldados.
+
+Marie Curie fundó el Instituto del Radio en París, que se convirtió en un centro de investigación de clase mundial. Dedicó el dinero de sus premios Nobel a financiar investigación científica, no a enriquecerse personalmente.
+
+Lamentablemente, años de exposición a materiales radioactivos sin protección adecuada cobraron su precio. Marie Curie falleció el 4 de julio de 1934, a los 66 años, víctima de anemia aplásica, una enfermedad causada por la radiación.
+
+Su legado perdura. Sus cuadernos de laboratorio siguen siendo tan radioactivos que se guardan en cajas forradas de plomo en la Biblioteca Nacional de Francia. Marie Curie no solo abrió las puertas de la ciencia a las mujeres, sino que transformó nuestra comprensión del mundo físico.
+
+---
+INSTRUCTIONS FOR TTS GENERATION:
+1. Use a Latin American Spanish TTS service (e.g., Google Cloud TTS, ElevenLabs, Amazon Polly)
+2. Voice: Female, "es-LA" or "es-MX" locale
+3. Speed: 0.9x (slightly slower for comprehension)
+4. Output format: MP3, 128kbps
+5. Save as: marie-curie-biografia.mp3
+6. Place in: apps/frontend/public/audio/

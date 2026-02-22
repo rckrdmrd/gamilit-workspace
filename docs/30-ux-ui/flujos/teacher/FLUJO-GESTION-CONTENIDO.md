@@ -1,11 +1,13 @@
 # FL-TCH-05 - Teacher Content Management
 
 **ID:** FL-TCH-05
-**Version:** 1.0.0
-**Fecha:** 2026-02-17
-**Estado:** Activo
+**Version:** 1.1.0
+**Fecha:** 2026-02-21
+**Estado:** DEPRECADO
 **Portal:** Teacher
 **Prioridad:** P2
+
+> **NOTA (v1.1.0 - 2026-02-21):** Este flujo ha sido **DEPRECADO**. Las paginas frontend de gestion de contenido (`TeacherContentManagementPage`, `TeacherContentPage`) fueron eliminadas del portal Teacher. La gestion de contenido educativo es responsabilidad exclusiva del portal Administrador. Los componentes backend (`teacher-content.controller.ts`, `teacher-content.service.ts`) permanecen activos pero solo son utilizados por los endpoints de Resource Sharing (seccion 10 del API Reference). El hook `useTeacherContent` y el API service `teacherContentApi` tambien fueron eliminados.
 
 ---
 

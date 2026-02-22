@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ChangeEvent } from 'react';
 import { X } from 'lucide-react';
 
 export interface ProgressFilterState {
@@ -26,25 +26,25 @@ interface ProgressFilterProps {
  * @param currentFilter - Current filter state
  * @param onFilterChange - Callback when filter changes
  */
-export const ProgressFilter: React.FC<ProgressFilterProps> = ({
+export const ProgressFilter = ({
   currentFilter,
   onFilterChange,
-}) => {
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+}: ProgressFilterProps) => {
+  const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({
       ...currentFilter,
       status: e.target.value as ProgressFilterState['status'],
     });
   };
 
-  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDifficultyChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({
       ...currentFilter,
       difficulty: e.target.value as ProgressFilterState['difficulty'],
     });
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({
       ...currentFilter,
       sortBy: e.target.value as ProgressFilterState['sortBy'],

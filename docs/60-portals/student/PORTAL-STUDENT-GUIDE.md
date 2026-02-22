@@ -1,9 +1,9 @@
 # Guía de Desarrollo - Portal Student
 
 **Fecha de creación:** 2025-11-29
-**Versión:** 2.0.0
+**Versión:** 2.2.0
 **Estado:** VIGENTE
-**Última actualización:** 2026-02-18 (Student Portal Refactoring Fases 0-4)
+**Última actualización:** 2026-02-21 (M3-M5 teacher-grade exclusivo; Mejoras Sistema de Misiones: exercise_id, auto-start, MissionDetailModal)
 **Aplica a:** apps/frontend/src/apps/student/ + apps/backend/src/modules/[progress, gamification, educational]
 
 ---
@@ -403,23 +403,23 @@ GET /api/v1/progress/modules/:moduleId/progress
 - `puzzle_contexto` - Puzzle de contexto
 - `rueda_inferencias` - Rueda de inferencias
 
-#### Módulo 3 - Comprensión Crítica
-- `analisis_fuentes` - Análisis de fuentes
-- `debate_digital` - Debate digital
-- `matriz_perspectivas` - Matriz de perspectivas
-- `podcast_argumentativo` - Podcast argumentativo
-- `tribunal_opiniones` - Tribunal de opiniones
+#### Módulo 3 - Comprensión Crítica (evaluado por maestro)
+- `analisis_fuentes` - Análisis de fuentes (evaluación de credibilidad con justificación escrita)
+- `debate_digital` - Debate digital (ensayo estructurado con postura y argumentos, sin IA)
+- `matriz_perspectivas` - Matriz de perspectivas (perspectivas pre-cargadas, alumno redacta análisis)
+- `podcast_argumentativo` - Podcast argumentativo (grabación + transcripción, revisión manual)
+- `tribunal_opiniones` - Tribunal de opiniones (veredicto escrito con justificación)
 
-#### Módulo 4 - Textos Digitales
-- `verificador_fakenews` - Verificador de fake news
-- `quiz_tiktok` - Quiz TikTok
-- `navegacion_hipertextual` - Navegación hipertextual
-- `analisis_memes` - Análisis de memes
-- `infografia_interactiva` - Infografía interactiva
-- `email_formal` - Email formal
-- `chat_literario` - Chat literario
-- `ensayo_argumentativo` - Ensayo argumentativo
-- `resena_critica` - Reseña crítica
+> **Nota M3:** Todos los ejercicios de Módulo 3 requieren revisión manual del maestro. No hay auto-scoring ni interacción con IA. El estudiante envía sus respuestas y recibe calificación cuando el maestro revisa.
+
+#### Módulo 4 - Textos Digitales (evaluado por maestro)
+- `verificador_fakenews` - Verificador de fake news (análisis escrito de artículos, sin auto-score)
+- `quiz_tiktok` - Quiz TikTok (selección + justificación escrita obligatoria, revisión manual)
+- `navegacion_hipertextual` - Navegación hipertextual (exploración + sección de reflexión escrita)
+- `analisis_memes` - Análisis de memes (análisis textual de elementos visuales)
+- `infografia_interactiva` - Infografía interactiva (exploración + reflexión escrita)
+
+> **Nota M4:** Todos los ejercicios de Módulo 4 requieren revisión manual del maestro. No hay auto-scoring ni interacción con IA. Las mecánicas incluyen justificaciones y reflexiones escritas que el maestro evalúa.
 
 **Componentes de Ejercicio:**
 
@@ -467,7 +467,9 @@ GET /api/v1/progress/modules/:moduleId/progress
 3. **Uso de Hint:** POST `/api/v1/progress/exercises/:exerciseId/use-hint`
 4. **Uso de Power-up:** POST `/api/v1/gamification/comodines/use`
 5. **Envío:** POST `/api/v1/progress/exercises/:exerciseId/submit`
-6. **Feedback:** Recibe calificación, XP ganado, ML Coins, achievements desbloqueados
+6. **Feedback:**
+   - **M1-M2 (auto-grade):** Recibe calificación inmediata, XP ganado, ML Coins, achievements desbloqueados
+   - **M3-M5 (teacher-grade):** Submission queda en estado `pending_review`. El estudiante ve confirmación de envío. XP, ML Coins y calificación se otorgan cuando el maestro completa la revisión manual
 
 **Hooks:**
 
@@ -676,21 +678,25 @@ POST /api/v1/gamification/users/:userId/achievements/:achievementId/claim
 ```typescript
 <MissionCard
   mission={mission}
-  progress={mission.currentProgress}
-  target={mission.targetProgress}
-  onClaim={handleClaim}
+  onCardClick={handleCardClick}   // Abre MissionDetailModal
+  onStart={handleStartMission}
+  onClaim={handleClaimReward}
+  onGoToExercise={handleGoToExercise}  // Navega via exercise_id
 />
 
-<MissionProgress
-  current={progress}
-  required={target}
-  percentage={percentage}
+<MissionDetailModal              // NUEVO v2.1.0
+  mission={selectedMission}
+  isOpen={!!selectedMission}
+  onClose={() => setSelectedMission(null)}
+  onStart={handleStartMission}
+  onClaim={handleClaimReward}
+  onGoToExercise={handleGoToExercise}
 />
 
-<MissionRewards
-  xp={mission.xpReward}
-  mlCoins={mission.mlCoinsReward}
-/>
+// Mejoras v2.1.0:
+// - exercise_id: vincula misiones a ejercicios específicos (FK missions.exercise_id)
+// - Auto-start: daily/weekly se crean como in_progress (no requieren "Iniciar")
+// - MissionDetailModal: descripción completa, progreso por objetivo, timer
 ```
 
 **APIs:**
@@ -860,8 +866,8 @@ GET   /api/v1/gamification/users/:userId/activity-graph
 | ID | Label | Icon | Path | Descripción |
 |----|-------|------|------|-------------|
 | home | Home | Home | `/` | Dashboard principal |
-| modules | Modules | BookOpen | `/modules` | Módulos educativos |
-| gamification | Gamification | Trophy | `/gamification` | Hub de gamificación |
+| learning | Aprender | BookOpen | `/learning` | Hub de módulos educativos |
+| achievements | Logros | Trophy | `/achievements` | Logros y gamificación |
 | notifications | Alerts | Bell | `/notifications` | Centro de notificaciones |
 | profile | Profile | User | `/profile` | Perfil de usuario |
 | settings | Settings | Settings | `/settings` | Configuración |
@@ -1161,9 +1167,12 @@ notificationsStore:
      powerupsUsed: ['hint_revealer']
    }
    ↓
-7. Backend calcula score, XP ganado, ML Coins
+7. Backend procesa submission:
+   - **M1-M2 (auto-grade):** Calcula score, XP ganado, ML Coins automaticamente
+   - **M3-M5 (teacher-grade):** Guarda submission con status=pending_review, NO calcula score
    ↓
 8. Response:
+   M1-M2:
    {
      score: 85,
      maxScore: 100,
@@ -1172,12 +1181,17 @@ notificationsStore:
      achievements: ['first_completion'],
      feedback: {...}
    }
+   M3-M5:
+   {
+     status: 'pending_review',
+     message: 'Tu trabajo fue enviado. El maestro lo revisara pronto.'
+   }
    ↓
-9. FeedbackModal muestra resultados
+9. FeedbackModal muestra resultados (M1-M2) o confirmacion de envio (M3-M5)
    ↓
-10. Si achievement desbloqueado → AchievementToast
+10. Si achievement desbloqueado → AchievementToast (solo M1-M2 inmediato)
    ↓
-11. Si rank up → RankUpModal
+11. Si rank up → RankUpModal (solo M1-M2 inmediato)
    ↓
 12. Redirect a /modules o /dashboard
 ```
@@ -1818,10 +1832,12 @@ async submitExercise(...) { ... }
 
 | Versión | Fecha | Cambios |
 |---------|-------|---------|
+| 2.2.0 | 2026-02-21 | M3-M5 evaluados exclusivamente por maestro: sin auto-scoring, sin IA. Debate Digital = ensayo estructurado, Quiz TikTok = justificaciones escritas, flujo de ejercicio diferenciado M1-M2 (auto-grade) vs M3-M5 (teacher-grade). Removed stale M4 mechanic listings (email_formal, chat_literario, ensayo_argumentativo, resena_critica) |
+| 2.1.0 | 2026-02-21 | Mejoras sistema de misiones: exercise_id (FK a ejercicios), auto-start daily/weekly, MissionDetailModal, click-to-detail en MissionCard |
 | 1.0.0 | 2025-11-29 | Creación inicial - Documentación completa del Portal Student |
 | 2.0.0 | 2026-02-18 | Actualizado post Student Portal Refactoring Fases 0-4: nuevas carpetas de componentes (shop, inventory, module, profile, leaderboard, friends, guilds, learning), hooks actualizados (useProfileData, useAvatarUpdate), estructura de carpetas refleja extractiones Phase 2-4 |
 
 ---
 
 **Mantenido por:** Tech Lead - GAMILIT Project
-**Última revisión:** 2026-02-18
+**Última revisión:** 2026-02-21

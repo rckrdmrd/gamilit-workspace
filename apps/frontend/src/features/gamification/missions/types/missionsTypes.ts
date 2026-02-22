@@ -61,6 +61,7 @@ export interface MissionRewardsFromAPI {
  */
 export interface Mission {
   id: string;
+  exercise_id?: string | null;
   type: MissionType;
   title: string;
   description: string;

@@ -7,7 +7,7 @@
  * @date 2025-11-24
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Users, TrendingUp, Award, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
@@ -20,11 +20,11 @@ interface ClassroomsViewProps {
   onStudentClick: (studentId: string) => void;
 }
 
-export const ClassroomsView: React.FC<ClassroomsViewProps> = ({
+export const ClassroomsView = ({
   classroomProgress,
   isLoading,
   onStudentClick,
-}) => {
+}: ClassroomsViewProps) => {
   const [sortField, setSortField] = useState<string>('display_name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showStudents, setShowStudents] = useState(true);

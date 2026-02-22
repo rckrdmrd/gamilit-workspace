@@ -1,11 +1,15 @@
+// Legacy types - kept for backward compatibility but no longer used by DebateDigitalExercise
+// The exercise was converted from AI chat to structured essay format
+
+/** @deprecated No longer used - exercise uses structured essay sections */
 export interface DebateMessage {
   id: string;
   sender: 'user' | 'ai';
   text: string;
   timestamp: Date;
-  argumentStrength?: number;
 }
 
+/** @deprecated No longer used - exercise uses structured essay sections */
 export interface DebateSession {
   id: string;
   topic: string;
@@ -23,10 +27,13 @@ export interface ExerciseProgressUpdate {
 
 // Exercise State for auto-save
 export interface DebateDigitalState {
-  messages: DebateMessage[];
-  score: number;
-  timeSpent: number;
-  hintsUsed: number;
+  essaySections: {
+    thesis: string;
+    arguments_for: string;
+    counterarguments: string;
+    conclusion: string;
+  };
+  userPosition: 'a_favor' | 'en_contra' | null;
 }
 
 // Exercise Actions Interface for Parent Control
@@ -34,7 +41,6 @@ export interface DebateDigitalActions {
   getState: () => DebateDigitalState;
   reset: () => void;
   validate: () => Promise<void>;
-  sendMessage?: (message: string) => Promise<void>;
 }
 
 // Standardized Exercise Props Interface (Module 1 Pattern)
@@ -53,8 +59,8 @@ export interface DebateDigitalExerciseProps {
 
 // Answers format for backend submission
 export interface DebateDigitalAnswers {
-  position: 'a_favor' | 'en_contra' | 'neutral';
-  response: string; // Full debate conversation or final argument
-  arguments?: string[]; // Array of user arguments
-  messageCount?: number; // Number of messages exchanged
+  position: 'a_favor' | 'en_contra';
+  response: string; // Concatenated essay sections
+  arguments?: string[]; // Array of essay section contents [thesis, arguments_for, counterarguments, conclusion]
+  messageCount?: number; // Always 4 (one per section)
 }

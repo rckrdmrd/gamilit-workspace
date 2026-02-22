@@ -4,7 +4,6 @@
  * Compare current rank with target rank showing differences and benefits.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap, Coins, CheckCircle } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -21,11 +20,11 @@ export interface RankComparisonProps {
 /**
  * RankComparison Component
  */
-export const RankComparison: React.FC<RankComparisonProps> = ({
+export const RankComparison = ({
   targetRank,
   showNextRank = true,
   className = '',
-}) => {
+}: RankComparisonProps) => {
   const { compareToNext, compareToRank } = useRank();
 
   // Get comparison data

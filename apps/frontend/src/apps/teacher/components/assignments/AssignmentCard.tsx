@@ -10,7 +10,7 @@
  * @module apps/teacher/components/assignments/AssignmentCard
  */
 
-import { Calendar, Users, Target, Clock, Eye, MessageSquare, Bell } from 'lucide-react';
+import { Calendar, Users, Target, Clock, Eye, Bell, Edit2, Trash2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { Assignment } from '../../types';
@@ -19,12 +19,16 @@ interface AssignmentCardProps {
   assignment: Assignment;
   onViewSubmissions: (assignment: Assignment) => void;
   onSendReminder?: (assignmentId: string) => void;
+  onEdit?: (assignment: Assignment) => void;
+  onDelete?: (assignment: Assignment) => void;
 }
 
 export function AssignmentCard({
   assignment,
   onViewSubmissions,
   onSendReminder,
+  onEdit,
+  onDelete,
 }: AssignmentCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -198,14 +202,35 @@ export function AssignmentCard({
               size="sm"
               onClick={() => onSendReminder(assignment.id)}
               title="Enviar recordatorio a estudiantes"
+              aria-label="Enviar recordatorio a estudiantes"
             >
               <Bell className="h-4 w-4" />
             </DetectiveButton>
           )}
 
-          <DetectiveButton variant="secondary" size="sm" title="Ver respuestas detalladas">
-            <MessageSquare className="h-4 w-4" />
-          </DetectiveButton>
+          {onEdit && (
+            <DetectiveButton
+              variant="secondary"
+              size="sm"
+              onClick={() => onEdit(assignment)}
+              title="Editar asignación"
+              aria-label="Editar asignación"
+            >
+              <Edit2 className="h-4 w-4" />
+            </DetectiveButton>
+          )}
+
+          {onDelete && (
+            <DetectiveButton
+              variant="danger"
+              size="sm"
+              onClick={() => onDelete(assignment)}
+              title="Eliminar asignación"
+              aria-label="Eliminar asignación"
+            >
+              <Trash2 className="h-4 w-4" />
+            </DetectiveButton>
+          )}
         </div>
       </div>
     </DetectiveCard>

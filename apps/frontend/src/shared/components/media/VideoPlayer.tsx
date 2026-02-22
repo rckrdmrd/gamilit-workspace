@@ -8,7 +8,8 @@
  * @since CORR-009
  */
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import type { MouseEvent, ChangeEvent } from 'react';
 
 export interface VideoPlayerProps {
   /** URL del archivo de video */
@@ -47,7 +48,7 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({
+export const VideoPlayer = ({
   src,
   poster,
   title,
@@ -60,7 +61,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onEnded,
   onTimeUpdate,
   className = '',
-}) => {
+}: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -157,7 +158,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [isPlaying, onPlay, onPause]);
 
   // Seek to position
-  const handleSeek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleSeek = useCallback((e: MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
     const progress = progressRef.current;
     if (!video || !progress) return;
@@ -170,7 +171,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [duration]);
 
   // Volume control
-  const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const video = videoRef.current;
     if (!video) return;
 

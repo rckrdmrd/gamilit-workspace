@@ -23,8 +23,10 @@ interface StreakReqs {
 }
 
 interface ModuleCompletionReqs {
-  module_id: string;
-  completion_percentage: number;
+  module_id?: string;
+  module_code?: string;
+  completion_percentage?: number;
+  all_exercises?: boolean;
 }
 
 interface AllModulesCompletionReqs {
@@ -82,7 +84,7 @@ interface ModuleAverageScoreReqs {
 
 /**
  * Rate limit configuration for achievements
- * RF-GAM-001: Maximum 5 achievements per minute per user
+ * RF-GAM-001: Maximum 20 achievements per minute per user
  */
 interface RateLimitEntry {
   count: number;
@@ -97,18 +99,18 @@ interface RateLimitEntry {
  * - Otorgamiento de logros a usuarios
  * - Seguimiento de progreso
  * - Detección automática de logros ganados
- * - Rate limiting (5 achievements/min) según RF-GAM-001
+ * - Rate limiting (20 achievements/min) según RF-GAM-001
  */
 @Injectable()
 export class AchievementsService {
   private readonly logger = new Logger(AchievementsService.name);
 
   /**
-   * Rate limiting: 5 achievements per minute per user
+   * Rate limiting: 20 achievements per minute per user
    * Map of userId -> { count, windowStart }
    */
   private readonly rateLimitCache = new Map<string, RateLimitEntry>();
-  private readonly RATE_LIMIT_MAX = 5;
+  private readonly RATE_LIMIT_MAX = 20;
   private readonly RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 
   constructor(
@@ -131,7 +133,7 @@ export class AchievementsService {
 
   /**
    * Verifica y actualiza el rate limit para un usuario
-   * RF-GAM-001: Maximum 5 achievements per minute
+   * RF-GAM-001: Maximum 20 achievements per minute
    *
    * @param userId - ID del usuario
    * @returns true if under rate limit, false if rate limited
@@ -156,7 +158,7 @@ export class AchievementsService {
     // Dentro de la ventana - verificar límite
     if (entry.count >= this.RATE_LIMIT_MAX) {
       this.logger.warn(
-        `Rate limit reached for user ${userId}. Queuing achievement grant.`,
+        `Rate limit reached for user ${userId}. Skipping achievement grant (rate limited).`,
       );
       return false;
     }
@@ -280,7 +282,7 @@ export class AchievementsService {
 
   /**
    * Otorga un achievement a un usuario
-   * RF-GAM-001: Aplica rate limiting (5/min) cuando se completa un logro
+   * RF-GAM-001: Aplica rate limiting (20/min) cuando se completa un logro
    */
   async grantAchievement(
     userId: string,
@@ -405,127 +407,6 @@ export class AchievementsService {
   }
 
   /**
-   * Updates achievement progress based on specific activity types.
-   * Called after exercise completion to incrementally track progress.
-   *
-   * @param userId - Profile ID
-   * @param activityType - Type of activity: 'exercise_completion' | 'streak' | 'module_completion' | 'perfect_score'
-   * @param activityData - Additional data about the activity
-   */
-  async updateIncrementalProgress(
-    userId: string,
-    activityType: string,
-    activityData: Record<string, any> = {},
-  ): Promise<UserAchievement[]> {
-    const updatedAchievements: UserAchievement[] = [];
-
-    try {
-      // Get all user's non-completed achievements with their definitions
-      const inProgressAchievements = await this.userAchievementRepo.find({
-        where: { user_id: userId, is_completed: false },
-        relations: ['achievement'],
-      });
-
-      for (const ua of inProgressAchievements) {
-        if (!ua.achievement || !ua.achievement.is_active) continue;
-
-        const conditions = ua.achievement.conditions as any;
-        if (!conditions?.type) continue;
-
-        let shouldIncrement = false;
-
-        switch (activityType) {
-          case 'exercise_completion':
-            // Achievements that track exercise count
-            if (conditions.type === 'exercise_completion' || conditions.type === 'progress') {
-              shouldIncrement = true;
-            }
-            // Module-specific exercise achievements
-            if (conditions.type === 'module_first_exercise' && activityData.moduleId) {
-              const reqModule = conditions.requirements?.module_id;
-              if (!reqModule || reqModule === activityData.moduleId) {
-                shouldIncrement = true;
-              }
-            }
-            // Exercise type specific
-            if (conditions.type === 'exercise_score' && activityData.exerciseType) {
-              const reqType = conditions.requirements?.exercise_type;
-              if (reqType === activityData.exerciseType) {
-                shouldIncrement = true;
-              }
-            }
-            break;
-
-          case 'perfect_score':
-            if (conditions.type === 'perfect_score' || conditions.type === 'score') {
-              shouldIncrement = true;
-            }
-            break;
-
-          case 'streak':
-            if (conditions.type === 'streak') {
-              // For streaks, set progress to current streak value instead of incrementing
-              const currentStreak = activityData.currentStreak || 0;
-              if (currentStreak > ua.progress) {
-                const wasCompletedStreak = ua.is_completed;
-                ua.progress = currentStreak;
-                ua.completion_percentage = Math.min(
-                  100,
-                  parseFloat(((currentStreak / ua.max_progress) * 100).toFixed(2)),
-                );
-                if (ua.progress >= ua.max_progress) {
-                  ua.is_completed = true;
-                  ua.completed_at = new Date();
-                }
-                const saved = await this.userAchievementRepo.save(ua);
-                updatedAchievements.push(saved);
-
-                // F5-A: Notify when streak achievement is newly completed
-                if (!wasCompletedStreak && saved.is_completed && ua.achievement) {
-                  await this.notifyAchievementUnlocked(userId, ua.achievement.id, saved);
-                }
-              }
-              continue; // Skip normal increment
-            }
-            break;
-
-          case 'module_completion':
-            if (conditions.type === 'module_completion' || conditions.type === 'all_modules_completion') {
-              shouldIncrement = true;
-            }
-            break;
-        }
-
-        if (shouldIncrement) {
-          ua.progress = Math.min(ua.progress + 1, ua.max_progress);
-          ua.completion_percentage = Math.min(
-            100,
-            parseFloat(((ua.progress / ua.max_progress) * 100).toFixed(2)),
-          );
-
-          const wasCompleted = ua.is_completed;
-          if (ua.progress >= ua.max_progress) {
-            ua.is_completed = true;
-            ua.completed_at = new Date();
-          }
-
-          const saved = await this.userAchievementRepo.save(ua);
-          updatedAchievements.push(saved);
-
-          // F5-A: Notify when achievement is newly completed via incremental progress
-          if (!wasCompleted && saved.is_completed && ua.achievement) {
-            await this.notifyAchievementUnlocked(userId, ua.achievement.id, saved);
-          }
-        }
-      }
-    } catch (error) {
-      this.logger.error(`Failed to update incremental progress for user ${userId}`, error);
-    }
-
-    return updatedAchievements;
-  }
-
-  /**
    * Detecta y otorga logros automáticamente basado en estadísticas del usuario
    * Lógica de auto-detection según condiciones
    */
@@ -539,7 +420,7 @@ export class AchievementsService {
     }
 
     const grantedAchievements: UserAchievement[] = [];
-    const allAchievements = await this.findAll();
+    const allAchievements = await this.findAll(true);
 
     for (const achievement of allAchievements) {
       // Verificar si el usuario ya tiene este logro completado
@@ -641,26 +522,27 @@ export class AchievementsService {
         // =====================================================
         case 'module_completion': {
           const r = reqs as unknown as ModuleCompletionReqs;
+          const moduleIdentifier = r.module_code || r.module_id;
 
           const result = await this.dataSource.query(
             `
-            SELECT mp.completion_percentage
+            SELECT mp.progress_percentage
             FROM progress_tracking.module_progress mp
             JOIN educational_content.modules m ON mp.module_id = m.id
             WHERE mp.user_id = $1
-              AND m.slug = $2
+              AND m.module_code = $2
             `,
-            [userId, r.module_id],
+            [userId, moduleIdentifier],
           );
 
           if (!result || result.length === 0) {
-            this.logger.debug(`[module_completion] No progress found for module ${r.module_id}`);
+            this.logger.debug(`[module_completion] No progress found for module ${moduleIdentifier}`);
             return false;
           }
 
-          const percentage = parseFloat(result[0].completion_percentage) || 0;
+          const percentage = parseFloat(result[0].progress_percentage) || 0;
           const met = percentage >= (r.completion_percentage || 100);
-          this.logger.debug(`[module_completion] Module ${r.module_id}: ${percentage}% / ${r.completion_percentage}%: ${met}`);
+          this.logger.debug(`[module_completion] Module ${moduleIdentifier}: ${percentage}% / ${r.completion_percentage}%: ${met}`);
           return met;
         }
 
@@ -797,7 +679,7 @@ export class AchievementsService {
             JOIN educational_content.exercises e ON es.exercise_id = e.id
             JOIN educational_content.modules m ON e.module_id = m.id
             WHERE es.user_id = $1
-              AND m.code = $2
+              AND m.module_code = $2
               AND es.status = 'graded'
             `,
             [userId, r.module_code],
@@ -864,7 +746,7 @@ export class AchievementsService {
               AND e.exercise_type = $2
               AND es.status = 'graded'
               AND es.score >= $3
-              AND es.time_spent <= $4
+              AND es.time_spent_seconds <= $4
             `,
             [userId, r.exercise_type, r.min_score || 0, r.max_time_seconds],
           );
@@ -907,7 +789,7 @@ export class AchievementsService {
             JOIN educational_content.exercises e ON es.exercise_id = e.id
             JOIN educational_content.modules m ON e.module_id = m.id
             WHERE es.user_id = $1
-              AND m.code = $2
+              AND m.module_code = $2
               AND es.status = 'graded'
             `,
             [userId, r.module_code],
@@ -1098,7 +980,7 @@ export class AchievementsService {
       throw new NotFoundException(`User stats not found for ${userId}`);
     }
 
-    const allAchievements = await this.findAll();
+    const allAchievements = await this.findAll(true);
     const userAchievements = await this.userAchievementRepo.find({
       where: { user_id: userId },
     });

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import { StatusBadge, StatusType } from '@shared/components/base/StatusBadge';
 import { DataTable, Column, RowAction } from '@shared/components/common/DataTable';
@@ -49,14 +49,14 @@ const getStatusType = (user: User): StatusType => {
   return user.isActive === false ? 'inactive' : 'active';
 };
 
-export const UserTable: React.FC<UserTableProps> = ({
+export const UserTable = ({
   users,
   currentUserId,
   onEdit,
   onDelete,
   onActivate,
   onDeactivate,
-}) => {
+}: UserTableProps) => {
   const columns: Column<User>[] = useMemo(() => [
     {
       key: 'fullName',

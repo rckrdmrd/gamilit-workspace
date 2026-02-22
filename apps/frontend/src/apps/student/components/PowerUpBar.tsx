@@ -5,7 +5,7 @@
  * Shows active power-ups with remaining time
  */
 
-import React from 'react';
+import type { ComponentType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb, Eye, RotateCcw, Clock, Zap } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -27,7 +27,7 @@ interface PowerUpBarProps {
 // ICON MAPPING
 // ============================================================================
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+const iconMap: Record<string, ComponentType<{ className?: string }>> = {
   lightbulb: Lightbulb,
   eye: Eye,
   'rotate-ccw': RotateCcw,
@@ -68,12 +68,12 @@ const getRarityColor = (type: string): string => {
 // MAIN COMPONENT
 // ============================================================================
 
-export const PowerUpBar: React.FC<PowerUpBarProps> = ({
+export const PowerUpBar = ({
   availablePowerUps,
   activePowerUps,
   onActivatePowerUp,
   disabled = false,
-}) => {
+}: PowerUpBarProps) => {
   // Filter power-ups that are actually available to use
   const usablePowerUps = availablePowerUps.filter(
     (p) => p.owned && p.quantity > 0 && p.status === 'available',

@@ -15,7 +15,6 @@
  * @since Phase 3 - Exercise System Restructuring
  */
 
-import React from 'react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ExercisePageHeader } from '@/apps/student/components/exercise/ExercisePageHeader';
@@ -27,7 +26,7 @@ import { ExerciseCompletedState } from './ExerciseCompletedState';
 import { ExerciseLoader } from './ExerciseLoader';
 import { ExerciseSidebar } from './ExerciseSidebar';
 
-export const ExerciseLayout: React.FC = () => {
+export const ExerciseLayout = () => {
   const {
     user,
     gamificationData,

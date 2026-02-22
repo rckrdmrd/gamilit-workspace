@@ -9,7 +9,8 @@
  * - Export button (CSV/PDF)
  */
 
-import React, { useState } from 'react';
+import type { ElementType } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Calendar,
@@ -43,7 +44,7 @@ interface LeaderboardFiltersProps {
 interface FilterOption<T> {
   value: T;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   description: string;
 }
 
@@ -101,7 +102,7 @@ const metricOptions: FilterOption<Metric>[] = [
   },
 ];
 
-export const LeaderboardFilters: React.FC<LeaderboardFiltersProps> = ({
+export const LeaderboardFilters = ({
   timePeriod,
   onTimePeriodChange,
   metric,
@@ -109,8 +110,8 @@ export const LeaderboardFilters: React.FC<LeaderboardFiltersProps> = ({
   searchQuery,
   onSearchChange,
   onExport,
-  className
-}) => {
+  className,
+}: LeaderboardFiltersProps) => {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 

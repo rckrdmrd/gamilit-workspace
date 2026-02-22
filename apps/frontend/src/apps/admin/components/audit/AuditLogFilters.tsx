@@ -23,7 +23,7 @@ interface AuditLogFiltersProps {
   onSearch: () => void;
 }
 
-export const AuditLogFilters: React.FC<AuditLogFiltersProps> = ({
+export const AuditLogFilters = ({
   filters,
   pageSize,
   onFilterChange,
@@ -31,7 +31,7 @@ export const AuditLogFilters: React.FC<AuditLogFiltersProps> = ({
   searchText,
   onSearchTextChange,
   onSearch,
-}) => {
+}: AuditLogFiltersProps) => {
   const [showFilters, setShowFilters] = useState(true);
 
   const activeFiltersCount = Object.values(filters).filter(

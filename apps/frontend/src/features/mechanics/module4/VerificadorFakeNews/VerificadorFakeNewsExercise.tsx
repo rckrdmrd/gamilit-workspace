@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, CheckCircle, XCircle, Send, Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -18,13 +18,13 @@ import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
 
-export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
+export const VerificadorFakeNewsExercise = ({
   exerciseId,
   onComplete,
   onProgressUpdate,
   initialData,
   exercise,
-}) => {
+}: ExerciseProps) => {
   // State management
   const [selectedArticleId, setSelectedArticleId] = useState(
     initialData?.selectedArticleId || mockArticles[0].id,
@@ -38,78 +38,20 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
   // API submission hook
   const {
-    submit,
+    submitAsync,
     isSubmitting,
-  } = useExerciseSubmission(exerciseId || '', {
-    onSuccess: (result) => {
-      setIsSubmitted(true);
-      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-      // Verificar si está pendiente de revisión manual
-      if (result.status === 'pending_review' || result.requiresManualReview) {
-        setFeedback({
-            type: 'info',
-            title: 'Verificación Enviada',
-            message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
-          pendingReview: true,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        });
-        setShowFeedback(true);
-        onComplete?.(0, timeSpent);
-        return;
-      }
-
-      // Flujo normal cuando ya está evaluado
-      setFeedback({
-        type: 'success',
-        title: '¡Verificación Completada!',
-        message: 'Tu análisis ha sido evaluado correctamente.',
-        score: result.score,
-        xpEarned: result.rewards?.xp || 0,
-        mlCoinsEarned: result.rewards?.mlCoins || 0,
-      });
-      setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
-    },
-    onError: (err: unknown) => {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Enviar',
-        message: (err instanceof Error ? err.message : null) || 'Hubo un problema al enviar tu verificación. Intenta de nuevo.',
-        score: 0,
-      });
-      setShowFeedback(true);
-    },
-  });
+  } = useExerciseSubmission(exerciseId || '');
 
   const selectedArticle =
     exercise?.articles?.find((a: NewsArticle) => a.id === selectedArticleId) ||
     mockArticles.find((a: NewsArticle) => a.id === selectedArticleId);
   const articles = exercise?.articles || mockArticles;
 
-  // Calculate score
-  const calculateScore = () => {
-    if (results.length === 0) return 0;
-
-    const verifiedCount = results.length;
-    const accurateVerifications = results.filter(
-      (r) => r.verdict === 'true' || r.verdict === 'false',
-    ).length;
-    const avgConfidence = results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
-
-    const verificationScore = (verifiedCount / Math.max(claims.length, 1)) * 40;
-    const accuracyScore = (accurateVerifications / Math.max(verifiedCount, 1)) * 40;
-    const confidenceScore = avgConfidence * 20;
-
-    return Math.round(verificationScore + accuracyScore + confidenceScore);
-  };
-
   // Progress tracking
   // FIX: Send answers in DTO format (claims_verified) for ExercisePage.tsx submit button
   useEffect(() => {
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    const score = calculateScore();
+    const score = 0; // Score assigned by teacher during manual review
 
     // CORR-010 FIX v4 2026-01-07: Sanitize claim IDs before sending
     // Transform to DTO format (claims_verified) for backend validation
@@ -228,7 +170,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
   // Submit handler - sends to API for manual review
   // FIX: Transform data to match VerificadorFakeNewsAnswerDto expected by backend
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!exerciseId || results.length === 0 || isSubmitting || isSubmitted) return;
 
     // CORR-010 FIX v4 2026-01-07: Sanitize claim IDs before sending
@@ -281,12 +223,50 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
           verifiedClaims: results.length,
           trueClaims: results.filter((r) => r.verdict === 'true').length,
           falseClaims: results.filter((r) => r.verdict === 'false').length,
-          averageConfidence: results.reduce((sum, r) => sum + r.confidence, 0) / results.length,
         },
       },
     };
 
-    submit(submissionData);
+    try {
+      const response = await submitAsync(submissionData);
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Check for manual review (MUST include 'submitted')
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Verificación Enviada',
+          message: MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
+          pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, timeSpent);
+        return;
+      }
+
+      // Normal graded flow
+      setFeedback({
+        type: 'success',
+        title: '¡Verificación Completada!',
+        message: 'Tu análisis ha sido evaluado correctamente.',
+        score: response.score,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(response.score, timeSpent);
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: (err instanceof Error ? err.message : null) || 'Hubo un problema al enviar tu verificación. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    }
   };
 
   const canSubmit = results.length >= 3 && !isSubmitting && !isSubmitted;
@@ -344,8 +324,8 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
               <p className="mb-4 text-detective-text-secondary">
                 Has verificado {results.length} afirmación(es).
               </p>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-4 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-2 sm:p-4 text-center">
                   <div className="mb-2 flex items-center justify-center gap-2">
                     <CheckCircle className="h-6 w-6 text-detective-success" />
                     <p className="text-3xl font-bold text-detective-success">
@@ -354,7 +334,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
                   </div>
                   <p className="text-sm text-detective-text">Verdaderas</p>
                 </div>
-                <div className="rounded-detective border-2 border-detective-danger/20 bg-detective-danger/10 p-4 text-center">
+                <div className="rounded-detective border-2 border-detective-danger/20 bg-detective-danger/10 p-2 sm:p-4 text-center">
                   <div className="mb-2 flex items-center justify-center gap-2">
                     <XCircle className="h-6 w-6 text-detective-danger" />
                     <p className="text-3xl font-bold text-detective-danger">
@@ -362,15 +342,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
                     </p>
                   </div>
                   <p className="text-sm text-detective-text">Falsas</p>
-                </div>
-                <div className="rounded-detective border-2 border-blue-200 bg-blue-50 p-4 text-center">
-                  <p className="mb-2 text-3xl font-bold text-detective-blue">
-                    {Math.round(
-                      (results.reduce((sum, r) => sum + r.confidence, 0) / results.length) * 100,
-                    )}
-                    %
-                  </p>
-                  <p className="text-sm text-detective-text">Confianza Promedio</p>
                 </div>
               </div>
 
@@ -428,7 +399,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
               const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-              onComplete(calculateScore(), timeSpent);
+              onComplete(0, timeSpent);
             }
           }}
           onRetry={() => {

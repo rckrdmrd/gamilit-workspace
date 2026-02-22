@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect, type KeyboardEvent } from 'react';
 import { motion } from 'framer-motion';
 import { CrucigramaCell } from './crucigramaTypes';
 import { cn } from '@shared/utils/cn';
@@ -10,12 +10,12 @@ export interface CrucigramaGridProps {
   onCellInput: (row: number, col: number, value: string) => void;
 }
 
-export const CrucigramaGrid: React.FC<CrucigramaGridProps> = ({
+export const CrucigramaGrid = ({
   grid,
   selectedCell,
   onCellClick,
   onCellInput
-}) => {
+}: CrucigramaGridProps) => {
   const cellRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export const CrucigramaGrid: React.FC<CrucigramaGridProps> = ({
   }, [selectedCell]);
 
   const handleKeyDown = (
-    e: React.KeyboardEvent,
+    e: KeyboardEvent,
     row: number,
     col: number
   ) => {

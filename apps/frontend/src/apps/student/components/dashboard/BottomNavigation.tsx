@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, type ElementType } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, BookOpen, Trophy, Bell, User, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -7,7 +7,7 @@ import { useNotificationsStore } from '@/features/notifications/store/notificati
 interface NavigationItem {
   id: string;
   label: string;
-  icon: React.ElementType;
+  icon: ElementType;
   path: string;
   ariaLabel: string;
 }
@@ -22,17 +22,17 @@ const navigationItems: NavigationItem[] = [
   },
   {
     id: 'modules',
-    label: 'Modules',
+    label: 'Aprender',
     icon: BookOpen,
-    path: '/modules',
-    ariaLabel: 'Ver Módulos Educativos',
+    path: '/learning',
+    ariaLabel: 'Ver Modulos Educativos',
   },
   {
     id: 'gamification',
-    label: 'Gamification',
+    label: 'Logros',
     icon: Trophy,
-    path: '/gamification',
-    ariaLabel: 'Ver Gamificación y Logros',
+    path: '/achievements',
+    ariaLabel: 'Ver Logros y Gamificacion',
   },
   {
     id: 'notifications',

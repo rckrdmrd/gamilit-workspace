@@ -8,7 +8,6 @@
  * @since Phase 3 - Exercise System Restructuring
  */
 
-import React from 'react';
 import {
   ArrowLeft,
   Save,
@@ -22,7 +21,7 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { HintSystem } from '@shared/components/mechanics/HintSystem';
 import { useExerciseContext } from '../context/ExerciseContext';
 
-export const ActionsPanel: React.FC = () => {
+export const ActionsPanel = () => {
   const {
     navigateBack,
     handleSaveProgress,

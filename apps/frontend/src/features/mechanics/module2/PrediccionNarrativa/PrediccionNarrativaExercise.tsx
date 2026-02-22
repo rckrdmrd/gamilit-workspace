@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, AlertCircle, Lightbulb } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -17,14 +17,14 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
-export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExerciseProps> = ({
+export const PrediccionNarrativaExercise = ({
   exercise = mockExerciseData,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: PrediccionNarrativaExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -319,7 +319,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
             </div>
 
             {/* Beginning of narrative */}
-            <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
+            <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-3 sm:p-6">
               <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
                 Inicio de la Historia
               </h3>

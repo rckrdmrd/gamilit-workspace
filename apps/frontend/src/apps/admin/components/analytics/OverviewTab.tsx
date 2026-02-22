@@ -10,7 +10,7 @@
  * @author Frontend-Developer Agent
  * @date 2025-11-24
  */
-import { useMemo } from 'react';
+import { useMemo, type ElementType } from 'react';
 import {
   PieChart,
   Pie,
@@ -50,7 +50,7 @@ function StatCard({
 }: {
   title: string;
   value: string | number;
-  icon: React.ElementType;
+  icon: ElementType;
   color: string;
 }) {
   return (

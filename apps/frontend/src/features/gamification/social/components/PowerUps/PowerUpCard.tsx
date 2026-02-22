@@ -2,7 +2,6 @@
  * PowerUpCard Component
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Coins, Package, type LucideIcon } from 'lucide-react';
 import type { PowerUp } from '../../types/powerUpsTypes';
@@ -21,12 +20,12 @@ interface PowerUpCardProps {
   showActions?: boolean;
 }
 
-export const PowerUpCard: React.FC<PowerUpCardProps> = ({
+export const PowerUpCard = ({
   powerUp,
   onPurchase,
   onUse,
   showActions = true,
-}) => {
+}: PowerUpCardProps) => {
   const Icon = iconMap[powerUp.icon] || Zap;
   const isAdvanced = powerUp.type === 'advanced';
 

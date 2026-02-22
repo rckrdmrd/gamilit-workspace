@@ -9,7 +9,7 @@
  * @updated 2026-02-18 - Added cascade dropdown filters (Obs #11)
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import type { ReportType, ReportFormat, GenerateReportParams } from '@/services/api/adminTypes';
 import { getOrganizations } from '@/services/api/adminAPI';
 import { classroomTeacherApi } from '@/services/api/admin/classroomTeacherApi';
@@ -140,7 +140,7 @@ export function ReportGenerationForm({ onSubmit, isGenerating }: ReportGeneratio
     return () => { cancelled = true; };
   }, [organizationId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const params: GenerateReportParams = {

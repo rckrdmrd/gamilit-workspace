@@ -1,6 +1,6 @@
 # Schema 11: Missions — gamification_system (3 tablas, RLS via 07d)
 
-> **Version:** 2.0.0 | **Fecha:** 2026-02-18
+> **Version:** 2.1.0 | **Fecha:** 2026-02-21
 > Las misiones residen en `gamification_system`, no en un schema separado.
 > DDL: `apps/database/ddl/schemas/gamification_system/tables/`
 
@@ -49,6 +49,8 @@ Catalogo de plantillas para generar misiones automaticamente.
 | min_level | INTEGER | NOT NULL | 1 | Nivel minimo requerido |
 | max_level | INTEGER | NULL | NULL | Nivel maximo (NULL = sin limite) |
 | required_module | VARCHAR(100) | NULL | NULL | Modulo especifico requerido |
+| required_exercise_type | VARCHAR(50) | NULL | NULL | Tipo de ejercicio requerido (e.g., crucigrama, detective_textual) |
+| exercise_id | UUID | NULL | NULL | FK educational_content.exercises — vincula template a ejercicio concreto |
 | icon | VARCHAR(10) | NULL | NULL | Emoji del template |
 | color | VARCHAR(20) | NULL | NULL | Color hex |
 | metadata | JSONB | NOT NULL | '{}' | Metadatos adicionales |
@@ -71,6 +73,7 @@ Instancias de misiones por usuario, generadas desde templates.
 | user_id | UUID | NOT NULL | - | FK auth_management.profiles |
 | tenant_id | UUID | NULL | NULL | FK auth_management.tenants |
 | template_id | UUID | NOT NULL | - | FK gamification_system.mission_templates (REC-009: migrado de TEXT a UUID) |
+| exercise_id | UUID | NULL | NULL | FK educational_content.exercises — propagado desde template al crear mision |
 | title | VARCHAR(200) | NOT NULL | - | Titulo de la mision |
 | description | TEXT | NULL | NULL | Descripcion |
 | mission_type | mission_type | NOT NULL | - | daily, weekly, special, classroom |
@@ -88,6 +91,7 @@ Instancias de misiones por usuario, generadas desde templates.
 **Constraints:**
 - `missions_template_id_fkey` FK → `mission_templates(id)` (REC-009)
 - `missions_user_template_type_date_unique` UNIQUE (`user_id`, `template_id`, `mission_type`, `end_date`) (REC-001)
+- `missions_exercise_id_fkey` FK → `educational_content.exercises(id)` ON DELETE SET NULL
 
 **RLS:** SI (via 07d)
 **Entity:** `Mission` (`gamification/entities/mission.entity.ts`)
@@ -137,4 +141,4 @@ Misiones asignadas por maestros a aulas completas.
 
 ---
 
-*Generado: 2026-02-18 | Sistema SIMCO v4.3.0*
+*Generado: 2026-02-21 | Sistema SIMCO v4.3.0*

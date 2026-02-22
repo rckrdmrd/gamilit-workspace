@@ -2,11 +2,12 @@
  * EarningSourcesBreakdown - Pie chart showing earning sources
  */
 
+import type { ComponentType, CSSProperties } from 'react';
 import { motion } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
 import { mockEarningSourcesData } from '../../mockData/economyMockData';
 
-export const EarningSourcesBreakdown: React.FC = () => {
+export const EarningSourcesBreakdown = () => {
   const data = mockEarningSourcesData;
 
   return (
@@ -17,7 +18,7 @@ export const EarningSourcesBreakdown: React.FC = () => {
 
       <div className="space-y-4">
         {data.map((source, index) => {
-          const IconMap = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>>;
+          const IconMap = LucideIcons as unknown as Record<string, ComponentType<{ className?: string; style?: CSSProperties }>>;
           const Icon = IconMap[source.icon] || LucideIcons.Circle;
 
           return (

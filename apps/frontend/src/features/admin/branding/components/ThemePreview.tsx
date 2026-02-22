@@ -8,7 +8,6 @@
  * @see ET-WL-001-theming.md
  */
 
-import React from 'react';
 import { Bell, User, Search, Home, BookOpen, Trophy, Settings } from 'lucide-react';
 import { getContrastTextColor } from '@/utils/color.utils';
 
@@ -47,13 +46,13 @@ interface ThemePreviewProps {
  * />
  * ```
  */
-export const ThemePreview: React.FC<ThemePreviewProps> = ({
+export const ThemePreview = ({
   platformName,
   logoUrl,
   primaryColor,
   secondaryColor,
   accentColor = '#f59e0b',
-}) => {
+}: ThemePreviewProps) => {
   const primaryTextColor = getContrastTextColor(primaryColor);
   const secondaryTextColor = getContrastTextColor(secondaryColor);
 

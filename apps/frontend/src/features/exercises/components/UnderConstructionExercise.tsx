@@ -10,7 +10,7 @@
  *
  * Especificación: orchestration/agentes/architecture-analyst/gap-analysis/ESTRATEGIA-MODULOS-4-5-EN-CONSTRUCCION.md
  */
-import React from 'react';
+import type { MutableRefObject } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Construction, AlertCircle, Zap, Clock, Gift, ArrowLeft, BookOpen } from 'lucide-react';
@@ -34,12 +34,12 @@ interface UnderConstructionExerciseProps {
   // Optional props to maintain compatibility with Exercise component interface
   onComplete?: () => void;
   onProgressUpdate?: (update: Record<string, unknown>) => void;
-  actionsRef?: React.MutableRefObject<Record<string, unknown>>;
+  actionsRef?: MutableRefObject<Record<string, unknown>>;
 }
 
-export const UnderConstructionExercise: React.FC<UnderConstructionExerciseProps> = ({
+export const UnderConstructionExercise = ({
   exercise,
-}) => {
+}: UnderConstructionExerciseProps) => {
   const navigate = useNavigate();
 
   // Extract module ID from exercise.module_id or exercise.module.id

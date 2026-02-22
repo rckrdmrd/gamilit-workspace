@@ -10,7 +10,6 @@
  * @component
  */
 
-import React from 'react';
 import { Calendar, Users } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -26,7 +25,7 @@ interface AlertDetailsModalProps {
   onClose: () => void;
 }
 
-export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isOpen, onClose }) => {
+export const AlertDetailsModal = ({ alert, isOpen, onClose }: AlertDetailsModalProps) => {
   if (!isOpen || !alert) return null;
 
   const getSeverityColor = (severity: SystemAlertSeverity): string => {

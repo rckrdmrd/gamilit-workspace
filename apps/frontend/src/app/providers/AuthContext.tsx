@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { authAPI } from '@/features/auth/api/authAPI';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { performLogout } from '@/shared/utils/authCleanup';
@@ -38,7 +38,7 @@ interface AuthProviderProps {
  * </AuthProvider>
  * ```
  */
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

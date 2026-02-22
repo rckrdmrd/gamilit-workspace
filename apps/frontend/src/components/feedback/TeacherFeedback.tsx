@@ -43,11 +43,11 @@ interface TeacherFeedbackProps {
   teacherMode?: boolean; // True if current user is teacher
 }
 
-export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({
+export const TeacherFeedback = ({
   existingFeedback = [],
   onSubmitFeedback,
   teacherMode = false,
-}) => {
+}: TeacherFeedbackProps) => {
   const [isComposing, setIsComposing] = useState(false);
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState<number | undefined>(undefined);

@@ -26,6 +26,12 @@ export class MissionResponseDto {
   })
     template_id!: string;
 
+  @ApiPropertyOptional({
+    description: 'ID del ejercicio vinculado (opcional)',
+    example: '990e8400-e29b-41d4-a716-446655440000',
+  })
+    exercise_id!: string | null;
+
   @ApiProperty({
     description: 'Título de la misión',
     example: 'Racha de ejercicios',

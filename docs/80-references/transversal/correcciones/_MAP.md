@@ -56,7 +56,7 @@
 | **Problema** | Documentacion RF-M4-001 y RF-M5-001 desincronizada con tipos reales de ejercicios |
 | **Inconsistencia 1** | RF-M4-001 listaba tipos incorrectos (linea_tiempo, mapa_mental, etc.) |
 | **Inconsistencia 2** | RF-M5-001 listaba tipos incorrectos (ensayo, carta, proyecto_multimedia) |
-| **Inconsistencia 3** | manualReviewExercises.ts incluia quiz-tiktok (es auto-gradable) |
+| **Inconsistencia 3** | manualReviewExercises.ts no incluia quiz-tiktok (requiere evaluacion manual) |
 | **Estado** | COMPLETADO - 3 archivos actualizados |
 | **Agente** | Orquestador |
 
@@ -64,7 +64,7 @@
 
 | Archivo | Cambio |
 |---------|--------|
-| `manualReviewExercises.ts` | Removido quiz-tiktok de lista manual |
+| `manualReviewExercises.ts` | Agregado quiz-tiktok a lista de evaluacion manual |
 | `RF-M4-001-ejercicios-m4.md` | Actualizado con tipos reales |
 | `RF-M5-001-ejercicios-m5.md` | Actualizado con tipos reales |
 
@@ -73,11 +73,11 @@
 | Modulo | Cantidad |
 |--------|----------|
 | M3 | 5 (tribunal_opiniones, debate_digital, analisis_fuentes, podcast_argumentativo, matriz_perspectivas) |
-| M4 | 4 (verificador_fake_news, infografia_interactiva, navegacion_hipertextual, analisis_memes) |
+| M4 | 5 (verificador_fake_news, infografia_interactiva, navegacion_hipertextual, analisis_memes, quiz_tiktok) |
 | M5 | 3 (diario_multimedia, comic_digital, video_carta) |
-| **Total** | **12** |
+| **Total** | **13** |
 
-**Nota:** quiz_tiktok (M4) es auto-gradable - NO requiere evaluacion manual.
+**Nota:** Todos los ejercicios M3-M5 requieren evaluacion manual (requires_manual_grading = true). No hay auto-grading ni interaccion con IA en estos modulos.
 
 **Cambios BD:** NO - Solo documentacion y constante frontend.
 
@@ -196,7 +196,7 @@ FROM educational_content.exercises WHERE exercise_type = 'tribunal_opiniones';
 | **Estado** | ✅ COMPLETADO - TypeScript sin errores |
 | **Agente** | Orquestador |
 | **Cambios BD** | ❌ Ninguno (solo logica de aplicacion) |
-| **Ejercicios afectados** | 13 ejercicios (5 M3 + 4 M4 + 4 M5) |
+| **Ejercicios afectados** | 13 ejercicios (5 M3 + 5 M4 + 3 M5) |
 | **US Cumplimiento** | US-TEACH-003 (Evaluacion Manual), US-GAM-001 (XP), US-GAM-002 (ML Coins) |
 
 ### CORR-006: Estilos Headers Ejercicios Modulo 3

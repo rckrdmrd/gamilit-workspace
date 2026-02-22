@@ -3,7 +3,7 @@
  * Time period selector for leaderboard data
  */
 
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, TrendingUp, Trophy } from 'lucide-react';
 import type { TimePeriod } from '../../types/leaderboardsTypes';
@@ -13,14 +13,14 @@ interface SeasonSelectorProps {
   onPeriodChange: (period: TimePeriod) => void;
 }
 
-const periods: { value: TimePeriod; label: string; icon: React.ElementType }[] = [
+const periods: { value: TimePeriod; label: string; icon: ElementType }[] = [
   { value: 'daily', label: 'Hoy', icon: Clock },
   { value: 'weekly', label: 'Semana', icon: Calendar },
   { value: 'monthly', label: 'Mes', icon: TrendingUp },
   { value: 'all-time', label: 'Historico', icon: Trophy },
 ];
 
-export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ selectedPeriod, onPeriodChange }) => {
+export const SeasonSelector = ({ selectedPeriod, onPeriodChange }: SeasonSelectorProps) => {
   return (
     <div className="flex gap-2 overflow-x-auto pb-2">
       {periods.map((period) => {

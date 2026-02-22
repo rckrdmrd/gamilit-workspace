@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { PlayCircle, BarChart, Zap } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -15,7 +15,7 @@ export interface QuickActionsCardProps {
 
 interface QuickAction {
   id: string;
-  icon: React.ElementType;
+  icon: ElementType;
   label: string;
   sublabel: string;
   onClick: () => void;
@@ -24,14 +24,14 @@ interface QuickAction {
   borderColor: string;
 }
 
-export const QuickActionsCard: React.FC<QuickActionsCardProps> = ({
+export const QuickActionsCard = ({
   onContinueCase,
   onViewProgress,
   onDailyChallenge,
   currentCaseTitle = 'Último caso',
   completionPercentage = 0,
   challengeAvailable = true,
-}) => {
+}: QuickActionsCardProps) => {
   const quickActions: QuickAction[] = [
     {
       id: 'continue-case',

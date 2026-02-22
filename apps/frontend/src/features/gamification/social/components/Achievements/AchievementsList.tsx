@@ -3,7 +3,7 @@
  * Grid display of all achievements with filtering
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -34,7 +34,7 @@ const categories: {
   { value: 'hidden', label: 'Ocultos', IconComponent: EyeOff },
 ];
 
-export const AchievementsList: React.FC = () => {
+export const AchievementsList = () => {
   const { getFilteredAchievements, filterByCategory, stats } = useAchievements();
   const [activeFilter, setActiveFilter] = useState<string>('all');
 

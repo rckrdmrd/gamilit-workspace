@@ -8,7 +8,7 @@
  * @since Phase 3 - Exercise System Restructuring
  */
 
-import React from 'react';
+import type { ComponentType } from 'react';
 import { motion } from 'framer-motion';
 import { Lightbulb, Eye, RotateCcw, Zap } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -24,7 +24,7 @@ interface ComodinConfig {
   type: ComodinType;
   label: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   iconColor: string;
   bgColor: string;
 }
@@ -60,7 +60,7 @@ const COMODIN_CONFIGS: ComodinConfig[] = [
 // COMPONENT
 // ============================================================================
 
-export const ConsumablesPanel: React.FC = () => {
+export const ConsumablesPanel = () => {
   const { comodines } = useExerciseContext();
   const { inventory, canUse, useComodin: activateComodin, usageLimits, isLoading, error } = comodines;
 
@@ -114,7 +114,7 @@ export const ConsumablesPanel: React.FC = () => {
                     : 'border-gray-100 bg-gray-50 opacity-60'
               }`}
             >
-              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${config.bgColor}`}>
+              <div className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full ${config.bgColor}`}>
                 <Icon className={`h-4 w-4 ${config.iconColor}`} />
               </div>
               <div className="min-w-0 flex-1">

@@ -47,6 +47,9 @@ import { RolesTable, RoleEditor, RoleActionsMenu } from '../components/roles';
 import type { Permission } from '@/services/api/adminTypes';
 
 export default function AdminRolesPage() {
+  // Local state
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+
   // Hooks
   const { roles, loading: rolesLoading, error: rolesError, refetch } = useRoles();
   const {
@@ -56,10 +59,7 @@ export default function AdminRolesPage() {
     fetchRolePermissions,
     updatePermissions,
     reset: resetPermissions,
-  } = useRolePermissions();
-
-  // Local state
-  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+  } = useRolePermissions(selectedRoleId);
   const [editingPermissions, setEditingPermissions] = useState<Permission[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);

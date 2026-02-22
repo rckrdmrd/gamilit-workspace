@@ -12,7 +12,7 @@ interface DashboardStatsGridProps {
  * Displays: Total Users, Institutions, Storage, and Flagged Content.
  * Extracted from AdminDashboardPage inline rendering.
  */
-export const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ metrics }) => {
+export const DashboardStatsGrid = ({ metrics }: DashboardStatsGridProps) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {/* Total Users */}

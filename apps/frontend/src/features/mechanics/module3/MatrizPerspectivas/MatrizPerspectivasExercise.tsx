@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type MutableRefObject } from 'react';
 import { motion } from 'framer-motion';
-import { Grid3x3, Sparkles, Eye } from 'lucide-react';
+import { Grid3x3, Eye } from 'lucide-react';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
@@ -9,7 +9,7 @@ import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/consta
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
-import { fetchMatrixExercise, getAIPerspectives } from './matrizPerspectivasAPI';
+import { fetchMatrixExercise } from './matrizPerspectivasAPI';
 import type {
   MatrixExercise,
   PerspectiveGeneration,
@@ -25,7 +25,7 @@ interface ExerciseProps {
   onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
@@ -34,17 +34,16 @@ interface ExerciseProps {
 interface ExerciseState {
   perspectives: PerspectiveGeneration[];
   currentScore: number;
-  perspectivesGenerated: boolean;
 }
 
-export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
+export const MatrizPerspectivasExercise = ({
   exerciseId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: ExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exerciseId);
@@ -54,7 +53,6 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
     initialData?.perspectives || [],
   );
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
   const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
@@ -102,7 +100,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
 
     // Progreso granular basado en múltiples factores
     const answeredQuestions = Object.values(answers).filter((a) => a.trim().length >= 50).length;
-    // Steps: 1=exercise loaded, 2=perspectives generated, 3-5=questions answered
+    // Steps: 1=exercise loaded, 2=perspectives loaded, 3-5=questions answered
     const currentStep = 1 + (perspectives.length > 0 ? 1 : 0) + answeredQuestions;
     const totalSteps = 5; // loaded + perspectives + 3 questions
 
@@ -125,6 +123,9 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
     try {
       const data = await fetchMatrixExercise(exerciseId);
       setExercise(data);
+      // Load perspectives from mock data (no AI generation)
+      const { mockPerspectives } = await import('./matrizPerspectivasMockData');
+      setPerspectives(mockPerspectives);
     } finally {
       setLoading(false);
     }
@@ -134,29 +135,8 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
     const state: ExerciseState = {
       perspectives,
       currentScore,
-      perspectivesGenerated: perspectives.length > 0,
     };
     saveProgressUtil(exerciseId, state);
-  };
-
-  const handleGenerate = async () => {
-    if (!exercise) return;
-    setGenerating(true);
-    try {
-      const persp = await getAIPerspectives(exercise.topic, exercise.perspectiveCount);
-      setPerspectives(persp);
-      const newScore = 50; // Base score for generating perspectives
-      setCurrentScore(newScore);
-    } catch (_error) {
-      setFeedback({
-        type: 'error',
-        title: 'Error al Generar',
-        message: 'No pudimos generar las perspectivas. Por favor intenta de nuevo.',
-      });
-      setShowFeedback(true);
-    } finally {
-      setGenerating(false);
-    }
   };
 
   const handleComplete = async () => {
@@ -192,7 +172,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       } as unknown as Record<string, unknown>);
 
       // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
-      if (response.status === 'pending_review' || response.requiresManualReview) {
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
         const pendingFeedback: FeedbackData = {
           type: 'info',
           title: 'Enviado para Revisión',
@@ -295,23 +275,17 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
         cardPadding="lg"
       >
         <div className="space-y-6">
-          {/* Generate Button */}
+          {/* Topic Description */}
           <div className="text-center">
-            <DetectiveButton
-              variant="primary"
-              onClick={handleGenerate}
-              disabled={generating}
-              loading={generating}
-              icon={<Sparkles className="h-6 w-6" />}
-            >
-              {generating ? 'Generando Perspectivas...' : 'Generar Perspectivas con IA'}
-            </DetectiveButton>
+            <p className="text-detective-base text-detective-text-secondary">
+              Analiza las siguientes perspectivas sobre el tema: <strong>{exercise.topic}</strong>
+            </p>
           </div>
 
           {/* Perspectives Grid */}
           {perspectives.length > 0 && (
             <>
-              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-6 md:grid-cols-3">
                 {perspectives.map((persp, idx) => (
                   <motion.div
                     key={idx}
@@ -319,7 +293,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.15 }}
                   >
-                    <div className="hover:shadow-detective-md rounded-detective border-2 border-detective-border-light bg-white p-6 transition-shadow">
+                    <div className="hover:shadow-detective-md rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6 transition-shadow">
                       <div className="mb-4 flex items-center gap-2">
                         <Eye className="h-5 w-5 text-detective-orange" />
                         <h3 className="text-detective-lg font-semibold text-detective-blue">
@@ -405,7 +379,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-8 rounded-detective-lg border-2 border-detective-blue bg-gradient-to-br from-blue-50 to-purple-50 p-6"
+                className="mt-8 rounded-detective-lg border-2 border-detective-blue bg-gradient-to-br from-blue-50 to-purple-50 p-3 sm:p-6"
               >
                 <h2 className="mb-4 flex items-center gap-2 text-detective-2xl font-bold text-detective-blue">
                   <Grid3x3 className="h-6 w-6" />
@@ -426,7 +400,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                       value={answers.q1}
                       onChange={(e) => setAnswers({ ...answers, q1: e.target.value })}
                       placeholder="Analiza y explica cuál perspectiva consideras más injusta y por qué..."
-                      className="w-full resize-none rounded-detective border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}
                     />
@@ -451,7 +425,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                       value={answers.q2}
                       onChange={(e) => setAnswers({ ...answers, q2: e.target.value })}
                       placeholder="Describe cómo ha cambiado la forma en que se ve a Marie Curie..."
-                      className="w-full resize-none rounded-detective border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}
                     />
@@ -476,7 +450,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                       value={answers.q3}
                       onChange={(e) => setAnswers({ ...answers, q3: e.target.value })}
                       placeholder="Identifica cuál grupo presentó la visión más balanceada y fundamenta tu respuesta..."
-                      className="w-full resize-none rounded-detective border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}
                     />
@@ -494,16 +468,6 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                 </div>
               </motion.div>
             </>
-          )}
-
-          {/* Empty State */}
-          {perspectives.length === 0 && !generating && (
-            <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-12 text-center">
-              <Grid3x3 className="mx-auto mb-4 h-16 w-16 text-gray-300" />
-              <p className="text-detective-base text-detective-text-secondary">
-                Genera perspectivas con IA para comenzar el análisis
-              </p>
-            </div>
           )}
 
           {/* Action Buttons */}

@@ -15,7 +15,7 @@
  * @component
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { Fragment, useState, useEffect, useMemo } from 'react';
 import { AdminPageShell } from '../components/shared';
 import { useProgress, useClassroomsList } from '../hooks';
 
@@ -164,12 +164,12 @@ export default function AdminProgressPage() {
             <nav aria-label="Ruta de navegacion">
               <div className="flex items-center gap-2 text-detective-text-secondary">
                 {breadcrumbs.map((crumb, index) => (
-                  <React.Fragment key={index}>
+                  <Fragment key={index}>
                     {index > 0 && <span aria-hidden="true">/</span>}
                     <span className={index === breadcrumbs.length - 1 ? 'font-medium' : ''} aria-current={index === breadcrumbs.length - 1 ? 'page' : undefined}>
                       {crumb}
                     </span>
-                  </React.Fragment>
+                  </Fragment>
                 ))}
               </div>
             </nav>

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import {
   PrivacySettingsForm,
   type PrivacyToggleItem,
@@ -20,7 +20,7 @@ interface PrivacyState {
 
 interface PrivacySettingsSectionProps {
   privacy: PrivacyState;
-  setPrivacy: React.Dispatch<React.SetStateAction<PrivacyState>>;
+  setPrivacy: Dispatch<SetStateAction<PrivacyState>>;
   saveStatus: SaveStatus;
   handleSave: () => void;
 }

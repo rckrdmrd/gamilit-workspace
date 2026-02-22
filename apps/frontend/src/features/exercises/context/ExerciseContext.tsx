@@ -7,7 +7,7 @@
  * @version 1.0.0
  * @since Phase 2 - Exercise System Restructuring
  */
-import React, { createContext, useContext, useCallback, useRef, useState } from 'react';
+import { createContext, useContext, useCallback, useRef, useState, useEffect, type ComponentType, type MutableRefObject, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
@@ -41,7 +41,7 @@ export interface ExerciseContextValue {
   adaptedExercise: Record<string, unknown> | null;
   mechanicEntry: ExerciseRegistryEntry | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  MechanicComponent: React.ComponentType<any> | null;
+  MechanicComponent: ComponentType<any> | null;
   isLoading: boolean;
   loadError: string | null;
   hints: string[];
@@ -82,7 +82,7 @@ export interface ExerciseContextValue {
   navigateBack: () => void;
 
   // === Mechanic actions ref ===
-  mechanicActionsRef: React.MutableRefObject<ExerciseMechanicActions>;
+  mechanicActionsRef: MutableRefObject<ExerciseMechanicActions>;
 
   // === Feedback ===
   feedback: FeedbackData | null;
@@ -121,7 +121,7 @@ export function useExerciseContext(): ExerciseContextValue {
 
 interface ExerciseProviderProps {
   exerciseId: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps) {
@@ -158,7 +158,7 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   const mechanicActionsRef = useRef<ExerciseMechanicActions>({});
 
   // Set initial feedback from load error
-  React.useEffect(() => {
+  useEffect(() => {
     if (exerciseData.error && !feedback) {
       setFeedback({
         type: 'info',
@@ -169,7 +169,7 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   }, [exerciseData.error, feedback]);
 
   // Set recovery feedback
-  React.useEffect(() => {
+  useEffect(() => {
     if (progressHook.autoSaveStatus === 'saved' && progressHook.lastSavedAt) {
       // Recovery happened
     }
@@ -251,11 +251,13 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
         xpEarned,
         mlCoinsEarned,
         showConfetti: result.isPerfect || result.score >= 80 || !!result.rankUp,
-        achievements: result.achievements?.map(a => ({
+        achievements: result.achievements?.map((a: { name: string; description?: string; icon?: string; rarity?: string; mlCoinsReward?: number; xpReward?: number }) => ({
           name: a.name,
-          description: a.description,
-          icon: a.icon,
-          rarity: 'common',
+          description: a.description || '',
+          icon: a.icon || 'trophy',
+          rarity: a.rarity ?? 'common',
+          mlCoinsReward: a.mlCoinsReward ?? 0,
+          xpReward: a.xpReward ?? 0,
         })),
         rankUp: result.rankUp ? {
           newRank: result.rankUp.newRank,

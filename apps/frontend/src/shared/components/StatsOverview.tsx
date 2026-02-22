@@ -1,4 +1,3 @@
-import React from 'react';
 import { BookOpen, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import type { ProgressSummary } from '@/shared/types/progress.types';
 import { formatTimeSpent, formatProgressPercentage } from '@/shared/utils/formatters';
@@ -20,7 +19,7 @@ interface StatsOverviewProps {
  *
  * @param summary - Progress summary data
  */
-export const StatsOverview: React.FC<StatsOverviewProps> = ({ summary }) => {
+export const StatsOverview = ({ summary }: StatsOverviewProps) => {
   const stats = [
     {
       label: 'Total Modules',

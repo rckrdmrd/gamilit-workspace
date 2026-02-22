@@ -16,8 +16,6 @@ export { analyticsApi, AnalyticsAPI } from './analyticsApi';
 export { classroomsApi, ClassroomsAPI } from './classroomsApi';
 export { assignmentsApi, AssignmentsAPI } from './assignmentsApi';
 export { interventionAlertsApi } from './interventionAlertsApi';
-export { teacherMessagesApi } from './teacherMessagesApi';
-export { teacherContentApi } from './teacherContentApi';
 // manualReviewApi removed — canonical is @/shared/api/manualReviewApi
 export { bonusCoinsApi, BonusCoinsAPI } from './bonusCoinsApi';
 export { exerciseResponsesApi } from './exerciseResponsesApi';
@@ -88,33 +86,6 @@ export type {
   InterventionAlertStatus,
 } from './interventionAlertsApi';
 
-// Teacher Messages types
-export type {
-  Message,
-  MessagesListResponse,
-  GetMessagesParams,
-  SendMessageData,
-  SendAnnouncementData,
-  SendFeedbackData,
-  Conversation,
-  MessageType,
-  MessageRecipient,
-  UnreadCountResponse,
-  SuccessResponse,
-} from './teacherMessagesApi';
-
-// Teacher Content types
-export type {
-  TeacherContent,
-  ContentListResponse,
-  GetContentParams,
-  CreateContentData,
-  UpdateContentData,
-  CloneContentData,
-  TeacherContentType,
-  TeacherContentStatus,
-  TeacherContentVisibility,
-} from './teacherContentApi';
 
 // Bonus Coins types
 export type { GrantBonusRequest, GrantBonusResponse } from './bonusCoinsApi';

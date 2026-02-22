@@ -231,7 +231,7 @@ BEGIN
             "memes": [
                 {
                     "id": "meme1",
-                    "imageUrl": "/memes/marie-curie-glowing.jpg",
+                    "imageUrl": "/memes/marie-curie-glowing.svg",
                     "format": "Drake Hotline Bling",
                     "topText": "Protección contra radiación",
                     "bottomText": "Seguir experimentando sin protección",
@@ -242,6 +242,72 @@ BEGIN
                         "historicalAccuracy": "Alta - realmente no usaban protección adecuada",
                         "implication": "Contraste entre conocimiento actual y pasado"
                     }
+                },
+                {
+                    "id": "meme2",
+                    "imageUrl": "/memes/expanding-brain-curie.svg",
+                    "format": "Expanding Brain",
+                    "topText": "Niveles de conocimiento sobre Marie Curie",
+                    "analysis": {
+                        "mainMessage": "El conocimiento sobre Curie tiene muchos niveles de profundidad",
+                        "humorType": "Progresión cómica",
+                        "culturalReference": "Meme Expanding Brain con 4 niveles",
+                        "historicalAccuracy": "Alta - todos los datos son verificables",
+                        "implication": "Mientras más sabes, más fascinante es su historia"
+                    }
+                },
+                {
+                    "id": "meme3",
+                    "imageUrl": "/memes/distracted-curie.svg",
+                    "format": "Distracted Boyfriend",
+                    "topText": "Marie Curie distraída por Radio",
+                    "bottomText": "Ignorando la Física Teórica",
+                    "analysis": {
+                        "mainMessage": "Curie abandonó la física pura por la investigación de elementos radioactivos",
+                        "humorType": "Analogía visual",
+                        "culturalReference": "Meme Distracted Boyfriend adaptado a ciencia",
+                        "historicalAccuracy": "Media - simplificación de su carrera",
+                        "implication": "La pasión por descubrir nuevos elementos dominó su investigación"
+                    }
+                },
+                {
+                    "id": "meme4",
+                    "imageUrl": "/memes/change-my-mind-curie.svg",
+                    "format": "Change My Mind",
+                    "topText": "Marie Curie es la científica más influyente de la historia",
+                    "analysis": {
+                        "mainMessage": "Debate sobre la importancia de Marie Curie en la ciencia",
+                        "humorType": "Desafío retórico",
+                        "culturalReference": "Meme Change My Mind de Steven Crowder",
+                        "historicalAccuracy": "Subjetiva - opinión debatible pero bien fundamentada",
+                        "implication": "Invita a reflexionar sobre el impacto real de sus contribuciones"
+                    }
+                },
+                {
+                    "id": "meme5",
+                    "imageUrl": "/memes/one-does-not-simply-curie.svg",
+                    "format": "One Does Not Simply",
+                    "topText": "No se puede simplemente ignorar la radioactividad",
+                    "analysis": {
+                        "mainMessage": "La radioactividad es un fenómeno que no se puede ignorar una vez descubierto",
+                        "humorType": "Dramatización",
+                        "culturalReference": "Meme de Boromir (El Señor de los Anillos)",
+                        "historicalAccuracy": "Alta - la radioactividad transformó la ciencia moderna",
+                        "implication": "El descubrimiento de Curie cambió permanentemente la ciencia y la medicina"
+                    }
+                },
+                {
+                    "id": "meme6",
+                    "imageUrl": "/memes/this-is-fine-curie.svg",
+                    "format": "This Is Fine",
+                    "topText": "Marie Curie en su laboratorio rodeada de materiales radioactivos",
+                    "analysis": {
+                        "mainMessage": "Curie trabajaba con materiales peligrosos sin consciencia del riesgo",
+                        "humorType": "Humor negro / ironía situacional",
+                        "culturalReference": "Meme del perro en el fuego (KC Green)",
+                        "historicalAccuracy": "Alta - trabajaba sin protección en un laboratorio contaminado",
+                        "implication": "Reflexión sobre los riesgos que asumen los científicos pioneros"
+                    }
                 }
             ],
             "questions": [
@@ -251,7 +317,7 @@ BEGIN
                 "¿Por qué es gracioso/irónico?"
             ]
         }'::jsonb,
-        '{"messagesIdentified": 1, "referencesRecognized": 1, "accuracyEvaluated": true}'::jsonb,
+        '{"messagesIdentified": 6, "referencesRecognized": 6, "accuracyEvaluated": true}'::jsonb,
         'intermediate', 100, 70,
         12, 3,
         ARRAY[

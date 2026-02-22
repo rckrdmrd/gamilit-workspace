@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AlertTriangle } from 'lucide-react';
@@ -12,17 +12,17 @@ export interface DeactivateUserModalProps {
   isLoading?: boolean;
 }
 
-export const DeactivateUserModal: React.FC<DeactivateUserModalProps> = ({
+export const DeactivateUserModal = ({
   isOpen,
   onClose,
   onConfirm,
   userName,
   isLoading = false,
-}) => {
+}: DeactivateUserModalProps) => {
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     // Validate reason length

@@ -8,7 +8,6 @@
  * Header section for exercises showing title, difficulty, rewards
  */
 
-import React from 'react';
 import { Zap, Coins, Clock, AlertCircle } from 'lucide-react';
 import type { Exercise } from '../types/exercise.types';
 
@@ -42,19 +41,19 @@ const DIFFICULTY_LABELS = {
   native: 'Nativo',
 };
 
-export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
+export const ExerciseHeader = ({
   exercise,
   attemptNumber = 1,
   formattedTime,
   showTimer = false,
   isTimeExpired = false,
-}) => {
+}: ExerciseHeaderProps) => {
   return (
-    <div className="bg-white rounded-xl border-2 border-gray-200 p-6 mb-6">
+    <div className="bg-white rounded-xl border-2 border-gray-200 p-3 sm:p-6 mb-6">
       {/* Top row: Title and difficulty */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
             {exercise.title}
           </h1>
           {exercise.description && (
@@ -86,7 +85,7 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
 
       {/* Bottom row: Stats and rewards */}
       <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {/* XP Reward */}
           <span className="flex items-center text-purple-600 font-semibold">
             <Zap className="w-4 h-4 mr-1" />

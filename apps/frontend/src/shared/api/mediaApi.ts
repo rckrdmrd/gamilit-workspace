@@ -191,7 +191,7 @@ export const uploadMedia = async (
   // Create FormData
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('type', options.type);
+  formData.append('fileType', options.type);
 
   if (options.exerciseId) {
     formData.append('exerciseId', options.exerciseId);

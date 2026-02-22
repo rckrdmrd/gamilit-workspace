@@ -13,7 +13,7 @@
  * Created: 2025-12-05 - US-ADMIN-P2-001
  */
 
-import React from 'react';
+import type { ReactElement } from 'react';
 import { Lock } from 'lucide-react';
 import type { RolePermissions, Permission } from '@/services/api/adminTypes';
 import { Button } from '@shared/components/Button';
@@ -42,7 +42,7 @@ export function RoleEditor({
   onTogglePermission,
   onSave,
   onClose,
-}: RoleEditorProps): React.ReactElement | null {
+}: RoleEditorProps): ReactElement | null {
 
   return (
     <Modal

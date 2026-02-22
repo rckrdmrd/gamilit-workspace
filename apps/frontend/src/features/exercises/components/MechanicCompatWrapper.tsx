@@ -18,11 +18,11 @@
  * @version 1.0.0
  * @since Phase 5 - Exercise System Restructuring
  */
-import React from 'react';
+import type { ComponentType } from 'react';
 import type { ExerciseMechanicProps } from '../types/exercise-mechanic.types';
 
 interface MechanicCompatWrapperProps extends ExerciseMechanicProps {
-  Component: React.ComponentType<Record<string, unknown>>;
+  Component: ComponentType<Record<string, unknown>>;
   onExit?: () => void;
 }
 
@@ -30,7 +30,7 @@ interface MechanicCompatWrapperProps extends ExerciseMechanicProps {
  * Wraps a legacy mechanic component to receive standardized props.
  * Passes through all props that the legacy component expects.
  */
-export const MechanicCompatWrapper: React.FC<MechanicCompatWrapperProps> = ({
+export const MechanicCompatWrapper = ({
   Component,
   exercise,
   exerciseId,
@@ -40,7 +40,7 @@ export const MechanicCompatWrapper: React.FC<MechanicCompatWrapperProps> = ({
   initialData,
   comodinesContext: _comodinesContext,
   onExit,
-}) => {
+}: MechanicCompatWrapperProps) => {
   return (
     <Component
       exercise={exercise}

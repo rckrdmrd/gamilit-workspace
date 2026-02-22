@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type MutableRefObject } from 'react';
 import { motion } from 'framer-motion';
 import { Grid3X3 } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -27,18 +27,18 @@ export interface CrucigramaExerciseProps {
     };
     answers: Record<string, unknown>;
   }) => void;
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
 }
 
-export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
+export const CrucigramaExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: CrucigramaExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');

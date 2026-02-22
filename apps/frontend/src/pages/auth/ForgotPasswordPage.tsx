@@ -18,7 +18,7 @@
  * ```
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,7 +29,7 @@ import { passwordAPI } from '@/services/api/passwordAPI';
 /**
  * ForgotPasswordPage Component
  */
-export const ForgotPasswordPage: React.FC = () => {
+export const ForgotPasswordPage = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

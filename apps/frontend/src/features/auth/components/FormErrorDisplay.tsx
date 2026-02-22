@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, X } from 'lucide-react';
 
@@ -11,10 +10,10 @@ interface FormErrorDisplayProps {
  * Componente para mostrar errores de formulario
  * Muestra una lista de errores con animación y opción de cerrar
  */
-export const FormErrorDisplay: React.FC<FormErrorDisplayProps> = ({
+export const FormErrorDisplay = ({
   errors,
   onDismiss
-}) => {
+}: FormErrorDisplayProps) => {
   if (!errors || errors.length === 0) return null;
 
   return (

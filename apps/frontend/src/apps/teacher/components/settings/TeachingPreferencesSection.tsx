@@ -1,4 +1,4 @@
-import React from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, ClipboardCheck, MessageSquare } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -21,7 +21,7 @@ interface TeachingPreferencesState {
 
 interface TeachingPreferencesSectionProps {
   teachingPreferences: TeachingPreferencesState;
-  setTeachingPreferences: React.Dispatch<React.SetStateAction<TeachingPreferencesState>>;
+  setTeachingPreferences: Dispatch<SetStateAction<TeachingPreferencesState>>;
   saveStatus: SaveStatus;
   handleSave: () => void;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scale, ChevronRight, ChevronLeft } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
@@ -19,12 +19,12 @@ import type {
 } from './tribunalOpinionesTypes';
 import { CLASSIFICATION_OPTIONS, VERDICT_OPTIONS } from './tribunalOpinionesTypes';
 
-export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps> = ({
+export const TribunalOpinionesExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: TribunalOpinionesExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -235,7 +235,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
       // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
-      if (response.status === 'pending_review' || response.requiresManualReview) {
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
         setFeedback({
           type: 'info',
           title: 'Enviado para Revisión',
@@ -350,7 +350,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         description="Clasifica cada afirmación y evalúa si está bien fundamentada"
         icon={<Scale className="h-8 w-8" />}
         headerChildren={
-          <div className="flex items-center gap-4 mt-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-3">
             <span className="rounded-full bg-white/20 px-3 py-1">
               Afirmación {currentIndex + 1} de {totalStatements}
             </span>
@@ -367,7 +367,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="rounded-xl border-2 border-detective-border bg-detective-bg p-6"
+              className="rounded-xl border-2 border-detective-border bg-detective-bg p-3 sm:p-6"
             >
               <h3 className="mb-2 text-lg font-semibold text-detective-text">Afirmación:</h3>
               <p className="text-xl leading-relaxed text-detective-text">"{currentStatement.text}"</p>
@@ -389,7 +389,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                 <button
                   key={option.value}
                   onClick={() => setCurrentClassification(option.value)}
-                  className={`rounded-xl border-2 p-4 text-left transition-all ${
+                  className={`rounded-xl border-2 p-2 sm:p-4 text-left transition-all ${
                     currentClassification === option.value
                       ? `${option.color} ring-2 ring-current ring-offset-2`
                       : 'border-detective-border bg-white hover:border-gray-300'
@@ -415,7 +415,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                 <button
                   key={option.value}
                   onClick={() => setCurrentVerdict(option.value)}
-                  className={`rounded-xl border-2 p-4 text-left transition-all ${
+                  className={`rounded-xl border-2 p-2 sm:p-4 text-left transition-all ${
                     currentVerdict === option.value
                       ? `${option.color} ring-2 ring-current ring-offset-2`
                       : 'border-detective-border bg-white hover:border-gray-300'
@@ -440,7 +440,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               value={currentJustification}
               onChange={(e) => setCurrentJustification(e.target.value)}
               placeholder="Explica en 2-3 líneas por qué clasificaste así esta afirmación..."
-              className="w-full resize-none rounded-xl border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+              className="w-full resize-none rounded-xl border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
               rows={3}
               maxLength={300}
             />

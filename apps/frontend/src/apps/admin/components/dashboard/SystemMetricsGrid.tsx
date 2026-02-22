@@ -14,7 +14,7 @@
  * - Responsive grid layout
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type ElementType } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users,
@@ -39,17 +39,17 @@ interface MetricCardData {
   label: string;
   value: number | null;
   trend?: number | null;
-  icon: React.ElementType;
+  icon: ElementType;
   color: string;
   unit?: string;
   sparklineData?: number[];
   tooltip?: string;
 }
 
-export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({
+export const SystemMetricsGrid = ({
   metrics,
   loading = false,
-}) => {
+}: SystemMetricsGridProps) => {
   // ============================================================================
   // METRIC CARDS DATA
   // ============================================================================
@@ -165,7 +165,7 @@ interface MetricCardProps {
   metrics: SystemMetrics;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
+const MetricCard = ({ card, index, metrics }: MetricCardProps) => {
   const [displayValue, setDisplayValue] = useState(0);
   const Icon = card.icon;
   const TrendIcon =
@@ -348,7 +348,7 @@ interface MiniSparklineProps {
   color: string;
 }
 
-const MiniSparkline: React.FC<MiniSparklineProps> = ({ data, color }) => {
+const MiniSparkline = ({ data, color }: MiniSparklineProps) => {
   if (!data || data.length === 0) return null;
 
   const max = Math.max(...data);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Mail, Smartphone, Trophy, BookOpen, Flame } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -23,7 +23,7 @@ interface NotifToggle {
   key: string;
   label: string;
   description: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   /** Backend notification type for channel-level preference */
   backendType?: string;
   /** Which channel this toggle controls */
@@ -71,7 +71,7 @@ const TOGGLES: NotifToggle[] = [
   },
 ];
 
-export const NotificationsSection: React.FC = () => {
+export const NotificationsSection = () => {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [loading, setLoading] = useState(true);
   const [toggles, setToggles] = useState<Record<string, boolean>>({

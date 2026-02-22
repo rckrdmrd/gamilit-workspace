@@ -16,7 +16,7 @@
  * @date 2025-11-24
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { EmptyState } from '@shared/components/feedback/EmptyState';
@@ -74,7 +74,7 @@ function getProgressColor(percent: number): string {
 /**
  * Metrics Tab Component
  */
-export const MetricsTab: React.FC<MetricsTabProps> = ({ metrics, isLoading, onRefresh }) => {
+export const MetricsTab = ({ metrics, isLoading, onRefresh }: MetricsTabProps) => {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 

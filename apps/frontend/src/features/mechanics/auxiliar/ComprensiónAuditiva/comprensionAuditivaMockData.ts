@@ -13,34 +13,34 @@ export const mockComprensiónAuditivaExercises: ComprensiónAuditivaData[] = [{
     { id: 'h2', text: 'Presta atención a los nombres de los elementos descubiertos', cost: 15 },
     { id: 'h3', text: 'Puedes reproducir el audio varias veces', cost: 5 }
   ],
-  audioUrl: 'https://example.com/marie-curie-biography.mp3',
+  audioUrl: '/audio/marie-curie-biografia.mp3',
   audioTitle: 'Biografía de Marie Curie',
-  audioDuration: 180,
+  audioDuration: 115,
   questions: [
     {
       id: 'q1',
-      time: 10,
+      time: 5,
       question: '¿Dónde nació Marie Curie?',
       options: ['Francia', 'Polonia', 'Rusia', 'Alemania'],
       correctAnswer: 1
     },
     {
       id: 'q2',
-      time: 30,
-      question: '¿Qué elemento descubrió Marie Curie junto con su esposo?',
+      time: 25,
+      question: '¿Qué elementos descubrió Marie Curie junto con su esposo?',
       options: ['Uranio', 'Polonio y Radio', 'Hierro', 'Oro'],
       correctAnswer: 1
     },
     {
       id: 'q3',
-      time: 50,
+      time: 45,
       question: '¿Cuántos Premios Nobel ganó Marie Curie?',
       options: ['Uno', 'Dos', 'Tres', 'Ninguno'],
       correctAnswer: 1
     },
     {
       id: 'q4',
-      time: 70,
+      time: 65,
       question: '¿En qué campos ganó Marie Curie los Premios Nobel?',
       options: ['Física y Química', 'Medicina y Física', 'Química y Medicina', 'Literatura y Paz'],
       correctAnswer: 0

@@ -7,7 +7,7 @@
  * @see EPIC 10.3 - Module Progress Tracking
  */
 
-import React from 'react';
+import type { ReactElement } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
@@ -142,7 +142,7 @@ export function ModuleProgressCard({
   onExerciseClick,
   showExerciseList = true,
   compact = false,
-}: ModuleProgressCardProps): React.ReactElement {
+}: ModuleProgressCardProps): ReactElement {
   const {
     module_title,
     total_exercises,

@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
@@ -9,12 +8,12 @@ interface SopaLetrasGridProps {
   onCellSelect: (r:number,c:number) => void;
 }
 
-export const SopaLetrasGrid: React.FC<SopaLetrasGridProps> = ({
+export const SopaLetrasGrid = ({
   grid,
   selectedCells,
   foundCells = [],
   onCellSelect
-}) => {
+}: SopaLetrasGridProps) => {
   const isSelected = (r: number, c: number) => selectedCells.some(cell => cell.row === r && cell.col === c);
   const isFound = (r: number, c: number) => foundCells.some(cell => cell.row === r && cell.col === c);
 

@@ -11,7 +11,7 @@
  * Created: 2025-12-05 - FE-ADMIN-011-016 (Sprint P2-B)
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -26,7 +26,7 @@ interface FeatureFlagEditorProps {
   onClose: () => void;
 }
 
-export const FeatureFlagEditor: React.FC<FeatureFlagEditorProps> = ({ flag, onSave, onClose }) => {
+export const FeatureFlagEditor = ({ flag, onSave, onClose }: FeatureFlagEditorProps) => {
   const isEditMode = !!flag;
 
   const [formData, setFormData] = useState({
@@ -76,7 +76,7 @@ export const FeatureFlagEditor: React.FC<FeatureFlagEditorProps> = ({ flag, onSa
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {

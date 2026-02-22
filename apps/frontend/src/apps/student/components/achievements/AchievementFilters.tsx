@@ -4,7 +4,7 @@
  * ~250 lines
  */
 
-import React from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -122,13 +122,13 @@ const iconComponents = {
   star: Star,
 };
 
-export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
+export const AchievementFilters = ({
   filters,
   onFilterChange,
   onClearFilters,
   resultsCount,
-}) => {
-  const [showMobileFilters, setShowMobileFilters] = React.useState(false);
+}: AchievementFiltersProps) => {
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const hasActiveFilters =
     filters.category !== 'all' ||
@@ -136,7 +136,7 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
     filters.status !== 'all' ||
     filters.searchQuery.length > 0;
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFilterChange({ searchQuery: e.target.value });
   };
 
@@ -148,11 +148,11 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
     onFilterChange({ rarity });
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({ status: e.target.value as 'all' | 'unlocked' | 'locked' | 'in_progress' });
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({ sortBy: e.target.value as 'recent' | 'alphabetical' | 'rarity' | 'progress' });
   };
 

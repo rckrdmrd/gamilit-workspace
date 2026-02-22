@@ -8,7 +8,8 @@
  * @since CORR-009
  */
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import type { MouseEvent, ChangeEvent } from 'react';
 
 export interface AudioPlayerProps {
   /** URL del archivo de audio */
@@ -41,7 +42,7 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-export const AudioPlayer: React.FC<AudioPlayerProps> = ({
+export const AudioPlayer = ({
   src,
   title,
   showWaveform = false,
@@ -51,7 +52,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   onEnded,
   onTimeUpdate,
   className = '',
-}) => {
+}: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
@@ -125,7 +126,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }, [isPlaying, onPlay, onPause]);
 
   // Seek to position
-  const handleSeek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleSeek = useCallback((e: MouseEvent<HTMLDivElement>) => {
     const audio = audioRef.current;
     const progress = progressRef.current;
     if (!audio || !progress) return;
@@ -138,7 +139,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }, [duration]);
 
   // Volume control
-  const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
 

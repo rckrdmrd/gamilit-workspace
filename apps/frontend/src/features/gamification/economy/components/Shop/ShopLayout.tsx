@@ -11,7 +11,7 @@ import { allShopItems } from '../../mockData/shopItemsMockData';
 import type { ShopCategory, ShopSortBy } from '../../types/economyTypes';
 import { Search } from 'lucide-react';
 
-export const ShopLayout: React.FC = () => {
+export const ShopLayout = () => {
   const [selectedCategory, setSelectedCategory] = useState<ShopCategory | 'all'>('all');
   const [showCart, setShowCart] = useState(false);
 

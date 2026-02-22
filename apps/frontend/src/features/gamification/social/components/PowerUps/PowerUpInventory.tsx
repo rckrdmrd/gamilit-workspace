@@ -4,7 +4,7 @@
  * Displays user's power-up inventory with real-time data from backend
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as Icons from 'lucide-react';
 import { useInventoryManagement } from '@/features/gamification/economy/hooks/useInventoryQuery';
 import type { PowerUpType } from '@/features/gamification/economy/api/inventoryAPI';
@@ -19,7 +19,7 @@ interface PowerUpCardProps {
   onUse: () => void;
 }
 
-const PowerUpCard: React.FC<PowerUpCardProps> = ({ name, description, icon, available, onUse }) => {
+const PowerUpCard = ({ name, description, icon, available, onUse }: PowerUpCardProps) => {
   return (
     <div className="rounded-detective border-2 border-detective-orange/20 bg-white p-4 shadow-card transition-all hover:border-detective-orange">
       <div className="flex items-start gap-3">
@@ -46,7 +46,7 @@ const PowerUpCard: React.FC<PowerUpCardProps> = ({ name, description, icon, avai
   );
 };
 
-export const PowerUpInventory: React.FC = () => {
+export const PowerUpInventory = () => {
   const { inventory, isLoading, isError, getTotalPowerUps, applyPowerUp, isUsing } =
     useInventoryManagement();
   const [, setSelectedType] = useState<PowerUpType | null>(null);

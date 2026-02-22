@@ -408,7 +408,7 @@ INSERT INTO gamification_system.achievements (
     jsonb_build_object(
         'type', 'module_completion',
         'requirements', jsonb_build_object(
-            'module_id', 'modulo-01-comprension-literal',
+            'module_code', 'MOD-01-LITERAL',
             'completion_percentage', 100
         )
     ),
@@ -450,7 +450,7 @@ INSERT INTO gamification_system.achievements (
     jsonb_build_object(
         'type', 'module_completion',
         'requirements', jsonb_build_object(
-            'module_id', 'modulo-02-comprension-inferencial',
+            'module_code', 'MOD-02-INFERENCIAL',
             'completion_percentage', 100
         )
     ),
@@ -492,7 +492,7 @@ INSERT INTO gamification_system.achievements (
     jsonb_build_object(
         'type', 'module_completion',
         'requirements', jsonb_build_object(
-            'module_id', 'modulo-03-comprension-critica',
+            'module_code', 'MOD-03-CRITICA',
             'completion_percentage', 100
         )
     ),

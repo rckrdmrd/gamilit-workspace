@@ -15,7 +15,7 @@
  * - Empty state when no alerts
  */
 
-import React, { useState } from 'react';
+import { useState, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, AlertCircle, Info, Shield, X, Eye, CheckCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -29,12 +29,12 @@ interface SystemAlertsPanelProps {
   onDismissAll?: () => void;
 }
 
-export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
+export const SystemAlertsPanel = ({
   alerts,
   loading = false,
   onDismiss,
   onDismissAll,
-}) => {
+}: SystemAlertsPanelProps) => {
   const [selectedAlert, setSelectedAlert] = useState<SystemAlert | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
@@ -263,12 +263,12 @@ interface AlertCardProps {
   index: number;
   onDismiss: (id: string) => void;
   onViewDetails: (alert: SystemAlert) => void;
-  getAlertIcon: (type: string) => React.ElementType;
+  getAlertIcon: (type: string) => ElementType;
   getAlertColors: (severity: string) => any;
   formatTimestamp: (date: Date) => string;
 }
 
-const AlertCard: React.FC<AlertCardProps> = ({
+const AlertCard = ({
   alert,
   index,
   onDismiss,
@@ -276,7 +276,7 @@ const AlertCard: React.FC<AlertCardProps> = ({
   getAlertIcon,
   getAlertColors,
   formatTimestamp,
-}) => {
+}: AlertCardProps) => {
   const Icon = getAlertIcon(alert.type);
   const colors = getAlertColors(alert.severity);
 

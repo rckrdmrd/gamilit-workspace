@@ -10,7 +10,7 @@
  * @route /teacher/settings
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@features/auth/hooks/useAuth';
@@ -200,10 +200,15 @@ export default function TeacherSettingsPage() {
         });
       }
 
-      if (activeSection === 'teaching') {
-        // Map teaching preferences to backend structure
-        await profileAPI.updatePreferences(user.id, {
-          preferences: {
+      if (activeSection === 'teaching' || activeSection === 'notifications' || activeSection === 'privacy') {
+        // FIX B-002: Fetch current prefs and merge client-side (backend does full replace)
+        const currentRes = await profileAPI.getPreferences();
+        const currentPrefs = (currentRes.preferences || {}) as Record<string, unknown>;
+
+        let sectionData: Record<string, unknown> = {};
+
+        if (activeSection === 'teaching') {
+          sectionData = {
             teaching: {
               newSubmissions: teachingPreferences.newSubmissions,
               lateSubmissions: teachingPreferences.lateSubmissions,
@@ -218,16 +223,13 @@ export default function TeacherSettingsPage() {
               autoResponseEnabled: teachingPreferences.autoResponseEnabled,
               preferredContactMethod: teachingPreferences.preferredContactMethod,
             },
-          },
-        } as TeacherPreferencesPayload);
-      }
+          };
+        }
 
-      if (activeSection === 'notifications') {
-        // Map notification preferences to backend structure
-        await profileAPI.updatePreferences(user.id, {
-          email_notifications: notifications.emailNotifications,
-          notifications_enabled: notifications.pushNotifications,
-          preferences: {
+        if (activeSection === 'notifications') {
+          sectionData = {
+            email_notifications: notifications.emailNotifications,
+            notifications_enabled: notifications.pushNotifications,
             notifications: {
               studentRiskAlerts: notifications.studentRiskAlerts,
               inactivityAlerts: notifications.inactivityAlerts,
@@ -240,14 +242,11 @@ export default function TeacherSettingsPage() {
               adminAnnouncements: notifications.adminAnnouncements,
               inAppNotifications: notifications.inAppNotifications,
             },
-          },
-        } as TeacherPreferencesPayload);
-      }
+          };
+        }
 
-      if (activeSection === 'privacy') {
-        // Map privacy settings to backend structure
-        await profileAPI.updatePreferences(user.id, {
-          preferences: {
+        if (activeSection === 'privacy') {
+          sectionData = {
             privacy: {
               profileVisibility: privacy.profileVisibility,
               showContactInfo: privacy.showContactInfo,
@@ -255,7 +254,12 @@ export default function TeacherSettingsPage() {
               allowParentContact: privacy.allowParentContact,
               showActivity: privacy.showActivity,
             },
-          },
+          };
+        }
+
+        await profileAPI.updatePreferences(user.id, {
+          ...currentPrefs,
+          ...sectionData,
         } as TeacherPreferencesPayload);
       }
 
@@ -280,7 +284,7 @@ export default function TeacherSettingsPage() {
   };
 
   // Handle Avatar Upload
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BookOpen, Clock, TrendingUp } from 'lucide-react';
 import type { Module } from '@/shared/types/educational.types';
 import type { ModuleProgress } from '@/shared/types/progress.types';
@@ -34,7 +33,7 @@ interface ProgressCardProps {
  * @param progress - Module progress data (optional)
  * @param onClick - Click handler
  */
-export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, onClick }) => {
+export const ProgressCard = ({ module, progress, onClick }: ProgressCardProps) => {
   const progressPercentage = progress?.progress_percentage || 0;
   const status = progress?.status || 'not_started';
   const exercisesCompleted = progress?.completed_exercises || 0;

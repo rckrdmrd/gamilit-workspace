@@ -1,9 +1,8 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { InfoCard } from './infografiaInteractivaTypes';
 import { ProgressTracker } from '@shared/components/mechanics/ProgressTracker';
 
-export const DataVisualization: React.FC<{ cards: InfoCard[]; onCardClick: (id: string) => void }> = ({ cards, onCardClick }) => {
+export const DataVisualization = ({ cards, onCardClick }: { cards: InfoCard[]; onCardClick: (id: string) => void }) => {
   const revealedCount = cards.filter(c => c.revealed).length;
 
   return (

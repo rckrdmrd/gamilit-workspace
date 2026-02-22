@@ -604,6 +604,7 @@ load_seeds() {
         "$seeds_base/educational_content/04-exercises-module3.sql"
         "$seeds_base/educational_content/05-exercises-module4.sql"
         "$seeds_base/educational_content/06-exercises-module5.sql"
+        "$seeds_base/educational_content/07-exercises-auxiliar.sql"
         "$seeds_base/educational_content/07-assessment-rubrics.sql"
         "$seeds_base/educational_content/05-assignments.sql"
         "$seeds_base/educational_content/08-difficulty_criteria.sql"

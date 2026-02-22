@@ -16,7 +16,7 @@
  * @date 2025-11-24
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AlertTriangle, XCircle, Eye, Copy, RefreshCw, Clock, AlertCircle } from 'lucide-react';
@@ -70,13 +70,13 @@ function getErrorLevelColor(level: string): string {
 /**
  * Error Tracking Tab Component
  */
-export const ErrorTrackingTab: React.FC<ErrorTrackingTabProps> = ({
+export const ErrorTrackingTab = ({
   stats,
   recentErrors,
   trends,
   isLoading,
   onRefresh,
-}) => {
+}: ErrorTrackingTabProps) => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>(24);
   const [errorLevel, setErrorLevel] = useState<ErrorLevel>('all');
   const [expandedError, setExpandedError] = useState<string | null>(null);

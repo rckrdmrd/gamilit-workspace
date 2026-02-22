@@ -13,7 +13,7 @@
  * - Empty states
  */
 
-import React, { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown,
@@ -71,14 +71,14 @@ const getRankColor = (rank: number): string => {
   return 'text-detective-text';
 };
 
-export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> = ({
+export const AdvancedLeaderboardTable = ({
   entries,
   currentUserId,
   onUserClick,
   showTopThreeInPodium = true,
   itemsPerPage = 50,
   className,
-}) => {
+}: AdvancedLeaderboardTableProps) => {
   const [sortColumn, setSortColumn] = useState<SortColumn>('rank');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [currentPage, setCurrentPage] = useState(1);

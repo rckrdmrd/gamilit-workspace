@@ -25,7 +25,7 @@
  * - PATCH /api/admin/organizations/:id/features
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Flag, ToggleLeft, ToggleRight, Users, Calendar, History } from 'lucide-react';
@@ -46,7 +46,7 @@ interface FeatureFlag {
   lastChangedBy: string;
 }
 
-export const FeatureFlagControls: React.FC = () => {
+export const FeatureFlagControls = () => {
   const [flags, setFlags] = useState<FeatureFlag[]>([
     {
       id: '1',

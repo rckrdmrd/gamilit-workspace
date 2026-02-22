@@ -65,6 +65,11 @@ interface BackendAssignment {
   module_name?: string;
   exercise_ids?: string[];
   exercises?: { id: string }[];
+  // Submission stats (may be populated by backend)
+  pendingReviews?: number;
+  pending_reviews?: number;
+  totalSubmissions?: number;
+  total_submissions?: number;
 }
 
 /**
@@ -119,6 +124,9 @@ function mapBackendToAssignment(raw: BackendAssignment): Assignment {
     classroomName: classroomId ? `Classroom ${classroomId}` : undefined,
     type: raw.assignmentType ?? raw.assignment_type,
     dueDate: dueDate,
+    // FIX M-003: Map pendingReviews/totalSubmissions from backend if available
+    pendingReviews: raw.pendingReviews ?? raw.pending_reviews ?? undefined,
+    totalSubmissions: raw.totalSubmissions ?? raw.total_submissions ?? undefined,
   };
 }
 

@@ -13,7 +13,7 @@ interface ShoppingCartProps {
   onClose: () => void;
 }
 
-export const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
+export const ShoppingCart = ({ onClose }: ShoppingCartProps) => {
   const cart = useEconomyStore((state) => state.cart);
   const removeFromCart = useEconomyStore((state) => state.removeFromCart);
   const getCartTotal = useEconomyStore((state) => state.getCartTotal);

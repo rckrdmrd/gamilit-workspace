@@ -6,7 +6,6 @@
  * Each rank has a unique icon inspired by Maya art and symbolism.
  */
 
-import React from 'react';
 import type { MayaRank } from '../types/ranksTypes';
 
 interface MayaIconProps {
@@ -19,7 +18,7 @@ interface MayaIconProps {
  * NACOM Icon - Detective Badge (Beginner)
  * Inspired by Maya circular glyphs and detective symbolism
  */
-export const NacomIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({ className = '', size = 24 }) => (
+export const NacomIcon = ({ className = '', size = 24 }: Omit<MayaIconProps, 'rank'>) => (
   <svg
     width={size}
     height={size}
@@ -39,7 +38,7 @@ export const NacomIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({ className = '
  * Ajaw Icon - Señor / Gobernante
  * Inspired by Maya warrior shields and geometric patterns
  */
-export const AjawIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({ className = '', size = 24 }) => (
+export const AjawIcon = ({ className = '', size = 24 }: Omit<MayaIconProps, 'rank'>) => (
   <svg
     width={size}
     height={size}
@@ -67,7 +66,7 @@ export const AjawIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({ className = ''
  * Ah K'in Icon - Sacerdote del Sol
  * Inspired by Maya star glyphs and astronomical symbols
  */
-export const AhKinIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({ className = '', size = 24 }) => (
+export const AhKinIcon = ({ className = '', size = 24 }: Omit<MayaIconProps, 'rank'>) => (
   <svg
     width={size}
     height={size}
@@ -93,10 +92,10 @@ export const AhKinIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({ className = '
  * Halach Uinic Icon - Hombre Verdadero
  * Inspired by Maya warrior glyphs and ceremonial medallions
  */
-export const HalachUinicIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({
+export const HalachUinicIcon = ({
   className = '',
   size = 24,
-}) => (
+}: Omit<MayaIconProps, 'rank'>) => (
   <svg
     width={size}
     height={size}
@@ -119,10 +118,10 @@ export const HalachUinicIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({
  * K'uk'ulkan Icon - Serpiente Emplumada
  * Inspired by Maya royal crowns and divine symbols
  */
-export const KukulkanIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({
+export const KukulkanIcon = ({
   className = '',
   size = 24,
-}) => (
+}: Omit<MayaIconProps, 'rank'>) => (
   <svg
     width={size}
     height={size}
@@ -144,10 +143,10 @@ export const KukulkanIcon: React.FC<Omit<MayaIconProps, 'rank'>> = ({
  * Prestige Star Icon
  * Special icon for prestige levels
  */
-export const PrestigeStarIcon: React.FC<{ className?: string; size?: number }> = ({
+export const PrestigeStarIcon = ({
   className = '',
   size = 16,
-}) => (
+}: { className?: string; size?: number }) => (
   <svg
     width={size}
     height={size}
@@ -172,7 +171,7 @@ export const PrestigeStarIcon: React.FC<{ className?: string; size?: number }> =
  * Main Maya Icon Component
  * Renders the appropriate icon based on rank
  */
-export const MayaIcon: React.FC<MayaIconProps> = ({ rank, className, size = 24 }) => {
+export const MayaIcon = ({ rank, className, size = 24 }: MayaIconProps) => {
   switch (rank) {
     case 'Nacom':
       return <NacomIcon className={className} size={size} />;

@@ -363,14 +363,13 @@ ON CONFLICT (id) DO UPDATE SET
 -- =====================================================
 -- SPECIAL MISSIONS: Exercise-Linked
 -- =====================================================
-
 -- Idempotency: Skip if special missions already exist
-DO $ BEGIN
+DO $$ BEGIN
     IF EXISTS (SELECT 1 FROM gamification_system.mission_templates WHERE name = 'Maestro del Crucigrama' LIMIT 1) THEN
         RAISE NOTICE 'Special mission templates already exist, skipping';
         RETURN;
     END IF;
-END $;
+END $$;
 
 -- 1. Maestro del Crucigrama
 INSERT INTO gamification_system.mission_templates (

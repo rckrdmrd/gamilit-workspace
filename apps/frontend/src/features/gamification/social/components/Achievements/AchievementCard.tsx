@@ -12,7 +12,7 @@
  * Displays individual achievement card with animations and claim functionality.
  */
 
-import React from 'react';
+import type { MouseEvent } from 'react';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -121,17 +121,17 @@ const rarityGlow = {
   legendary: 'shadow-xl shadow-yellow-300 animate-gold-shine',
 };
 
-export const AchievementCard: React.FC<AchievementCardProps> = ({
+export const AchievementCard = ({
   achievement,
   onClick,
   onClaimRewards,
   isClaiming = false,
-}) => {
+}: AchievementCardProps) => {
   const IconComponent = achievementIconMap[achievement.icon] || Award;
   const isLocked = !achievement.isUnlocked;
   const canClaimRewards = achievement.isUnlocked && !achievement.rewardsClaimed && onClaimRewards;
 
-  const handleClaimClick = async (e: React.MouseEvent) => {
+  const handleClaimClick = async (e: MouseEvent) => {
     e.stopPropagation(); // Prevent triggering onClick of parent
     if (onClaimRewards && !isClaiming) {
       await onClaimRewards(achievement.id);

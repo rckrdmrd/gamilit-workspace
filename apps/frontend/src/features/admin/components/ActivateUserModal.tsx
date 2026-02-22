@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { CheckCircle2 } from 'lucide-react';
@@ -12,16 +12,16 @@ export interface ActivateUserModalProps {
   isLoading?: boolean;
 }
 
-export const ActivateUserModal: React.FC<ActivateUserModalProps> = ({
+export const ActivateUserModal = ({
   isOpen,
   onClose,
   onConfirm,
   userName,
   isLoading = false,
-}) => {
+}: ActivateUserModalProps) => {
   const [reason, setReason] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onConfirm(reason.trim() || undefined);
   };

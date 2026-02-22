@@ -1,4 +1,3 @@
-import React from 'react';
 import { Users, Calendar, Edit, Eye, Settings, TrendingUp, Building } from 'lucide-react';
 import { EmptyState } from '@shared/components/feedback/EmptyState';
 import { DataTable, type Column } from '@/shared/components/common/DataTable';
@@ -25,13 +24,13 @@ interface InstitutionsTableProps {
  *
  * @component
  */
-export const InstitutionsTable: React.FC<InstitutionsTableProps> = ({
+export const InstitutionsTable = ({
   institutions,
   loading = false,
   onView,
   onEdit,
   onManageFeatures,
-}) => {
+}: InstitutionsTableProps) => {
   const planColors: Record<string, string> = {
     free: 'bg-gray-500/20 text-gray-500',
     basic: 'bg-green-500/20 text-green-500',

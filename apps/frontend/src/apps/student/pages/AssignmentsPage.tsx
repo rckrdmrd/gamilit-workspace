@@ -9,7 +9,7 @@
  * @created 2025-11-29
  */
 
-import { useEffect } from 'react';
+import { useEffect, type ComponentType } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -38,7 +38,7 @@ const statusConfig: Record<
     label: string;
     color: string;
     bgColor: string;
-    icon: React.ComponentType<{ className?: string }>;
+    icon: ComponentType<{ className?: string }>;
   }
 > = {
   assigned: {

@@ -20,6 +20,7 @@ export interface MissionFromAPI {
   id: string;
   mission_type: 'daily' | 'weekly' | 'special';
   template_id: string;
+  exercise_id?: string | null;
   title?: string;
   description?: string;
   objectives: Array<{
@@ -204,6 +205,7 @@ export function transformMission(apiMission: MissionFromAPI): Mission {
   // Build transformed mission
   const mission: Mission = {
     id: apiMission.id,
+    exercise_id: apiMission.exercise_id || null,
     type,
     title: apiMission.title || generateTitle(templateId),
     description: apiMission.description || generateDescription(apiMission.objectives),

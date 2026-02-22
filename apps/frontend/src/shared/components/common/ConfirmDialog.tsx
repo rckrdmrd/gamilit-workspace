@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal } from './Modal';
 import { AlertTriangle, CheckCircle, Info, XCircle } from 'lucide-react';
 
@@ -14,7 +13,7 @@ export interface ConfirmDialogProps {
   loading?: boolean;
 }
 
-export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+export const ConfirmDialog = ({
   isOpen,
   onClose,
   onConfirm,
@@ -24,7 +23,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   cancelText = 'Cancelar',
   variant = 'warning',
   loading = false,
-}) => {
+}: ConfirmDialogProps) => {
   const variantConfig = {
     danger: {
       icon: XCircle,

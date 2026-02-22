@@ -8,7 +8,6 @@
  * @created 2026-01-27
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   TrendingUp,
@@ -26,11 +25,11 @@ interface ChildProgressCardProps {
   onViewProgress: () => void;
 }
 
-export const ChildProgressCard: React.FC<ChildProgressCardProps> = ({
+export const ChildProgressCard = ({
   student,
   progress,
   onViewProgress,
-}) => {
+}: ChildProgressCardProps) => {
   // Get initials for avatar fallback
   const initials = student.displayName
     .split(' ')

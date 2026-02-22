@@ -13,7 +13,7 @@
  * - Integración con useUserManagement hook
  */
 
-import React, { useState } from 'react';
+import { useState, type ComponentType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   UserX,
@@ -56,7 +56,7 @@ interface BulkActionsPanelProps {
 interface BulkAction {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   color: string;
   hoverColor: string;
   requiresConfirmation: boolean;
@@ -83,7 +83,7 @@ interface ConfirmationModalProps {
 /**
  * Confirmation Modal Component
  */
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+const ConfirmationModal = ({
   isOpen,
   title,
   message,
@@ -95,7 +95,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   requiresRole = false,
   selectedRole = 'student',
   onRoleChange,
-}) => {
+}: ConfirmationModalProps) => {
   const roleOptions = [
     { value: 'student', label: 'Detective Novato' },
     { value: 'teacher', label: 'Sargento Detective' },
@@ -198,7 +198,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
  * Displays a floating panel at the bottom of the screen when users are selected.
  * Provides quick access to bulk operations.
  */
-export const BulkActionsPanel: React.FC<BulkActionsPanelProps> = ({
+export const BulkActionsPanel = ({
   selectedUsers,
   users,
   onClearSelection,
@@ -207,7 +207,7 @@ export const BulkActionsPanel: React.FC<BulkActionsPanelProps> = ({
   onBulkChangeRole,
   onBulkDelete,
   onExportCSV,
-}) => {
+}: BulkActionsPanelProps) => {
   const [loading, setLoading] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;

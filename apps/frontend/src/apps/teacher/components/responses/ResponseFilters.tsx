@@ -12,7 +12,7 @@
  * @component
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Filter, X, Calendar, CheckCircle, XCircle, School, Search, BookOpen } from 'lucide-react';
 import { useClassrooms } from '@apps/teacher/hooks/useClassrooms';
@@ -39,11 +39,11 @@ interface ResponseFiltersProps {
 // SUB-COMPONENTS
 // ============================================================================
 
-const FilterSection: React.FC<{
-  icon: React.ReactNode;
+const FilterSection = ({ icon, label, children }: {
+  icon: ReactNode;
   label: string;
-  children: React.ReactNode;
-}> = ({ icon, label, children }) => {
+  children: ReactNode;
+}) => {
   return (
     <div className="space-y-2">
       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
@@ -59,7 +59,7 @@ const FilterSection: React.FC<{
 // MAIN COMPONENT
 // ============================================================================
 
-export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onChange, onClear }) => {
+export const ResponseFilters = ({ filters, onChange, onClear }: ResponseFiltersProps) => {
   const { classrooms } = useClassrooms();
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');

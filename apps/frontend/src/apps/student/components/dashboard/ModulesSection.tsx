@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
@@ -46,7 +46,7 @@ interface ModuleCardProps {
   onModuleClick?: (moduleId: string) => void;
 }
 
-const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick }) => {
+const ModuleCard = ({ module, index, onModuleClick }: ModuleCardProps) => {
   const isClickable = module.status !== 'locked' && module.status !== 'backlog';
 
   // Get unique color scheme based on module ID (consistent across renders)
@@ -350,7 +350,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick })
   );
 };
 
-const ModuleSkeleton: React.FC = () => (
+const ModuleSkeleton = () => (
   <EnhancedCard variant="primary" hover={false} padding="md">
     <div className="flex items-start justify-between mb-4">
       <div className="flex items-center gap-3">
@@ -375,12 +375,12 @@ const ModuleSkeleton: React.FC = () => (
   </EnhancedCard>
 );
 
-export const ModulesSection: React.FC<ModulesSectionProps> = ({
+export const ModulesSection = ({
   modules,
   loading,
   error,
   onModuleClick
-}) => {
+}: ModulesSectionProps) => {
   // Handle error state
   if (error && !loading) {
     return (

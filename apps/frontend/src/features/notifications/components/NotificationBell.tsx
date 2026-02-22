@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotificationsStore } from '../store/notificationsStore';
 import { NotificationDropdown } from './NotificationDropdown';
 import './NotificationBell.css';
 
-export const NotificationBell: React.FC = () => {
+export const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   // Using Zustand selectors to prevent unnecessary re-renders
   const unreadCount = useNotificationsStore((state) => state.unreadCount);

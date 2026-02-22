@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useFocusTrap } from '@shared/hooks/useFocusTrap';
@@ -7,7 +8,7 @@ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '5xl' | 'full';
   showCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
@@ -21,9 +22,11 @@ export interface ModalProps {
   contentClassName?: string;
   /** Explicit aria-labelledby override — useful when contentClassName is set and the caller provides its own title element */
   ariaLabelledBy?: string;
+  /** Explicit aria-describedby override — links modal to its description element (WCAG 1.3.1) */
+  ariaDescribedBy?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({
+export const Modal = ({
   isOpen,
   onClose,
   title,
@@ -37,7 +40,8 @@ export const Modal: React.FC<ModalProps> = ({
   overlayClassName,
   contentClassName,
   ariaLabelledBy,
-}) => {
+  ariaDescribedBy,
+}: ModalProps) => {
   // Focus trap: traps Tab focus inside modal and restores on close (WCAG 2.4.3)
   const modalRef = useFocusTrap(isOpen);
 
@@ -82,7 +86,7 @@ export const Modal: React.FC<ModalProps> = ({
   // Resolve aria-labelledby: explicit prop wins, then auto-derive from title prop
   const resolvedAriaLabelledBy = ariaLabelledBy ?? (title ? 'modal-title' : undefined);
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+  const handleOverlayClick = (e: MouseEvent<HTMLDivElement>): void => {
     if (closeOnOverlayClick && e.target === e.currentTarget) {
       onClose();
     }
@@ -145,6 +149,7 @@ export const Modal: React.FC<ModalProps> = ({
             role="dialog"
             aria-modal="true"
             aria-labelledby={resolvedAriaLabelledBy}
+            aria-describedby={ariaDescribedBy}
           >
             <motion.div
               ref={modalRef}
@@ -173,6 +178,7 @@ export const Modal: React.FC<ModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby={resolvedAriaLabelledBy}
+      aria-describedby={ariaDescribedBy}
     >
       <div
         ref={modalRef}

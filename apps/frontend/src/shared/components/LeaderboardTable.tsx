@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Trophy, Crown, Loader } from 'lucide-react';
 import { Avatar } from './Avatar';
 import { cn } from '@shared/utils/cn';
@@ -48,7 +48,7 @@ const getRankLabel = (rank: MayaRank): string => {
 /**
  * Get rank position badge
  */
-const getRankBadge = (rank: number): React.ReactNode => {
+const getRankBadge = (rank: number): ReactNode => {
   if (rank === 1) return <span className="text-2xl">🥇</span>;
   if (rank === 2) return <span className="text-2xl">🥈</span>;
   if (rank === 3) return <span className="text-2xl">🥉</span>;
@@ -58,7 +58,7 @@ const getRankBadge = (rank: number): React.ReactNode => {
 /**
  * Skeleton Loading Row
  */
-const SkeletonRow: React.FC = () => (
+const SkeletonRow = () => (
   <tr className="animate-pulse border-b border-gray-200">
     <td className="px-6 py-4">
       <div className="h-8 w-8 rounded bg-gray-200" />
@@ -90,10 +90,10 @@ const SkeletonRow: React.FC = () => (
 /**
  * Mobile Card View (for responsive)
  */
-const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> = ({
+const MobileCard = ({
   entry,
   isCurrentUser,
-}) => (
+}: { entry: LeaderboardEntry; isCurrentUser: boolean }) => (
   <div
     className={cn(
       'mb-4 rounded-lg border-2 bg-white p-4',
@@ -169,12 +169,12 @@ const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> 
  * skeleton loading rows, and heavily customized cell rendering (medals,
  * avatars, rank badges). These exceed DataTable's column `render` scope.
  */
-export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
+export const LeaderboardTable = ({
   entries,
   currentUserId,
   isLoading = false,
   className,
-}) => {
+}: LeaderboardTableProps) => {
   // Show skeleton while loading
   if (isLoading) {
     return (

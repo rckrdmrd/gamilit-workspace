@@ -246,10 +246,10 @@ export function useAdminDashboard(
   // ============================================================================
 
   const loading =
-    healthQuery.isLoading &&
-    metricsQuery.isLoading &&
-    actionsQuery.isLoading &&
-    alertsQuery.isLoading &&
+    healthQuery.isLoading ||
+    metricsQuery.isLoading ||
+    actionsQuery.isLoading ||
+    alertsQuery.isLoading ||
     activityQuery.isLoading;
 
   const firstError =

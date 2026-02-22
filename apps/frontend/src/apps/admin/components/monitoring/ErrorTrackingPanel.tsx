@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useErrorTracking } from '../../hooks/useAdminData';
@@ -12,7 +12,7 @@ const severityColors = {
   critical: { bg: 'bg-red-500/10', text: 'text-red-500', border: 'border-red-500/30' },
 };
 
-export const ErrorTrackingPanel: React.FC = () => {
+export const ErrorTrackingPanel = () => {
   const [filters, setFilters] = useState<{ severity?: string; resolved?: boolean }>({});
   const { errors, loading, markAsResolved, refresh } = useErrorTracking(filters);
   const [expandedError, setExpandedError] = useState<string | null>(null);

@@ -1,9 +1,8 @@
-import React from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { WordPosition } from './sopaLetrasTypes';
 
-export const WordList: React.FC<{ words: WordPosition[] }> = ({ words }) => (
+export const WordList = ({ words }: { words: WordPosition[] }) => (
   <DetectiveCard variant="default" padding="md">
     <h3 className="font-bold mb-4">Palabras a encontrar</h3>
     <div className="space-y-2">

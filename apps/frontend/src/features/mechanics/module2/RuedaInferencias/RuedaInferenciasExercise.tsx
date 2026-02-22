@@ -6,7 +6,7 @@
  * @task FE-071
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { RotateCw, Send, Book, CheckCircle2 } from 'lucide-react';
@@ -108,14 +108,14 @@ type GamePhase =
   | 'completed'
   | 'feedback';
 
-export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> = ({
+export const RuedaInferenciasExercise = ({
   exerciseId,
   userId: _userId,
   onComplete,
   onProgressUpdate,
   initialData,
   actionsRef,
-}) => {
+}: RuedaInferenciasExerciseProps) => {
   // Store hooks for syncing rewards
   const { syncAndInvalidate } = useInvalidateDashboard();
 
@@ -539,7 +539,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6 text-center"
               >
-                <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-6">
+                <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-3 sm:p-6">
                   <Book className="mx-auto mb-4 h-12 w-12 text-blue-600" />
                   <h3 className="mb-3 text-xl font-semibold text-blue-900">¿Cómo funciona?</h3>
                   <div className="mx-auto max-w-2xl space-y-2 text-left text-detective-text">
@@ -553,7 +553,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
                 <button
                   onClick={handleSpinWheel}
-                  className="mx-auto flex transform items-center gap-3 rounded-lg bg-blue-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-blue-700"
+                  className="mx-auto flex transform items-center gap-3 rounded-lg bg-blue-600 px-4 py-2 sm:px-8 sm:py-4 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-blue-700"
                 >
                   <RotateCw className="h-6 w-6" />
                   Girar la Ruleta
@@ -593,7 +593,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
               >
                 {/* Selected Category */}
                 <div
-                  className="rounded-lg p-6 text-center text-white shadow-lg"
+                  className="rounded-lg p-3 sm:p-6 text-center text-white shadow-lg"
                   style={{ backgroundColor: selectedCategory.color }}
                 >
                   <div className="mb-3 text-5xl">{selectedCategory.icon}</div>
@@ -602,7 +602,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 </div>
 
                 {/* Fragment Text */}
-                <div className="rounded-lg border-2 border-detective-border bg-detective-bg p-8">
+                <div className="rounded-lg border-2 border-detective-border bg-detective-bg p-4 sm:p-8">
                   <h4 className="mb-4 text-lg font-semibold text-detective-text">
                     Fragmento {currentFragmentIndex + 1}:
                   </h4>
@@ -611,7 +611,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
                 <button
                   onClick={handleStartWriting}
-                  className="mx-auto flex transform items-center gap-3 rounded-lg bg-green-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-green-700"
+                  className="mx-auto flex transform items-center gap-3 rounded-lg bg-green-600 px-4 py-2 sm:px-8 sm:py-4 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-green-700"
                 >
                   <Send className="h-6 w-6" />
                   Comenzar a Escribir
@@ -649,7 +649,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 </div>
 
                 {/* Fragment Text */}
-                <div className="rounded-lg border-2 border-detective-border bg-detective-bg p-6">
+                <div className="rounded-lg border-2 border-detective-border bg-detective-bg p-3 sm:p-6">
                   <p className="text-base leading-relaxed text-detective-text">{currentFragment.text}</p>
                 </div>
 
@@ -660,7 +660,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                     value={currentText}
                     onChange={(e) => setCurrentText(e.target.value)}
                     placeholder={`Escribe tu inferencia aquí (${exercise.content.settings.minTextLength}-${exercise.content.settings.maxTextLength} caracteres)...`}
-                    className="h-40 w-full resize-none rounded-lg border-2 border-detective-border p-4 text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="h-32 sm:h-40 w-full resize-none rounded-lg border-2 border-detective-border p-4 text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                     maxLength={exercise.content.settings.maxTextLength}
                     disabled={!isTimerRunning}
                   />
@@ -678,7 +678,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                   <button
                     onClick={handleManualSubmit}
                     disabled={!isTextValid || !isTimerRunning}
-                    className={`flex items-center gap-3 rounded-lg px-8 py-4 font-bold shadow-lg transition-all ${
+                    className={`flex items-center gap-3 rounded-lg px-4 py-2 sm:px-8 sm:py-4 font-bold shadow-lg transition-all ${
                       isTextValid && isTimerRunning
                         ? 'transform bg-blue-600 text-white hover:scale-105 hover:bg-blue-700'
                         : 'cursor-not-allowed bg-gray-300 text-detective-text-secondary'
@@ -703,7 +703,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-6">
+                <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-3 sm:p-6">
                   <h3 className="mb-4 text-xl font-bold text-blue-900">
                     📋 Resumen de tus respuestas
                   </h3>
@@ -739,7 +739,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                       setPhase('writing');
                       setIsTimerRunning(true);
                     }}
-                    className="rounded-lg bg-gray-300 px-8 py-4 font-bold text-detective-text transition-all hover:bg-gray-400"
+                    className="rounded-lg bg-gray-300 px-4 py-2 sm:px-8 sm:py-4 font-bold text-detective-text transition-all hover:bg-gray-400"
                   >
                     Editar Última Respuesta
                   </button>
@@ -751,7 +751,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                       handleSubmitExercise();
                     }}
                     disabled={isSubmitting || fragmentStates.some((s) => !s.isComplete)}
-                    className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+                    className="rounded-lg bg-green-600 px-4 py-2 sm:px-8 sm:py-4 font-bold text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
                   >
                     <Send className="mr-2 inline h-5 w-5" />
                     {isSubmitting ? 'Enviando...' : 'Enviar Respuestas'}
@@ -770,7 +770,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-6 text-center"
               >
-                <div className="rounded-lg border-2 border-green-300 bg-detective-success/10 p-8">
+                <div className="rounded-lg border-2 border-green-300 bg-detective-success/10 p-4 sm:p-8">
                   <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-detective-success" />
                   <h3 className="mb-2 text-2xl font-bold text-green-900">¡Ejercicio Completado!</h3>
                   <p className="text-detective-text">

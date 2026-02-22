@@ -12,7 +12,7 @@
  * - Badge indicators for pending items
  */
 
-import React from 'react';
+import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Users, Building, Flag, FileText, BarChart3, Settings, ArrowRight } from 'lucide-react';
@@ -21,7 +21,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 interface QuickAction {
   title: string;
   description: string;
-  icon: React.ElementType;
+  icon: ElementType;
   link: string;
   gradient: string;
   badge?: number;
@@ -33,7 +33,7 @@ interface QuickActionsGridProps {
   flaggedContent?: number;
 }
 
-export const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ flaggedContent = 0 }) => {
+export const QuickActionsGrid = ({ flaggedContent = 0 }: QuickActionsGridProps) => {
   // ============================================================================
   // ACTIONS DATA
   // ============================================================================
@@ -112,7 +112,7 @@ interface QuickActionCardProps {
   index: number;
 }
 
-const QuickActionCard: React.FC<QuickActionCardProps> = ({ action, index }) => {
+const QuickActionCard = ({ action, index }: QuickActionCardProps) => {
   const Icon = action.icon;
 
   // Get color classes

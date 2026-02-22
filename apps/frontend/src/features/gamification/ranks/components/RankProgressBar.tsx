@@ -4,7 +4,7 @@
  * XP progress bar with smooth animations, milestones, and detailed stats.
  */
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Star, Target } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -56,7 +56,7 @@ const colorConfig = {
 /**
  * RankProgressBar Component
  */
-export const RankProgressBar: React.FC<RankProgressBarProps> = ({
+export const RankProgressBar = ({
   currentXP,
   xpToNextLevel,
   currentLevel,
@@ -67,7 +67,7 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
   height = 'md',
   color = 'detective',
   className = '',
-}) => {
+}: RankProgressBarProps) => {
   // Calculate progress percentage
   const progress = useMemo(() => {
     const percentage = (currentXP / xpToNextLevel) * 100;
@@ -211,13 +211,13 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
 /**
  * CompactProgressBar - Minimal version without stats
  */
-export const CompactProgressBar: React.FC<RankProgressBarProps> = (props) => {
+export const CompactProgressBar = (props: RankProgressBarProps) => {
   return <RankProgressBar {...props} showStats={false} showMilestones={false} />;
 };
 
 /**
  * DetailedProgressBar - Full version with all features
  */
-export const DetailedProgressBar: React.FC<RankProgressBarProps> = (props) => {
+export const DetailedProgressBar = (props: RankProgressBarProps) => {
   return <RankProgressBar {...props} showStats={true} showMilestones={true} />;
 };

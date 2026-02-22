@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Clock, Star, BookOpen, FileText, Tag, Calendar } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -31,11 +30,11 @@ const exerciseTypeLabels: Record<string, string> = {
   'essay': 'Ensayo',
 };
 
-export const ExercisePreviewModal: React.FC<ExercisePreviewModalProps> = ({
+export const ExercisePreviewModal = ({
   isOpen,
   exercise,
   onClose,
-}) => {
+}: ExercisePreviewModalProps) => {
   if (!isOpen || !exercise) return null;
 
   const difficulty = exercise.difficulty || 'facil';

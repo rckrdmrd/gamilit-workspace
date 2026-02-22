@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { Crown } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 
@@ -65,7 +65,7 @@ const iconSizes = {
   lg: 'w-5 h-5',
 };
 
-export const RankBadge = React.forwardRef<HTMLSpanElement, RankBadgeProps>(
+export const RankBadge = forwardRef<HTMLSpanElement, RankBadgeProps>(
   ({ rank, showIcon = true, size = 'md', className, animated = false }, ref) => {
     return (
       <span

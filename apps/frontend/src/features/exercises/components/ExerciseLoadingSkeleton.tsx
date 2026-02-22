@@ -4,14 +4,13 @@
  * Full-page loading state for exercise page.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useExerciseContext } from '../context/ExerciseContext';
 
-export const ExerciseLoadingSkeleton: React.FC = () => {
+export const ExerciseLoadingSkeleton = () => {
   const { user, gamificationData, logout } = useExerciseContext();
 
   return (

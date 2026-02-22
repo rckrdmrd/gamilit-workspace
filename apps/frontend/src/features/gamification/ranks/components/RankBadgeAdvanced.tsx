@@ -4,7 +4,6 @@
  * Enhanced rank badge with animations, prestige stars, and interactive features.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 import { MayaIcon, PrestigeStarIcon } from './MayaIconography';
@@ -56,7 +55,7 @@ const sizeConfig = {
 /**
  * RankBadgeAdvanced Component
  */
-export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
+export const RankBadgeAdvanced = ({
   rank,
   prestigeLevel = 0,
   size = 'md',
@@ -67,7 +66,7 @@ export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
   showTooltip = false,
   onClick,
   className = '',
-}) => {
+}: RankBadgeAdvancedProps) => {
   const rankData = getRankById(rank);
   const config = sizeConfig[size];
 
@@ -147,13 +146,13 @@ export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
 /**
  * RankBadgeSimple - Simplified version without animations
  */
-export const RankBadgeSimple: React.FC<RankBadgeAdvancedProps> = (props) => {
+export const RankBadgeSimple = (props: RankBadgeAdvancedProps) => {
   return <RankBadgeAdvanced {...props} animated={false} showGlow={false} />;
 };
 
 /**
  * RankBadgeGlow - Version with permanent glow effect
  */
-export const RankBadgeGlow: React.FC<RankBadgeAdvancedProps> = (props) => {
+export const RankBadgeGlow = (props: RankBadgeAdvancedProps) => {
   return <RankBadgeAdvanced {...props} showGlow={true} />;
 };

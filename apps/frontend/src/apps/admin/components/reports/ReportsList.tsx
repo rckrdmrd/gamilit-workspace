@@ -8,7 +8,7 @@
  * @date 2025-11-24
  */
 
-import React from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import type { Report, ReportStatus } from '@/services/api/adminTypes';
 import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
@@ -77,10 +77,10 @@ export function ReportsList({
   onDelete,
   onRefresh,
 }: ReportsListProps) {
-  const [deletingId, setDeletingId] = React.useState<string | null>(null);
-  const [downloadingId, setDownloadingId] = React.useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
-  const [pendingDeleteId, setPendingDeleteId] = React.useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const handleDownload = async (reportId: string) => {
     setDownloadingId(reportId);

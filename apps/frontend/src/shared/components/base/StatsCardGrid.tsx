@@ -11,6 +11,7 @@
  * @module shared/components/base/StatsCardGrid
  */
 
+import type { ComponentType } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { DetectiveCard } from './DetectiveCard';
@@ -169,7 +170,7 @@ function MinimalStatCard({ item }: { item: StatItem }) {
 
 const variantRenderers: Record<
   NonNullable<StatsCardGridProps['variant']>,
-  React.ComponentType<{ item: StatItem }>
+  ComponentType<{ item: StatItem }>
 > = {
   detective: DetectiveStatCard,
   gradient: GradientStatCard,

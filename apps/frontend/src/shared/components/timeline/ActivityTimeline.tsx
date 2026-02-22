@@ -7,7 +7,6 @@
  * Full implementation needed in Phase 2
  */
 
-import React from 'react';
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
 // ============================================================================
@@ -34,11 +33,11 @@ export interface ActivityTimelineProps {
 // COMPONENT
 // ============================================================================
 
-export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
+export const ActivityTimeline = ({
   activities,
   loading = false,
   emptyMessage = 'No hay actividad registrada',
-}) => {
+}: ActivityTimelineProps) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">

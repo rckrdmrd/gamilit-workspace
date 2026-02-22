@@ -53,11 +53,11 @@ interface AttemptWithDetails {
   score_percentage?: number;
 }
 
-export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
+export const ExerciseHistory = ({
   exerciseId,
   userId,
   showAnswers = true,
-}) => {
+}: ExerciseHistoryProps) => {
   const [attempts, setAttempts] = useState<AttemptWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect'>('all');

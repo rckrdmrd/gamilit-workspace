@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ChangeEvent, FocusEvent, ReactNode } from 'react';
 import { AlertCircle } from 'lucide-react';
 
 export interface FormFieldProps {
@@ -6,8 +6,8 @@ export interface FormFieldProps {
   name: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date' | 'textarea' | 'select';
   value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   placeholder?: string;
   error?: string;
   required?: boolean;
@@ -19,7 +19,7 @@ export interface FormFieldProps {
   helpText?: string;
 }
 
-export const FormField: React.FC<FormFieldProps> = ({
+export const FormField = ({
   label,
   name,
   type = 'text',
@@ -35,7 +35,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   rows = 3,
   options = [],
   helpText,
-}) => {
+}: FormFieldProps) => {
   const baseInputClasses = `
     w-full rounded-md border px-3 py-2 text-sm
     focus:outline-none focus:ring-2 focus:ring-blue-500
@@ -44,7 +44,7 @@ export const FormField: React.FC<FormFieldProps> = ({
     ${inputClassName}
   `;
 
-  const renderInput = (): React.ReactNode => {
+  const renderInput = (): ReactNode => {
     if (type === 'textarea') {
       return (
         <textarea

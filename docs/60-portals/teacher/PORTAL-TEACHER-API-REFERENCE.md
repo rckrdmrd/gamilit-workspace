@@ -1,7 +1,7 @@
 # Portal Teacher - API Reference
 
 **Fecha de creacion:** 2025-11-29
-**Version:** 1.0.0
+**Version:** 1.3.0
 **Estado:** VIGENTE
 **Complementa:** PORTAL-TEACHER-GUIDE.md
 
@@ -9,22 +9,22 @@
 
 ## 1. Resumen de Endpoints
 
-El Portal Teacher expone **63+ endpoints** organizados en 10 controladores:
+El Portal Teacher expone **63+ endpoints** organizados en 10 controladores backend. El frontend conecta con 8 de ellos (los controladores de Communication y Content fueron desconectados del frontend en v3.1.0):
 
-| Controller | Base Path | Endpoints | Descripcion |
-|------------|-----------|-----------|-------------|
-| TeacherController | `/teacher` | 20 | Dashboard, progress, analytics, grading |
-| TeacherClassroomsController | `/teacher/classrooms` | 12 | CRUD de aulas, estudiantes |
-| TeacherAssignmentsController | `/teacher/assignments` | * | Gestion de asignaciones |
-| InterventionAlertsController | `/teacher/alerts` | 5 | Alertas de intervencion |
-| AlertConfigController | `/teacher/alert-config` | * | Configuracion de umbrales de alertas |
-| ManualReviewController | `/teacher/reviews` | * | Revision manual de ejercicios |
-| TeacherCommunicationController | `/teacher/messages` | 6 | Mensajes y comunicacion |
-| TeacherContentController | `/teacher/content` | 13 | Contenido personalizado + resource sharing |
-| ExerciseResponsesController | `/teacher/exercise-responses` | 4 | Respuestas de ejercicios |
-| TeacherGradesController | `/teacher/grades` | 3 | Calificaciones |
+| Controller | Base Path | Endpoints | Descripcion | Frontend |
+|------------|-----------|-----------|-------------|----------|
+| TeacherController | `/teacher` | 20 | Dashboard, progress, analytics, grading | Si |
+| TeacherClassroomsController | `/teacher/classrooms` | 12 | CRUD de aulas, estudiantes | Si |
+| TeacherAssignmentsController | `/teacher/assignments` | * | Gestion de asignaciones | Si |
+| InterventionAlertsController | `/teacher/alerts` | 5 | Alertas de intervencion | Si |
+| AlertConfigController | `/teacher/alert-config` | * | Configuracion de umbrales de alertas | Si |
+| ManualReviewController | `/teacher/reviews` | * | Revision manual de ejercicios | Si |
+| TeacherCommunicationController | `/teacher/messages` | 6 | Mensajes y comunicacion | No (removed v3.1.0) |
+| TeacherContentController | `/teacher/content` | 13 | Contenido personalizado + resource sharing | Parcial (solo resource sharing) |
+| ExerciseResponsesController | `/teacher/exercise-responses` | 4 | Respuestas de ejercicios | Si |
+| TeacherGradesController | `/teacher/grades` | 3 | Calificaciones | Si |
 
-> **Nota:** Los controladores marcados con `*` requieren conteo detallado de endpoints. La cifra "63+" refleja los 7 controladores documentados; el total real incluye los 3 controladores agregados.
+> **Nota:** Los controladores marcados con `*` requieren conteo detallado de endpoints. La cifra "63+" refleja los 7 controladores documentados; el total real incluye los 3 controladores agregados. Los controladores de Communication y Content siguen existiendo en el backend pero sus paginas/hooks/APIs frontend fueron eliminados en v3.1.0. Los endpoints de Resource Sharing (seccion 10) siguen conectados via `resourceSharingApi.ts`.
 
 ---
 
@@ -1186,6 +1186,7 @@ socket.on('student:progress', (data) => {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 1.3.0 | 2026-02-21 | Added Frontend column to controller table. Marked TeacherCommunicationController and TeacherContentController as disconnected from frontend (v3.1.0 cleanup). Resource Sharing endpoints still connected via resourceSharingApi.ts |
 | 1.2.0 | 2026-02-21 | Fixed TeacherContentController endpoint count (11->13, actual count from source), added 3 missing controllers (TeacherAssignments, AlertConfig, ManualReview), updated total (51->63+) |
 | 1.1.0 | 2026-02-21 | Added 6 Resource Sharing endpoints (section 10), updated endpoint counts (45->51, TeacherContentController 5->11) |
 | 1.0.0 | 2025-11-29 | Creacion inicial |

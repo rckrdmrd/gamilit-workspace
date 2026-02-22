@@ -9,7 +9,6 @@
  * @component
  */
 
-import React from 'react';
 import { AlertCard } from './AlertCard';
 import { Pagination } from '@shared/components/Pagination';
 import { EmptyState } from '@shared/components/feedback/EmptyState';
@@ -33,7 +32,7 @@ interface AlertsListProps {
   onPrevPage: () => void;
 }
 
-export const AlertsList: React.FC<AlertsListProps> = ({
+export const AlertsList = ({
   alerts,
   isLoading,
   pagination,
@@ -43,7 +42,7 @@ export const AlertsList: React.FC<AlertsListProps> = ({
   onSuppress,
   onNextPage,
   onPrevPage,
-}) => {
+}: AlertsListProps) => {
   // Loading State
   if (isLoading && alerts.length === 0) {
     return (

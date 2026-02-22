@@ -8,7 +8,7 @@
  * @created 2026-01-27
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -30,10 +30,10 @@ interface WeeklyReportViewProps {
   reports: WeeklyReport[];
 }
 
-export const WeeklyReportView: React.FC<WeeklyReportViewProps> = ({
+export const WeeklyReportView = ({
   studentId,
   reports,
-}) => {
+}: WeeklyReportViewProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
     reports.length > 0 ? reports[0] : null,

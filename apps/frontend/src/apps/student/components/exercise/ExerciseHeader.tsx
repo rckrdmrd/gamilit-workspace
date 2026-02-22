@@ -3,7 +3,8 @@
  * Header section with back button, title, difficulty, rewards, and stats
  */
 
-import React from 'react';
+
+
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -23,7 +24,7 @@ interface ExerciseHeaderProps {
   score?: number;
 }
 
-export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
+export const ExerciseHeader = ({
   moduleId,
   exerciseTitle,
   exerciseDescription,
@@ -35,7 +36,7 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
   maxAttempts,
   timeElapsed,
   score,
-}) => {
+}: ExerciseHeaderProps) => {
   const navigate = useNavigate();
 
   const getDifficultyConfig = (diff: 'facil' | 'medio' | 'dificil' | 'experto') => {

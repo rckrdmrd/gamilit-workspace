@@ -1,5 +1,6 @@
 import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
 
+/** User annotation placed on a meme image */
 export interface MemeAnnotation {
   id: string;
   x: number;
@@ -8,21 +9,49 @@ export interface MemeAnnotation {
   category: 'texto' | 'contexto' | 'humor' | 'critica';
 }
 
+/** Individual meme item with metadata and analysis info */
+export interface MemeItem {
+  id: string;
+  imageUrl: string;
+  format: string;
+  topText?: string;
+  bottomText?: string;
+  analysis?: {
+    mainMessage: string;
+    humorType: string;
+    culturalReference: string;
+    historicalAccuracy: string;
+    implication: string;
+  };
+}
+
+/** Exercise data for Análisis de Memes (Module 4) */
 export interface AnalisisMemesData extends BaseExercise {
   memeUrl: string;
   memeTitle: string;
   expectedAnnotations: MemeAnnotation[];
+  memes?: MemeItem[];
+  analysisQuestions?: string[];
 }
 
-export interface ExerciseProgressUpdate {
-  currentStep: number;
-  totalSteps: number;
-  score: number;
-  hintsUsed: number;
-  timeSpent: number;
+/** Progress data sent to parent via onProgressUpdate */
+export interface AnalisisMemesProgressData {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: Record<string, unknown>;
 }
 
-// Exercise State for auto-save
+/** Serializable exercise state for auto-save and restore */
+export interface AnalisisMemesExerciseState {
+  annotations: MemeAnnotation[];
+}
+
+/** Full exercise state including score and time (for parent control) */
 export interface AnalisisMemesState {
   annotations: MemeAnnotation[];
   score: number;
@@ -30,24 +59,10 @@ export interface AnalisisMemesState {
   hintsUsed: number;
 }
 
-// Exercise Actions Interface for Parent Control
+/** Actions interface exposed via ref for parent control */
 export interface AnalisisMemesActions {
   getState: () => AnalisisMemesState;
   reset: () => void;
   validate: () => Promise<void>;
   addAnnotation?: (annotation: MemeAnnotation) => void;
-}
-
-// Standardized Exercise Props Interface
-export interface AnalisisMemesExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
-  initialData?: Partial<AnalisisMemesState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<AnalisisMemesActions | undefined>;
 }

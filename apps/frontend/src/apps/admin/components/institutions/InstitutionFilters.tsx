@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 
@@ -24,10 +24,10 @@ export interface FilterValues {
  *
  * @component
  */
-export const InstitutionFilters: React.FC<InstitutionFiltersProps> = ({
+export const InstitutionFilters = ({
   onFilter,
   onReset,
-}) => {
+}: InstitutionFiltersProps) => {
   const [filters, setFilters] = useState<FilterValues>({
     search: '',
     status: [],
@@ -48,7 +48,7 @@ export const InstitutionFilters: React.FC<InstitutionFiltersProps> = ({
     { value: 'enterprise', label: 'Enterprise' },
   ];
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newFilters = { ...filters, search: e.target.value };
     setFilters(newFilters);
     onFilter(newFilters);

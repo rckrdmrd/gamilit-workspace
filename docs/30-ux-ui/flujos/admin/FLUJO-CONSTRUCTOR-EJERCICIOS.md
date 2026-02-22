@@ -1,8 +1,8 @@
 # FL-ADM-07 - Exercise Builder (Admin)
 
 **ID:** FL-ADM-07
-**Version:** 1.2.0
-**Fecha:** 2026-02-19
+**Version:** 1.4.0
+**Fecha:** 2026-02-21
 **Estado:** Activo
 **Portal:** Admin
 **Prioridad:** P1
@@ -11,31 +11,45 @@
 
 ## 1. Resumen
 
-Flujo del constructor de ejercicios en el portal de administracion. Un administrador o maestro autorizado crea nuevos ejercicios educativos mediante un asistente de 4 pasos: (1) Informacion Basica (titulo, descripcion, modulo, dificultad, recompensas), (2) Seleccion de Tipo de Ejercicio (17 tipos disponibles en 3 modulos), (3) Configuracion Especifica del tipo seleccionado (contenido, opciones, respuestas correctas), y (4) Vista Previa con opcion de guardar como borrador o enviar a revision.
+Flujo del constructor de ejercicios en el portal de administracion. Un administrador o maestro autorizado crea o edita ejercicios educativos mediante un asistente de 4 pasos: (1) Informacion Basica (titulo, descripcion, modulo, dificultad, recompensas), (2) Seleccion de Tipo de Ejercicio (29 tipos disponibles en 5 modulos), (3) Configuracion Especifica del tipo seleccionado (contenido, opciones, respuestas correctas), y (4) Vista Previa con opcion de guardar como borrador o enviar a revision/publicar.
 
-El builder soporta 17 tipos de ejercicios agrupados en 3 modulos: M1 Comprension Literal (7 tipos), M2 Comprension Inferencial (5 tipos), M3 Comprension Critica (5 tipos). Cada tipo tiene su componente de configuracion dedicado con validaciones especificas.
+El builder soporta 29 tipos de ejercicios agrupados en 5 modulos: M1 Comprension Literal (7 tipos), M2 Comprension Inferencial (5 tipos), M3 Comprension Critica (5 tipos), M4 Lectura Digital (9 tipos), M5 Produccion Creativa (3 tipos). Los tipos M1-M3 tienen componentes de configuracion dedicados (`TypeConfigComponent`). Los tipos M4-M5 son seleccionables pero aun no tienen configs dedicados (fallback: mensaje indicando seleccionar tipo).
 
-Impacto funcional: Permite la creacion estructurada y validada de contenido educativo, asegurando que cada ejercicio cumpla con los estandares pedagogicos y gamificacion (XP, ML Coins, pistas) antes de su publicacion.
+**v1.4.0:** Soporte completo de edicion de ejercicios existentes. La ruta `/admin/exercises/:id/edit` ahora detecta el parametro `id` via `useParams`, fetcha el ejercicio con `GET /educational/exercises/:id` (React Query), pre-popula el formulario con datos existentes, y usa `PATCH /educational/exercises/:id` para actualizar en lugar de `POST`. Header y botones cambian dinamicamente: "Editar Ejercicio" vs "Crear Ejercicio", "Guardar y Publicar" vs "Enviar a Revision". ExerciseTypeSelector expandido de 17 a 29 tipos (M4+M5 agregados).
+
+**v1.3.0:** El selector de modulos en Step 1 ahora usa datos dinamicos del API (`GET /educational/modules`) en lugar de opciones hardcodeadas. Incluye un boton "+ Nuevo" que abre un modal (CreateModuleModal) para crear modulos inline sin salir del wizard. Esto implementa parcialmente EXT-001 de RF-ADM-004 (creacion de modulos custom). El Step 2 mapea UUIDs reales a IDs logicos (`module-{order_index}`) para el filtrado por tabs.
+
+Impacto funcional: Permite la creacion y edicion estructurada y validada de contenido educativo, asegurando que cada ejercicio cumpla con los estandares pedagogicos y gamificacion (XP, ML Coins, pistas) antes de su publicacion.
 
 ## 2. Precondiciones
 
 - Usuario autenticado con JWT valido y rol `super_admin` o `admin_teacher` con permiso de creacion de contenido.
 - Al menos un modulo educativo existente en `educational_content.modules`.
 - Backend con datasource `educational` operativo.
-- Conocimiento del tipo de ejercicio a crear (17 tipos disponibles).
+- Conocimiento del tipo de ejercicio a crear (29 tipos disponibles en 5 modulos).
 - Para Vista Previa: datos de configuracion completos en el paso 3.
 - Endpoint de creacion de ejercicios funcional (`POST /educational/exercises`).
+- Para edicion: ejercicio existente accesible via `GET /educational/exercises/:id` y endpoint `PATCH /educational/exercises/:id`.
 
 ## 3. Diagrama Mermaid
 
 ```mermaid
 flowchart TD
     A[Admin accede a /admin/exercises/create] --> B[AdminExerciseCreatePage.tsx]
+    A2[Admin accede a /admin/exercises/:id/edit] --> B2[AdminExerciseCreatePage.tsx - Edit Mode]
+    B2 --> B3[useQuery: GET /educational/exercises/:id]
+    B3 --> B4[Pre-popular formulario con datos existentes]
+    B4 --> C
     B --> C[Step 1: Informacion Basica]
 
     C --> C1[Llenar titulo + descripcion]
-    C1 --> C2[Seleccionar modulo M1-M5]
-    C2 --> C3[Configurar dificultad + tiempo + pistas]
+    C1 --> C2[Seleccionar modulo desde API]
+    C2 --> C2a{Modulo existe?}
+    C2a -- Si --> C3[Configurar dificultad + tiempo + pistas]
+    C2a -- No --> C2b[Abrir CreateModuleModal]
+    C2b --> C2c[POST /educational/modules]
+    C2c --> C2d[Modulo creado y auto-seleccionado]
+    C2d --> C3[Configurar dificultad + tiempo + pistas]
     C3 --> C4[Notas pedagogicas opcionales]
     C4 --> C5[Configurar recompensas XP + ML Coins]
     C5 --> C6{Validar: titulo + desc + modulo?}
@@ -44,7 +58,7 @@ flowchart TD
 
     D --> D1[ExerciseTypeSelector.tsx]
     D1 --> D2[Filtrar por modulo seleccionado]
-    D2 --> D3[17 tipos disponibles en cards]
+    D2 --> D3[29 tipos disponibles en cards - 5 modulos]
     D3 --> D4{Seleccionar tipo?}
     D4 -- No --> D3
     D4 -- Si --> E[Step 3: Configuracion]
@@ -94,41 +108,54 @@ flowchart TD
     G2 -- Guardar Borrador --> H1[handleSaveDraft]
     G2 -- Enviar a Revision --> H2[handleSubmitForReview]
 
-    H1 --> I1[POST /educational/exercises status=draft]
-    H2 --> I2[POST /educational/exercises status=pending_review]
+    H1 --> I0{Modo edicion?}
+    H2 --> I0
+    I0 -- Crear --> I1[POST /educational/exercises]
+    I0 -- Editar --> I3[PATCH /educational/exercises/:id]
 
     I1 --> J[BE: ExercisesController.create]
-    I2 --> J
+    I3 --> J2[BE: ExercisesController.update]
 
     J --> K[ExercisesService.createExercise]
+    J2 --> K2[ExercisesService.updateExercise]
     K --> L[DB: INSERT educational_content.exercises]
+    K2 --> L2[DB: UPDATE educational_content.exercises]
+    L2 --> M
     L --> M[Respuesta exitosa]
     M --> N[Toast: Ejercicio guardado/enviado]
 ```
 
 ## 4. Secuencia FE -> BE -> DB
 
+### Paso 0: Entrada (Crear o Editar)
+1. **Frontend:** `AdminExerciseCreatePage.tsx` se monta en ruta `/admin/exercises/create` (modo crear) o `/admin/exercises/:id/edit` (modo editar).
+2. **Frontend (edit mode):** Si `useParams()` devuelve `id`, activa `isEditMode=true`. React Query fetch del ejercicio via `getExercise(id)` → `GET /educational/exercises/:id`. Transforma respuesta backend a `ExerciseFormData` (reverse difficulty map, snake_case→camelCase). Pre-popula formulario con datos existentes.
+3. **Frontend:** Header muestra "Editar Ejercicio" o "Crear Ejercicio" segun modo. Botones en Step 4 cambian: "Guardar y Publicar" vs "Enviar a Revision".
+
 ### Paso 1: Informacion Basica (Step 1)
-1. **Frontend:** `AdminExerciseCreatePage.tsx` se monta en ruta `/admin/exercises/create`.
+1. **Frontend:** `AdminExerciseCreatePage.tsx` renderiza Step 1 (pre-populado si edit mode).
 2. **Frontend:** Componente `StepBasicInfo` renderiza formulario con:
    - Titulo (obligatorio), Descripcion (obligatorio), Instrucciones (opcional).
-   - Selector de modulo: M1-M5 (obligatorio).
+   - Selector de modulo: dropdown dinamico via `useModulesQuery()` → `GET /educational/modules` (obligatorio).
+   - Boton "+ Nuevo" junto al selector que abre `CreateModuleModal` para crear modulos inline → `POST /educational/modules`.
    - Dificultad: beginner/intermediate/advanced/expert.
    - Tiempo estimado (min), Pistas permitidas (0-10).
    - Notas pedagogicas: como resolver, estrategia recomendada, notas docente.
    - Recompensas: XP reward (default 50), ML Coins (default 10).
-3. **Frontend:** Validacion local: `canAdvance()` verifica titulo + descripcion + moduleId.
+3. **Frontend:** `useModulesQuery` hook (React Query) cachea modulos con staleTime 5min. Mutation invalida cache al crear modulo.
+4. **Frontend:** Validacion local: `canAdvance()` verifica titulo + descripcion + moduleId (UUID real).
 
 ### Paso 2: Seleccion de Tipo (Step 2)
-4. **Frontend:** `ExerciseTypeSelector.tsx` muestra 17 tipos de ejercicio en cards.
-5. **Frontend:** Filtrado por modulo seleccionado (tabs: Todos, M1 Literal, M2 Inferencial, M3 Critica).
-6. **Frontend:** Cada card muestra: icono, nombre, descripcion, complejidad (simple/medium/complex).
-7. **Frontend:** Al seleccionar tipo, se resetea `typeConfig` a `{}`.
+5. **Frontend:** `ExerciseTypeSelector.tsx` muestra 29 tipos de ejercicio en cards (7 M1 + 5 M2 + 5 M3 + 9 M4 + 3 M5).
+6. **Frontend:** Mapea UUID del modulo seleccionado a ID logico (`module-{order_index}`) para filtrado por tabs. Tabs: Todos, Literal, Inferencial, Critica, Digital, Creativa + tabs dinamicos para modulos nuevos.
+7. **Frontend:** Cada card muestra: icono, nombre, descripcion, complejidad (simple/medium/complex).
+8. **Frontend:** Si el modulo seleccionado no tiene tipos asignados, muestra mensaje indicando usar tab "Todos".
+9. **Frontend:** Al seleccionar tipo, se resetea `typeConfig` a `{}`.
 
 ### Paso 3: Configuracion Especifica (Step 3)
 8. **Frontend:** Se renderiza el componente de configuracion correspondiente via `TYPE_CONFIG_MAP[exerciseType]`.
 9. **Frontend:** Cada componente recibe `config` y `onChange` para actualizar `typeConfig`.
-10. **Frontend:** Componentes de configuracion (17 total) definen campos especificos del tipo de ejercicio:
+10. **Frontend:** Componentes de configuracion (17 configs para M1-M3; tipos M4-M5 seleccionables sin config dedicado — fallback message) definen campos especificos del tipo de ejercicio:
     - `CompletarEspaciosConfig`: Texto con blancos, opciones por espacio.
     - `CrucigramaConfig`: Grid, pistas horizontales/verticales.
     - `EmparejamientoConfig`: Pares de conceptos.
@@ -158,8 +185,11 @@ flowchart TD
 |------|------|-------------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminExerciseCreatePage.tsx` | Asistente de 4 pasos para crear ejercicios |
 | Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
-| Componente Step 1 | `apps/frontend/src/apps/admin/components/exercise-builder/StepBasicInfo.tsx` | Formulario de informacion basica (Step 1) |
-| Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ExerciseTypeSelector.tsx` | Selector de tipo de ejercicio (17 tipos) |
+| Componente Step 1 | `apps/frontend/src/apps/admin/components/exercise-builder/StepBasicInfo.tsx` | Formulario de informacion basica con selector dinamico de modulos (Step 1) |
+| Modal | `apps/frontend/src/apps/admin/components/exercise-builder/CreateModuleModal.tsx` | Modal inline para crear modulos sin salir del wizard (v1.3.0) |
+| Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ExerciseTypeSelector.tsx` | Selector de tipo de ejercicio (29 tipos en 5 modulos) con tabs dinamicos y mapeo UUID→logico |
+| Hook | `apps/frontend/src/apps/admin/hooks/useContentQueries.ts` → `useModulesQuery()` | React Query hook para fetch + create de modulos (v1.3.0) |
+| API | `apps/frontend/src/services/api/educationalAPI.ts` → `createModule()` | Funcion API para POST /educational/modules (v1.3.0) |
 | Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ExercisePreview.tsx` | Vista previa del ejercicio configurado |
 | Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ContentEditor.tsx` | Editor de contenido del ejercicio |
 | Barrel | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/index.ts` | Barrel export de todos los type configs |
@@ -198,6 +228,8 @@ flowchart TD
 | Endpoint | `POST /educational/exercises/:id/submit` | Enviar respuesta de ejercicio |
 | Controller | `apps/backend/src/modules/educational/controllers/exercise-validation.controller.ts` | Validacion de ejercicios |
 | Controller | `apps/backend/src/modules/educational/controllers/modules.controller.ts` | CRUD de modulos educativos |
+| Endpoint | `GET /educational/modules` | Listar todos los modulos (usado por Step 1 dropdown) |
+| Endpoint | `POST /educational/modules` | Crear nuevo modulo (usado por CreateModuleModal) |
 | Controller | `apps/backend/src/modules/educational/controllers/media-upload.controller.ts` | Upload de media para ejercicios |
 
 ### Datos (Base de Datos)
@@ -223,12 +255,12 @@ flowchart TD
 ## 6. Reglas y validaciones
 
 - **RBAC:** Solo roles `super_admin` y `admin_teacher` con permiso de creacion de contenido pueden acceder a `/admin/exercises/create`.
-- **Validacion Step 1:** Titulo (obligatorio, no vacio), Descripcion (obligatorio, no vacio), Modulo (obligatorio, debe ser M1-M5 valido).
+- **Validacion Step 1:** Titulo (obligatorio, no vacio), Descripcion (obligatorio, no vacio), Modulo (obligatorio, UUID valido de `educational_content.modules`).
 - **Validacion Step 2:** Tipo de ejercicio debe estar seleccionado (string no vacio).
 - **Validacion Step 3:** `typeConfig` debe tener al menos una clave (`Object.keys(typeConfig).length > 0`).
 - **Validacion Step 4:** Siempre permitido (paso final).
 - **Navegacion:** Solo se puede avanzar si `canAdvance()` retorna true; se puede retroceder sin restricciones. Se puede volver a steps completados.
-- **Tipos por modulo:** 7 tipos en M1 (Literal), 5 en M2 (Inferencial), 5 en M3 (Critica). Total: 17 tipos.
+- **Tipos por modulo:** 7 tipos en M1 (Literal), 5 en M2 (Inferencial), 5 en M3 (Critica), 9 en M4 (Digital), 3 en M5 (Creativa). Total: 29 tipos.
 - **Complejidad:** Cada tipo tiene complejidad asignada: simple (verde), medium (amarillo), complex (rojo).
 - **Recompensas:** XP reward default=50 (min 0, step 10), ML Coins default=10 (min 0, step 5), Pistas default=3 (0-10).
 - **Tiempo estimado:** Default 10 minutos (min 1, max 120 minutos).
@@ -259,11 +291,11 @@ flowchart TD
 
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
-| Frontend (pagina) | `apps/frontend/src/apps/admin/pages/AdminExerciseCreatePage.tsx` | Ruta `/admin/exercises/create`, wizard 4 pasos, 17 type configs |
+| Frontend (pagina) | `apps/frontend/src/apps/admin/pages/AdminExerciseCreatePage.tsx` | Ruta `/admin/exercises/create` y `/admin/exercises/:id/edit`, wizard 4 pasos, 17 type configs (M1-M3), edicion via PATCH |
 | Frontend (wrapper) | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
 | Frontend (step 1) | `apps/frontend/src/apps/admin/components/exercise-builder/StepBasicInfo.tsx` | Formulario de informacion basica extraido |
 | Frontend (barrel) | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/index.ts` | Barrel export de type configs |
-| Frontend (selector) | `apps/frontend/src/apps/admin/components/exercise-builder/ExerciseTypeSelector.tsx` | 17 tipos definidos, filtro por modulo, complexity badges |
+| Frontend (selector) | `apps/frontend/src/apps/admin/components/exercise-builder/ExerciseTypeSelector.tsx` | 29 tipos definidos (5 modulos), filtro por modulo, complexity badges |
 | Frontend (preview) | `apps/frontend/src/apps/admin/components/exercise-builder/ExercisePreview.tsx` | Vista previa del ejercicio completo |
 | Frontend (config M1) | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/CompletarEspaciosConfig.tsx` | Config para Completar Espacios |
 | Frontend (config M2) | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/ConstruccionHipotesisConfig.tsx` | Config para Construccion de Hipotesis |

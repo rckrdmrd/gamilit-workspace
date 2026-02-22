@@ -12,7 +12,7 @@
  * Created: 2025-12-05 - FE-ADMIN-011-016 (Sprint P2-B)
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -34,7 +34,7 @@ import type { FeatureFlag, CreateFlagDto, UpdateFlagDto } from '../../types';
 
 type FilterStatus = 'all' | 'enabled' | 'disabled';
 
-export const FeatureFlagsPanel: React.FC = () => {
+export const FeatureFlagsPanel = () => {
   const { flags, loading, error, createFlag, updateFlag, deleteFlag, toggleFlag, fetchFlags } =
     useFeatureFlags();
 

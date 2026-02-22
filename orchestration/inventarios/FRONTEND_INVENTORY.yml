@@ -2,7 +2,7 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.0.0"
+version: "12.1.0"
 fecha: "2026-02-21"
 proyecto: "gamilit"
 framework: "React 19.2"
@@ -15,16 +15,16 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 590                          # Verified 2026-02-21: find *.tsx excl tests/stories/examples/_testing. +CompletionHeader, +CompletionActions, +Pagination, +ResourceSharingPanel, +StudentMonitoringPanel, +SuspendStudentModal, +StudentDetailModal, +more
-  hooks: 127                                    # Verified 2026-02-21: find use*.ts excl user*/tests. +useCompletionAnimations, +useSharedResources, +useGamificationSocket, +useBatchEquipment, +useTeacherContent, +useTeacherMessages, +useAnalytics(teacher), +useExerciseState, +useBranding(shared)
-  paginas: 70                                   # 70 activas + 1 legacy
+  componentes_tsx: 576                          # Verified 2026-02-21: find .tsx excl tests/stories/examples/legacy/testing
+  hooks: 128                                    # Verified 2026-02-21: find use*.ts excl tests + type files (user*.types.ts)
+  paginas: 67                                   # Verified 2026-02-21: find *Page.tsx excl tests/legacy. -1 LegacyExercisePage, -3 teacher pages
   stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003)
-  api_service_files: 67                         # Verified 2026-02-21: 45 services/api (excl infra/index) + 19 features + 2 shared + 1 NotificationService(deprecated). +resourceSharingApi.ts
+  api_service_files: 65                         # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0). +resourceSharingApi.ts
   api_calls_total: 580                          # ~580: +resourceSharingApi calls over previous 575
   type_definition_files: 49                     # 49 archivos, 430+ tipos/interfaces/enums exportados
   portales: 4
   mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
-  routes: 73                                    # 73 <Route path=> definitions en App.tsx (verified 2026-02-21)
+  routes: 70                                    # 73 - 3 routes removed (teacher communication, content, content-management)
   contexts_providers: 4                         # AuthContext, BrandingProvider, ExerciseContext (Exercise Restructuring), barrel
   config_files: 16                              # 14 root + exercise-registry.ts + registrations.ts
   utility_files: 37                             # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1) + difficulty.ts + inventory/utils.ts + downloadCSV.ts
@@ -42,7 +42,7 @@ portales:
   - nombre: "Portal Estudiante"
     directorio: "apps/student/"
     completitud: "~100%"
-    paginas: 20                                 # 18 *Page.tsx + DashboardComplete + DeviceManagementSection
+    paginas: 19                                 # 18 *Page.tsx + DashboardComplete + DeviceManagementSection - 1 LegacyExercisePage deleted
     componentes_tsx: 100                        # Verified 2026-02-21: incl. +CompletionHeader, +CompletionActions, +CompletionModalSections (CompletionModal split)
     descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda, misiones, amigos"
     cambios_recientes: |
@@ -61,11 +61,20 @@ portales:
   - nombre: "Portal Maestro"
     directorio: "apps/teacher/"
     completitud: "~95%"
-    paginas: 19                                 # 19 paginas (ADR-030: renamed with "Page" suffix)
-    componentes_tsx: 46                         # Verified 2026-02-21: 46 .tsx in components/ (excl tests). +ResourceSharingPanel, +more post-AUDIT
-    hooks: 25                                   # Verified 2026-02-21: 25 use*.ts (excl index.ts). +useSharedResources, +useTeacherContent, +useTeacherMessages, +useAnalytics
-    descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, comunicacion, resource sharing"
+    paginas: 16                                 # 16 paginas (was 19, removed Communication, ContentManagement, Content)
+    componentes_tsx: 44                         # 46 - 6 communication components deleted + 4 in collaboration/settings remain
+    hooks: 23                                   # 25 - 2 deleted (useTeacherMessages, useTeacherContent)
+    descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, resource sharing"
     cambios_recientes: |
+      v12.1.0 (Teacher Portal Cleanup 2026-02-21):
+      - 3 pages deleted (Communication, ContentManagement, Content) — not applicable to teacher role
+      - 6 communication components deleted (AnnouncementForm, ConversationsList, FeedbackForm, MessageComposer, MessagesList, MessageFilters)
+      - 2 hooks deleted (useTeacherMessages, useTeacherContent)
+      - 2 API services deleted (teacherMessagesApi, teacherContentApi)
+      - 3 routes removed from App.tsx, 2 sidebar items removed from GamilitSidebar
+      - Bug fixes: analyticsApi transformers, settings preferences merge, grading empty answers, assignments edit/delete
+      - Standards compliance: LoadingSpinner, EmptyState, aria-labels, role="alert"
+      - React Query migration: TeacherStudentsPage (legacy useEffect -> useQuery)
       v12.0.0 (Phase 1+2 Backlog 2026-02-21):
       - 4 teacher pages re-enabled (routes + sidebar items)
       - +ResourceSharingPanel component (full-stack wired)
@@ -106,7 +115,7 @@ portales:
     descripcion: "Dashboard, progreso hijo, login, registro"
 
 # Nota: Paginas compartidas (auth pages, feature-level pages) = 8 adicionales fuera de portales
-# Total paginas: 20+19+19+4+8 = 70
+# Total paginas: 19+19+19+4+8 = 69
 
 # -------------------------------------------------------------------------------
 # FEATURES (Verificado contra features/ directory)

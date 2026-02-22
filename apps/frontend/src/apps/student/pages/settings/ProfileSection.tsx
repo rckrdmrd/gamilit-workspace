@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/app/providers/AuthContext';
 import { profileAPI } from '@/services/api/profileAPI';
@@ -15,7 +15,7 @@ interface ProfileSectionProps {
   user: User;
 }
 
-export const ProfileSection: React.FC<ProfileSectionProps> = ({ user }) => {
+export const ProfileSection = ({ user }: ProfileSectionProps) => {
   const { refreshUser } = useAuth();
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');

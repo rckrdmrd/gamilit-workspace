@@ -19,7 +19,7 @@
  * Multi-tenancy can be implemented later when needed for true data isolation.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -39,7 +39,7 @@ interface Tenant {
   lastActive: string;
 }
 
-export const TenantManagementPanel: React.FC = () => {
+export const TenantManagementPanel = () => {
   const [tenants] = useState<Tenant[]>([
     {
       id: '1',

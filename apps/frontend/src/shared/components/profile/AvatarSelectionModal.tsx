@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { X, Check } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -28,12 +27,12 @@ const AVATAR_OPTIONS = [
     'https://api.dicebear.com/7.x/avataaars/svg?seed=Kevin',
 ];
 
-export const AvatarSelectionModal: React.FC<AvatarSelectionModalProps> = ({
+export const AvatarSelectionModal = ({
     isOpen,
     onClose,
     onSelect,
     currentAvatar,
-}) => {
+}: AvatarSelectionModalProps) => {
     // Note: ESC key, scroll lock, and focus trap are handled by Modal component
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Construction, Clock, Beaker, Sparkles, AlertTriangle } from 'lucide-react';
 
 export interface FeatureBadgeProps {
@@ -64,14 +64,14 @@ export interface FeatureBadgeProps {
  *   <div className="card-content">...</div>
  * </div>
  */
-export const FeatureBadge: React.FC<FeatureBadgeProps> = ({
+export const FeatureBadge = ({
   variant,
   size = 'md',
   tooltip,
   position = 'inline',
   text,
   className = '',
-}) => {
+}: FeatureBadgeProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   // Variant configurations

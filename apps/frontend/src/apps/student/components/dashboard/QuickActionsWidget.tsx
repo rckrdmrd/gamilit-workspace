@@ -11,13 +11,14 @@
  * @component
  */
 
+import type { ComponentType } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Award, Users, ArrowRight, Sparkles } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 
 interface QuickAction {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   label: string;
   description: string;
   color: string;

@@ -4,7 +4,7 @@
  * @description Real-time battle interface for peer challenges (EXT-009)
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useBattle } from '../hooks/useBattle';
 
 /**
@@ -15,7 +15,7 @@ const BATTLE_EMOJIS = ['&#128588;', '&#128293;', '&#128556;', '&#128526;', '&#12
 /**
  * BattleArena Component
  */
-export const BattleArena: React.FC = () => {
+export const BattleArena = () => {
   const {
     currentBattle,
     currentQuestion,

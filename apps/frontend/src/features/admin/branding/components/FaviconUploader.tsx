@@ -8,7 +8,7 @@
  * @see ET-WL-003-asset-management.md
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import { type ChangeEvent, type DragEvent, useState, useRef, useCallback } from 'react';
 import { X, Globe, AlertCircle, Loader2 } from 'lucide-react';
 
 interface FaviconUploaderProps {
@@ -48,14 +48,14 @@ interface FaviconUploaderProps {
  * />
  * ```
  */
-export const FaviconUploader: React.FC<FaviconUploaderProps> = ({
+export const FaviconUploader = ({
   label,
   currentFaviconUrl,
   onUpload,
   onRemove,
   disabled = false,
   description,
-}) => {
+}: FaviconUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,7 +115,7 @@ export const FaviconUploader: React.FC<FaviconUploaderProps> = ({
   /**
    * Handle input change
    */
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       handleFileSelect(file);
@@ -126,19 +126,19 @@ export const FaviconUploader: React.FC<FaviconUploaderProps> = ({
   /**
    * Handle drag events
    */
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     if (!disabled) {
       setIsDragging(true);
     }
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
+  const handleDragLeave = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 

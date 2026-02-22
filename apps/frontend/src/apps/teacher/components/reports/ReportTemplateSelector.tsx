@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { FileText, Calendar, BarChart, AlertCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import type { ReportType } from '../../types';
@@ -8,7 +8,7 @@ interface Template {
   type: ReportType;
   name: string;
   description: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   metrics: string[];
 }
 

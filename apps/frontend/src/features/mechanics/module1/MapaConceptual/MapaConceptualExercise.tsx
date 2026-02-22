@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type MutableRefObject } from 'react';
 import { GitBranch } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -25,18 +25,18 @@ export interface MapaConceptualExerciseProps {
     };
     answers: Record<string, unknown>;
   }) => void;
-  actionsRef?: React.MutableRefObject<{
+  actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
 }
 
-export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
+export const MapaConceptualExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: MapaConceptualExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
@@ -218,7 +218,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
         }
       >
         <DetectiveCard variant="default" padding="lg">
-          <div className="relative h-[600px] w-full rounded-lg bg-detective-bg">
+          <div className="relative h-[350px] sm:h-[600px] w-full overflow-auto rounded-lg bg-detective-bg">
             <svg className="absolute inset-0 h-full w-full">
               {connections.map((conn, i) => {
                 const [fromId, toId] = conn.split('-');

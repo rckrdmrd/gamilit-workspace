@@ -13,7 +13,7 @@
  * Route: /teacher/notifications
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -45,7 +45,7 @@ import { useNotificationsStore } from '@/features/notifications/store/notificati
 import { cn } from '@shared/utils/cn';
 
 // Notification type icons mapping for teachers
-const notificationIcons: Record<string, React.ElementType> = {
+const notificationIcons: Record<string, ElementType> = {
   achievement_unlocked: Trophy,
   rank_promoted: TrendingUp,
   assignment_submitted: ClipboardCheck,

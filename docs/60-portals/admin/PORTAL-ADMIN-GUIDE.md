@@ -64,8 +64,8 @@ admin/
 │   ├── AdminNotificationPreferencesPage.tsx # Preferencias de notif.
 │   ├── AdminAuditLogsPage.tsx          # Logs de auditoría
 │   ├── AdminAssignmentsPage.tsx        # Gestión de asignaciones
-│   └── AdminExerciseCreatePage.tsx     # Constructor de ejercicios
-├── components/                 # Componentes organizados por dominio (30+)
+│   └── AdminExerciseCreatePage.tsx     # Constructor de ejercicios (crear + editar via :id/edit)
+├── components/                 # Componentes organizados por dominio (124 componentes)
 │   ├── shared/                 # Componentes cross-cutting (Sprint 0)
 │   │   ├── AdminPageShell.tsx          # Wrapper estándar de página
 │   │   └── AdminTabBar.tsx             # Tabs genérico (underline/cards)
@@ -98,7 +98,9 @@ admin/
 │   ├── institutions/           # Organizaciones (Sprint 2)
 │   │   └── InstitutionFormModals.tsx   # Modales CRUD
 │   ├── exercise-builder/       # Constructor de ejercicios (Sprint 2)
-│   │   ├── StepBasicInfo.tsx           # Paso 1: info básica
+│   │   ├── StepBasicInfo.tsx           # Paso 1: info basica + selector dinamico de modulos
+│   │   ├── CreateModuleModal.tsx       # Modal crear modulo inline (v1.3.0)
+│   │   ├── ExerciseTypeSelector.tsx    # Selector tipo ejercicio (29 tipos, 5 modulos) con tabs dinamicos
 │   │   ├── ExercisePreview.tsx         # Preview de ejercicio
 │   │   └── type-configs/              # Config por tipo (barrel)
 │   ├── reports/                # Generación de reportes
@@ -106,7 +108,7 @@ admin/
 │   ├── settings/               # Configuración
 │   │   └── ProfileSettings.tsx
 │   └── alerts/                 # Sistema de alertas
-├── hooks/                      # Custom hooks (12 hooks)
+├── hooks/                      # Custom hooks (31 hooks)
 │   ├── useAdminPageSetup.ts            # Boilerplate centralizado (Sprint 0)
 │   ├── useAdminDashboard.ts            # Dashboard data
 │   ├── useUserManagement.ts            # CRUD usuarios (legacy)
@@ -131,7 +133,7 @@ admin/
 admin/
 ├── admin.module.ts             # Módulo NestJS principal
 ├── index.ts                    # Barrel exports
-├── controllers/                # 17 controllers
+├── controllers/                # 21 controllers
 │   ├── admin-dashboard.controller.ts       # Dashboard general
 │   ├── admin-users.controller.ts           # CRUD usuarios
 │   ├── admin-organizations.controller.ts   # CRUD organizaciones

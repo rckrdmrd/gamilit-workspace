@@ -328,11 +328,14 @@ export class ExerciseSubmissionService {
       // PERMITIR actualización - actualizar submission existente
       this.logger.log(`[CORR-010] Updating existing submission ${existingSubmission.id} (status: ${existingSubmission.status})`);
 
+      // FIX DEAD-CODE: Check previous status BEFORE overwriting it
+      const wasDraft = existingSubmission.status === 'draft';
+
       existingSubmission.answer_data = answers;
       existingSubmission.submitted_at = new Date();
       existingSubmission.status = 'submitted';
       // Incrementar número de intento si era draft
-      if (existingSubmission.status === 'draft') {
+      if (wasDraft) {
         existingSubmission.attempt_number = (existingSubmission.attempt_number || 0) + 1;
       }
 

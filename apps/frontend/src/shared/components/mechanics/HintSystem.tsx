@@ -1,11 +1,9 @@
 /**
  * Hint System Component
  * Provides hints for exercises
- *
- * TODO: Stub component - needs full implementation
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 
 export interface HintSystemProps {
@@ -14,11 +12,11 @@ export interface HintSystemProps {
   onHintUsed?: (hintIndex: number) => void;
 }
 
-export const HintSystem: React.FC<HintSystemProps> = ({
+export const HintSystem = ({
   hints,
   maxHints = hints.length,
   onHintUsed,
-}) => {
+}: HintSystemProps) => {
   const [revealedHints, setRevealedHints] = useState<number[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -39,40 +37,45 @@ export const HintSystem: React.FC<HintSystemProps> = ({
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
+        aria-expanded={isExpanded}
+        aria-controls="hint-list"
         className="w-full flex items-center justify-between p-3 hover:bg-yellow-100 transition-colors"
       >
         <div className="flex items-center space-x-2">
-          <Lightbulb className="w-5 h-5 text-yellow-600" />
+          <Lightbulb className="w-5 h-5 text-yellow-600" aria-hidden="true" />
           <span className="font-medium text-yellow-800">
             Pistas ({revealedHints.length}/{availableHints})
           </span>
         </div>
         {isExpanded ? (
-          <ChevronUp className="w-5 h-5 text-yellow-600" />
+          <ChevronUp className="w-5 h-5 text-yellow-600" aria-hidden="true" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-yellow-600" />
+          <ChevronDown className="w-5 h-5 text-yellow-600" aria-hidden="true" />
         )}
       </button>
 
       {/* Expanded content */}
       {isExpanded && (
-        <div className="p-3 border-t border-yellow-200">
+        <div id="hint-list" className="p-3 border-t border-yellow-200">
           {/* Revealed hints */}
-          {revealedHints.map((hintIndex) => (
-            <div key={hintIndex} className="mb-3 last:mb-0">
-              <div className="flex items-start space-x-2">
-                <span className="flex-shrink-0 w-6 h-6 bg-yellow-400 text-yellow-900 rounded-full flex items-center justify-center text-xs font-bold">
-                  {hintIndex + 1}
-                </span>
-                <p className="text-sm text-yellow-900">{hints[hintIndex]}</p>
+          <div role="list" aria-label="Pistas reveladas">
+            {revealedHints.map((hintIndex) => (
+              <div key={hintIndex} role="listitem" className="mb-3 last:mb-0">
+                <div className="flex items-start space-x-2">
+                  <span aria-hidden="true" className="flex-shrink-0 w-6 h-6 bg-yellow-400 text-yellow-900 rounded-full flex items-center justify-center text-xs font-bold">
+                    {hintIndex + 1}
+                  </span>
+                  <p className="text-sm text-yellow-900">{hints[hintIndex]}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {/* Reveal next hint button */}
           {hintsRemaining > 0 && (
             <button
               onClick={revealNextHint}
+              aria-label={`Revelar pista ${revealedHints.length + 1} de ${availableHints}`}
               className="mt-3 w-full px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-medium rounded-lg transition-colors"
             >
               Revelar siguiente pista ({hintsRemaining} restantes)

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { Coins, TrendingUp, TrendingDown, Clock, Sparkles } from 'lucide-react';
 import { getColorSchemeByName } from '@shared/utils/colorPalette';
@@ -19,7 +19,7 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
     damping: 30,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data?.balance) {
       balanceSpring.set(data.balance);
     }

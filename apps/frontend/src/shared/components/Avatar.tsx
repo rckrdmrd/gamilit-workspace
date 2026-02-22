@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@shared/utils/cn';
 
 interface AvatarProps {
@@ -9,7 +9,7 @@ interface AvatarProps {
   className?: string;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ src, alt, name, size = 'md', className }) => {
+export const Avatar = ({ src, alt, name, size = 'md', className }: AvatarProps) => {
   const [imageError, setImageError] = useState(false);
 
   const sizeStyles = {

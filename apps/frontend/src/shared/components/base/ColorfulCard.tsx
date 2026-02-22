@@ -5,12 +5,12 @@
  * Makes cards visually appealing with minimal code changes.
  */
 
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo, type ComponentType, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';
 
 export interface ColorfulCardProps {
-  children: React.ReactNode;
+  children: ReactNode;
   id?: string;
   index?: number;
   hover?: boolean;
@@ -96,7 +96,7 @@ const paddingStyles = {
   lg: 'p-8',
 };
 
-export const ColorfulCard = React.forwardRef<HTMLDivElement, ColorfulCardProps>(
+export const ColorfulCard = forwardRef<HTMLDivElement, ColorfulCardProps>(
   (
     {
       children,
@@ -185,7 +185,7 @@ ColorfulCard.displayName = 'ColorfulCard';
  * ColorfulIconCard - Card with a prominent colored icon
  */
 export interface ColorfulIconCardProps extends ColorfulCardProps {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   iconSize?: 'sm' | 'md' | 'lg';
 }
 
@@ -201,7 +201,7 @@ const iconContainerSizes = {
   lg: 'w-20 h-20',
 };
 
-export const ColorfulIconCard = React.forwardRef<HTMLDivElement, ColorfulIconCardProps>(
+export const ColorfulIconCard = forwardRef<HTMLDivElement, ColorfulIconCardProps>(
   ({ icon: Icon, iconSize = 'md', children, ...props }, ref) => {
     const colorScheme = useMemo(() => {
       if (props.id) return getColorSchemeById(props.id);

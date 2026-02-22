@@ -14,7 +14,7 @@
  *
  * ~320 lines
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
 import {
@@ -47,6 +47,7 @@ type StatusStyles = {
 
 interface MissionCardProps {
   mission: Mission;
+  onCardClick?: (mission: Mission) => void;
   onStart?: (missionId: string) => void;
   onClaim?: (missionId: string) => void;
   onTrack?: (missionId: string) => void;
@@ -56,6 +57,7 @@ interface MissionCardProps {
 
 export function MissionCard({
   mission,
+  onCardClick,
   onStart,
   onClaim,
   onTrack,
@@ -134,10 +136,11 @@ export function MissionCard({
 
   // Check if this is a special mission with exercise constraints (navigable)
   const hasExerciseConstraints = useMemo(() => {
+    if (mission.exercise_id) return true;
     if (mission.type !== 'special') return false;
     const firstObj = mission.objectives?.[0];
     return !!(firstObj?.required_exercise_type || firstObj?.required_module);
-  }, [mission.type, mission.objectives]);
+  }, [mission.exercise_id, mission.type, mission.objectives]);
 
   // Status-based styling with random colors
   const statusStyles = useMemo(() => {
@@ -186,9 +189,10 @@ export function MissionCard({
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         whileHover={{ y: -5 }}
+        onClick={() => onCardClick?.(mission)}
         className={cn(
           'relative overflow-hidden rounded-xl bg-white shadow-md',
-          'border-2 transition-all duration-300',
+          'border-2 transition-all duration-300 cursor-pointer',
           statusStyles.border,
           statusStyles.shadow,
           mission.status === 'claimed' && 'opacity-70',
@@ -329,7 +333,7 @@ export function MissionCard({
           </div>
 
           {/* Action Button */}
-          <div>
+          <div onClick={(e) => e.stopPropagation()}>
             {mission.status === 'not_started' && (
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -431,7 +435,7 @@ export function MissionCard({
  */
 
 function getCategoryIcon(category: MissionCategory) {
-  const icons: Record<string, React.ElementType> = {
+  const icons: Record<string, ElementType> = {
     exercises: BookOpen,
     xp: Zap,
     time: Clock,

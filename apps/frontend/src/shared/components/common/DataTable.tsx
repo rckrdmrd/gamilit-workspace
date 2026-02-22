@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type ReactNode, type ReactElement } from 'react';
 import { ChevronUp, ChevronDown, Eye, Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { Pagination } from '@shared/components/Pagination';
@@ -9,9 +9,9 @@ import { Pagination } from '@shared/components/Pagination';
 
 export interface Column<T> {
   key: string;
-  label: string | React.ReactNode;
+  label: string | ReactNode;
   sortable?: boolean;
-  render?: (row: T) => React.ReactNode;
+  render?: (row: T) => ReactNode;
   width?: string;
   align?: 'left' | 'center' | 'right';
 }
@@ -23,7 +23,7 @@ export interface RowAction<T> {
   /** Accessible label (used as tooltip and aria-label) */
   label: string;
   /** Custom icon to render (overrides the default for the key) */
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   /** Callback when the action is triggered */
   onClick: (row: T) => void;
   /** Conditionally hide the action for a given row */
@@ -139,7 +139,7 @@ const VARIANT_STYLES = {
 // DEFAULT ACTION ICONS
 // ============================================================================
 
-const DEFAULT_ACTION_ICONS: Record<string, React.ReactNode> = {
+const DEFAULT_ACTION_ICONS: Record<string, ReactNode> = {
   view: <Eye size={16} />,
   edit: <Pencil size={16} />,
   delete: <Trash2 size={16} />,
@@ -169,7 +169,7 @@ export function DataTable<T = Record<string, unknown>>({
   selectable = false,
   onSelectionChange,
   rowIdKey = 'id',
-}: DataTableProps<T>): React.ReactElement {
+}: DataTableProps<T>): ReactElement {
   const styles = VARIANT_STYLES[variant];
 
   // -----------------------------------------------------------------------
@@ -224,7 +224,7 @@ export function DataTable<T = Record<string, unknown>>({
     }
   };
 
-  const renderCell = (row: T, column: Column<T>): React.ReactNode => {
+  const renderCell = (row: T, column: Column<T>): ReactNode => {
     if (column.render) {
       return column.render(row);
     }

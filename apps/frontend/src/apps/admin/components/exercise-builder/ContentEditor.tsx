@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { cn } from '@shared/utils/cn';
 import { Bold, Italic, List, ImageIcon } from 'lucide-react';
 
@@ -101,7 +101,7 @@ function ToolbarButton({
 }: {
   onClick: () => void;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button

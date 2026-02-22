@@ -4,7 +4,7 @@
  * Real-time display of current multiplier with breakdown and expiration warnings.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Info, Clock, TrendingUp } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -19,11 +19,11 @@ export interface MultiplierWidgetProps {
 /**
  * MultiplierWidget Component
  */
-export const MultiplierWidget: React.FC<MultiplierWidgetProps> = ({
+export const MultiplierWidget = ({
   variant = 'compact',
   showBreakdown = true,
   className = '',
-}) => {
+}: MultiplierWidgetProps) => {
   const {
     totalMultiplier,
     allSources,
@@ -233,6 +233,6 @@ export const MultiplierWidget: React.FC<MultiplierWidgetProps> = ({
 /**
  * CompactMultiplierWidget - Badge version for headers
  */
-export const CompactMultiplierWidget: React.FC<MultiplierWidgetProps> = (props) => {
+export const CompactMultiplierWidget = (props: MultiplierWidgetProps) => {
   return <MultiplierWidget {...props} variant="compact" showBreakdown={false} />;
 };

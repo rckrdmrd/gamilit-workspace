@@ -11,7 +11,6 @@
  * @component
  */
 
-import React from 'react';
 import { Eye, Check, CheckCircle, XCircle, Clock, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -32,13 +31,13 @@ interface AlertCardProps {
   onSuppress: (alert: SystemAlert) => void;
 }
 
-export const AlertCard: React.FC<AlertCardProps> = ({
+export const AlertCard = ({
   alert,
   onViewDetails,
   onAcknowledge,
   onResolve,
   onSuppress,
-}) => {
+}: AlertCardProps) => {
   // Utility functions imported from alertUtils.ts
   const canAcknowledge = alert.status === 'open';
   const canResolve = alert.status === 'open' || alert.status === 'acknowledged';

@@ -24,8 +24,8 @@ Flujo para crear, configurar y publicar asignaciones a aulas/estudiantes. El doc
 
 ```mermaid
 flowchart TD
-    page[TeacherAssignments] --> creator[AssignmentCreator]
-    creator --> publish[Publicar asignacion]
+    page[TeacherAssignmentsPage] --> wizard[ImprovedAssignmentWizard]
+    wizard --> publish[Publicar asignacion]
     publish --> apiCreate[POST /api/v1/teacher/assignments]
     apiCreate --> service[TeacherAssignmentsService]
     service --> dbAssign[(educational_content.assignments)]
@@ -34,29 +34,37 @@ flowchart TD
     dbAssign --> ui[Confirmacion + listado actualizado]
     page --> apiList[GET /api/v1/teacher/assignments]
     page --> apiUpcoming[GET /api/v1/teacher/assignments/upcoming]
+    page --> card[AssignmentCard]
+    card --> editModal[Edit Modal]
+    editModal --> apiUpdate[PUT /api/v1/teacher/assignments/:id]
+    apiUpdate --> service
+    card --> deleteConfirm[Delete Confirmation]
+    deleteConfirm --> apiDelete[DELETE /api/v1/teacher/assignments/:id]
+    apiDelete --> service
+    card --> submissions[SubmissionsModal]
+    submissions --> apiSubmissions[GET /api/v1/teacher/assignments/:id/submissions]
 ```
 
 ## 4. Secuencia FE -> BE -> DB
 
-1. Docente abre `TeacherAssignments` page, hook `useAssignments` ejecuta `GET /api/v1/teacher/assignments` y `GET /api/v1/teacher/assignments/upcoming`.
-2. Docente usa `AssignmentCreator` para configurar: titulo, descripcion, tipo (practice/quiz/exam/homework), fecha limite, classroom_id y exercise_ids.
+1. Docente abre `TeacherAssignmentsPage`, hook `useAssignments` ejecuta `GET /api/v1/teacher/assignments` y `GET /api/v1/teacher/assignments/upcoming`.
+2. Docente usa `ImprovedAssignmentWizard` para configurar: titulo, descripcion, tipo (practice/quiz/exam/homework), fecha limite, classroom_id y exercise_ids.
 3. FE envia `POST /api/v1/teacher/assignments` con `CreateAssignmentDto`.
 4. Backend (`TeacherAssignmentsController`) valida ownership del aula, existencia de ejercicios y parametros via guards `JwtAuthGuard` + `RolesGuard`.
 5. `TeacherAssignmentsService` persiste en `educational_content.assignments`, `educational_content.assignment_exercises` y `educational_content.assignment_students`.
-6. Para actualizaciones: `PUT /api/v1/teacher/assignments/:id` con `UpdateAssignmentDto`.
-7. Para enviar recordatorio: `POST /api/v1/teacher/assignments/:id/send-reminder` notifica a estudiantes sin entrega.
-8. Para consultar entregas: `GET /api/v1/teacher/assignments/:id/submissions`.
-9. FE refresca listado via `useAssignments.refresh()`.
+6. Para actualizaciones: `PUT /api/v1/teacher/assignments/:id` con `UpdateAssignmentDto` (accesible via boton Edit en `AssignmentCard`).
+7. Para eliminacion: `DELETE /api/v1/teacher/assignments/:id` (accesible via boton Delete en `AssignmentCard`, con dialogo de confirmacion).
+8. Para enviar recordatorio: `POST /api/v1/teacher/assignments/:id/send-reminder` notifica a estudiantes sin entrega.
+9. Para consultar entregas: `GET /api/v1/teacher/assignments/:id/submissions` (via `SubmissionsModal`).
+10. FE refresca listado via invalidacion de React Query `['teacher', 'assignments']`.
 
 ## 5. Componentes y artefactos implicados
 
 | Capa | Archivo | Descripcion |
 |------|---------|-------------|
-| FE Page | `apps/frontend/src/apps/teacher/pages/TeacherAssignments.tsx` | Pagina principal de asignaciones |
-| FE Component | `apps/frontend/src/apps/teacher/components/assignments/AssignmentCreator.tsx` | Creador de asignaciones |
-| FE Component | `apps/frontend/src/apps/teacher/components/assignments/AssignmentCard.tsx` | Tarjeta de asignacion |
-| FE Component | `apps/frontend/src/apps/teacher/components/assignments/AssignmentList.tsx` | Listado de asignaciones |
-| FE Component | `apps/frontend/src/apps/teacher/components/assignments/AssignmentWizard.tsx` | Wizard paso a paso |
+| FE Page | `apps/frontend/src/apps/teacher/pages/TeacherAssignmentsPage.tsx` | Pagina principal de asignaciones (edit modal + delete confirmation) |
+| FE Component | `apps/frontend/src/apps/teacher/components/assignments/ImprovedAssignmentWizard.tsx` | Wizard paso a paso para crear asignaciones |
+| FE Component | `apps/frontend/src/apps/teacher/components/assignments/AssignmentCard.tsx` | Tarjeta con acciones: ver entregas, editar, eliminar, recordatorio |
 | FE Component | `apps/frontend/src/apps/teacher/components/assignments/SubmissionsModal.tsx` | Modal de entregas |
 | FE Hook | `apps/frontend/src/apps/teacher/hooks/useAssignments.ts` | Hook CRUD de asignaciones |
 | FE API | `apps/frontend/src/services/api/teacher/assignmentsApi.ts` | Cliente API asignaciones |
@@ -101,7 +109,7 @@ flowchart TD
 | DDL | `apps/database/ddl/schemas/educational_content/tables/05-assignments.sql` | CREATE TABLE educational_content.assignments |
 | Entity | `apps/backend/src/modules/teacher/services/teacher-assignments.service.ts` | TeacherAssignmentsService |
 | Controller | `apps/backend/src/modules/teacher/controllers/teacher-assignments.controller.ts` | @Controller('teacher/assignments') |
-| Frontend | `apps/frontend/src/apps/teacher/pages/TeacherAssignments.tsx` | Pagina de asignaciones |
+| Frontend | `apps/frontend/src/apps/teacher/pages/TeacherAssignmentsPage.tsx` | Pagina de asignaciones (ADR-030 "Page" suffix) |
 | API Client | `apps/frontend/src/services/api/teacher/assignmentsApi.ts` | assignmentsApi |
 
 ## 9. Referencias

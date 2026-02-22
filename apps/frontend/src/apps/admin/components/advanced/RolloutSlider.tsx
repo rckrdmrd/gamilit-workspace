@@ -10,7 +10,7 @@
  * Created: 2025-12-05 - FE-ADMIN-011-016 (Sprint P2-B)
  */
 
-import React, { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 interface RolloutSliderProps {
   value: number;
@@ -19,15 +19,15 @@ interface RolloutSliderProps {
   className?: string;
 }
 
-export const RolloutSlider: React.FC<RolloutSliderProps> = ({
+export const RolloutSlider = ({
   value,
   onChange,
   disabled = false,
   className = '',
-}) => {
+}: RolloutSliderProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(parseInt(e.target.value, 10));
   };
 

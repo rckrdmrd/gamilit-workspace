@@ -1,4 +1,5 @@
-import React from 'react';
+
+
 import { cn } from '@shared/utils/cn';
 
 interface PasswordStrengthIndicatorProps {
@@ -37,9 +38,9 @@ const LABEL_COLORS: Record<number, string> = {
   4: 'text-green-700',
 };
 
-export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
+export const PasswordStrengthIndicator = ({
   password,
-}) => {
+}: PasswordStrengthIndicatorProps) => {
   const { score, label } = getStrength(password);
   if (!password) return null;
 

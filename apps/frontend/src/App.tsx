@@ -62,8 +62,6 @@ const TeacherClassesPage = lazy(() => import('@/apps/teacher/pages/TeacherClasse
 const TeacherGamificationPage = lazy(() => import('@/apps/teacher/pages/TeacherGamificationPage'));
 const TeacherStudentsPage = lazy(() => import('@/apps/teacher/pages/TeacherStudentsPage'));
 const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertsPage'));
-const TeacherCommunicationPage = lazy(() => import('@/apps/teacher/pages/TeacherCommunicationPage'));
-const TeacherContentManagementPage = lazy(() => import('@/apps/teacher/pages/TeacherContentManagementPage'));
 const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoringPage'));
 const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgressPage'));
 const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReportsPage'));
@@ -398,22 +396,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/teacher/communication"
-                element={
-                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                    <TeacherCommunicationPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/teacher/content"
-                element={
-                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                    <TeacherContentManagementPage />
-                  </ProtectedRoute>
-                }
-              />
 
               <Route
                 path="/teacher/gamification"
@@ -455,8 +437,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* DEPRECADO (2026-01-25): /teacher/resources eliminado
-              La funcionalidad de recursos multimedia se integró en TeacherContentPage.
+              {/* DEPRECADO (2026-01-25): /teacher/resources eliminado.
               Redirect mantenido por compatibilidad con URLs existentes. */}
               <Route
                 path="/teacher/resources"
@@ -714,7 +695,7 @@ function App() {
               <Route
                 path="/parent/dashboard"
                 element={
-                  <ProtectedRoute allowedRoles={['parent']}>
+                  <ProtectedRoute allowedRoles={['parent']} redirectTo="/parent/login">
                     <ParentDashboardPage />
                   </ProtectedRoute>
                 }
@@ -722,7 +703,7 @@ function App() {
               <Route
                 path="/parent/child/:studentId"
                 element={
-                  <ProtectedRoute allowedRoles={['parent']}>
+                  <ProtectedRoute allowedRoles={['parent']} redirectTo="/parent/login">
                     <ChildProgressPage />
                   </ProtectedRoute>
                 }

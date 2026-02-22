@@ -8,7 +8,7 @@
  * @created 2026-01-27
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useParentStore } from '@/features/parent/store/parentStore';
@@ -21,12 +21,11 @@ import {
   Target,
   BookOpen,
   Star,
-  RefreshCw,
 } from 'lucide-react';
 import { parentAPI } from '@/features/parent/api/parentAPI';
 import type { RecentActivity, UpcomingAssignment, WeeklyReport } from '@/features/parent/types/parent.types';
 
-export const ChildProgressPage: React.FC = () => {
+export const ChildProgressPage = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
   const { students, progressSummaries, loadStudentProgress, isLoading: _isLoading } = useParentStore();
@@ -146,10 +145,24 @@ export const ChildProgressPage: React.FC = () => {
         </nav>
 
         {isLoadingData ? (
-          <div className="flex items-center justify-center py-12" aria-live="polite">
-            <div className="flex flex-col items-center gap-4">
-              <RefreshCw className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
-              <p className="text-gray-600">Cargando datos...</p>
+          <div className="space-y-6 py-4" aria-live="polite" aria-label="Cargando datos">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="animate-pulse bg-white rounded-xl p-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-200 rounded-lg w-9 h-9" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 w-16 bg-gray-200 rounded" />
+                      <div className="h-5 w-10 bg-gray-200 rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="animate-pulse bg-white rounded-xl p-6 shadow-sm space-y-3">
+              <div className="h-4 w-40 bg-gray-200 rounded" />
+              <div className="h-3 w-full bg-gray-200 rounded" />
+              <div className="h-3 w-3/4 bg-gray-200 rounded" />
             </div>
           </div>
         ) : (

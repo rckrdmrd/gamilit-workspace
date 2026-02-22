@@ -14,7 +14,7 @@
  * - Integration with useUserManagement hook
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactElement } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Activity, Shield, Edit2, Save, XCircle } from 'lucide-react';
 import { Modal } from '@shared/components/common/Modal';
@@ -55,7 +55,7 @@ export function UserDetailModal({
   isOpen,
   onClose,
   onUpdate,
-}: UserDetailModalProps): React.ReactElement | null {
+}: UserDetailModalProps): ReactElement | null {
   // State
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);

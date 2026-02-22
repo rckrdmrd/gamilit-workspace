@@ -16,11 +16,11 @@ interface AuditLogStatsProps {
   failedCount: number;
 }
 
-export const AuditLogStats: React.FC<AuditLogStatsProps> = ({
+export const AuditLogStats = ({
   total,
   successCount,
   failedCount,
-}) => {
+}: AuditLogStatsProps) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <DetectiveCard className="p-4">

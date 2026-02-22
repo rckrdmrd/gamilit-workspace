@@ -8,7 +8,7 @@
  * @version 1.0 (2025-01-13) - Initial implementation for FE-054
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import { useApiError } from '@shared/hooks';
 import type { UpdatePreferenceDto } from '@/services/api/notificationsAPI';
@@ -77,7 +77,7 @@ const NOTIFICATION_TYPES = [
   },
 ];
 
-export const NotificationPreferencesPage: React.FC = () => {
+export const NotificationPreferencesPage = () => {
   const {
     preferences,
     preferencesLoading,

@@ -54,7 +54,7 @@ interface ShopItemProps {
   onPurchase?: (item: ShopItemType) => void;
 }
 
-export const ShopItem: React.FC<ShopItemProps> = ({ item, onPurchase: _onPurchase }) => {
+export const ShopItem = ({ item, onPurchase: _onPurchase }: ShopItemProps) => {
   const canAfford = useEconomyStore((state) => state.canAfford);
   const addToCart = useEconomyStore((state) => state.addToCart);
 

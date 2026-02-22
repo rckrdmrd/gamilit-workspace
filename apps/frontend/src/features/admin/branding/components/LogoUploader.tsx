@@ -8,7 +8,7 @@
  * @see ET-WL-003-asset-management.md
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import { type ChangeEvent, type DragEvent, useState, useRef, useCallback } from 'react';
 import { Upload, X, AlertCircle, Loader2 } from 'lucide-react';
 
 interface LogoUploaderProps {
@@ -55,7 +55,7 @@ interface LogoUploaderProps {
  * />
  * ```
  */
-export const LogoUploader: React.FC<LogoUploaderProps> = ({
+export const LogoUploader = ({
   label,
   currentLogoUrl,
   onUpload,
@@ -65,7 +65,7 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({
   disabled = false,
   description,
   dimensions = 'Recommended: 200x50 pixels, PNG or SVG',
-}) => {
+}: LogoUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +123,7 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({
   /**
    * Handle input change
    */
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       handleFileSelect(file);
@@ -135,19 +135,19 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({
   /**
    * Handle drag events
    */
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     if (!disabled) {
       setIsDragging(true);
     }
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
+  const handleDragLeave = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 

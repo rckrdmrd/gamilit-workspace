@@ -9,7 +9,7 @@ import { CoinBalanceWidget } from './CoinBalanceWidget';
 import { useCoins } from '../../hooks/useCoins';
 import { useTransactions } from '../../hooks/useTransactions';
 
-export const CoinWallet: React.FC = () => {
+export const CoinWallet = () => {
   const { balance, getSpendingPercentage, getBalanceTier } = useCoins();
   const { getTotalEarned, getTotalSpent } = useTransactions();
   const totalEarned7d = getTotalEarned('7d');

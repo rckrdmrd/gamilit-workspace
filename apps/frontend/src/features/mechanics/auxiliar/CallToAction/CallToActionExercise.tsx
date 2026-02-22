@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Megaphone, Users, Share2, CheckCircle, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -31,12 +31,12 @@ const DEFAULT_TAGS = [
   'Química',
 ];
 
-export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
+export const CallToActionExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}: CallToActionExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');

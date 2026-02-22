@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { profileAPI } from '@/services/api/profileAPI';
 import {
@@ -26,7 +26,7 @@ const DEFAULT_PRIVACY: PrivacySettings = {
   showActivity: true,
 };
 
-export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
+export const PrivacySection = ({ user }: PrivacySectionProps) => {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [loading, setLoading] = useState(true);
   const [privacy, setPrivacy] = useState<PrivacySettings>(DEFAULT_PRIVACY);

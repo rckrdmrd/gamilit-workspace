@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { BrandingContext } from '@/app/providers/BrandingProvider';
 import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
@@ -12,10 +12,10 @@ interface FooterProps {
   copyrightText?: string;
 }
 
-export const Footer: React.FC<FooterProps> = ({
+export const Footer = ({
   links = [],
   copyrightText,
-}) => {
+}: FooterProps) => {
   const branding = useContext(BrandingContext);
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
   const defaultCopyright = `© ${new Date().getFullYear()} ${platformName}. Todos los derechos reservados.`;

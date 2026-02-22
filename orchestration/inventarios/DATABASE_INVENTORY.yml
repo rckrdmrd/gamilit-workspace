@@ -20,7 +20,7 @@ resumen:
   funciones: 158               # 158 ^CREATE FUNCTION in functions/*.sql (116 files). Verified 2026-02-21. Note: ~44 additional inline functions in table/trigger/view files
   triggers: 68                 # 68 CREATE TRIGGER in triggers/*.sql (37 files). Verified 2026-02-21. Note: ~64 additional inline triggers in table/function files
   rls_policies: 251            # 251 ^CREATE POLICY in rls-policies/*.sql (37 files). Verified 2026-02-21. Note: ~143 additional inline policies in table files
-  foreign_keys: 299              # +1 missions_template_id_fkey (REC-009)
+  foreign_keys: 301              # 299 + missions_exercise_id_fkey + mission_templates_exercise_id_fkey (exercise_id FK added to missions/mission_templates)
   enums: 42                     # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
   index_statements: 979          # +1 implicit from UNIQUE constraint missions_user_template_type_date_unique (REC-001)
   uuid_standardization: "131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups across ~25 seed files (2026-02-21)"
@@ -283,12 +283,12 @@ scripts:
 
 seeds:
   ruta: "apps/database/seeds/dev/"
-  total: 92                       # 92 pipeline entries in init-database.sh. 0 excluidos
+  total: 93                       # 93 pipeline entries in init-database.sh (+1 07-exercises-auxiliar.sql). 0 excluidos
   errores: 0                      # 0 errores post-SEED-HOMOLOGATION (2026-02-20). UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups across ~25 seed files
   schemas_con_seeds:
     - "auth (3 archivos: demo-users, production-users, demo-students)"
     - "auth_management (9 archivos)"
-    - "educational_content (11+ archivos: modules, exercises M1-M5, rubrics, taxonomies)"
+    - "educational_content (12+ archivos: modules, exercises M1-M5, exercises-auxiliar, rubrics, taxonomies)"
     - "gamification_system (10 archivos: ranks, achievements, shop, missions, comodines)"
     - "progress_tracking (14 archivos)"
     - "social_features (10 archivos)"
