@@ -23,7 +23,8 @@ import {
 /**
  * WebSocket configuration
  */
-const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3005';
+// Use centralized WebSocket config from api.config.ts
+import { WS_BASE_URL } from '@/config/api.config';
 
 /**
  * useBattle Hook

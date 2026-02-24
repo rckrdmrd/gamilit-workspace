@@ -78,15 +78,16 @@ module.exports = {
     },
 
     // ========================================================================
-    // FRONTEND - Vite Preview (PRODUCCIÓN)
+    // FRONTEND - SPA Server (PRODUCCIÓN)
     // ========================================================================
-    // NOTA: En producción se usa vite preview para servir los archivos
-    // buildados. Para máximo rendimiento se recomienda usar Nginx.
+    // Serves dist/ with SPA fallback (index.html for all routes).
+    // Required for React Router client-side routing (/teacher/*, /admin/*, etc.)
+    // NOTE: vite preview does NOT support SPA fallback and returns 404 for routes.
     {
       name: 'gamilit-frontend',
       cwd: './apps/frontend',
-      script: 'npx',
-      args: 'vite preview --port 3005 --host 0.0.0.0',
+      script: 'serve.cjs',
+      args: '--port 3005 --host 0.0.0.0',
 
       // Configuración
       instances: 1,

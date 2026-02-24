@@ -44,7 +44,7 @@ export const API_BASE_URL = USE_PROXY
  * Ejemplo: ws://localhost:3006
  */
 export const WS_BASE_URL = USE_PROXY
-  ? `${WS_PROTOCOL}://${window.location.hostname}:3006`
+  ? `${WS_PROTOCOL}://${window.location.host}`
   : `${WS_PROTOCOL}://${WS_HOST}`;
 
 /**
