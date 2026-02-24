@@ -1,13 +1,21 @@
 -- =====================================================
--- Seed: gamification_system.user_stats (PROD) - v2.0
+-- Seed: gamification_system.user_stats (DEV) - v2.2
 -- Description: Estadísticas de gamificación para usuarios demo
--- Environment: PRODUCTION
+-- Environment: DEVELOPMENT
 -- Dependencies: auth_management.profiles, gamification_system.maya_ranks
 -- Order: 05
 -- Created: 2025-01-11
--- Updated: 2025-11-15
--- Version: 2.0 (Refactored - Trigger-based creation)
+-- Updated: 2026-02-23
+-- Version: 2.2 (Backport FASE 0.1 safety init + REC-009 FIX from prod)
 -- =====================================================
+--
+-- CAMBIOS v2.2:
+-- ============
+-- ✅ FIX REC-009: template_id ahora es UUID (FK to mission_templates)
+-- ✅ Dynamic profile lookups (no hardcoded UUIDs)
+-- ✅ NULL guards en todas las inserciones
+-- ✅ BACKPORT: FASE 0.1 safety init from prod (auto-heal profiles sin stats)
+-- ✅ BACKPORT: Tenant fallback UUID hardcoded (más robusto que slug lookup)
 --
 -- CAMBIOS v2.0:
 -- ============
@@ -57,17 +65,7 @@ BEGIN
     LIMIT 1;
 
     IF v_tenant_id IS NULL THEN
-        -- Fallback: try slug-based lookup
-        SELECT id INTO v_tenant_id
-        FROM auth_management.tenants
-        WHERE slug = 'gamilit-platform' OR slug = 'gamilit' OR slug = 'default'
-        ORDER BY created_at
-        LIMIT 1;
-    END IF;
-
-    IF v_tenant_id IS NULL THEN
-        RAISE NOTICE 'No tenant found, skipping user_stats base records';
-        RETURN;
+        v_tenant_id := 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
     END IF;
 
     -- Resolver profile IDs para usuarios de testing
@@ -135,6 +133,61 @@ BEGIN
     END IF;
 
     RAISE NOTICE '✓ Registros base de testing asegurados (admin, teacher, student)';
+END $$;
+
+-- =====================================================
+-- FASE 0.1: Inicializar user_stats para TODOS los perfiles
+-- =====================================================
+-- CORRECCION 2026-01-10: El trigger initialize_user_stats no siempre ejecuta
+-- durante el seed. Esta seccion garantiza que todos los perfiles tengan
+-- registros de gamificacion.
+-- BACKPORT 2026-02-23: Traido de prod v2.2 a dev
+
+DO $$
+DECLARE
+    v_profile RECORD;
+    v_count INTEGER := 0;
+    v_tenant_id uuid;
+BEGIN
+    -- Resolver tenant_id dinámicamente
+    SELECT id INTO v_tenant_id
+    FROM auth_management.tenants
+    WHERE name = 'GAMILIT Platform'
+    LIMIT 1;
+
+    IF v_tenant_id IS NULL THEN
+        v_tenant_id := 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
+    END IF;
+
+    FOR v_profile IN
+        SELECT p.id as profile_id, p.user_id, p.display_name
+        FROM auth_management.profiles p
+        LEFT JOIN gamification_system.user_stats us ON us.user_id = p.id
+        WHERE us.user_id IS NULL
+    LOOP
+        -- Insert user_stats
+        INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+        VALUES (v_profile.profile_id, v_tenant_id, 100, 100)
+        ON CONFLICT (user_id) DO NOTHING;
+
+        -- Insert user_ranks
+        INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+        VALUES (v_profile.profile_id, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+        ON CONFLICT DO NOTHING;
+
+        -- Insert comodines_inventory
+        INSERT INTO gamification_system.comodines_inventory (user_id)
+        VALUES (v_profile.profile_id)
+        ON CONFLICT (user_id) DO NOTHING;
+
+        v_count := v_count + 1;
+    END LOOP;
+
+    IF v_count > 0 THEN
+        RAISE NOTICE '✓ Inicializados % perfiles sin user_stats (fallback)', v_count;
+    ELSE
+        RAISE NOTICE '✓ Todos los perfiles ya tienen user_stats (trigger funcionó correctamente)';
+    END IF;
 END $$;
 
 -- =====================================================
