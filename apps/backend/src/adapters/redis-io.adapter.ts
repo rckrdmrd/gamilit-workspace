@@ -140,12 +140,12 @@ export class RedisIoAdapter extends IoAdapter {
       this.logger.warn('Socket.IO will use default in-memory adapter (no horizontal scaling)');
 
       // Cleanup orphan clients to prevent memory leaks
+      // MUST use destroy() — quit() hangs when Redis never fully connected
       for (const client of [this.pubClient, this.subClient]) {
         if (client) {
           try {
             client.removeAllListeners();
-            if (client.isOpen) await client.quit();
-            else client.destroy();
+            client.destroy();
           } catch { /* ignore cleanup errors */ }
         }
       }

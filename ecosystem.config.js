@@ -54,11 +54,11 @@ module.exports = {
       // Variables de entorno - Se sobrescriben con .env.production
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3006,
+        PORT: 4006,
       },
       env_development: {
         NODE_ENV: 'development',
-        PORT: 3006,
+        PORT: 4006,
       },
 
       // Logs
@@ -87,7 +87,7 @@ module.exports = {
       name: 'gamilit-frontend',
       cwd: './apps/frontend',
       script: 'serve.cjs',
-      args: '--port 3005 --host 0.0.0.0',
+      args: '--port 4005 --host 0.0.0.0',
 
       // Configuración
       instances: 1,

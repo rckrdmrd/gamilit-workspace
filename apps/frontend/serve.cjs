@@ -5,7 +5,7 @@
  * All routes that don't match a static file return index.html,
  * allowing React Router to handle client-side routing.
  *
- * Usage: node serve.cjs [--port 3005] [--host 0.0.0.0]
+ * Usage: node serve.cjs [--port 4005] [--host 0.0.0.0]
  *
  * @author GAMILIT Team
  * @date 2026-02-23
@@ -22,7 +22,7 @@ const getArg = (name, defaultVal) => {
   return idx !== -1 && args[idx + 1] ? args[idx + 1] : defaultVal;
 };
 
-const PORT = parseInt(getArg('--port', process.env.PORT || '3005'), 10);
+const PORT = parseInt(getArg('--port', process.env.PORT || '4005'), 10);
 const HOST = getArg('--host', process.env.HOST || '0.0.0.0');
 const DIST_DIR = path.join(__dirname, 'dist');
 
