@@ -18,13 +18,74 @@
 | DB Port | 5432 | 5432 |
 | DB Pool Max | 2 (WSL2 limitado) | 2 |
 | DB Timeout | 15000ms | 15000ms |
-| Redis | `REDIS_ENABLED=false` por defecto; si se habilita, `predev` alinea `REDIS_URL` al host resuelto | localhost:6379 |
+| Redis | Configurable via `REDIS_ENABLED` (true/false, defecto=true) | REQUERIDO (localhost:6379) |
 
 ## SSL/HTTPS
 
 - **Dev:** Sin SSL, HTTP directo en puertos 3005/3006
 - **Prod:** Nginx reverse proxy con SSL (self-signed o Let's Encrypt via Certbot)
 - **CORS:** Manejado SOLO por NestJS (NUNCA duplicar en Nginx)
+
+## Redis: Requerido vs Opcional
+
+### Produccion (REQUERIDO)
+
+**Redis es obligatorio en producción** para:
+- **WebSocket real-time:** Socket.IO adapter distribuido (múltiples instancias backend)
+- **Cache distribuido:** Session persistence, leaderboard updates, notificaciones pendientes
+- **Message persistence:** Garantizar entrega de mensajes incluso con desconexiones inesperadas
+
+Si Redis no está disponible en producción, **el sistema fallará**:
+- WebSocket desconexiones permanentes, no se recuperan
+- Session timeouts inesperados, usuarios desconectados
+- Perdida de notificaciones en tiempo real
+- Cache inefectivo, carga excesiva en BD
+
+**Configuracion en prod:**
+- `REDIS_ENABLED=true` (obligatorio, no cambiar)
+- `REDIS_URL=redis://localhost:6379` (o Redis remoto con password)
+
+### Desarrollo (OPCIONAL)
+
+**Redis es opcional en desarrollo** para máxima flexibilidad durante desarrollo iterativo:
+- Set `REDIS_ENABLED=false` en `.env.dev` para deshabilitar completamente Redis
+- El sistema **funciona 100% para desarrollo normal** sin Redis
+- WebSocket usa **in-memory adapter** (funciona perfectamente con 1 instancia backend)
+- Cache usa **in-memory store** (defecto de @nestjs/cache-manager, ~100 items)
+- Session management usa memoria local por peticion
+
+**Limitaciones sin Redis en dev (no afecta desarrollo normal):**
+- WebSocket solo funciona con 1 instancia backend (no escalable, pero dev usa 1 instancia)
+- Cache de memoria no persiste entre restarts (reload de navegador reinicia memoria)
+- Notificaciones pendientes se pierden si el backend crashea (durante dev esto es normal)
+- Leaderboard updates no se sincronizan en multi-instancia (dev no usa multi-instancia)
+
+**Para habilitar Redis en dev:** Set `REDIS_ENABLED=true` en `.env.dev` si tienes Redis corriendo en WSL2
+- Util para testing de features distribuidas (multi-browser, simulaciones multi-instancia)
+- NO requerido para desarrollo diario
+
+### Configuracion de Flags (Backend)
+
+Definido en `apps/backend/src/config/redis.config.ts`:
+
+| Variable | Default | Efecto |
+|----------|---------|--------|
+| `REDIS_ENABLED` | true | Si false, todas las features Redis se deshabilitan gracefully (socket.io in-memory, cache in-memory) |
+| `REDIS_URL` | redis://localhost:6379 | URL de conexion (protocolo redis:// o rediss:// con SSL) |
+| `REDIS_PASSWORD` | undefined | Password si Redis esta protegido con AUTH |
+| `REDIS_SOCKET_DB` | 0 | Database number para Socket.IO adapter (redis db 0) |
+| `REDIS_SOCKET_PREFIX` | gamilit:socket: | Prefix para keys de Socket.IO |
+
+### Checklist de Configuracion
+
+**Dev:**
+- `.env.dev`: `REDIS_ENABLED=false` (recomendado) o `REDIS_ENABLED=true` si Redis local disponible
+- No necesita acceso a Redis para funcionar
+
+**Prod:**
+- `.env.production`: `REDIS_ENABLED=true` (OBLIGATORIO)
+- `REDIS_URL=redis://localhost:6379` (o parametros separados)
+- **Verificar:** `redis-cli ping` debe responder PONG antes de iniciar backend
 
 ## Modo Proxy y Acceso LAN (Dev)
 
@@ -94,8 +155,11 @@ Identica en ambos ambientes:
 | NODE_ENV | development | production |
 | DB_HOST_MODE | `auto` (recomendado), `localhost`, `wsl-ip` | N/A |
 | DB_HOST | Gestionado por `predev` segun `DB_HOST_MODE` | localhost |
-| CORS_ORIGINS | http://localhost:3005 | https://domain.com |
-| SWAGGER_ENABLED | true | false |
+| REDIS_ENABLED | false (recomendado) o true si local disponible | true (OBLIGATORIO) |
+| REDIS_URL | redis://localhost:6379 (si enabled=true) | redis://localhost:6379 (o remoto) |
+| REDIS_PASSWORD | undefined | Rotado en prod (ver .env.production) |
+| CORS_ORIGIN | http://localhost:3005 | https://74.208.126.102,https://74.208.126.102:3005 |
+| ENABLE_SWAGGER | true | false |
 | JWT_SECRET | dev_secret | prod_secret (rotado) |
 | LOG_LEVEL | debug | warn |
 
@@ -175,7 +239,7 @@ bash /home/isem/gamilit-workspace/apps/database/scripts/recreate-database.sh --e
 
 # 5. Reiniciar backend + smoke test
 pm2 restart ecosystem.config.js
-curl -s https://localhost:3006/health
+curl -s http://localhost:3006/api/v1/health
 ```
 
 ### Scripts Disponibles
