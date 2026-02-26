@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useResponsiveLayout } from '@shared/hooks/useResponsiveLayout';
 
 interface UseCompletionAnimationsParams {
   isOpen: boolean;
@@ -32,18 +33,7 @@ export function useCompletionAnimations({
   const [showConfetti, setShowConfetti] = useState(false);
   const [animatedXP, setAnimatedXP] = useState(0);
   const [animatedCoins, setAnimatedCoins] = useState(0);
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1024,
-    height: typeof window !== 'undefined' ? window.innerHeight : 768,
-  });
-
-  // Window resize tracking
-  useEffect(() => {
-    const handleResize = () =>
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const { width, height } = useResponsiveLayout();
 
   // Confetti + counter animations
   useEffect(() => {
@@ -84,5 +74,5 @@ export function useCompletionAnimations({
     }
   }, [isOpen, success, xpGained, mlCoinsGained]);
 
-  return { showConfetti, animatedXP, animatedCoins, windowSize };
+  return { showConfetti, animatedXP, animatedCoins, windowSize: { width, height } };
 }

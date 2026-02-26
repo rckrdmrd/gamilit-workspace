@@ -46,7 +46,7 @@ export function LearningAnalyticsDashboard({ classroomId }: LearningAnalyticsDas
         <div className="flex items-center gap-3">
           <BarChart3 className="h-8 w-8 text-detective-orange" />
           <div>
-            <h2 className="text-2xl font-bold text-detective-text">Analíticas de Aprendizaje</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-detective-text">Analíticas de Aprendizaje</h2>
             <p className="text-detective-text-secondary">
               Métricas avanzadas de rendimiento educativo
             </p>

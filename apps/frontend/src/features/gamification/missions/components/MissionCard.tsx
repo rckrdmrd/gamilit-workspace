@@ -17,6 +17,7 @@
 import { useState, useEffect, useMemo, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
+import { useResponsiveLayout } from '@shared/hooks/useResponsiveLayout';
 import {
   BookOpen,
   Zap,
@@ -66,6 +67,7 @@ export function MissionCard({
 }: MissionCardProps) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState('');
+  const { width: viewportWidth, height: viewportHeight } = useResponsiveLayout();
 
   // Get unique color scheme based on mission ID (consistent across renders)
   const colorScheme = useMemo((): ColorScheme => {
@@ -172,8 +174,8 @@ export function MissionCard({
         {showConfetti && (
           <div className="pointer-events-none fixed inset-0 z-50">
             <Confetti
-              width={window.innerWidth}
-              height={window.innerHeight}
+              width={viewportWidth}
+              height={viewportHeight}
               numberOfPieces={300}
               recycle={false}
               colors={['#F59E0B', '#FB923C', '#FBBF24', '#FCD34D']}

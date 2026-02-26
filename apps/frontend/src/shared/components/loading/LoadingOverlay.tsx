@@ -29,7 +29,7 @@ export function LoadingOverlay({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex items-center justify-center p-8"
+            className="flex items-center justify-center p-4 sm:p-8"
             role="status"
             aria-live="polite"
           >

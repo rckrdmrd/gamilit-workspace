@@ -82,7 +82,7 @@ export default function AdminUsersPage() {
         <div>
           <div className="mb-2 flex items-center gap-3">
             <Users className="h-8 w-8 text-blue-500" />
-            <h1 className="text-3xl font-bold text-detective-text">Gestion de Usuarios</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Gestion de Usuarios</h1>
             <FeatureBadge variant="under-construction" tooltip="CRUD completo de usuarios en desarrollo" size="sm" />
           </div>
           <p className="mt-1 text-detective-text-secondary">Administra usuarios, roles y permisos de la plataforma</p>

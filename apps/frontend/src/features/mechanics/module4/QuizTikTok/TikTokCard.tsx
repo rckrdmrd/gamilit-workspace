@@ -33,9 +33,9 @@ export const TikTokCard = ({
 
   return (
     <motion.div
-      initial={{ y: window.innerHeight }}
+      initial={{ y: '100vh' }}
       animate={{ y: 0 }}
-      exit={{ y: -window.innerHeight }}
+      exit={{ y: '-100vh' }}
       transition={{ type: 'spring', damping: 30, stiffness: 300 }}
       className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-8"
       style={{ backgroundColor: question.backgroundColor || 'var(--detective-bg-secondary, #1f2937)' }}

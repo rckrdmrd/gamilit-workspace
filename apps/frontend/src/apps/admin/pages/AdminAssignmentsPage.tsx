@@ -113,7 +113,7 @@ export default function AdminAssignmentsPage() {
         <div>
           <div className="mb-2 flex items-center gap-3">
             <ClipboardList className="h-8 w-8 text-blue-500" />
-            <h1 className="text-3xl font-bold text-detective-text">Assignments</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Assignments</h1>
           </div>
           <p className="mt-1 text-detective-text-secondary">
             Visualiza y monitorea todas las tareas asignadas en la plataforma

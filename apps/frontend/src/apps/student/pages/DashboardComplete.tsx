@@ -130,7 +130,7 @@ export default function DashboardComplete() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <h1 className="mb-2 text-3xl font-bold text-detective-text">¡Bienvenido, Detective! 🕵️</h1>
+          <h1 className="mb-2 text-2xl sm:text-3xl font-bold text-detective-text">¡Bienvenido, Detective! 🕵️</h1>
           <p className="text-detective-text-secondary">
             Explora la plataforma educativa de investigación y desarrolla tus habilidades
             detectivescas.

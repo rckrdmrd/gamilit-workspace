@@ -88,7 +88,7 @@ export const ConfirmDialog = ({
         </p>
 
         {/* Actions */}
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3">
           <button
             type="button"
             onClick={onClose}

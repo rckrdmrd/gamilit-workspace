@@ -129,7 +129,7 @@ export default function AdminAnalyticsPage() {
           <div>
             <div className="mb-2 flex items-center gap-3">
               <TrendingUp className="h-8 w-8 text-detective-orange" />
-              <h1 className="text-3xl font-bold text-detective-text">Analíticas</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Analíticas</h1>
             </div>
             <p className="text-detective-text-secondary">
               Análisis completo de usuarios, engagement, gamificación y retención

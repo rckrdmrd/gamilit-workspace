@@ -47,7 +47,7 @@ export default function AdminClassroomTeacherPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-detective-text">
+          <h1 className="mb-2 text-2xl sm:text-3xl font-bold text-detective-text">
             Asignaciones Aula-Docente
           </h1>
           <p className="text-detective-text-secondary">

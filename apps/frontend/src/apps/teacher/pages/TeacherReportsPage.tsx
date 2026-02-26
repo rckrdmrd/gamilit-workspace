@@ -290,7 +290,7 @@ export default function TeacherReportsPage() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="mb-2 text-3xl font-bold text-detective-text">Reportes y Estadísticas</h1>
+            <h1 className="mb-2 text-2xl sm:text-3xl font-bold text-detective-text">Reportes y Estadísticas</h1>
             <p className="text-detective-text-secondary">
               Genera reportes personalizados y analiza el desempeño de tus estudiantes
             </p>

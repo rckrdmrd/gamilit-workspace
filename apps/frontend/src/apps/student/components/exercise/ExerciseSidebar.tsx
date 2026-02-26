@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { useMediaQuery } from '@shared/hooks/useResponsiveLayout';
 import { usePowerUps } from '@/features/gamification/social/hooks/usePowerUps';
 import {
   ChevronLeft,
@@ -50,6 +51,7 @@ export const ExerciseSidebar = ({
   className = '',
 }: ExerciseSidebarProps) => {
   const { getAvailablePowerUps, getActivePowerUps, applyPowerUp } = usePowerUps();
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
   const [activeTab, setActiveTab] = useState<'powerups' | 'hints' | 'progress' | 'stats'>(
     'powerups',
   );
@@ -89,14 +91,14 @@ export const ExerciseSidebar = ({
 
       {/* Sidebar */}
       <AnimatePresence>
-        {(isOpen || window.innerWidth >= 1024) && (
+        {(isOpen || isLargeScreen) && (
           <motion.aside
             initial={{ x: '100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className={`
-              fixed right-0 top-0 z-30 h-screen w-80
+              fixed right-0 top-0 z-30 h-screen w-[min(320px,calc(100vw-2rem))] sm:w-80
               overflow-y-auto bg-white shadow-2xl dark:bg-gray-800
               lg:sticky lg:h-auto lg:w-full lg:shadow-none
               ${className}
@@ -198,8 +200,7 @@ export const ExerciseSidebar = ({
                         )}
                       </div>
                       <div
-                        className="space-y-2 overflow-y-auto overscroll-contain pr-2"
-                        style={{ maxHeight: '260px' }}
+                        className="space-y-2 overflow-y-auto overscroll-contain pr-2 max-h-[40vh] sm:max-h-[260px]"
                       >
                         {availablePowerUps.map((powerUp) => (
                           <motion.div
@@ -403,7 +404,7 @@ export const ExerciseSidebar = ({
 
       {/* Backdrop for mobile */}
       <AnimatePresence>
-        {isOpen && window.innerWidth < 1024 && (
+        {isOpen && !isLargeScreen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

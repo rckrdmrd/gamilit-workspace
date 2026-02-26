@@ -26,7 +26,7 @@ export const PurchaseConfirmation = ({
       contentClassName="custom"
       ariaLabelledBy="purchase-confirmation-title"
     >
-      <div className="p-8 text-center">
+      <div className="p-4 sm:p-6 md:p-8 text-center">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}

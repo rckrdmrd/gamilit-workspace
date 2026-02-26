@@ -58,7 +58,7 @@ export default function TeacherAlertsPage() {
               <Bell className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-detective-text">Alertas y Notificaciones</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Alertas y Notificaciones</h1>
               <p className="mt-1 text-detective-text-secondary">
                 Sistema de monitoreo inteligente para intervención temprana
               </p>

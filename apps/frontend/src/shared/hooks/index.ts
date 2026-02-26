@@ -31,3 +31,12 @@ export type {
 export { useBranding } from './useBranding';
 export { useApiError } from './useApiError';
 export { usePageTitle } from './usePageTitle';
+export {
+  useResponsiveLayout,
+  useMediaQuery,
+  useKeyboardShortcuts,
+  BREAKPOINTS,
+  type Breakpoint as ResponsiveBreakpoint,
+  type Orientation,
+  type ResponsiveLayoutState,
+} from './useResponsiveLayout';

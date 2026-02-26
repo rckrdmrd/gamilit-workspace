@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, Info, Trophy, Sparkles, Clock } from 'lucide-react';
 import Confetti from 'react-confetti';
 import { Modal } from '@shared/components/common/Modal';
+import { useResponsiveLayout } from '@shared/hooks/useResponsiveLayout';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import {
@@ -31,6 +32,7 @@ export const FeedbackModal = ({
   onRetry,
   onNext
 }: FeedbackModalProps) => {
+  const { width: viewportWidth, height: viewportHeight } = useResponsiveLayout();
   const [showConfetti, setShowConfetti] = useState(false);
   const [animatedXP, setAnimatedXP] = useState(0);
   const [animatedCoins, setAnimatedCoins] = useState(0);
@@ -109,8 +111,8 @@ export const FeedbackModal = ({
         {showConfetti && (
           <div className="fixed inset-0 z-50 pointer-events-none" aria-hidden="true">
             <Confetti
-              width={typeof window !== 'undefined' ? window.innerWidth : 1024}
-              height={typeof window !== 'undefined' ? window.innerHeight : 768}
+              width={viewportWidth}
+              height={viewportHeight}
               recycle={false}
               numberOfPieces={150}
               gravity={0.3}
@@ -307,7 +309,7 @@ export const FeedbackModal = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex gap-3"
+            className="flex flex-col-reverse gap-3 sm:flex-row"
           >
             {feedback.type === 'success' && onNext && (
               <DetectiveButton

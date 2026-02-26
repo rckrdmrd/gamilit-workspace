@@ -24,7 +24,7 @@ export default function AdminInstitutionsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-detective-text">Gestión de Organizaciones</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Gestión de Organizaciones</h1>
           <p className="mt-1 text-detective-text-secondary">
             Gestiona organizaciones, planes y suscripciones de la plataforma
           </p>

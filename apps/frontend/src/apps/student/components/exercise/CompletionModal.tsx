@@ -198,10 +198,10 @@ export const CompletionModal = ({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 z-10 rounded-full bg-white/20 p-1.5 text-white transition-colors hover:bg-white/40"
+        className="absolute right-3 top-3 z-10 flex items-center justify-center rounded-full bg-white/20 p-2 min-w-[44px] min-h-[44px] text-white transition-colors hover:bg-white/40 touch-manipulation"
         aria-label="Cerrar modal"
       >
-        <X className="h-5 w-5" />
+        <X className="h-6 w-6" />
       </button>
 
       <CompletionHeader
@@ -213,7 +213,7 @@ export const CompletionModal = ({
       />
 
       {/* Content — composed from subcomponents */}
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-6 md:p-8">
         <CompletionScoreDisplay score={score} maxScore={maxScore} success={success} />
         {success && <CompletionRewards animatedXP={animatedXP} animatedCoins={animatedCoins} />}
         <CompletionStats timeSpent={timeSpent} hintsUsed={hintsUsed} />

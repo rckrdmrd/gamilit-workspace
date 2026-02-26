@@ -103,7 +103,7 @@ export const AchievementModal = ({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-0 right-0 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-0 right-0 flex items-center justify-center rounded-full p-2 min-w-[44px] min-h-[44px] text-gray-400 hover:text-gray-600 transition-colors touch-manipulation"
           aria-label="Cerrar"
         >
           <X className="w-6 h-6" />
@@ -251,7 +251,7 @@ export const AchievementModal = ({
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Recompensas</h3>
             <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 border-2 border-yellow-200">
-              <div className="flex justify-center space-x-6">
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
                 {achievement.rewards.xp > 0 && (
                   <div className="text-center">
                     <Trophy className="w-8 h-8 text-yellow-600 mx-auto mb-2" />

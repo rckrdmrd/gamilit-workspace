@@ -133,7 +133,7 @@ export default function AdminGamificationPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="flex items-center gap-3 text-3xl font-bold text-detective-text">
+          <h1 className="flex items-center gap-3 text-2xl sm:text-3xl font-bold text-detective-text">
             <Trophy className="h-8 w-8 text-detective-gold" />
             Gamificacion
           </h1>

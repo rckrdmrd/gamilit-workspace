@@ -44,7 +44,9 @@ export const PortalLayout = ({
   onLogout,
   resolveOrgName,
 }: PortalLayoutProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const branding = useContext(BrandingContext);

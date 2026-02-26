@@ -10,6 +10,7 @@
 import { useState, useEffect, useMemo, type ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
+import { useResponsiveLayout } from '@shared/hooks/useResponsiveLayout';
 import {
   BookOpen,
   Zap,
@@ -47,6 +48,7 @@ export function MissionDetailModal({
   onClaim,
   onGoToExercise,
 }: MissionDetailModalProps) {
+  const { width: viewportWidth, height: viewportHeight } = useResponsiveLayout();
   const [showConfetti, setShowConfetti] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState('');
 
@@ -142,8 +144,8 @@ export function MissionDetailModal({
         {showConfetti && (
           <div className="pointer-events-none fixed inset-0 z-[80]">
             <Confetti
-              width={window.innerWidth}
-              height={window.innerHeight}
+              width={viewportWidth}
+              height={viewportHeight}
               numberOfPieces={300}
               recycle={false}
               colors={['#F59E0B', '#FB923C', '#FBBF24', '#FCD34D']}
@@ -221,7 +223,7 @@ export function MissionDetailModal({
           {/* Rewards */}
           <div>
             <h4 className="mb-2 text-sm font-semibold text-gray-500">Recompensas</h4>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2">
                 <Coins className="h-5 w-5 text-amber-600" />
                 <span className="text-sm font-bold text-amber-700">{mlCoins} ML Coins</span>

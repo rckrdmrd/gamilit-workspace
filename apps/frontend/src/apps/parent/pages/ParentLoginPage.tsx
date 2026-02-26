@@ -61,7 +61,7 @@ export const ParentLoginPage = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-3xl font-bold text-white mb-2 relative"
+              className="text-2xl sm:text-3xl font-bold text-white mb-2 relative"
             >
               Portal de Padres
             </motion.h1>

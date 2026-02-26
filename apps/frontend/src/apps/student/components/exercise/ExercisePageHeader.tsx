@@ -110,7 +110,7 @@ export const ExercisePageHeader = ({
 
             {/* Exercise Info */}
             <div className="mb-2 flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-detective-text">{exercise.title}</h1>
+                <h1 className="text-lg font-bold text-detective-text sm:text-xl md:text-2xl">{exercise.title}</h1>
                 <span
                     className={`rounded-lg px-3 py-1 text-sm font-bold ${getDifficultyColor(
                         String(exercise.difficulty),
@@ -122,7 +122,7 @@ export const ExercisePageHeader = ({
             <p className="mb-4 text-detective-text-secondary">{exercise.description}</p>
 
             {/* Exercise Stats */}
-            <div className="flex flex-wrap items-center gap-6">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6">
                 <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-detective-orange" />
                     <div>

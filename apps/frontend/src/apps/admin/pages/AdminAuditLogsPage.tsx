@@ -132,7 +132,7 @@ export default function AdminAuditLogsPage() {
           <div>
             <div className="mb-2 flex items-center gap-3">
               <Shield className="h-8 w-8 text-blue-500" />
-              <h1 className="text-3xl font-bold text-detective-text">Audit Logs</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Audit Logs</h1>
             </div>
             <p className="text-detective-text-secondary">
               Historial de intentos de autenticacion y acciones del sistema

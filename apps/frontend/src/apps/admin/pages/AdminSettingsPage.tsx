@@ -67,7 +67,7 @@ export default function AdminSettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-detective-text">Configuración del Sistema</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Configuración del Sistema</h1>
           <p className="mt-1 text-detective-text-secondary">
             Gestiona la configuración global y políticas de seguridad
           </p>

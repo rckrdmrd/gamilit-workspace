@@ -54,7 +54,7 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-detective-text">
+        <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold text-detective-text">
           <Flame className="h-7 w-7 text-orange-600" />
           Rachas y Misiones
         </h2>

@@ -127,7 +127,7 @@ export default function AdminAlertsPage() {
           <div>
             <div className="mb-2 flex items-center gap-3">
               <AlertTriangle className="h-8 w-8 text-detective-orange" />
-              <h1 className="text-3xl font-bold text-detective-text">Alertas del Sistema</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Alertas del Sistema</h1>
             </div>
             <p className="text-detective-text-secondary">
               Monitorea y gestiona alertas críticas del sistema en tiempo real

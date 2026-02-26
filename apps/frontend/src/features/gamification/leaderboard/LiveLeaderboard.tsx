@@ -811,7 +811,7 @@ export const LiveLeaderboard = ({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="mb-2 text-3xl font-bold text-detective-text">Tabla de Clasificación</h2>
+          <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-detective-text">Tabla de Clasificación</h2>
           <div className="flex items-center gap-2 text-sm text-detective-text-secondary">
             <Clock className="h-4 w-4" />
             <span>Última actualización: {lastUpdated.toLocaleTimeString()}</span>

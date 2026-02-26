@@ -159,7 +159,7 @@ export default function AdminProgressPage() {
           <div>
             <div className="mb-2 flex items-center gap-3">
               <TrendingUp className="h-8 w-8 text-detective-orange" />
-              <h1 className="text-3xl font-bold text-detective-text">Seguimiento de Progreso</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Seguimiento de Progreso</h1>
             </div>
             <nav aria-label="Ruta de navegacion">
               <div className="flex items-center gap-2 text-detective-text-secondary">

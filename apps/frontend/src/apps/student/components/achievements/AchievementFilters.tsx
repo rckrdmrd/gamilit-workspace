@@ -6,6 +6,7 @@
 
 import { useState, type ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useMediaQuery } from '@shared/hooks/useResponsiveLayout';
 import {
   Search,
   BookOpen,
@@ -129,6 +130,7 @@ export const AchievementFilters = ({
   resultsCount,
 }: AchievementFiltersProps) => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
 
   const hasActiveFilters =
     filters.category !== 'all' ||
@@ -187,8 +189,8 @@ export const AchievementFilters = ({
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{
-              height: showMobileFilters || window.innerWidth >= 1024 ? 'auto' : 0,
-              opacity: showMobileFilters || window.innerWidth >= 1024 ? 1 : 0,
+              height: showMobileFilters || isLargeScreen ? 'auto' : 0,
+              opacity: showMobileFilters || isLargeScreen ? 1 : 0,
             }}
             exit={{ height: 0, opacity: 0 }}
             className="space-y-6 overflow-hidden lg:!h-auto lg:!opacity-100"

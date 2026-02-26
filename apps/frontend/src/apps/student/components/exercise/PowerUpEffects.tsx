@@ -115,8 +115,8 @@ export const PowerUpEffects = ({
             <motion.div
               key={i}
               initial={{
-                x: Math.random() * window.innerWidth,
-                y: window.innerHeight + 100,
+                x: `${Math.random() * 100}vw`,
+                y: '110vh',
                 scale: 0,
               }}
               animate={{
@@ -164,7 +164,7 @@ export const PowerUpEffects = ({
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`relative bg-white dark:bg-gray-800 rounded-detective shadow-2xl p-8 min-w-[300px] border-4 border-transparent bg-gradient-to-r ${config.color}`}
+              className={`relative bg-white dark:bg-gray-800 rounded-detective shadow-2xl p-4 sm:p-8 w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[300px] max-w-sm border-4 border-transparent bg-gradient-to-r ${config.color}`}
             >
               <div className="bg-white dark:bg-gray-800 rounded-detective p-6 text-center">
                 {/* Icon with Pulse */}

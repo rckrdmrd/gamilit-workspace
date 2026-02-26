@@ -30,7 +30,7 @@ export function CompletionHeader({
 }: CompletionHeaderProps) {
   return (
     <div
-      className={`rounded-t-detective p-8 ${
+      className={`rounded-t-detective p-4 sm:p-6 md:p-8 ${
         success
           ? 'bg-gradient-to-br from-green-500 to-emerald-600'
           : 'bg-gradient-to-br from-orange-500 to-red-600'

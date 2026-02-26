@@ -83,7 +83,7 @@ export default function AchievementsPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="flex items-center text-3xl font-bold text-detective-text">
+          <h1 className="flex items-center text-2xl sm:text-3xl font-bold text-detective-text">
             <Trophy className="mr-3 h-8 w-8 text-yellow-600" />
             Logros
           </h1>

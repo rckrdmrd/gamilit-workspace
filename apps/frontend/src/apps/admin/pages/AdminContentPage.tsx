@@ -104,7 +104,7 @@ export default function AdminContentPage() {
     <AdminPageShell>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-detective-text">Gestion de Contenido</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Gestion de Contenido</h1>
           <p className="mt-1 text-detective-text-secondary">
             Modera ejercicios, gestiona multimedia y controla versiones del sistema
           </p>

@@ -44,7 +44,7 @@ export function RankUpModal({ newRank, oldRank, onDismiss }: RankUpModalProps) {
     <Modal isOpen={true} onClose={onDismiss} showCloseButton={false} size="sm" className="bg-transparent shadow-none p-0">
       <div className="-mx-6 -my-4 flex items-center justify-center">
         <div
-          className={`max-w-sm transform rounded-2xl bg-gradient-to-br ${gradient} p-8 text-center text-white shadow-2xl transition-all duration-500 ${
+          className={`max-w-sm transform rounded-2xl bg-gradient-to-br ${gradient} p-4 sm:p-6 md:p-8 text-center text-white shadow-2xl transition-all duration-500 ${
             isVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
           }`}
         >

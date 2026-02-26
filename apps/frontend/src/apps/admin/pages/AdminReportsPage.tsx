@@ -118,7 +118,7 @@ export default function AdminReportsPage() {
       <div className="mx-auto max-w-7xl">
         {/* Page Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             Generación de Reportes
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

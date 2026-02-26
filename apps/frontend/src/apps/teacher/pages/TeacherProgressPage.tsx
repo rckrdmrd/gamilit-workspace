@@ -221,7 +221,7 @@ export default function TeacherProgressPage() {
               <BarChart3 className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-detective-text">Progreso Académico</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Progreso Académico</h1>
               <p className="text-detective-text-secondary">
                 Monitorea el rendimiento y avance de tus estudiantes
               </p>

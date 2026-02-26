@@ -487,7 +487,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
         <div className="flex items-center gap-3">
           <Users className="h-8 w-8 text-detective-orange" />
           <div>
-            <h2 className="text-2xl font-bold text-detective-text">Monitoreo de Estudiantes</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-detective-text">Monitoreo de Estudiantes</h2>
             <p className="text-detective-text-secondary">Vista en tiempo real del aula</p>
           </div>
         </div>

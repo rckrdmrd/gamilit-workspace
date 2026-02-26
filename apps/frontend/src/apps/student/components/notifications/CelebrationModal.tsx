@@ -101,7 +101,7 @@ export function CelebrationModal({
                 }}
                 initial={{ y: 0, opacity: 1, rotate: 0 }}
                 animate={{
-                  y: window.innerHeight + 100,
+                  y: '110vh',
                   opacity: [1, 1, 0],
                   rotate: Math.random() * 720,
                   x: (Math.random() - 0.5) * 200,
@@ -120,7 +120,7 @@ export function CelebrationModal({
       <div className="flex flex-col h-full md:h-auto">
         {/* Header */}
         <div
-          className={`relative p-8 bg-gradient-to-br ${config.gradient} overflow-hidden`}
+          className={`relative p-4 sm:p-6 md:p-8 bg-gradient-to-br ${config.gradient} overflow-hidden`}
         >
           {/* Animated background pattern */}
           <motion.div

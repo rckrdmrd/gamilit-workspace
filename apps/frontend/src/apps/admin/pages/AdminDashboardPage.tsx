@@ -29,7 +29,7 @@ export default function AdminDashboardPage() {
         {/* Header with Refresh */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-detective-text">Panel de Administracion</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">Panel de Administracion</h1>
             <p className="mt-1 text-detective-text-secondary">
               Gestiona la plataforma GAMILIT de forma centralizada
             </p>

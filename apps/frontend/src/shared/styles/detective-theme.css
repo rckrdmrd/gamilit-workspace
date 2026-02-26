@@ -646,3 +646,43 @@ a:focus-visible {
   border-radius: 0.5rem 0.5rem 0 0;
   padding: 1rem;
 }
+
+/* ============================================================
+   RESPONSIVE UTILITIES (ADR-050 Responsive Design Strategy)
+   ============================================================ */
+
+/** Touch target: WCAG 2.5.5 minimum 44x44px */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+/** Responsive padding: compact on mobile, spacious on desktop */
+.responsive-padding {
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+  .responsive-padding {
+    padding: 1.5rem;
+  }
+}
+@media (min-width: 768px) {
+  .responsive-padding {
+    padding: 2rem;
+  }
+}
+
+/** Modal content responsive height */
+.modal-content-responsive {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+@media (min-width: 640px) {
+  .modal-content-responsive {
+    max-height: calc(100vh - 200px);
+  }
+}

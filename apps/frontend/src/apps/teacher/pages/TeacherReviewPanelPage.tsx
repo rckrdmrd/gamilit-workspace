@@ -175,7 +175,7 @@ export default function TeacherReviewPanelPage() {
             <div className="flex items-center gap-3">
               <ClipboardList className="h-8 w-8 text-detective-orange" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Panel de Revision</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Panel de Revision</h1>
                 <p className="text-gray-600">
                   {selectedReview
                     ? 'Revisando envio de estudiante'

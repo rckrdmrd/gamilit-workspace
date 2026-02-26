@@ -292,7 +292,7 @@ export default function AdminExerciseCreatePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-detective-text">
+        <h1 className="text-2xl sm:text-3xl font-bold text-detective-text">
           {isEditMode ? 'Editar Ejercicio' : 'Crear Ejercicio'}
         </h1>
         <p className="mt-1 text-detective-text-secondary">

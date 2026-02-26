@@ -61,7 +61,7 @@ export const AvatarSelectionModal = ({
 
             {/* Body */}
             <div className="p-6">
-                <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+                <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
                     {AVATAR_OPTIONS.map((avatar, index) => {
                         const isSelected = currentAvatar === avatar;
                         return (

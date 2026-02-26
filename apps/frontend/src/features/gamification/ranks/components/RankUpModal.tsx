@@ -40,7 +40,7 @@ const ConfettiParticle = ({ delay }: { delay: number }) => {
       }}
       initial={{ y: 0, x: 0, opacity: 1, rotate: 0 }}
       animate={{
-        y: window.innerHeight,
+        y: '110vh',
         x: endX - startX,
         opacity: 0,
         rotate: rotation,
@@ -103,16 +103,16 @@ export const RankUpModal = ({ isOpen, onClose }: RankUpModalProps) => {
       {/* Close Button */}
       <button
         onClick={handleClose}
-        className="absolute right-4 top-4 z-10 rounded-full bg-gray-100 p-2 transition-colors hover:bg-gray-200"
+        className="absolute right-3 top-3 z-10 flex items-center justify-center rounded-full bg-gray-100 p-2 min-w-[44px] min-h-[44px] transition-colors hover:bg-gray-200 touch-manipulation"
         aria-label="Cerrar modal"
       >
-        <X className="h-5 w-5 text-gray-600" />
+        <X className="h-6 w-6 text-gray-600" />
       </button>
 
       {/* Header with gradient background */}
       <div
         className={cn(
-          'relative px-8 pb-8 pt-12 text-white',
+          'relative px-4 pb-6 pt-10 text-white sm:px-8 sm:pb-8 sm:pt-12',
           'bg-gradient-to-br',
           currentRank.gradient,
         )}
@@ -135,7 +135,7 @@ export const RankUpModal = ({ isOpen, onClose }: RankUpModalProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-2 text-center text-3xl font-bold"
+          className="mb-2 text-center text-2xl font-bold sm:text-3xl"
         >
           Felicitaciones!
         </motion.h2>
@@ -151,7 +151,7 @@ export const RankUpModal = ({ isOpen, onClose }: RankUpModalProps) => {
       </div>
 
       {/* Content */}
-      <div className="space-y-6 px-8 py-6">
+      <div className="space-y-4 px-4 py-4 sm:space-y-6 sm:px-8 sm:py-6">
         {/* Rank Progression */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

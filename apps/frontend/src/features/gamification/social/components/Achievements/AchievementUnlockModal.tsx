@@ -133,7 +133,7 @@ export const AchievementUnlockModal = ({
         }}
       />
 
-      <div className="p-8">
+      <div className="p-4 sm:p-6 md:p-8">
         {/* Celebration Header */}
         <div className="mb-6 text-center">
           <motion.div

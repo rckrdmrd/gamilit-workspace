@@ -73,13 +73,13 @@ export const Modal = ({
   }, [isOpen]);
 
   const sizeClasses: Record<string, string> = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl',
-    '4xl': 'max-w-4xl',
-    '5xl': 'max-w-5xl',
+    sm: 'max-w-[calc(100vw-2rem)] sm:max-w-sm',
+    md: 'max-w-[calc(100vw-2rem)] sm:max-w-md',
+    lg: 'max-w-[calc(100vw-2rem)] sm:max-w-lg',
+    xl: 'max-w-[calc(100vw-2rem)] sm:max-w-xl',
+    '2xl': 'max-w-[calc(100vw-2rem)] sm:max-w-2xl',
+    '4xl': 'max-w-[calc(100vw-2rem)] sm:max-w-4xl',
+    '5xl': 'max-w-[calc(100vw-2rem)] sm:max-w-5xl',
     full: 'max-w-full mx-4',
   };
 
@@ -118,17 +118,17 @@ export const Modal = ({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                className="flex items-center justify-center rounded-full p-2 min-w-[44px] min-h-[44px] text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 touch-manipulation"
                 aria-label="Cerrar modal"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             )}
           </div>
         )}
 
         {/* Content */}
-        <div className="max-h-[calc(100vh-200px)] overflow-y-auto px-6 py-4">
+        <div className="max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto px-4 sm:px-6 py-4">
           {children}
         </div>
       </>
