@@ -28,7 +28,7 @@ El proyecto GAMILIT presenta una contradiccion documentada entre la configuracio
 2. **`CLAUDE.md`** (documento de gobernanza del proyecto) declaraba:
    > "Minimo 80% test coverage objetivo"
 
-3. **Cobertura real observada:** El proyecto tiene **833 tests passing** (60 spec files) con una cobertura cercana al 50%. Alcanzar 80% de forma inmediata requeriria duplicar el volumen de tests existentes, lo cual no es viable sin impactar el desarrollo de features en curso.
+3. **Cobertura real observada:** El proyecto tiene **2324 tests** (2296 passed + 28 skipped, 63 spec files) con una cobertura cercana al 50%. Alcanzar 80% de forma inmediata requeriria duplicar el volumen de tests existentes, lo cual no es viable sin impactar el desarrollo de features en curso.
 
 ### Problema
 

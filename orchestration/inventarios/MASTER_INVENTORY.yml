@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "13.1.0"
-fecha: "2026-02-21"  # Inventory validation 2026-02-21: tables, views, functions, triggers, RLS, services, DTOs corrected
+version: "14.0.0"
+fecha: "2026-02-26"  # Inventory validation 2026-02-26: 7 metrics corrected (Foreign Keys, Seeds, Entity classes, Tests, Components, Hooks, Routes)
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -17,7 +17,7 @@ resumen:
   stack: "NestJS 11 + React 19 + PostgreSQL 15 + Socket.IO 4.8+ + Vite 6.x"
   repositorio: "git@github.com:rckrdmrd/gamilit-workspace.git (MONOREPO)"
   epics_completados: "34 EPICs, 162 SP"
-  tests_pasando: 833
+  tests_pasando: "2324 (2296 passed + 28 skipped)"
   en_produccion: true
 
 # -------------------------------------------------------------------------------
@@ -33,9 +33,9 @@ metricas:
     funciones: 158               # 158 ^CREATE FUNCTION in functions/*.sql (116 files). Verified 2026-02-21. Note: ~44 additional inline functions in table/trigger/view files (total ~202 across all DDL)
     triggers: 68                 # 68 CREATE TRIGGER in triggers/*.sql (37 files). Verified 2026-02-21. Note: ~64 additional inline triggers in table/function files
     rls_policies: 251            # 251 ^CREATE POLICY in rls-policies/*.sql (37 files). Verified 2026-02-21. +10 resource-sharing-policies, +3 teacher_reports. Note: ~143 additional inline policies in table files
-    foreign_keys: 299            # +1 missions_template_id_fkey (REC-009)
+    foreign_keys: 301            # +1 missions_template_id_fkey (REC-009). Verified 2026-02-26
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
-    seeds: 93                    # 93 pipeline entries (+1 07-exercises-auxiliar.sql), 0 errores, 0 excluidos. UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups
+    seeds: 92                    # 92 pipeline entries, 0 errores, 0 excluidos. UUID standardization: 131 placeholder UUIDs replaced with gen_random_uuid() + dynamic lookups. Verified 2026-02-26
     scripts:                     # Key database scripts
       - "recreate-database.sh"         # Main recreate (--env dev|prod --force)
       - "recreate-database-dev.sh"     # Wrapper DEV
@@ -44,7 +44,8 @@ metricas:
 
   backend:
     modulos: 23                  # 22 directorios + mail (transitivo)
-    entities: 156                # 156 archivos, 159 @Entity classes (+UserEquippedItem now own file, +PendingUserInitialization, +ResourceRating, +ResourceComment, +ResourceDownload, message.entity has 2)
+    entity_files: 156            # 156 archivos
+    entity_classes: 157          # 157 @Entity classes (Verified 2026-02-26, was 159 but 2 over-counted)
     dtos: 401                    # 401 *.dto.ts files in modules/. Verified 2026-02-21
     services: 172                # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
     controllers: 108
@@ -57,15 +58,15 @@ metricas:
     tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 576              # Verified 2026-02-21: find .tsx excl tests/stories/examples/legacy/testing
-    hooks: 128                        # Verified 2026-02-21: find use*.ts excl tests + type files
+    componentes_tsx: 577              # Verified 2026-02-26: 577 production .tsx files
+    hooks: 134                        # Verified 2026-02-26: 134 unique hooks (audit-corrected)
     paginas: 67                       # Verified 2026-02-21: find *Page.tsx excl tests/legacy
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
     api_service_files: 65             # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0)
     api_calls_total: 580              # ~580: +resourceSharingApi calls over previous 575
     portales: 4
     mecanicas_ejercicio: 30           # 30 mecanicas unicas de ejercicio
-    routes: 70                        # 73 - 3 routes removed (teacher communication, content, content-management)
+    routes: 74                        # 74 routes (Verified 2026-02-26, updated from migration to React Router v7)
     type_files: 49                    # 49 archivos type definition
     recursos_multimedia:
       meme_svgs: 6                   # public/memes/*.svg (Marie Curie, flat design 600x500px)
@@ -74,7 +75,7 @@ metricas:
     tests_frontend: 236               # +23 CompletionModal accessibility tests, +51 USE_PROXY tests (api.config.test.ts)
 
   calidad:
-    tests_total: 833                 # Backend tests. Frontend tests now +74 (51 USE_PROXY + 23 CompletionModal a11y)
+    tests_total: 2324                # 2324 total (2296 passed + 28 skipped), 63 spec files. Verified 2026-02-26
     coherencia_ddl_backend: "90.2%"  # 156 entity files / 173 tables (100% bidirectional, 16 DDL-only in data_warehouse + 1 new resource table)
     entity_registration: "100%"     # All entities registered in forFeature()
     cobertura_target: "80%"
@@ -188,5 +189,5 @@ credenciales:
   redis_db: 0
 
 # ===============================================================================
-# FIN MASTER INVENTORY v13.0.0
+# FIN MASTER INVENTORY v14.0.0
 # ===============================================================================

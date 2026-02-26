@@ -74,8 +74,8 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 
 | Documento | Ubicacion | Descripcion |
 |-----------|-----------|-------------|
-| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 580 componentes, 123 hooks, 66 API services |
-| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 905 endpoints documentados |
+| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 577 componentes, 134 hooks, 65 API services |
+| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 912 endpoints documentados |
 
 ### Tarea Activa
 
@@ -829,9 +829,9 @@ docs/60-portals/student/specs/
 - `docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
 
 ### Inventarios
-- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 580 componentes
-- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 905 endpoints
-- `orchestration/inventarios/DATABASE_INVENTORY.yml` - 16 schemas, 135+ tablas
+- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 577 componentes
+- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 912 endpoints
+- `orchestration/inventarios/DATABASE_INVENTORY.yml` - 18 schemas, 173 tablas
 
 ### Codebase
 - Frontend: `apps/frontend/src/apps/student/`

@@ -16,9 +16,19 @@
 | PostgreSQL | 5432 | Base de datos principal |
 | Redis | 6379 | Cache y sesiones (DB 0) |
 
-### WSL — Servicios de Base de Datos
+### WSL2 — Servicios de Base de Datos y Networking
 
-En desarrollo local (Windows), PostgreSQL y Redis corren dentro de WSL (Ubuntu-24.04). El codigo fuente reside en Windows.
+En desarrollo local (Windows), PostgreSQL y Redis corren dentro de WSL2 (Ubuntu-24.04). El codigo fuente reside en Windows.
+
+**Networking WSL2 (IP dinamica):**
+- `DB_HOST` usa la IP dinamica de WSL2, NO `localhost` — evita el proxy `svchost.exe` que causa `ECONNRESET`.
+- El script `apps/database/scripts/update-wsl-ip.sh` detecta la IP actual y actualiza `.env.dev` automaticamente.
+- El `package.json` del backend incluye un hook `predev` que ejecuta `update-wsl-ip.sh` antes de `start:dev`.
+
+**Redis opcional en dev:**
+- `REDIS_ENABLED=false` en `.env.dev` deshabilita Redis completamente.
+- Con Redis deshabilitado, las funcionalidades de tiempo real quedan inactivas (WebSocket, cache, sesiones Redis).
+- Util cuando Redis no esta corriendo en WSL2 y solo se necesita el API REST.
 
 ### Docker Compose (Desarrollo Local)
 
@@ -114,7 +124,7 @@ npm run start:prod      # Ejecuta build de produccion
 
 # Validaciones
 npm run lint            # ESLint
-npm run test            # Jest (833 tests)
+npm run test            # Jest (2324 tests: 2296 passed + 28 skipped, 63 spec files)
 npm run test:cov        # Cobertura de tests
 ```
 
@@ -232,10 +242,9 @@ apps/devops/k8s/
 ## Git Workflow
 
 ### Branch Strategy
-- **main:** Produccion (protegida)
-- **develop:** Desarrollo activo
-- **feature/GAM-XXX:** Features individuales
-- **hotfix/GAM-XXX:** Hotfixes urgentes
+- **master:** Unica rama activa (produccion + desarrollo)
+- **feature/GAM-XXX:** Features individuales (merge a master)
+- **hotfix/GAM-XXX:** Hotfixes urgentes (merge a master)
 
 ### Commit Convention
 ```

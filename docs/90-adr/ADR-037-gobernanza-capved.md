@@ -6,7 +6,7 @@
 
 ## Contexto
 
-En el desarrollo de gamilit (MVP 98% completado, 23 modulos, 155 entities (156 classes), 905 endpoints), la gestion de tareas presentaba problemas criticos:
+En el desarrollo de gamilit (MVP 98% completado, 23 modulos, 156 entities (157 classes), 912 endpoints), la gestion de tareas presentaba problemas criticos:
 
 1. **Falta de estructura:** Tareas documentadas de forma inconsistente o no documentadas
 2. **Trazabilidad perdida:** Imposible rastrear que cambio se hizo, cuando y por que
@@ -37,7 +37,7 @@ Implementar el **Sistema de Gobernanza de Tareas** basado en el ciclo **CAPVED**
 | A - ANALISIS                                                                 |
 | - Comportamiento deseado (perspectiva de producto)                          |
 | - Restricciones: seguridad, performance, UX, gamificacion                   |
-| - Objetos impactados: BD (169 tablas), Backend (155 entities), Frontend     |
+| - Objetos impactados: BD (173 tablas), Backend (156 entity files), Frontend  |
 | - Dependencias con otras tareas (bloquea/bloqueada por)                     |
 | - Salida: Lista de objetos + dependencias + riesgos                         |
 +-----------------------------------------------------------------------------+
@@ -95,13 +95,13 @@ Implementar el **Sistema de Gobernanza de Tareas** basado en el ciclo **CAPVED**
 ## Validaciones Tecnicas
 [ ] Build pasa: cd apps/backend && npm run build
 [ ] Lint pasa: cd apps/backend && npm run lint
-[ ] Tests pasan: cd apps/backend && npm run test (833 tests)
+[ ] Tests pasan: cd apps/backend && npm run test (2324 tests: 2296 passed + 28 skipped, 63 spec files)
 [ ] Build frontend pasa: cd apps/frontend && npm run build
 [ ] Typecheck frontend pasa: cd apps/frontend && npm run typecheck
 
 ## Coherencia Entre Capas (CRITICO)
-[ ] DDL <-> Backend verificado (169 tablas = 155 entity files coherentes)
-[ ] Backend <-> Frontend verificado (905 endpoints documentados)
+[ ] DDL <-> Backend verificado (173 tablas = 156 entity files coherentes)
+[ ] Backend <-> Frontend verificado (912 endpoints documentados)
 [ ] Si cambio DDL: BD recreada con recreate-database.sh
 
 ## Inventarios (SSOT)

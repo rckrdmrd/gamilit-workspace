@@ -121,10 +121,10 @@
 ### Features Utilizados
 | Feature | Descripcion |
 |---------|-------------|
-| Row-Level Security (RLS) | 231 DDL / 471 runtime policies para multi-tenancy |
+| Row-Level Security (RLS) | 251 DDL / 471 runtime policies para multi-tenancy |
 | Schemas | 18 schemas modulares para separacion logica |
-| Functions | 183 funciones (DDL) para logica de negocio |
-| Triggers | 67 triggers para eventos automaticos |
+| Functions | 158 funciones (DDL) para logica de negocio |
+| Triggers | 68 triggers para eventos automaticos |
 | Materialized Views | 7 MVs para queries de analytics |
 | Partitioning | Tablas de logs/analytics particionadas por mes |
 | Full-text Search | Busqueda de contenido educativo |
@@ -178,10 +178,10 @@ Browser (React 19)
 |--------|----------------|
 | **Modular Architecture** | 23 modulos NestJS independientes |
 | **Repository Pattern** | TypeORM repositories por entity |
-| **DTO Pattern** | 399 DTOs para validacion de entrada/salida |
+| **DTO Pattern** | 401 DTOs para validacion de entrada/salida |
 | **Guard Pattern** | 15 guards para autorizacion |
 | **Decorator Pattern** | 18 decorators custom |
-| **Multi-tenancy** | RLS en PostgreSQL (231 DDL / 471 runtime policies) |
+| **Multi-tenancy** | RLS en PostgreSQL (251 DDL / 471 runtime policies) |
 | **Event-driven** | Socket.IO para real-time updates |
 | **CQRS (partial)** | Materialized Views para lectura, tablas para escritura |
 | **Clean Architecture** | Separacion layers: controller -> service -> repository |
@@ -194,7 +194,7 @@ Browser (React 19)
 |-----------|------------|---------|
 | Autenticacion | JWT + Passport | Access token 15min + Refresh token 7d |
 | Autorizacion | RBAC | 4 roles: estudiante, maestro, admin, padre |
-| Multi-tenancy | PostgreSQL RLS | 231 DDL / 471 runtime policies, aislamiento por escuela |
+| Multi-tenancy | PostgreSQL RLS | 251 DDL / 471 runtime policies, aislamiento por escuela |
 | Validacion | class-validator / zod | DTOs en backend, schemas en frontend |
 | Rate Limiting | @nestjs/throttler | 100 req/min por IP |
 | CORS | NestJS CORS | Origenes especificos por ambiente |

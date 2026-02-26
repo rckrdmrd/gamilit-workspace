@@ -316,18 +316,18 @@ La aplicacion 12-Factor es completamente auto-contenida y no depende de un servi
 
 ### Evidencia
 
-- **Backend:** NestJS se auto-vincula al puerto configurado en `PORT` (default 4006)
+- **Backend:** NestJS se auto-vincula al puerto configurado en `PORT` (default 3006)
   ```typescript
   // main.ts
   const port = configService.get('env.port', 3006);
   await app.listen(port);
   ```
-- **Frontend:** Vite preview se vincula al puerto 4005 via `--port 4005`
+- **Frontend:** SPA server se vincula al puerto 3005 via `--port 3005`
   ```javascript
   // ecosystem.config.js
-  args: 'vite preview --port 4005 --host 0.0.0.0',
+  args: '--port 3005 --host 0.0.0.0',
   ```
-- **Nginx como reverse proxy:** No inyecta la app en un servidor web; solo hace proxy de puertos externos (3005/3006 HTTPS) a puertos internos (4005/4006 HTTP). La app funciona sin Nginx.
+- **Nginx como reverse proxy:** No inyecta la app en un servidor web; solo hace proxy de HTTPS (:443) a puertos internos (3005/3006 HTTP). La app funciona sin Nginx.
 
 ### Acciones correctivas
 
@@ -388,14 +388,14 @@ En la aplicacion 12-Factor, los procesos son ciudadanos de primera clase. La apl
        deploy:
          replicas: 2
        environment:
-         - PORT=4006
+         - PORT=3006
    ```
 
 3. **Opcion C — Mantener fork mode y escalar con Nginx upstream:**
 
    ```nginx
    upstream gamilit_backend {
-     server 127.0.0.1:4006;
+     server 127.0.0.1:3006;
      server 127.0.0.1:4007;  # segunda instancia PM2 en otro puerto
    }
    ```
@@ -451,7 +451,7 @@ La aplicacion 12-Factor esta disenada para despliegue continuo manteniendo el ga
 - **Mismos backing services:** PostgreSQL 15 y Redis en ambos ambientes
 - **Misma estructura DB:** 18 schemas, mismas tablas, funciones y triggers
 - **Mismo stack:** NestJS 11 + React 19 + TypeORM 0.3.x en ambos
-- **Mismos puertos internos:** Backend en 4006, Frontend en 4005
+- **Mismos puertos internos:** Backend en 3006, Frontend en 3005
 - **Mismo process manager:** PM2 en ambos (aunque en dev se usa `npm run dev` frecuentemente)
 
 **Gaps:**

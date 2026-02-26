@@ -27,13 +27,13 @@ updated_date: "2026-02-10"
 ## Criterios de Aceptacion
 
 ### CA-01: Schemas y Tablas
-Exactamente 18 schemas y 169 tablas
+Exactamente 18 schemas y 173 tablas
 
 ### CA-02: Foreign Keys
-299 FKs validadas, 0 referencias huerfanas
+301 FKs validadas, 0 referencias huerfanas
 
 ### CA-03: RLS Policies
-231 RLS policies activas y funcionando
+251 RLS policies activas y funcionando
 
 ### CA-04: Triggers
 4 triggers disparan correctamente en cascada (INSERT profile → 15 inserts automaticos)

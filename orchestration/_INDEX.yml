@@ -4,7 +4,7 @@
 
 version: "2.0.0"
 created: "2026-02-07"
-updated: "2026-02-07"
+updated: "2026-02-26"
 proyecto: "gamilit"
 tipo: "STANDALONE"
 
@@ -54,12 +54,18 @@ estructura:
 
   directorios:
     inventory:
-      descripcion: "Inventarios por capa (DATABASE, BACKEND, FRONTEND, MASTER)"
+      descripcion: "Inventarios SSOT por capa y dominio (10 archivos)"
       archivos:
         - "MASTER_INVENTORY.yml"
         - "DATABASE_INVENTORY.yml"
         - "BACKEND_INVENTORY.yml"
         - "FRONTEND_INVENTORY.yml"
+        - "SEEDS_INVENTORY.yml"
+        - "DEPENDENCY_GRAPH.yml"
+        - "TRACEABILITY_MATRIX.yml"
+        - "SKILLS-REGISTRY.yml"
+        - "TEST_COVERAGE.yml"
+        - "LOCAL-WSL-ENVIRONMENT.yml"
 
     work-items:
       descripcion: "Gestion de trabajo (epics, sprints, releases)"
@@ -81,7 +87,10 @@ estructura:
         - "PURGA-DECISION-LOG.md"
 
     tareas:
-      descripcion: "Tracking de tareas de migracion"
+      descripcion: "Tracking de tareas (activa + archive digest)"
+      archivos_clave:
+        - "_INDEX.yml"
+        - "ARCHIVE-DIGEST.md"
 
 # -------------------------------------------------------------------------------
 # HERENCIA
@@ -140,7 +149,7 @@ gobernanza:
 # -------------------------------------------------------------------------------
 
 modulos:
-  total: 22
+  total: 23
   categorias:
     core_infrastructure:
       count: 7
@@ -151,7 +160,7 @@ modulos:
       modulos: ["modules", "exercises", "content", "classrooms", "students"]
 
     gamification_system:
-      count: 6
+      count: 7
       modulos: ["gamification", "leaderboard", "missions", "store", "achievements", "social"]
 
     support_operations:

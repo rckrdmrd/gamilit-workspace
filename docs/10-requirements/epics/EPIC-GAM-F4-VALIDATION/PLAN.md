@@ -24,7 +24,7 @@
 ## Enfoque Tecnico
 
 - **Stack:** PostgreSQL 15 / NestJS 11 / TypeScript 5.7 / React 19 / Vite 6 / Socket.IO 4.8+
-- **Base de datos:** 18 schemas, 169 tablas, 299 FKs, 231 RLS policies
+- **Base de datos:** 18 schemas, 173 tablas, 301 FKs, 251 RLS policies
 - **Validacion:** Queries SQL directos, curl/httpie API calls, browser checks, DB verification post-action
 - **Patron:** Bottom-up (infra → DB → backend → frontend → integration → gamification → docs)
 
@@ -32,7 +32,7 @@
 
 - **F0:** Verificar servicios y builds
 - **F1:** SQL queries contra information_schema + test data inserts
-- **F2:** curl endpoints, npm run test (833+ tests)
+- **F2:** curl endpoints, npm run test (2324+ tests)
 - **F3:** Browser navigation, npm run test:run
 - **F4:** End-to-end flows con verificacion DB post-accion
 - **F5:** Reporte consolidado con hallazgos clasificados

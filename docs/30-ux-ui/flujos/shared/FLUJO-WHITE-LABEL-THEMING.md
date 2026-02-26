@@ -3,7 +3,7 @@
 **ID:** FL-SHR-03
 **Version:** 1.0.0
 **Fecha:** 2026-02-17
-**Estado:** Planificado
+**Estado:** Parcialmente Implementado
 **Portal:** Shared (Admin configures, all portals consume)
 **Prioridad:** P3
 
@@ -66,7 +66,7 @@ flowchart TD
 
 ## 4. Secuencia FE -> BE -> DB
 
-```
+```text
 === Carga inicial (todos los portales) ===
 1. FE: App monta → BrandingProvider.useEffect → brandingApi.getBranding(tenantId)
 2. FE: GET /tenants/:tenantId/branding (endpoint publico, sin auth requerido)

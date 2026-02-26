@@ -1,7 +1,7 @@
 # INDICE Y GUIA DE ASIGNACION DE PERFILES DE AGENTES
 
-**Version:** 2.5.0
-**Fecha:** 2026-02-14
+**Version:** 3.0.0
+**Fecha:** 2026-02-26
 **Sistema:** NEXUS v4.1 + SIMCO v4.5.0
 **Proposito:** Guia para asignacion correcta de tareas a perfiles especializados
 
@@ -30,6 +30,15 @@ Antes de usar cualquier perfil full:
 - Resolver skills/contexto desde `PROFILE-SKILL-MAP.json` mediante `profile_skill_resolver.py`.
 - Evitar rutas legacy no existentes en este workspace standalone.
 
+```yaml
+# PERFIL-CONTRATO-TRANSVERSAL.md
+archivo: "PERFIL-CONTRATO-TRANSVERSAL.md"
+dominio: "Contrato IoC + normalizacion obligatorio para todos los perfiles full"
+descripcion_breve: |
+  Define la estructura minima obligatoria que todo perfil full debe cumplir:
+  CCA, Identidad, Referencias, Context Requirements. Aplica SOLID documental.
+```
+
 ---
 
 ## MAPEO RAPIDO: TAREA → PERFIL
@@ -47,11 +56,10 @@ Antes de usar cualquier perfil full:
 | "Docker", "CI/CD basico", "deploy simple", "nginx" | DevOps | @PERFIL_DEVOPS |
 | "pipeline avanzado", "Jenkins", "GitHub Actions", "quality gates" | CICD-Specialist | @PERFIL_CICD_SPECIALIST |
 | "produccion", "rollback", "ambiente prod", "deploy produccion" | Production-Manager | @PERFIL_PRODUCTION_MANAGER |
-| "recrear bd dev", "wsl", "reset db local", "database local windows" | DB-Dev-WSL | @PERFIL_DB_DEV_WSL |
+| "recrear bd dev", "wsl", "reset db local", "database local windows" | Database-PostgreSQL | @PERFIL_DATABASE_POSTGRESQL |
 | "secretos", "credenciales", ".env", "API keys", "rotacion" | Secrets-Manager | @PERFIL_SECRETS_MANAGER |
 | "Prometheus", "Grafana", "alertas", "metricas", "monitoreo" | Monitoring-Agent | @PERFIL_MONITORING_AGENT |
 | "puertos", "entorno local", "conflictos de puertos" | DevEnv | @PERFIL_DEVENV |
-| "workspace", "inventario infraestructura", "servidores", "credenciales ubicacion" | Infrastructure-Manager | @PERFIL_INFRASTRUCTURE_MANAGER |
 | "test", "jest", "pytest", "cobertura", "e2e", "integracion" | Testing | @PERFIL_TESTING |
 | "code review", "PR review", "revision de codigo" | Code-Reviewer | @PERFIL_REVIEWER |
 | "bug", "fix", "corregir error", "debug" | Bug-Fixer | @PERFIL_BUGFIX |
@@ -157,41 +165,7 @@ no_asignar_si:
 
 ### 2. DESARROLLO TECNICO
 
-#### PERFIL-DATABASE
-```yaml
-alias: "@PERFIL_DATABASE"
-archivo: "PERFIL-DATABASE.md"
-dominio: "Modelado y DDL de bases de datos"
-
-descripcion_breve: |
-  Especialista en PostgreSQL. Crea tablas, indices, constraints,
-  migraciones. Diseña schemas eficientes y seguros.
-
-tipos_tarea:
-  - "Crear tabla nueva"
-  - "Agregar columna/constraint"
-  - "Crear indice"
-  - "Diseñar schema"
-  - "Escribir migracion"
-  - "Optimizar query"
-
-directivas:
-  - "@OP_DDL"
-  - "@PAT_TX" (transacciones)
-  - "Directivas de BD del proyecto"
-
-estandares:
-  - "Nomenclatura snake_case"
-  - "Timestamps en todas las tablas"
-  - "Soft delete cuando aplique"
-  - "UUID como PK preferido"
-
-no_asignar_si:
-  - "Tarea es de codigo backend/frontend"
-  - "Es configuracion de ORM sin DDL"
-```
-
-#### PERFIL-DATABASE-POSTGRESQL (Especializado)
+#### PERFIL-DATABASE-POSTGRESQL
 ```yaml
 alias: "@PERFIL_DATABASE_POSTGRESQL"
 archivo: "PERFIL-DATABASE-POSTGRESQL.md"
@@ -225,40 +199,7 @@ no_asignar_si:
   - "Es solo configuracion de ORM"
 ```
 
-#### PERFIL-BACKEND
-```yaml
-alias: "@PERFIL_BACKEND"
-archivo: "PERFIL-BACKEND.md"
-dominio: "Desarrollo backend NestJS"
-
-descripcion_breve: |
-  Desarrolla APIs con NestJS. Crea controllers, services, DTOs,
-  entities. Implementa logica de negocio del servidor.
-
-tipos_tarea:
-  - "Crear endpoint REST"
-  - "Implementar service"
-  - "Crear DTO con validaciones"
-  - "Configurar modulo NestJS"
-  - "Implementar logica de negocio"
-
-directivas:
-  - "@OP_BACKEND"
-  - "@PAT_VALIDACION"
-  - "@PAT_EXCEPTION"
-
-estandares:
-  - "DTOs con class-validator"
-  - "Services inyectables"
-  - "Repositorios para acceso a datos"
-  - "Swagger decorators"
-
-no_asignar_si:
-  - "Proyecto usa Express (usar @PERFIL_BACKEND_EXPRESS)"
-  - "Tarea es de frontend o base de datos pura"
-```
-
-#### PERFIL-BACKEND-NESTJS (Especializado)
+#### PERFIL-BACKEND-NESTJS
 ```yaml
 alias: "@PERFIL_BACKEND_NESTJS"
 archivo: "PERFIL-BACKEND-NESTJS.md"
@@ -336,63 +277,7 @@ no_asignar_si:
   - "No involucra documentacion"
 ```
 
-#### PERFIL-BACKEND-EXPRESS [ARCHIVED]
-```yaml
-alias: "@PERFIL_BACKEND_EXPRESS"
-archivo: "_archive/PERFIL-BACKEND-EXPRESS.md"
-dominio: "Desarrollo backend Express"
-estado: "ARCHIVED - gamilit usa NestJS"
-
-descripcion_breve: |
-  Desarrolla APIs con Express.js. Crea routes, middlewares,
-  controllers. Para proyectos que no usan NestJS.
-
-tipos_tarea:
-  - "Crear route Express"
-  - "Implementar middleware"
-  - "Configurar router"
-
-directivas:
-  - "@OP_BACKEND"
-
-no_asignar_si:
-  - "Proyecto usa NestJS (usar @PERFIL_BACKEND)"
-```
-
-#### PERFIL-FRONTEND
-```yaml
-alias: "@PERFIL_FRONTEND"
-archivo: "PERFIL-FRONTEND.md"
-dominio: "Desarrollo frontend React/Vue"
-
-descripcion_breve: |
-  Desarrolla interfaces de usuario. Crea componentes React/Vue,
-  maneja estado, implementa formularios y navegacion.
-
-tipos_tarea:
-  - "Crear componente React/Vue"
-  - "Implementar pagina/vista"
-  - "Crear formulario con validacion"
-  - "Integrar con API"
-  - "Estilizar con Tailwind/CSS"
-  - "Manejar estado (Zustand/Redux)"
-
-directivas:
-  - "@OP_FRONTEND"
-  - "@PAT_VALIDACION" (frontend)
-
-estandares:
-  - "Componentes funcionales"
-  - "Hooks para logica"
-  - "TypeScript estricto"
-  - "Tailwind para estilos"
-
-no_asignar_si:
-  - "Tarea es de backend o base de datos"
-  - "Es configuracion de servidor"
-```
-
-#### PERFIL-FRONTEND-REACT (Especializado)
+#### PERFIL-FRONTEND-REACT
 ```yaml
 alias: "@PERFIL_FRONTEND_REACT"
 archivo: "PERFIL-FRONTEND-REACT.md"
@@ -424,20 +309,10 @@ no_asignar_si:
   - "Proyecto no usa React"
 ```
 
-#### PERFIL-ML-SPECIALIST [ARCHIVED]
+#### PERFIL-ML-SPECIALIST [ELIMINADO]
 ```yaml
-alias: "@PERFIL_ML_SPEC"
-archivo: "_archive/PERFIL-ML.md"
-dominio: "Machine Learning y Data Science"
-estado: "ARCHIVED - No aplica a gamilit (plataforma educativa sin ML real)"
-
-nota: |
-  gamilit tenia heuristicas placeholder en ml-predictor.service.ts (REMOVIDO Sprint 3,
-  TASK-2026-02-20-TEACHER-PORTAL-AUDIT). Risk detection ahora en StudentRiskAlertService.
-  "ML Coins" = "Maya Learning Coins" (moneda virtual). Perfil archivado 2026-02-12.
-
-no_asignar_si:
-  - "Proyecto gamilit (sin componentes ML reales)"
+estado: "ELIMINADO - No aplica a gamilit (plataforma educativa sin ML real)"
+nota: "Perfil eliminado 2026-02-26 (recuperable via git history)"
 ```
 
 ---
@@ -632,42 +507,6 @@ no_asignar_si:
   - "No involucra entorno local"
 ```
 
-#### PERFIL-INFRASTRUCTURE-MANAGER
-```yaml
-alias: "@PERFIL_INFRASTRUCTURE_MANAGER"
-archivo: "PERFIL-INFRASTRUCTURE-MANAGER.md"
-dominio: "Gestion de inventarios y multi-workspace"
-
-descripcion_breve: |
-  Gestiona inventarios de infraestructura, configuraciones
-  de ambientes y coordinacion entre workspaces ISEM.
-
-tipos_tarea:
-  - "Registrar nuevo workspace"
-  - "Actualizar inventario de servidores"
-  - "Documentar estacion de trabajo"
-  - "Gestionar ubicaciones de credenciales"
-  - "Sincronizar mirrors entre workspaces"
-
-directivas:
-  - "SIMCO-MULTI-WORKSPACE.md"
-  - "WORKSPACE-REGISTRY.yml"
-  - "CREDENTIALS-INVENTORY.yml"
-  - "DEV-SERVERS-INVENTORY.yml"
-
-inventarios:
-  - "WORKSPACE-REGISTRY.yml"
-  - "LOCAL-WSL-ENVIRONMENT.yml"
-  - "CREDENTIALS-INVENTORY.yml"
-  - "DEV-SERVERS-INVENTORY.yml"
-  - "WORKSTATIONS-INVENTORY.yml"
-
-no_asignar_si:
-  - "Es desarrollo de codigo"
-  - "Es operacion de base de datos"
-  - "Es deploy a produccion"
-```
-
 ---
 
 ### 4. CALIDAD Y TESTING
@@ -753,6 +592,32 @@ no_asignar_si:
   - "No hay componente de seguridad"
 ```
 
+#### PERFIL-POLICY-AUDITOR
+```yaml
+alias: "@PERFIL_POLICY"
+archivo: "PERFIL-POLICY-AUDITOR.md"
+dominio: "Auditoria de politicas RLS y permisos de base de datos"
+
+descripcion_breve: |
+  Audita politicas RLS, permisos de base de datos, y cumplimiento
+  de reglas de acceso multi-tenant. Valida que RLS policies cubran
+  todas las tablas y operaciones requeridas.
+
+tipos_tarea:
+  - "Auditar politicas RLS"
+  - "Verificar permisos de BD"
+  - "Validar cobertura de policies multi-tenant"
+  - "Revisar grants y privilegios"
+
+directivas:
+  - "@OP_DDL"
+  - "@SIMCO/SIMCO-DDL.md"
+
+no_asignar_si:
+  - "Es auditoria de codigo (usar Security-Auditor)"
+  - "Es desarrollo de features"
+```
+
 ---
 
 ### 6. DOCUMENTACION Y KNOWLEDGE BASE
@@ -816,10 +681,9 @@ contexto_requerido:
 
 | Capa | Perfil Principal | Alternativa |
 |------|------------------|-------------|
-| Base de Datos | @PERFIL_DATABASE | @PERFIL_DATABASE_POSTGRESQL (avanzado), @PERFIL_DB_AUDITOR (auditoria) |
-| Backend NestJS | @PERFIL_BACKEND | @PERFIL_BACKEND_NESTJS (avanzado) |
-| Backend Express | @PERFIL_BACKEND_EXPRESS | - |
-| Frontend | @PERFIL_FRONTEND | @PERFIL_FRONTEND_REACT (avanzado) |
+| Base de Datos | @PERFIL_DATABASE_POSTGRESQL | @PERFIL_DB_AUDITOR (auditoria) |
+| Backend NestJS | @PERFIL_BACKEND_NESTJS | - |
+| Frontend | @PERFIL_FRONTEND_REACT | - |
 | Mobile | @PERFIL_MOBILE | - |
 | ML/Data | @PERFIL_ML_SPEC | Especializado por proyecto |
 | Infra Dev | @PERFIL_DEVENV | @PERFIL_DEVOPS |
@@ -972,7 +836,7 @@ recovery_protocol:
 |-------------|-----------------|-----|
 | Full (canonical) | 800-1,500 | Tarea principal, sesion completa |
 | Compact | 200-300 | Subagente, tarea delegada |
-| Stub (deprecated) | 7 lineas | Redireccion — ahora en _archive/ |
+| Stub (deprecated) | N/A | Eliminados 2026-02-26 (git history) |
 
 ---
 
@@ -988,18 +852,22 @@ recovery_protocol:
 
 ---
 
-## PERFILES ARCHIVADOS (_archive/)
+## PERFILES ELIMINADOS (2026-02-26)
 
-Los siguientes perfiles deprecated han sido movidos a `_archive/`:
+Perfiles deprecated eliminados del repo (recuperables via git history):
 
-| Perfil Deprecated | Canonical | Fecha Archivo |
+| Perfil Eliminado | Reemplazo | Fecha Original |
 |---|---|---|
 | PERFIL-SECURITY.md | PERFIL-SECURITY-AUDITOR.md | 2026-02-13 |
 | PERFIL-QA.md | PERFIL-TESTING.md | 2026-02-13 |
 | PERFIL-DOCUMENTATION.md | PERFIL-DOCUMENTATION-VALIDATOR.md | 2026-02-13 |
 | PERFIL-ML.md | N/A (no aplica a gamilit) | 2026-02-12 |
 | PERFIL-BACKEND-EXPRESS.md | N/A (gamilit usa NestJS) | 2026-02-12 |
+| PERFIL-BACKEND.md (stub) | PERFIL-BACKEND-NESTJS.md | 2026-02-26 |
+| PERFIL-DATABASE.md (stub) | PERFIL-DATABASE-POSTGRESQL.md | 2026-02-26 |
+| PERFIL-FRONTEND.md (stub) | PERFIL-FRONTEND-REACT.md | 2026-02-26 |
+| PERFIL-DB-DEV-WSL.md | N/A (env-specific) | 2026-02-26 |
 
 ---
 
-**Version:** 2.5.0 | **Sistema:** NEXUS v4.1 + SIMCO v5.0.0 | **Mantenido por:** Architecture-Analyst
+**Version:** 3.0.0 | **Sistema:** NEXUS v4.1 + SIMCO v5.0.0 | **Mantenido por:** Architecture-Analyst

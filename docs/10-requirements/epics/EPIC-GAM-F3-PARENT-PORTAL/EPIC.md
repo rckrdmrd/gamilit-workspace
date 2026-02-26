@@ -1,4 +1,4 @@
-# EXT-011: Parent Portal
+# EPIC-GAM-F3-PARENT-PORTAL: Parent Portal
 
 > **⚠️ BACKLOG - FUERA DEL MVP**
 >
@@ -86,9 +86,9 @@ Los padres de familia actualmente no tienen visibilidad del progreso de sus hijo
 ## 🔗 Dependencias
 
 ### Depende de:
-- EXT-003: Sistema de Notificaciones (para alertas a padres)
-- EAI-003: Gamificación (para mostrar logros)
-- EAI-004: Analytics (para reportes de progreso)
+- EPIC-GAM-F3-NOTIFICATIONS: Sistema de Notificaciones (para alertas a padres)
+- EPIC-GAM-F3-GAMIFICATION: Gamificación (para mostrar logros)
+- EPIC-GAM-F3-ANALYTICS: Analytics (para reportes de progreso)
 
 ### Habilita:
 - Modelo de negocio B2C
@@ -99,7 +99,7 @@ Los padres de familia actualmente no tienen visibilidad del progreso de sus hijo
 
 ## 🎯 Navegación
 
-**⬅️ Anterior:** [EXT-010: Parent Notifications](../EXT-010-parent-notifications/)
+**⬅️ Anterior:** [EPIC-GAM-F3-PARENT-NOTIFICATIONS: Parent Notifications](../EPIC-GAM-F3-PARENT-NOTIFICATIONS/)
 **⬆️ Índice:** [Fase 3: Extensiones](../_INDEX.md)
 **📋 Backlog:** [Fase 4: Backlog](../04-fase-backlog/README.md)
 

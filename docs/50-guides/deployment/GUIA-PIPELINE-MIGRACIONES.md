@@ -10,6 +10,7 @@ estado: vigente
 # Guia de Pipeline de Migraciones DDL en Deploy
 
 > **Version:** 1.0.0 | **Fecha:** 2026-02-14 | **Estado:** Vigente
+> **SSOT operativo:** `orchestration/referencias/MATRIZ-SSOT-DEV-PROD.md`
 
 ## 1. Proposito
 
@@ -64,7 +65,7 @@ Antes de ejecutar el pipeline completo, verificar si hay cambios en el directori
 
 ```bash
 # Desde el servidor de produccion
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 
 # Verificar si hay cambios DDL desde ultimo deploy
 git fetch origin
@@ -218,7 +219,7 @@ ls -lh "$BACKUP_DIR"/gamilit-$TIMESTAMP.*
 pm2 stop ecosystem.config.js
 
 # 2. Revertir codigo
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 git checkout HEAD~1
 
 # 3. Rebuild
@@ -226,12 +227,12 @@ cd apps/backend && npm ci --production=false && npm run build
 cd ../frontend && npm ci && npm run build
 
 # 4. Restart
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 pm2 restart ecosystem.config.js --env production
 pm2 save
 
 # 5. Verificar
-curl -f http://localhost:4006/api/v1/health || echo "HEALTH CHECK FAILED"
+curl -f http://localhost:3006/api/v1/health || echo "HEALTH CHECK FAILED"
 ```
 
 ### Rollback completo (con restauracion de BD)
@@ -254,7 +255,7 @@ pg_restore -d gamilit_platform "$LAST_BACKUP"
 sudo -u postgres psql -d gamilit_platform -c "SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog', 'information_schema');"
 
 # 5. Revertir codigo
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 git checkout HEAD~1
 
 # 6. Rebuild
@@ -262,13 +263,13 @@ cd apps/backend && npm ci --production=false && npm run build
 cd ../frontend && npm ci && npm run build
 
 # 7. Restart
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 pm2 restart ecosystem.config.js --env production
 pm2 save
 
 # 8. Verificar
-curl -f http://localhost:4006/api/v1/health || echo "HEALTH CHECK FAILED"
-curl -f http://localhost:4005 || echo "FRONTEND CHECK FAILED"
+curl -f http://localhost:3006/api/v1/health || echo "HEALTH CHECK FAILED"
+curl -f http://localhost:3005 || echo "FRONTEND CHECK FAILED"
 pm2 logs --lines 10 --nostream
 ```
 
@@ -290,7 +291,7 @@ pm2 logs --lines 10 --nostream
 ### Uso de recreate-database.sh en produccion
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 
 # SIEMPRE con --env prod y --password
 bash apps/database/scripts/recreate-database.sh \
@@ -319,7 +320,7 @@ Para cambios que no requieren recreacion completa, aplicar SQL directamente:
 
 ```bash
 # Desde el servidor de produccion
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 
 # Aplicar un archivo DDL especifico como superuser
 sudo -u postgres psql -d gamilit_platform -f apps/database/ddl/schemas/gamilit/tables/nuevo_tabla.sql
@@ -381,7 +382,7 @@ sudo -u postgres psql -d gamilit_platform -c "
 "
 
 # Verificar que el backend puede conectar
-curl -f http://localhost:4006/api/v1/health
+curl -f http://localhost:3006/api/v1/health
 ```
 
 ---
@@ -410,8 +411,8 @@ Usar esta lista antes y durante cada deploy que incluya cambios DDL:
 
 ### Post-Deploy
 
-- [ ] Health check backend exitoso: `curl -f http://localhost:4006/api/v1/health`
-- [ ] Health check frontend exitoso: `curl -f http://localhost:4005`
+- [ ] Health check backend exitoso: `curl -f http://localhost:3006/api/v1/health`
+- [ ] Health check frontend exitoso: `curl -f http://localhost:3005`
 - [ ] Health check HTTPS backend: `curl -fk https://74.208.126.102:3006/api/v1/health`
 - [ ] Health check HTTPS frontend: `curl -fk https://74.208.126.102:3005`
 - [ ] Logs sin errores criticos: `pm2 logs --lines 30 --nostream`

@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-07
-**Tests Activos:** 833 passing
+**Tests Activos:** 2324 tests (2296 passed + 28 skipped), 63 spec files
 
 ---
 
@@ -12,11 +12,11 @@ GAMILIT implementa una estrategia de testing basada en la piramide de tests, con
 
 | Nivel | Framework | Cantidad | Cobertura Target |
 |-------|-----------|----------|------------------|
-| Unit Tests (Backend) | Jest | ~550 | 80% |
-| Unit Tests (Frontend) | Vitest | ~200 | 70% |
+| Unit Tests (Backend) | Jest | ~550 | 50% (objetivo gradual 80%) |
+| Unit Tests (Frontend) | Vitest | ~200 | 50% (objetivo gradual 80%) |
 | Integration Tests | Jest + Supertest | ~70 | Flujos criticos |
 | E2E Tests | Pending | ~13 | Flujos principales |
-| **Total** | | **833** | **80% global** |
+| **Total** | | **2324 (2296 passed + 28 skipped), 63 spec files** | **50% global (objetivo gradual 80%)** |
 
 ---
 
@@ -49,7 +49,8 @@ GAMILIT implementa una estrategia de testing basada en la piramide de tests, con
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   coverageThreshold: {
-    global: { branches: 75, functions: 80, lines: 80, statements: 80 }
+    global: { branches: 50, functions: 50, lines: 50, statements: 50 }
+    // objetivo gradual 80% (ADR-044)
   }
 }
 ```
@@ -113,7 +114,8 @@ npm run test:watch
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      thresholds: { lines: 70, functions: 70, branches: 65, statements: 70 }
+      thresholds: { lines: 50, functions: 50, branches: 50, statements: 50 }
+      // objetivo gradual 80% (ADR-044)
     }
   }
 }
@@ -190,10 +192,10 @@ bash apps/database/scripts/recreate-database.sh
 ```
 
 ### Validaciones Automaticas
-- RLS policies activas en todas las tablas multi-tenant (231 DDL / 471 runtime policies)
-- Funciones SQL ejecutan sin errores (183 funciones DDL)
-- Triggers disparan correctamente (67 triggers)
-- Foreign keys validas (299 FKs)
+- RLS policies activas en todas las tablas multi-tenant (251 DDL / 467 runtime policies)
+- Funciones SQL ejecutan sin errores (158 funciones DDL)
+- Triggers disparan correctamente (68 triggers)
+- Foreign keys validas (301 FKs)
 - ENUMs sincronizados con backend (42 ENUMs)
 
 ---
@@ -203,15 +205,15 @@ bash apps/database/scripts/recreate-database.sh
 ### Estado Actual
 | Metrica | Valor | Target |
 |---------|-------|--------|
-| Tests pasando | 833 | 100% |
-| Cobertura backend | ~75% | 80% |
-| Cobertura frontend | ~65% | 70% |
+| Tests pasando | 2324 (2296 passed + 28 skipped), 63 spec files | 100% |
+| Cobertura backend | ~50% | 50% (objetivo gradual 80%) |
+| Cobertura frontend | ~50% | 50% (objetivo gradual 80%) |
 | Coherencia DDL-Backend | 89% | 100% |
 | Tests de integracion | ~70 | 100+ |
 | E2E tests | Planificados | 13+ |
 
 ### Objetivos Post-MVP
-- Alcanzar 80% cobertura global
+- Alcanzar 80% cobertura global (gradual desde umbral actual 50% — ver ADR-044)
 - Implementar E2E tests para flujos principales
 - Agregar tests de carga (k6/Artillery)
 - Tests de accesibilidad (axe-core)
@@ -253,4 +255,4 @@ Push to main
 ---
 
 *GAMILIT - Testing Strategy*
-*833 tests pasando - Target 80% cobertura*
+*2324 tests (2296 passed + 28 skipped), 63 spec files - Umbral 50% cobertura (objetivo gradual 80% — ADR-044)*

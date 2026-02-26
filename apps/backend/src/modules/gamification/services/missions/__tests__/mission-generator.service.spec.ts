@@ -346,14 +346,14 @@ describe('MissionGeneratorService', () => {
       );
     });
 
-    it('should set mission status to ACTIVE', async () => {
+    it('should set mission status to IN_PROGRESS', async () => {
       // Act
       await service.createMissionFromTemplate(mockProfileId, template as any, endDate);
 
       // Assert
       expect(missionsRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: MissionStatusEnum.ACTIVE,
+          status: MissionStatusEnum.IN_PROGRESS,
         }),
       );
     });

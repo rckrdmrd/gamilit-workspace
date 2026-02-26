@@ -5,7 +5,7 @@
 
 ---
 
-## Indice Completo (43 ADRs)
+## Indice Completo (46 ADRs)
 
 ### Fundamentos y Arquitectura (001-005)
 
@@ -78,13 +78,16 @@
 | [ADR-041](./ADR-041-simco-system.md) | Implementacion del Sistema SIMCO | Accepted |
 | [ADR-042](./ADR-042-team-vs-guild.md) | Team vs Guild Terminology | Accepted |
 
-### Calidad y Arquitectura (044-046)
+### Calidad y Arquitectura (044-049)
 
 | ADR | Titulo | Estado |
 |-----|--------|--------|
 | [ADR-044](./ADR-044-test-coverage-strategy.md) | Estrategia de Test Coverage | Accepted |
 | [ADR-045](./ADR-045-clean-architecture-pragmatica.md) | Clean Architecture Pragmatica | Accepted |
+| [ADR-047](./ADR-047-state-architecture-zustand-react-query.md) | State Architecture — Zustand + React Query | Accepted |
+| [ADR-048](./ADR-048-component-sharing-strategy.md) | Component Sharing Strategy | Accepted |
+| [ADR-049](./ADR-049-confirm-dialog-consolidation.md) | ConfirmDialog Consolidation | Accepted |
 
 ---
 
-**Total:** 43 ADRs | **Numeros libres:** 006, 024, 025
+**Total:** 46 ADRs | **Numeros libres:** 006, 024, 025

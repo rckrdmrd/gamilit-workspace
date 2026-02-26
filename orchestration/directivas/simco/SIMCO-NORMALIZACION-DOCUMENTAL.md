@@ -163,10 +163,10 @@ EPIC-GAM-F{N}-{NOMBRE}/
 
 ```markdown
 # Referencia a archivo
-Ver [SIMCO-BACKEND](../SIMCO-BACKEND.md)
+Ver [SIMCO-BACKEND](./SIMCO-BACKEND.md)
 
 # Referencia a seccion especifica
-Ver [SIMCO-BACKEND seccion 3](../SIMCO-BACKEND.md#3-operaciones)
+Ver [SIMCO-BACKEND seccion 3](./SIMCO-BACKEND.md#3-operaciones)
 
 # Referencia a alias
 Ver @SIMCO-BACKEND

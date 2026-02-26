@@ -7,7 +7,7 @@ Iniciar el backend en modo dev y verificar el health endpoint.
 
 ## Acciones
 1. `cd apps/backend && npm run dev`
-2. `curl http://localhost:3000/health`
+2. `curl http://localhost:3006/health`
 3. Verificar 200 OK y datasources conectadas
 
 ## Criterio Pass

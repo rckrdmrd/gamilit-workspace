@@ -70,14 +70,14 @@ Containerizar la plataforma gamilit para lograr:
 │         │                 │                           │
 │  ┌──────┴───────┐  ┌─────┴────────┐                  │
 │  │   backend    │  │   frontend   │  Aplicaciones    │
-│  │  :4006       │  │   :4005      │                  │
+│  │  :3006       │  │   :3005      │                  │
 │  │  NestJS 11   │  │  Nginx/Vite  │                  │
 │  └──────────────┘  └──────────────┘                  │
 │                                                       │
 └───────────────────────────────────────────────────────┘
          │                    │
          ▼                    ▼
-   API: localhost:4006   UI: localhost:4005
+   API: localhost:3006   UI: localhost:3005
 ```
 
 ---
@@ -126,17 +126,17 @@ COPY --from=builder --chown=nestjs:nodejs /app/tsconfig-paths-bootstrap.js ./
 
 # Variables de entorno por defecto
 ENV NODE_ENV=production
-ENV PORT=4006
+ENV PORT=3006
 
 # Exponer puerto interno (mismo que ecosystem.config.js)
-EXPOSE 4006
+EXPOSE 3006
 
 # Cambiar a usuario no-root
 USER nestjs
 
 # Health check integrado
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:4006/api/v1/health || exit 1
+  CMD curl -f http://localhost:3006/api/v1/health || exit 1
 
 # tsconfig-paths-bootstrap.js requerido para resolver path aliases (@modules/*, etc.)
 CMD ["node", "-r", "./tsconfig-paths-bootstrap.js", "dist/main.js"]
@@ -177,7 +177,7 @@ COPY . .
 
 # Variables de entorno para el build de Vite
 # (se inyectan en build time, no en runtime)
-ARG VITE_API_URL=http://localhost:4006
+ARG VITE_API_URL=http://localhost:3006
 ARG VITE_ENV=production
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_ENV=$VITE_ENV
@@ -195,11 +195,11 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exponer puerto (consistente con ecosystem.config.js)
-EXPOSE 4005
+EXPOSE 3005
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD curl -f http://localhost:4005/ || exit 1
+  CMD curl -f http://localhost:3005/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
 ```
@@ -279,10 +279,10 @@ services:
     container_name: gamilit-backend
     restart: unless-stopped
     ports:
-      - "4006:4006"  # Puerto interno consistente con ecosystem.config.js
+      - "3006:3006"
     environment:
       NODE_ENV: development
-      PORT: 4006
+      PORT: 3006
       # Base de datos
       DB_HOST: postgres
       DB_PORT: 5432
@@ -302,7 +302,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4006/api/v1/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3006/api/v1/health"]
       interval: 30s
       timeout: 5s
       start_period: 15s
@@ -316,17 +316,17 @@ services:
       context: ./apps/frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: http://localhost:4006
+        VITE_API_URL: http://localhost:3006
         VITE_ENV: development
     container_name: gamilit-frontend
     restart: unless-stopped
     ports:
-      - "4005:4005"  # Puerto interno consistente con ecosystem.config.js
+      - "3005:3005"
     depends_on:
       backend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4005/"]
+      test: ["CMD", "curl", "-f", "http://localhost:3005/"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -365,11 +365,11 @@ services:
       context: ./apps/frontend
       dockerfile: Dockerfile
       target: deps
-    command: npx vite --host 0.0.0.0 --port 4005
+    command: npx vite --host 0.0.0.0 --port 3005
     volumes:
       - ./apps/frontend/src:/app/src:ro  # Montar codigo fuente
     ports:
-      - "4005:4005"
+      - "3005:3005"
 ```
 
 ---
@@ -524,11 +524,11 @@ Crear `apps/frontend/nginx.conf`:
 # GAMILIT Frontend - Nginx Configuration
 # ==============================================================================
 # Configuracion para servir la SPA de React con Vite
-# Puerto: 4005 (consistente con ecosystem.config.js)
+# Puerto: 3005 (consistente con ecosystem.config.js)
 # ==============================================================================
 
 server {
-    listen 4005;
+    listen 3005;
     server_name localhost;
 
     root /usr/share/nginx/html;
@@ -562,7 +562,7 @@ server {
 
     # Proxy para API (opcional, si frontend necesita hacer llamadas relativas)
     # location /api/ {
-    #     proxy_pass http://backend:4006;
+    #     proxy_pass http://backend:3006;
     #     proxy_set_header Host $host;
     #     proxy_set_header X-Real-IP $remote_addr;
     #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -584,7 +584,7 @@ server {
 ### Estado Actual: PM2 + Bare Metal
 
 Actualmente gamilit se despliega en `74.208.126.102` con:
-- **PM2** gestionando procesos backend (`:4006`) y frontend (`:4005`)
+- **PM2** gestionando procesos backend (`:3006`) y frontend (`:3005`)
 - **Nginx** como reverse proxy con SSL/HTTPS (`:443`)
 - **PostgreSQL 15** instalado directamente en el servidor
 - **Redis** instalado directamente en el servidor
@@ -710,8 +710,8 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 - [ ] `docker compose up -d` levanta todos los servicios sin errores
 - [ ] `docker compose ps` muestra todos los servicios healthy
-- [ ] Backend responde en `http://localhost:4006/api/v1/health`
-- [ ] Frontend carga en `http://localhost:4005`
+- [ ] Backend responde en `http://localhost:3006/api/v1/health`
+- [ ] Frontend carga en `http://localhost:3005`
 - [ ] PostgreSQL acepta conexiones: `docker compose exec postgres psql -U gamilit_user -d gamilit_platform`
 - [ ] Redis responde: `docker compose exec redis redis-cli ping`
 - [ ] `docker compose down -v && docker compose up -d` funciona (rebuild limpio)
@@ -731,7 +731,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 |-----------|----------|
 | `GUIA-GITHUB-ACTIONS-CICD.md` | CI/CD puede usar Docker para builds consistentes |
 | `GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md` | Deploy actual sin Docker, referencia de arquitectura |
-| `ecosystem.config.js` | Puertos 4006/4005 son consistentes con Docker |
+| `ecosystem.config.js` | Puertos 3006/3005 son consistentes con Docker |
 | `GUIA-SSL-NGINX-PRODUCCION.md` | Nginx en produccion vs Nginx en container de frontend |
 
 ---

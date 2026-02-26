@@ -4,7 +4,7 @@
 # Sistema: SIMCO v4.0.0
 
 version: "2.3.0"
-updated: "2026-02-21"
+updated: "2026-02-25"
 
 # ============================================
 # EPICAS ACTIVAS
@@ -110,7 +110,7 @@ epicas:
   - id: "EPIC-WS-005"
     titulo: "Correcciones Tecnicas Pendientes"
     descripcion: "Correcciones tecnicas de codigo, DDL, RLS y seeds identificadas en auditorias"
-    estado: "en_progreso"
+    estado: "completado"
     prioridad: "P0"
     tarea_origen: "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
     items:
@@ -152,7 +152,7 @@ epicas:
   - id: "EPIC-WS-006"
     titulo: "Trazabilidad de Procesos y Planeacion Integrada"
     descripcion: "Cerrar brechas de trazabilidad FL->EPIC->US->TASK e institucionalizar mejoras de estandares, skills y patrones."
-    estado: "en_progreso"
+    estado: "completado"
     prioridad: "P0"
     tarea_origen: "TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION"
     items:
@@ -197,7 +197,7 @@ epicas:
   - id: "EPIC-WS-007"
     titulo: "Gobernanza DB DDL-First por Ambientes"
     descripcion: "Asegurar recreacion limpia de BD en DEV/PROD con directivas, scripts y perfiles consistentes."
-    estado: "en_progreso"
+    estado: "completado"
     prioridad: "P0"
     tarea_origen: "TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES"
     items:
@@ -241,7 +241,7 @@ epicas:
   - id: "EPIC-WS-008"
     titulo: "Estandarizacion Cross-Portal y Deuda Tecnica Frontend"
     descripcion: "Items diferidos de la estandarizacion de portales Teacher/Admin/Student (TASK-2026-02-19). Incluye React Query migration, modals, TabBar unification y Pagination."
-    estado: "en_progreso"
+    estado: "completado"
     prioridad: "P1"
     tarea_origen: "TASK-2026-02-19-ESTANDARIZACION-PORTALES"
     items:
@@ -371,20 +371,20 @@ metricas:
   historias_en_backlog: 7
   puntos_en_backlog: 52
   items_calidad_total: 10
-  items_calidad_completados: 7          # MQ-001,002,003,004,006,008,009. Remaining: MQ-005 diferido, MQ-007 documentado, MQ-010 pendiente
-  items_calidad_pendientes: 3
+  items_calidad_completados: 8          # MQ-001,002,003,004,006,007,008,009. Remaining: MQ-005 diferido, MQ-010 pendiente
+  items_calidad_pendientes: 2
   correcciones_total: 5
   correcciones_completadas: 5
   correcciones_pendientes: 0
   items_trazabilidad_total: 6
-  items_trazabilidad_completados: 5
-  items_trazabilidad_pendientes: 1
+  items_trazabilidad_completados: 6
+  items_trazabilidad_pendientes: 0
   items_dbops_total: 6
-  items_dbops_completados: 5
-  items_dbops_pendientes: 1
+  items_dbops_completados: 6
+  items_dbops_pendientes: 0
   items_estandarizacion_total: 4
-  items_estandarizacion_completados: 0
-  items_estandarizacion_pendientes: 4    # STD-001 diferido, STD-002/003/004 pendiente
+  items_estandarizacion_completados: 4
+  items_estandarizacion_pendientes: 0
 
 # ============================================
 # REFERENCIAS
@@ -404,4 +404,4 @@ metadata:
   created_by: "Claude Code"
   created_at: "2026-01-29"
   updated_by: "Claude Code"
-  updated_at: "2026-02-19"
+  updated_at: "2026-02-25"

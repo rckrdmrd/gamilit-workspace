@@ -48,13 +48,13 @@ Este trigger se activa AUTOMATICAMENTE cuando:
 
 ---
 
-## SECUENCIA WORKSPACE-V2
+## SECUENCIA WORKSPACE
 
-El workspace-v2 usa submodules. Secuencia obligatoria:
+GAMILIT usa submodules solo si aplica. Secuencia obligatoria:
 
 ```bash
 # PASO 1: Identificar submodules modificados
-cd /home/isem/workspace-v2
+cd /home/isem/gamilit-workspace
 git status
 
 # PASO 2: Para CADA submodule con cambios
@@ -153,7 +153,7 @@ fi
 ║      projects/{proyecto}                                                  ║
 ║                                                                           ║
 ║   3. TERCERO: Workspace (Nivel 0)                                        ║
-║      workspace-v2/                                                        ║
+║      gamilit-workspace/                                                   ║
 ║                                                                           ║
 ║   VIOLACION DE ORDEN = REFERENCIAS INCONSISTENTES                        ║
 ║                                                                           ║

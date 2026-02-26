@@ -86,8 +86,8 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 |---------|------------|
 | **Schema** | Agrupacion logica de objetos de BD (tablas, funciones, vistas). 18 schemas en gamilit. |
 | **DDL (Data Definition Language)** | SQL para definir estructura (CREATE, ALTER, DROP). |
-| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 231 DDL / 471 runtime policies. |
-| **Trigger** | Funcion que se ejecuta automaticamente ante eventos de BD. 67 triggers. |
+| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 251 DDL / 471 runtime policies. |
+| **Trigger** | Funcion que se ejecuta automaticamente ante eventos de BD. 68 triggers. |
 | **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). 42 ENUMs. |
 | **JSONB** | Tipo de dato JSON binario en PostgreSQL para datos flexibles. |
 | **Materialized View** | Vista pre-computada para mejor performance. 7 MVs. |
@@ -98,9 +98,9 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 
 | Termino | Definicion |
 |---------|------------|
-| **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). 155 entity files (156 @Entity classes). |
-| **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. 399 DTOs. |
-| **Service** | Clase con logica de negocio. 173 services. |
+| **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). 156 entity files (157 @Entity classes). |
+| **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. 401 DTOs. |
+| **Service** | Clase con logica de negocio. 172 services. |
 | **Controller** | Clase que maneja endpoints HTTP. 108 controllers. |
 | **Guard** | Middleware para autorizacion (ej: JwtAuthGuard, RolesGuard, TenantGuard). 15 guards. |
 | **Decorator** | Anotacion que modifica comportamiento (ej: @Roles()). 18 decorators. |
@@ -110,11 +110,11 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 
 | Termino | Definicion |
 |---------|------------|
-| **Component** | Elemento de UI reutilizable. 580 componentes. |
-| **Hook** | Funcion para manejar estado y efectos. 123 hooks. |
+| **Component** | Elemento de UI reutilizable. 577 componentes. |
+| **Hook** | Funcion para manejar estado y efectos. 134 hooks. |
 | **Store** | Estado global de la aplicacion (Zustand). 13 stores. |
-| **Page** | Componente que representa una ruta. 70 paginas. |
-| **API Service** | Servicio para comunicacion con backend. 66 API service files. |
+| **Page** | Componente que representa una ruta. 67 paginas. |
+| **API Service** | Servicio para comunicacion con backend. 65 API service files. |
 
 ### Arquitectura
 

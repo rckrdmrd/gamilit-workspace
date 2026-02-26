@@ -1,7 +1,7 @@
 # Modulos del Sistema - GAMILIT
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-07
+**Version:** 1.1.0
+**Fecha:** 2026-02-25
 **Total Modulos:** 23
 
 ---
@@ -16,6 +16,7 @@ GAMILIT cuenta con 23 modulos backend organizados en 4 categorias funcionales. C
 | Educational Content | 5 | modules, exercises, content, classrooms, students |
 | Gamification System | 6 | gamification, leaderboard, missions, store, achievements, social |
 | Support & Operations | 4 | teachers, parents, analytics, reports |
+| Modulos Transitivios | 1 | mail |
 
 ---
 
@@ -316,7 +317,7 @@ Logros e insignias desbloqueables.
 ---
 
 ### 18. social
-**ID:** GAM-SOCIAL | **Estado:** 50%
+**ID:** GAM-SOCIAL | **Estado:** 60%
 
 Interacciones sociales entre estudiantes.
 
@@ -330,7 +331,7 @@ Interacciones sociales entre estudiantes.
 **Entities:** teams, team_members, social_interactions, social_feed
 **Endpoints:** ~20 (teams, feed, interactions)
 
-**Nota:** Modulo parcialmente implementado. DDL y entities completos, logica de negocio al 50%.
+**Nota:** Modulo parcialmente implementado. DDL y entities completos, logica de negocio al 60%.
 
 ---
 
@@ -425,12 +426,26 @@ Generacion de reportes y exportaciones.
 | 15 | missions | 4 | ~25 | 4 | 3 | 85% |
 | 16 | store | 4 | ~20 | 4 | 2 | 75% |
 | 17 | achievements | 3 | ~20 | 3 | 2 | 90% |
-| 18 | social | 4 | ~20 | 4 | 2 | 50% |
+| 18 | social | 4 | ~20 | 4 | 2 | 60% |
 | 19 | teachers | 3 | ~30 | 5 | 3 | 95% |
 | 20 | parents | 3 | ~20 | 3 | 2 | 100% |
 | 21 | analytics | 2 | ~25 | 5 | 3 | 85% |
 | 22 | reports | 3 | ~20 | 3 | 2 | 75% |
-| **TOTAL** | | **~155** | **905** | **173** | **108** | **~92%** |
+| 23 | mail | - | - | 2 | - | 100% |
+| **TOTAL** | | **156** | **912** | **172** | **108** | **~98%** |
+
+---
+
+## Nota: Modulos Transitivios
+
+**mail** (#23) no tiene directorio propio en `apps/backend/src/modules/`. Es un modulo **transitivo**, cargado como dependencia por:
+- `auth` (password reset, account confirmation)
+- `notifications` (multi-channel templates)
+- `teacher` (communication templates)
+- `parents` (account notifications)
+- `progress` (achievement notifications)
+
+Se incluye en el conteo total de 23 modulos por su rol critico en el sistema, aunque su logica esta integrada en los modulos que lo carga.
 
 ---
 

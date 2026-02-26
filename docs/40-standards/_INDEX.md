@@ -4,6 +4,12 @@
 
 ---
 
+## Archivos Generales
+
+| Archivo | Descripcion |
+|---------|-------------|
+| [README.md](./README.md) | Entrada y navegacion rapida de estandares |
+
 ## Tabla de Contenidos (24 Estandares Activos)
 
 ### Estandares Generales (19)

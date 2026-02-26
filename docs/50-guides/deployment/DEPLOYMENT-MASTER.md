@@ -1,5 +1,15 @@
 # DEPLOYMENT-MASTER.md - Guia Consolidada de Deployment GAMILIT
 
+> [!WARNING]
+> **Estado:** `DEPRECATED` para operacion directa (2026-02-24).  
+> Este documento se conserva como referencia historica consolidada, pero **no** es la fuente canonica operativa.
+>
+> Usar SSOT vigente:
+> - `orchestration/referencias/MATRIZ-SSOT-DEV-PROD.md`
+> - `orchestration/agents/perfiles/PERFIL-DEPLOY-SERVER.md`
+> - `orchestration/directivas/simco/SIMCO-RECREAR-BD.md`
+> - `docs/20-architecture/AMBIENTES-DEV-PROD.md`
+
 **Version:** 1.0.0
 **Fecha:** 2026-02-03
 **Consolidado desde:** 8 documentos previos
@@ -26,7 +36,7 @@
 
 ```bash
 # 1. BACKUP (SIEMPRE PRIMERO)
-BACKUP_DIR="/home/gamilit/backups/$(date +%Y%m%d_%H%M%S)"
+BACKUP_DIR="/home/isem/backups/$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR/config"
 cp apps/backend/.env.production "$BACKUP_DIR/config/"
 cp apps/frontend/.env.production "$BACKUP_DIR/config/"
@@ -98,16 +108,16 @@ pm2 list && pm2 logs --lines 10 --nostream
 |---------|-------|
 | **IP** | 74.208.126.102 |
 | **OS** | Linux (Ubuntu 20.04+) |
-| **Usuario** | isem / gamilit |
-| **Node.js** | v18+ |
+| **Usuario** | isem |
+| **Node.js** | v20+ |
 | **PM2** | Instalado globalmente |
-| **PostgreSQL** | 16+ |
+| **PostgreSQL** | 15+ |
 
 ### Servicios Desplegados
 
 | Servicio | Puerto | Instancias | Modo |
 |----------|--------|------------|------|
-| Backend API | 3006 | 2 | cluster |
+| Backend API | 3006 | 1 | fork |
 | Frontend | 3005 | 1 | fork |
 | PostgreSQL | 5432 | 1 | standalone |
 | Nginx | 80/443 | 1 | reverse proxy |
@@ -131,7 +141,7 @@ pm2 list && pm2 logs --lines 10 --nostream
 #### Requisitos del Sistema
 
 ```bash
-# Verificar Node.js (v18+)
+# Verificar Node.js (v20+)
 node --version
 
 # Verificar npm (v9+)
@@ -170,7 +180,7 @@ export FRONTEND_URL="https://gamilit.com"
 export BACKEND_URL="https://gamilit.com/api"
 
 # Backups
-export BACKUP_BASE="/home/gamilit/backups"
+export BACKUP_BASE="/home/isem/backups"
 ```
 
 ### 3.2 Proceso de Deployment Completo
@@ -180,7 +190,7 @@ export BACKUP_BASE="/home/gamilit/backups"
 ```bash
 # Crear timestamp y directorio
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="${BACKUP_BASE:-/home/gamilit/backups}/$TIMESTAMP"
+BACKUP_DIR="${BACKUP_BASE:-/home/isem/backups}/$TIMESTAMP"
 mkdir -p "$BACKUP_DIR"/{database,config,logs}
 
 # Backup de base de datos
@@ -203,7 +213,7 @@ cp ecosystem.config.js "$BACKUP_DIR/config/" 2>/dev/null || true
 cp logs/*.log "$BACKUP_DIR/logs/" 2>/dev/null || true
 
 # Actualizar symlink 'latest'
-ln -sfn "$BACKUP_DIR" "${BACKUP_BASE:-/home/gamilit/backups}/latest"
+ln -sfn "$BACKUP_DIR" "${BACKUP_BASE:-/home/isem/backups}/latest"
 ```
 
 #### FASE 2: Detener Servicios
@@ -297,10 +307,10 @@ module.exports = {
   apps: [
     {
       name: 'gamilit-backend',
-      script: 'dist/main.js',
+      script: './tsconfig-paths-bootstrap.js',
       cwd: './apps/backend',
-      instances: 2,
-      exec_mode: 'cluster',
+      instances: 1,
+      exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
         PORT: 3006
@@ -315,8 +325,7 @@ module.exports = {
     },
     {
       name: 'gamilit-frontend',
-      script: 'npx',
-      args: 'serve -s dist -l 3005',
+      script: 'serve.cjs',
       cwd: './apps/frontend',
       instances: 1,
       exec_mode: 'fork',
@@ -344,7 +353,7 @@ pm2 monit               # Monitor interactivo
 
 # Reiniciar
 pm2 restart all         # Reiniciar todos
-pm2 reload gamilit-backend  # Zero-downtime (cluster)
+pm2 reload gamilit-backend  # Graceful reload (fork)
 pm2 restart gamilit-frontend
 
 # Detener/Eliminar
@@ -603,7 +612,7 @@ echo | openssl s_client -connect gamilit.com:443 2>/dev/null | openssl x509 -noo
 ```
 Ejecuta el deployment de GAMILIT siguiendo el procedimiento:
 
-1. Backup BD y configs a /home/gamilit/backups/TIMESTAMP/
+1. Backup BD y configs a /home/isem/backups/TIMESTAMP/
 2. pm2 stop all
 3. git reset --hard origin/master
 4. Restaurar configs desde backup
@@ -618,7 +627,7 @@ Ejecuta paso a paso mostrando outputs.
 ### 5.2 Estructura de Backups
 
 ```
-/home/gamilit/backups/
+/home/isem/backups/
 +-- YYYYMMDD_HHMMSS/
 |   +-- database/
 |   |   +-- gamilit_YYYYMMDD_HHMMSS.sql.gz
@@ -668,7 +677,7 @@ Si algo falla, reportar:
 ```
 /home/isem/gamilit-workspace/
 +-- apps/
-|   +-- backend/          # NestJS API (puerto 3006, 2 instancias PM2)
+|   +-- backend/          # NestJS API (puerto 3006, 1 instancia PM2 fork)
 |   +-- frontend/         # React App (puerto 3005, 1 instancia PM2)
 |   +-- database/         # DDL, Seeds, Scripts
 +-- scripts/              # Scripts de produccion
@@ -882,7 +891,7 @@ pm2 show gamilit-backend
 #### Dockerfile Backend
 
 ```dockerfile
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
@@ -895,7 +904,7 @@ CMD ["node", "dist/main.js"]
 #### Dockerfile Frontend
 
 ```dockerfile
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -915,7 +924,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: gamilit_platform
       POSTGRES_USER: gamilit_user
@@ -964,7 +973,7 @@ volumes:
 
 ### 8.3 Checklist Pre-Deployment
 
-- [ ] Codigo mergeado a rama `main`
+- [ ] Codigo mergeado a rama `master`
 - [ ] Tests pasando (`npm test`)
 - [ ] Variables de entorno actualizadas
 - [ ] Secrets de produccion configurados
@@ -990,7 +999,7 @@ name: Deploy Production
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   deploy:
@@ -999,14 +1008,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy to server
         run: |
-          ssh user@74.208.126.102 'cd /path/to/gamilit && git pull && ./scripts/deploy-production.sh'
+          ssh isem@74.208.126.102 'cd /home/isem/gamilit-workspace && git pull && ./scripts/deploy-production.sh'
 ```
 
 ### 8.6 Performance Tuning
 
-#### PM2 Cluster Mode
+#### PM2 Fork Mode
 
-Backend ejecuta 2 instancias en cluster para mejor rendimiento y disponibilidad.
+Backend ejecuta 1 instancia en fork mode (compatibilidad con TypeORM multi-datasource).
 
 #### Database Optimization
 

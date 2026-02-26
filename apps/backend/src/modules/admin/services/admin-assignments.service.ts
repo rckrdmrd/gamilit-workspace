@@ -446,6 +446,131 @@ export class AdminAssignmentsService {
   }
 
   /**
+   * Export assignments to CSV
+   *
+   * Reuses the same query logic as findAll() but without pagination,
+   * then serialises the result to a CSV string.
+   *
+   * CSV columns: id, title, teacher_name, assignment_type, due_date,
+   *              is_published, classrooms_count, submissions_count, created_at
+   *
+   * @param filters  - Same filter DTO used by findAll (page/limit ignored)
+   * @param tenantId - Tenant UUID (reserved for future RLS-aware queries)
+   * @returns UTF-8 CSV string ready to be streamed to the client
+   */
+  async exportToCsv(
+    filters: AdminAssignmentFiltersDto,
+    tenantId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): Promise<string> {
+    const { classroom_id, teacher_id, student_id, status, date_from, date_to } = filters;
+
+    const query = this.assignmentRepo
+      .createQueryBuilder('assignment')
+      .leftJoin(Profile, 'teacher', 'teacher.user_id = assignment.teacher_id')
+      .leftJoin(
+        AssignmentClassroom,
+        'ac',
+        'ac.assignment_id = assignment.id',
+      )
+      .leftJoin(
+        AssignmentStudent,
+        'ast',
+        'ast.assignment_id = assignment.id',
+      )
+      .leftJoin(
+        AssignmentSubmission,
+        'sub',
+        'sub.assignment_id = assignment.id',
+      )
+      .select([
+        'assignment.id AS id',
+        'assignment.title AS title',
+        'COALESCE(teacher.first_name || \' \' || teacher.last_name, \'Unknown\') AS teacher_name',
+        'assignment.assignment_type AS assignment_type',
+        'assignment.due_date AS due_date',
+        'assignment.is_published AS is_published',
+        'assignment.created_at AS created_at',
+        'COUNT(DISTINCT ac.classroom_id) AS classrooms_count',
+        'COUNT(DISTINCT sub.id) AS submissions_count',
+      ])
+      .groupBy('assignment.id')
+      .addGroupBy('teacher.first_name')
+      .addGroupBy('teacher.last_name')
+      .orderBy('assignment.created_at', 'DESC');
+
+    if (classroom_id) {
+      query.andWhere('ac.classroom_id = :classroom_id', { classroom_id });
+    }
+
+    if (teacher_id) {
+      query.andWhere('assignment.teacher_id = :teacher_id', { teacher_id });
+    }
+
+    if (student_id) {
+      query.andWhere('ast.student_id = :student_id', { student_id });
+    }
+
+    if (status) {
+      query.andWhere('sub.status = :status', { status });
+    }
+
+    if (date_from) {
+      query.andWhere('assignment.created_at >= :date_from', { date_from });
+    }
+
+    if (date_to) {
+      query.andWhere('assignment.created_at <= :date_to', { date_to });
+    }
+
+    const rows = await query.getRawMany();
+
+    /**
+     * Escape a single CSV cell value:
+     *   - null/undefined  → empty string
+     *   - Contains comma, double-quote, or newline → wrap in double-quotes
+     *     and escape inner double-quotes by doubling them (RFC 4180)
+     */
+    const escapeCell = (value: unknown): string => {
+      if (value === null || value === undefined) {
+        return '';
+      }
+      const str = String(value);
+      if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const header = [
+      'id',
+      'title',
+      'teacher_name',
+      'assignment_type',
+      'due_date',
+      'is_published',
+      'classrooms_count',
+      'submissions_count',
+      'created_at',
+    ].join(',');
+
+    const dataLines = rows.map((row) =>
+      [
+        escapeCell(row.id),
+        escapeCell(row.title),
+        escapeCell(row.teacher_name),
+        escapeCell(row.assignment_type),
+        escapeCell(row.due_date),
+        escapeCell(row.is_published),
+        escapeCell(parseInt(row.classrooms_count, 10) || 0),
+        escapeCell(parseInt(row.submissions_count, 10) || 0),
+        escapeCell(row.created_at),
+      ].join(','),
+    );
+
+    return [header, ...dataLines].join('\n');
+  }
+
+  /**
    * Get assignments by student
    *
    * @param studentId - Student UUID

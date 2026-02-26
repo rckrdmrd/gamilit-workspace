@@ -14,7 +14,7 @@
 
 ## Descripcion
 
-Implementacion de la estrategia de testing completa para la plataforma educativa gamilit. Incluye tests unitarios con Jest para los 23 modulos del backend (exercise evaluators, gamification engine, auth/RBAC, multi-tenancy RLS), tests unitarios con Vitest para los 4 portales del frontend (componentes de ejercicio, mecanicas de gamificacion, state management), tests de integracion para flujos criticos (ejercicio completado -> XP otorgado -> rango actualizado -> leaderboard recalculado), y planificacion de E2E tests. El objetivo es alcanzar 80% de cobertura global con 833+ tests pasando.
+Implementacion de la estrategia de testing completa para la plataforma educativa gamilit. Incluye tests unitarios con Jest para los 23 modulos del backend (exercise evaluators, gamification engine, auth/RBAC, multi-tenancy RLS), tests unitarios con Vitest para los 4 portales del frontend (componentes de ejercicio, mecanicas de gamificacion, state management), tests de integracion para flujos criticos (ejercicio completado -> XP otorgado -> rango actualizado -> leaderboard recalculado), y planificacion de E2E tests. El objetivo es alcanzar 80% de cobertura global con 2324 tests (2296 passed + 28 skipped).
 
 ## Alcance
 
@@ -31,8 +31,8 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 | Capa | Componentes |
 |------|-------------|
 | Database | Seeds de datos de prueba, fixtures para testing |
-| Backend | Jest tests para 23 modulos, 173 services, 108 controllers |
-| Frontend | Vitest tests para 580 componentes, 123 hooks, 13 stores |
+| Backend | Jest tests para 23 modulos, 172 services, 108 controllers |
+| Frontend | Vitest tests para 577 componentes, 134 hooks, 13 stores |
 | DevOps | Jest/Vitest configuration, coverage reporting |
 
 ## Dependencias
@@ -46,7 +46,7 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 
 ## Definition of Done
 
-- [ ] 833+ tests pasando entre backend (Jest) y frontend (Vitest)
+- [ ] 2324 tests (2296 passed + 28 skipped) entre backend (Jest) y frontend (Vitest)
 - [ ] Cobertura global >= 75% (target 80%)
 - [ ] Flujos criticos de gamificacion con integration tests completos
 - [ ] Documentacion actualizada

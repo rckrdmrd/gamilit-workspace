@@ -7,10 +7,9 @@
 ## Comando Rápido (Sin Conflictos)
 
 ```bash
-cd /home/isem/workspace-v2
+cd /home/isem/gamilit-workspace
 git fetch origin && git pull origin master
 git submodule update --init --recursive
-for p in projects/*/; do cd "$p" && git fetch origin && git pull origin master 2>/dev/null; [ -f .gitmodules ] && git submodule foreach 'git fetch origin && git pull origin master 2>/dev/null || true'; cd /home/isem/workspace-v2; done
 ```
 
 ---
@@ -18,7 +17,7 @@ for p in projects/*/; do cd "$p" && git fetch origin && git pull origin master 2
 ## Verificación Rápida
 
 ```bash
-cd /home/isem/workspace-v2
+cd /home/isem/gamilit-workspace
 echo "Workspace: $(git rev-parse --short HEAD) vs $(git rev-parse --short origin/master)"
 git submodule status | grep "^+" && echo "⚠️ Hay diferencias" || echo "✅ Todo sincronizado"
 ```
@@ -65,8 +64,7 @@ Nivel 0: cd workspace && git add proyecto && git commit && git push
 
 | Repositorio | Commit |
 |-------------|--------|
-| workspace-v2 | 479d9296+ |
-| erp-core | df57a2e |
+| gamilit-workspace | 479d9296+ |
 
 ---
 

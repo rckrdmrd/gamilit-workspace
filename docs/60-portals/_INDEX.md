@@ -1,8 +1,15 @@
 # Documentacion de Portales - GAMILIT
 
-Documentacion especifica de cada portal de la plataforma.
+> Documentacion especifica de cada portal de la plataforma.
 
 ---
+
+## Archivos Generales
+
+| Archivo | Descripcion |
+|---------|-------------|
+| [README.md](./README.md) | Entrada y navegacion de portales |
+| [PORTAL-ADMIN-API-REFERENCE.md](./PORTAL-ADMIN-API-REFERENCE.md) | Referencia de API del portal administrativo |
 
 ## Portales
 

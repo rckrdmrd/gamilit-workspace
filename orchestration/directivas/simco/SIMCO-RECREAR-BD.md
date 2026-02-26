@@ -230,7 +230,7 @@ pm2 logs --lines 20
 
 ```bash
 # Verificar que el backend responde
-curl -s http://localhost:4006/api/v1/health | head -20
+curl -s http://localhost:3006/api/v1/health | head -20
 
 # Verificar conexion BD desde backend
 pm2 logs gamilit-backend --lines 5 | grep -i "database"

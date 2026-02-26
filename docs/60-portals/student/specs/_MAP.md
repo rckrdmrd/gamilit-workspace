@@ -107,8 +107,8 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 
 | Documento | Proposito |
 |-----------|-----------|
-| `FRONTEND_INVENTORY.yml` | 580 componentes, 123 hooks, 66 APIs |
-| `BACKEND_INVENTORY.yml` | 905 endpoints documentados |
+| `FRONTEND_INVENTORY.yml` | 577 componentes, 134 hooks, 65 APIs |
+| `BACKEND_INVENTORY.yml` | 912 endpoints documentados |
 
 ### Tareas (orchestration/tareas/)
 

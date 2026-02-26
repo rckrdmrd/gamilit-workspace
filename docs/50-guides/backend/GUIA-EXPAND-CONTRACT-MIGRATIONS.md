@@ -33,11 +33,11 @@ El patron Expand/Contract (tambien conocido como Parallel Change) es una tecnica
 
 ### Por que es necesario en gamilit
 
-- **169 tablas** con datos en produccion que no pueden perderse
-- **418 politicas RLS** que dependen de nombres de columnas y tablas
-- **67 triggers** que referencian columnas especificas
-- **299 foreign keys** que crean dependencias entre schemas
-- **155 entities (156 classes) TypeORM** que deben reflejar el schema exacto
+- **173 tablas** con datos en produccion que no pueden perderse
+- **251 politicas RLS** que dependen de nombres de columnas y tablas
+- **68 triggers** que referencian columnas especificas
+- **301 foreign keys** que crean dependencias entre schemas
+- **156 entities (157 classes) TypeORM** que deben reflejar el schema exacto
 - **Deploy con PM2** (fork mode) — hay un breve periodo donde codigo viejo y nuevo coexisten
 
 ### Compatible con DDL-first workflow
@@ -372,7 +372,7 @@ CREATE TABLE educational_content.student_classrooms (
   UNIQUE(student_id, classroom_id)
 );
 
--- Habilitar RLS (consistente con las 418 politicas existentes)
+-- Habilitar RLS (consistente con las 251 politicas existentes)
 ALTER TABLE educational_content.student_classrooms ENABLE ROW LEVEL SECURITY;
 
 -- Indices
@@ -642,7 +642,7 @@ NUNCA: DDL CONTRACT antes de deploy de codigo limpio
 
 ### 9.1 Politicas RLS
 
-Con 418 politicas RLS en gamilit, antes de ejecutar CONTRACT verificar que ninguna politica referencia la columna a eliminar:
+Con 251 politicas RLS en gamilit, antes de ejecutar CONTRACT verificar que ninguna politica referencia la columna a eliminar:
 
 ```sql
 -- Buscar politicas que referencian la columna

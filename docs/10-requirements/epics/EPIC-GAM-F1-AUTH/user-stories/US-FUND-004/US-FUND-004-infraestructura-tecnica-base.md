@@ -232,10 +232,10 @@ frontend/
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
+    port: 3005,
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'http://localhost:3006',
         changeOrigin: true,
       }
     }
@@ -268,7 +268,7 @@ services:
       dockerfile: Dockerfile
     container_name: gamilit-backend
     ports:
-      - "4000:4000"
+      - "3006:3006"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -288,7 +288,7 @@ services:
       dockerfile: Dockerfile
     container_name: gamilit-frontend
     ports:
-      - "3000:3000"
+      - "3005:3005"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -305,8 +305,8 @@ volumes:
 ```env
 # Application
 NODE_ENV=development
-PORT=4000
-APP_URL=http://localhost:4000
+PORT=3006
+APP_URL=http://localhost:3006
 
 # Database
 DB_HOST=localhost
@@ -328,7 +328,7 @@ SMTP_PASSWORD=your-app-password
 
 **.env.example (Frontend):**
 ```env
-VITE_API_URL=http://localhost:4000/api
+VITE_API_URL=http://localhost:3006/api
 VITE_APP_NAME=GAMILIT
 ```
 
@@ -511,8 +511,8 @@ npm run lint         # Should pass linting
 
 # Docker
 docker-compose up -d # Should start all services
-curl http://localhost:4000/health # Should return 200
-curl http://localhost:3000 # Should serve frontend
+curl http://localhost:3006/health # Should return 200
+curl http://localhost:3005 # Should serve frontend
 ```
 
 ---

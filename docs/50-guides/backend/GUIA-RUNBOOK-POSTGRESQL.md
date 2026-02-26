@@ -33,13 +33,13 @@ estado: vigente
 | Metrica | Cantidad |
 |---------|----------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 169 |
-| Views | 22 (16 regulares + 6 adicionales) |
+| Tablas | 173 |
+| Views | 18 |
 | Materialized Views | 7 |
-| Funciones | 249 |
-| Triggers | 67 |
-| Politicas RLS | 418 |
-| Foreign Keys | 298 |
+| Funciones | 158 (DDL source) |
+| Triggers | 68 |
+| Politicas RLS | 251 (DDL source) |
+| Foreign Keys | 301 |
 | ENUMs | 42 |
 
 ### Schemas Activos (16)
@@ -236,7 +236,7 @@ LIMIT 20;
 
 ### 3.1 Configuracion recomendada para gamilit
 
-Con 169 tablas y 418 politicas RLS, el autovacuum debe estar bien afinado para evitar table bloat y degradacion de queries con RLS.
+Con 173 tablas y 251 politicas RLS, el autovacuum debe estar bien afinado para evitar table bloat y degradacion de queries con RLS.
 
 ```sql
 -- Verificar configuracion actual de autovacuum
@@ -252,7 +252,7 @@ SHOW autovacuum_analyze_scale_factor;
 ```ini
 # Autovacuum general
 autovacuum = on
-autovacuum_max_workers = 4                    # Default es 3; gamilit tiene 169 tablas
+autovacuum_max_workers = 4                    # Default es 3; gamilit tiene 173 tablas
 autovacuum_naptime = 30s                       # Verificar cada 30 segundos (default 1min)
 autovacuum_vacuum_threshold = 50               # Minimo de tuplas muertas antes de vacuum
 autovacuum_vacuum_scale_factor = 0.1           # 10% de la tabla (default 20%)
@@ -370,7 +370,7 @@ LIMIT 20;
 
 **Nota:** Antes de eliminar un indice no utilizado, verificar que:
 - Las estadisticas no fueron reseteadas recientemente
-- El indice no es usado por politicas RLS (gamilit tiene 418 RLS que pueden depender de indices)
+- El indice no es usado por politicas RLS (gamilit tiene 251 RLS que pueden depender de indices)
 - El indice no es una FK constraint (PostgreSQL no crea indices automaticos para FK)
 
 ### 4.2 Sequential scans en tablas grandes
@@ -604,7 +604,7 @@ ORDER BY query_start;
 
 **Problema: RLS + triggers con FK cruzadas**
 
-gamilit tiene 418 politicas RLS y 67 triggers que pueden causar deadlocks cuando:
+gamilit tiene 251 politicas RLS y 68 triggers que pueden causar deadlocks cuando:
 - Dos transacciones actualizan tablas relacionadas por FK en orden diferente
 - Un trigger en tabla A actualiza tabla B mientras otra transaccion hace lo inverso
 - RLS policies ejecutan subqueries que toman locks adicionales

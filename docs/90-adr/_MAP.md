@@ -1,6 +1,6 @@
 # _MAP: docs/90-adr/
 
-**Ultima actualizacion:** 2026-02-14
+**Ultima actualizacion:** 2026-02-25
 **Estado:** Activo
 **Version:** 4.0.0
 **Proposito:** Architecture Decision Records
@@ -29,7 +29,7 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 
 ## Contenido
 
-### ADRs (40 total)
+### ADRs (46 total)
 
 #### Fundamentos y Arquitectura (001-005)
 
@@ -55,7 +55,7 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 | ADR-033 | Expansion de Schemas de 8 a 18 | Accepted | Database |
 | ADR-043 | Consolidacion de Base de Datos GAMILIT | Accepted | Database |
 
-#### Frontend (011, 013-015, 019-021, 029-030)
+#### Frontend (011, 013-015, 019-021, 029-030, 046-049)
 
 | ADR | Titulo | Estado | Categoria |
 |-----|--------|--------|-----------|
@@ -68,6 +68,10 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 | ADR-021 | Estandarizacion de Recompensas XP | Accepted | Gamification |
 | ADR-029 | Consolidacion de TeacherResourcesPage | Accepted | Frontend |
 | ADR-030 | Convencion de Nombres de Paginas — Sufijo "Page" | Amended | Frontend |
+| ADR-046 | PageShell Pattern Replaces HOC Layout Wrappers | Accepted | Frontend |
+| ADR-047 | State Architecture — Zustand + React Query | Accepted | Frontend |
+| ADR-048 | Component Sharing Strategy | Accepted | Frontend |
+| ADR-049 | ConfirmDialog Consolidation | Accepted | Frontend |
 
 #### Portales (017, 028, 031-032)
 
@@ -101,7 +105,14 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 | ADR-041 | Implementacion del Sistema SIMCO | Accepted | Governance |
 | ADR-042 | Team vs Guild Terminology | Accepted | Social Features |
 
-**Total ADRs:** 40 | **Numeros libres:** 006, 024, 025
+#### Calidad y Arquitectura (044-045)
+
+| ADR | Titulo | Estado | Categoria |
+|-----|--------|--------|-----------|
+| ADR-044 | Estrategia de Test Coverage | Accepted | Quality |
+| ADR-045 | Clean Architecture Pragmatica | Accepted | Architecture |
+
+**Total ADRs:** 46 | **Numeros libres:** 006, 024, 025
 
 ---
 
@@ -109,12 +120,13 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 
 | Categoria | Cantidad | ADRs |
 |-----------|----------|------|
-| Architecture | 8 | 001, 002, 003, 004, 005, 010, 017, 028, 038, 040 |
-| Database | 6 | 007, 008, 012, 020, 027, 033, 043 |
-| Frontend | 6 | 011, 013, 014, 015, 019, 029, 030 |
-| Governance | 4 | 035, 036, 037, 039, 041 |
+| Architecture | 9 | 001, 002, 003, 004, 005, 010, 017, 028, 038, 040, 045 |
+| Database | 7 | 007, 008, 012, 020, 027, 033, 043 |
+| Frontend | 10 | 011, 013, 014, 015, 019, 029, 030, 046, 047, 048, 049 |
+| Governance | 5 | 035, 036, 037, 039, 041 |
 | Documentation | 2 | 026, 034 |
 | Maintenance | 3 | 018, 022, 023 |
+| Quality | 1 | 044 |
 | Backend | 1 | 016 |
 | Gamification | 1 | 021 |
 | Social Features | 1 | 042 |
@@ -135,10 +147,10 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 
 ## Proximos ADRs Disponibles
 
-Numeros disponibles para nuevos ADRs: **ADR-006**, **ADR-024**, **ADR-025**, **ADR-044+**
+Numeros disponibles para nuevos ADRs: **ADR-006**, **ADR-024**, **ADR-025**, **ADR-050+**
 
 ---
 
 **Generado:** 2025-11-07
-**Ultima consolidacion:** 2026-02-14 (40 ADRs documentados)
+**Ultima consolidacion:** 2026-02-25 (46 ADRs documentados)
 **Version:** 4.0.0

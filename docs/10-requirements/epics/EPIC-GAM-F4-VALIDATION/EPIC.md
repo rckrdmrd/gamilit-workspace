@@ -25,7 +25,7 @@
 
 Validar que el sistema gamilit **funciona de extremo a extremo** tras completar 5 fases de auditoria documental/DDL (score 78%→97%). Esto incluye:
 
-1. **Recrear la base de datos** desde DDL puro (18 schemas, 169 tablas)
+1. **Recrear la base de datos** desde DDL puro (18 schemas, 173 tablas)
 2. **Compilar y levantar** backend (NestJS) y frontend (Vite/React)
 3. **Verificar los 4 portales** (Student, Teacher, Admin, Parent)
 4. **Probar 23 modulos backend** via API smoke tests

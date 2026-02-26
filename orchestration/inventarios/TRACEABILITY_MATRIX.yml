@@ -1,9 +1,9 @@
 # TRACEABILITY_MATRIX.yml - Matriz Consolidada de Trazabilidad
 
 project: GAMILIT
-version: 3.0
+version: 4.0
 generated: 2025-11-08
-updated: 2026-01-16
+updated: 2026-02-25
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT
 
 # ============================================================================
@@ -15,8 +15,8 @@ summary:
   total_requirements: 45+
   total_specifications: 45+
   total_user_stories: 120+
-  total_database_objects: 478  # RECONCILIADO: 137 tables + 109 funcs + 35 triggers + 157 RLS + 38 enums
-  total_backend_modules: 17  # RECONCILIADO 2026-01-16
+  total_database_objects: 971  # RECONCILIADO: 173 tables + 158 funcs + 68 triggers + 251 RLS + 18 schemas + 301 FKs + 2 placeholder
+  total_backend_modules: 23  # ACTUALIZADO 2026-02-25
   total_frontend_features: 10
   traceability_coverage: 100%
 
@@ -25,7 +25,7 @@ summary:
 # ============================================================================
 
 coherence_analysis:
-  date: 2026-01-16
+  date: 2026-02-25
   methodology: "Exploración paralela con agentes especializados SIMCO"
 
   phase_1_epics:
@@ -113,35 +113,35 @@ transversal_validations:
       - "mission_templates FK: CORREGIDO - ahora referencia auth_management.profiles"
 
 # ============================================================================
-# MÉTRICAS RECONCILIADAS 2026-01-16
+# MÉTRICAS RECONCILIADAS 2026-02-25
 # ============================================================================
 
 reconciled_metrics:
   database:
-    schemas: 16
-    tables: 137
-    functions_active: 109
-    triggers_active: 35
-    policies_rls: 157
-    enums: 38
-    indexes_statements: 405
-    foreign_keys: 208
+    schemas: 18
+    tables: 173
+    functions_active: 158
+    triggers_active: 68
+    policies_rls: 251
+    enums: 42
+    indexes_statements: 979
+    foreign_keys: 301
 
   backend:
-    modules: 17
-    entities: 123  # ACTUALIZADO 2026-01-16: -1 (eliminado notification.entity.ts deprecated)
-    services: 104  # ACTUALIZADO 2026-01-16: -1 (eliminado notifications.service.ts deprecated)
-    controllers: 75
-    endpoints: 612
+    modules: 23
+    entities: 156  # ACTUALIZADO 2026-02-25: 156 files (157 @Entity classes)
+    services: 172  # ACTUALIZADO 2026-02-25
+    controllers: 108  # ACTUALIZADO 2026-02-25
+    endpoints: 912  # ACTUALIZADO 2026-02-25
     coherencia_bd: "99%"
 
   frontend:
-    components: 474  # ACTUALIZADO 2026-02-15 (was 463)
-    hooks: 102       # ACTUALIZADO 2026-02-15 (was 101, +useFocusTrap)
-    pages: 68        # ACTUALIZADO 2026-02-15 (was 74)
-    stores: 14       # ACTUALIZADO 2026-02-15 (was 12)
-    api_services: 51 # ACTUALIZADO 2026-02-15 (was 26)
-    mechanics: 30    # ACTUALIZADO 2026-02-15 (was 33)
+    components: 577  # ACTUALIZADO 2026-02-25 (was 474)
+    hooks: 134       # ACTUALIZADO 2026-02-25 (was 102)
+    pages: 67        # ACTUALIZADO 2026-02-25 (was 68)
+    stores: 13       # ACTUALIZADO 2026-02-25 (was 14)
+    api_services: 65 # ACTUALIZADO 2026-02-25 (was 51)
+    mechanics: 30    # Sin cambios
 
 # ============================================================================
 # MATRIZ POR ÉPICA

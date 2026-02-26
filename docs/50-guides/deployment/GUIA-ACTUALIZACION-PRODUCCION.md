@@ -1,5 +1,14 @@
 # GUIA-ACTUALIZACION-PRODUCCION.md
 
+> [!WARNING]
+> **Estado:** `DEPRECATED` para flujo maestro (2026-02-24).  
+> Esta guia contiene pasos legacy; no usar como referencia principal de deploy.
+>
+> Fuentes canonicas:
+> - `orchestration/referencias/MATRIZ-SSOT-DEV-PROD.md`
+> - `orchestration/agents/perfiles/PERFIL-DEPLOY-SERVER.md`
+> - `orchestration/directivas/simco/SIMCO-RECREAR-BD.md`
+
 **Fecha:** 2025-12-18
 **Version:** 1.0
 **Proposito:** Guia paso a paso para actualizar el servidor de produccion desde el repositorio remoto

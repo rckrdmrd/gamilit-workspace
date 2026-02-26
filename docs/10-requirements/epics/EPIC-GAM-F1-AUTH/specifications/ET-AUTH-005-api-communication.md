@@ -132,7 +132,7 @@ apiClient.interceptors.response.use(
 
 ```typescript
 export const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3006/api/v1',
   timeout: 30000,
   retryAttempts: 3,
   retryDelay: 1000,
@@ -171,8 +171,7 @@ Tipos generados desde OpenAPI/Swagger del backend.
 ```typescript
 app.enableCors({
   origin: process.env.CORS_ORIGIN?.split(',') || [
-    'http://localhost:5173',
-    'http://localhost:3000',
+    'http://localhost:3005',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

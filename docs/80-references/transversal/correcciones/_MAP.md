@@ -12,7 +12,7 @@
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
 | `BACKEND-CRITICAL-ISSUES-PENDING.md` | Issues P0 Backend - estado actualizado | **SSOT** |
-| `PLAN-RESTRUCTURACION-DOCUMENTACION-2026-01-06.md` | Plan de restructuración documentación | En ejecución |
+| `PLAN-RESTRUCTURACION-DOCUMENTACION-2026-01-06.md` | Plan de restructuracion documentacion | [ARCHIVADO - documento no disponible] |
 | `ANALISIS-ERROR-404-PROGRESS-MODULES.md` | Error 404 en endpoint progress/modules | **CORREGIDO** |
 
 ### Archivos Movidos a Archivados (2026-01-06)
@@ -130,7 +130,7 @@
 | Total líneas | ~220 |
 
 **Flujo Corregido M3-M5:**
-```
+```text
 1. Estudiante envía → status = 'submitted'
 2. Estudiante puede reenviar → actualiza submission
 3. Teacher califica → status = 'graded'
@@ -421,7 +421,7 @@ Los siguientes archivos fueron movidos a `orchestration/reportes/correcciones/`:
 
 ## Metricas de Integracion (Ultima validacion: 2025-11-26)
 
-```
+```text
 Database → Backend:              89.0%
 Database → Frontend (via APIs):  86.0%
 PROMEDIO GLOBAL:                 87.5%

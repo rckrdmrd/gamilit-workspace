@@ -3,10 +3,10 @@
 **US:** US-VAL-008 | **Tipo:** Audit | **Estado:** Pendiente | **SP:** 2
 
 ## Descripcion
-Mapear las 169 tablas DB contra las 141 entities TypeScript, explicar delta.
+Mapear las 173 tablas DB contra las 156 entity files (157 classes) TypeScript, explicar delta.
 
 ## Acciones
-1. Query information_schema.tables — listar 169 tablas
+1. Query information_schema.tables — listar 173 tablas
 2. grep -r "@Entity" en backend/src — listar entities
 3. Crear mapping tabla↔entity
 4. Identificar tablas sin entity (views, junction, audit)

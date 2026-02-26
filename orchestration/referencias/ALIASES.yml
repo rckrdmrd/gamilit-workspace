@@ -14,8 +14,8 @@
 #
 # ===============================================================================
 
-version: "4.0.0"
-fecha_actualizacion: "2026-02-14"
+version: "4.1.0"
+fecha_actualizacion: "2026-02-25"
 
 # ---------------------------------------------------------------------------
 # DEFINICIONES CANONICAS (Fuente Unica de Verdad)
@@ -215,8 +215,8 @@ referencia:
 # ===============================================================================
 
 metadata:
-  total_aliases: 95
-  ultima_actualizacion: "2026-02-14"
+  total_aliases: 85
+  ultima_actualizacion: "2026-02-25"
   mantenido_por: "Documentation-Maintainer"
   notas:
     - "v4.0.0: Rewrite completo para standalone gamilit"

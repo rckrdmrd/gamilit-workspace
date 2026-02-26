@@ -2,10 +2,10 @@
 
 **Single Instruction Matrix by Context and Operation**
 
-**Version:** 5.0.0
-**Fecha:** 2026-02-14
+**Version:** 5.1.0
+**Fecha:** 2026-02-25
 **Extension:** CCA + CAPVED + Niveles + Economia de Tokens + Git + Context Engineering + Subagentes + Git Remotes + Estandares Documentacion + Validacion SSOT + Normalizacion Documental + Delegacion Paralela + Multi-Agent + Work Items + Limpieza Post-Fase + Frontmatter Schema
-**Archivos:** 70 activos + _INDEX + 15 archivados = 86 total
+**Archivos:** 72 activos + _INDEX + 15 archivados = 88 total
 
 > **NOTA (2026-02-11):** 14 archivos solapados fueron consolidados y archivados en `_archive/`.
 > Los archivos principales absorben la funcionalidad de los archivados.
@@ -23,7 +23,7 @@ SIMCO es un sistema de directivas organizadas por **tipo de operacion**, no por 
 > **NOTA:** Proyecto STANDALONE — todas las rutas son relativas a `orchestration/directivas/simco/`
 
 ```
-simco/                                       # 70 DIRECTIVAS ACTIVAS + _INDEX + 15 archivadas
+simco/                                       # 72 DIRECTIVAS ACTIVAS + _INDEX + 15 archivadas
 ├── _INDEX.md                               ← ESTAS AQUI
 │
 │   # === CICLO DE VIDA (3) ===
@@ -66,9 +66,10 @@ simco/                                       # 70 DIRECTIVAS ACTIVAS + _INDEX + 
 ├── SIMCO-GIT-REMOTES.md                    # Operaciones con repositorios remotos
 ├── SIMCO-ESCALAMIENTO.md                   # Escalamiento a Product Owner
 │
-│   # === SUBAGENTES Y ORQUESTACION (6) ===
+│   # === SUBAGENTES Y ORQUESTACION (7) ===
 ├── SIMCO-SUBAGENTE.md                      # Protocolo para agentes en modo subagente
 ├── SIMCO-DELEGACION-PARALELA.md            # Orquestacion paralela (hasta 5 subagentes)
+├── SIMCO-DELEGACION-GEMINI-CLI.md          # Delegacion especifica a Gemini CLI
 ├── SIMCO-MULTI-AGENT.md                    # Compatibilidad multi-agente (Claude/Gemini/Windsurf)
 ├── SIMCO-FLUJO-AGENTES.md                  # Flujo de trabajo entre agentes
 ├── SIMCO-PROMPTS-AGENTES.md                # Templates de prompts para agentes
@@ -128,7 +129,7 @@ simco/                                       # 70 DIRECTIVAS ACTIVAS + _INDEX + 
 ├── SIMCO-AGILE-METRICS.md                  # Metricas agiles
 ├── SIMCO-CAPVED-PLUS.md                    # Extension CAPVED
 │
-│   # === ANALISIS (1) ===
+│   # === ANALISIS (2) ===
 ├── SIMCO-ANALISIS-PLANIFICACION.md         # Analisis y planificacion
 ├── SIMCO-AUDITORIA-FLUJOS-E2E.md           # Procedimiento de auditoria FE↔BE↔DB por flujo
 │
@@ -247,12 +248,8 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 @CAPVED:        orchestration/directivas/principios/PRINCIPIO-CAPVED.md
 @TAREA:         orchestration/directivas/simco/SIMCO-TAREA.md
 @INICIALIZACION: orchestration/directivas/simco/SIMCO-INICIALIZACION.md
-@TPL_CAPVED:    orchestration/templates/TEMPLATE-TAREA-CAPVED.md
-
 # CONTEXT ENGINEERING (NUEVO)
 @CONTEXT_ENGINEERING: orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
-@TPL_RECOVERY_CTX:    orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
-@TPL_HERENCIA_CTX:    orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md
 
 # OPERACIONES UNIVERSALES
 @CREAR:      orchestration/directivas/simco/SIMCO-CREAR.md
@@ -281,7 +278,6 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 @SUBAGENTE:           orchestration/directivas/simco/SIMCO-SUBAGENTE.md
 @DELEGACION_PARALELA: orchestration/directivas/simco/SIMCO-DELEGACION-PARALELA.md
 @MULTI_AGENT:         orchestration/directivas/simco/SIMCO-MULTI-AGENT.md
-@CHK_DELEGACION:      orchestration/checklists/CHECKLIST-PRE-DELEGACION.md
 @PERFILES_COMPACT:    orchestration/agents/perfiles/compact/
 
 # GIT Y REPOSITORIOS REMOTOS
@@ -314,19 +310,12 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 # SINCRONIZACION
 @SYNC_BD:            orchestration/directivas/simco/SIMCO-SINCRONIZACION-BD.md
 
-# TEMPLATES DE CONTEXTO
-@CTX_STANDALONE: orchestration/templates/CONTEXTO-NIVEL-STANDALONE.md
-@CTX_SUITE:      orchestration/templates/CONTEXTO-NIVEL-SUITE.md
-@CTX_SUITE_CORE: orchestration/templates/CONTEXTO-NIVEL-SUITE-CORE.md
-@CTX_VERTICAL:   orchestration/templates/CONTEXTO-NIVEL-VERTICAL.md
-
 # PRINCIPIOS
 @PRINCIPIOS: orchestration/directivas/principios/
 @TOKENS:     orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md
 
 # PATRONES Y REFERENCIAS
 @PATRONES:   orchestration/patrones/
-@IMPACTOS:   orchestration/impactos/
 @QUICK_REF:  orchestration/directivas/simco/SIMCO-QUICK-REFERENCE.md
 
 # PROYECTO
@@ -350,6 +339,7 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 
 ## CHANGELOG
 
+- **v5.1.0** (2026-02-25): Cleanup: added SIMCO-DELEGACION-GEMINI-CLI.md, fixed ANALISIS count (1->2), removed 10 phantom aliases from ALIAS MAS USADOS, total 72 active directives
 - **v5.0.0** (2026-02-14): Auditoria integral: rewrite ESTRUCTURA con 70 archivos reales, eliminados 8 phantoms (REUTILIZAR, CONTRIBUIR-CATALOGO, MOBILE, ML, PROPAGACION, DOCUMENTAR-SUITE, CHECKLIST-FASE-D, LECCIONES-APRENDIDAS), corregidos core/ → orchestration/ paths, removido catalogo shared/
 - **v4.5.0** (2026-02-13): Limpieza Post-Fase CAPVED (SIMCO-LIMPIEZA-POST-FASE); Frontmatter Schema (SIMCO-FRONTMATTER-SCHEMA); LOCAL-WSL-ENVIRONMENT.yml; Perfiles _MAP.md con NEXUS v4.1; 3 stubs archivados; Guia Coverage Testing
 - **v4.4.0** (2026-02-13): Gestion de Work Items (SIMCO-WORK-ITEMS); TRIGGER-SSOT-SYNC; Catalogo errores expandido 10→25
@@ -368,4 +358,4 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 
 ---
 
-**Version:** 5.0.0 | **Sistema:** SIMCO + CAPVED + NEXUS + Context Engineering | **Mantenido por:** Tech Lead
+**Version:** 5.1.0 | **Sistema:** SIMCO + CAPVED + NEXUS + Context Engineering | **Mantenido por:** Tech Lead

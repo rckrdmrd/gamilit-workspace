@@ -38,7 +38,7 @@ SIN FETCH = ESTADO INCOMPLETO
 ### RC2: COHERENCIA ENTRE CAPAS
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
-  DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/159 classes, 16 DDL-only en data_warehouse)
+  DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/157 classes, 16 DDL-only en data_warehouse)
   Backend -> Frontend: Endpoints documentados (912 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
@@ -72,6 +72,8 @@ Branch: master
 | Redis | 6379 | - | - | - | 0 |
 
 **Schemas:** 18 schemas modulares (16 activos + 2 placeholder)
+
+**Nota de seguridad:** Estas credenciales son exclusivamente para el entorno de desarrollo local (WSL2). Produccion usa credenciales rotadas almacenadas en variables de entorno del servidor — NO en este archivo.
 
 ### RC6: DEPLOYMENT (Servidor Produccion)
 ```
@@ -143,7 +145,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 11 | classrooms | Gestion de aulas | 90% |
 | 12 | students | Perfiles de estudiantes, progreso | 90% |
 
-### Gamification System (7)
+### Gamification System (6)
 | # | Modulo | Descripcion | Estado |
 |---|--------|-------------|--------|
 | 13 | gamification | XP, rangos maya, achievements, ML coins | 95% |
@@ -151,17 +153,18 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 15 | missions | Quests, misiones diarias/semanales | 85% |
 | 16 | store | Tienda virtual con ML Coins | 75% |
 | 17 | achievements | Badges, milestones, rangos maya | 90% |
-| 18 | social | Interacciones sociales, equipos | 50% |
+| 18 | social | Interacciones sociales, equipos | 60% |
 
-### Support (4)
+### Support (5)
 | # | Modulo | Descripcion | Estado |
 |---|--------|-------------|--------|
 | 19 | teachers | Herramientas docentes, asignaciones | 95% |
 | 20 | parents | Portal padres, notificaciones | 100% |
 | 21 | analytics | Learning analytics, reportes | 85% |
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
+| 23 | mail | Transporte email (transitivo via auth/notifications/teacher/parents/progress) | 100% |
 
-**Total:** 23 modulos, 156 entities (159 classes), 172 services, 108 controllers, 912 endpoints
+**Total:** 23 modulos, 156 entities (157 classes), 172 services, 108 controllers, 912 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
 > Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` no configurado), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
@@ -359,7 +362,7 @@ gamilit/
 |   +-- 60-portals/              <- Manuales de portales (student, teacher, admin)
 |   +-- 70-onboarding/           <- Guias de onboarding por rol
 |   +-- 80-references/           <- Referencias tecnicas
-|   +-- 90-adr/                  <- ADRs del proyecto (40 ADRs normalizados)
+|   +-- 90-adr/                  <- ADRs del proyecto (47 ADRs normalizados)
 |   +-- 99-delivery/             <- Documentos de entrega
 +-- orchestration/
     +-- _INDEX.yml
@@ -368,8 +371,8 @@ gamilit/
     +-- CONTEXT-MAP.yml          <- Variables y aliases resueltos
     +-- BOOTLOADER.md            <- Secuencia de arranque
     +-- agents/                  <- Perfiles de agente (full + compact)
-    +-- directivas/              <- ~63 archivos SIMCO activos (+13 en _archive)
-    +-- inventarios/             <- 8 YAMLs SSOT
+    +-- directivas/              <- 72 archivos SIMCO activos (+15 en _archive)
+    +-- inventarios/             <- 10 YAMLs SSOT
     +-- work-items/              <- Epics/sprints tracking
     +-- trazas/                  <- Logs de ejecucion
     +-- tareas/                  <- Gestion de tareas
@@ -406,7 +409,7 @@ proyecto:
 - Leaderboards y componente social
 
 ### Portal Maestro (~95%)
-- Gestion de aulas y estudiantes (19 paginas)
+- Gestion de aulas y estudiantes (16 paginas)
 - Asignacion de ejercicios
 - Reportes de progreso
 - Revision manual de ejercicios
@@ -437,34 +440,34 @@ proyecto:
 | Funciones | 158 (DDL functions/ dirs) |
 | Triggers | 68 |
 | Politicas RLS | 251 (DDL rls-policies/ dirs) |
-| Foreign Keys | 299 |
+| Foreign Keys | 301 |
 | ENUMs | 42 |
 
 ### Backend
 | Metrica | Valor |
 |---------|-------|
 | Modulos | 23 |
-| Entities | 156 files (159 classes) |
+| Entities | 156 files (157 classes) |
 | DTOs | 401 |
 | Services | 172 |
 | Controllers | 108 |
 | Endpoints | 912 |
 | Guards | 15 |
 | Decorators | 18 |
-| Tests | 833 passing (60 spec files) |
+| Tests | 833 passing (63 spec files) |
 
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 590 |
-| Hooks | 127 |
-| Paginas | 70 |
+| Componentes (.tsx prod) | 577 |
+| Hooks | 134 |
+| Paginas | 67 |
 | Stores Zustand | 13 |
-| API Service Files | 67 |
-| API Calls Total | ~580 |
+| API Service Files | 65 |
+| API Calls Total | ~575 |
 | Portales | 4 |
 | Mecanicas Ejercicio | 30 |
-| Routes | 73 |
+| Routes | 74 |
 | Type Files | 49 |
 
 > **SSOT:** `orchestration/inventarios/MASTER_INVENTORY.yml`

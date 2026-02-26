@@ -28,15 +28,15 @@ Project Path: /home/isem/gamilit-workspace
 │  SERVIDOR PRODUCCIÓN: 74.208.126.102                    │
 │                                                         │
 │  ┌──────────── Nginx (SSL Termination) ──────────────┐  │
-│  │  :3005 (HTTPS) ──→ :4005 (HTTP) Frontend          │  │
-│  │  :3006 (HTTPS) ──→ :4006 (HTTP) Backend API       │  │
+│  │  :443 (HTTPS) ──→ :3005 (HTTP) Frontend           │  │
+│  │  :443 (HTTPS) ──→ :3006 (HTTP) Backend API        │  │
 │  │  Certs: /etc/nginx/ssl/gamilit.{crt,key}          │  │
 │  │  Config: /etc/nginx/sites-enabled/gamilit          │  │
 │  └───────────────────────────────────────────────────┘  │
 │                                                         │
 │  ┌──── PM2 (Process Manager) ────┐                      │
-│  │  gamilit-backend  :4006 fork  │ → NestJS API         │
-│  │  gamilit-frontend :4005 fork  │ → Vite Preview       │
+│  │  gamilit-backend  :3006 fork  │ → NestJS API         │
+│  │  gamilit-frontend :3005 fork  │ → SPA Server         │
 │  └───────────────────────────────┘                      │
 │                                                         │
 │  ┌──── Servicios ────┐                                  │
@@ -48,10 +48,10 @@ Project Path: /home/isem/gamilit-workspace
 
 ### Puertos y Servicios
 
-| Servicio | Puerto Externo (HTTPS) | Puerto Interno (HTTP) | Proceso PM2 | Modo |
-|----------|------------------------|----------------------|-------------|------|
-| Backend API | 3006 | 4006 | gamilit-backend | fork |
-| Frontend | 3005 | 4005 | gamilit-frontend | fork |
+| Servicio | Puerto (HTTP) | Proceso PM2 | Modo |
+|----------|---------------|-------------|------|
+| Backend API | 3006 | gamilit-backend | fork |
+| Frontend | 3005 | gamilit-frontend | fork |
 | PostgreSQL | - | 5432 | sistema | - |
 | Redis | - | 6379 | sistema (opcional) | - |
 
@@ -75,8 +75,8 @@ Project Path: /home/isem/gamilit-workspace
 | Validaciones | Permisivas | Estrictas |
 | Swagger | Habilitado | **Deshabilitado** |
 | Logs | Verbose/info | Warning/error |
-| PM2 Port Backend | 4006 | 4006 |
-| PM2 Port Frontend | 4005 | 4005 |
+| PM2 Port Backend | 3006 | 3006 |
+| PM2 Port Frontend | 3005 | 3005 |
 | Nginx Proxy | No | Sí (SSL termination) |
 
 ### Variable de entorno clave: DB_USERNAME vs DB_USER
@@ -187,7 +187,7 @@ pg_restore -d gamilit_platform "$LAST_BACKUP"
 
 # Validación post-restore
 sudo -u postgres psql -d gamilit_platform -c "SELECT COUNT(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog','information_schema');"
-curl -f http://localhost:4006/api/v1/health || echo "HEALTH CHECK FAILED"
+curl -f http://localhost:3006/api/v1/health || echo "HEALTH CHECK FAILED"
 ```
 
 ### Paso 6: Verificar .env
@@ -249,10 +249,10 @@ pm2 save
 
 ```bash
 # Health check backend (puerto INTERNO, ruta: /health SIN prefijo /api)
-curl -f http://localhost:4006/api/v1/health || echo "BACKEND HEALTH FAILED"
+curl -f http://localhost:3006/api/v1/health || echo "BACKEND HEALTH FAILED"
 
-# Verificar frontend (puerto INTERNO)
-curl -f http://localhost:4005 || echo "FRONTEND HEALTH FAILED"
+# Verificar frontend
+curl -f http://localhost:3005 || echo "FRONTEND HEALTH FAILED"
 
 # Verificar acceso externo con SSL
 curl -fk https://74.208.126.102:3006/api/v1/health || echo "BACKEND HTTPS FAILED"
@@ -325,8 +325,7 @@ pm2 save
 4. **DB_USERNAME ≠ DB_USER** en el código NestJS. `database.config.ts` lee `DB_USERNAME`.
    Siempre incluir ambas variables en .env con el mismo valor.
 
-5. **Puertos internos vs externos:** Nginx proxy: 3005→4005 y 3006→4006.
-   PM2/apps usan puertos 400X. Nginx expone puertos 300X con SSL.
+5. **Puertos:** PM2 y apps escuchan en 3005/3006. Nginx hace proxy_pass a estos mismos puertos y expone HTTPS en :443.
 
 6. **prod.conf usa `localhost`** aunque el servidor tiene IP 74.208.126.102.
    Esto es correcto porque los scripts se ejecutan EN el servidor (conexión local, sin SSL a PG).
@@ -449,7 +448,7 @@ En caso de fallo post-deploy, tres niveles de rollback:
    ```nginx
    # /etc/nginx/sites-enabled/gamilit — Ejemplo blue-green
    upstream gamilit_backend_blue {
-     server 127.0.0.1:4006;
+     server 127.0.0.1:3006;
    }
    upstream gamilit_backend_green {
      server 127.0.0.1:4016;

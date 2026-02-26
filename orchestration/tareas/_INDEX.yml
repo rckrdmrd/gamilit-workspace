@@ -2,18 +2,18 @@
 # INDICE DE TAREAS - GAMILIT
 # ==============================================================================
 #
-# Proposito: Registro centralizado de TODAS las tareas del proyecto Gamilit
-#             con vinculacion a EPICs del backlog (BACKLOG.yml)
-# Version: 3.0.0
+# Proposito: Registro centralizado de tareas activas del proyecto Gamilit
+#            con vinculacion a EPICs del backlog (BACKLOG.yml)
+# Version: 5.0.0
 # Creado: 2026-01-24
-# Actualizado: 2026-02-17
+# Actualizado: 2026-02-26
 # Tarea origen: MQ-004 (EPIC-WS-004)
 #
 # ==============================================================================
 
-version: "3.0.0"
+version: "5.0.0"
 created: "2026-01-24"
-updated: "2026-02-17"
+updated: "2026-02-26"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
@@ -28,281 +28,39 @@ maintained_by: "@WS_ORCHESTRATOR"
 # EPIC-WS-005: Correcciones Tecnicas Pendientes
 # EPIC-WS-006: Trazabilidad de Procesos y Planeacion Integrada
 # EPIC-WS-007: Gobernanza DB DDL-First por Ambientes
-#
 
 # ------------------------------------------------------------------------------
-# TAREAS ACTIVAS (carpetas en orchestration/tareas/)
+# TAREAS ACTIVAS
 # ------------------------------------------------------------------------------
 
-tareas:
+tareas_activas: []
 
-  # === 2026-02-12 ===
-
-  - id: "TASK-2026-02-12-ANALISIS-BD-VS-DOCS"
-    path: "orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/"
+tareas_completadas_sprint2:
+  - id: "TASK-2026-02-25-AUDITORIA-DOCUMENTACION"
+    path: "orchestration/tareas/TASK-2026-02-25-AUDITORIA-DOCUMENTACION/"
     epic_ref: "EPIC-WS-001"
-    estado: "completada"
-    fecha_creacion: "2026-02-12"
-    descripcion_corta: "Analisis de discrepancias entre modelo BD (DDL) y documentacion existente"
+    estado: "completado"
+    fecha_creacion: "2026-02-25"
+    fecha_completado: "2026-02-25"
+    descripcion_corta: "Auditoria integral de documentacion — 53 discrepancias identificadas"
 
-  - id: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
-    path: "orchestration/tareas/TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION/"
+  - id: "TASK-2026-02-26-REMEDIACION-DOCUMENTAL-GENERAL"
+    path: "orchestration/tareas/TASK-2026-02-26-REMEDIACION-DOCUMENTAL-GENERAL/"
     epic_ref: "EPIC-WS-001"
-    estado: "completada"
-    fecha_creacion: "2026-02-12"
-    descripcion_corta: "Analisis de integracion backend — hallazgos, discrepancias y sprints de remediacion"
-
-  - id: "TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION"
-    path: "orchestration/tareas/TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION/"
-    epic_ref: "EPIC-WS-001"
-    estado: "completada"
-    fecha_creacion: "2026-02-12"
-    descripcion_corta: "Analisis de integracion frontend — hallazgos, discrepancias y mapeo de archivos"
-
-  # === 2026-02-13 ===
-
-  - id: "TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES"
-    path: "orchestration/tareas/TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES/"
-    epic_ref: "EPIC-WS-004"
-    estado: "completada"
-    fecha_creacion: "2026-02-13"
-    descripcion_corta: "Analisis consolidado de mejoras integrables identificadas en auditorias previas"
-
-  - id: "TASK-2026-02-13-CORRECCION-MULTI-TENANCY-PRODUCCION"
-    path: "orchestration/tareas/TASK-2026-02-13-CORRECCION-MULTI-TENANCY-PRODUCCION/"
-    epic_ref: "EPIC-WS-005"
-    estado: "completada"
-    fecha_creacion: "2026-02-13"
-    descripcion_corta: "Correccion de multi-tenancy en produccion — diagnostico, plan y dependencias"
-
-  - id: "TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP"
-    path: "orchestration/tareas/TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP/"
-    epic_ref: "EPIC-WS-003"
-    estado: "completada"
-    fecha_creacion: "2026-02-13"
-    descripcion_corta: "Fix de Redis/WebSocket en startup — analisis y validacion post-recreacion BD"
-
-  # === 2026-02-14 ===
-
-  - id: "TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA"
-    path: "orchestration/tareas/TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA/"
-    epic_ref: "EPIC-WS-001"
-    estado: "completada"
-    fecha_creacion: "2026-02-14"
-    descripcion_corta: "Auditoria integral de documentacion y gobernanza — orchestration, estandares, SSOT"
-
-  - id: "TASK-2026-02-14-INTEGRACION-DEEP-RESEARCH"
-    path: "orchestration/tareas/TASK-2026-02-14-INTEGRACION-DEEP-RESEARCH/"
-    epic_ref: "EPIC-WS-001"
-    estado: "completada"
-    fecha_creacion: "2026-02-14"
-    descripcion_corta: "Investigacion profunda de integracion — clasificacion de documentos, gap matrix, plan de fases"
-
-  # === 2026-02-15 ===
-
-  - id: "TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL"
-    path: "orchestration/tareas/TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL/"
-    epic_ref: "EPIC-WS-001"
-    estado: "completada"
-    fecha_creacion: "2026-02-15"
-    descripcion_corta: "Plan de desarrollo integral — analisis de gaps, plan, tareas por fase, metricas verificadas"
-
-  # === 2026-02-16 ===
-
-  - id: "TASK-2026-02-16-VALIDACION-INTEGRAL"
-    path: "orchestration/tareas/TASK-2026-02-16-VALIDACION-INTEGRAL/"
-    epic_ref: "EPIC-WS-005"
-    estado: "completada"
-    fecha_creacion: "2026-02-16"
-    descripcion_corta: "Validacion integral cross-layer — hallazgos DB/backend/frontend y plan de correcciones"
-
-  # === 2026-02-17 ===
-
-  - id: "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
-    path: "orchestration/tareas/TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO/"
-    epic_ref: "EPIC-WS-004"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Analisis y plan de mejoras de calidad de codigo — origen de items MQ-001 a MQ-010"
-
-  - id: "TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION"
-    path: "orchestration/tareas/TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION/"
-    epic_ref: "EPIC-WS-006"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Auditoria de trazabilidad y planeacion — origen de items TRZ-001 a TRZ-006"
-
-  - id: "TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES"
-    path: "orchestration/tareas/TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES/"
-    epic_ref: "EPIC-WS-007"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Procedimientos DB para DEV/PROD con agentes — origen de items DBOPS-001 a DBOPS-006"
-
-  - id: "TASK-2026-02-17-VALIDACION-INTEGRAL"
-    path: "orchestration/tareas/TASK-2026-02-17-VALIDACION-INTEGRAL/"
-    epic_ref: "EPIC-WS-005"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Validacion integral de correcciones tecnicas — cierre de CORR-01 a CORR-05"
-
-  - id: "TASK-2026-02-17-AUDITORIA-FLUJOS-P0"
-    path: "orchestration/tareas/TASK-2026-02-17-AUDITORIA-FLUJOS-P0/"
-    epic_ref: "EPIC-WS-006"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Auditoria de flujos P0 — hallazgos, plan de implementacion y asignacion de agentes"
-
-  - id: "TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL"
-    path: "orchestration/tareas/TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL/"
-    epic_ref: "EPIC-WS-005"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Cierre de riesgos residuales — hallazgos, plan de issues y asignacion de agentes"
-
-  - id: "TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES"
-    path: "orchestration/tareas/TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES/"
-    epic_ref: "EPIC-WS-004"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Implementacion de plan de estandares — CAPVED completo con contexto, analisis, plan, validacion, ejecucion"
-
-  - id: "TASK-2026-02-17-VALIDACION-DESARROLLO"
-    path: "orchestration/tareas/TASK-2026-02-17-VALIDACION-DESARROLLO/"
-    epic_ref: "EPIC-WS-004"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Validacion de desarrollo — hallazgos, plan de correcciones y validacion del plan"
-
-  - id: "TASK-2026-02-17-VALIDACION-REQUISITOS"
-    path: "orchestration/tareas/TASK-2026-02-17-VALIDACION-REQUISITOS/"
-    epic_ref: "EPIC-WS-006"
-    estado: "completada"
-    fecha_creacion: "2026-02-17"
-    descripcion_corta: "Validacion de requisitos — hallazgos, discrepancias y plan de correccion"
+    estado: "completado"
+    fecha_creacion: "2026-02-26"
+    fecha_completado: "2026-02-26"
+    descripcion_corta: "Remediacion documental 3 fases — 60+ archivos, 150+ valores corregidos, 0 residuales"
 
 # ------------------------------------------------------------------------------
-# TAREAS HISTORICAS (archivadas en orchestration/tareas/_archive/)
-# ------------------------------------------------------------------------------
-# Las tareas previas al 2026-02-12 fueron archivadas y consolidadas.
-# Total archivado: 53 tareas (21 del 2026-01-24, 12 del 2026-01-25, 9 del 2026-01-27,
-#                  2 del 2026-01-30, 1 del 2026-01-31, 3 del 2026-02-02,
-#                  1 del 2026-02-05, 1 del 2026-02-06, 2 del 2026-02-03)
-#
-# Referencia: orchestration/tareas/_archive/
-# Consolidado: TAREAS-HISTORICO-CONSOLIDADO.md
-#
-# Asignacion EPIC retroactiva (historicas):
-#   - Tareas 2026-01-24 a 2026-01-31: EPIC-WS-001 (gobernanza y estandarizacion)
-#   - TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS: EPIC-WS-001
-#   - TASK-2026-02-02-REMEDIACION-DDL: EPIC-WS-005
-#   - TASK-2026-02-02-IMPLEMENTAR-OPTIMIZACION-TRIGGERS: EPIC-WS-003
-#   - TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS: EPIC-WS-001
-#   - TASK-2026-02-03-ANALISIS-FRONTEND-UXUI: EPIC-WS-001
-#   - TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD: EPIC-WS-001
-#   - TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION: EPIC-WS-001
-
-# ------------------------------------------------------------------------------
-# DISTRIBUCION POR EPIC
+# ARCHIVO HISTORICO
 # ------------------------------------------------------------------------------
 
-distribucion_por_epic:
-  EPIC-WS-001:
-    titulo: "Estandarizacion y Gobernanza del Workspace"
-    tareas_activas:
-      - "TASK-2026-02-12-ANALISIS-BD-VS-DOCS"
-      - "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
-      - "TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION"
-      - "TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA"
-      - "TASK-2026-02-14-INTEGRACION-DEEP-RESEARCH"
-      - "TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL"
-    count: 6
-
-  EPIC-WS-003:
-    titulo: "Optimizacion de Infraestructura"
-    tareas_activas:
-      - "TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP"
-    count: 1
-
-  EPIC-WS-004:
-    titulo: "Mejoras de Calidad de Codigo"
-    tareas_activas:
-      - "TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES"
-      - "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
-      - "TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES"
-      - "TASK-2026-02-17-VALIDACION-DESARROLLO"
-    count: 4
-
-  EPIC-WS-005:
-    titulo: "Correcciones Tecnicas Pendientes"
-    tareas_activas:
-      - "TASK-2026-02-13-CORRECCION-MULTI-TENANCY-PRODUCCION"
-      - "TASK-2026-02-16-VALIDACION-INTEGRAL"
-      - "TASK-2026-02-17-VALIDACION-INTEGRAL"
-      - "TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL"
-    count: 4
-
-  EPIC-WS-006:
-    titulo: "Trazabilidad de Procesos y Planeacion Integrada"
-    tareas_activas:
-      - "TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION"
-      - "TASK-2026-02-17-AUDITORIA-FLUJOS-P0"
-      - "TASK-2026-02-17-VALIDACION-REQUISITOS"
-    count: 3
-
-  EPIC-WS-007:
-    titulo: "Gobernanza DB DDL-First por Ambientes"
-    tareas_activas:
-      - "TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES"
-    count: 1
-
-# ------------------------------------------------------------------------------
-# ESTADISTICAS
-# ------------------------------------------------------------------------------
-
-estadisticas:
-  total_tareas: 19
-  tareas_con_epic_ref: 19
-  cobertura_porcentaje: 100
-  por_estado:
-    completadas: 19
-    en_progreso: 0
-    pendientes: 0
-  por_epic:
-    EPIC-WS-001: 6
-    EPIC-WS-002: 0
-    EPIC-WS-003: 1
-    EPIC-WS-004: 4
-    EPIC-WS-005: 4
-    EPIC-WS-006: 3
-    EPIC-WS-007: 1
-  tareas_historicas_archivadas: 53
-  tareas_totales_incluyendo_historicas: 72
-
-# ------------------------------------------------------------------------------
-# NOTAS
-# ------------------------------------------------------------------------------
-
-notas: |
-  Este indice fue reestructurado en v3.0.0 (MQ-004) para vincular TODAS las
-  tareas activas con sus EPICs del backlog (BACKLOG.yml).
-
-  Cambios respecto a v2.4.0:
-  - Reestructurado: formato plano con campos estandar (id, path, epic_ref, estado,
-    fecha_creacion, descripcion_corta) para cada tarea
-  - Agregado: campo epic_ref en cada tarea vinculando a EPIC-WS-001..007
-  - Agregado: seccion distribucion_por_epic con conteo por EPIC
-  - Agregado: estadisticas actualizadas con cobertura de vinculacion
-  - Conservado: referencia a tareas historicas archivadas con asignacion EPIC retroactiva
-
-  Criterio de asignacion EPIC:
-  - Tareas de analisis/auditoria de coherencia cross-layer -> EPIC-WS-001
-  - Tareas de features cross-project -> EPIC-WS-002
-  - Tareas de infraestructura (Redis, CI/CD, deployment) -> EPIC-WS-003
-  - Tareas de calidad de codigo y estandares -> EPIC-WS-004
-  - Tareas de correcciones tecnicas (bugs, DDL, RLS, seeds) -> EPIC-WS-005
-  - Tareas de trazabilidad y planeacion integrada -> EPIC-WS-006
-  - Tareas de gobernanza DB y ambientes -> EPIC-WS-007
+archivo_historico:
+  ref: "orchestration/tareas/ARCHIVE-DIGEST.md"
+  tareas_archivadas: 39
+  periodo: "2026-02-12 a 2026-02-21"
+  nota: "Recuperables via git history"
 
 # ==============================================================================
 # FIN DEL INDICE

@@ -20,6 +20,10 @@ flowchart TD
     db --> ui[Detalle por modulo]
 ```
 
+## Nota Tecnica
+
+> **Nota Tecnica:** El datasource `data_warehouse` NO esta configurado como datasource activo en `app.module.ts`. Los endpoints que dependen de analytics/data_warehouse pueden no estar operativos hasta que se configure.
+
 ## Secuencia FE -> BE -> DB
 
 1. Padre selecciona estudiante.

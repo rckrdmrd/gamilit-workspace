@@ -4,7 +4,7 @@
 
 ---
 
-## Archivos Root (11)
+## Archivos Root (12)
 
 | Archivo | Descripcion |
 |---------|-------------|
@@ -19,6 +19,7 @@
 | [COHERENCE-ENTITIES-DDL.md](COHERENCE-ENTITIES-DDL.md) | Coherencia DDL ↔ Entities TypeORM |
 | [TRACEABILITY-US-SCHEMAS.md](TRACEABILITY-US-SCHEMAS.md) | Trazabilidad User Stories ↔ Schemas |
 | [SCHEMA-REFERENCE.md](SCHEMA-REFERENCE.md) | Indice de referencia de schemas |
+| [DB-OPERACION-AMBIENTES-DECISION.md](DB-OPERACION-AMBIENTES-DECISION.md) | Decision operativa de BD por ambiente (dev vs prod) |
 
 ## Subdirectorios
 
@@ -68,4 +69,4 @@ Documentacion detallada por schema de base de datos:
 
 ---
 
-**Total:** 11 archivos root + 22 schema-reference + 8 gamificacion + _INDEX.md
+**Total:** 12 archivos root + 22 schema-reference + 8 gamificacion + _INDEX.md

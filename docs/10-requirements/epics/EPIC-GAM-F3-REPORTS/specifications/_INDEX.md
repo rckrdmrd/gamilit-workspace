@@ -1,0 +1,10 @@
+# _INDEX - Especificaciones EPIC-GAM-F3-REPORTS
+
+> Especificaciones tecnicas de reportes.
+
+| Archivo | Descripcion |
+|---------|-------------|
+| [ET-REP-001-reportes-estudiante.md](./ET-REP-001-reportes-estudiante.md) | Reportes estudiante |
+| [ET-REP-002-reportes-aula.md](./ET-REP-002-reportes-aula.md) | Reportes aula |
+| [ET-REP-003-export-pdf-excel.md](./ET-REP-003-export-pdf-excel.md) | Export PDF/Excel |
+| [_MAP.md](./_MAP.md) | Mapa de navegacion |

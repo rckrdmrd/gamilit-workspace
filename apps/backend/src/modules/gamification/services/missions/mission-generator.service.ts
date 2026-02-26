@@ -178,7 +178,7 @@ export class MissionGeneratorService {
         ml_coins: template.ml_coins_reward,
         xp: template.xp_reward,
       } as MissionRewards,
-      status: MissionStatusEnum.ACTIVE,
+      status: MissionStatusEnum.IN_PROGRESS,
       progress: 0,
       start_date: new Date(),
       end_date: endDate,

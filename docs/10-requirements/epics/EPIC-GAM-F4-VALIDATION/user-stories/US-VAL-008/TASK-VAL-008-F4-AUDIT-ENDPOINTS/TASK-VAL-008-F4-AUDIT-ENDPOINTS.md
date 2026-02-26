@@ -12,5 +12,5 @@ Mapear endpoints API a controllers para verificar cobertura.
 4. Documentar endpoints huerfanos o sin implementacion
 
 ## Criterio Pass
-- 850 endpoints mapeados
+- 912 endpoints mapeados
 - Cobertura documentada

@@ -140,11 +140,11 @@ orchestration/trazas/DECISIONES-SESION.yml
 
 ## 9. HERENCIA
 
-GAMILIT hereda de:
-1. `workspace-v2/CLAUDE.md` (reglas workspace)
-2. `workspace-v2/orchestration/directivas/` (SIMCO)
+GAMILIT es standalone. La base normativa local es:
+1. `orchestration/directivas/` (SIMCO)
+2. `orchestration/_inheritance.yml` (modelo de herencia local)
 
-Ver: `orchestration/00-guidelines/HERENCIA-SIMCO.md`
+Ver: `orchestration/templates/04-globales/HERENCIA-SIMCO.md`
 
 ---
 

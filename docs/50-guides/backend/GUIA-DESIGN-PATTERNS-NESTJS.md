@@ -1011,7 +1011,7 @@ export class TypeOrmUserRepository implements IUserRepository {
 })
 ```
 
-En gamilit, 155 entities (156 classes) mapean a repositories via TypeORM `Repository<Entity>`, organizados en 10 datasources (uno por schema de PostgreSQL).
+En gamilit, 156 entity files (157 classes) mapean a repositories via TypeORM `Repository<Entity>`, organizados en 11 datasources (uno por schema de PostgreSQL).
 
 ---
 

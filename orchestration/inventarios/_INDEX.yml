@@ -1,0 +1,79 @@
+# ===============================================================================
+# INDICE DE INVENTARIOS - GAMILIT
+# ===============================================================================
+#
+# Version: 1.0.0
+# Fecha: 2026-02-25
+# Proposito: Indice maestro de todos los inventarios SSOT del proyecto
+# Ubicacion: orchestration/inventarios/
+#
+# ===============================================================================
+
+version: "1.0.0"
+updated: "2026-02-25"
+owner: "orchestration"
+total_inventarios: 10
+
+# -------------------------------------------------------------------------------
+# INVENTARIOS
+# -------------------------------------------------------------------------------
+
+inventarios:
+
+  # --- Inventarios por Capa (4) ---
+
+  - nombre: "MASTER_INVENTORY.yml"
+    descripcion: "Inventario maestro consolidado — metricas globales del proyecto"
+    dominio: "global"
+    prioridad: "critico"
+
+  - nombre: "DATABASE_INVENTORY.yml"
+    descripcion: "Inventario de base de datos — schemas, tablas, funciones, triggers, RLS"
+    dominio: "database"
+    prioridad: "critico"
+
+  - nombre: "BACKEND_INVENTORY.yml"
+    descripcion: "Inventario de backend — modulos, entities, services, controllers, endpoints"
+    dominio: "backend"
+    prioridad: "critico"
+
+  - nombre: "FRONTEND_INVENTORY.yml"
+    descripcion: "Inventario de frontend — componentes, hooks, paginas, stores, routes"
+    dominio: "frontend"
+    prioridad: "critico"
+
+  # --- Inventarios por Dominio (6) ---
+
+  - nombre: "SEEDS_INVENTORY.yml"
+    descripcion: "Inventario de seeds de base de datos — archivos SQL de datos iniciales"
+    dominio: "database"
+    prioridad: "alto"
+
+  - nombre: "DEPENDENCY_GRAPH.yml"
+    descripcion: "Grafo de dependencias entre modulos y capas del sistema"
+    dominio: "arquitectura"
+    prioridad: "medio"
+
+  - nombre: "TRACEABILITY_MATRIX.yml"
+    descripcion: "Matriz de trazabilidad — mapeo requerimientos a implementacion"
+    dominio: "calidad"
+    prioridad: "medio"
+
+  - nombre: "SKILLS-REGISTRY.yml"
+    descripcion: "Registro de skills de agentes — capacidades y contratos"
+    dominio: "orquestacion"
+    prioridad: "medio"
+
+  - nombre: "TEST_COVERAGE.yml"
+    descripcion: "Inventario de cobertura de tests — suites, archivos, metricas"
+    dominio: "calidad"
+    prioridad: "alto"
+
+  - nombre: "LOCAL-WSL-ENVIRONMENT.yml"
+    descripcion: "Configuracion de entorno local WSL — puertos, IPs, paths"
+    dominio: "devenv"
+    prioridad: "medio"
+
+# ===============================================================================
+# FIN DE INDICE DE INVENTARIOS
+# ===============================================================================

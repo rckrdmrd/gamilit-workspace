@@ -14,7 +14,7 @@
 
 ## Descripcion
 
-Documentacion completa del proyecto gamilit como plataforma educativa gamificada. Abarca la documentacion tecnica y funcional en las 6 secciones del directorio docs/ (overview, requirements, architecture, ux-ui, api, adr), la documentacion de orquestacion con inventarios YAML sincronizados (MASTER, DATABASE, BACKEND, FRONTEND + 4 especializados), CLAUDE.md v2.0.0 como identidad del proyecto, 33 ADRs (4 arquitectura + 29 migrados del sistema NEXUS), 27 user stories L3, y la API Reference con los 905 endpoints documentados en Swagger/OpenAPI.
+Documentacion completa del proyecto gamilit como plataforma educativa gamificada. Abarca la documentacion tecnica y funcional en las 6 secciones del directorio docs/ (overview, requirements, architecture, ux-ui, api, adr), la documentacion de orquestacion con inventarios YAML sincronizados (MASTER, DATABASE, BACKEND, FRONTEND + 4 especializados), CLAUDE.md v2.0.0 como identidad del proyecto, 33 ADRs (4 arquitectura + 29 migrados del sistema NEXUS), 27 user stories L3, y la API Reference con los 912 endpoints documentados en Swagger/OpenAPI.
 
 ## Alcance
 
@@ -22,7 +22,7 @@ Documentacion completa del proyecto gamilit como plataforma educativa gamificada
 - docs/00-overview/: VISION-ALCANCE, MODULOS-EDUCATIVOS, ONBOARDING, GLOSARIO
 - docs/10-requirements/: 27 user stories L3, 5 guias de prueba por modulo educativo
 - docs/20-architecture/: STACK-TECNOLOGICO, GAMIFICACION-MAYA, MODELO-DATOS, SCHEMA-REFERENCE
-- docs/40-api/: API-REFERENCE (905 endpoints), ADMIN-PORTAL-ENDPOINTS
+- docs/40-api/: API-REFERENCE (912 endpoints), ADMIN-PORTAL-ENDPOINTS
 - docs/90-adr/: 33 ADRs (ADR-001 a ADR-004 + 29 migrados)
 - orchestration/: inventarios YAML (8), work-items, PROJECT-CONTEXT
 - README.md completo del proyecto
@@ -31,9 +31,9 @@ Documentacion completa del proyecto gamilit como plataforma educativa gamificada
 
 | Capa | Componentes |
 |------|-------------|
-| Database | DATABASE_INVENTORY.yml (18 schemas, 169 tablas documentados) |
-| Backend | BACKEND_INVENTORY.yml (23 modulos, 905 endpoints documentados), Swagger/OpenAPI |
-| Frontend | FRONTEND_INVENTORY.yml (4 portales, 580 componentes documentados) |
+| Database | DATABASE_INVENTORY.yml (18 schemas, 173 tablas documentados) |
+| Backend | BACKEND_INVENTORY.yml (23 modulos, 912 endpoints documentados), Swagger/OpenAPI |
+| Frontend | FRONTEND_INVENTORY.yml (4 portales, 577 componentes documentados) |
 | DevOps | N/A |
 
 ## Dependencias

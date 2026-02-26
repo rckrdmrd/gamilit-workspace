@@ -15,7 +15,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 | Metrica | Valor |
 |---------|-------|
-| Total Entities Backend | 156 files (159 @Entity classes) |
+| Total Entities Backend | 156 files (157 @Entity classes) |
 | Total Tablas DDL | 173 |
 | Tablas con Entity | 156 |
 | Tablas sin Entity | 17 |

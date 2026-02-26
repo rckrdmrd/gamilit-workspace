@@ -1,0 +1,7 @@
+# _INDEX - Tasks EPIC-GAM-F3-PROFILES
+
+> Tareas de perfiles.
+
+| Archivo | Descripcion |
+|---------|-------------|
+| [_MAP.md](./_MAP.md) | Mapa de tareas |

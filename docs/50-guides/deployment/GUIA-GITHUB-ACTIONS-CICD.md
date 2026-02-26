@@ -13,6 +13,7 @@ estado: vigente
 > **Fecha:** 2026-02-14
 > **Repositorio:** git@github.com:rckrdmrd/gamilit-workspace.git
 > **Branch principal:** master
+> **SSOT operativo:** `orchestration/referencias/MATRIZ-SSOT-DEV-PROD.md`
 
 ---
 
@@ -42,7 +43,7 @@ Automatizar los procesos de integracion continua (CI) y despliegue continuo (CD)
 | Validacion de codigo | Manual (`npm run lint/test/build`) | Automatica en cada PR |
 | Deploy a produccion | SSH manual + PM2 restart | Automatizado con aprobacion |
 | Quality gates | No existen | Bloquean merge si fallan |
-| Tests backend | 833 tests Jest, ejecucion manual | Ejecucion automatica en CI |
+| Tests backend | 2324 tests Jest, ejecucion manual | Ejecucion automatica en CI |
 | Tests frontend | 46 tests Vitest, ejecucion manual | Ejecucion automatica en CI |
 | Auditoria de seguridad | No se ejecuta regularmente | `npm audit` en cada PR |
 
@@ -67,7 +68,7 @@ Push/PR → CI Pipeline → Quality Gates → CD Pipeline → Deploy
 │  ┌──────────────────────────────────────────────┐               │
 │  │ Quality Gates (TODAS deben pasar)            │               │
 │  │ • Backend lint: 0 errores                    │               │
-│  │ • Backend tests: 833+ passing (Jest)         │               │
+│  │ • Backend tests: 2324+ passing (Jest)        │               │
 │  │ • Backend build: exitoso                     │               │
 │  │ • Frontend lint: 0 errores                   │               │
 │  │ • Frontend typecheck: 0 errores              │               │
@@ -84,7 +85,7 @@ Push/PR → CI Pipeline → Quality Gates → CD Pipeline → Deploy
 │    → cd apps/backend && npm ci && npm run build                 │
 │    → cd apps/frontend && npm ci && npm run build                │
 │    → pm2 restart ecosystem.config.js --env production           │
-│    → Health checks (backend :4006, frontend :4005)              │
+│    → Health checks (backend :3006, frontend :3005)              │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -158,7 +159,7 @@ jobs:
       - name: Ejecutar linter (ESLint)
         run: npm run lint
 
-      - name: Ejecutar tests (Jest, 833+ tests)
+      - name: Ejecutar tests (Jest, 2324+ tests)
         run: npm run test
         env:
           NODE_ENV: test
@@ -334,7 +335,7 @@ jobs:
           command_timeout: 10m
           script: |
             echo "=== Iniciando deploy de gamilit ==="
-            cd /home/isem/workspace-v2/projects/gamilit
+            cd /home/isem/gamilit-workspace
 
             echo "--- 1. Pull de cambios ---"
             git fetch origin master
@@ -360,8 +361,8 @@ jobs:
             sleep 10
 
             echo "--- 6. Health checks ---"
-            # Backend en puerto interno 4006
-            BACKEND_STATUS=$(curl -sf http://localhost:4006/api/v1/health || echo "FAIL")
+            # Backend en puerto 3006
+            BACKEND_STATUS=$(curl -sf http://localhost:3006/api/v1/health || echo "FAIL")
             if echo "$BACKEND_STATUS" | grep -q "FAIL"; then
               echo "ERROR: Backend health check fallo"
               pm2 logs gamilit-backend --lines 20 --nostream
@@ -369,8 +370,8 @@ jobs:
             fi
             echo "Backend OK: $BACKEND_STATUS"
 
-            # Frontend en puerto interno 4005
-            FRONTEND_STATUS=$(curl -sf http://localhost:4005 || echo "FAIL")
+            # Frontend en puerto 3005
+            FRONTEND_STATUS=$(curl -sf http://localhost:3005 || echo "FAIL")
             if echo "$FRONTEND_STATUS" | grep -q "FAIL"; then
               echo "ERROR: Frontend health check fallo"
               pm2 logs gamilit-frontend --lines 20 --nostream
@@ -394,7 +395,7 @@ jobs:
 - **workflow_dispatch:** Permite trigger manual desde la interfaz de GitHub Actions. Recomendado como primer paso antes de auto-deploy.
 - **environment: production:** Requiere aprobacion manual en la configuracion de GitHub (Settings > Environments > production > Required reviewers).
 - **Backup previo:** Se crea un dump de la BD antes de cada deploy. Se puede saltar para hotfixes urgentes.
-- **Health checks:** Verifican que tanto backend (`:4006/api/v1/health`) como frontend (`:4005`) responden correctamente despues del restart de PM2.
+- **Health checks:** Verifican que tanto backend (`:3006/api/v1/health`) como frontend (`:3005`) responden correctamente despues del restart de PM2.
 - **Timeout de 10 minutos:** Suficiente para `npm ci` + `npm run build` de ambas aplicaciones.
 
 ---
@@ -557,7 +558,7 @@ Para compilaciones pesadas, se puede cachear el directorio `dist`:
 | npm ci frontend | ~90s | ~20s |
 | npm run build backend | ~30s | ~30s |
 | npm run build frontend | ~45s | ~45s |
-| Tests backend (833) | ~60s | ~60s |
+| Tests backend (2324) | ~120s | ~120s |
 | Tests frontend (46) | ~15s | ~15s |
 | **Total CI (paralelo)** | **~4 min** | **~2.5 min** |
 
@@ -647,11 +648,11 @@ gamilit-workspace/
 │   └── workflows/
 │       ├── ci.yml          ← Validacion en PR (lint, test, build)
 │       └── cd.yml          ← Deploy a produccion (SSH + PM2)
-├── ecosystem.config.js     ← Configuracion PM2 (backend:4006, frontend:4005)
+├── ecosystem.config.js     ← Configuracion PM2 (backend:3006, frontend:3005)
 ├── apps/
-│   ├── backend/            ← NestJS 11, Jest (833 tests)
+│   ├── backend/            ← NestJS 11, Jest (2324 tests)
 │   ├── frontend/           ← React 19, Vitest (46 tests), Vite 6.x
-│   └── database/           ← PostgreSQL 15, 18 schemas, 169 tablas
+│   └── database/           ← PostgreSQL 15, 18 schemas, 173 tablas
 └── ...
 ```
 

@@ -1,4 +1,4 @@
-# EXT-010: Parent Notifications
+# EPIC-GAM-F3-PARENT-NOTIFICATIONS: Parent Notifications
 
 > **⚠️ BACKLOG - FUERA DEL MVP**
 >

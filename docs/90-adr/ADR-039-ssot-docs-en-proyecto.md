@@ -103,9 +103,9 @@ depends_on: []
 ### DEC-SSOT-004: Inventarios en orchestration/
 
 **Decision:** `orchestration/inventarios/` contiene SSOT de implementacion (no producto):
-- `DATABASE_INVENTORY.yml` — Schemas, tablas, views, funciones (169 tablas)
-- `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (155 entity files/156 classes, 905 endpoints)
-- `FRONTEND_INVENTORY.yml` — Components, pages, stores (580 componentes, 70 paginas)
+- `DATABASE_INVENTORY.yml` — Schemas, tablas, views, funciones (173 tablas)
+- `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (156 entity files/157 classes, 912 endpoints)
+- `FRONTEND_INVENTORY.yml` — Components, pages, stores (577 componentes, 70 paginas)
 - `MASTER_INVENTORY.yml` — Metricas consolidadas
 
 **Separacion clara:**

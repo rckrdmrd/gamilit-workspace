@@ -14,26 +14,26 @@
 
 ## Descripcion
 
-Implementacion completa del esquema de base de datos PostgreSQL 15 para la plataforma educativa gamilit. Abarca 18 schemas modulares que cubren desde autenticacion y multi-tenancy hasta los 5 modulos educativos, el sistema de gamificacion maya, y los portales de maestros y padres. El diseno incluye Row Level Security (RLS) con 207 politicas para aislamiento multi-tenant, 183 funciones (DDL) para logica de negocio critica, y 67 triggers para automatizacion de eventos como calculo de XP y actualizacion de rangos maya.
+Implementacion completa del esquema de base de datos PostgreSQL 15 para la plataforma educativa gamilit. Abarca 18 schemas modulares que cubren desde autenticacion y multi-tenancy hasta los 5 modulos educativos, el sistema de gamificacion maya, y los portales de maestros y padres. El diseno incluye Row Level Security (RLS) con 251 politicas para aislamiento multi-tenant, 158 funciones (DDL) para logica de negocio critica, y 68 triggers para automatizacion de eventos como calculo de XP y actualizacion de rangos maya.
 
 ## Alcance
 
 - 18 schemas creados con todas sus tablas (auth, users, tenants, modules, exercises, content, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports, notifications, settings)
-- 169 tablas con DDL completo (CREATE TABLE, constraints, defaults, comments)
-- 231 RLS policies para multi-tenancy seguro
-- 183 funciones (DDL) (calculo XP, evaluacion ejercicios, ranking, estadisticas)
-- 67 triggers (auto-update timestamps, gamification events, notification dispatch)
+- 173 tablas con DDL completo (CREATE TABLE, constraints, defaults, comments)
+- 251 RLS policies para multi-tenancy seguro
+- 158 funciones (DDL) (calculo XP, evaluacion ejercicios, ranking, estadisticas)
+- 68 triggers (auto-update timestamps, gamification events, notification dispatch)
 - 42 ENUMs sincronizados entre DDL y backend
 - 13 views + 7 materialized views (leaderboards, estadisticas agregadas)
-- 299 foreign keys con integridad referencial
+- 301 foreign keys con integridad referencial
 - Seeds de datos de prueba para desarrollo
 
 ## Componentes Afectados
 
 | Capa | Componentes |
 |------|-------------|
-| Database | 18 schemas, 169 tablas, 231 RLS, 183 funciones (DDL), 67 triggers, 42 ENUMs, 13 views, 7 MVs, 299 FKs |
-| Backend | TypeORM entities (152) deben sincronizar con DDL |
+| Database | 18 schemas, 173 tablas, 251 RLS, 158 funciones (DDL), 68 triggers, 42 ENUMs, 13 views, 7 MVs, 301 FKs |
+| Backend | TypeORM entities: 156 files (157 classes) deben sincronizar con DDL |
 | Frontend | N/A (indirectamente via API) |
 | DevOps | Script unified-recreate-db.sh para recreacion automatizada en WSL |
 
@@ -48,8 +48,8 @@ Implementacion completa del esquema de base de datos PostgreSQL 15 para la plata
 
 ## Definition of Done
 
-- [ ] 169 tablas creadas en 18 schemas con DDL completo y sin errores de ejecucion
-- [ ] 231 RLS policies aplicadas y verificadas con multi-tenant queries
+- [ ] 173 tablas creadas en 18 schemas con DDL completo y sin errores de ejecucion
+- [ ] 251 RLS policies aplicadas y verificadas con multi-tenant queries
 - [ ] Seeds de datos ejecutados exitosamente en WSL con unified-recreate-db.sh
 - [ ] Documentacion actualizada
 - [ ] Inventarios sincronizados

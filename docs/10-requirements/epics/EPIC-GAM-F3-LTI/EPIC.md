@@ -1,4 +1,4 @@
-# EXT-007: LTI Integration
+# EPIC-GAM-F3-LTI: LTI Integration
 
 > **BACKLOG - FUERA DEL MVP**
 >
@@ -199,8 +199,8 @@ Para detalle completo de implementacion, ver:
 - **P0/P1 fixes:** Seguridad y funcionalidad critica resueltos
 
 ### Bloquea
-- **EXT-002:** Admin Extendido (gestion de tenants con LTI)
-- **EXT-005:** Reportes Avanzados (metricas de integracion LTI)
+- **EPIC-GAM-F3-ADMIN-EXTENDED:** Admin Extendido (gestion de tenants con LTI)
+- **EPIC-GAM-F3-REPORTS:** Reportes Avanzados (metricas de integracion LTI)
 
 ---
 

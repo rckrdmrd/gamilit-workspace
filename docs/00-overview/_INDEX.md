@@ -10,7 +10,7 @@
 | [IDENTIDAD.md](./IDENTIDAD.md) | Identidad institucional y tecnica del proyecto |
 | [VISION.md](./VISION.md) | Proposito y objetivos academicos |
 | [ARQUITECTURA-TECNICA.md](./ARQUITECTURA-TECNICA.md) | Stack y estructura monorepo |
-| [MODULOS-SISTEMA.md](./MODULOS-SISTEMA.md) | Catalogo de modulos funcionales |
+| [MODULOS.md](./MODULOS.md) | Catalogo de modulos funcionales (23 modulos) |
 | [MODULOS-EDUCATIVOS.md](./MODULOS-EDUCATIVOS.md) | Resumen de modulos y ejercicios |
 | [PORTALES.md](./PORTALES.md) | Portales y responsabilidades |
 | [GAMIFICACION.md](./GAMIFICACION.md) | Componentes del sistema gamificado |
@@ -25,6 +25,9 @@
 | [DEVOPS.md](./DEVOPS.md) | Configuracion DevOps |
 | [VISION-ALCANCE.md](./VISION-ALCANCE.md) | Redirect a docs/10-requirements/ |
 | [ONBOARDING.md](./ONBOARDING.md) | Redirect a docs/70-onboarding/ |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | Arquitectura de deployment y servidor de produccion |
+| [MODULOS.md](./MODULOS.md) | Catalogo de modulos del sistema (23 modulos) |
+| [REPORTE-INTEGRAL-2026-01-20.md](./REPORTE-INTEGRAL-2026-01-20.md) | Reporte integral de analisis final de portales y documentacion |
 
 ## Secciones Relacionadas
 

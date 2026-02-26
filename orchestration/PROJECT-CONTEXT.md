@@ -1,6 +1,6 @@
 # PROJECT-CONTEXT - GAMILIT
 
-**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.1.0 | **Fecha:** 2026-02-21
+**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.1.0 | **Fecha:** 2026-02-25
 
 ---
 
@@ -127,10 +127,10 @@ teachers, parents, analytics, reports
 18 schemas | 173 tablas | 18 views | 7 MVs | 158 funciones (DDL) | 68 triggers | 251 RLS policies | 42 ENUMs
 
 ### Backend
-23 modulos | 156 files (159 classes) | 401 DTOs | 172 services | 108 controllers | 912 endpoints | 15 guards | 18 decorators
+23 modulos | 156 files (157 classes) | 401 DTOs | 172 services | 108 controllers | 912 endpoints | 15 guards | 18 decorators
 
 ### Frontend
-590 componentes | 127 hooks | 70 paginas | 13 stores | 67 API services | 4 portales | 30 mecanicas
+577 componentes | 134 hooks | 67 paginas | 13 stores | 65 API services | 4 portales | 30 mecanicas
 
 ### Testing
 833 tests pasando (620 backend + 236 frontend) | Target 80% cobertura | Coherencia DDL-Backend: 90.2%

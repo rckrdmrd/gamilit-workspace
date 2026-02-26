@@ -77,21 +77,21 @@
 
 ---
 
-## Nota de Auditoria (2026-02-12)
+## Nota de Auditoria (2026-02-26, actualizado)
 
-> **IMPORTANTE:** Los criterios de aceptacion de US-VAL-002 (Database Integrity) usan metricas pre-auditoria que deben actualizarse con el baseline real verificado en TASK-2026-02-12-ANALISIS-BD-VS-DOCS:
+> **Metricas canonicas DDL vigentes** (SSOT: `orchestration/inventarios/DATABASE_INVENTORY.yml`):
 >
-> | Metrica | Valor en US | Valor Real Correcto |
-> |---------|-------------|---------------------|
-> | Tablas | 147/170 | **171** |
-> | FKs | 299 | **298** |
-> | RLS Policies | 282 | **263** |
-> | ENUMs | 36 | **42** |
-> | Funciones | 128/255 | **183** |
-> | Triggers | 49/132 | **126** |
-> | PostgreSQL | 16 (en algunos docs) | **15** |
->
-> **Referencia:** `orchestration/inventarios/DATABASE_INVENTORY.yml` (v8.0.0)
+> | Metrica | Valor Canonico DDL |
+> |---------|--------------------|
+> | Tablas | **173** |
+> | FKs | **301** |
+> | RLS Policies | **251** |
+> | ENUMs | **42** |
+> | Funciones (DDL source) | **158** |
+> | Triggers (DDL source) | **68** |
+> | Entities | **156 files (157 classes)** |
+> | Endpoints | **912** |
+> | Tests | **2324 (2296 passed + 28 skipped)** |
 
 ---
 

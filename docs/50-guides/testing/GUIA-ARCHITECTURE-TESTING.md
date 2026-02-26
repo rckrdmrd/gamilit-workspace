@@ -18,7 +18,7 @@ estado: vigente
 
 ## 1. Proposito
 
-Validar que las reglas arquitectonicas del proyecto gamilit se cumplen automaticamente mediante tests. Esto previene la degradacion gradual de la arquitectura conforme crece el codebase (23 modulos, 155 entities (156 classes), 173 services, 108 controllers).
+Validar que las reglas arquitectonicas del proyecto gamilit se cumplen automaticamente mediante tests. Esto previene la degradacion gradual de la arquitectura conforme crece el codebase (23 modulos, 156 entities (157 classes), 172 services, 108 controllers).
 
 Los architecture tests son tests automatizados que verifican:
 
@@ -27,7 +27,7 @@ Los architecture tests son tests automatizados que verifican:
 - **Reglas de nomenclatura** — Archivos y clases siguen convenciones consistentes
 - **Ausencia de ciclos** — No existen dependencias circulares entre modulos
 
-Estos tests se ejecutan junto con el suite de tests existente (833 tests passing, 57 spec files) y no requieren infraestructura adicional.
+Estos tests se ejecutan junto con el suite de tests existente (2324 tests, 63 spec files) y no requieren infraestructura adicional.
 
 ---
 
@@ -101,7 +101,7 @@ describe('Architecture Rules', () => {
 });
 ```
 
-**Justificacion en gamilit:** Con 108 controllers y 173 services, es critico mantener esta separacion. Un controller que accede directamente al repository bypasa validaciones de negocio, guards y interceptors.
+**Justificacion en gamilit:** Con 108 controllers y 172 services, es critico mantener esta separacion. Un controller que accede directamente al repository bypasa validaciones de negocio, guards y interceptors.
 
 ### 3.2 Entities no importan de infrastructure
 
@@ -129,7 +129,7 @@ it('entities should not depend on services', async () => {
 });
 ```
 
-**Justificacion en gamilit:** Las 155 entities (156 classes) del proyecto representan el modelo de datos de 18 schemas PostgreSQL. Deben ser independientes de la logica de negocio para permitir su reutilizacion en multiples services y modulos.
+**Justificacion en gamilit:** Las 156 entities (157 classes) del proyecto representan el modelo de datos de 18 schemas PostgreSQL. Deben ser independientes de la logica de negocio para permitir su reutilizacion en multiples services y modulos.
 
 ### 3.3 Sin dependencias circulares entre modulos
 
@@ -243,7 +243,7 @@ it('DTOs should not import repositories', async () => {
 });
 ```
 
-**Justificacion en gamilit:** Con 399 DTOs distribuidos en 23 modulos, mantener los DTOs como estructuras puras de datos es esencial para la mantenibilidad. La logica de transformacion pertenece a los services.
+**Justificacion en gamilit:** Con 401 DTOs distribuidos en 23 modulos, mantener los DTOs como estructuras puras de datos es esencial para la mantenibilidad. La logica de transformacion pertenece a los services.
 
 ### 3.7 Interceptors en shared o su modulo especifico
 
@@ -260,7 +260,7 @@ it('interceptors should be in shared or their specific module', async () => {
 });
 ```
 
-**Justificacion en gamilit:** Los 5 interceptors del proyecto (RlsInterceptor, AuditInterceptor, TransformResponseInterceptor, etc.) deben estar centralizados. El `RlsInterceptor` en `shared/` aplica multi-tenancy a todos los queries.
+**Justificacion en gamilit:** Los 6 interceptors del proyecto (RlsInterceptor, AuditInterceptor, TransformResponseInterceptor, etc.) deben estar centralizados. El `RlsInterceptor` en `shared/` aplica multi-tenancy a todos los queries.
 
 ---
 

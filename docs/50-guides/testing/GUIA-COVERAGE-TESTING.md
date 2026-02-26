@@ -3,7 +3,7 @@
 **Version:** 1.0.0
 **Fecha:** 2026-02-13
 **Objetivo:** Alcanzar 80% de cobertura de tests
-**Estado actual:** ~30% backend (threshold), frontend sin medicion formal
+**Estado actual:** ~50% backend (threshold), frontend sin medicion formal
 
 ---
 
@@ -13,9 +13,9 @@
 
 | Metrica | Valor |
 |---------|-------|
-| Spec files | 59 |
-| Tests passing | 833 |
-| Coverage threshold actual | 30% (branches, functions, lines, statements) |
+| Spec files | 63 |
+| Tests passing | 2324 (2296 passed + 28 skipped) |
+| Coverage threshold actual | 50% (branches, functions, lines, statements) |
 | Coverage objetivo | 80% |
 | Test runner | Jest con ts-jest |
 | Config | `apps/backend/jest.config.js` |
@@ -39,7 +39,7 @@
 ```
 1. SERVICES (alta prioridad)
    - Logica de negocio critica
-   - 173 services, ~30% cubiertos
+   - 172 services, ~30% cubiertos
    - ROI mas alto: 1 test = 1 regla de negocio validada
 
 2. CONTROLLERS (media prioridad)
@@ -49,17 +49,17 @@
 
 3. GUARDS / INTERCEPTORS (alta prioridad)
    - Cross-cutting concerns de seguridad
-   - 15 guards, 5 interceptors
+   - 15 guards, 6 interceptors
    - Impacto global: 1 bug aqui = toda la app afectada
 
 4. ENTITIES (baja prioridad)
    - Validacion de relaciones y transformers
-   - 155 entity files (156 classes)
+   - 156 entity files (157 classes)
    - La mayoria se valida indirectamente via services
 
 5. FRONTEND COMPONENTS (media prioridad)
    - Componentes criticos: auth, exercises, gamification
-   - 580 componentes, 46 tests actuales (~10%)
+   - 577 componentes, 46 tests actuales (~10%)
    - Priorizar: formularios, integracion API, estado
 ```
 
@@ -96,10 +96,10 @@ module.exports = {
   cache: false,                     // Deshabilitado por memoria
   coverageThreshold: {
     global: {
-      branches: 30,                 // TODO: Subir a 80 gradualmente
-      functions: 30,
-      lines: 30,
-      statements: 30
+      branches: 50,                 // TODO: Subir a 80 gradualmente
+      functions: 50,
+      lines: 50,
+      statements: 50
     }
   },
   collectCoverageFrom: [
@@ -117,13 +117,13 @@ module.exports = {
 
 ```yaml
 fase_1: # Actual
-  threshold: 30%
+  threshold: 50%
   cuando: "Ahora"
 
 fase_2:
-  threshold: 50%
-  cuando: "Al alcanzar 50% real en CI"
-  accion: "Actualizar coverageThreshold a 50"
+  threshold: 70%
+  cuando: "Al alcanzar 70% real en CI"
+  accion: "Actualizar coverageThreshold a 70"
 
 fase_3:
   threshold: 70%
@@ -439,9 +439,9 @@ NO testear (bajo ROI):
 
 | Metrica | Actual | Objetivo Fase 2 | Objetivo Final |
 |---------|--------|-----------------|---------------|
-| BE Spec Files | 59 | 90 | 120+ |
-| BE Tests Passing | 833 | 1,200 | 1,500+ |
-| BE Coverage | ~30% | 50% | 80% |
+| BE Spec Files | 63 | 90 | 120+ |
+| BE Tests Passing | 2324 (2296 + 28 skipped) | 2,800 | 3,500+ |
+| BE Coverage | ~50% | 70% | 80% |
 | FE Test Files | 46 | 70 | 100+ |
 | FE Coverage | N/A | 40% | 80% |
 

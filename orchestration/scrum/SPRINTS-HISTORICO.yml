@@ -1,34 +1,35 @@
 # SPRINTS-HISTORICO.yml
 # Historico de sprints completados
-# Version: 1.0.0
+# Version: 2.0.0
 # Sistema: SIMCO v4.0.0
+# Nota: Sprint 1 migrado desde SPRINT-ACTUAL.yml el 2026-02-26
 
-version: "1.0.0"
-updated: "2026-01-29"
+version: "2.0.0"
+updated: "2026-02-26"
 
 # ============================================
 # RESUMEN GENERAL
 # ============================================
 
 resumen:
-  total_sprints: 1
-  sprints_completados: 0
-  sprints_en_progreso: 1
-  velocidad_promedio: 8
-  puntos_totales_completados: 8
+  total_sprints: 2
+  sprints_completados: 2
+  sprints_en_progreso: 0
+  velocidad_promedio: 14
+  puntos_totales_completados: 38
 
 # ============================================
 # HISTORICO DE SPRINTS
 # ============================================
 
 sprints:
-  # Sprint 0 - Inicializacion (en progreso)
+  # Sprint 0 - Inicializacion (completado)
   - numero: 0
     nombre: "Sprint de Inicializacion"
     fecha_inicio: "2026-01-16"
     fecha_fin: "2026-01-30"
     duracion_dias: 14
-    estado: "en_progreso"
+    estado: "completado"
 
     objetivos:
       total: 3
@@ -65,6 +66,136 @@ sprints:
       acciones:
         - "Revisar estimaciones para Sprint 1"
 
+  # Sprint 1 - Calidad y Estabilizacion (completado)
+  # Migrado desde SPRINT-ACTUAL.yml el 2026-02-26
+  - numero: 1
+    nombre: "Sprint de Calidad y Estabilizacion"
+    fecha_inicio: "2026-02-17"
+    fecha_fin: "2026-03-03"
+    fecha_fin_real: "2026-02-17"
+    duracion_dias: 14
+    estado: "completado"
+
+    objetivos:
+      - id: "OBJ-001"
+        descripcion: "Resolver contradiccion de test coverage (MQ-001)"
+        estado: "completado"
+        progreso: 100
+        items: ["MQ-001"]
+        fecha_completado: "2026-02-17"
+
+      - id: "OBJ-002"
+        descripcion: "Crear jerarquia de errores de dominio en backend (MQ-002)"
+        estado: "completado"
+        progreso: 100
+        items: ["MQ-002"]
+        fecha_completado: "2026-02-17"
+
+      - id: "OBJ-003"
+        descripcion: "Crear 4 skills P1 faltantes en orchestration (MQ-003)"
+        estado: "completado"
+        progreso: 100
+        items: ["MQ-003"]
+        fecha_completado: "2026-02-17"
+
+      - id: "OBJ-004"
+        descripcion: "Vincular tareas existentes a EPICs (MQ-004)"
+        estado: "completado"
+        progreso: 100
+        items: ["MQ-004"]
+        fecha_completado: "2026-02-17"
+
+      - id: "OBJ-005"
+        descripcion: "Corregir DDL cascade errors y RLS deficit (CORR-03, CORR-04)"
+        estado: "completado"
+        progreso: 100
+        items: ["CORR-03", "CORR-04"]
+        fecha_completado: "2026-02-17"
+
+    items:
+      # P0 - Inmediato
+      - id: "MQ-001"
+        titulo: "Resolver contradiccion test coverage (jest.config.js=50% vs CLAUDE.md=80%)"
+        epica: "EPIC-WS-004"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        asignado: "Claude Code"
+        dependencias: []
+        fecha_completado: "2026-02-17"
+        entregable: "docs/90-adr/ADR-044-test-coverage-strategy.md"
+
+      # P1 - Semana 1-2
+      - id: "MQ-002"
+        titulo: "Crear jerarquia de errores de dominio"
+        epica: "EPIC-WS-004"
+        prioridad: "P1"
+        esfuerzo: "L"
+        estado: "completado"
+        asignado: "Claude Code"
+        dependencias: []
+        fecha_completado: "2026-02-17"
+        entregable: "apps/backend/src/shared/exceptions/"
+
+      - id: "MQ-003"
+        titulo: "Crear 4 skills P1 faltantes"
+        epica: "EPIC-WS-004"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "completado"
+        asignado: "Claude Code"
+        dependencias: []
+        fecha_completado: "2026-02-17"
+        entregable: "orchestration/skills/"
+
+      - id: "MQ-004"
+        titulo: "Vincular tareas a EPICs"
+        epica: "EPIC-WS-004"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "completado"
+        asignado: "Claude Code"
+        dependencias: []
+        fecha_completado: "2026-02-17"
+        entregable: "orchestration/tareas/_INDEX.yml"
+
+      - id: "CORR-03"
+        titulo: "DDL cascade errors — trigger 28, function order, tenant seed"
+        epica: "EPIC-WS-005"
+        prioridad: "P1"
+        esfuerzo: "L"
+        estado: "completado"
+        asignado: "@PERFIL-DATABASE-POSTGRESQL"
+        dependencias: []
+        fecha_completado: "2026-02-17"
+
+      - id: "CORR-04"
+        titulo: "RLS deficit 195 vs 227"
+        epica: "EPIC-WS-005"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "completado"
+        asignado: "@PERFIL-DATABASE-POSTGRESQL"
+        dependencias: ["CORR-03"]
+        fecha_completado: "2026-02-17"
+
+    metricas:
+      velocidad_planificada: 30
+      items_total: 6
+      items_completados: 6
+      items_en_progreso: 0
+      items_pendientes: 0
+      porcentaje_avance: 100
+
+    notas:
+      - "Sprint enfocado en calidad y estabilizacion del codebase"
+      - "MQ-001 (P0) debe resolverse en los primeros 1-2 dias"
+      - "CORR-04 depende de CORR-03 — ejecutar secuencialmente"
+      - "Sprint anterior (Sprint 0) completado — enfocado en inicializacion"
+      - "Origen: TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
+      - "Trabajo adicional fuera de sprint: TASK-2026-02-19-ESTANDARIZACION-PORTALES (5 fases, 66 hallazgos resueltos)"
+      - "Deferred del sprint: React Query migration 25 admin hooks (requiere sprint dedicado)"
+
 # ============================================
 # METRICAS ACUMULADAS
 # ============================================
@@ -72,12 +203,13 @@ sprints:
 metricas_acumuladas:
   velocidad_por_sprint:
     sprint_0: 8
+    sprint_1: 30
 
-  tendencia_velocidad: "estable"
+  tendencia_velocidad: "creciente"
 
   distribucion_puntos:
     documentacion: 8
-    desarrollo: 0
+    desarrollo: 30
     bugfix: 0
     refactor: 0
 
@@ -91,6 +223,16 @@ lecciones_aprendidas:
     categoria: "proceso"
     aplicacion: "Aplicar CAPVED a todas las tareas"
 
+  - sprint: 1
+    leccion: "MQ items P0 deben resolverse en los primeros dias del sprint"
+    categoria: "proceso"
+    aplicacion: "Priorizar P0 bloqueantes al inicio del sprint"
+
+  - sprint: 1
+    leccion: "Correcciones DDL deben ejecutarse secuencialmente (CORR-03 antes de CORR-04)"
+    categoria: "tecnica"
+    aplicacion: "Respetar dependencias de orden en items de base de datos"
+
 # ============================================
 # REFERENCIAS
 # ============================================
@@ -103,3 +245,12 @@ referencias:
 metadata:
   created_by: "Claude Code"
   created_at: "2026-01-29"
+  updated_by: "Claude Code"
+  updated_at: "2026-02-26"
+  changelog:
+    - version: "1.0.0"
+      date: "2026-01-29"
+      note: "Creacion inicial con Sprint 0"
+    - version: "2.0.0"
+      date: "2026-02-26"
+      note: "Sprint 1 migrado desde SPRINT-ACTUAL.yml; resumen y metricas acumuladas actualizados"

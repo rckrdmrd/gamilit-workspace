@@ -1,5 +1,12 @@
 # Guia Completa de Despliegue en Produccion - GAMILIT
 
+> [!WARNING]
+> **Estado:** `DEPRECATED` para ejecucion operativa (2026-02-24).  
+> Mantener solo como referencia historica. Para operar deploy real usar:
+> - `orchestration/referencias/MATRIZ-SSOT-DEV-PROD.md`
+> - `orchestration/agents/perfiles/PERFIL-DEPLOY-SERVER.md`
+> - `docs/20-architecture/AMBIENTES-DEV-PROD.md`
+
 > **Version:** 1.0.0
 > **Fecha:** 2025-12-18
 > **Servidor:** 74.208.126.102

@@ -6,6 +6,7 @@
 
 | Archivo | Descripcion | Audiencia |
 |---------|-------------|-----------|
+| [README.md](./README.md) | Entrada y navegacion de guias de onboarding | Todos |
 | [ONBOARDING-DESARROLLADORES.md](./ONBOARDING-DESARROLLADORES.md) | Guia para desarrolladores humanos | Desarrolladores |
 | [ONBOARDING-AGENTES.md](./ONBOARDING-AGENTES.md) | Guia para agentes IA | Agentes IA (Claude, Gemini, etc.) |
 | [ONBOARDING-QA.md](./ONBOARDING-QA.md) | Guia para testers y QA | QA Engineers |

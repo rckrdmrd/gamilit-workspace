@@ -3,7 +3,7 @@
 **US:** US-VAL-002 | **Tipo:** Database | **Estado:** Pendiente | **SP:** 2
 
 ## Descripcion
-Validar las 299 Foreign Keys y constraints no tienen referencias huerfanas.
+Validar las 301 Foreign Keys y constraints no tienen referencias huerfanas.
 
 ## Acciones
 1. Query information_schema.table_constraints para contar FKs
@@ -11,5 +11,5 @@ Validar las 299 Foreign Keys y constraints no tienen referencias huerfanas.
 3. Verificar integridad referencial con test data
 
 ## Criterio Pass
-- 299 FKs presentes
+- 301 FKs presentes
 - 0 referencias huerfanas

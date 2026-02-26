@@ -18,7 +18,7 @@ GAMILIT (Gamificacion Maya para la Lectoescritura en Tecnologia) es una **plataf
 STANDALONE_HEREDERO (Nivel 2A)
   |
   v
-gamilit (23 modulos, 169 tablas, 905 endpoints)
+gamilit (23 modulos, 173 tablas, 912 endpoints)
   |
   v
 shared/catalog/ (exporta patrones generalizables)
@@ -83,7 +83,7 @@ GAMILIT organiza sus 23 modulos en 4 categorias funcionales:
 | 15 | missions | Misiones diarias/semanales, quests tematicas | 85% |
 | 16 | store | Tienda virtual con ML Coins, items cosmeticos y power-ups | 75% |
 | 17 | achievements | Badges, milestones, logros secretos, showcase | 90% |
-| 18 | social | Equipos, retos grupales, feed social (parcial) | 50% |
+| 18 | social | Equipos, retos grupales, feed social (parcial) | 60% |
 
 #### 2.1.4 Support & Operations (4)
 
@@ -112,7 +112,7 @@ GAMILIT esta disenado para el segmento educativo K-12 hispanohablante, incorpora
 El modelo de aislamiento por escuela implementa:
 
 - Toda tabla transaccional incluye columna `tenant_id`
-- Row-Level Security (RLS) activado en PostgreSQL para 231 DDL / 471 runtime policies
+- Row-Level Security (RLS) activado en PostgreSQL para 251 DDL / 471 runtime policies
 - 18 schemas modulares organizados por dominio funcional
 - Datos compartidos (contenido global) vs datos aislados (progreso, gamificacion)
 
@@ -208,7 +208,7 @@ El modelo de aislamiento por escuela implementa:
 |----|---------------|---------|
 | RNF-GAM-006 | Autenticacion | JWT con expiracion corta (15min) + refresh tokens (7d) |
 | RNF-GAM-007 | Autorizacion | RBAC con 4 roles academicos y permisos granulares |
-| RNF-GAM-008 | Aislamiento de datos | RLS en PostgreSQL para todas las tablas con tenant_id (231 DDL / 471 runtime policies) |
+| RNF-GAM-008 | Aislamiento de datos | RLS en PostgreSQL para todas las tablas con tenant_id (251 DDL / 471 runtime policies) |
 | RNF-GAM-009 | Validacion | DTOs con class-validator en todos los endpoints |
 | RNF-GAM-010 | CORS | Configurado por entorno, rate limiting 100 req/min |
 | RNF-GAM-011 | Contenido usuario | Sanitizacion de contenido generado por estudiantes |
@@ -243,7 +243,7 @@ El modelo de aislamiento por escuela implementa:
 
 | ID | Requerimiento | Detalle |
 |----|---------------|---------|
-| RNF-GAM-023 | Cobertura de tests | >= 80% unitarios, 833 tests activos |
+| RNF-GAM-023 | Cobertura de tests | >= 80% unitarios, 2324 tests (2296 passed + 28 skipped) activos |
 | RNF-GAM-024 | Documentacion API | OpenAPI/Swagger auto-generada y actualizada |
 | RNF-GAM-025 | Modularidad | 23 modulos NestJS independientes |
 | RNF-GAM-026 | Code standards | ESLint + Prettier, TypeScript strict mode |
@@ -273,11 +273,11 @@ El modelo de aislamiento por escuela implementa:
 | EPIC-GAM-SCAFFOLD | Scaffolding del Proyecto | 5 | Estructura base | Completado |
 | EPIC-GAM-REQUIREMENTS | Requerimientos y US | 13 | Documentacion | Completado |
 | EPIC-GAM-ARCHITECTURE | Diseno de Arquitectura | 13 | Documentacion | Completado |
-| EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 169 tablas | Completado |
-| EPIC-GAM-BACKEND | Backend NestJS | 34 | 23 modulos, 905 endpoints | Completado |
-| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 580 componentes | Completado |
+| EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 173 tablas | Completado |
+| EPIC-GAM-BACKEND | Backend NestJS | 34 | 23 modulos, 912 endpoints | Completado |
+| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 577 componentes | Completado |
 | EPIC-GAM-K8S | Kubernetes Setup | 8 | Deployment configs | En progreso |
-| EPIC-GAM-TESTING | Testing Completo | 13 | 833 tests | En progreso |
+| EPIC-GAM-TESTING | Testing Completo | 13 | 2324 tests | En progreso |
 | EPIC-GAM-DEVOPS | DevOps y CI/CD | 8 | Pipelines | En progreso |
 | EPIC-GAM-DOCS | Documentacion Final | 8 | Docs completas | En progreso |
 | EPIC-GAM-INTEGRATION | Integracion y QA | 5 | E2E validation | En progreso |
@@ -302,9 +302,9 @@ El modelo de aislamiento por escuela implementa:
 | Metrica | Objetivo | Actual |
 |---------|----------|--------|
 | MVP completado | 100% | 98% |
-| Tests pasando | 100% | 833 (100%) |
+| Tests pasando | 100% | 2324 (2296 passed + 28 skipped) |
 | Cobertura de tests | 80% | ~75% |
-| Coherencia DDL-Backend | 100% | 82.5% |
+| Coherencia DDL-Backend | 100% | ~90.2% |
 | Portales operativos | 4/4 | 4/4 |
 | Modulos educativos | 5/5 | 5/5 |
 | Tipos de ejercicios | 23/23 | 23/23 |

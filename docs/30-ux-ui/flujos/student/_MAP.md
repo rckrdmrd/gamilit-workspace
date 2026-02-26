@@ -1,0 +1,40 @@
+# MAPA DE NAVEGACION - Student
+
+> Acceso rapido por categoria de flujo.
+
+## Aprendizaje y progreso
+
+- Ejercicio completo: [FLUJO-EJERCICIO-COMPLETO.md](./FLUJO-EJERCICIO-COMPLETO.md)
+- Ejercicio M3-M5: [FLUJO-EJERCICIO-M3-M5.md](./FLUJO-EJERCICIO-M3-M5.md)
+- Progreso academico: [FLUJO-PROGRESO-ACADEMICO.md](./FLUJO-PROGRESO-ACADEMICO.md)
+- Dashboard academico: [FLUJO-DASHBOARD-ACADEMICO.md](./FLUJO-DASHBOARD-ACADEMICO.md)
+- Dashboard progreso: [FLUJO-DASHBOARD-PROGRESO.md](./FLUJO-DASHBOARD-PROGRESO.md)
+- Pagina de aprendizaje: [FLUJO-PAGINA-APRENDIZAJE.md](./FLUJO-PAGINA-APRENDIZAJE.md)
+- Asignaciones del estudiante: [FLUJO-ASIGNACIONES-ESTUDIANTE.md](./FLUJO-ASIGNACIONES-ESTUDIANTE.md)
+
+## Gamificacion y social
+
+- Logros y misiones: [FLUJO-LOGROS-MISIONES-CLAIM.md](./FLUJO-LOGROS-MISIONES-CLAIM.md)
+- Leaderboards: [FLUJO-LEADERBOARDS.md](./FLUJO-LEADERBOARDS.md)
+- Gremios: [FLUJO-GREMIOS.md](./FLUJO-GREMIOS.md)
+- Amigos: [FLUJO-AMIGOS.md](./FLUJO-AMIGOS.md)
+
+## Perfil y configuracion
+
+- Perfil y ajustes: [FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md](./FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md)
+- Perfil y notificaciones: [FLUJO-PERFIL-NOTIFICACIONES.md](./FLUJO-PERFIL-NOTIFICACIONES.md)
+- Personalizacion de avatar: [FLUJO-PERSONALIZACION-AVATAR.md](./FLUJO-PERSONALIZACION-AVATAR.md)
+- Settings dispositivos: [FLUJO-SETTINGS-DISPOSITIVOS.md](./FLUJO-SETTINGS-DISPOSITIVOS.md)
+- Settings notificaciones: [FLUJO-SETTINGS-NOTIFICACIONES.md](./FLUJO-SETTINGS-NOTIFICACIONES.md)
+
+## Tienda e inventario
+
+- Tienda compra: [FLUJO-TIENDA-COMPRA.md](./FLUJO-TIENDA-COMPRA.md)
+- Tienda overview: [FLUJO-TIENDA-OVERVIEW.md](./FLUJO-TIENDA-OVERVIEW.md)
+- Inventario de items: [FLUJO-INVENTARIO-ITEMS.md](./FLUJO-INVENTARIO-ITEMS.md)
+- Equipamiento cosmetico: [FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md](./FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md)
+- Compra e inventario: [FLUJO-COMPRA-INVENTARIO-EQUIPAR.md](./FLUJO-COMPRA-INVENTARIO-EQUIPAR.md)
+
+## Navegacion
+
+- Indice: [_INDEX.md](./_INDEX.md)

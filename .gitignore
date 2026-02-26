@@ -44,6 +44,9 @@ build/
 .env.production
 .env.development
 .env.test
+
+# Excepcion: frontend .env.production es safe (no tiene secrets, solo config de build)
+!apps/frontend/.env.production
 # Database env files (contain credentials)
 .env.database
 .env.dev

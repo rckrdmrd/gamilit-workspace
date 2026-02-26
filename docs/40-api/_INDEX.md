@@ -6,6 +6,7 @@
 
 | Archivo | Descripcion |
 |---------|-------------|
+| [README.md](./README.md) | Introduccion a la documentacion de APIs |
 | [API-REFERENCE.md](./API-REFERENCE.md) | Referencia completa de la API (911 endpoints) |
 | [ENDPOINTS-INVENTORY-EQUIP.md](./ENDPOINTS-INVENTORY-EQUIP.md) | Contratos API de equipamiento cosmetico |
 | [ADMIN-PORTAL-ENDPOINTS.md](./ADMIN-PORTAL-ENDPOINTS.md) | Endpoints del portal administrativo |

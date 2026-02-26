@@ -683,7 +683,7 @@ async oauthLogin(@Param('provider') provider: string) {
 ```typescript
 const allowedRedirects = [
   'https://gamilit.com/auth/callback',
-  'http://localhost:3000/auth/callback', // Solo en dev
+  'http://localhost:3005/auth/callback', // Solo en dev
 ];
 
 if (!allowedRedirects.includes(redirectUri)) {

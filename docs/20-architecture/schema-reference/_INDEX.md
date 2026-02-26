@@ -85,6 +85,7 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 | Seccion | Archivo |
 |---------|---------|
 | Materialized Views, ENUMs, Indices, Trazabilidad | [99-utilities.md](99-utilities.md) |
+| Catalogo de series UUID por schema | [UUID-SERIES-CATALOG.md](UUID-SERIES-CATALOG.md) |
 
 ---
 

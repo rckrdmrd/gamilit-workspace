@@ -40,14 +40,14 @@ servicios_requeridos:
 // CORS soporta multiples origenes via variable de entorno
 
 // .env.production
-CORS_ORIGIN=https://gamilit.com,https://www.gamilit.com,https://api.gamilit.com
+CORS_ORIGIN=https://gamilit.com,https://www.gamilit.com
 ```
 
 ### 3. Configuracion HTTPS/SSL
 
 ```bash
 # Generar certificado SSL con Let's Encrypt
-sudo certbot --nginx -d gamilit.com -d www.gamilit.com -d api.gamilit.com
+sudo certbot --nginx -d gamilit.com -d www.gamilit.com
 
 # Verificar renovacion automatica
 sudo certbot renew --dry-run
@@ -64,12 +64,12 @@ sudo certbot renew --dry-run
 
 ```bash
 # 1. Verificar rama correcta
-git checkout main
+git checkout master
 git pull origin master
 
 # 2. Verificar estado de produccion actual
 pm2 status
-curl -s https://api.gamilit.com/api/health
+curl -s https://gamilit.com/api/v1/health
 
 # 3. Notificar mantenimiento (si necesario)
 ```
@@ -122,7 +122,7 @@ ls -la ../backups/
 
 # O paso a paso manual:
 cd apps/backend && npm ci && npm run build
-cd apps/frontend && npm ci && npm run build:prod
+cd apps/frontend && npm ci && npm run build
 pm2 startOrRestart ecosystem.config.js --env production
 pm2 save
 ```
@@ -131,7 +131,7 @@ pm2 save
 
 ```bash
 # Health checks
-curl -s https://api.gamilit.com/api/health
+curl -s https://gamilit.com/api/v1/health
 
 # Verificar logs
 pm2 logs gamilit-backend --lines 50
@@ -171,7 +171,7 @@ npm run build
 pm2 start ecosystem.config.js --env production
 
 # 5. Verificar
-curl -s https://api.gamilit.com/api/health
+curl -s https://gamilit.com/api/v1/health
 ```
 
 ---
@@ -293,7 +293,7 @@ solucion: |
 
 verificacion:
   # Verificar que no hay headers duplicados
-  curl -I -X OPTIONS https://api.gamilit.com/api/health \
+  curl -I -X OPTIONS https://gamilit.com/api/v1/health \
     -H "Origin: https://gamilit.com" \
     -H "Access-Control-Request-Method: GET"
 

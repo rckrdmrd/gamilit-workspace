@@ -24,7 +24,7 @@ Esta guia establece la estrategia, configuracion y mejores practicas para implem
 | Ejercicios | 30 mecanicas unicas en 5 modulos educativos |
 | Tests E2E actuales | 0 (primera implementacion) |
 | Test runner unitario frontend | Vitest (46 archivos) |
-| Test runner backend | Jest (833 tests, 57 spec files) |
+| Test runner backend | Jest (2324 tests, 63 spec files) |
 
 ### Objetivos
 
