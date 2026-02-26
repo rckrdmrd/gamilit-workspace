@@ -9,21 +9,23 @@
 
 ## Estado Actual
 
-### Ultima Tarea Completada: Remediacion Documental General (2026-02-26)
+### Ultima Tarea Completada: Auditoria Integral BD (2026-02-26)
 
-**22 tareas en 3 fases. 60+ archivos modificados. 150+ valores corregidos. 0 residuales obsoletos.**
+**9 fases, ~20 agentes, ~30 archivos modificados. 40 UUIDs remediados. Loaders unificados. 0 errores recreacion.**
 
 | Item | Descripcion | Estado |
 |------|-------------|--------|
-| Fase 1 | Documentacion General (9 tareas: overview, requirements, CLAUDE.md) | COMPLETADA |
-| Fase 2 | Propagacion Downstream (8 tareas: ADRs, guides, onboarding, standards, EPICs) | COMPLETADA |
-| Fase 3 | Codigo/Config (5 tareas: env vars, Redis, Nginx, EPIC headers) | COMPLETADA |
-| Verificacion | Grep residuales: 0 valores obsoletos en docs/ | VERIFICADO |
-| Sprint 2 | 13/13 items (DOC-001..008 + FIX-001..005) completados | COMPLETADO (100%) |
+| Fase 0 | Census UUID (230+ non-v4) + Reconciliacion loaders (113+71+74 archivos) | COMPLETADA |
+| Fase 1 | Core Identity: DDL, triggers, FK chains, overlap matrix | COMPLETADA |
+| Fase 2 | UUID achievements remediados: 40 → gen_random_uuid() + subquery lookups | COMPLETADA |
+| Fase 3-7 | 6 schemas analizados: sysconfig, notifications, audit, educational, social, gamification, progress, lti | COMPLETADAS |
+| Fase 8 | load-prod-seeds.sh creado, staging loader corregido, _testing/ → _deprecated/, SEED-LOADING-ORDER.md | COMPLETADA |
+| Fase 9 | Recreacion limpia (92 seeds, 0 errores) + idempotencia + build OK | COMPLETADA |
 
 **Reportes:**
-- Auditoria (analisis): `orchestration/tareas/TASK-2026-02-25-AUDITORIA-DOCUMENTACION/`
-- Remediacion (ejecucion): `orchestration/tareas/TASK-2026-02-26-REMEDIACION-DOCUMENTAL-GENERAL/`
+- Hallazgos: `orchestration/tareas/TASK-2026-02-26-AUDITORIA-BD/01-HALLAZGOS.md`
+- Correcciones: `orchestration/tareas/TASK-2026-02-26-AUDITORIA-BD/02-CORRECCIONES.md`
+- Loading order: `apps/database/seeds/SEED-LOADING-ORDER.md`
 
 ---
 
@@ -54,6 +56,15 @@
 | 44 | Integrar Parent portal con detective-theme (usa paleta indigo divergente) | L | depende #43 |
 | 49 | Crear 8 flujos UX admin faltantes + 6 flujos teacher faltantes | L | WS09 |
 | 50 | Documentar 30 API service files no documentados | L | WS09 |
+
+### P1 — BD Pendientes (post auditoria 2026-02-26)
+
+| ID | Descripcion | Referencia |
+|----|-------------|------------|
+| BD-P01 | ml_coins_transactions duplica welcome bonus (trigger + seed) | `TASK-2026-02-26-AUDITORIA-BD/02-CORRECCIONES.md` P-01 |
+| BD-P02 | 02-message_participants.sql staging/prod bug FK (profiles.user_id vs profiles.id) | idem P-07 |
+| BD-P03 | 7 seeds huerfanos dev (notifications 02-05, audit 03, classroom_modules 16) | idem P-04 |
+| BD-P04 | Notification templates 9-18 solo en dev — decision prod | idem P-08 |
 
 ### P1 — Tecnico Diferido
 
@@ -118,6 +129,8 @@
 | Validacion standards/principles | `orchestration/tareas/TASK-2026-02-21-ANALISIS-PORTALES/validacion/` |
 | VS-03 analisis refactoring | `orchestration/tareas/TASK-2026-02-21-VS03-ANALYSIS/01-ANALYSIS.md` |
 | Checklist produccion (BLQ-01..04) | `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/03-CHECKLIST-PRODUCCION.md` |
+| Auditoria BD 2026-02-26 | `orchestration/tareas/TASK-2026-02-26-AUDITORIA-BD/` |
+| Seed loading order | `apps/database/seeds/SEED-LOADING-ORDER.md` |
 | Schema reference | `docs/20-architecture/schema-reference/_INDEX.md` |
 | MASTER_INVENTORY | `orchestration/inventarios/MASTER_INVENTORY.yml` |
 | FRONTEND_INVENTORY | `orchestration/inventarios/FRONTEND_INVENTORY.yml` |

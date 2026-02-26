@@ -34,6 +34,9 @@ CREATE TABLE gamification_system.achievements (
     -- Primary Key
     CONSTRAINT achievements_pkey PRIMARY KEY (id),
 
+    -- Unique Constraints
+    CONSTRAINT achievements_name_tenant_key UNIQUE (name, tenant_id),
+
     -- Check Constraints
     CONSTRAINT achievements_rarity_check CHECK ((rarity = ANY (ARRAY['common'::text, 'rare'::text, 'epic'::text, 'legendary'::text])))
 );

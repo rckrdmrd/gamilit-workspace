@@ -1,19 +1,31 @@
 #!/bin/bash
 # ============================================================================
-# Script: Carga de Seeds para Ambiente STAGING
-# Fecha: 2026-01-16
-# Task: TASK-2026-01-16-003
+# Script: Carga de Seeds para Ambiente PRODUCCION
+# Fecha: 2026-02-26
+# Task: TASK-2026-02-26-AUDITORIA-BD
 # ============================================================================
 #
 # DESCRIPCION:
-#   Este script carga los seeds de staging en el orden correcto,
-#   respetando las dependencias entre schemas.
+#   Este script carga los seeds de produccion en el orden correcto,
+#   respetando las dependencias entre schemas. Solo incluye datos core
+#   requeridos para el funcionamiento del sistema.
 #
 # USO:
-#   ./load-staging-seeds.sh [DATABASE_URL]
+#   ./load-prod-seeds.sh [DATABASE_URL]
 #
 # EJEMPLO:
-#   ./load-staging-seeds.sh "postgresql://user:password@localhost:5432/gamilit_staging"
+#   ./load-prod-seeds.sh "postgresql://user:password@localhost:5432/gamilit_platform"
+#
+# DIFERENCIAS CON DEV:
+#   - NO incluye _testing seeds
+#   - NO incluye demo students (01b-demo-students.sql)
+#   - NO incluye demo profiles/roles (03-profiles.sql, 04-user_roles.sql)
+#   - NO incluye demo preferences/security (05-user_preferences.sql, 06-auth_attempts, 07-security_events)
+#   - NO incluye extended progress tracking (02-16)
+#   - NO incluye dev notification devices
+#   - NO incluye admin_dashboard seeds
+#   - NO incluye communication (messages seeded only in dev)
+#   - NO incluye LTI sessions/passback (dev-only demo data)
 #
 # ============================================================================
 
@@ -34,15 +46,15 @@ NC='\033[0m' # No Color
 DATABASE_URL="${1:-${DATABASE_URL:-}}"
 
 if [ -z "$DATABASE_URL" ]; then
-    echo -e "${RED}ERROR: DATABASE_URL no está configurada${NC}"
+    echo -e "${RED}ERROR: DATABASE_URL no esta configurada${NC}"
     echo "Uso: $0 <DATABASE_URL>"
-    echo "Ejemplo: $0 'postgresql://user:password@localhost:5432/gamilit_staging'"
+    echo "Ejemplo: $0 'postgresql://user:password@localhost:5432/gamilit_platform'"
     exit 1
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SEEDS_DIR="$SCRIPT_DIR/staging"
-LOG_FILE="$SCRIPT_DIR/load-staging-seeds-$(date +%Y%m%d_%H%M%S).log"
+SEEDS_DIR="$SCRIPT_DIR/prod"
+LOG_FILE="$SCRIPT_DIR/load-prod-seeds-$(date +%Y%m%d_%H%M%S).log"
 
 # ============================================================================
 # FUNCIONES
@@ -53,15 +65,15 @@ log() {
 }
 
 log_success() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] ✅ $1${NC}" | tee -a "$LOG_FILE"
+    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] OK $1${NC}" | tee -a "$LOG_FILE"
 }
 
 log_error() {
-    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ❌ $1${NC}" | tee -a "$LOG_FILE"
+    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR $1${NC}" | tee -a "$LOG_FILE"
 }
 
 log_warning() {
-    echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] ⚠️  $1${NC}" | tee -a "$LOG_FILE"
+    echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARN $1${NC}" | tee -a "$LOG_FILE"
 }
 
 execute_sql() {
@@ -90,7 +102,7 @@ execute_sql() {
 # ============================================================================
 
 log "============================================================================"
-log "INICIO: Carga de Seeds STAGING - GAMILIT"
+log "INICIO: Carga de Seeds PRODUCCION - GAMILIT"
 log "============================================================================"
 log "DATABASE_URL: ${DATABASE_URL%%\?*}"
 log "SEEDS_DIR: $SEEDS_DIR"
@@ -124,7 +136,7 @@ log_success "FASE 1 completada"
 log ""
 
 # ============================================================================
-# FASE 2: AUDIT LOGGING (sin dependencias)
+# FASE 2: AUDIT LOGGING (config only — no sample data in prod)
 # ============================================================================
 
 log "============================================================================"
@@ -152,7 +164,7 @@ log_success "FASE 3 completada"
 log ""
 
 # ============================================================================
-# FASE 4: AUTH (usuarios demo)
+# FASE 4: AUTH (usuarios base y produccion)
 # ============================================================================
 
 log "============================================================================"
@@ -194,7 +206,7 @@ log_success "FASE 6 completada"
 log ""
 
 # ============================================================================
-# FASE 7: AUTH MANAGEMENT (profiles y roles)
+# FASE 7: AUTH MANAGEMENT (profiles y roles — only explicit prod profiles)
 # ============================================================================
 
 log "============================================================================"
@@ -239,7 +251,7 @@ log_success "FASE 9 completada"
 log ""
 
 # ============================================================================
-# FASE 10: SOCIAL FEATURES
+# FASE 10: SOCIAL FEATURES (core only)
 # ============================================================================
 
 log "============================================================================"
@@ -247,11 +259,11 @@ log "FASE 10: SOCIAL FEATURES"
 log "============================================================================"
 
 execute_sql "$SEEDS_DIR/social_features/00-schools-default.sql" "Seeds: schools (default)"
-execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
+execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools"
 execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms"
 execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members"
-execute_sql "$SEEDS_DIR/social_features/04-friendships.sql" "Seeds: friendships"
 execute_sql "$SEEDS_DIR/social_features/04-teams.sql" "Seeds: teams"
+execute_sql "$SEEDS_DIR/social_features/04-friendships.sql" "Seeds: friendships"
 execute_sql "$SEEDS_DIR/social_features/05-teacher-reports.sql" "Seeds: teacher_reports"
 
 log_success "FASE 10 completada"
@@ -271,25 +283,11 @@ log_success "FASE 10.5 completada"
 log ""
 
 # ============================================================================
-# FASE 11: COMMUNICATION
+# FASE 11: EDUCATIONAL CONTENT (ejercicios y configuracion)
 # ============================================================================
 
 log "============================================================================"
-log "FASE 11: COMMUNICATION"
-log "============================================================================"
-
-execute_sql "$SEEDS_DIR/communication/01-system-messages.sql" "Seeds: system messages"
-execute_sql "$SEEDS_DIR/communication/02-message_participants.sql" "Seeds: message_participants"
-
-log_success "FASE 11 completada"
-log ""
-
-# ============================================================================
-# FASE 12: EDUCATIONAL CONTENT (ejercicios y configuracion)
-# ============================================================================
-
-log "============================================================================"
-log "FASE 12: EDUCATIONAL CONTENT - Ejercicios"
+log "FASE 11: EDUCATIONAL CONTENT - Ejercicios"
 log "============================================================================"
 
 execute_sql "$SEEDS_DIR/educational_content/02-exercises-module1.sql" "Seeds: exercises M1"
@@ -297,6 +295,7 @@ execute_sql "$SEEDS_DIR/educational_content/03-exercises-module2.sql" "Seeds: ex
 execute_sql "$SEEDS_DIR/educational_content/04-exercises-module3.sql" "Seeds: exercises M3"
 execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: exercises M4"
 execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: exercises M5"
+execute_sql "$SEEDS_DIR/educational_content/07-exercises-auxiliar.sql" "Seeds: exercises auxiliar"
 execute_sql "$SEEDS_DIR/educational_content/05-assignments.sql" "Seeds: assignments"
 execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: assessment_rubrics"
 execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
@@ -304,44 +303,45 @@ execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "S
 execute_sql "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql" "Seeds: exercise_validation_config"
 execute_sql "$SEEDS_DIR/educational_content/11-exercise_validation_config_m4_m5.sql" "Seeds: exercise_validation_config M4-M5"
 execute_sql "$SEEDS_DIR/educational_content/13-exercise_type_rubrics.sql" "Seeds: exercise_type_rubrics"
-execute_sql "$SEEDS_DIR/educational_content/07-exercises-auxiliar.sql" "Seeds: exercises auxiliar"
 execute_sql "$SEEDS_DIR/educational_content/14-classroom_modules.sql" "Seeds: classroom_modules"
+
+log_success "FASE 11 completada"
+log ""
+
+# ============================================================================
+# FASE 12: PROGRESS TRACKING (solo module_progress placeholder)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 12: PROGRESS TRACKING"
+log "============================================================================"
+
+execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress"
+execute_sql "$SEEDS_DIR/progress_tracking/15-student_intervention_alerts.sql" "Seeds: student_intervention_alerts"
+execute_sql "$SEEDS_DIR/progress_tracking/16-teacher_alert_configurations.sql" "Seeds: teacher_alert_configurations"
 
 log_success "FASE 12 completada"
 log ""
 
 # ============================================================================
-# FASE 13: PROGRESS TRACKING
+# FASE 13: LTI INTEGRATION (consumers only — no demo sessions)
 # ============================================================================
 
 log "============================================================================"
-log "FASE 13: PROGRESS TRACKING"
+log "FASE 13: LTI INTEGRATION"
 log "============================================================================"
 
-execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress"
+execute_sql "$SEEDS_DIR/lti_integration/01-lti_consumers.sql" "Seeds: lti_consumers"
 
 log_success "FASE 13 completada"
 log ""
 
 # ============================================================================
-# FASE 14: LTI INTEGRATION
+# FASE 14: GAMIFICATION SYSTEM
 # ============================================================================
 
 log "============================================================================"
-log "FASE 14: LTI INTEGRATION"
-log "============================================================================"
-
-execute_sql "$SEEDS_DIR/lti_integration/01-lti_consumers.sql" "Seeds: lti_consumers"
-
-log_success "FASE 14 completada"
-log ""
-
-# ============================================================================
-# FASE 15: GAMIFICATION SYSTEM
-# ============================================================================
-
-log "============================================================================"
-log "FASE 15: GAMIFICATION SYSTEM"
+log "FASE 14: GAMIFICATION SYSTEM"
 log "============================================================================"
 
 execute_sql "$SEEDS_DIR/gamification_system/01-achievement_categories.sql" "Seeds: achievement_categories"
@@ -353,14 +353,28 @@ execute_sql "$SEEDS_DIR/gamification_system/20-achievements-collection.sql" "See
 execute_sql "$SEEDS_DIR/gamification_system/10-mission_templates.sql" "Seeds: mission_templates"
 execute_sql "$SEEDS_DIR/gamification_system/12-shop_categories.sql" "Seeds: shop_categories"
 execute_sql "$SEEDS_DIR/gamification_system/13-shop_items.sql" "Seeds: shop_items"
+execute_sql "$SEEDS_DIR/gamification_system/16-shop_items_expanded.sql" "Seeds: shop_items_expanded"
+execute_sql "$SEEDS_DIR/gamification_system/17-shop_items_metadata_normalization.sql" "Seeds: shop_items_metadata_normalization"
+execute_sql "$SEEDS_DIR/gamification_system/15-comodin_usage_tracking.sql" "Seeds: comodin_usage_tracking"
 execute_sql "$SEEDS_DIR/gamification_system/05-user_stats.sql" "Seeds: user_stats"
 execute_sql "$SEEDS_DIR/gamification_system/06-user_ranks.sql" "Seeds: user_ranks"
 execute_sql "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql" "Seeds: ml_coins_transactions"
 execute_sql "$SEEDS_DIR/gamification_system/08-user_achievements.sql" "Seeds: user_achievements"
 execute_sql "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql" "Seeds: comodines_inventory"
-execute_sql "$SEEDS_DIR/gamification_system/15-comodin_usage_tracking.sql" "Seeds: comodin_usage_tracking"
-execute_sql "$SEEDS_DIR/gamification_system/16-shop_items_expanded.sql" "Seeds: shop_items_expanded"
-execute_sql "$SEEDS_DIR/gamification_system/17-shop_items_metadata_normalization.sql" "Seeds: shop_items_metadata_normalization"
+
+log_success "FASE 14 completada"
+log ""
+
+# ============================================================================
+# FASE 15: ADMIN DASHBOARD
+# ============================================================================
+
+log "============================================================================"
+log "FASE 15: ADMIN DASHBOARD"
+log "============================================================================"
+
+execute_sql "$SEEDS_DIR/admin_dashboard/01-bulk_operations.sql" "Seeds: bulk_operations"
+execute_sql "$SEEDS_DIR/admin_dashboard/02-admin_reports.sql" "Seeds: admin_reports"
 
 log_success "FASE 15 completada"
 log ""
@@ -373,13 +387,14 @@ log "===========================================================================
 log "RESUMEN FINAL"
 log "============================================================================"
 
-SEED_COUNT=$(find "$SEEDS_DIR" -name "*.sql" | wc -l)
+SEED_COUNT=$(find "$SEEDS_DIR" -name "*.sql" -not -path "*/_backlog/*" -not -path "*/_testing/*" -not -name "*.deprecated" | wc -l)
 
 log ""
 log "Seeds cargados: $SEED_COUNT archivos"
+log "Fases completadas: 15"
 log ""
 log_success "============================================================================"
-log_success "✅ SEEDS STAGING CARGADOS EXITOSAMENTE"
+log_success "SEEDS PRODUCCION CARGADOS EXITOSAMENTE"
 log_success "============================================================================"
 log ""
 log "Log completo disponible en: $LOG_FILE"

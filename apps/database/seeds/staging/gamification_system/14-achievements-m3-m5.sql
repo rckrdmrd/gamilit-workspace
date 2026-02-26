@@ -16,7 +16,7 @@
 --
 -- TOTAL: 15 achievements
 --
--- UUID Pattern: 90000003-xxxx para M3, 90000004-xxxx para M4, 90000005-xxxx para M5
+-- IDs: gen_random_uuid() (v4), upsert via ON CONFLICT (name, tenant_id)
 -- =====================================================
 
 SET search_path TO gamification_system, educational_content, public;
@@ -27,12 +27,11 @@ SET search_path TO gamification_system, educational_content, public;
 
 -- M3-1: Pensador Critico Emergente
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000003-0001-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Pensador Critico Emergente',
     'Completa tu primer ejercicio del Modulo 3 - Lectura Critica',
@@ -68,16 +67,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M3-2: Juez de Opiniones
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000003-0001-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Juez de Opiniones',
     'Obtiene 90% o mas en el ejercicio Tribunal de Opiniones',
@@ -114,16 +131,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M3-3: Maestro del Debate
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000003-0001-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Maestro del Debate',
     'Obtiene 95% o mas en el ejercicio Debate Digital',
@@ -161,16 +196,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M3-4: Verificador de Fuentes
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000003-0001-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Verificador de Fuentes',
     'Obtiene 100% en el ejercicio Analisis de Fuentes CRAAP',
@@ -208,16 +261,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M3-5: Comprension Critica Dominada
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000003-0001-0000-0000-000000000005'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Comprension Critica Dominada',
     'Completa todos los ejercicios del Modulo 3 - Lectura Critica',
@@ -255,7 +326,26 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- MODULO 4: ALFABETIZACION DIGITAL (5 achievements)
@@ -263,12 +353,11 @@ INSERT INTO gamification_system.achievements (
 
 -- M4-1: Detective de la Verdad
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000004-0001-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Detective de la Verdad',
     'Realiza 5 verificaciones exitosas de fake news',
@@ -306,16 +395,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M4-2: Explorador Digital
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000004-0001-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Explorador Digital',
     'Completa 3 ejercicios de Infografia Interactiva',
@@ -353,16 +460,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M4-3: Velocista Digital
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000004-0001-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Velocista Digital',
     'Completa Quiz TikTok en menos de 30 segundos con 100% de aciertos',
@@ -401,16 +526,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M4-4: Memelogo
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000004-0001-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Memelogo',
     'Analiza 10 memes de manera exitosa',
@@ -448,16 +591,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M4-5: Maestro de la Alfabetizacion Digital
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000004-0001-0000-0000-000000000005'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Maestro de la Alfabetizacion Digital',
     'Completa todos los ejercicios del Modulo 4 - Alfabetizacion Digital',
@@ -495,7 +656,26 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- MODULO 5: PRODUCCION CREATIVA (5 achievements)
@@ -503,12 +683,11 @@ INSERT INTO gamification_system.achievements (
 
 -- M5-1: Escritor Creativo
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000005-0001-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Escritor Creativo',
     'Obtiene 80% o mas en el ejercicio Diario Multimedia',
@@ -545,16 +724,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M5-2: Artista Narrativo
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000005-0001-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Artista Narrativo',
     'Obtiene 80% o mas en el ejercicio Comic Digital',
@@ -591,16 +788,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M5-3: Voz del Pasado
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000005-0001-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Voz del Pasado',
     'Obtiene 80% o mas en el ejercicio Video-Carta',
@@ -637,16 +852,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M5-4: Produccion Completa
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000005-0001-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Produccion Completa',
     'Completa todos los ejercicios del Modulo 5 - Produccion Creativa',
@@ -684,16 +917,34 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- M5-5: Creador Multimedia Experto
 INSERT INTO gamification_system.achievements (
-    id, tenant_id, name, description, icon, category, rarity, difficulty_level,
+    tenant_id, name, description, icon, category, rarity, difficulty_level,
     conditions, rewards, ml_coins_reward, is_secret, is_active, is_repeatable,
     order_index, points_value, unlock_message, instructions, tips, metadata,
     created_at, updated_at
 ) VALUES (
-    '90000005-0001-0000-0000-000000000005'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Creador Multimedia Experto',
     'Obtiene promedio de 90% o mas en todos los ejercicios del Modulo 5',
@@ -731,7 +982,26 @@ INSERT INTO gamification_system.achievements (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-);
+)
+ON CONFLICT (name, tenant_id) DO UPDATE SET
+    description = EXCLUDED.description,
+    icon = EXCLUDED.icon,
+    category = EXCLUDED.category,
+    rarity = EXCLUDED.rarity,
+    difficulty_level = EXCLUDED.difficulty_level,
+    conditions = EXCLUDED.conditions,
+    rewards = EXCLUDED.rewards,
+    ml_coins_reward = EXCLUDED.ml_coins_reward,
+    is_secret = EXCLUDED.is_secret,
+    is_active = EXCLUDED.is_active,
+    is_repeatable = EXCLUDED.is_repeatable,
+    order_index = EXCLUDED.order_index,
+    points_value = EXCLUDED.points_value,
+    unlock_message = EXCLUDED.unlock_message,
+    instructions = EXCLUDED.instructions,
+    tips = EXCLUDED.tips,
+    metadata = EXCLUDED.metadata,
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- Resumen de achievements creados

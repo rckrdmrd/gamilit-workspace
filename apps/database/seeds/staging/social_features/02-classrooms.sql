@@ -5,7 +5,7 @@
 -- Dependencies: social_features.schools (00-schools-default.sql), auth_management.profiles
 -- Order: 02
 -- Created: 2025-01-11
--- Updated: 2026-01-08 - Renombrado a GAMILIT Aula General
+-- Updated: 2026-01-18 - FIX-UUID-002: Cambiar fallback UUID a formato v4 válido
 -- Version: 4.0
 -- =====================================================
 --
@@ -227,9 +227,8 @@ SELECT
 FROM social_features.classrooms c
 WHERE c.teacher_id IS NOT NULL
   AND c.code = 'DEFAULT'
-ON CONFLICT (id) DO UPDATE SET
-    role = EXCLUDED.role,
-    teacher_id = EXCLUDED.teacher_id;
+ON CONFLICT (teacher_id, classroom_id) DO UPDATE SET
+    role = EXCLUDED.role;
 
 -- 2. FIX-2026-01-18: Agregar a TODOS los teachers existentes al classroom DEFAULT
 -- Esto asegura que cualquier teacher pueda acceder al aula general

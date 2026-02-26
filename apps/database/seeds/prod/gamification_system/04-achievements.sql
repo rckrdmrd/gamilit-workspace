@@ -30,7 +30,6 @@ SET search_path TO gamification_system, educational_content, public;
 -- =====================================================
 
 INSERT INTO gamification_system.achievements (
-    id,
     tenant_id,
     name,
     description,
@@ -60,7 +59,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 1. Primeros Pasos
 (
-    '90000001-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,  -- Tenant principal
     'Primeros Pasos',
     'Completa tu primer ejercicio de comprensión lectora',
@@ -102,7 +100,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 2. Lector Principiante
 (
-    '90000001-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Lector Principiante',
     'Completa 10 ejercicios de comprensión lectora',
@@ -143,7 +140,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 3. Lector Experimentado
 (
-    '90000001-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Lector Experimentado',
     'Completa 50 ejercicios de comprensión lectora',
@@ -184,7 +180,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 4. Lector Experto
 (
-    '90000001-0000-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Lector Experto',
     'Completa 100 ejercicios de comprensión lectora',
@@ -225,7 +220,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 5. Maestro de la Lectura
 (
-    '90000001-0000-0000-0000-000000000005'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Maestro de la Lectura',
     'Completa 200 ejercicios de comprensión lectora',
@@ -270,7 +264,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 6. Racha de 3 Días
 (
-    '90000002-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Racha de 3 Días',
     'Mantén una racha de 3 días consecutivos practicando',
@@ -311,7 +304,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 7. Racha de 7 Días
 (
-    '90000002-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Racha de 7 Días',
     'Mantén una racha de 7 días consecutivos practicando',
@@ -352,7 +344,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 8. Racha de 30 Días
 (
-    '90000002-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Racha de 30 Días',
     'Mantén una racha de 30 días consecutivos practicando',
@@ -397,7 +388,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 9. Módulo 1 Completado
 (
-    '90000003-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Comprensión Literal Dominada',
     'Completa todos los ejercicios del Módulo 1: Comprensión Literal',
@@ -439,7 +429,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 10. Módulo 2 Completado
 (
-    '90000003-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Comprensión Inferencial Dominada',
     'Completa todos los ejercicios del Módulo 2: Comprensión Inferencial',
@@ -481,7 +470,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 11. Módulo 3 Completado
 (
-    '90000003-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Comprensión Crítica Dominada',
     'Completa todos los ejercicios del Módulo 3: Comprensión Crítica',
@@ -523,7 +511,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 12. Todos los Módulos Completados
 (
-    '90000003-0000-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Completista Total',
     'Completa todos los módulos del sistema',
@@ -569,7 +556,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 13. Perfeccionista
 (
-    '90000004-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Perfeccionista',
     'Obtén 100% de aciertos en 10 ejercicios',
@@ -611,7 +597,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 14. Experto en Inferencias
 (
-    '90000004-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Experto en Inferencias',
     'Completa 20 ejercicios de inferencia con 90% o más de aciertos',
@@ -655,7 +640,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 15. Crítico Avanzado
 (
-    '90000004-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Crítico Avanzado',
     'Completa 20 ejercicios de pensamiento crítico con 90% o más',
@@ -703,7 +687,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 16. Explorador Curioso
 (
-    '90000005-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Explorador Curioso',
     'Explora al menos 3 módulos diferentes',
@@ -745,7 +728,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 17. Aventurero del Conocimiento
 (
-    '90000005-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Aventurero del Conocimiento',
     'Completa ejercicios de todos los niveles de dificultad',
@@ -791,7 +773,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 18. Compañero de Aula
 (
-    '90000006-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Compañero de Aula',
     'Únete a tu primera aula virtual',
@@ -832,7 +813,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 19. Estudiante Colaborativo
 (
-    '90000006-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Estudiante Colaborativo',
     'Participa en 5 actividades sociales (aulas, desafíos, etc.)',
@@ -877,7 +857,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 20. Primera Visita
 (
-    '90000007-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Primera Visita',
     'Inicia sesión por primera vez en GAMILIT',
@@ -917,8 +896,7 @@ INSERT INTO gamification_system.achievements (
     gamilit.now_mexico()
 )
 
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
+ON CONFLICT (name, tenant_id) DO UPDATE SET
     description = EXCLUDED.description,
     icon = EXCLUDED.icon,
     category = EXCLUDED.category,

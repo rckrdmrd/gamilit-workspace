@@ -22,7 +22,6 @@
 SET search_path TO gamification_system, educational_content, public;
 
 INSERT INTO gamification_system.achievements (
-    id,
     tenant_id,
     name,
     description,
@@ -52,7 +51,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 1. Coleccionista de Logros
 (
-    '90000008-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Coleccionista de Logros',
     'Desbloquea 5 logros diferentes en tu viaje de aprendizaje',
@@ -93,7 +91,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 2. Maestro de Niveles
 (
-    '90000008-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Maestro de Niveles',
     'Alcanza nivel 3 o superior en todos los modulos educativos',
@@ -135,7 +132,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 3. Coleccionista de Avatares
 (
-    '90000008-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Coleccionista de Avatares',
     'Equipa 10 o mas items cosmeticos para personalizar tu perfil',
@@ -176,7 +172,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 4. Millonario ML
 (
-    '90000008-0000-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Millonario ML',
     'Acumula un total de 10,000 ML Coins a lo largo de tu experiencia',
@@ -217,7 +212,6 @@ INSERT INTO gamification_system.achievements (
 
 -- 5. Cazador de Tesoros
 (
-    '90000008-0000-0000-0000-000000000005'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Cazador de Tesoros',
     'Compra todos los items disponibles en la tienda virtual',
@@ -256,8 +250,7 @@ INSERT INTO gamification_system.achievements (
     gamilit.now_mexico()
 )
 
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
+ON CONFLICT (name, tenant_id) DO UPDATE SET
     description = EXCLUDED.description,
     icon = EXCLUDED.icon,
     category = EXCLUDED.category,
