@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-03
-**Aplica a:** Documentacion de base de datos en gamilit (18 schemas, 169 tablas)
+**Aplica a:** Documentacion de base de datos en gamilit (18 schemas, 173 tablas)
 **Obligatoriedad:** RECOMENDADO para documentacion tecnica
 
 ---

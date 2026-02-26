@@ -11,7 +11,7 @@ prerrequisitos:
 
 ## Introduccion
 
-Como QA en el proyecto gamilit, tu rol es asegurar la calidad de una plataforma educativa gamificada basada en cultura maya. El proyecto tiene 23 modulos, 4 portales (estudiante, maestro, administrador, padres), 833 tests passing y un objetivo de 80% de cobertura. Se usa Jest para backend/frontend y la piramide de pruebas (70% unit, 20% integration, 10% E2E).
+Como QA en el proyecto gamilit, tu rol es asegurar la calidad de una plataforma educativa gamificada basada en cultura maya. El proyecto tiene 23 modulos, 4 portales (estudiante, maestro, administrador, padres), 2324 tests (2296 passed + 28 skipped) en 63 spec files y un objetivo de 80% de cobertura. Se usa Jest para backend/frontend y la piramide de pruebas (70% unit, 20% integration, 10% E2E).
 
 ---
 
@@ -81,11 +81,11 @@ Lee estos documentos en orden para entender el contexto de QA:
 
 | Metrica | Valor |
 |---------|-------|
-| Tests passing | 833 |
-| Endpoints | 850 |
-| Entities | 152 |
-| Tablas DB | 170 |
-| Componentes frontend | 458 |
+| Tests passing | 2324 (2296 passed + 28 skipped) |
+| Endpoints | 912 |
+| Entities | 156 files (157 classes) |
+| Tablas DB | 173 |
+| Componentes frontend | 577 |
 
 ---
 
@@ -102,7 +102,7 @@ Lee estos documentos en orden para entender el contexto de QA:
 ### Ejecucion de Pruebas
 
 ```bash
-# Unit tests backend (833 tests)
+# Unit tests backend (2324 tests in 63 spec files)
 cd apps/backend
 npm run test
 
@@ -139,7 +139,7 @@ Incluir en cada reporte:
 
 Antes de aprobar un PR, verificar:
 - [ ] Tests nuevos cubren la funcionalidad
-- [ ] Tests existentes siguen pasando (833+)
+- [ ] Tests existentes siguen pasando (2324 tests, 2296 passed + 28 skipped)
 - [ ] Cobertura cumple umbrales minimos
 - [ ] Codigo sigue estandares del proyecto
 - [ ] Build pasa en backend y frontend
@@ -190,7 +190,7 @@ Antes de aprobar un PR, verificar:
 
 1. **[ ] Leer ESTANDAR-TESTING.md** - Entender piramide de testing y patrones
 2. **[ ] Configurar ambiente local** - Ver [ONBOARDING-DESARROLLADORES.md](./ONBOARDING-DESARROLLADORES.md)
-3. **[ ] Ejecutar suite de tests existente** - `cd apps/backend && npm run test` (833 tests)
+3. **[ ] Ejecutar suite de tests existente** - `cd apps/backend && npm run test` (2324 tests, 2296 passed + 28 skipped, 63 spec files)
 4. **[ ] Revisar cobertura actual** - `npm run test:cov`
 5. **[ ] Identificar gaps de testing** - Documentar areas sin cobertura
 6. **[ ] Revisar requerimientos funcionales** - `docs/10-requirements/`
@@ -220,7 +220,7 @@ Antes de aprobar un PR, verificar:
 
 - [ ] Lei ONBOARDING-DESARROLLADORES.md y configure ambiente local
 - [ ] Lei ESTANDAR-TESTING.md y entiendo la piramide de testing
-- [ ] Puedo ejecutar `npm run test` exitosamente (833 tests)
+- [ ] Puedo ejecutar `npm run test` exitosamente (2324 tests, 2296 passed + 28 skipped)
 - [ ] Puedo ejecutar `npm run test:cov` y ver reportes de cobertura
 - [ ] Tengo acceso a GitHub para ver PRs y checks
 - [ ] Conozco los 4 portales y 23 modulos del proyecto

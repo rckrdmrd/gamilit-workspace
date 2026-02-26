@@ -63,7 +63,7 @@ cp .env.example .env
 # Crear base de datos
 createdb gamilit_platform
 
-# Ejecutar DDL completo (18 schemas, 169 tablas)
+# Ejecutar DDL completo (18 schemas, 173 tablas)
 bash apps/database/scripts/recreate-database.sh
 
 # Cargar seeds (datos iniciales)
@@ -77,7 +77,7 @@ cd apps/database/seeds
 cd apps/backend
 npm run build    # Debe compilar sin errores
 npm run lint     # Debe pasar sin errores
-npm run test     # 833 tests deben pasar
+npm run test     # 2324 tests (2296 passed + 28 skipped) deben pasar
 
 # Frontend
 cd apps/frontend
@@ -95,7 +95,7 @@ gamilit-workspace/
 ├── CLAUDE.md                 # Instrucciones para agentes IA (leer primero)
 ├── ecosystem.config.js       # PM2 config (backend:3006, frontend:3005)
 ├── apps/                     # MONOREPO (todo en mismo repo Git)
-│   ├── backend/              # NestJS 11 (23 modulos, 905 endpoints)
+│   ├── backend/              # NestJS 11 (23 modulos, 912 endpoints)
 │   │   └── src/modules/      # Modulos del backend (@BACKEND)
 │   ├── frontend/             # React 19 + Zustand + TailwindCSS
 │   │   └── src/              # Codigo frontend (@FRONTEND)
@@ -218,7 +218,7 @@ psql -U gamilit_user -d gamilit_platform -h 127.0.0.1
 
 ### Testing
 ```bash
-# Todos los tests (833 passing)
+# Todos los tests (2324 tests, 2296 passed + 28 skipped)
 cd apps/backend && npm run test
 
 # Tests en modo watch
@@ -268,7 +268,7 @@ npm run test:cov
 - [ ] Configure variables de entorno (.env)
 - [ ] Base de datos gamilit_platform funcionando (18 schemas)
 - [ ] Build y lint pasan en backend y frontend
-- [ ] 833 tests pasan en backend
+- [ ] 2324 tests (2296 passed + 28 skipped) pasan en backend
 - [ ] Lei CLAUDE.md completo
 - [ ] Lei documentacion de estandares
 - [ ] Entiendo el flujo de commits [GAM-XXX]

@@ -323,7 +323,7 @@ La Arquitectura Hexagonal (Ports & Adapters) complementa Clean Architecture al d
 
 ```
         ┌──────────── ADAPTADORES PRIMARIOS ────────────┐
-        │  Controllers (107)  │  Gateways  │  Cron Jobs  │
+        │  Controllers (108)  │  Gateways  │  Cron Jobs  │
         └──────────┬──────────┴─────┬──────┴──────┬──────┘
                    │                │             │
         ┌──────────▼────────────────▼─────────────▼──────┐
@@ -525,7 +525,7 @@ La siguiente tabla muestra como los modulos principales de gamilit se mapean a l
 
 #### Beneficios del Mapeo Hexagonal en gamilit
 
-1. **Testabilidad:** Los puertos secundarios se pueden mockear facilmente en tests unitarios (833 tests passing)
+1. **Testabilidad:** Los puertos secundarios se pueden mockear facilmente en tests unitarios (2324 tests, 2296 passed + 28 skipped)
 2. **Intercambiabilidad:** El `RedisIoAdapter` puede reemplazarse por un adaptador en memoria sin modificar gateways
 3. **Separacion de concerns:** Los 15 guards (`JwtAuthGuard`, `RolesGuard`, `TenantGuard`, etc.) actuan como interceptores en la capa de adaptadores primarios
 4. **Multi-datasource:** Los 10 datasources de gamilit mapean a adaptadores secundarios independientes por schema

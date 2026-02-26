@@ -17,7 +17,7 @@ Antes de ejecutar cualquier tarea, lee estos archivos:
 - **Stack:** NestJS 11 + React 19 + PostgreSQL 15 + TypeORM 0.3.x + Redis + Socket.IO 4.8+ + Vite 6.x
 - **Estado:** MVP 98% completado, produccion activa
 - **Repositorio:** git@github.com:rckrdmrd/gamilit-workspace.git
-- **DB:** gamilit_platform (usuario: gamilit_user, 18 schemas, 169 tablas)
+- **DB:** gamilit_platform (usuario: gamilit_user, 18 schemas, 173 tablas)
 - **Puertos:** Backend 3006, Frontend 3005
 
 ### Sistema SIMCO
@@ -76,8 +76,8 @@ ANTES de modificar archivo existente:
 ### 3. Coherencia entre Capas
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
-  DDL → Backend: Toda tabla DEBE tener entity (169 tablas = 155 entities (156 classes))
-  Backend → Frontend: Endpoints documentados (905 endpoints)
+  DDL → Backend: Toda tabla DEBE tener entity (173 tablas = 156 files, 157 classes)
+  Backend → Frontend: Endpoints documentados (912 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = sincronizados
 ```
 
@@ -86,7 +86,7 @@ TODA MODIFICACION DEBE MANTENER COHERENCIA:
 ANTES de marcar tarea como completada:
 1. npm run build (backend + frontend) debe pasar
 2. npm run lint debe pasar
-3. npm run test (833 tests) debe pasar
+3. npm run test (2324 tests, 2296 passed + 28 skipped) debe pasar
 4. Inventarios actualizados si aplica
 ```
 
@@ -102,12 +102,12 @@ OBLIGATORIO: Edicion minima, verificar coherencia, documentar cambio
 gamilit-workspace/
 ├── CLAUDE.md                 ← Auto-cargado (punto de entrada)
 ├── apps/                     ← MONOREPO (single Git repo, NO submodules)
-│   ├── backend/              ← NestJS 11 (23 modulos, 905 endpoints)
+│   ├── backend/              ← NestJS 11 (23 modulos, 912 endpoints)
 │   │   └── src/modules/      ← @BACKEND
 │   ├── frontend/             ← React 19 + Zustand + TailwindCSS
 │   │   └── src/              ← @FRONTEND
 │   ├── database/             ← PostgreSQL 15 DDL
-│   │   ├── ddl/              ← @DDL (18 schemas, 170 tablas)
+│   │   ├── ddl/              ← @DDL (18 schemas, 173 tablas)
 │   │   └── seeds/            ← @SEEDS
 │   └── devops/
 ├── docs/                     ← Documentacion del producto
@@ -166,13 +166,13 @@ DDL primero → Entity → Endpoints → Frontend → Tests → Documentacion
 | Categoria | Metrica | Valor |
 |-----------|---------|-------|
 | DB | Schemas | 18 (16 activos + 2 placeholder) |
-| DB | Tablas | 170 |
-| Backend | Modulos | 22 |
-| Backend | Entities | 152 |
-| Backend | Endpoints | 850 |
-| Backend | Tests | 833 passing |
-| Frontend | Componentes | 458 |
-| Frontend | Paginas | 85 |
+| DB | Tablas | 173 |
+| Backend | Modulos | 23 |
+| Backend | Entities | 156 files (157 classes) |
+| Backend | Endpoints | 912 |
+| Backend | Tests | 2324 (2296 passed + 28 skipped) |
+| Frontend | Componentes | 577 |
+| Frontend | Paginas | 67 |
 | Frontend | Portales | 4 |
 
 ## Recursos Adicionales
