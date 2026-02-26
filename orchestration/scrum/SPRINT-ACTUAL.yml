@@ -4,7 +4,7 @@
 # Sistema: SIMCO v4.0.0
 # Nota: Sprint 1 historico movido a SPRINTS-HISTORICO.yml el 2026-02-26
 
-version: "3.2.0"
+version: "3.3.0"
 updated: "2026-02-26"
 
 # ============================================
@@ -53,6 +53,21 @@ objetivos:
     estado: "completado"
     progreso: 100
     items: ["FIX-001", "FIX-002", "FIX-003", "FIX-004", "FIX-005"]
+    fecha_completado: "2026-02-26"
+
+  - id: "OBJ-S2-005"
+    descripcion: "Auditoria integral BD: modelado, seeds, UUIDs, triggers — 9 fases"
+    estado: "completado"
+    progreso: 100
+    items: ["BD-001"]
+    fecha_completado: "2026-02-26"
+    nota: "9 fases, ~20 agentes, ~30 archivos. 40 UUIDs remediados. Loaders unificados. 0 errores recreacion."
+
+  - id: "OBJ-S2-006"
+    descripcion: "Responsive design mobile-first para todos los portales (ADR-050)"
+    estado: "completado"
+    progreso: 100
+    items: ["RESP-001"]
     fecha_completado: "2026-02-26"
 
 # ============================================
@@ -206,14 +221,40 @@ items:
     fecha_completado: "2026-02-26"
     entregable: "apps/frontend/src/shared/layouts/PortalLayout.tsx"
 
+  # Auditoria Integral BD (TASK-2026-02-26-AUDITORIA-BD)
+  - id: "BD-001"
+    titulo: "Auditoria integral BD: UUID remediation, loader unification, seed fixes"
+    epica: "EPIC-WS-001"
+    prioridad: "P0"
+    esfuerzo: "XL"
+    estado: "completado"
+    asignado: "Claude Code"
+    dependencias: []
+    fecha_completado: "2026-02-26"
+    entregable: "orchestration/tareas/TASK-2026-02-26-AUDITORIA-BD/"
+    nota: "9 fases: census UUID, core identity, UUID remediation (40 achievements), 6 schemas, loader unification, E2E validation"
+
+  # Responsive Design (ADR-050)
+  - id: "RESP-001"
+    titulo: "Mobile-first responsive improvements across all portals"
+    epica: "EPIC-WS-001"
+    prioridad: "P1"
+    esfuerzo: "L"
+    estado: "completado"
+    asignado: "Claude Code"
+    dependencias: []
+    fecha_completado: "2026-02-26"
+    entregable: "docs/90-adr/ADR-050-responsive-design-strategy.md"
+    nota: "71 files: shared useResponsiveLayout hook, Modal mobile fix, responsive headings, ADR-050 + standard + guide"
+
 # ============================================
 # METRICAS
 # ============================================
 
 metricas:
   velocidad_planificada: 40
-  items_total: 13
-  items_completados: 13
+  items_total: 15
+  items_completados: 15
   items_en_progreso: 0
   items_pendientes: 0
   porcentaje_avance: 100
@@ -258,3 +299,9 @@ metadata:
     - version: "3.1.0"
       date: "2026-02-26"
       note: "Sprint 1 historico extraido a SPRINTS-HISTORICO.yml; archivo reducido a sprint actual unicamente"
+    - version: "3.2.0"
+      date: "2026-02-26"
+      note: "13→15 items: +BD-001 (auditoria integral BD) +RESP-001 (responsive design)"
+    - version: "3.3.0"
+      date: "2026-02-26"
+      note: "+OBJ-S2-005 (auditoria BD) +OBJ-S2-006 (responsive design)"
