@@ -1,3 +1,11 @@
+---
+titulo: Schema 4 - gamification_system
+tipo: arquitectura
+subtipo: schema-reference
+schema: gamification_system
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema: gamification_system (27 tablas)
 
 > **Nota:** Este documento describe el modelo conceptual basado en DDL. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/gamification_system/`.
@@ -7,180 +15,6 @@
 > **Nota de nombres:** El schema fisico DDL es `gamification_system`. No existe un schema DDL separado llamado `gamification`. Todas las tablas de este documento pertenecen al schema `gamification_system`.
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
-
----
-
-## XP y Niveles (schema: gamification_system)
-
-> **[DEPRECATED]** This section describes an early conceptual model that was never implemented as described.
-> The DDL-accurate documentation appears in the updated sections below.
-
-### gamification_system.xp_transactions [NO DDL — conceptual only]
-Historial de transacciones XP (append-only, inmutable).
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| amount | INTEGER | NOT NULL | - | Cantidad de XP (positivo) |
-| source | xp_source_type | NOT NULL | - | Fuente (exercise, mission, achievement, bonus, streak) |
-| source_id | UUID | NULL | NULL | ID del recurso fuente |
-| multiplier | NUMERIC(3,1) | NOT NULL | 1.0 | Multiplicador aplicado |
-| base_amount | INTEGER | NOT NULL | - | Monto antes de multiplicador |
-| description | VARCHAR(200) | NULL | NULL | Descripcion |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Indices:** `idx_xp_student_date` (student_id, created_at), `idx_xp_source`
-**Entity:** `XpTransaction`
-**Trigger:** tr_xp_transaction_created (actualiza student_gamification, check level/rank)
-
----
-
-### gamification_system.levels [NO DDL — conceptual only]
-Definicion de niveles del sistema.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| number | INTEGER | NOT NULL | - | Numero de nivel |
-| name | VARCHAR(100) | NOT NULL | - | Nombre del nivel |
-| xp_required | INTEGER | NOT NULL | - | XP minimo para alcanzar |
-| rank_type | rank_type | NOT NULL | - | Rango maya asociado |
-| icon_url | VARCHAR(500) | NULL | NULL | Icono del nivel |
-| benefits | JSONB | NULL | '{}' | Beneficios desbloqueados |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**RLS:** NO (catalogo global)
-**Entity:** `Level`
-
----
-
-### gamification_system.rank_definitions [NO DDL — conceptual only]
-Definicion de los 5 rangos maya.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| type | rank_type | NOT NULL | - | ahkin, nacom, batab, halach_uinik, ajaw |
-| name | VARCHAR(50) | NOT NULL | - | Nombre completo |
-| display_name | VARCHAR(100) | NOT NULL | - | Nombre para mostrar |
-| description | TEXT | NULL | NULL | Descripcion del rango |
-| min_xp | INTEGER | NOT NULL | - | XP minimo |
-| max_xp | INTEGER | NULL | NULL | XP maximo (null para ultimo) |
-| icon_url | VARCHAR(500) | NOT NULL | - | Icono del rango |
-| frame_url | VARCHAR(500) | NULL | NULL | Marco de avatar |
-| benefits | JSONB | NULL | '{}' | Beneficios del rango |
-| sort_order | INTEGER | NOT NULL | - | Orden jerarquico |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**RLS:** NO (catalogo global, 5 registros)
-**Entity:** `RankDefinition`
-
----
-
-### gamification_system.student_gamification [NO DDL — conceptual only]
-Estado actual de gamificacion por estudiante.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| total_xp | INTEGER | NOT NULL | 0 | XP total acumulado |
-| current_level | INTEGER | NOT NULL | 1 | Nivel actual |
-| current_rank | rank_type | NOT NULL | 'ahkin' | Rango maya actual |
-| ml_coins_balance | INTEGER | NOT NULL | 0 | Saldo ML Coins |
-| total_ml_coins_earned | INTEGER | NOT NULL | 0 | Total ML Coins ganados |
-| total_ml_coins_spent | INTEGER | NOT NULL | 0 | Total ML Coins gastados |
-| achievements_count | INTEGER | NOT NULL | 0 | Logros desbloqueados |
-| exercises_completed | INTEGER | NOT NULL | 0 | Ejercicios completados |
-| current_streak | INTEGER | NOT NULL | 0 | Racha actual (dias) |
-| longest_streak | INTEGER | NOT NULL | 0 | Racha mas larga |
-| last_activity_at | TIMESTAMPTZ | NULL | NULL | Ultima actividad |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Indices:** `idx_student_gam_unique` UNIQUE (student_id, tenant_id), `idx_student_gam_rank`, `idx_student_gam_xp`
-**Entity:** `StudentGamification`
-
----
-
-### gamification_system.gamification_config [NO DDL — conceptual only]
-Parametros configurables de gamificacion por tenant.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| xp_base_exercise | INTEGER | NOT NULL | 10 | XP base por ejercicio |
-| xp_multiplier_easy | NUMERIC(3,1) | NOT NULL | 1.0 | Multiplicador facil |
-| xp_multiplier_medium | NUMERIC(3,1) | NOT NULL | 1.5 | Multiplicador medio |
-| xp_multiplier_hard | NUMERIC(3,1) | NOT NULL | 2.0 | Multiplicador dificil |
-| xp_multiplier_expert | NUMERIC(3,1) | NOT NULL | 3.0 | Multiplicador experto |
-| streak_bonus_multiplier | NUMERIC(3,2) | NOT NULL | 0.10 | Bonus por racha (+10% por dia) |
-| streak_bonus_max | NUMERIC(3,1) | NOT NULL | 2.0 | Maximo bonus de racha |
-| daily_xp_limit | INTEGER | NOT NULL | 500 | Limite diario XP |
-| ml_coins_per_exercise | INTEGER | NOT NULL | 5 | ML Coins base por ejercicio |
-| config_data | JSONB | NULL | '{}' | Configuracion adicional |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `GamificationConfig`
-
----
-
-### gamification_system.xp_multipliers [NO DDL — conceptual only]
-Multiplicadores activos por estudiante.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| multiplier_type | VARCHAR(50) | NOT NULL | - | Tipo de multiplicador |
-| value | NUMERIC(3,1) | NOT NULL | - | Valor del multiplicador |
-| source | VARCHAR(100) | NOT NULL | - | Origen (item, event, streak) |
-| expires_at | TIMESTAMPTZ | NULL | NULL | Expiracion |
-| is_active | BOOLEAN | NOT NULL | true | Activo |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
----
-
-### gamification_system.daily_xp_limits [NO DDL — conceptual only]
-Control anti-abuse de XP diario.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| date | DATE | NOT NULL | CURRENT_DATE | Fecha |
-| xp_earned | INTEGER | NOT NULL | 0 | XP ganado hoy |
-| limit_reached | BOOLEAN | NOT NULL | false | Limite alcanzado |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Indices:** `idx_daily_xp_student_date` UNIQUE (student_id, date, tenant_id)
-
----
-
-### gamification_system.streak_records [NO DDL — conceptual only]
-Registro de rachas de dias consecutivos.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| streak_start | DATE | NOT NULL | - | Inicio de la racha |
-| streak_end | DATE | NULL | NULL | Fin de la racha (null = activa) |
-| days_count | INTEGER | NOT NULL | 1 | Dias consecutivos |
-| status | streak_status | NOT NULL | 'active' | Estado (active, broken, completed) |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `StreakRecord`
 
 ---
 
@@ -774,3 +608,21 @@ Audit trail inmutable del historial de consumo de comodines. Tabla de auditoria 
 **Indices:** `idx_comodin_uses_user_id`, `idx_comodin_uses_comodin_type`, `idx_comodin_uses_exercise_id` (parcial, WHERE exercise_id IS NOT NULL), `idx_comodin_uses_consumed_at` (DESC), `idx_comodin_uses_user_type_time` (user_id, comodin_type, consumed_at DESC), `idx_comodin_uses_user_exercise` (parcial, WHERE exercise_id IS NOT NULL), `idx_comodin_uses_value_provided_gin` (GIN)
 **RLS:** Habilitado (own select, admin select, system/admin insert)
 **Nota:** Tabla inmutable (sin updated_at). Solo el sistema via SECURITY DEFINER functions o admins pueden insertar. Cross-schema: referencias educational_content y progress_tracking. Ubicada en `_cross_schema/21-comodin_uses.sql`. GAP-GAM-001.
+
+---
+
+## Tablas Conceptuales (sin DDL)
+
+> Las siguientes tablas aparecen en el modelo conceptual pero no tienen DDL implementado.
+> Son candidatas para futuras iteraciones o estan cubiertas por tablas existentes.
+
+| Tabla | Proposito |
+|-------|-----------|
+| gamification_system.xp_transactions | Transacciones de XP |
+| gamification_system.levels | Definicion de niveles |
+| gamification_system.rank_definitions | Definicion de rangos maya |
+| gamification_system.student_gamification | Perfil gamificado del estudiante |
+| gamification_system.gamification_config | Configuracion de gamificacion |
+| gamification_system.xp_multipliers | Multiplicadores de XP |
+| gamification_system.daily_xp_limits | Limites diarios de XP |
+| gamification_system.streak_records | Registros de rachas |

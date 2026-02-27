@@ -1,3 +1,10 @@
+---
+titulo: TRAZA - Corrección de Errores Dashboard de Estudiantes
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # TRAZA: Corrección de Errores Dashboard de Estudiantes
 
 **Fecha:** 2026-01-04

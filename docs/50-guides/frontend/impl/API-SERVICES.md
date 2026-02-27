@@ -1,3 +1,10 @@
+---
+titulo: API Services
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # API Services - GAMILIT Frontend
 
 **Proyecto:** GAMILIT Platform

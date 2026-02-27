@@ -1,3 +1,10 @@
+---
+titulo: Plan de Consolidación de Types
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Plan de Consolidación de Types - Frontend GAMILIT
 
 **Fecha:** 2025-11-29

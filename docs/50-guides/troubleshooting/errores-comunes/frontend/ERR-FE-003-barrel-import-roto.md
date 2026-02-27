@@ -1,3 +1,10 @@
+---
+titulo: Error FE-003 Import Barrel Roto
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-FE-003: Import Barrel Roto
 
 ## Descripcion

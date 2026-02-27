@@ -1,3 +1,11 @@
+---
+titulo: Schema 6 - classrooms
+tipo: arquitectura
+subtipo: schema-reference
+schema: educational_content
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 6: classrooms (8 tablas, 28 RLS policies)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.

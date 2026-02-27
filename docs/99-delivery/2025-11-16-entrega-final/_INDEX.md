@@ -21,9 +21,9 @@
 | `Manual de Usuario.docx` | Manual de usuario del sistema (formato Word) | 2026-02-27 |
 | `Manual del Portal de Administrador.docx` | Manual del portal de administrador (formato Word) | 2026-02-27 |
 | `Manual del Portal de Maestros.docx` | Manual del portal de maestros (formato Word) | 2026-02-27 |
-| `Manual-Portal-Administrador-ACTUALIZADO.md` | Manual actualizado del portal de administrador (Markdown) | 2026-02-27 |
-| `Manual-Portal-Maestros-ACTUALIZADO.md` | Manual actualizado del portal de maestros (Markdown) | 2026-02-27 |
-| `Manual-Portal-Student-v1.0.md` | Manual del portal de estudiante v1.0 (Markdown) | 2026-02-27 |
+| `MANUAL-PORTAL-ADMINISTRADOR-ACTUALIZADO.md` | Manual actualizado del portal de administrador (Markdown) | 2026-02-27 |
+| `MANUAL-PORTAL-MAESTROS-ACTUALIZADO.md` | Manual actualizado del portal de maestros (Markdown) | 2026-02-27 |
+| `MANUAL-PORTAL-STUDENT-V1.0.md` | Manual del portal de estudiante v1.0 (Markdown) | 2026-02-27 |
 | `MANUAL-USUARIO-PORTAL-ADMINISTRADOR.md` | Manual de usuario del portal de administrador | 2026-02-27 |
 | `MANUAL-USUARIO-PORTAL-ESTUDIANTE.md` | Manual de usuario del portal de estudiante | 2026-02-27 |
 | `MANUAL-USUARIO-PORTAL-MAESTROS.md` | Manual de usuario del portal de maestros | 2026-02-27 |

@@ -1,3 +1,10 @@
+---
+titulo: STUDENT-GAP-006 - Perfil - Estadísticas Hardcodeadas
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # STUDENT-GAP-006: Perfil - Estadísticas Hardcodeadas
 
 **Fecha de corrección:** 2025-11-24

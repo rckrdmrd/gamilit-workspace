@@ -1,3 +1,5 @@
+> **[HISTORICAL SNAPSHOT — 2025-11-16]** Stack references in this document reflect the November 2025 delivery state (PostgreSQL 16.x, Vite 7.x). Current stack: PostgreSQL 15, Vite 6.x. Content preserved as-is for audit trail.
+
 # Resumen de Datos Completados en Documentos de Entrega
 
 **Fecha de actualización:** 16 de noviembre de 2025

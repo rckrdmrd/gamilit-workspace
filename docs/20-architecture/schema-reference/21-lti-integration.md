@@ -1,3 +1,11 @@
+---
+titulo: Schema 21 - lti_integration
+tipo: arquitectura
+subtipo: schema-reference
+schema: lti_integration
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 21: lti_integration (3 tablas)
 
 > **Nota:** Este documento describe el schema fisico `lti_integration`. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/lti_integration/tables/`.

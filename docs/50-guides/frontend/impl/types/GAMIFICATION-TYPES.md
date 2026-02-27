@@ -1,3 +1,10 @@
+---
+titulo: Gamification Frontend Types
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Gamification Frontend Types - Estado Actual
 
 **Documento:** GAMIFICATION-TYPES.md

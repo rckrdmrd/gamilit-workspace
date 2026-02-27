@@ -1,3 +1,10 @@
+---
+titulo: Error DB-004 Conflictos RLS entre Schemas
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-DB-004: Conflictos RLS entre Schemas
 
 ## Descripcion

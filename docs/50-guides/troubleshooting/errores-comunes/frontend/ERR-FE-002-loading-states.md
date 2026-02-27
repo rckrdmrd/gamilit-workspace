@@ -1,3 +1,10 @@
+---
+titulo: Error FE-002 Estados de Carga No Manejados
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-FE-002: Estados de Carga No Manejados
 
 **Categoria:** Frontend

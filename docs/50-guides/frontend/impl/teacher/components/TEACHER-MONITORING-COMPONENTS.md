@@ -1,3 +1,10 @@
+---
+titulo: Componentes de Monitoreo Teacher Portal
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Componentes de Monitoreo - Teacher Portal
 
 **Version:** 1.0.0

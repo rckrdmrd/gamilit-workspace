@@ -1,3 +1,10 @@
+---
+titulo: Estructura de Módulos Backend
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Estructura de Módulos Backend
 
 **Versión:** 1.0.0

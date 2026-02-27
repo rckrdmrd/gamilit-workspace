@@ -1,3 +1,10 @@
+---
+titulo: Guía de Pruebas Módulo 4 Lectura Digital y Multimodal
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA DE PRUEBAS - MODULO 4: LECTURA DIGITAL Y MULTIMODAL
 ## Ejemplos de Respuestas para Testing QA
 

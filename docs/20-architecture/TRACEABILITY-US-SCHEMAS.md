@@ -1,3 +1,9 @@
+---
+titulo: TRACEABILITY - User Stories a Schemas de Base de Datos
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # TRACEABILITY: User Stories a Schemas de Base de Datos
 
 **Proyecto:** GAMILIT

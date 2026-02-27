@@ -1,3 +1,9 @@
+---
+titulo: Arquitectura de Gamificacion - GAMILIT
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Arquitectura de Gamificacion - GAMILIT
 
 **Version:** 1.0.0

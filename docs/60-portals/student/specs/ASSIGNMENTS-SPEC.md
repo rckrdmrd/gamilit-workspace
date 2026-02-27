@@ -1,3 +1,10 @@
+---
+titulo: ASSIGNMENTS-SPEC - Student Assignments Pages Specification
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # ASSIGNMENTS-SPEC: Student Assignments Pages Specification
 
 **Sistema:** Gamilit - Student Portal

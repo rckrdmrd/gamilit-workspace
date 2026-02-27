@@ -1,3 +1,10 @@
+---
+titulo: Guia de Coverage Testing
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia de Coverage Testing — gamilit
 
 **Version:** 1.0.0

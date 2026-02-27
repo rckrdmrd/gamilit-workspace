@@ -1,3 +1,10 @@
+---
+titulo: Guía TypeORM Cross-Datasource en Gamilit
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía: TypeORM Cross-Datasource en Gamilit
 
 **Versión:** 1.0.0

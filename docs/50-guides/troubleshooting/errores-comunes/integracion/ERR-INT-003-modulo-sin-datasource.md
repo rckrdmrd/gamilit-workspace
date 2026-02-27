@@ -1,3 +1,10 @@
+---
+titulo: Error INT-003 Módulo Registrado sin Entidades en Datasource
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-INT-003: Modulo Registrado sin Entidades en Datasource
 
 ## Descripcion

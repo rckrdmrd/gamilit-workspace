@@ -1,3 +1,10 @@
+---
+titulo: Guía de Pruebas Módulo 2 Comprensión Inferencial
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # GUÍA DE PRUEBAS - MÓDULO 2: COMPRENSIÓN INFERENCIAL
 ## Ejemplos de Respuestas para Testing QA
 

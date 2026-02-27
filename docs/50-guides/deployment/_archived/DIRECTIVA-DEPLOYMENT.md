@@ -1,3 +1,10 @@
+---
+titulo: Directiva Deployment en Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # DIRECTIVA: Deployment en Producción
 
 **Versión:** 1.0

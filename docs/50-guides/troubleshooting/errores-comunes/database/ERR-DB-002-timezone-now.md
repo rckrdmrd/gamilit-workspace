@@ -1,3 +1,10 @@
+---
+titulo: Error DB-002 Uso de NOW() en lugar de gamilit.now_mexico()
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-DB-002: Uso de NOW() en lugar de gamilit.now_mexico()
 
 **Categoria:** Database

@@ -1,3 +1,9 @@
+---
+titulo: Modulo 1 - Mecanicas
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Modulo 1 - Mecanicas
 
 > Comprension literal.

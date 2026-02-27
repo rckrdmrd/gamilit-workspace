@@ -1,3 +1,9 @@
+---
+titulo: Datos de Gamificacion - GAMILIT
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # DATOS DE GAMIFICACION - GAMILIT
 
 **Version:** 2.0.0

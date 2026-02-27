@@ -1,3 +1,10 @@
+---
+titulo: Patrones de Componentes
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Patrones de Componentes - Frontend GAMILIT
 
 **Fecha de creacion:** 2025-11-29

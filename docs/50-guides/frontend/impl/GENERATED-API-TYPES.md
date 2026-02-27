@@ -1,3 +1,10 @@
+---
+titulo: Tipos API Generados Automáticamente
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Tipos API Generados Automáticamente
 
 **Fecha:** 2025-11-24

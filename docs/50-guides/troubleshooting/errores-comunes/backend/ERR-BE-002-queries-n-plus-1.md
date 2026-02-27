@@ -1,3 +1,10 @@
+---
+titulo: Error BE-002 Queries N+1 en TypeORM
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-002: Queries N+1 en TypeORM
 
 **Categoria:** Backend

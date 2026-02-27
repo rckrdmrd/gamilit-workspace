@@ -1,3 +1,10 @@
+---
+titulo: Guía de Pruebas Módulo 3 Comprensión Crítica y Valorativa
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # GUÍA DE PRUEBAS: Respuestas de Ejemplo - Módulo 3
 ## COMPRENSIÓN CRÍTICA Y VALORATIVA
 

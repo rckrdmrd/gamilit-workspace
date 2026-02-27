@@ -1,6 +1,11 @@
-# Guia de Rotacion de Secretos
-
 ---
+titulo: Guía de Rotación de Secretos
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
+# Guia de Rotacion de Secretos
 titulo: Guia de Rotacion de Secretos
 version: 1.0.0
 fecha_creacion: 2026-02-14

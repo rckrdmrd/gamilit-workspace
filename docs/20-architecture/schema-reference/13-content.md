@@ -1,3 +1,11 @@
+---
+titulo: Schema 13 - content_management
+tipo: arquitectura
+subtipo: schema-reference
+schema: content_management
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 13: content_management (10 tablas)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/content_management/`.

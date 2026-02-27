@@ -1,6 +1,11 @@
-# Guia de Architecture Testing
-
 ---
+titulo: Guia de Architecture Testing
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
+# Guia de Architecture Testing
 titulo: Guia de Architecture Testing
 version: 1.0.0
 fecha_creacion: 2026-02-14

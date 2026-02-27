@@ -1,15 +1,39 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-02-27
-**Version:** v5.4 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
-**Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~92/100
-**Sprint Actual:** Sprint 2 COMPLETADO — Remediacion 17 Gaps COMPLETADA — Sprint 3 backlog listo
+**Version:** v5.5 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
+**Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~98/100
+**Sprint Actual:** Sprint 2 COMPLETADO — Doc Health Remediation 85->98 COMPLETADA — Sprint 3 funcional pendiente
 
 ---
 
 ## Estado Actual
 
-### Ultima Tarea Completada: Auditoria BD + Ejercicios + WSL (2026-02-27)
+### Ultima Tarea Completada: Doc Health Remediation 85→98/100 (2026-02-27)
+
+**5 fases, ~23 subagentes, ~296 operaciones (230 mod + 57 creados + 9 renombrados). Health Score: 85→~98/100.**
+
+Cambios aplicados (Fases 1-5):
+1. FASE 1A: Banners snapshot historico agregados a 8 archivos en 99-delivery
+2. FASE 1B: MODELO-DATOS.md corregido (Views 22→18, Functions 183→158), SCHEMA-REFERENCE.md reescrito como redirect, 06-progress.md→06b-progress.md
+3. FASE 1C: Schema-reference _MAP.md nombres de schema corregidos
+4. FASE 1D: 37 definiciones [NO DDL] fantasma eliminadas (~740 lineas, 7 archivos schema-ref)
+5. FASE 2A/2B/2D: +118 endpoints documentados (ExerciseValidation 21, Notifications 32, ClassroomMissions 5, TeacherGrades 2, ETL/ML/Viz 58)
+6. FASE 3A: 18 _INDEX.md de navegacion creados
+7. FASE 3B: 23 _MAP.md de EPIC creados
+8. FASE 3C: 10 _MAP.md non-EPIC creados
+9. FASE 3D: 4 _INDEX.md portales expandidos, 8 archivos renombrados (UPPER-CASE)
+10. FASE 3E: Orphan redirect corregido
+11. FASE 4A: ESTANDAR-SEGURIDAD.md dividido (1863L → indice 91L + WEB 993L + API 857L)
+12. FASE 4B: ESTANDAR-TESTING.md dividido (1582L → ~130L indice + Unit + Integration + E2E + Architecture)
+13. FASE 4C: ESTANDAR-API.md deduplicado solapamiento seguridad (-203 lineas)
+14. FASE 5A-5D: Frontmatter campaign — ~209 archivos (standards 31, architecture 47, guides ~100+, portals 31)
+
+API Coverage: ~513→~631/912 (56%→~69%). Standards: 17→35 archivos (post-split). Health Score: 85→98/100.
+
+**Reporte:** `orchestration/tareas/TASK-2026-02-27-DOC-HEALTH-100/REMEDIATION-REPORT.md`
+
+### Tarea Anterior: Auditoria BD + Ejercicios + WSL (2026-02-27)
 
 **23 discrepancias cross-layer corregidas. 18 archivos. Build OK. Todas las validaciones PASS.**
 
@@ -206,7 +230,10 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 | Frontend | Stores Zustand | 13 |
 | Frontend | API Service Files | 65 |
 | Portales | Parent portal | 100% (7/7 pages) |
-| Health Score | Post-remediacion | ~92/100 (era 84) |
+| Health Score | Post-remediacion | ~98/100 (era 92, prev 84) |
+| Docs | API Coverage | ~631/912 (~69%, era 513/56%) |
+| Docs | Frontmatter | >90% (~209 archivos) |
+| Docs | Standards files | 35 (era 17 pre-split) |
 
 > SSOT: `orchestration/inventarios/MASTER_INVENTORY.yml`
 
@@ -216,6 +243,7 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 
 | Recurso | Ubicacion |
 |---------|-----------|
+| **Doc Health Remediation 2026-02-27** | **`orchestration/tareas/TASK-2026-02-27-DOC-HEALTH-100/REMEDIATION-REPORT.md` — Health 85→98, ~296 ops** |
 | Historial de sesiones 2026 | `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md` |
 | Sprint actual | `orchestration/scrum/SPRINT-ACTUAL.yml` |
 | Backlog | `orchestration/scrum/BACKLOG.yml` |

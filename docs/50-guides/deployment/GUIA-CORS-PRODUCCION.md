@@ -1,6 +1,11 @@
-# GUIA-CORS-PRODUCCION.md
+---
+titulo: Configuración CORS para Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
 
-## Configuración CORS para Producción - GAMILIT
+# Configuración CORS para Producción - GAMILIT
 
 **Fecha**: 2025-12-18
 **Problema resuelto**: Error `Access-Control-Allow-Origin contains multiple values`

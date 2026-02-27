@@ -1,70 +1,16 @@
+---
+titulo: Schema 16 - audit_logging
+tipo: arquitectura
+subtipo: schema-reference
+schema: audit_logging
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 16: audit_logging (7 tablas, 14+ RLS policies)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
-
----
-
-> **[DEPRECATED]** This section describes an early conceptual model that was never implemented as described.
-> The DDL-accurate documentation appears in the updated sections below.
-> **Note:** The DDL schema is `audit_logging`, not `audit`. The `audit.*` prefix below is legacy.
-
-### audit.audit_logs [NO DDL — conceptual only]
-Registro de acciones criticas del sistema.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| action | audit_action | NOT NULL | - | create, update, delete, login, logout |
-| entity_type | VARCHAR(100) | NOT NULL | - | Tipo de entidad |
-| entity_id | UUID | NULL | NULL | ID de la entidad |
-| old_values | JSONB | NULL | NULL | Valores anteriores |
-| new_values | JSONB | NULL | NULL | Valores nuevos |
-| ip_address | INET | NULL | NULL | IP |
-| user_agent | TEXT | NULL | NULL | User agent |
-| metadata | JSONB | NULL | '{}' | Metadatos adicionales |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Indices:** `idx_audit_entity`, `idx_audit_user_date`
-
----
-
-### audit.data_changes [NO DDL — conceptual only]
-Historial detallado de cambios en datos.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| table_name | VARCHAR(100) | NOT NULL | - | Tabla afectada |
-| record_id | UUID | NOT NULL | - | ID del registro |
-| operation | VARCHAR(10) | NOT NULL | - | INSERT, UPDATE, DELETE |
-| changed_by | UUID | NULL | NULL | FK auth.users |
-| old_data | JSONB | NULL | NULL | Datos anteriores |
-| new_data | JSONB | NULL | NULL | Datos nuevos |
-| changed_columns | TEXT[] | NULL | NULL | Columnas modificadas |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
----
-
-### audit.access_logs [NO DDL — conceptual only]
-Registro de acceso al sistema.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| tenant_id | UUID | NULL | NULL | FK tenants.tenants |
-| user_id | UUID | NULL | NULL | FK auth.users |
-| endpoint | VARCHAR(500) | NOT NULL | - | Endpoint accedido |
-| method | VARCHAR(10) | NOT NULL | - | HTTP method |
-| status_code | INTEGER | NOT NULL | - | Codigo de respuesta |
-| response_time_ms | INTEGER | NOT NULL | - | Tiempo de respuesta |
-| ip_address | INET | NOT NULL | - | IP |
-| user_agent | TEXT | NULL | NULL | User agent |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
 
 ---
 
@@ -323,3 +269,16 @@ Registro de usuarios cuya inicializacion de gamificacion fallo para retry poster
 **Indices:** `idx_pending_init_user_id`, `idx_pending_init_status`, `idx_pending_init_created_at` (DESC), `idx_pending_init_next_retry` (parcial: status IN pending/retrying)
 **Trigger:** trg_pending_init_updated_at
 **Funcion helper:** `audit_logging.resolve_pending_initialization(p_user_id, p_resolved_by, p_notes)` → marca como resuelto
+
+---
+
+## Tablas Conceptuales (sin DDL)
+
+> Las siguientes tablas aparecen en el modelo conceptual pero no tienen DDL implementado.
+> Son candidatas para futuras iteraciones o estan cubiertas por tablas existentes.
+
+| Tabla | Proposito |
+|-------|-----------|
+| audit.audit_logs | Logs de auditoria |
+| audit.data_changes | Registro de cambios de datos |
+| audit.access_logs | Logs de acceso |

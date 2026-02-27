@@ -1,3 +1,9 @@
+---
+titulo: Multi-Tenant Isolation Flow
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # FL-SYS-06: Multi-Tenant Isolation Flow
 
 **ID:** FL-SYS-06

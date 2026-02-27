@@ -1,3 +1,10 @@
+---
+titulo: Referencia de Tipos Teacher Portal
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Referencia de Tipos - Teacher Portal
 
 **Version:** 1.0.0

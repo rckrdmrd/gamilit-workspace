@@ -1,3 +1,10 @@
+---
+titulo: Guía de Desarrollo - Portal Teacher
+tipo: portal
+portal: teacher
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia de Desarrollo - Portal Teacher
 
 **Fecha de creacion:** 2025-11-29

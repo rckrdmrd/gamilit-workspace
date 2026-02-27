@@ -1,3 +1,10 @@
+---
+titulo: Error FE-004 Archivo Utility Duplicado
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-FE-004: Archivo Utility Duplicado
 
 ## Descripcion

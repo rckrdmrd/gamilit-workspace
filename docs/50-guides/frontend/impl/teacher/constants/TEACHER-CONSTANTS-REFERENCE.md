@@ -1,3 +1,10 @@
+---
+titulo: Referencia de Constantes Teacher Portal
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Referencia de Constantes - Teacher Portal
 
 **Version:** 1.0.0

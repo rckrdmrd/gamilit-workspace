@@ -1,10 +1,15 @@
+---
+titulo: Guía de Testing GAMILIT
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Testing GAMILIT
 
 **Proyecto:** GAMILIT - Consolidación GAMILIT Platform
 **Fecha:** 2025-10-27
 **Versión:** 1.0
-
----
 
 ## Introducción
 

@@ -1,3 +1,9 @@
+---
+titulo: Flujo Tecnico - Equipamiento
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # FLUJO-TECNICO-EQUIPAMIENTO
 
 > Flujo tecnico end-to-end para equipamiento cosmético usando `shop_items.metadata` y `user_equipped_items`.

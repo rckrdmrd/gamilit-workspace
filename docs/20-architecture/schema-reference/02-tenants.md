@@ -1,3 +1,11 @@
+---
+titulo: Schema 2 - tenants
+tipo: arquitectura
+subtipo: schema-reference
+schema: auth_management
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 2: tenants (4 tablas, 12 RLS policies)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.

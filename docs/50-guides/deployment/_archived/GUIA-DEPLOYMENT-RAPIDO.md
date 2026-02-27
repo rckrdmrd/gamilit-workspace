@@ -1,3 +1,10 @@
+---
+titulo: Guía Rápida Deployment en Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA RAPIDA: Deployment en Produccion
 
 **Version:** 1.0.0

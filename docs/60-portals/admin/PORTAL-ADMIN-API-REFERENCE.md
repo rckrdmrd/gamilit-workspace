@@ -1,3 +1,10 @@
+---
+titulo: Portal Admin - API Reference
+tipo: portal
+portal: admin
+ultima_actualizacion: 2026-02-27
+---
+
 # Portal Admin - API Reference
 
 **Version:** 1.0.0

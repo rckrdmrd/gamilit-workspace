@@ -1,3 +1,11 @@
+---
+titulo: Schema - gamilit (utility)
+tipo: arquitectura
+subtipo: schema-reference
+schema: gamilit
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema: gamilit (0 tablas, 37 funciones, 1 view)
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

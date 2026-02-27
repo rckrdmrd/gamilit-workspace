@@ -1,3 +1,10 @@
+---
+titulo: SSL Auto-firmado para Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA: SSL Auto-firmado para Produccion (Sin Dominio)
 
 **Servidor:** 74.208.126.102

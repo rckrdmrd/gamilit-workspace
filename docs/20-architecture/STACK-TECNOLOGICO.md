@@ -1,3 +1,9 @@
+---
+titulo: Stack Tecnologico - GAMILIT
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Stack Tecnologico - GAMILIT
 
 **Version:** 1.0.0

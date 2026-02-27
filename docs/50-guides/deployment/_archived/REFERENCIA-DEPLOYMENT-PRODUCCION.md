@@ -1,3 +1,10 @@
+---
+titulo: Referencia Deployment en Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # REFERENCIA: Deployment en Produccion
 
 **Ubicacion de Documentacion Completa:**

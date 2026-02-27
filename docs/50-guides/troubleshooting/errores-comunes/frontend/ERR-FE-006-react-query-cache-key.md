@@ -1,3 +1,10 @@
+---
+titulo: Error FE-006 React Query Cache Key Collision
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-FE-006: React Query Cache Key Collision
 
 ## Descripcion

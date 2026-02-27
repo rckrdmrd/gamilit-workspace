@@ -1,3 +1,10 @@
+---
+titulo: Guía de Deployment para Agente en Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA DE DEPLOYMENT PARA AGENTE EN PRODUCCION - GAMILIT
 
 **Version:** 1.0

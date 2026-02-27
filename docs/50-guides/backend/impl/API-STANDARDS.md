@@ -1,3 +1,10 @@
+---
+titulo: Estándares de API REST
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Estandares de API REST - GAMILIT
 
 **Version:** 2.0.0

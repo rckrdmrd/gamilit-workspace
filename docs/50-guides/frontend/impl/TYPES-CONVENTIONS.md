@@ -1,3 +1,10 @@
+---
+titulo: Convenciones de Types
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Convenciones de Types - Frontend GAMILIT
 
 **Fecha de creación:** 2025-11-29

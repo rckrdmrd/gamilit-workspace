@@ -1,3 +1,10 @@
+---
+titulo: Instrucciones de Deployment
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # INSTRUCCIONES DE DEPLOYMENT - GAMILIT
 
 **Version:** 1.0

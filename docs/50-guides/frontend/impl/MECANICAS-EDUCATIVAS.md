@@ -1,3 +1,10 @@
+---
+titulo: Mecánicas Educativas Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # MECANICAS EDUCATIVAS - FRONTEND
 
 **Proyecto:** GAMILIT - Plataforma Educativa Gamificada

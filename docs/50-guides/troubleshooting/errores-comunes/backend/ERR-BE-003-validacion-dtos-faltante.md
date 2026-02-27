@@ -1,3 +1,10 @@
+---
+titulo: Error BE-003 Validación Faltante en DTOs
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-003: Validacion Faltante en DTOs
 
 **Categoria:** Backend

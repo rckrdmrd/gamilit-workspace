@@ -1,3 +1,11 @@
+---
+titulo: Schemas Placeholder y Vacios
+tipo: arquitectura
+subtipo: schema-reference
+schema: placeholder
+ultima_actualizacion: 2026-02-27
+---
+
 # Schemas Placeholder y Vacios
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

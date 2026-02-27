@@ -20,9 +20,9 @@
 
 | Archivo | Version | Descripcion |
 |---------|---------|-------------|
-| [Manual-Portal-Administrador-ACTUALIZADO.md](./Manual-Portal-Administrador-ACTUALIZADO.md) | 1.3 | Manual operativo del portal administrador (Ene 2026) |
-| [Manual-Portal-Maestros-ACTUALIZADO.md](./Manual-Portal-Maestros-ACTUALIZADO.md) | 2.0 | Manual operativo del portal maestro (Nov 2025) |
-| [Manual-Portal-Student-v1.0.md](./Manual-Portal-Student-v1.0.md) | 1.1 | Manual operativo del portal estudiante (Nov 2025) |
+| [MANUAL-PORTAL-ADMINISTRADOR-ACTUALIZADO.md](./MANUAL-PORTAL-ADMINISTRADOR-ACTUALIZADO.md) | 1.3 | Manual operativo del portal administrador (Ene 2026) |
+| [MANUAL-PORTAL-MAESTROS-ACTUALIZADO.md](./MANUAL-PORTAL-MAESTROS-ACTUALIZADO.md) | 2.0 | Manual operativo del portal maestro (Nov 2025) |
+| [MANUAL-PORTAL-STUDENT-V1.0.md](./MANUAL-PORTAL-STUDENT-V1.0.md) | 1.1 | Manual operativo del portal estudiante (Nov 2025) |
 
 ## Complementarios
 

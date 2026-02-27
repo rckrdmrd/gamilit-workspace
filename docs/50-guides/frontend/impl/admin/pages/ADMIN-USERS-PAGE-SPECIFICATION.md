@@ -1,3 +1,10 @@
+---
+titulo: Especificación AdminUsersPage
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Especificacion: AdminUsersPage
 
 **Version:** 1.0.0

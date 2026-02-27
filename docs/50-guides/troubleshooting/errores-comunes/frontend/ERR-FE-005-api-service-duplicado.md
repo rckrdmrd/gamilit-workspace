@@ -1,3 +1,10 @@
+---
+titulo: Error FE-005 API Service Duplicado entre lib y services
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-FE-005: API Service Duplicado entre lib/ y services/
 
 ## Estado: RESUELTO (2026-02-19)

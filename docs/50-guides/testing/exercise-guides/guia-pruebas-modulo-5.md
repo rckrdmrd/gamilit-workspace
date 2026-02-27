@@ -1,3 +1,10 @@
+---
+titulo: Guía de Pruebas Módulo 5 Producción Creativa
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA DE PRUEBAS - MODULO 5: PRODUCCION CREATIVA
 ## Ejemplos de Respuestas para Testing QA
 

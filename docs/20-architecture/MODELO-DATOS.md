@@ -1,3 +1,9 @@
+---
+titulo: Modelo de Datos - GAMILIT
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Modelo de Datos - GAMILIT
 
 **Version:** 1.3.0
@@ -18,9 +24,9 @@
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
 | Tablas | 173 |
-| Views | 22 |
+| Views | 18 |
 | Materialized Views | 7 |
-| Functions | 183 |
+| Functions | 158 |
 | Triggers | 67 (CREATE TRIGGER) / 126 (trigger functions) |
 | RLS Policies | 251 (DDL) / 477 (runtime estimate) |
 | Foreign Keys | 301 |
@@ -430,7 +436,7 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 | Trigger | Tabla | Evento | Accion |
 |---------|-------|--------|--------|
 | tr_user_created | auth.users | INSERT | Crear perfil, log audit |
-| tr_exercise_completed | education.exercise_results | INSERT | Calcular XP, actualizar progreso |
+| tr_exercise_completed | educational_content.exercise_results | INSERT | Calcular XP, actualizar progreso |
 | tr_xp_transaction_created | gamification_system.xp_transactions | INSERT | Check level/rank, update leaderboard |
 | tr_rank_promotion | gamification_system.student_gamification | UPDATE | Notificar, otorgar recompensa |
 | tr_mission_progress_updated | missions.mission_progress | UPDATE | Check completion, award rewards |

@@ -1,6 +1,14 @@
+---
+titulo: Schema 10 - store (deprecated)
+tipo: arquitectura
+subtipo: schema-reference
+schema: store
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 10: store (deprecado)
 
-> Este documento queda como referencia historica.  
+> Este documento queda como referencia historica.
 > El modelo activo de tienda/equipamiento se documenta en `gamification_system.*`.
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

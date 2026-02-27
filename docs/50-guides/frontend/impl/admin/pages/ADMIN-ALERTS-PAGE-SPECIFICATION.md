@@ -1,3 +1,10 @@
+---
+titulo: Especificación AdminAlertsPage
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Especificacion: AdminAlertsPage
 
 **Version:** 1.0.0

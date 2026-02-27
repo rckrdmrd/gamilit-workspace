@@ -1,3 +1,10 @@
+---
+titulo: Arquitectura de API Clients Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Arquitectura de API Clients - Frontend
 
 **Versión:** 1.0.0

@@ -1,3 +1,10 @@
+---
+titulo: SPEC-PROGRESS - Student Portal Progress Tracking
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-PROGRESS - Student Portal Progress Tracking
 
 **Version:** 1.0.0

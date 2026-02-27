@@ -1,4 +1,6 @@
 #!/bin/bash
+# [HISTORICAL SNAPSHOT — 2025-11-16] This script reflects the November 2025 delivery state. Preserved as-is for audit trail.
+
 ################################################################################
 # Script de Preparación de Entrega en USB - Proyecto GAMILIT
 # Fecha: 16 de noviembre de 2025

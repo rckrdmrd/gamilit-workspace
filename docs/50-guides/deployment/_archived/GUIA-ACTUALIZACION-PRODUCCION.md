@@ -1,3 +1,10 @@
+---
+titulo: Guía de Actualización Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA-ACTUALIZACION-PRODUCCION.md
 
 > [!WARNING]

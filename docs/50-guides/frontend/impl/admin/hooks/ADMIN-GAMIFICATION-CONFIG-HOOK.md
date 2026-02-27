@@ -1,3 +1,10 @@
+---
+titulo: Hook useGamificationConfig
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Hook: useGamificationConfig
 
 **Version:** 1.0.0

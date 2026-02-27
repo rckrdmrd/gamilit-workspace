@@ -1,3 +1,10 @@
+---
+titulo: STUDENT-GAP-008 - Backend - getUserStatistics() Returns Mock Data
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # STUDENT-GAP-008: Backend - getUserStatistics() Returns Mock Data
 
 **Fecha de corrección:** 2025-11-24

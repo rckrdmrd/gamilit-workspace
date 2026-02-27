@@ -1,6 +1,11 @@
-# Runbook PostgreSQL para Gamilit
-
 ---
+titulo: Runbook PostgreSQL para Gamilit
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
+# Runbook PostgreSQL para Gamilit
 titulo: Runbook PostgreSQL para Gamilit
 version: 1.0.0
 fecha_creacion: 2026-02-14

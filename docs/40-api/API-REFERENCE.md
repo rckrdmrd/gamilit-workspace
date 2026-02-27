@@ -7,7 +7,7 @@
 **Auth:** JWT Bearer Token
 **Format:** JSON
 
-> **Nota:** Este documento cubre ~637 de 912 endpoints totales (incluyendo ~159 del modulo Admin, ~141 Social, ~103 Content, ~42 LTI, ~18 Assignments). Para el inventario completo, consultar orchestration/inventarios/BACKEND_INVENTORY.yml
+> **Nota:** Este documento cubre ~669 de 912 endpoints totales (incluyendo ~159 del modulo Admin, ~141 Social, ~103 Content, ~42 LTI, ~18 Assignments, +32 Notifications Extended). Para el inventario completo, consultar orchestration/inventarios/BACKEND_INVENTORY.yml
 
 ---
 
@@ -173,6 +173,50 @@ Authorization: Bearer <jwt_token>
 
 ---
 
+## 5.5 Exercise Validation Module (21 endpoints)
+
+> **Guard:** `JwtAuthGuard` en todos los endpoints
+> **Prefijo base:** `/api/v1/educational/validation`
+> **Controller:** `ExerciseValidationController` en `apps/backend/src/modules/educational/controllers/exercise-validation.controller.ts`
+
+### Rubrics — Rubricas de Ejercicio (8 endpoints)
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/api/v1/educational/validation/rubrics` | Listar todas las rubricas por tipo de ejercicio | Si | teacher/admin |
+| GET | `/api/v1/educational/validation/rubrics/:id` | Obtener rubrica por ID | Si | teacher/admin |
+| GET | `/api/v1/educational/validation/rubrics/exercise-type/:exerciseType` | Obtener rubrica por tipo de ejercicio (por defecto) | Si | teacher/admin |
+| GET | `/api/v1/educational/validation/rubrics/module/:moduleCode` | Obtener rubricas por codigo de modulo (M3, M4, M5) | Si | teacher/admin |
+| POST | `/api/v1/educational/validation/rubrics` | Crear nueva rubrica | Si | admin |
+| PUT | `/api/v1/educational/validation/rubrics/:id` | Actualizar rubrica existente | Si | admin |
+| DELETE | `/api/v1/educational/validation/rubrics/:id` | Eliminar rubrica | Si | admin |
+| POST | `/api/v1/educational/validation/rubrics/:id/set-default` | Establecer rubrica como default para su tipo de ejercicio | Si | admin |
+
+### Validation Configs — Configuracion de Validacion (6 endpoints)
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/api/v1/educational/validation/configs` | Listar todas las configuraciones de validacion | Si | admin |
+| GET | `/api/v1/educational/validation/configs/:id` | Obtener configuracion de validacion por ID | Si | admin |
+| GET | `/api/v1/educational/validation/configs/exercise-type/:exerciseType` | Obtener configuracion por tipo de ejercicio | Si | admin |
+| POST | `/api/v1/educational/validation/configs` | Crear o actualizar configuracion de validacion (upsert) | Si | admin |
+| DELETE | `/api/v1/educational/validation/configs/:id` | Eliminar configuracion de validacion | Si | admin |
+| GET | `/api/v1/educational/validation/configs/functions/available` | Obtener funciones SQL de validacion disponibles | Si | admin |
+
+### Audit — Auditoria de Validacion (7 endpoints)
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/api/v1/educational/validation/audit` | Consultar registros de auditoria con filtros y paginacion | Si | admin |
+| GET | `/api/v1/educational/validation/audit/:id` | Obtener registro de auditoria por ID | Si | admin |
+| GET | `/api/v1/educational/validation/audit/exercise/:exerciseId` | Obtener registros de auditoria por ejercicio | Si | teacher/admin |
+| GET | `/api/v1/educational/validation/audit/user/:userId` | Obtener registros de auditoria por usuario | Si | admin |
+| GET | `/api/v1/educational/validation/audit/discrepancies` | Obtener registros con discrepancias detectadas | Si | admin |
+| GET | `/api/v1/educational/validation/audit/exercise/:exerciseId/stats` | Obtener estadisticas de validacion de un ejercicio | Si | teacher/admin |
+| POST | `/api/v1/educational/validation/audit/:id/discrepancy` | Marcar discrepancia en un registro de auditoria | Si | admin |
+
+---
+
 ## 6. Gamification Module (73 endpoints)
 
 > Rutas reales extraidas de los 11 controladores. Base URL: `/api/v1`. Todos los endpoints requieren JWT salvo indicacion contraria.
@@ -258,12 +302,15 @@ Authorization: Bearer <jwt_token>
 | POST | `/api/v1/admin/mission-templates/seed/initial` | Sembrar templates iniciales en la base de datos | Si | admin |
 
 ### Classroom Missions — Misiones de Aula (5 endpoints)
+
+> **Controller:** `ClassroomMissionsController` en `apps/backend/src/modules/gamification/controllers/classroom-missions.controller.ts`
+
 | Method | Endpoint | Description | Auth | Roles |
 |--------|----------|-------------|------|-------|
 | POST | `/api/v1/gamification/classrooms/:classroomId/missions` | Asignar mision a un aula (con bonificaciones opcionales) | Si | teacher |
-| GET | `/api/v1/gamification/classrooms/:classroomId/missions` | Listar misiones activas de un aula | Si | any |
-| GET | `/api/v1/gamification/classrooms/:classroomId/missions/:missionTemplateId` | Detalle de una mision especifica del aula | Si | any |
-| DELETE | `/api/v1/gamification/classrooms/:classroomId/missions/:missionTemplateId` | Desactivar mision del aula (soft delete) | Si | teacher |
+| GET | `/api/v1/gamification/classrooms/:classroomId/missions` | Listar todas las misiones del aula | Si | teacher/student |
+| GET | `/api/v1/gamification/classrooms/:classroomId/missions/:missionTemplateId` | Obtener mision especifica del aula | Si | teacher/student |
+| DELETE | `/api/v1/gamification/classrooms/:classroomId/missions/:missionTemplateId` | Remover (desactivar) mision del aula | Si | teacher |
 | PATCH | `/api/v1/gamification/classrooms/:classroomId/missions/:missionTemplateId` | Actualizar configuracion de mision del aula | Si | teacher |
 
 ### Shop — Tienda (6 endpoints)
@@ -340,6 +387,16 @@ Authorization: Bearer <jwt_token>
 | POST | /teachers/reviews/:id | Evaluar ejercicio manualmente | Si | teacher |
 | GET | /teachers/reports/classroom/:id | Reporte de aula | Si | teacher |
 | GET | /teachers/reports/student/:id | Reporte de estudiante | Si | teacher |
+
+### Grades — Calificaciones (2 endpoints)
+
+> **Controller:** `TeacherGradesController` en `apps/backend/src/modules/teacher/controllers/teacher-grades.controller.ts`
+> **Nota:** Los grades son una vista de submissions calificadas; no existe una entidad "grade" separada.
+
+| Method | Endpoint | Description | Auth | Roles |
+|--------|----------|-------------|------|-------|
+| GET | `/api/v1/teacher/grades` | Listar todas las calificaciones (paginado, filtros por assignment, classroom, student, status) | Si | teacher |
+| GET | `/api/v1/teacher/grades/:id` | Obtener detalle de una calificacion por ID | Si | teacher |
 
 ---
 
@@ -567,6 +624,80 @@ Authorization: Bearer <jwt_token>
 | GET | /notifications/preferences | Preferencias de notificacion | Si |
 | PATCH | /notifications/preferences | Actualizar preferencias | Si |
 | POST | /notifications/send | Enviar notificacion (admin/teacher) | Si |
+
+### Notifications System (Extended)
+
+> **Prefijo base:** `/api/v1/notifications`
+> **Guard:** `JwtAuthGuard` salvo indicacion contraria
+> **Controllers:** 5 archivos — analytics, templates, devices, rate-limit, multichannel
+
+#### 13.1 NotificationAnalyticsController (10 endpoints)
+
+| Method | Endpoint | Description | Auth | Role |
+|--------|----------|-------------|------|------|
+| GET | `/api/v1/notifications/analytics/summary` | Resumen de analiticas de notificaciones | Si | admin |
+| GET | `/api/v1/notifications/analytics/by-template/:templateKey` | Analiticas por template especifico | Si | admin |
+| GET | `/api/v1/notifications/analytics/by-channel/:channel` | Analiticas por canal (email, push, sms, in_app) | Si | admin |
+| GET | `/api/v1/notifications/delivery/:notificationId` | Estado de entrega de una notificacion | Si | admin |
+| GET | `/api/v1/notifications/errors` | Errores recientes de entrega (paginado) | Si | admin |
+| GET | `/api/v1/notifications/errors/:notificationId` | Errores de una notificacion especifica | Si | admin |
+| POST | `/api/v1/notifications/track/open` | Registrar apertura de email (pixel tracking) | No | public |
+| GET | `/api/v1/notifications/track/open` | Registrar apertura via GET (responde GIF 1x1) | No | public |
+| POST | `/api/v1/notifications/track/click` | Registrar clic en enlace de notificacion | No | public |
+| GET | `/api/v1/notifications/track/click` | Registrar clic y redirigir al destino (GET) | No | public |
+
+#### 13.2 NotificationTemplatesController (9 endpoints)
+
+> **Controller prefix:** `/api/v1/notifications/templates`
+> **Auth:** JwtAuthGuard + AdminGuard
+
+| Method | Endpoint | Description | Auth | Role |
+|--------|----------|-------------|------|------|
+| GET | `/api/v1/notifications/templates` | Listar todos los templates activos | Si | admin |
+| GET | `/api/v1/notifications/templates/locales` | Locales i18n soportados | Si | admin |
+| GET | `/api/v1/notifications/templates/:templateKey` | Obtener template por clave | Si | admin |
+| POST | `/api/v1/notifications/templates/preview` | Previsualizar template Handlebars en crudo | Si | admin |
+| POST | `/api/v1/notifications/templates/validate` | Validar sintaxis Handlebars | Si | admin |
+| POST | `/api/v1/notifications/templates/:templateKey/render` | Renderizar preview del template (sin enviar) | Si | admin |
+| POST | `/api/v1/notifications/templates/:templateKey/render-localized` | Renderizar con localizacion i18n | Si | admin |
+| GET | `/api/v1/notifications/templates/:templateKey/versions` | Historial de versiones del template | Si | admin |
+| GET | `/api/v1/notifications/templates/:templateKey/version/:version` | Obtener version especifica del template | Si | admin |
+
+#### 13.3 NotificationDevicesController (6 endpoints)
+
+> **Controller prefix:** `/api/v1/notifications/devices`
+
+| Method | Endpoint | Description | Auth | Role |
+|--------|----------|-------------|------|------|
+| GET | `/api/v1/notifications/devices/vapid-public-key` | Obtener VAPID public key para web push | No | public |
+| POST | `/api/v1/notifications/devices` | Registrar dispositivo para push notifications | Si | any |
+| GET | `/api/v1/notifications/devices` | Listar dispositivos registrados del usuario | Si | any |
+| GET | `/api/v1/notifications/devices/:id` | Obtener informacion de un dispositivo | Si | any |
+| PATCH | `/api/v1/notifications/devices/:id` | Actualizar nombre del dispositivo | Si | any |
+| DELETE | `/api/v1/notifications/devices/:id` | Dar de baja un dispositivo | Si | any |
+
+#### 13.4 NotificationRateLimitController (5 endpoints)
+
+> **Controller prefix:** `/api/v1/notifications/rate-limit`
+> **Auth:** JwtAuthGuard + AdminGuard
+
+| Method | Endpoint | Description | Auth | Role |
+|--------|----------|-------------|------|------|
+| GET | `/api/v1/notifications/rate-limit/status` | Estado actual de rate limits | Si | admin |
+| GET | `/api/v1/notifications/rate-limit/config` | Configuracion de rate limits | Si | admin |
+| GET | `/api/v1/notifications/rate-limit/channel/:channel` | Estado de rate limit para un canal especifico | Si | admin |
+| POST | `/api/v1/notifications/rate-limit/reset/:channel` | Resetear rate limit de un canal | Si | admin |
+| POST | `/api/v1/notifications/rate-limit/reset-all` | Resetear todos los rate limits | Si | admin |
+
+#### 13.5 NotificationMultiChannelController (2 endpoints)
+
+> **Controller prefix:** `/api/v1/notifications/multichannel`
+> **Auth:** JwtAuthGuard + AdminGuard
+
+| Method | Endpoint | Description | Auth | Role |
+|--------|----------|-------------|------|------|
+| POST | `/api/v1/notifications/multichannel` | Crear notificacion multi-canal ad-hoc | Si | admin |
+| POST | `/api/v1/notifications/multichannel/send-from-template` | Enviar desde template en multiples canales | Si | admin |
 
 ---
 
@@ -1330,5 +1461,167 @@ Documentacion interactiva generada automaticamente desde decorators NestJS (@Api
 
 ---
 
+## Modulos Condicionales [CONDITIONAL]
+
+> **Nota:** Los siguientes endpoints solo estan disponibles cuando `ENABLE_DATA_WAREHOUSE=true`.
+> Estos modulos (ETL, ML, Visualization) no se cargan por defecto en `app.module.ts`.
+> Requieren el datasource `data_warehouse` configurado.
+
+**Total condicional:** 58 endpoints | 10 controllers | 3 modulos
+
+---
+
+### ETL Module (16 endpoints)
+
+> **Activacion:** `ENABLE_DATA_WAREHOUSE=true`
+> **Controllers:** 3 (EtlController, EtlLoadController, TransformController + ValidationController + CacheController)
+> **Auth:** `JwtAuthGuard` + `RolesGuard` (rol: `super_admin`)
+
+#### EtlController (5 endpoints)
+
+> **Route prefix:** `/api/v1/etl/extract`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/etl/extract/trigger` | Admin | Trigger ETL extraction |
+| GET | `/api/v1/etl/extract/status` | Admin | Get current extraction status |
+| GET | `/api/v1/etl/extract/history` | Admin | Get extraction history |
+| GET | `/api/v1/etl/extract/overview` | Admin | Get ETL extraction overview |
+| GET | `/api/v1/etl/extract/job-status` | Admin | Get extraction job status |
+
+#### EtlLoadController (5 endpoints)
+
+> **Route prefix:** `/api/v1/etl`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/etl/load/trigger` | Admin | Trigger ETL load phase |
+| GET | `/api/v1/etl/load/status` | Admin | Get current load status |
+| POST | `/api/v1/etl/load/full` | Admin | Trigger full ETL pipeline |
+| GET | `/api/v1/etl/pipeline/status` | Admin | Get pipeline status |
+| GET | `/api/v1/etl/load/logs` | Admin | Get load log history (paginated) |
+
+#### TransformController + ValidationController + CacheController (6 endpoints)
+
+> **Route prefix:** `/api/v1/etl`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/etl/transform/trigger` | Admin | Trigger transformation pipeline |
+| GET | `/api/v1/etl/transform/status` | Admin | Get transformation status |
+| GET | `/api/v1/etl/transform/health` | Admin | Transformation health check |
+| GET | `/api/v1/etl/validation/report` | Admin | Get data quality validation report |
+| POST | `/api/v1/etl/cache/clear` | Admin | Clear dimension caches |
+| GET | `/api/v1/etl/cache/stats` | Admin | Get cache statistics |
+
+---
+
+### ML Module (21 endpoints)
+
+> **Activacion:** `ENABLE_DATA_WAREHOUSE=true`
+> **Controllers:** 3 (FeaturesController, ModelAdminController, PredictionController)
+> **Auth:** `JwtAuthGuard` + `RolesGuard` (roles segun endpoint)
+
+#### FeaturesController (5 endpoints)
+
+> **Route prefix:** `/api/v1/ml/features`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/v1/ml/features/:studentId` | Teacher/Admin | Get ML features for student |
+| POST | `/api/v1/ml/features/batch` | SuperAdmin | Batch generate features |
+| GET | `/api/v1/ml/features/schema` | Admin | Get feature schema documentation |
+| DELETE | `/api/v1/ml/features/cache/:studentId` | Admin | Invalidate feature cache |
+| GET | `/api/v1/ml/features/cached/:studentId` | Teacher/Admin | Get cached features (no regeneration) |
+
+#### ModelAdminController (7 endpoints)
+
+> **Route prefix:** `/api/v1/ml/admin`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/v1/ml/admin/models` | Admin | List all ML models and status |
+| GET | `/api/v1/ml/admin/models/:modelType/metrics` | Admin | Get metrics for model |
+| POST | `/api/v1/ml/admin/models/:modelType/train` | Admin | Trigger model training |
+| POST | `/api/v1/ml/admin/models/:modelType/activate/:version` | Admin | Activate model version |
+| GET | `/api/v1/ml/admin/predictions/logs` | Admin | Get prediction audit logs |
+| DELETE | `/api/v1/ml/admin/cache/predictions` | Admin | Clear all prediction cache |
+| GET | `/api/v1/ml/admin/cache/stats` | Admin | Get cache statistics |
+
+#### PredictionController (9 endpoints)
+
+> **Route prefix:** `/api/v1/ml/predict`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/v1/ml/predict/dropout-risk/:studentId` | Teacher/Admin | Get dropout risk prediction |
+| GET | `/api/v1/ml/predict/performance/:studentId/:exerciseId` | Teacher/Admin | Get performance prediction |
+| GET | `/api/v1/ml/predict/difficulty/:studentId/:moduleId` | Teacher/Admin | Get difficulty recommendation |
+| GET | `/api/v1/ml/predict/engagement/:studentId` | Teacher/Admin | Get engagement prediction |
+| GET | `/api/v1/ml/predict/insights/:studentId` | Teacher/Admin | Get comprehensive student insights |
+| POST | `/api/v1/ml/predict/batch/dropout-risk` | Admin | Batch predict dropout risk |
+| POST | `/api/v1/ml/predict/batch/classroom/:classroomId` | Teacher/Admin | Batch predict for classroom |
+| GET | `/api/v1/ml/predict/dashboard/at-risk` | Teacher/Admin | Get students at risk dashboard |
+| GET | `/api/v1/ml/predict/dashboard/metrics` | Admin | Get ML model performance metrics |
+
+---
+
+### Visualization Module (21 endpoints)
+
+> **Activacion:** `ENABLE_DATA_WAREHOUSE=true`
+> **Controllers:** 4 (AggregationController, ChartController, DashboardController, ReportController)
+> **Auth:** `JwtAuthGuard` + `RolesGuard` (roles segun endpoint)
+
+#### AggregationController (2 endpoints)
+
+> **Route prefix:** `/api/v1/visualization/aggregation`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/visualization/aggregation/query` | Teacher/Admin | Execute aggregation query |
+| GET | `/api/v1/visualization/aggregation/kpi` | Teacher/Admin | Get KPI value |
+
+#### ChartController (4 endpoints)
+
+> **Route prefix:** `/api/v1/visualization/charts`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/visualization/charts/generate` | Teacher/Admin | Generate a chart |
+| GET | `/api/v1/visualization/charts/student/:studentId/progress` | Teacher/Admin/Parent | Get student progress charts |
+| GET | `/api/v1/visualization/charts/classroom/:classroomId/comparison` | Teacher/Admin | Get class comparison chart |
+| GET | `/api/v1/visualization/charts/engagement/heatmap` | Teacher/Admin | Get engagement heatmap |
+
+#### DashboardController (7 endpoints)
+
+> **Route prefix:** `/api/v1/visualization/dashboards`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/v1/visualization/dashboards` | Teacher/Admin | List dashboards |
+| GET | `/api/v1/visualization/dashboards/templates` | Teacher/Admin | Get available dashboard templates |
+| GET | `/api/v1/visualization/dashboards/:id` | Teacher/Admin | Get dashboard by ID |
+| GET | `/api/v1/visualization/dashboards/:id/widgets/:widgetId` | Teacher/Admin | Get widget data |
+| POST | `/api/v1/visualization/dashboards` | Admin | Create new dashboard |
+| PUT | `/api/v1/visualization/dashboards/:id` | Admin | Update dashboard |
+| DELETE | `/api/v1/visualization/dashboards/:id` | Admin | Delete dashboard |
+
+#### ReportController (8 endpoints)
+
+> **Route prefix:** `/api/v1/visualization/reports`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/v1/visualization/reports/templates` | Teacher/Admin | List available report templates |
+| GET | `/api/v1/visualization/reports/templates/:id` | Teacher/Admin | Get report template by ID |
+| POST | `/api/v1/visualization/reports/generate` | Teacher/Admin | Generate a report |
+| GET | `/api/v1/visualization/reports/jobs/:jobId` | Teacher/Admin | Get report job status |
+| GET | `/api/v1/visualization/reports/jobs/:jobId/download` | Teacher/Admin | Download generated report |
+| POST | `/api/v1/visualization/reports/schedule` | Admin | Schedule a recurring report |
+| GET | `/api/v1/visualization/reports/scheduled` | Admin | List scheduled reports |
+| DELETE | `/api/v1/visualization/reports/scheduled/:id` | Admin | Cancel scheduled report |
+
+---
+
 *GAMILIT - API Reference*
-*912 endpoints | 23 modulos + Admin Module + LTI + Assignments | JWT Auth | Socket.IO Real-time*
+*912 endpoints (activos) + 58 endpoints condicionales | 23 modulos + Admin Module + LTI + Assignments + ETL + ML + Visualization | JWT Auth | Socket.IO Real-time*

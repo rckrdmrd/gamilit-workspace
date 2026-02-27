@@ -1,3 +1,10 @@
+---
+titulo: Error DB-003 Conflictos de UUID en Seeds
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-DB-003: Conflictos de UUID en Seeds
 
 **Categoria:** Database

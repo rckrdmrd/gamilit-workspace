@@ -1,3 +1,10 @@
+---
+titulo: Arquitectura de Componentes de Alertas Admin Portal
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Arquitectura de Componentes de Alertas - Admin Portal
 
 **Version:** 1.0.0

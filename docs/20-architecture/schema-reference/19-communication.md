@@ -1,3 +1,11 @@
+---
+titulo: Schema 19 - communication
+tipo: arquitectura
+subtipo: schema-reference
+schema: communication
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema: communication (4 tablas)
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

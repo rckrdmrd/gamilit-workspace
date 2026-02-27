@@ -1,8 +1,26 @@
-# MAP - Parent Portal
+# EPIC-GAM-F3-PARENT-PORTAL — Mapa de Navegación
 
-> Mapa de compatibilidad para índice legacy.
+## Estructura
 
-Documentos clave:
-- [EPIC.md](./EPIC.md)
-- [specifications/](./specifications/)
-- [user-stories/](./user-stories/)
+```
+EPIC-GAM-F3-PARENT-PORTAL/
+├── _INDEX.md
+├── _MAP.md
+├── EPIC.md
+├── PLAN.md
+├── traceability/
+└── user-stories/
+```
+
+## Descripción
+
+Parent Portal — portal para padres con seguimiento del progreso académico de sus hijos.
+
+## Navegación
+
+| Recurso | Descripción |
+|---------|-------------|
+| `EPIC.md` | Definición del epic (ID, fase, estado, módulos) |
+| `PLAN.md` | Plan de implementación |
+| `user-stories/` | Historias de usuario (US-*) con tareas |
+| `traceability/` | Matriz de trazabilidad (TRACEABILITY.yml) |

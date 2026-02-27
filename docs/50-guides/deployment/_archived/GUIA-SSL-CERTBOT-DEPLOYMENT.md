@@ -1,3 +1,10 @@
+---
+titulo: Guía SSL con Certbot
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia SSL con Certbot - GAMILIT
 
 **Version:** 1.0.0

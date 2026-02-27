@@ -1,3 +1,11 @@
+---
+titulo: Schema 8 - Reports (social_features)
+tipo: arquitectura
+subtipo: schema-reference
+schema: social_features
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 8: Reports — social_features (3 tablas, 10 RLS policies)
 
 > **Version:** 2.0.0 | **Fecha:** 2026-02-20

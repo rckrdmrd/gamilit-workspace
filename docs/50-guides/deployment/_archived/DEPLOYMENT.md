@@ -1,3 +1,10 @@
+---
+titulo: Deployment Guide
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # Deployment Guide
 
 ## Production Environment

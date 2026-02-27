@@ -1,3 +1,9 @@
+---
+titulo: Economia Virtual
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Economia Virtual
 
 > Definicion funcional de ML Coins, bonus y consumo.

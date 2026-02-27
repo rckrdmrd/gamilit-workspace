@@ -1,3 +1,10 @@
+---
+titulo: Validación Plan vs Análisis Types Consolidation
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Validación: Plan vs Análisis - Types Consolidation
 
 **Fecha:** 2025-11-29

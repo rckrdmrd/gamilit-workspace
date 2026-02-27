@@ -1,3 +1,9 @@
+---
+titulo: Analisis de Recursos Visuales
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # ANALISIS-RECURSOS-VISUALES
 
 > Analisis tecnico de bajo esfuerzo/alto impacto para recursos visuales de tienda usando `metadata` JSONB.

@@ -1,3 +1,10 @@
+---
+titulo: INVENTARIO DE IMPLEMENTACIONES - CORRECCIONES P0
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # INVENTARIO DE IMPLEMENTACIONES - CORRECCIONES P0
 ## Student Portal - GAMILIT
 

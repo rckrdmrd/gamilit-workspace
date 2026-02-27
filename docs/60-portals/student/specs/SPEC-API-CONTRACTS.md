@@ -1,3 +1,10 @@
+---
+titulo: SPEC-API-CONTRACTS - Student Portal API Contracts
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-API-CONTRACTS - Student Portal API Contracts
 
 **Version:** 1.0.0

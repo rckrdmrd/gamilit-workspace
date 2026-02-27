@@ -1,6 +1,12 @@
+---
+titulo: Decision Operativa DB por Ambiente
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Decision Operativa DB por Ambiente
 
-**Version:** 1.0.0  
+**Version:** 1.0.0
 **Fecha:** 2026-02-17  
 **Estado:** Aprobado para ejecución
 

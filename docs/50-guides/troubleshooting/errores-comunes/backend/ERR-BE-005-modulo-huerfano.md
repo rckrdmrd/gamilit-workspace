@@ -1,3 +1,10 @@
+---
+titulo: Error BE-005 Módulo Sin Registrar en AppModule
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-005: Modulo Sin Registrar en AppModule (Modulo Huerfano)
 
 ## Descripcion

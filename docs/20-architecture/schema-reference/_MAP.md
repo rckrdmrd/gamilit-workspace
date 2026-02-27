@@ -12,7 +12,7 @@ schema-reference/
 ├── 04-gamification.md
 ├── 05-social.md
 ├── 06-classrooms.md
-├── 06-progress.md
+├── 06b-progress.md
 ├── 07-analytics.md
 ├── 08-reports.md
 ├── 09-notifications.md
@@ -47,9 +47,9 @@ schema-reference/
 ### Social & Community (Schema 5)
 - **05-social.md** — Esquema social_features (guilds, competencias, interacciones, equipos)
 
-### Learning Management (Schemas 6-7)
+### Learning Management (Schema 6)
 - **06-classrooms.md** — Esquema classroom_management (aulas, inscripciones, asignaciones)
-- **06-progress.md** — Esquema progress_tracking (progreso estudiante, dificultad, alertas de intervencion, certificados)
+- **06b-progress.md** — Esquema progress_tracking (progreso estudiante, dificultad, alertas de intervencion, certificados)
 
 ### Analytics & Reporting (Schemas 7-8)
 - **07-analytics.md** — Esquema learning_analytics (analisis de aprendizaje, predicciones, reportes)
@@ -75,11 +75,8 @@ schema-reference/
 ### Audit & Compliance (Schema 16)
 - **16-audit.md** — Esquema audit_logging (logs de acceso, cambios, eventos, trazas de compliance)
 
-### Data Warehouse (Schema 17)
-- **17-data-warehouse.md** — Esquema data_warehouse (tablas analíticas, vistas materializadas para ML/BI)
-
 ### Placeholder (Schema 17-18)
-- **17-18-placeholder.md** — Esquema placeholder para futuras expansiones
+- **17-18-placeholder.md** — Esquema placeholder original para futuras expansiones (reservado para expansion futura)
 
 ### Admin Dashboard (Schema 18)
 - **18-admin-dashboard.md** — Esquema admin_dashboard (widgets, metricas, configuracion admin)

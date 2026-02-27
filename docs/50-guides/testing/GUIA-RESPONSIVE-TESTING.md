@@ -1,3 +1,10 @@
+---
+titulo: Guía de Testing Responsive
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Testing Responsive — gamilit Frontend
 
 **Versión:** 1.0.0

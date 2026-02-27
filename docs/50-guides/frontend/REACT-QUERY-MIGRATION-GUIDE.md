@@ -1,3 +1,10 @@
+---
+titulo: React Query Migration Guide
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # React Query Migration Guide
 
 **Version:** 1.1.0

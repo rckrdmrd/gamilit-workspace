@@ -1,3 +1,11 @@
+---
+titulo: Schema - progress_tracking
+tipo: arquitectura
+subtipo: schema-reference
+schema: progress_tracking
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema: progress_tracking (21 tablas)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/progress_tracking/`.

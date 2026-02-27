@@ -1,3 +1,10 @@
+---
+titulo: Guía del Portal de Padres
+tipo: portal
+portal: parents
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia del Portal de Padres
 
 **Version:** 2.0.0

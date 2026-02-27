@@ -1,88 +1,29 @@
+---
+titulo: Schema 12 - leaderboard (conceptual)
+tipo: arquitectura
+subtipo: schema-reference
+schema: gamification_system
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 12: leaderboard (4 tablas, 12 RLS policies)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
 
-> **[DEPRECATED]** This section describes an early conceptual model that was never implemented as described.
-> The DDL-accurate documentation appears in the updated sections below.
 > **Note:** No `leaderboard` schema exists in DDL. Leaderboard functionality is implemented via materialized views in `gamification_system` (see `gamification_system.leaderboard_metadatas` in `04-gamification.md`).
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 
 ---
 
-### leaderboard.leaderboard_entries [NO DDL — conceptual only]
-Entradas de ranking por estudiante.
+## Tablas Conceptuales (sin DDL)
 
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| classroom_id | UUID | NULL | NULL | FK classrooms.classrooms |
-| season_id | UUID | NULL | NULL | FK leaderboard.leaderboard_seasons |
-| scope | VARCHAR(20) | NOT NULL | - | classroom, school, global |
-| total_xp | INTEGER | NOT NULL | 0 | XP total en el scope |
-| rank_position | INTEGER | NULL | NULL | Posicion actual |
-| previous_position | INTEGER | NULL | NULL | Posicion anterior |
-| exercises_completed | INTEGER | NOT NULL | 0 | Ejercicios completados |
-| average_score | NUMERIC(5,2) | NULL | NULL | Puntaje promedio |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
+> Las siguientes tablas aparecen en el modelo conceptual pero no tienen DDL implementado.
+> Son candidatas para futuras iteraciones o estan cubiertas por tablas existentes.
 
-**Entity:** `LeaderboardEntry`
-
----
-
-### leaderboard.leaderboard_seasons [NO DDL — conceptual only]
-Temporadas de leaderboard.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| name | VARCHAR(100) | NOT NULL | - | Nombre de temporada |
-| number | INTEGER | NOT NULL | - | Numero de temporada |
-| starts_at | TIMESTAMPTZ | NOT NULL | - | Inicio |
-| ends_at | TIMESTAMPTZ | NOT NULL | - | Fin |
-| status | season_status | NOT NULL | 'upcoming' | upcoming, active, ended |
-| rewards | JSONB | NULL | '{}' | Recompensas por posicion |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**RLS:** NO (global)
-**Entity:** `LeaderboardSeason`
-
----
-
-### leaderboard.leaderboard_history [NO DDL — conceptual only]
-Historial de posiciones por snapshot.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| season_id | UUID | NOT NULL | - | FK leaderboard.leaderboard_seasons |
-| scope | VARCHAR(20) | NOT NULL | - | classroom, school, global |
-| position | INTEGER | NOT NULL | - | Posicion en ese momento |
-| xp_total | INTEGER | NOT NULL | - | XP al momento |
-| snapshot_date | TIMESTAMPTZ | NOT NULL | - | Fecha del snapshot |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
----
-
-### leaderboard.season_rewards [NO DDL — conceptual only]
-Recompensas distribuidas al final de temporada.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| season_id | UUID | NOT NULL | - | FK leaderboard.leaderboard_seasons |
-| student_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| position | INTEGER | NOT NULL | - | Posicion final |
-| scope | VARCHAR(20) | NOT NULL | - | Scope del leaderboard |
-| xp_reward | INTEGER | NOT NULL | 0 | XP recompensa |
-| ml_coins_reward | INTEGER | NOT NULL | 0 | ML Coins recompensa |
-| item_id | UUID | NULL | NULL | FK store.store_items |
-| claimed | BOOLEAN | NOT NULL | false | Reclamado |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
+| Tabla | Proposito |
+|-------|-----------|
+| leaderboard.leaderboard_entries | Entradas de leaderboard |
+| leaderboard.leaderboard_seasons | Temporadas de competencia |
+| leaderboard.leaderboard_history | Historial de rankings |
+| leaderboard.season_rewards | Recompensas por temporada |

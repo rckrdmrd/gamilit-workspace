@@ -1,3 +1,10 @@
+---
+titulo: Error INT-001 Database-Backend Desalineado
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-INT-001: Database-Backend Desalineado
 
 ## Descripcion

@@ -1,3 +1,10 @@
+---
+titulo: Guía de Componentes UI
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Componentes UI
 
 **Versión:** 1.0.0

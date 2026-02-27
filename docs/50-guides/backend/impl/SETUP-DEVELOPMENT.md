@@ -1,3 +1,10 @@
+---
+titulo: Setup de Desarrollo Backend
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Setup de Desarrollo Backend
 
 **Versión:** 1.0.0

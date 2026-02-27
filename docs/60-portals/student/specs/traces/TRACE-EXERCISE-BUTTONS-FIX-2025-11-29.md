@@ -1,3 +1,10 @@
+---
+titulo: TRAZA - Corrección de Botones Redundantes en Ejercicios
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # TRAZA: Corrección de Botones Redundantes en Ejercicios
 
 **Fecha:** 2025-11-29

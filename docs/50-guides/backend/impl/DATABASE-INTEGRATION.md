@@ -1,3 +1,10 @@
+---
+titulo: Integración con Base de Datos
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Integración con Base de Datos
 
 **Versión:** 1.0.0

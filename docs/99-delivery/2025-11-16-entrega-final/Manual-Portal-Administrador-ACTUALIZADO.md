@@ -1,3 +1,5 @@
+> **[HISTORICAL SNAPSHOT — 2025-11-16]** Stack references in this document reflect the November 2025 delivery state (PostgreSQL 16.x, Vite 7.x). Current stack: PostgreSQL 15, Vite 6.x. Content preserved as-is for audit trail.
+
 > **[SUPERSEDED]** This manual has been superseded by the updated version: `MANUAL-USUARIO-PORTAL-ADMINISTRADOR.md` (v2.0.0, Feb 2026).
 > This file is retained for historical reference only.
 

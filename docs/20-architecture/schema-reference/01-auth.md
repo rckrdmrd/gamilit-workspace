@@ -1,3 +1,11 @@
+---
+titulo: Schema 1 - auth & auth_management
+tipo: arquitectura
+subtipo: schema-reference
+schema: auth
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 1: auth + auth_management (estructura dual)
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar los schemas correspondientes.
@@ -42,142 +50,6 @@ Usuarios del sistema en todos los roles.
 **RLS:** 4 policies (SELECT, INSERT, UPDATE, DELETE por tenant_id)
 
 > **Nota sobre auth.users:** La tabla `auth.users` en produccion contiene ~30+ columnas (incluyendo `encrypted_password`, `raw_app_meta_data`, `raw_user_meta_data`, `email_confirmed_at`, `last_sign_in_at`, entre otros) siguiendo la estructura Supabase/GoTrue. Este documento muestra solo las columnas mas relevantes para el dominio gamilit.
-
----
-
-> **[DEPRECATED]** This section describes an early conceptual model that was never implemented as described.
-> The DDL-accurate documentation appears in the updated sections below.
-
-### auth.user_profiles [NO DDL — conceptual only]
-Perfiles extendidos segun rol.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| display_name | VARCHAR(100) | NULL | NULL | Nombre de display |
-| bio | TEXT | NULL | NULL | Biografia |
-| grade_level | INTEGER | NULL | NULL | Grado escolar (estudiantes) |
-| school_id | VARCHAR(50) | NULL | NULL | Matricula escolar |
-| phone | VARCHAR(20) | NULL | NULL | Telefono |
-| profile_data | JSONB | NULL | '{}' | Datos adicionales por rol |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `UserProfile`
-
----
-
-### auth.user_preferences [NO DDL — conceptual only]
-Preferencias de usuario (idioma, notificaciones, accesibilidad).
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| language | VARCHAR(5) | NOT NULL | 'es' | Idioma preferido |
-| font_size | VARCHAR(10) | NOT NULL | 'medium' | Tamano de fuente |
-| high_contrast | BOOLEAN | NOT NULL | false | Modo alto contraste |
-| text_to_speech | BOOLEAN | NOT NULL | false | Texto a voz activo |
-| notification_email | BOOLEAN | NOT NULL | true | Notificaciones email |
-| notification_push | BOOLEAN | NOT NULL | true | Notificaciones push |
-| notification_sms | BOOLEAN | NOT NULL | false | Notificaciones SMS |
-| preferences_data | JSONB | NULL | '{}' | Preferencias adicionales |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `UserPreference`
-
----
-
-### auth.sessions [NO DDL — conceptual only]
-Sesiones activas del usuario.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| token_hash | VARCHAR(255) | NOT NULL | - | Hash del access token |
-| ip_address | INET | NULL | NULL | IP de conexion |
-| user_agent | TEXT | NULL | NULL | User agent |
-| device_info | JSONB | NULL | '{}' | Info del dispositivo |
-| expires_at | TIMESTAMPTZ | NOT NULL | - | Expiracion |
-| is_active | BOOLEAN | NOT NULL | true | Sesion activa |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `Session`
-
----
-
-### auth.refresh_tokens [NO DDL — conceptual only]
-Tokens de refresco para renovar access tokens.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| token_hash | VARCHAR(255) | NOT NULL | - | Hash del refresh token |
-| expires_at | TIMESTAMPTZ | NOT NULL | - | Expiracion (7 dias default) |
-| is_revoked | BOOLEAN | NOT NULL | false | Token revocado |
-| revoked_at | TIMESTAMPTZ | NULL | NULL | Fecha de revocacion |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `RefreshToken`
-
----
-
-### auth.oauth_connections [NO DDL — conceptual only]
-Conexiones con proveedores OAuth externos.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| provider | VARCHAR(50) | NOT NULL | - | Proveedor (google, etc.) |
-| provider_user_id | VARCHAR(255) | NOT NULL | - | ID en el proveedor |
-| access_token | TEXT | NULL | NULL | Token de acceso (encriptado) |
-| refresh_token | TEXT | NULL | NULL | Refresh token (encriptado) |
-| token_expires_at | TIMESTAMPTZ | NULL | NULL | Expiracion del token |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
-**Entity:** `OAuthConnection`
-
----
-
-### auth.password_resets [NO DDL — conceptual only]
-Solicitudes de reseteo de contrasena.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| token_hash | VARCHAR(255) | NOT NULL | - | Hash del token de reset |
-| expires_at | TIMESTAMPTZ | NOT NULL | - | Expiracion (1 hora) |
-| used_at | TIMESTAMPTZ | NULL | NULL | Fecha de uso |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-
----
-
-### auth.login_attempts [NO DDL — conceptual only]
-Registro de intentos de login para seguridad.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| email | VARCHAR(255) | NOT NULL | - | Email intentado |
-| tenant_id | UUID | NULL | NULL | Tenant (si identificable) |
-| ip_address | INET | NOT NULL | - | IP de origen |
-| success | BOOLEAN | NOT NULL | - | Intento exitoso |
-| failure_reason | VARCHAR(100) | NULL | NULL | Razon de fallo |
-| user_agent | TEXT | NULL | NULL | User agent |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
 
 ---
 
@@ -683,3 +555,20 @@ Sesiones activas de usuarios con informacion de dispositivo y ubicacion geografi
 **Trigger:** `trg_parent_notifications_updated_at` (auto-updates updated_at)
 **RLS:** Habilitado (own read, admin all)
 **Entity:** `ParentNotification` (`auth/entities/parent-notification.entity.ts`)
+
+---
+
+## Tablas Conceptuales (sin DDL)
+
+> Las siguientes tablas aparecen en el modelo conceptual pero no tienen DDL implementado.
+> Son candidatas para futuras iteraciones o estan cubiertas por tablas existentes.
+
+| Tabla | Proposito |
+|-------|-----------|
+| auth.user_profiles | Perfiles extendidos de usuario |
+| auth.user_preferences | Preferencias de usuario |
+| auth.sessions | Sesiones activas |
+| auth.refresh_tokens | Tokens de refresco |
+| auth.oauth_connections | Conexiones OAuth externas |
+| auth.password_resets | Solicitudes de reset de password |
+| auth.login_attempts | Intentos de login (rate limiting) |

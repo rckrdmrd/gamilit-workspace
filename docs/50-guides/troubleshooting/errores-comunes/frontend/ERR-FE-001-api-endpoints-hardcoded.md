@@ -1,3 +1,10 @@
+---
+titulo: Error FE-001 Endpoints API Hardcodeados
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-FE-001: Endpoints API Hardcodeados
 
 ## Descripcion

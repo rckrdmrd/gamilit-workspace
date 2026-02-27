@@ -1,3 +1,10 @@
+---
+titulo: Portal Teacher - Flujos de Datos e Integración
+tipo: portal
+portal: teacher
+ultima_actualizacion: 2026-02-27
+---
+
 # Portal Teacher - Flujos de Datos e Integracion
 
 **Fecha de creacion:** 2025-11-29

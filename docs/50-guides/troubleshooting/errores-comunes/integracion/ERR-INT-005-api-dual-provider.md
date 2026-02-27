@@ -1,3 +1,10 @@
+---
+titulo: Error INT-005 Dual AuthProvider System con Comportamiento Inconsistente
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-INT-005: Dual AuthProvider System con Comportamiento Inconsistente
 
 ## Descripcion

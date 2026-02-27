@@ -1,3 +1,10 @@
+---
+titulo: Configuración SSL con Nginx para Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # GUIA: Configuracion SSL con Nginx para Produccion
 
 **Servidor:** 74.208.126.102

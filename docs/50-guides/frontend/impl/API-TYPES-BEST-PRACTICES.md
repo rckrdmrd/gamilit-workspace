@@ -1,3 +1,10 @@
+---
+titulo: Best Practices API Types Alignment
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Best Practices: API Types Alignment
 
 **Fecha:** 2025-11-24

@@ -1,3 +1,10 @@
+---
+titulo: Integración Student Portal Teacher Portal
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # Integracion Student Portal → Teacher Portal
 
 **Fecha de creacion:** 2025-11-29

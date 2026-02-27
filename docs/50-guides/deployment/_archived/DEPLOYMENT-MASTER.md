@@ -1,3 +1,10 @@
+---
+titulo: Guía Consolidada de Deployment
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # DEPLOYMENT-MASTER.md - Guia Consolidada de Deployment GAMILIT
 
 > [!WARNING]

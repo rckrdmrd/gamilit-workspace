@@ -1,3 +1,10 @@
+---
+titulo: SPEC-EXERCISES - Student Portal Exercises
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-EXERCISES - Student Portal Exercises
 
 **Version:** 1.1.0

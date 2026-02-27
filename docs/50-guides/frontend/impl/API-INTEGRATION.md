@@ -1,3 +1,10 @@
+---
+titulo: Integración con API Backend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Integración con API Backend
 
 **Versión:** 1.0.0

@@ -1,3 +1,10 @@
+---
+titulo: Error BE-006 Dependencia Circular entre Módulos
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-006: Dependencia Circular entre Modulos
 
 ## Descripcion

@@ -1,3 +1,10 @@
+---
+titulo: Guía de Servidores de Desarrollo
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # 🚀 GAMILIT - Guía de Servidores de Desarrollo
 
 Guía rápida para iniciar y detener los servidores de desarrollo Frontend y Backend.

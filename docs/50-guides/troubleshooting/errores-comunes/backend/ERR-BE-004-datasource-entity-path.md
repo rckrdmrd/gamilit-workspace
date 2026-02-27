@@ -1,3 +1,10 @@
+---
+titulo: Error BE-004 Datasource Entity Path Incorrecto
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-004: Datasource Entity Path Incorrecto
 
 ## Descripcion

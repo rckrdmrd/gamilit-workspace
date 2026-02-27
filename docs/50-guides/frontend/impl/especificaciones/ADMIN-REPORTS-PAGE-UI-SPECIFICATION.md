@@ -1,3 +1,10 @@
+---
+titulo: AdminReportsPage UI Specification
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # AdminReportsPage - UI Specification
 
 **Componente**: AdminReportsPage

@@ -1,3 +1,9 @@
+---
+titulo: Rangos Maya
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Rangos Maya
 
 > Fuente canonica de jerarquia de rangos y umbrales.

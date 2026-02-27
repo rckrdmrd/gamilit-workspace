@@ -1,3 +1,11 @@
+---
+titulo: Schema 15 - settings (system_configuration)
+tipo: arquitectura
+subtipo: schema-reference
+schema: system_configuration
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 15: settings (9 tablas, system_configuration)
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

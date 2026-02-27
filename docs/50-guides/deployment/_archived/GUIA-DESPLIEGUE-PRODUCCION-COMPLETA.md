@@ -1,3 +1,10 @@
+---
+titulo: Guía Completa de Despliegue en Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia Completa de Despliegue en Produccion - GAMILIT
 
 > [!WARNING]

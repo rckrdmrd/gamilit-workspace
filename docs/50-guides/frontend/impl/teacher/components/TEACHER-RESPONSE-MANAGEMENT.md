@@ -1,3 +1,10 @@
+---
+titulo: Componentes de Gestión de Respuestas Teacher Portal
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Componentes de Gestion de Respuestas - Teacher Portal
 
 **Version:** 1.0.0

@@ -31,9 +31,15 @@ Estandares tecnicos del proyecto GAMILIT. Convenciones, patrones y reglas obliga
 | [ESTANDAR-NOMENCLATURA-API.md](./ESTANDAR-NOMENCLATURA-API.md) | Nomenclatura snake_case/camelCase entre capas | Vigente |
 | [ESTANDAR-OBSERVABILIDAD.md](./ESTANDAR-OBSERVABILIDAD.md) | OpenTelemetry, Prometheus, tracing, SLOs | Vigente |
 | [ESTANDAR-PERFORMANCE.md](./ESTANDAR-PERFORMANCE.md) | Estandar de rendimiento y optimizacion | Vigente |
-| [ESTANDAR-SEGURIDAD.md](./ESTANDAR-SEGURIDAD.md) | Estandar de seguridad (RLS, JWT, rate limiting) | Vigente |
+| [ESTANDAR-SEGURIDAD.md](./ESTANDAR-SEGURIDAD.md) | Indice de seguridad + Checklist pre-deploy (RLS, JWT, rate limiting) | Vigente |
+| [ESTANDAR-SEGURIDAD-WEB.md](./ESTANDAR-SEGURIDAD-WEB.md) | OWASP Web Top 10 (2021) + Validacion + Auth + Secrets + Headers | Vigente |
+| [ESTANDAR-SEGURIDAD-API.md](./ESTANDAR-SEGURIDAD-API.md) | OWASP API Security Top 10 (2023) con ejemplos NestJS/gamilit | Vigente |
 | [ESTANDAR-SKILLS.md](./ESTANDAR-SKILLS.md) | [MOVED] a `orchestration/agents/SKILL-STANDARD.md` | Stub |
-| [ESTANDAR-TESTING.md](./ESTANDAR-TESTING.md) | Estandar de testing (unit, integration, e2e) | Vigente |
+| [ESTANDAR-TESTING.md](./ESTANDAR-TESTING.md) | Indice de testing — cobertura minima (Sec 5) + checklists (Sec 9) | Vigente |
+| [ESTANDAR-TESTING-UNIT.md](./ESTANDAR-TESTING-UNIT.md) | Unit tests, naming conventions, mocking, test data management | Vigente |
+| [ESTANDAR-TESTING-INTEGRATION.md](./ESTANDAR-TESTING-INTEGRATION.md) | Integration tests (backend endpoints, frontend features, DB cleanup) | Vigente |
+| [ESTANDAR-TESTING-E2E.md](./ESTANDAR-TESTING-E2E.md) | E2E tests con Playwright (POM) + visual regression testing | Vigente |
+| [ESTANDAR-TESTING-ARCHITECTURE.md](./ESTANDAR-TESTING-ARCHITECTURE.md) | Architecture tests: ts-arch, madge circular deps, ESLint boundaries | Vigente |
 | [ESTANDAR-12-FACTOR-APP.md](./ESTANDAR-12-FACTOR-APP.md) | Checklist 12-Factor App compliance | Vigente |
 
 ### Estandares Frontend Especificos

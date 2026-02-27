@@ -1,3 +1,10 @@
+---
+titulo: Domain Error Migration Guide
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Domain Error Migration Guide
 
 **ADR Reference:** ADR-045 (Clean Architecture — Domain Errors)

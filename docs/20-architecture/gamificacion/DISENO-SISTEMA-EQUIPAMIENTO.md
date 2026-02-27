@@ -1,3 +1,9 @@
+---
+titulo: Diseno Tecnico - Sistema de Equipamiento de Items
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Diseño Técnico: Sistema de Equipamiento de Items (Skins)
 
 **Fecha:** 2026-02-21

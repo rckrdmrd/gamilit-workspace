@@ -1,3 +1,9 @@
+---
+titulo: Coherence - Backend Entities vs DDL Tables
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # COHERENCE: Backend Entities vs DDL Tables
 
 **Proyecto:** GAMILIT

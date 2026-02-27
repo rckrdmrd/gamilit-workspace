@@ -1,3 +1,9 @@
+---
+titulo: Seeds - Tienda Visual
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # SEEDS-TIENDA-VISUAL
 
 > Definición de seeds reproducibles para variantes visuales, ownership y equipamiento por usuario.

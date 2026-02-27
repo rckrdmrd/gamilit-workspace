@@ -1,3 +1,10 @@
+---
+titulo: Estado de Documentación de Entities
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Estado de Documentacion de Entities - GAMILIT Backend
 
 **Fecha:** 2025-12-26

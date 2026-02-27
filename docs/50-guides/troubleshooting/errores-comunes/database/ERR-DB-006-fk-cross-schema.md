@@ -1,3 +1,10 @@
+---
+titulo: Error DB-006 Foreign Key Cross-Schema sin Search Path
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-DB-006: Foreign Key Cross-Schema sin Search Path
 
 ## Descripcion

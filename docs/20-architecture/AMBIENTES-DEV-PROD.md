@@ -1,3 +1,9 @@
+---
+titulo: Diferencias Dev vs Prod
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Diferencias Dev (WSL) vs Prod (Servidor)
 
 **Version:** 1.1.0

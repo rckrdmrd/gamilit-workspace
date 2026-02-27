@@ -1,3 +1,10 @@
+---
+titulo: SPEC-SOCIAL - Student Portal Social Features
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-SOCIAL - Student Portal Social Features
 
 **Version:** 1.0.0

@@ -1,3 +1,10 @@
+---
+titulo: Error INT-004 Relación Entity Cross-Datasource sin Include
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-INT-004: Relacion Entity Cross-Datasource sin Include
 
 ## Descripcion

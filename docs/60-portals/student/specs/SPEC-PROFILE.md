@@ -1,3 +1,10 @@
+---
+titulo: SPEC-PROFILE - Student Portal Profile & Settings
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-PROFILE - Student Portal Profile & Settings
 
 **Version:** 1.0.0

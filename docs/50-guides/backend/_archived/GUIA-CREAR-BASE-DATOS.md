@@ -1,3 +1,10 @@
+---
+titulo: Guía Crear Base de Datos Gamilit
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía: Crear Base de Datos Gamilit (Referencia Legacy)
 
 **Fecha**: 2025-11-08

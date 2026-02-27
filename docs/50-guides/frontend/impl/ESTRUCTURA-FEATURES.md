@@ -1,3 +1,10 @@
+---
+titulo: Estructura de Features Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Estructura de Features Frontend
 
 **Versión:** 1.2.0

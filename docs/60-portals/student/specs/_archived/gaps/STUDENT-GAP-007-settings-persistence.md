@@ -1,3 +1,10 @@
+---
+titulo: STUDENT-GAP-007 - Settings - Guardar Configuraciones es Mock
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # STUDENT-GAP-007: Settings - Guardar Configuraciones es Mock
 
 **Fecha de corrección:** 2025-11-24

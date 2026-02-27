@@ -7,11 +7,11 @@ Cada guia contiene 40-50+ ejemplos de respuestas validas para los ejercicios int
 
 | Archivo | Modulo | Ejercicios | Descripcion |
 |---------|--------|------------|-------------|
-| `guia-pruebas-modulo-1.md` | Comprension Literal | Crucigrama, linea de tiempo, completar espacios, V/F, sopa de letras | Respuestas ejemplo para ejercicios de comprension literal |
-| `guia-pruebas-modulo-2.md` | Comprension Inferencial | Detective, hipotesis, prediccion, puzzle contexto, rueda inferencias | Respuestas ejemplo para ejercicios inferenciales |
-| `guia-pruebas-modulo-3.md` | Comprension Critica | Tribunal, debate, analisis fuentes, podcast, matriz perspectivas | Respuestas ejemplo para ejercicios de pensamiento critico |
-| `guia-pruebas-modulo-4.md` | Lectura Digital | Fake news, infografia, quiz TikTok, hipertextual, memes | Respuestas ejemplo para ejercicios de literacidad digital |
-| `guia-pruebas-modulo-5.md` | Produccion y Expresion | Diario multimedia, comic digital, video carta | Respuestas ejemplo para ejercicios de produccion textual |
+| `GUIA-PRUEBAS-MODULO-1.md` | Comprension Literal | Crucigrama, linea de tiempo, completar espacios, V/F, sopa de letras | Respuestas ejemplo para ejercicios de comprension literal |
+| `GUIA-PRUEBAS-MODULO-2.md` | Comprension Inferencial | Detective, hipotesis, prediccion, puzzle contexto, rueda inferencias | Respuestas ejemplo para ejercicios inferenciales |
+| `GUIA-PRUEBAS-MODULO-3.md` | Comprension Critica | Tribunal, debate, analisis fuentes, podcast, matriz perspectivas | Respuestas ejemplo para ejercicios de pensamiento critico |
+| `GUIA-PRUEBAS-MODULO-4.md` | Lectura Digital | Fake news, infografia, quiz TikTok, hipertextual, memes | Respuestas ejemplo para ejercicios de literacidad digital |
+| `GUIA-PRUEBAS-MODULO-5.md` | Produccion y Expresion | Diario multimedia, comic digital, video carta | Respuestas ejemplo para ejercicios de produccion textual |
 
 ## Uso
 

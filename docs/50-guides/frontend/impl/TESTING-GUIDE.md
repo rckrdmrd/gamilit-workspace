@@ -1,3 +1,10 @@
+---
+titulo: Guía de Testing Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Testing Frontend
 
 **Versión:** 1.0.0

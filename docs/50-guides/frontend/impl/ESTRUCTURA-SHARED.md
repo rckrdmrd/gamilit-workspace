@@ -1,3 +1,10 @@
+---
+titulo: Estructura de Código Compartido Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Estructura de Código Compartido Frontend
 
 **Versión:** 1.1.0

@@ -1,3 +1,10 @@
+---
+titulo: Gestión de Estado Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Gestión de Estado Frontend
 
 **Versión:** 1.0.0

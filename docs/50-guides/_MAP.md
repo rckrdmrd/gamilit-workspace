@@ -55,7 +55,7 @@
 
 - **backend/** — Guias de desarrollo backend (patrones, migraciones, dependency rules, OpenTelemetry, rotacion secretos, runbook PostgreSQL)
 - **deployment/** — Guias de deployment (scripts, configuracion PM2, CI/CD)
-- **documentation-master/** — Documentacion maestra del proyecto
+- **documentation-master/** — **[RELOCATED 2026-01-22]** Documentacion maestra → `orchestration/tareas/TASK-2026-01-22-DOCUMENTATION-MASTER/`
 - **frontend/** — Guias de desarrollo frontend (componentes, hooks, estados, patrones)
 - **integration/** — Guias de integraciones (WebSocket, APIs externas)
 - **testing/** — Guias de testing (cobertura, unit tests, e2e, guias por ejercicio)

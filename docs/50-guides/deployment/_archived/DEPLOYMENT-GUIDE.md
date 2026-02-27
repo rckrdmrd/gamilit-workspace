@@ -1,3 +1,10 @@
+---
+titulo: Guía de Despliegue
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Despliegue - GAMILIT Platform
 
 ## 📋 Información General

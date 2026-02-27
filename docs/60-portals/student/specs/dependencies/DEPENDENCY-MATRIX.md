@@ -1,3 +1,10 @@
+---
+titulo: MATRIZ DE DEPENDENCIAS BIDIRECCIONALES - Student Portal
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # MATRIZ DE DEPENDENCIAS BIDIRECCIONALES
 ## Student Portal - Correcciones P0
 

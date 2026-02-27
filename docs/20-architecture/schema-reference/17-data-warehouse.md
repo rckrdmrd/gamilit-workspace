@@ -1,3 +1,11 @@
+---
+titulo: Schema - data_warehouse
+tipo: arquitectura
+subtipo: schema-reference
+schema: data_warehouse
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema: data_warehouse (16 tablas)
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

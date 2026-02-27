@@ -1,3 +1,10 @@
+---
+titulo: Error BE-007 Orden Incorrecto de Decoradores Guard
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-007: Orden Incorrecto de Decoradores Guard
 
 ## Descripcion

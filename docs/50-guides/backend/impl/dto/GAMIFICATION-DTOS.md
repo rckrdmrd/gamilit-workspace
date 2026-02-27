@@ -1,3 +1,10 @@
+---
+titulo: Gamification Backend DTOs
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Gamification Backend DTOs - Estado Actual
 
 **Documento:** GAMIFICATION-DTOS.md

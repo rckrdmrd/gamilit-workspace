@@ -1,3 +1,10 @@
+---
+titulo: Procedimiento de Pruebas Manuales del Backend
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # Procedimiento de Pruebas Manuales del Backend
 
 **Version:** 1.0.0

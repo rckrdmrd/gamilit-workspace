@@ -1,3 +1,10 @@
+---
+titulo: Error BE-001 Endpoints con Prefijo Duplicado
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-001: Endpoints con Prefijo Duplicado
 
 ## Descripcion

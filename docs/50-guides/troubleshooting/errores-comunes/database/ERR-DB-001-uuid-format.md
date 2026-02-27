@@ -1,3 +1,10 @@
+---
+titulo: Error DB-001 Formato UUID Incorrecto en Seeds
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-DB-001: Formato UUID Incorrecto en Seeds
 
 ## Descripcion

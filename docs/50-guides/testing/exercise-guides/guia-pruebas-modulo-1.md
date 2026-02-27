@@ -1,3 +1,10 @@
+---
+titulo: Guía de Pruebas Módulo 1 Comprensión Literal
+tipo: guia
+dominio: testing
+ultima_actualizacion: 2026-02-27
+---
+
 # GUÍA DE PRUEBAS - MÓDULO 1: COMPRENSIÓN LITERAL
 ## Ejemplos de Respuestas para Testing QA
 

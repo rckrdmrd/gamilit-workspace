@@ -1,3 +1,10 @@
+---
+titulo: Convenciones de Nombres APIs y Payloads
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Convenciones de Nombres - APIs y Payloads
 
 **Versión:** 1.0.0

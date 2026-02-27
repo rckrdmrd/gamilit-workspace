@@ -1,3 +1,10 @@
+---
+titulo: Guía del Sistema de Alertas Frontend
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia del Sistema de Alertas - Frontend
 
 **Version:** 1.0.0

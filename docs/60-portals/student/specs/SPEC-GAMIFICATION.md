@@ -1,3 +1,10 @@
+---
+titulo: SPEC-GAMIFICATION - Student Portal Gamification System
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-GAMIFICATION - Student Portal Gamification System
 
 **Version:** 1.0.0

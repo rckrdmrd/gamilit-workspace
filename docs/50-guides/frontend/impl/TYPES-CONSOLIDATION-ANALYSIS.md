@@ -1,3 +1,10 @@
+---
+titulo: Análisis de Consolidación de Types
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Análisis de Consolidación de Types - Frontend GAMILIT
 
 **Fecha de análisis:** 2025-11-29

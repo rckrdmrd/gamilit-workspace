@@ -61,7 +61,7 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 | 1 | auth | `auth` + `auth_management` | 1+17 | [01-auth.md](01-auth.md) |
 | 2 | tenants | `auth_management` (parcial) | - | [02-tenants.md](02-tenants.md) |
 | 3 | education | `educational_content` | 24 | [03-education.md](03-education.md) |
-| 3b | progress | `progress_tracking` | 21 | [06-progress.md](06-progress.md) |
+| 3b | progress | `progress_tracking` | 21 | [06b-progress.md](06b-progress.md) |
 | 4 | gamification | `gamification_system` | 27 | [04-gamification.md](04-gamification.md) |
 | 5 | social | `social_features` | 30 | [05-social.md](05-social.md) |
 | 5b | classrooms | `social_features` (parcial) | - | [06-classrooms.md](06-classrooms.md) |
@@ -100,7 +100,7 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 | auth (01-auth.md) | `auth` + `auth_management` | 1 + 17 | SPLIT | auth = users base; auth_management = perfiles, roles, tenants, RBAC |
 | tenants (02-tenants.md) | `auth_management` (parcial) | - | MERGED | Contenido incluido en auth_management |
 | education (03-education.md) | `educational_content` | 24 | ~1:1 | Contenido educativo (+3 resource tables 2026-02-21) |
-| progress (06-progress.md) | `progress_tracking` | 21 | ~1:1 | Seguimiento de progreso, sesiones, certificados, intervenciones |
+| progress (06b-progress.md) | `progress_tracking` | 21 | ~1:1 | Seguimiento de progreso, sesiones, certificados, intervenciones |
 | gamification (04-gamification.md) | `gamification_system` | 27 | ~1:1 | XP, rangos, achievements, comodines, tienda, misiones |
 | social (05-social.md) | `social_features` (parcial) | 30 | PARTIAL | Amistades, interacciones |
 | classrooms (06-classrooms.md) | `social_features` (parcial) | - | MERGED | Escuelas, aulas, equipos dentro de social_features |

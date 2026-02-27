@@ -1,3 +1,10 @@
+---
+titulo: Ejemplo de Migración a Tipos Generados
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Ejemplo de Migración a Tipos Generados
 
 **Fecha:** 2025-11-24

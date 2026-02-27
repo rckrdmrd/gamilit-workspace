@@ -1,3 +1,11 @@
+---
+titulo: Schema 11 - Missions (gamification_system)
+tipo: arquitectura
+subtipo: schema-reference
+schema: gamification_system
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 11: Missions — gamification_system (3 tablas, RLS via 07d)
 
 > **Version:** 2.1.0 | **Fecha:** 2026-02-21

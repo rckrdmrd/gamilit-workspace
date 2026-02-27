@@ -1,3 +1,10 @@
+---
+titulo: Especificación AdminGamificationPage
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Especificacion: AdminGamificationPage
 
 **Version:** 1.0.0

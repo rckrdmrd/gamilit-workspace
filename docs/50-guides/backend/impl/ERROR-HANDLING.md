@@ -1,3 +1,10 @@
+---
+titulo: Manejo de Errores Backend
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
 # Manejo de Errores Backend
 
 **Versión:** 1.0.0

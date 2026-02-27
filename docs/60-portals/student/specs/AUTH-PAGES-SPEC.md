@@ -1,3 +1,10 @@
+---
+titulo: AUTH-PAGES-SPEC - Especificación de Páginas de Autenticación
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # AUTH-PAGES-SPEC: Especificacion de Paginas de Autenticacion
 
 **Documento:** Especificacion Tecnica de Paginas de Autenticacion del Student Portal

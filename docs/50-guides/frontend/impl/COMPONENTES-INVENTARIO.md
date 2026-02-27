@@ -1,3 +1,10 @@
+---
+titulo: Componentes Frontend Inventario
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # COMPONENTES FRONTEND - INVENTARIO
 
 **Proyecto:** GAMILIT - Plataforma Educativa Gamificada

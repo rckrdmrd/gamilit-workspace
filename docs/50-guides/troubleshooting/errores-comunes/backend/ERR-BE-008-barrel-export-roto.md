@@ -1,3 +1,10 @@
+---
+titulo: Error BE-008 Barrel Export Referencia Archivo Inexistente
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-BE-008: Barrel Export Referencia Archivo Inexistente
 
 ## Descripcion

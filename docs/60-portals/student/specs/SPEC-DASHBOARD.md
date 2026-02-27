@@ -1,3 +1,10 @@
+---
+titulo: SPEC-DASHBOARD - Student Portal Dashboard
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-DASHBOARD - Student Portal Dashboard
 
 **Version:** 1.0.0

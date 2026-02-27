@@ -1,3 +1,9 @@
+---
+titulo: Checklist - Aceptacion Tienda Visual
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # CHECKLIST-ACEPTACION-TIENDA-VISUAL
 
 > Checklist final de validación documental y trazabilidad para integración de tienda visual.

@@ -1,3 +1,10 @@
+---
+titulo: Especificaciones de Páginas Teacher Portal
+tipo: guia
+dominio: frontend
+ultima_actualizacion: 2026-02-27
+---
+
 # Especificaciones de Paginas - Teacher Portal
 
 **Version:** 1.0.0

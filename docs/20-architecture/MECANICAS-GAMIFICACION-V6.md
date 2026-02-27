@@ -1,3 +1,9 @@
+---
+titulo: Mecanicas de Gamificacion (Indice Legacy)
+tipo: arquitectura
+ultima_actualizacion: 2026-02-27
+---
+
 # Mecanicas de Gamificacion (Indice Legacy)
 
 > Documento legado preservado como punto de entrada; contenido segmentado para normalizacion.

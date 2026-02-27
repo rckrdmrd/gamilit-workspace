@@ -308,7 +308,7 @@ La función SQL `validate_fill_in_blank` ahora valida automáticamente contra `c
 
 ### Documentación del Problema
 - [Archivo no disponible — documento historico] (01-ANALISIS-GAP.md, generado por agente y no persistido)
-- `docs/50-guides/testing/exercise-guides/guia-pruebas-modulo-1.md` (lineas 372-386)
+- `docs/50-guides/testing/exercise-guides/GUIA-PRUEBAS-MODULO-1.md` (lineas 372-386)
 
 ### Implementación
 - [Archivo no disponible — documento historico] (02-PLAN-CORRECCION.md, generado por agente y no persistido)

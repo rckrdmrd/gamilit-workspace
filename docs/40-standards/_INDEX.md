@@ -10,9 +10,9 @@
 |---------|-------------|
 | [README.md](./README.md) | Entrada y navegacion rapida de estandares |
 
-## Tabla de Contenidos (25 Estandares Activos)
+## Tabla de Contenidos (31 Estandares Activos)
 
-### Estandares Generales (19)
+### Estandares Generales (21)
 
 | # | Estandar | Proposito |
 |---|----------|-----------|
@@ -31,10 +31,16 @@
 | 13 | ESTANDAR-NOMENCLATURA-API.md | snake_case/camelCase entre capas |
 | 14 | ESTANDAR-OBSERVABILIDAD.md | OpenTelemetry, Prometheus, tracing, SLOs |
 | 15 | ESTANDAR-PERFORMANCE.md | Optimizacion y rendimiento |
-| 16 | ESTANDAR-SEGURIDAD.md | RLS, JWT, rate limiting |
-| 17 | ESTANDAR-SKILLS.md | [MOVED] a `orchestration/agents/SKILL-STANDARD.md` |
-| 18 | ESTANDAR-TESTING.md | Unit, integration, E2E (piramide 70-20-10) |
-| 19 | ESTANDAR-12-FACTOR-APP.md | Checklist 12-Factor App compliance |
+| 16 | ESTANDAR-SEGURIDAD.md | Indice de seguridad + Checklist pre-deploy |
+| 17 | ESTANDAR-SEGURIDAD-WEB.md | OWASP Web Top 10 (2021) + Auth + Secrets + Headers |
+| 18 | ESTANDAR-SEGURIDAD-API.md | OWASP API Security Top 10 (2023) |
+| 19 | ESTANDAR-SKILLS.md | [MOVED] a `orchestration/agents/SKILL-STANDARD.md` |
+| 20 | ESTANDAR-TESTING.md | Indice de testing (cobertura + checklists) + links a sub-archivos |
+| 20a | ESTANDAR-TESTING-UNIT.md | Unit tests, naming, mocking, test data |
+| 20b | ESTANDAR-TESTING-INTEGRATION.md | Integration tests (backend, frontend, DB) |
+| 20c | ESTANDAR-TESTING-E2E.md | E2E tests + visual regression con Playwright |
+| 20d | ESTANDAR-TESTING-ARCHITECTURE.md | Architecture tests (ts-arch, circular deps) |
+| 21 | ESTANDAR-12-FACTOR-APP.md | Checklist 12-Factor App compliance |
 
 ### Estandares Frontend Especificos (6)
 

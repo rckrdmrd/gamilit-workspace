@@ -1,3 +1,11 @@
+---
+titulo: Schema 9 - notifications
+tipo: arquitectura
+subtipo: schema-reference
+schema: notifications
+ultima_actualizacion: 2026-02-27
+---
+
 # Schema 9: notifications (7 tablas)
 
 > **DDL Path:** `apps/database/ddl/schemas/notifications/tables/`
@@ -251,23 +259,13 @@
 
 ---
 
-## Deprecated / Conceptual Only
+---
 
-> **[DEPRECATED]** The following section describes an early conceptual model that was never implemented as described.
-> The DDL-accurate documentation appears in the sections above.
+## Tablas Conceptuales (sin DDL)
 
-### notifications.push_subscriptions [NO DDL -- conceptual only]
+> Las siguientes tablas aparecen en el modelo conceptual pero no tienen DDL implementado.
+> Son candidatas para futuras iteraciones o estan cubiertas por tablas existentes.
 
-Suscripciones a push notifications. Este concepto fue reemplazado por `notifications.user_devices`.
-
-| Columna | Tipo | Nullable | Default | Descripcion |
-|---------|------|----------|---------|-------------|
-| id | UUID | NOT NULL | uuid_generate_v4() | PK |
-| user_id | UUID | NOT NULL | - | FK auth.users |
-| tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| endpoint | TEXT | NOT NULL | - | Push endpoint |
-| keys | JSONB | NOT NULL | '{}' | Push keys (p256dh, auth) |
-| device_info | JSONB | NULL | '{}' | Info del dispositivo |
-| is_active | BOOLEAN | NOT NULL | true | Suscripcion activa |
-| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
-| updated_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
+| Tabla | Proposito |
+|-------|-----------|
+| notifications.push_subscriptions | Suscripciones push de dispositivos |

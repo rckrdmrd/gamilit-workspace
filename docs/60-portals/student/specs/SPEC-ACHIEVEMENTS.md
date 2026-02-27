@@ -1,3 +1,10 @@
+---
+titulo: SPEC-ACHIEVEMENTS - Student Portal Achievements System
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-ACHIEVEMENTS - Student Portal Achievements System
 
 **Version:** 1.1.0

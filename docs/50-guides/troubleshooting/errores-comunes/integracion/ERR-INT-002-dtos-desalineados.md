@@ -1,3 +1,10 @@
+---
+titulo: Error INT-002 DTOs Desalineados Frontend-Backend
+tipo: guia
+dominio: integracion
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-INT-002: DTOs Desalineados Frontend-Backend
 
 **Categoria:** Integracion

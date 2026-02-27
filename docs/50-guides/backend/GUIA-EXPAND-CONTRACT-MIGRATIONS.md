@@ -1,6 +1,11 @@
-# Guia de Migraciones Expand/Contract
-
 ---
+titulo: Guía de Migraciones Expand/Contract
+tipo: guia
+dominio: backend
+ultima_actualizacion: 2026-02-27
+---
+
+# Guia de Migraciones Expand/Contract
 titulo: Guia de Migraciones Expand/Contract
 version: 1.0.0
 fecha_creacion: 2026-02-14

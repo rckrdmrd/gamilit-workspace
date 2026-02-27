@@ -1,3 +1,10 @@
+---
+titulo: SPEC-MODULES - Student Portal Educational Modules
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-MODULES - Student Portal Educational Modules
 
 **Version:** 1.0.0

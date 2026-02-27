@@ -1,3 +1,10 @@
+---
+titulo: Guía de Desarrollo - Portal Admin
+tipo: portal
+portal: admin
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Desarrollo - Portal Admin
 
 **Fecha de creación:** 2025-11-29

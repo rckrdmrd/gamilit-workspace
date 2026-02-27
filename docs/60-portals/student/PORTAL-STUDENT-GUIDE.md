@@ -1,3 +1,10 @@
+---
+titulo: Guía de Desarrollo - Portal Student
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # Guía de Desarrollo - Portal Student
 
 **Fecha de creación:** 2025-11-29

@@ -1,3 +1,10 @@
+---
+titulo: Guía de Validación y Troubleshooting Producción
+tipo: guia
+dominio: deployment
+ultima_actualizacion: 2026-02-27
+---
+
 # Guia de Validacion y Troubleshooting - Produccion GAMILIT
 
 > **Version:** 1.0.0

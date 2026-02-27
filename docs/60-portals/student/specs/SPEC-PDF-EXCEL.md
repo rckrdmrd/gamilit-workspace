@@ -1,3 +1,10 @@
+---
+titulo: SPEC-PDF-EXCEL - Student Portal File Generation
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-PDF-EXCEL - Student Portal File Generation
 
 **Version:** 1.0.0

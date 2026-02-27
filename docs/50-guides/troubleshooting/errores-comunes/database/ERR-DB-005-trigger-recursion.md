@@ -1,3 +1,10 @@
+---
+titulo: Error DB-005 Recursión Infinita en Triggers
+tipo: guia
+dominio: troubleshooting
+ultima_actualizacion: 2026-02-27
+---
+
 # ERR-DB-005: Recursion Infinita en Triggers
 
 ## Descripcion

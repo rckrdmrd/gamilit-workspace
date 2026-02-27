@@ -1,3 +1,10 @@
+---
+titulo: STUDENT-GAP-002 - Misiones - Progreso No Se Actualiza Correctamente
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # STUDENT-GAP-002: Misiones - Progreso No Se Actualiza Correctamente
 
 **Fecha de identificación:** 2025-11-29

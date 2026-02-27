@@ -1,3 +1,10 @@
+---
+titulo: SPEC-MULTIMEDIA - Student Portal Multimedia Handling
+tipo: portal
+portal: student
+ultima_actualizacion: 2026-02-27
+---
+
 # SPEC-MULTIMEDIA - Student Portal Multimedia Handling
 
 **Version:** 1.0.0
