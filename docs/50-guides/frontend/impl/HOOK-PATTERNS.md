@@ -6,8 +6,8 @@
 **Contexto:** Estandarizacion de 30+ custom hooks
 
 **Estandares relacionados:**
-- [`STANDARD-API.md`](../../../40-standards/STANDARD-API.md) -- React Query como estandar, query key factories
-- [`STANDARD-COMPONENT.md`](../../../40-standards/STANDARD-COMPONENT.md) -- Export patterns para hooks
+- [`ESTANDAR-FRONTEND-API.md`](../../../40-standards/ESTANDAR-FRONTEND-API.md) -- React Query como estandar, query key factories
+- [`ESTANDAR-FRONTEND-COMPONENT.md`](../../../40-standards/ESTANDAR-FRONTEND-COMPONENT.md) -- Export patterns para hooks
 
 ---
 

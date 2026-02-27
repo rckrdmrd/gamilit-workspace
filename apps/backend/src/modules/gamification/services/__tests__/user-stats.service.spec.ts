@@ -1,10 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { UserStatsService } from '../user-stats.service';
 import { UserStats } from '../../entities';
 import { Profile } from '@/modules/auth/entities/profile.entity';
+import {
+  UserStatsNotFoundError,
+  ProfileNotFoundError,
+  UserStatsAlreadyExistsError,
+  NonNumericFieldError,
+} from '../../errors/gamification.errors';
 
 describe('UserStatsService', () => {
   let service: UserStatsService;
@@ -125,26 +130,23 @@ describe('UserStatsService', () => {
       });
     });
 
-    it('should throw NotFoundException when stats not found', async () => {
+    it('should throw UserStatsNotFoundError when stats not found', async () => {
       // Arrange - profile mock is already set in beforeEach
       mockUserStatsRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        `No stats found for user ${mockUserId} (profile: ${mockProfileId})`,
+        UserStatsNotFoundError,
       );
     });
 
-    it('should throw NotFoundException when profile not found', async () => {
+    it('should throw ProfileNotFoundError when profile not found', async () => {
       // Arrange - override the default profile mock
       mockProfileRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        NotFoundException,
+        ProfileNotFoundError,
       );
     });
   });
@@ -196,14 +198,14 @@ describe('UserStatsService', () => {
       );
     });
 
-    it('should throw BadRequestException if stats already exist', async () => {
+    it('should throw UserStatsAlreadyExistsError if stats already exist', async () => {
       // Arrange - profile mock is already set in beforeEach
       const existingStats = createMockStats({ user_id: mockProfileId });
       mockUserStatsRepo.findOne.mockResolvedValue(existingStats);
 
       // Act & Assert
       await expect(service.create(mockUserId, mockTenantId)).rejects.toThrow(
-        BadRequestException,
+        UserStatsAlreadyExistsError,
       );
       expect(mockUserStatsRepo.create).not.toHaveBeenCalled();
       expect(mockUserStatsRepo.save).not.toHaveBeenCalled();
@@ -232,14 +234,14 @@ describe('UserStatsService', () => {
       );
     });
 
-    it('should throw NotFoundException if user stats not found', async () => {
+    it('should throw UserStatsNotFoundError if user stats not found', async () => {
       // Arrange
       mockUserStatsRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(
         service.updateStats(mockUserId, { level: 5 }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(UserStatsNotFoundError);
     });
 
     it('should handle multiple field updates', async () => {
@@ -305,7 +307,7 @@ describe('UserStatsService', () => {
       expect(result.ml_coins).toBe(150);
     });
 
-    it('should throw BadRequestException for non-numeric field', async () => {
+    it('should throw NonNumericFieldError for non-numeric field', async () => {
       // Arrange
       const mockStats = createMockStats();
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
@@ -313,20 +315,20 @@ describe('UserStatsService', () => {
       // Act & Assert
       await expect(
         service.incrementField(mockUserId, 'user_id' as any, 1),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(NonNumericFieldError);
       await expect(
         service.incrementField(mockUserId, 'user_id' as any, 1),
       ).rejects.toThrow('Field user_id is not numeric');
     });
 
-    it('should throw NotFoundException if user stats not found', async () => {
+    it('should throw UserStatsNotFoundError if user stats not found', async () => {
       // Arrange
       mockUserStatsRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(
         service.incrementField(mockUserId, 'exercises_completed'),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(UserStatsNotFoundError);
     });
   });
 
@@ -500,13 +502,13 @@ describe('UserStatsService', () => {
       expect(result.rank_progress).toBe(0); // Reset progress after promotion
     });
 
-    it('should throw NotFoundException if user stats not found', async () => {
+    it('should throw UserStatsNotFoundError if user stats not found', async () => {
       // Arrange
       mockUserStatsRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.addXp(mockUserId, 100)).rejects.toThrow(
-        NotFoundException,
+        UserStatsNotFoundError,
       );
     });
 

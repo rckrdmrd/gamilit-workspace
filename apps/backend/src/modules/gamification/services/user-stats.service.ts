@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import {
+  UserStatsNotFoundError,
+  ProfileNotFoundError,
+  UserStatsAlreadyExistsError,
+  NonNumericFieldError,
+} from '../errors/gamification.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserStats } from '../entities';
@@ -70,10 +76,7 @@ export class UserStatsService {
     });
 
     if (!profileByUserId) {
-      throw new NotFoundException(
-        `Profile not found for auth user ${authUserId}. User may not be properly initialized. ` +
-        `Please ensure the user registration process completed successfully.`
-      );
+      throw new ProfileNotFoundError(authUserId);
     }
 
     return profileByUserId;
@@ -107,7 +110,7 @@ export class UserStatsService {
     });
 
     if (!stats) {
-      throw new NotFoundException(`No stats found for user ${authUserId} (profile: ${profileId})`);
+      throw new UserStatsNotFoundError(authUserId);
     }
 
     return stats;
@@ -133,7 +136,7 @@ export class UserStatsService {
     });
 
     if (existingStats) {
-      throw new BadRequestException(`User ${authUserId} (profile: ${profile.id}) already has stats`);
+      throw new UserStatsAlreadyExistsError(authUserId);
     }
 
     // Usar tenant_id del profile si no se proporciona
@@ -189,7 +192,7 @@ export class UserStatsService {
     const currentValue = stats[field];
 
     if (typeof currentValue !== 'number') {
-      throw new BadRequestException(`Field ${field} is not numeric`);
+      throw new NonNumericFieldError(field as string);
     }
 
     (stats[field] as number) = (currentValue as number) + amount;
@@ -368,7 +371,7 @@ export class UserStatsService {
     try {
       userStats = await this.findByUserId(userId);
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof UserStatsNotFoundError) {
         // Si no existe, crear registro inicial
         userStats = await this.create(userId);
       } else {

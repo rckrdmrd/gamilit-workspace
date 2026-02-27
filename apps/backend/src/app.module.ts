@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -35,6 +35,11 @@ import { HealthModule } from './modules/health/health.module';
 import { ParentsModule } from './modules/parents/parents.module';
 import { CommunicationModule } from './modules/communication/communication.module';
 import { LtiModule } from './modules/lti/lti.module';
+
+// Data Warehouse modules (conditionally loaded via ENABLE_DATA_WAREHOUSE=true)
+import { ETLModule } from './modules/etl/etl.module';
+import { MLModule } from './modules/ml/ml.module';
+import { VisualizationModule } from './modules/visualization/visualization.module';
 
 // Shared
 import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
@@ -427,6 +432,43 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
       }),
       inject: [ConfigService],
     }),
+
+    // ============================================================
+    // Data Warehouse datasource + modules (ETL, ML, Visualization)
+    // Enabled via ENABLE_DATA_WAREHOUSE=true environment variable.
+    // Default: OFF — no impact on existing modules or tests.
+    // ============================================================
+    ...(process.env.ENABLE_DATA_WAREHOUSE === 'true'
+      ? [
+          // 12th datasource: data_warehouse schema (fact/dimension tables for analytics)
+          TypeOrmModule.forRootAsync({
+            name: 'data_warehouse',
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
+              type: 'postgres',
+              host: configService.get('database.host'),
+              port: configService.get('database.port'),
+              username: configService.get('database.username'),
+              password: configService.get('database.password'),
+              database: configService.get('database.database'),
+              entities: [],  // ETL uses raw SQL, no entity classes for data_warehouse
+              synchronize: false,  // Never auto-sync warehouse schema
+              logging: configService.get('database.logging'),
+              ssl: configService.get('database.ssl'),
+              extra: configService.get('database.extra'),
+              retryAttempts: configService.get('database.retryAttempts', 5),
+              retryDelay: configService.get('database.retryDelay', 5000),
+            }),
+            inject: [ConfigService],
+          }),
+          // ETL: Extract-Transform-Load pipeline (data_warehouse + audit + progress + auth + social + gamification)
+          ETLModule,
+          // ML: Machine Learning predictions (progress + gamification + auth, queries data_warehouse via cross-schema SQL)
+          MLModule,
+          // Visualization: Dashboards, charts, reports (in-memory, no datasource)
+          VisualizationModule,
+        ]
+      : []),
 
     // Application modules
     AuthModule,

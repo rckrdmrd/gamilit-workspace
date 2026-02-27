@@ -7,7 +7,7 @@
 | Ruta | Uso |
 |------|-----|
 | [epics/_INDEX.md](./epics/_INDEX.md) | Indice maestro EPIC -> US -> TASK |
-| [testing-guides/README.md](./testing-guides/README.md) | Guias de prueba vinculadas a requerimientos |
+| [testing-guides/](./testing-guides/) | [MOVED] a `docs/50-guides/testing/exercise-guides/` |
 
 ## Regla SSOT
 

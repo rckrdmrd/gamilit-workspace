@@ -1,6 +1,14 @@
+---
+titulo: "ADR-031: Introduccion del Portal de Padres (Parent Portal)"
+tipo: adr
+fecha_creacion: "2026-01-27"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-031: Introduccion del Portal de Padres (Parent Portal)
 
-**Estado:** ACEPTADO
+**Estado:** Aceptada
 **Fecha:** 2026-01-27
 **Contexto:** TASK-2026-01-30-CORRECCION-INTEGRAL (Fase 3.3)
 
@@ -99,5 +107,5 @@ apps/frontend/src/apps/parent/
 
 ---
 
-*Sistema SIMCO v4.3.0*
+*Sistema SIMCO v4.0.0*
 *Fecha documentacion: 2026-01-30*

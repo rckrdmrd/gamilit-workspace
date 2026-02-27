@@ -1,258 +1,42 @@
-# Testing Strategy - GAMILIT
+# Testing Strategy - Redirect
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-07
-**Tests Activos:** 2324 tests (2296 passed + 28 skipped), 63 spec files
+> **Este documento es un redirect.** La estrategia de testing se mantiene en ubicaciones especializadas.
 
 ---
 
-## Resumen
+## Resumen de Estrategia
 
-GAMILIT implementa una estrategia de testing basada en la piramide de tests, con enfasis en tests unitarios para logica de negocio y tests de integracion para flujos criticos.
+GAMILIT usa una piramide de tests con Jest (backend) y Vitest (frontend). El umbral minimo es 50% de cobertura con objetivo gradual a 80% (ADR-044). Tests de integracion cubren flujos criticos (auth, ejercicios, gamificacion). Estado actual: 2324 tests (2296 passed + 28 skipped), 63 spec files.
 
-| Nivel | Framework | Cantidad | Cobertura Target |
-|-------|-----------|----------|------------------|
-| Unit Tests (Backend) | Jest | ~550 | 50% (objetivo gradual 80%) |
-| Unit Tests (Frontend) | Vitest | ~200 | 50% (objetivo gradual 80%) |
-| Integration Tests | Jest + Supertest | ~70 | Flujos criticos |
-| E2E Tests | Pending | ~13 | Flujos principales |
-| **Total** | | **2324 (2296 passed + 28 skipped), 63 spec files** | **50% global (objetivo gradual 80%)** |
+## Documentos SSOT
 
----
+### Politica y Estandar
+- **[ESTANDAR-TESTING.md](../40-standards/ESTANDAR-TESTING.md)** -- Estandar de testing (politica, umbrales, convenciones)
+- **[ADR-044](../90-adr/ADR-044-testing-coverage-strategy.md)** -- Decision arquitectonica: cobertura 50% minimo, objetivo 80%
 
-## Piramide de Tests
+### Guias de Implementacion
+- **[docs/50-guides/testing/](../50-guides/testing/_INDEX.md)** -- Indice completo de guias de testing
+- [GUIA-COVERAGE-TESTING.md](../50-guides/testing/GUIA-COVERAGE-TESTING.md) -- Estrategia de cobertura
+- [GUIA-E2E-PLAYWRIGHT.md](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md) -- Testing E2E con Playwright
+- [GUIA-ARCHITECTURE-TESTING.md](../50-guides/testing/GUIA-ARCHITECTURE-TESTING.md) -- Testing de arquitectura
+- [GUIA-RESPONSIVE-TESTING.md](../50-guides/testing/GUIA-RESPONSIVE-TESTING.md) -- Testing responsive
 
-```
-        /\
-       /  \
-      / E2E \         <- Flujos principales (13 planificados)
-     /--------\
-    / Integracion \    <- Flujos criticos entre modulos (~70)
-   /--------------\
-  /   Unit Tests    \  <- Logica de negocio, services, hooks (~750)
- /------------------\
-```
+### Testing de Ejercicios Educativos
+- **[exercise-guides/](../50-guides/testing/exercise-guides/_INDEX.md)** -- Respuestas ejemplo y criterios de validacion para 23 tipos de ejercicio (5 modulos)
 
----
+## Comandos Rapidos
 
-## Backend (Jest)
-
-### Configuracion
-```typescript
-// jest.config.ts
-{
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
-  testRegex: '.*\\.spec\\.ts$',
-  transform: { '^.+\\.(t|j)s$': 'ts-jest' },
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
-  testEnvironment: 'node',
-  coverageThreshold: {
-    global: { branches: 50, functions: 50, lines: 50, statements: 50 }
-    // objetivo gradual 80% (ADR-044)
-  }
-}
-```
-
-### Tests Unitarios (~550)
-Cada modulo tiene tests unitarios para:
-- **Services:** Logica de negocio aislada con mocks de repositorios
-- **Controllers:** Validacion de rutas, parametros, respuestas
-- **Guards:** Verificacion de autorizacion y roles
-- **Pipes:** Validacion y transformacion de datos
-
-Modulos con mayor cobertura:
-| Modulo | Tests | Cobertura |
-|--------|-------|-----------|
-| auth | ~45 | 90% |
-| gamification | ~40 | 85% |
-| exercises | ~50 | 85% |
-| users | ~30 | 90% |
-| students | ~30 | 80% |
-| content | ~25 | 80% |
-
-### Tests de Integracion (~70)
-Tests que validan interaccion entre modulos:
-- Auth -> Users (registro completo)
-- Exercises -> Gamification (XP award on completion)
-- Exercises -> Students (progress tracking)
-- Gamification -> Leaderboard (ranking update)
-- Gamification -> Achievements (unlock check)
-- Notifications -> Email/Push (delivery flow)
-- Teachers -> Classrooms -> Students (assignment flow)
-
-### Comandos
 ```bash
-cd apps/backend
+# Backend tests
+cd apps/backend && npm run test && npm run test:cov
 
-# Ejecutar todos los tests
-npm run test
+# Frontend tests
+cd apps/frontend && npm run test && npm run test:coverage
 
-# Ejecutar tests con cobertura
-npm run test:cov
-
-# Ejecutar tests de un modulo
-npm run test -- --testPathPattern=modules/gamification
-
-# Watch mode
-npm run test:watch
-```
-
----
-
-## Frontend (Vitest)
-
-### Configuracion
-```typescript
-// vitest.config.ts
-{
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test/setup.ts'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      thresholds: { lines: 50, functions: 50, branches: 50, statements: 50 }
-      // objetivo gradual 80% (ADR-044)
-    }
-  }
-}
-```
-
-### Tests Unitarios (~200)
-- **Components:** Renderizado, interacciones de usuario, estados
-- **Hooks:** Logica custom, side effects, estado
-- **Stores:** Estado Zustand, acciones, selectors
-- **Services:** Llamadas API, transformacion de datos
-
-Componentes con mayor cobertura:
-| Area | Tests | Cobertura |
-|------|-------|-----------|
-| Gamification components | ~35 | 80% |
-| Exercise components | ~40 | 75% |
-| Auth components | ~20 | 85% |
-| Student portal | ~30 | 70% |
-| Shared components | ~25 | 75% |
-
-### Testing Library
-- **@testing-library/react:** Renderizado y queries
-- **@testing-library/user-event:** Simulacion de interacciones
-- **MSW (Mock Service Worker):** Mock de API calls
-
-### Comandos
-```bash
-cd apps/frontend
-
-# Ejecutar todos los tests
-npm run test
-
-# Ejecutar tests con cobertura
-npm run test:coverage
-
-# Watch mode
-npm run test:watch
-
-# Tests de un directorio
-npm run test -- --testPathPattern=components/gamification
-```
-
----
-
-## Tests de Integracion
-
-### Flujos Criticos Cubiertos
-
-1. **Flujo de autenticacion completo**
-   - Register -> Login -> Refresh -> Logout
-   - OAuth flow
-   - Password reset
-
-2. **Flujo de ejercicio completo**
-   - Student selects exercise -> Loads content -> Submits answer -> Evaluates -> Awards XP -> Updates leaderboard
-
-3. **Flujo de asignacion**
-   - Teacher creates assignment -> Students receive notification -> Complete -> Teacher reviews
-
-4. **Flujo de gamificacion**
-   - Exercise completion -> XP calculation -> Level check -> Rank promotion -> Achievement unlock -> Notification
-
-5. **Flujo de tienda**
-   - Earn ML Coins -> Browse store -> Purchase item -> Add to inventory -> Apply effect
-
----
-
-## Database Testing
-
-### Validacion DDL
-```bash
-# Recrear BD completa y validar schemas
+# Database validation
 bash apps/database/scripts/recreate-database.sh
 ```
 
-### Validaciones Automaticas
-- RLS policies activas en todas las tablas multi-tenant (251 DDL / 467 runtime policies)
-- Funciones SQL ejecutan sin errores (158 funciones DDL)
-- Triggers disparan correctamente (68 triggers)
-- Foreign keys validas (301 FKs)
-- ENUMs sincronizados con backend (42 ENUMs)
-
 ---
 
-## Metricas de Calidad
-
-### Estado Actual
-| Metrica | Valor | Target |
-|---------|-------|--------|
-| Tests pasando | 2324 (2296 passed + 28 skipped), 63 spec files | 100% |
-| Cobertura backend | ~50% | 50% (objetivo gradual 80%) |
-| Cobertura frontend | ~50% | 50% (objetivo gradual 80%) |
-| Coherencia DDL-Backend | 89% | 100% |
-| Tests de integracion | ~70 | 100+ |
-| E2E tests | Planificados | 13+ |
-
-### Objetivos Post-MVP
-- Alcanzar 80% cobertura global (gradual desde umbral actual 50% — ver ADR-044)
-- Implementar E2E tests para flujos principales
-- Agregar tests de carga (k6/Artillery)
-- Tests de accesibilidad (axe-core)
-- Tests de visual regression
-
----
-
-## CI/CD Integration
-
-### Pre-commit Hooks
-```bash
-# Verificaciones antes de commit
-npm run lint
-npm run typecheck
-npm run test -- --bail
-```
-
-### Pipeline de CI
-```
-Push to main
-  -> Install dependencies
-  -> Lint (backend + frontend)
-  -> TypeCheck (backend + frontend)
-  -> Unit tests (backend + frontend)
-  -> Integration tests
-  -> Build (backend + frontend)
-  -> Deploy (if all pass)
-```
-
----
-
-## Documentos Relacionados
-
-- [Guias de Pruebas por Modulo](../10-requirements/testing-guides/README.md) — Respuestas ejemplo y criterios de validacion para los 23 tipos de ejercicio (5 modulos educativos)
-- [ESTANDAR-TESTING](../40-standards/ESTANDAR-TESTING.md) — Estandar general de testing
-- [GUIA-E2E-PLAYWRIGHT](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md) — Testing E2E con Playwright
-- [GUIA-COVERAGE-TESTING](../50-guides/testing/GUIA-COVERAGE-TESTING.md) — Estrategia de cobertura
-
----
-
-*GAMILIT - Testing Strategy*
-*2324 tests (2296 passed + 28 skipped), 63 spec files - Umbral 50% cobertura (objetivo gradual 80% — ADR-044)*
+*Redirect creado 2026-02-27 -- Wave 3 Documentation Audit*

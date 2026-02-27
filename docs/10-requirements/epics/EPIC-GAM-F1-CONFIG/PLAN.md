@@ -16,7 +16,7 @@
 | 3 | US-SYS-003 | Preferencias de notificaciones | 5 | US-SYS-001 | Sprint 4 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Redis
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Redis
 - **Base de datos:** Schema `system_configuration` (tablas system_settings, feature_flags, notification_preferences)
 - **Patron:** Key-value store con cache Redis, feature flags con evaluacion por tenant/role
 

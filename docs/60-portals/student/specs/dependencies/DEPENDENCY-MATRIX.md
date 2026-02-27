@@ -43,11 +43,11 @@ Este documento mapea TODAS las dependencias bidireccionales entre los componente
 8. [SettingsPage Component](#8-settingspage-component)
 
 ### Base de Datos (10 tablas)
-9. [gamification.missions](#9-gamificationmissions-tabla)
+9. [gamification_system.missions](#9-gamification_systemmissions-tabla)
 10. [gamification_system.user_stats](#10-gamification_systemuser_stats-tabla)
-11. [gamification.user_ranks](#11-gamificationuser_ranks-tabla)
-12. [gamification.user_achievements](#12-gamificationuser_achievements-tabla) ✨ **NUEVO (GAP-008)**
-13. [gamification.achievements](#13-gamificationachievements-tabla) ✨ **NUEVO (GAP-008)**
+11. [gamification_system.user_ranks](#11-gamification_systemuser_ranks-tabla)
+12. [gamification_system.user_achievements](#12-gamification_systemuser_achievements-tabla) ✨ **NUEVO (GAP-008)**
+13. [gamification_system.achievements](#13-gamification_systemachievements-tabla) ✨ **NUEVO (GAP-008)**
 14. [economy.ml_coins_transactions](#14-economyml_coins_transactions-tabla)
 15. [progress_tracking.exercise_submissions](#15-progress_trackingexercise_submissions-tabla) ✨ **NUEVO (GAP-008)**
 
@@ -95,7 +95,7 @@ mission.status = 'claimed';
 mission.claimed_at = new Date();
 await this.missionsRepository.save(mission);
 ```
-- Tabla BD: `gamification.missions`
+- Tabla BD: `gamification_system.missions`
 - Operaciones: SELECT (findOne), UPDATE (save)
 - Impacto: Si falla, método lanza exception
 
@@ -147,7 +147,7 @@ const newRank = await this.ranksService.getCurrentRank(userId); // Después de o
 const rankPromotion = previousRank.rank !== newRank.rank;
 ```
 - Módulo: `gamification/services/ranks.service.ts`
-- Tabla BD consultada: `gamification.user_ranks`
+- Tabla BD consultada: `gamification_system.user_ranks`
 - Impacto: Si falla, promoción NO se detecta pero XP se otorga correctamente
 
 #### ES CONSUMIDO POR (Dependencias Entrantes)
@@ -674,11 +674,11 @@ import { Loader2, User, Lock, Bell, Globe, Palette } from 'lucide-react';
 
 ---
 
-### 7. gamification.missions (Tabla)
+### 7. gamification_system.missions (Tabla)
 
 **Tipo:** PostgreSQL Table
 **Gap:** STUDENT-GAP-001
-**Schema:** gamification
+**Schema:** gamification_system
 
 #### ES CONSUMIDO POR (Dependencias Entrantes - Escritura)
 
@@ -691,7 +691,7 @@ import { Loader2, User, Lock, Bell, Globe, Palette } from 'lucide-react';
 **7.1 MissionsService UPDATE**
 ```sql
 -- Operación realizada por TypeORM
-UPDATE gamification.missions
+UPDATE gamification_system.missions
 SET status = 'claimed',
     claimed_at = NOW()
 WHERE id = $1 AND user_id = $2;
@@ -730,10 +730,10 @@ SET total_xp = total_xp + $1
 WHERE user_id = $2;
 
 -- Trigger automático después del UPDATE
-EXECUTE FUNCTION gamification.check_user_promotion();
+EXECUTE FUNCTION gamification_system.check_user_promotion();
 ```
 - Trigger: `check_user_promotion_on_xp_update` se ejecuta AFTER UPDATE
-- Efecto: Actualiza `gamification.user_ranks` si XP cruza umbral
+- Efecto: Actualiza `gamification_system.user_ranks` si XP cruza umbral
 
 #### ES CONSUMIDO POR (Dependencias Entrantes - Lectura)
 
@@ -743,11 +743,11 @@ EXECUTE FUNCTION gamification.check_user_promotion();
 
 ---
 
-### 9. gamification.user_ranks (Tabla)
+### 9. gamification_system.user_ranks (Tabla)
 
 **Tipo:** PostgreSQL Table
 **Gap:** STUDENT-GAP-001, STUDENT-GAP-006
-**Schema:** gamification
+**Schema:** gamification_system
 
 #### ES CONSUMIDO POR (Dependencias Entrantes - Escritura)
 
@@ -760,7 +760,7 @@ EXECUTE FUNCTION gamification.check_user_promotion();
 **9.1 check_user_promotion() Function**
 ```sql
 -- Función PL/pgSQL ejecutada por trigger
-CREATE OR REPLACE FUNCTION gamification.check_user_promotion()
+CREATE OR REPLACE FUNCTION gamification_system.check_user_promotion()
 RETURNS TRIGGER AS $$
 DECLARE
   current_xp INTEGER;
@@ -781,7 +781,7 @@ BEGIN
   END;
 
   -- Actualizar rango si cambió
-  UPDATE gamification.user_ranks
+  UPDATE gamification_system.user_ranks
   SET rank = new_rank,
       promoted_at = NOW()
   WHERE user_id = NEW.user_id

@@ -4,8 +4,8 @@
 # Sistema: SIMCO v4.0.0
 # Nota: Sprint 1 historico movido a SPRINTS-HISTORICO.yml el 2026-02-26
 
-version: "3.3.0"
-updated: "2026-02-26"
+version: "3.4.0"
+updated: "2026-02-27"
 
 # ============================================
 # SPRINT ACTUAL
@@ -17,7 +17,8 @@ sprint:
   fecha_inicio: "2026-02-25"
   fecha_fin: "2026-03-11"
   duracion_dias: 14
-  estado: "en_progreso"
+  estado: "completado"
+  fecha_completado: "2026-02-27"
 
 # ============================================
 # OBJETIVOS DEL SPRINT
@@ -59,9 +60,9 @@ objetivos:
     descripcion: "Auditoria integral BD: modelado, seeds, UUIDs, triggers — 9 fases"
     estado: "completado"
     progreso: 100
-    items: ["BD-001"]
+    items: ["BD-001", "BD-FIX-001"]
     fecha_completado: "2026-02-26"
-    nota: "9 fases, ~20 agentes, ~30 archivos. 40 UUIDs remediados. Loaders unificados. 0 errores recreacion."
+    nota: "9 fases + pendientes fix. 40 UUIDs remediados. Loaders unificados. BD-P01..P08 + D-01 resueltos."
 
   - id: "OBJ-S2-006"
     descripcion: "Responsive design mobile-first para todos los portales (ADR-050)"
@@ -247,14 +248,26 @@ items:
     entregable: "docs/90-adr/ADR-050-responsive-design-strategy.md"
     nota: "71 files: shared useResponsiveLayout hook, Modal mobile fix, responsive headings, ADR-050 + standard + guide"
 
+  # BD Pendientes Remediacion (BD-P01 a P08 + D-01)
+  - id: "BD-FIX-001"
+    titulo: "Fix BD-P01..P08 + D-01: welcome bonus dup, message_participants FK, templates sync, loader tags"
+    epica: "EPIC-WS-001"
+    prioridad: "P1"
+    esfuerzo: "L"
+    estado: "completado"
+    asignado: "Claude Code"
+    dependencias: ["BD-001"]
+    fecha_completado: "2026-02-26"
+    nota: "8 pendientes BD resueltos + 4 scope tags init-database.sh corregidos. ~22 archivos modificados/movidos."
+
 # ============================================
 # METRICAS
 # ============================================
 
 metricas:
   velocidad_planificada: 40
-  items_total: 15
-  items_completados: 15
+  items_total: 16
+  items_completados: 16
   items_en_progreso: 0
   items_pendientes: 0
   porcentaje_avance: 100
@@ -291,7 +304,7 @@ metadata:
   created_by: "META-ORQUESTADOR"
   created_at: "2026-01-16"
   updated_by: "Claude Code"
-  updated_at: "2026-02-26"
+  updated_at: "2026-02-27"
   changelog:
     - version: "3.0.0"
       date: "2026-02-25"
@@ -305,3 +318,6 @@ metadata:
     - version: "3.3.0"
       date: "2026-02-26"
       note: "+OBJ-S2-005 (auditoria BD) +OBJ-S2-006 (responsive design)"
+    - version: "3.4.0"
+      date: "2026-02-26"
+      note: "+BD-FIX-001: 8 BD pendientes resueltos + 4 scope tags corregidos (15→16 items)"

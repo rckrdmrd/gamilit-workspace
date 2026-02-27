@@ -1,6 +1,14 @@
+---
+titulo: "ADR-033: Expansion de Schemas de 8 a 18"
+tipo: adr
+fecha_creacion: "2026-02-06"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-033: Expansion de Schemas de 8 a 18
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-06
 **Contexto:** TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION
 

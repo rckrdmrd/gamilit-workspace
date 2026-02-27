@@ -162,4 +162,4 @@
 ---
 
 **Generado:** 2026-01-04
-**Sistema:** NEXUS v3.4 + SIMCO + SCRUM
+**Sistema:** NEXUS v4.1 + SIMCO + SCRUM

@@ -50,10 +50,10 @@ BEGIN
      'block', 'critical', true, true, true, 100,
      v_admin_profile_id),
 
-    -- Contenido ofensivo extremo
+    -- Contenido ofensivo extremo (BD-P06: keywords reales para contexto educativo infantil)
     ('Lenguaje Ofensivo Extremo', 'keyword', 'content',
      '{
-       "keywords": ["palabra1", "palabra2", "palabra3"],
+       "keywords": ["idiota", "estupido", "imbecil", "tonto", "maldito", "odio", "matar", "golpear", "amenaza", "insulto"],
        "case_sensitive": false,
        "match_whole_word": true
      }'::jsonb,

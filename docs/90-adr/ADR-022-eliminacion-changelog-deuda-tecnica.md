@@ -1,6 +1,14 @@
+---
+titulo: "ADR-022: Eliminacion de CHANGELOG.md y deuda-tecnica/"
+tipo: adr
+fecha_creacion: "2025-11-29"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-022: Eliminación de CHANGELOG.md y deuda-tecnica/
 
-**Estado:** Documentado (Post-mortem)
+**Estado:** Aceptada (Post-mortem)
 **Fecha:** 2025-11-29
 **Autor:** Architecture-Analyst
 **Relacionado con:**

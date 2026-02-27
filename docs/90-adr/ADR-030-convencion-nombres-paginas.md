@@ -1,6 +1,14 @@
+---
+titulo: "ADR-030: Convencion de Nombres de Paginas - Sufijo Page"
+tipo: adr
+fecha_creacion: "2026-01-25"
+ultima_actualizacion: "2026-02-27"
+estado: enmendada
+---
+
 # ADR-030: Convencion de Nombres de Paginas — Sufijo "Page"
 
-**Estado:** ENMENDADO
+**Estado:** Enmendada
 **Fecha original:** 2026-01-25
 **Fecha enmienda:** 2026-02-19
 **Contexto original:** TASK-2026-01-30-CORRECCION-INTEGRAL (Fase 3.2)
@@ -135,5 +143,5 @@ apps/frontend/src/apps/{portal}/
 
 ---
 
-*Sistema SIMCO v4.3.0*
+*Sistema SIMCO v4.0.0*
 *Fecha documentacion: 2026-02-19*

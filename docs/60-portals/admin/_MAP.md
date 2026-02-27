@@ -1,0 +1,24 @@
+# admin — Mapa de Navegacion (Portal)
+
+## Estructura
+
+```
+admin/
+├── _INDEX.md
+├── _MAP.md
+├── PORTAL-ADMIN-API-REFERENCE.md
+└── PORTAL-ADMIN-GUIDE.md
+```
+
+## Archivos
+
+- **PORTAL-ADMIN-API-REFERENCE.md** — Referencia de endpoints del Portal Administrador (gestion de contenido, usuarios, configuracion, analytics)
+- **PORTAL-ADMIN-GUIDE.md** — Guia de uso del Portal Administrador (18 paginas, flujos principales)
+
+## Notas
+
+- Portal administrativo completo al 90%
+- Permite gestion de contenido educativo (modulos, ejercicios, preguntas)
+- Usuarios y roles (instituciones, maestros, estudiantes, padres)
+- Configuracion global del sistema
+- Analytics y reportes de uso

@@ -519,5 +519,5 @@ ORDER BY table_name;
 ---
 
 **Generado:** 2026-01-04
-**Sistema:** NEXUS v3.4 + SIMCO
+**Sistema:** NEXUS v4.1 + SIMCO
 **Aprobacion requerida:** SI

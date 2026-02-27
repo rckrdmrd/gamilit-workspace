@@ -418,4 +418,271 @@ Sigue así para mantener tu racha y ganar más recompensas.
 )
 ON CONFLICT (template_key, version) DO NOTHING;
 
--- Note: 8 plantillas predefinidas para notificaciones del sistema (DB-115 - 2025-11-13)
+-- Template 9: Promocion de rango (BD-P04: propagated from staging)
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'rank_promoted',
+    'Promocion de Rango',
+    'Notificacion cuando el estudiante sube de rango',
+    '🎖️ ¡Has ascendido a {{new_rank}}!',
+    '¡Felicidades {{student_name}}!
+
+🎖️ Has sido promovido de rango:
+
+Rango anterior: {{old_rank}}
+Nuevo rango: {{new_rank}}
+
+¡Sigue esforzandote para alcanzar el siguiente nivel!',
+    NULL,
+    '["student_name", "old_rank", "new_rank", "rank_icon"]'::jsonb,
+    ARRAY['in_app', 'push'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 10: Modulo completado
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'module_completed',
+    'Modulo Completado',
+    'Notificacion cuando el estudiante completa un modulo',
+    '🎓 ¡Modulo completado: {{module_name}}!',
+    '¡Excelente {{student_name}}!
+
+🎓 Has completado el modulo:
+📚 {{module_name}}
+
+✨ XP ganados: {{xp_earned}}
+📅 Fecha de completado: {{completion_date}}
+
+¡Continua con el siguiente modulo!',
+    NULL,
+    '["student_name", "module_name", "xp_earned", "completion_date"]'::jsonb,
+    ARRAY['in_app'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 11: Desafio recibido
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'challenge_received',
+    'Desafio Recibido',
+    'Notificacion cuando un estudiante recibe un desafio',
+    '⚔️ ¡{{challenger_name}} te ha desafiado!',
+    'Hola {{student_name}},
+
+{{challenger_name}} te ha enviado un desafio:
+
+⚔️ {{challenge_name}}
+📝 {{challenge_description}}
+⏰ Tiempo limite: {{time_limit}}
+
+¿Aceptas el reto?',
+    NULL,
+    '["student_name", "challenger_name", "challenge_name", "challenge_description", "time_limit", "accept_url"]'::jsonb,
+    ARRAY['in_app', 'push'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 12: Desafio completado
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'challenge_completed',
+    'Desafio Completado',
+    'Notificacion cuando se completa un desafio',
+    '🏅 ¡Desafio completado!',
+    '¡Bien hecho {{student_name}}!
+
+🏅 Has completado el desafio:
+⚔️ {{challenge_name}}
+
+Resultado: {{result}}
+🏆 Ganador: {{winner_name}}
+
+XP ganados: {{xp_earned}}',
+    NULL,
+    '["student_name", "challenge_name", "result", "winner_name", "xp_earned"]'::jsonb,
+    ARRAY['in_app'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 13: Resumen diario (para padres/tutores)
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'daily_summary',
+    'Resumen Diario',
+    'Resumen diario de actividad para padres/tutores',
+    'Resumen diario de {{student_name}} - {{date}}',
+    'Resumen de actividad de {{student_name}}
+
+📅 Fecha: {{date}}
+
+📊 Actividad del dia:
+• Tiempo de estudio: {{study_time}} minutos
+• Ejercicios completados: {{exercises_completed}}
+• XP ganados: {{xp_earned}}
+• Logros desbloqueados: {{achievements_count}}
+
+📈 Progreso general: {{progress_percentage}}%',
+    NULL,
+    '["student_name", "date", "study_time", "exercises_completed", "xp_earned", "achievements_count", "progress_percentage"]'::jsonb,
+    ARRAY['email'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 14: Reporte semanal
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'weekly_report',
+    'Reporte Semanal',
+    'Reporte semanal de progreso',
+    'Reporte semanal de {{student_name}} - Semana {{week_number}}',
+    'Reporte semanal de {{student_name}}
+
+📅 Semana: {{week_number}} ({{week_start}} - {{week_end}})
+
+📊 Resumen de la semana:
+• Dias activos: {{active_days}}/7
+• Tiempo total de estudio: {{total_study_time}} horas
+• Modulos avanzados: {{modules_progress}}
+• Ejercicios completados: {{exercises_completed}}
+• XP totales ganados: {{total_xp}}
+
+🏆 Posicion en ranking: #{{ranking_position}}',
+    NULL,
+    '["student_name", "week_number", "week_start", "week_end", "active_days", "total_study_time", "modules_progress", "exercises_completed", "total_xp", "ranking_position"]'::jsonb,
+    ARRAY['email'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 15: Reporte mensual
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'monthly_report',
+    'Reporte Mensual',
+    'Reporte mensual de progreso',
+    'Reporte mensual de {{student_name}} - {{month_name}} {{year}}',
+    'Reporte mensual de {{student_name}}
+
+📅 Mes: {{month_name}} {{year}}
+
+📊 Resumen del mes:
+• Dias activos: {{active_days}}
+• Modulos completados: {{modules_completed}}
+• Logros desbloqueados: {{achievements_unlocked}}
+• XP totales: {{total_xp}}
+• ML Coins ganados: {{total_coins}}
+
+📈 Comparacion con mes anterior:
+• Progreso: {{progress_comparison}}',
+    NULL,
+    '["student_name", "month_name", "year", "active_days", "modules_completed", "achievements_unlocked", "total_xp", "total_coins", "progress_comparison"]'::jsonb,
+    ARRAY['email'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 16: Alerta de bajo rendimiento
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'low_performance',
+    'Alerta de Bajo Rendimiento',
+    'Alerta cuando el estudiante tiene bajo rendimiento',
+    '⚠️ Alerta de rendimiento - {{student_name}}',
+    'Estimado padre/tutor,
+
+Queremos informarle sobre el rendimiento de {{student_name}}:
+
+⚠️ Se ha detectado bajo rendimiento en:
+📚 Modulo: {{module_name}}
+📊 Promedio actual: {{average_score}}%
+📉 Tendencia: {{trend}}
+
+Recomendaciones:
+{{recommendations}}
+
+El equipo docente esta disponible para ayudar.',
+    NULL,
+    '["student_name", "module_name", "average_score", "trend", "recommendations", "teacher_contact"]'::jsonb,
+    ARRAY['email'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 17: Alerta de inactividad
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'inactivity_alert',
+    'Alerta de Inactividad',
+    'Alerta cuando el estudiante no ha ingresado en varios dias',
+    '¡Te extrañamos {{student_name}}! 📚',
+    'Hola {{student_name}},
+
+¡Te hemos extrañado! Han pasado {{days_inactive}} dias desde tu ultima visita.
+
+Tu racha actual: {{current_streak}} dias (¡no la pierdas!)
+
+Mientras estuviste fuera:
+• Nuevos ejercicios disponibles: {{new_exercises}}
+• Desafios pendientes: {{pending_challenges}}
+
+¡Regresa y continua tu aventura de aprendizaje!',
+    NULL,
+    '["student_name", "days_inactive", "current_streak", "new_exercises", "pending_challenges", "return_url"]'::jsonb,
+    ARRAY['email'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Template 18: Ejercicio enviado (confirmacion)
+INSERT INTO notifications.notification_templates (
+    template_key, name, description, subject_template, body_template, html_template, variables, default_channels, is_active
+) VALUES (
+    'exercise_submitted',
+    'Ejercicio Enviado',
+    'Confirmacion de que el ejercicio fue enviado exitosamente',
+    '✅ Ejercicio enviado: {{exercise_title}}',
+    'Hola {{student_name}},
+
+¡Tu ejercicio ha sido enviado exitosamente!
+
+📝 Ejercicio: {{exercise_title}}
+📚 Modulo: {{module_name}}
+📅 Enviado: {{submitted_at}}
+
+Tu profesor revisara tu trabajo y te notificara cuando sea calificado.
+
+¡Sigue aprendiendo!
+
+Equipo Gamilit',
+    '<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="background: linear-gradient(135deg, #4A90E2, #5CB85C); color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+        <h2 style="margin: 0;">✅ ¡Ejercicio Enviado!</h2>
+    </div>
+    <div style="padding: 20px; background: #f9f9f9;">
+        <p>Hola <strong>{{student_name}}</strong>,</p>
+        <p>Tu ejercicio ha sido enviado exitosamente.</p>
+        <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <p><strong>📝 Ejercicio:</strong> {{exercise_title}}</p>
+            <p><strong>📚 Modulo:</strong> {{module_name}}</p>
+            <p><strong>📅 Enviado:</strong> {{submitted_at}}</p>
+        </div>
+        <p style="color: #666;">Tu profesor revisara tu trabajo y te notificara cuando sea calificado.</p>
+    </div>
+    <div style="background: #333; color: white; padding: 10px; text-align: center; border-radius: 0 0 8px 8px;">
+        <small>Equipo Gamilit</small>
+    </div>
+</body>
+</html>',
+    '["student_name", "exercise_title", "module_name", "submitted_at", "requires_manual_grading", "score", "max_score"]'::jsonb,
+    ARRAY['in_app', 'email'],
+    true
+) ON CONFLICT (template_key, version) DO NOTHING;
+
+-- Note: 18 plantillas predefinidas para notificaciones del sistema (BD-P04: propagated from staging 2026-02-26)

@@ -24,7 +24,7 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 - Tests de exercise engine: 23 evaluadores con casos de borde
 - Tests de gamification engine: XP calculation, rank progression, achievement unlock
 - Cobertura actual ~75%, target 80%
-- Guias de prueba por modulo educativo (5 guias en docs/10-requirements/testing-guides/)
+- Guias de prueba por modulo educativo (5 guias en docs/50-guides/testing/exercise-guides/)
 
 ## Componentes Afectados
 
@@ -32,7 +32,7 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 |------|-------------|
 | Database | Seeds de datos de prueba, fixtures para testing |
 | Backend | Jest tests para 23 modulos, 172 services, 108 controllers |
-| Frontend | Vitest tests para 577 componentes, 134 hooks, 13 stores |
+| Frontend | Vitest tests para 575 componentes, 132 hooks, 13 stores |
 | DevOps | Jest/Vitest configuration, coverage reporting |
 
 ## Dependencias

@@ -1,6 +1,14 @@
+---
+titulo: "ADR-021: Estandarizacion de Recompensas XP en Ejercicios"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-021: Estandarización de Recompensas XP en Ejercicios
 
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Fecha:** 2025-11-24
 **Autor:** Architecture-Analyst
 **Relacionado con:**
@@ -544,7 +552,7 @@ ORDER BY
 
 ---
 
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Próxima revisión:** Después de validación en staging
 **Aprobado por:** Architecture-Analyst
 **Fecha de aprobación:** 2025-11-24

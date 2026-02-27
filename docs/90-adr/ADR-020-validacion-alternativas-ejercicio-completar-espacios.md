@@ -1,6 +1,14 @@
+---
+titulo: "ADR-020: Soporte de Multiples Alternativas en Ejercicios Completar Espacios"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-020: Soporte de Múltiples Alternativas en Ejercicios Completar Espacios
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-24
 **Autor:** Architecture-Analyst
 **Relacionado con:** GAP-EJERCICIO-1.3-001, DB-122
@@ -299,12 +307,12 @@ La función SQL `validate_fill_in_blank` ahora valida automáticamente contra `c
 ## Referencias
 
 ### Documentación del Problema
-- `orchestration/agentes/architecture-analyst/ejercicio-1-3-validacion-alternativas-2025-11-24/01-ANALISIS-GAP.md`
-- `docs/10-requirements/testing-guides/guia-pruebas-modulo-1.md` (líneas 372-386)
+- [Archivo no disponible — documento historico] (01-ANALISIS-GAP.md, generado por agente y no persistido)
+- `docs/50-guides/testing/exercise-guides/guia-pruebas-modulo-1.md` (lineas 372-386)
 
 ### Implementación
-- `orchestration/agentes/architecture-analyst/ejercicio-1-3-validacion-alternativas-2025-11-24/02-PLAN-CORRECCION.md`
-- `orchestration/agentes/database/ejercicio-1-3-validacion-alternativas-2025-11-24/00-RESUMEN-EJECUTIVO.md`
+- [Archivo no disponible — documento historico] (02-PLAN-CORRECCION.md, generado por agente y no persistido)
+- [Archivo no disponible — documento historico] (00-RESUMEN-EJECUTIVO.md, generado por agente y no persistido)
 
 ### Código Afectado
 - `apps/database/ddl/schemas/educational_content/functions/06-validate_fill_in_blank.sql`
@@ -312,8 +320,7 @@ La función SQL `validate_fill_in_blank` ahora valida automáticamente contra `c
 - `apps/database/seeds/prod/educational_content/02-exercises-module1.sql`
 
 ### Directivas Aplicadas
-- `orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
-- `orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md`
+- [Archivo no disponible — documento historico] (directivas reubicadas en `orchestration/directivas/` en restructuraciones posteriores)
 
 ---
 
@@ -344,5 +351,5 @@ La función SQL `validate_fill_in_blank` ahora valida automáticamente contra `c
 
 ---
 
-**Estado:** ✅ **ACEPTADO E IMPLEMENTADO**
+**Estado:** Aceptada e Implementada
 **Revisión:** Anual (2026-11-24)

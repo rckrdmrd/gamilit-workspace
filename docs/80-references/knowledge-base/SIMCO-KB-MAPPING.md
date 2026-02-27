@@ -128,7 +128,7 @@ Seguir esta secuencia:
 | GUIA-RUNBOOK-POSTGRESQL.md | docs/50-guides/backend/GUIA-RUNBOOK-POSTGRESQL.md |
 | GUIA-OPENTELEMETRY-NESTJS.md | docs/50-guides/backend/GUIA-OPENTELEMETRY-NESTJS.md |
 | GUIA-EXPAND-CONTRACT-MIGRATIONS.md | docs/50-guides/backend/GUIA-EXPAND-CONTRACT-MIGRATIONS.md |
-| GUIA-CREAR-BASE-DATOS.md | docs/50-guides/backend/GUIA-CREAR-BASE-DATOS.md |
+| GUIA-CREAR-BASE-DATOS.md | docs/50-guides/backend/_archived/GUIA-CREAR-BASE-DATOS.md |
 | GUIA-COVERAGE-TESTING.md | docs/50-guides/testing/GUIA-COVERAGE-TESTING.md |
 | GUIA-ARCHITECTURE-TESTING.md | docs/50-guides/testing/GUIA-ARCHITECTURE-TESTING.md |
 | GUIA-E2E-PLAYWRIGHT.md | docs/50-guides/testing/GUIA-E2E-PLAYWRIGHT.md |

@@ -15,19 +15,18 @@ Esta guía proporciona las soluciones exactas y los criterios de evaluación par
 | 1.3 | Completar Espacios | Cloze | M1 | Principiante | 100 | Automática |
 | 1.4 | Verdadero o Falso | Selección | M1 | Principiante | 100 | Automática |
 | 2.1 | Detective Textual | Selección Múltiple | M2 | Intermedio | 100 | Automática |
-| 2.2 | Causa-Efecto | Drag & Drop | M2 | Intermedio | 100 | Automática |
+| 2.2 | Construcción de Hipótesis | Drag & Drop | M2 | Intermedio | 100 | Automática |
 | 2.3 | Predicción Narrativa | Inferencia | M2 | Intermedio | 100 | Automática |
 | 2.4 | Puzzle de Contexto | Reconstrucción | M2 | Intermedio | 100 | Automática |
 | 2.5 | Rueda de Inferencias | Conexión | M2 | Intermedio | 100 | Automática |
-| 1.5 | Emparejamiento | Drag & Drop | M1 | Principiante | 100 | Automatica |
-| 2.5 | Rueda de Inferencias | Escritura libre | M2 | Intermedio | 100 | Automatica |
+| 1.5 | Sopa de Letras (BONUS) | Búsqueda | M1 | Principiante | 100 | Automática |
 | 3.1 | Analisis de Fuentes | Ranking | M3 | Avanzado | 100 | **Manual** |
 | 3.2 | Debate Digital | Argumentativo | M3 | Avanzado | 100 | **Manual** |
 | 3.3 | Matriz Perspectivas | Analisis multipers. | M3 | Avanzado | 100 | **Manual** |
 | 3.4 | Podcast Argumentativo | Produccion Oral | M3 | Avanzado | 100 | **Manual** |
 | 3.5 | Tribunal de Opiniones | Clasificacion | M3 | Avanzado | 100 | **Manual** |
 | 4.1 | Verificador Fake News | Verificacion | M4 | Intermedio | 100 | **Manual** |
-| 4.2 | Quiz TikTok | Seleccion Rapida | M4 | Elemental | 100 | Automatica |
+| 4.2 | Quiz TikTok | Seleccion Rapida | M4 | Elemental | 100 | **Manual** |
 | 4.3 | Navegacion Hipertextual | Busqueda navegacion | M4 | Intermedio | 100 | **Manual** |
 | 4.4 | Analisis de Memes | Semiotica | M4 | Intermedio | 100 | **Manual** |
 | 4.5 | Infografia Interactiva | Extraccion datos | M4 | Intermedio | 100 | **Manual** |
@@ -95,14 +94,25 @@ Esta guía proporciona las soluciones exactas y los criterios de evaluación par
   9. Su padre no apoyaba su interés en las ciencias: **Falso**
   10. Marie estudió en la Universidad de Varsovia: **Falso** (Estudió en la Sorbona)
 
-### Ejercicio 1.5: Emparejamiento
-- **Tipo:** Drag & Drop (emparejar conceptos)
+### Ejercicio 1.5: Sopa de Letras (BONUS)
+- **Tipo:** Sopa de Letras (grid 10x10)
 - **Dificultad:** Principiante
 - **Puntos maximos:** 100
 - **Tiempo estimado:** 10 min
 - **Evaluacion:** Automatica
-- **Respuestas Esperadas:** Emparejar terminos cientificos con sus definiciones correctas. Cada par concepto-definicion debe coincidir segun la informacion biografica de Marie Curie (elementos quimicos, premios, instituciones).
-- **Criterios:** Puntos por cada par correcto. Sin penalizacion por intentos.
+- **Nota:** Ejercicio BONUS opcional
+- **Respuestas Esperadas (10 palabras a encontrar):**
+  1. **MARIE** (5 letras)
+  2. **CURIE** (5 letras)
+  3. **POLONIA** (7 letras)
+  4. **NOBEL** (5 letras)
+  5. **RADIO** (5 letras)
+  6. **POLONIO** (7 letras)
+  7. **PARIS** (5 letras)
+  8. **SORBONA** (7 letras)
+  9. **CIENCIA** (7 letras)
+  10. **FISICA** (6 letras)
+- **Criterios:** 10 puntos por palabra encontrada. Grid incluye direcciones horizontal, vertical y diagonal.
 
 ---
 
@@ -118,7 +128,7 @@ Esta guía proporciona las soluciones exactas y los criterios de evaluación par
   3. **¿Relación entre síntomas y trabajo?** R: La radiación estaba afectando su salud directamente.
   4. **¿Motivación de Marie?** R: Una motivación altruista (beneficiar a la humanidad).
 
-### Ejercicio 2.2: Relaciones Causa-Efecto
+### Ejercicio 2.2: Construcción de Hipótesis (Causa-Efecto)
 - **Tipo:** Drag & Drop
 - **Dificultad:** Intermedio
 - **Respuestas Esperadas:**
@@ -317,7 +327,7 @@ Esta guía proporciona las soluciones exactas y los criterios de evaluación par
 
 ## Apéndice: Notas para el Docente
 
-1.  **Evaluación de Módulos 3 y 5:** Estos módulos requieren que el docente acceda al panel de revisión para calificar las producciones abiertas. Se recomienda usar las rúbricas detalladas arriba para garantizar objetividad.
+1.  **Evaluación de Módulos 3, 4 y 5:** Estos módulos requieren que el docente acceda al panel de revisión para calificar las producciones abiertas. Se recomienda usar las rúbricas detalladas arriba para garantizar objetividad.
 2.  **Dificultad Progresiva:** La plataforma está diseñada para que el estudiante no pueda avanzar al Módulo 3 (Crítico) sin haber superado el Módulo 1 (Literal) con al menos un 70% de aciertos.
 3.  **Uso de la IA:** En el Módulo 3.2 (Debate), se sugiere verificar que los estudiantes no realicen "copy-paste" directo de motores de búsqueda, valorando la personalización del argumento.
 4.  **Incentivo de Gamificación:** Los puntos obtenidos en ejercicios automáticos desbloquean "insignias" (como "Pionero del Radio" o "Maestro de la Sorbona").

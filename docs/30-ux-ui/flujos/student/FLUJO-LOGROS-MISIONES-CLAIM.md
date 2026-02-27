@@ -224,4 +224,4 @@ Al hacer click en cualquier MissionCard se abre un modal con:
 
 ---
 
-*Generado: 2026-02-21 | Sistema SIMCO v4.3.0*
+*Generado: 2026-02-21 | Sistema SIMCO v4.0.0*

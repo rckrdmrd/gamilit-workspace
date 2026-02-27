@@ -1,7 +1,15 @@
+---
+titulo: "ADR-012: Inicializacion Automatica de Usuarios mediante Trigger de Base de Datos"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-012: Inicialización Automática de Usuarios mediante Trigger de Base de Datos
 
 **Fecha:** 2025-11-24
-**Estado:** ✅ Aprobado
+**Estado:** Aceptada
 **Autores:** Architecture-Analyst, Database-Agent, Backend-Agent, Frontend-Agent
 **Decisión:** Implementar trigger `initialize_user_stats()` que crea automáticamente todos los registros necesarios al registrar un usuario
 

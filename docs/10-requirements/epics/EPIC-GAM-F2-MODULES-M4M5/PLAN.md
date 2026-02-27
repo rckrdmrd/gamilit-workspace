@@ -20,7 +20,7 @@
 | 7 | US-M4M5-003 | Notificaciones M4-M5 | 3 | US-M4M5-002 | Sprint 12 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Schema `educational_content` (extension de exercises con tipos M4/M5, lectura digital + produccion)
 - **Patron:** Modulos educativos extensibles, validadores especificos por tipo M4/M5
 

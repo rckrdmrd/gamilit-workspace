@@ -1,6 +1,14 @@
+---
+titulo: "ADR-035: Adopcion del Sistema SAAD (Activacion Automatica de Directivas)"
+tipo: adr
+fecha_creacion: "2026-02-11"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-035: Adopcion del Sistema SAAD (Activacion Automatica de Directivas)
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-11
 **Contexto:** Gobernanza SIMCO en gamilit standalone
 

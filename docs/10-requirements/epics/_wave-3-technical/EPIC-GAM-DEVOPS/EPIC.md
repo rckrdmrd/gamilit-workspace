@@ -14,7 +14,7 @@
 
 ## Descripcion
 
-Configuracion de la infraestructura DevOps para la plataforma educativa gamilit. Incluye Docker Compose para desarrollo local con PostgreSQL 16, Redis y los 4 portales, Dockerfiles optimizados multi-stage para backend NestJS y frontend React, pipeline CI/CD con GitHub Actions, health checks configurados en los 3 endpoints estandar (/health, /ready, /live), ambiente de desarrollo WSL con scripts de recreacion automatizada de base de datos, y logging estructurado para diagnostico en produccion.
+Configuracion de la infraestructura DevOps para la plataforma educativa gamilit. Incluye Docker Compose para desarrollo local con PostgreSQL 15, Redis y los 4 portales, Dockerfiles optimizados multi-stage para backend NestJS y frontend React, pipeline CI/CD con GitHub Actions, health checks configurados en los 3 endpoints estandar (/health, /ready, /live), ambiente de desarrollo WSL con scripts de recreacion automatizada de base de datos, y logging estructurado para diagnostico en produccion.
 
 ## Alcance
 
@@ -31,7 +31,7 @@ Configuracion de la infraestructura DevOps para la plataforma educativa gamilit.
 
 | Capa | Componentes |
 |------|-------------|
-| Database | Docker PostgreSQL 16, scripts de backup, recreation scripts |
+| Database | Docker PostgreSQL 15, scripts de backup, recreation scripts |
 | Backend | Dockerfile, health endpoints, logging configuration |
 | Frontend | Dockerfile, Nginx configuration, static assets optimization |
 | DevOps | Docker Compose, GitHub Actions CI/CD, WSL scripts, monitoring setup |

@@ -1,9 +1,9 @@
 # TRACEABILITY_MATRIX.yml - Matriz Consolidada de Trazabilidad
 
 project: GAMILIT
-version: 4.0
+version: 4.1
 generated: 2025-11-08
-updated: 2026-02-25
+updated: 2026-02-27
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT
 
 # ============================================================================
@@ -11,10 +11,10 @@ source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT
 # ============================================================================
 
 summary:
-  total_epics: 16
+  total_epics: 24  # ACTUALIZADO 2026-02-27: 24 funcionales (was 16 pre-F3). 11 técnicos adicionales en _wave-3-technical/
   total_requirements: 45+
   total_specifications: 45+
-  total_user_stories: 120+
+  total_user_stories: 144+  # ACTUALIZADO 2026-02-27: 144 directorios US únicos (was 120+)
   total_database_objects: 971  # RECONCILIADO: 173 tables + 158 funcs + 68 triggers + 251 RLS + 18 schemas + 301 FKs + 2 placeholder
   total_backend_modules: 23  # ACTUALIZADO 2026-02-25
   total_frontend_features: 10
@@ -136,9 +136,10 @@ reconciled_metrics:
     coherencia_bd: "99%"
 
   frontend:
-    components: 577  # ACTUALIZADO 2026-02-25 (was 474)
-    hooks: 134       # ACTUALIZADO 2026-02-25 (was 102)
-    pages: 67        # ACTUALIZADO 2026-02-25 (was 68)
+    components: 575  # ACTUALIZADO 2026-02-27: reconteo post-remediacion (excl. tests, stories, examples, _legacy, _testing)
+    hooks: 132       # ACTUALIZADO 2026-02-27: reconteo use*.ts en hooks/ dirs (excl. type files, API services)
+    pages: 72        # ACTUALIZADO 2026-02-27: post-remediacion parents portal 100% (7/7)
+    routes: 74       # ACTUALIZADO 2026-02-27: conteo <Route path= en App.tsx
     stores: 13       # ACTUALIZADO 2026-02-25 (was 14)
     api_services: 65 # ACTUALIZADO 2026-02-25 (was 51)
     mechanics: 30    # Sin cambios

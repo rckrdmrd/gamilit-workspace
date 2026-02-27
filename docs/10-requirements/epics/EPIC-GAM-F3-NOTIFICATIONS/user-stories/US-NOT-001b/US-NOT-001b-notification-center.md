@@ -202,7 +202,7 @@ updated_date: "2026-01-04"
 
 ### Frontend - React Components
 
-**Tecnologías**: React 18, TypeScript, Zustand, Socket.IO Client, date-fns, sonner (toasts), TailwindCSS
+**Tecnologías**: React 19, TypeScript, Zustand, Socket.IO Client, date-fns, sonner (toasts), TailwindCSS
 
 **NotificationCenter Component**:
 
@@ -438,7 +438,7 @@ export function showToast(notification: Notification) {
 
 ## Stack Tecnológico
 
-**Frontend:** React 18, TypeScript, Zustand, Socket.IO Client, sonner, date-fns, TailwindCSS
+**Frontend:** React 19, TypeScript, Zustand, Socket.IO Client, sonner, date-fns, TailwindCSS
 **Testing:** Jest, React Testing Library, Cypress
 
 ---

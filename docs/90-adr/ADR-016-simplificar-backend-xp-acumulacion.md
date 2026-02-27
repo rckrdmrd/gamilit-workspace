@@ -1,6 +1,14 @@
+---
+titulo: "ADR-016: Simplificar Backend XP Acumulacion - Delegar Promocion a Trigger DB"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-016: Simplificar Backend XP Acumulación - Delegar Promoción a Trigger DB
 
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Fecha:** 2025-11-24
 **Autor:** Architecture-Analyst
 **Relacionado con:** Bug Fix - Sistema de Rangos Maya (ET-GAM-003)
@@ -405,7 +413,7 @@ ORDER BY
 
 ---
 
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Próxima revisión:** Después de testing manual en dev
 **Aprobado por:** Architecture-Analyst
 **Fecha de aprobación:** 2025-11-24

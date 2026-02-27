@@ -1,6 +1,14 @@
+---
+titulo: "ADR-032: Parent Notifications Integration Strategy"
+tipo: adr
+fecha_creacion: "2026-02-05"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-032: Parent Notifications Integration Strategy
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2026-02-05
 **Contexto:** FIX H-040 (TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD)
 

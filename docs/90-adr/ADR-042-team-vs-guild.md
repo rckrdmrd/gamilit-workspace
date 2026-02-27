@@ -1,6 +1,14 @@
-# ADR: Team vs Guild Terminology
+---
+titulo: "ADR-042: Team vs Guild Terminology"
+tipo: adr
+fecha_creacion: "2025-11-07"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
 
-**Estado**: ✅ Aceptado
+# ADR-042: Team vs Guild Terminology
+
+**Estado:** Aceptada
 **Fecha**: 2025-11-07
 **Contexto**: Discrepancia P0-4 identificada durante validación Fase 1
 

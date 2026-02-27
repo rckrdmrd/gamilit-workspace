@@ -17,7 +17,7 @@ SELECT
   sg.current_rank, sg.current_level
 FROM leaderboard.leaderboard_entries le
 JOIN auth.users u ON le.student_id = u.id
-JOIN gamification.student_gamification sg ON le.student_id = sg.student_id
+JOIN gamification_system.student_gamification sg ON le.student_id = sg.student_id
 WHERE le.scope = 'classroom';
 -- REFRESH: CONCURRENTLY cada 5 min
 ```
@@ -95,9 +95,9 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 | auth.users | (email, tenant_id) | Email unico por tenant |
 | tenants.tenants | (slug) | Slug unico global |
 | tenants.tenant_members | (tenant_id, user_id) | Un registro por usuario-tenant |
-| education.module_progress | (student_id, module_id, tenant_id) | Un progreso por modulo |
-| gamification.student_gamification | (student_id, tenant_id) | Un registro por estudiante |
-| gamification.daily_xp_limits | (student_id, date, tenant_id) | Un limite por dia |
+| educational_content.module_progress | (student_id, module_id, tenant_id) | Un progreso por modulo |
+| gamification_system.student_gamification | (student_id, tenant_id) | Un registro por estudiante |
+| gamification_system.daily_xp_limits | (student_id, date, tenant_id) | Un limite por dia |
 | analytics.analytics_daily | (student_id, date, tenant_id) | Un resumen por dia |
 | store.ml_coin_balances | (student_id, tenant_id) | Un saldo por estudiante |
 | parents.parent_student_links | (parent_id, student_id, tenant_id) | Una vinculacion |
@@ -108,8 +108,8 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 ### Indices de Performance
 | Tabla | Columnas | Proposito |
 |-------|----------|-----------|
-| gamification.xp_transactions | (student_id, created_at) | Historial XP |
-| education.exercise_attempts | (student_id, exercise_id) | Busqueda de intentos |
+| gamification_system.xp_transactions | (student_id, created_at) | Historial XP |
+| educational_content.exercise_attempts | (student_id, exercise_id) | Busqueda de intentos |
 | analytics.analytics_events | (event_type, created_at) | Busqueda por tipo |
 | leaderboard.leaderboard_entries | (tenant_id, scope, total_xp) | Rankings |
 
@@ -128,4 +128,4 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 ---
 
 *GAMILIT - Schema Reference Utilities*
-*172 tablas | 18 schemas | 237 RLS policies (DDL) | 42 ENUMs | PostgreSQL 15*
+*173 tablas | 18 schemas | 251 RLS policies (DDL) | 42 ENUMs | PostgreSQL 15*

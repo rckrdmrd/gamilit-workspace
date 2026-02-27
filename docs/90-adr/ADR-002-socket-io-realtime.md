@@ -1,3 +1,11 @@
+---
+titulo: "ADR-002: Socket.IO para Interacciones en Tiempo Real"
+tipo: adr
+fecha_creacion: "2025-08-20"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-002: Socket.IO para Interacciones en Tiempo Real
 
 **Fecha:** 2025-08-20

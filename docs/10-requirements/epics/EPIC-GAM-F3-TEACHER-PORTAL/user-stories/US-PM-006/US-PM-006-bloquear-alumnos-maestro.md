@@ -58,7 +58,7 @@ Esta funcionalidad es parte del **Alcance v2 (Ampliación) - Portal de Maestros 
 
 ### Objetos de BD
 - **Tabla principal:** `auth_management.profiles`
-  - Columna: `status` (ENUM: active, suspended, pending_verification, deactivated)
+  - Columna: `status` (ENUM `auth_management.user_status`: active, inactive, suspended, banned, pending)
   - Columna: `status_changed_at` (timestamp)
   - Columna: `status_changed_by` (UUID referencia a users)
   - Columna: `status_reason` (TEXT, opcional)
@@ -153,7 +153,7 @@ Esta funcionalidad es parte del **Alcance v2 (Ampliación) - Portal de Maestros 
 - ❌ NO puedo suspender alumnos de otros maestros
 - ❌ NO puedo suspender maestros (solo admin puede)
 - ❌ NO puedo suspender administradores
-- ❌ NO puedo cambiar status a `banned` o `deactivated` (solo admin puede)
+- ❌ NO puedo cambiar status a `banned` o `inactive` (solo admin puede)
 - ✅ Solo puedo alternar entre `active` y `suspended`
 
 ### CA-4: Interfaz de Usuario

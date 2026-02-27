@@ -323,4 +323,4 @@ flowchart TD
 - ADR sistema dual exercise/mechanics: `docs/90-adr/ADR-008-sistema-dual-exercise-mechanics.md`
 - Arquitectura mecanicas gamificacion: `docs/20-architecture/MECANICAS-GAMIFICACION-V6.md`
 - Modelo de datos: `docs/20-architecture/MODELO-DATOS.md`
-- Estandar de skills: `docs/40-standards/ESTANDAR-SKILLS.md`
+- Estandar de skills: `orchestration/agents/SKILL-STANDARD.md`

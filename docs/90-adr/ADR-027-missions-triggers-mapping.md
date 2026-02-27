@@ -1,6 +1,14 @@
+---
+titulo: "ADR-027: Mapeo de Triggers de Misiones - BD como Fuente de Verdad"
+tipo: adr
+fecha_creacion: "2025-01-04"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-027: Mapeo de Triggers de Misiones - BD como Fuente de Verdad
 
-**Estado:** Aprobado
+**Estado:** Aceptada
 **Fecha:** 2025-01-04
 **Origen:** Extraido de TRACE-GAP-002 (archivos historicos)
 

@@ -1,9 +1,17 @@
-# ADR-2026-01-07: Consolidación de Base de Datos GAMILIT
+---
+titulo: "ADR-043: Consolidacion de Base de Datos GAMILIT"
+tipo: adr
+fecha_creacion: "2026-01-07"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
+# ADR-043: Consolidación de Base de Datos GAMILIT
 
 **Proyecto:** GAMILIT
 **Versión:** 1.0
 **Última actualización:** 2026-01-07
-**Estado:** APROBADO
+**Estado:** Aceptada
 
 ---
 

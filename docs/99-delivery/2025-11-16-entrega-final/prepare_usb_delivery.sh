@@ -82,7 +82,7 @@ if [ -d "$PROJECT_ROOT/docs/finiquito" ]; then
     cp "$PROJECT_ROOT/docs/finiquito"/*.docx "$USB_PATH/01-DOCUMENTOS-ENTREGA/" 2>/dev/null || true
 
     # Copiar también la guía de entrega
-    cp "$PROJECT_ROOT/docs/finiquito/GUIA_ENTREGA_USB.md" "$USB_PATH/" 2>/dev/null || true
+    cp "$PROJECT_ROOT/docs/finiquito/GUIA-ENTREGA-USB.md" "$USB_PATH/" 2>/dev/null || true
 
     echo -e "${GREEN}✅ $(ls -1 "$USB_PATH/01-DOCUMENTOS-ENTREGA"/*.docx 2>/dev/null | wc -l) documentos copiados${NC}"
 else
@@ -283,7 +283,7 @@ REQUISITOS:
 
 INICIO RÁPIDO:
 ──────────────────────────────────────────────────────────────────
-1. Leer GUIA_ENTREGA_USB.md
+1. Leer GUIA-ENTREGA-USB.md
 2. Instalar requisitos
 3. Configurar base de datos (usar scripts en 04-BASE-DATOS/)
 4. Configurar .env (usar template en 05-MANUALES/)

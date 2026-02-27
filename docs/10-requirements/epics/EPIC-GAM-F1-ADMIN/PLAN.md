@@ -20,7 +20,7 @@
 | 7 | US-ADM-007 | Vista actividad aula | 8 | US-ADM-003, F1-ANALYTICS | Sprint 6 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Schema `educational_content` (tablas classrooms, classroom_students, classroom_modules, groups)
 - **Patron:** CRUD con validacion de pertenencia a tenant, multi-role access (teacher, admin)
 

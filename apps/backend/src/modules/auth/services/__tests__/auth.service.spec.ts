@@ -15,8 +15,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { ConflictException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import {
+  EmailAlreadyExistsError,
+  InvalidCredentialsError,
+  InactiveUserError,
+  InvalidRefreshTokenError,
+  SessionExpiredError,
+  UserNotFoundError,
+  InvalidPasswordError,
+  WeakPasswordError,
+  SamePasswordError,
+} from '../../errors/auth.errors';
 import { AuthService } from '../auth.service';
 import { User, Profile, Tenant, UserSession, AuthAttempt } from '../../entities';
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
@@ -144,13 +154,13 @@ describe('AuthService', () => {
       expect(profileRepository.save).toHaveBeenCalled();
     });
 
-    it('should throw ConflictException if email already exists', async () => {
+    it('should throw EmailAlreadyExistsError if email already exists', async () => {
       // Arrange
       userRepository.findOne.mockResolvedValue(mockUser as any);
 
       // Act & Assert
-      await expect(service.register(registerDto)).rejects.toThrow(ConflictException);
-      await expect(service.register(registerDto)).rejects.toThrow('Email ya registrado');
+      await expect(service.register(registerDto)).rejects.toThrow(EmailAlreadyExistsError);
+      await expect(service.register(registerDto)).rejects.toThrow('ya registrado');
     });
 
     it('should throw error if no active tenant exists', async () => {
@@ -232,50 +242,47 @@ describe('AuthService', () => {
       expect(bcrypt.compare).toHaveBeenCalledWith(loginPassword, mockUser.encrypted_password);
     });
 
-    it('should throw UnauthorizedException if user not found', async () => {
+    it('should throw InvalidCredentialsError if user not found', async () => {
       // Arrange
       userRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.login(loginEmail, loginPassword)).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(service.login(loginEmail, loginPassword)).rejects.toThrow(
-        'Credenciales inválidas',
+        InvalidCredentialsError,
       );
     });
 
-    it('should throw UnauthorizedException if password is invalid', async () => {
+    it('should throw InvalidCredentialsError if password is invalid', async () => {
       // Arrange
       bcryptMock.compare.mockResolvedValue(false as never);
 
       // Act & Assert
       await expect(service.login(loginEmail, loginPassword)).rejects.toThrow(
-        UnauthorizedException,
+        InvalidCredentialsError,
       );
     });
 
-    it('should throw UnauthorizedException if user is deleted', async () => {
+    it('should throw InactiveUserError if user is deleted', async () => {
       // Arrange
       const deletedUser = { ...mockUser, deleted_at: new Date() };
       userRepository.findOne.mockResolvedValue(deletedUser as any);
 
       // Act & Assert
       await expect(service.login(loginEmail, loginPassword)).rejects.toThrow(
-        UnauthorizedException,
+        InactiveUserError,
       );
       await expect(service.login(loginEmail, loginPassword)).rejects.toThrow(
         'Usuario no activo',
       );
     });
 
-    it('should throw UnauthorizedException if profile not found', async () => {
+    it('should throw ProfileNotFoundError if profile not found', async () => {
       // Arrange
       profileRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.login(loginEmail, loginPassword)).rejects.toThrow(
-        'Perfil de usuario no encontrado',
+        'Perfil',
       );
     });
 
@@ -340,7 +347,7 @@ describe('AuthService', () => {
       expect(jwtService.verify).toHaveBeenCalledWith(mockRefreshToken);
     });
 
-    it('should throw UnauthorizedException if token is invalid', async () => {
+    it('should throw InvalidRefreshTokenError if token is invalid', async () => {
       // Arrange
       jwtService.verify.mockImplementation(() => {
         throw new Error('Invalid token');
@@ -348,22 +355,22 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(service.refreshToken('invalid.token')).rejects.toThrow(
-        UnauthorizedException,
+        InvalidRefreshTokenError,
       );
     });
 
-    it('should throw UnauthorizedException if user not found', async () => {
+    it('should throw InactiveUserError if user not found', async () => {
       // Arrange - profile exists but user does not
       profileRepository.findOne.mockResolvedValue(mockProfile as any);
       userRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.refreshToken(mockRefreshToken)).rejects.toThrow(
-        'Usuario no encontrado o inactivo',
+        InactiveUserError,
       );
     });
 
-    it('should throw UnauthorizedException if session expired', async () => {
+    it('should throw SessionExpiredError if session expired', async () => {
       // Arrange
       const expiredSession = {
         ...mockSession,
@@ -373,7 +380,7 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(service.refreshToken(mockRefreshToken)).rejects.toThrow(
-        'Sesión expirada',
+        'Sesion expirada',
       );
     });
 
@@ -418,38 +425,38 @@ describe('AuthService', () => {
       expect(bcrypt.hash).toHaveBeenCalledWith(newPassword, 10);
     });
 
-    it('should throw NotFoundException if user not found', async () => {
+    it('should throw UserNotFoundError if user not found', async () => {
       // Arrange
       userRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(
         service.changePassword(userId, currentPassword, newPassword),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(UserNotFoundError);
     });
 
-    it('should throw BadRequestException if current password is incorrect', async () => {
+    it('should throw InvalidPasswordError if current password is incorrect', async () => {
       // Arrange
       bcryptMock.compare.mockResolvedValue(false as never);
 
       // Act & Assert
       await expect(
         service.changePassword(userId, currentPassword, newPassword),
-      ).rejects.toThrow('La contraseña actual es incorrecta');
+      ).rejects.toThrow(InvalidPasswordError);
     });
 
-    it('should throw BadRequestException if new password is too short', async () => {
+    it('should throw WeakPasswordError if new password is too short', async () => {
       // Act & Assert
       await expect(service.changePassword(userId, currentPassword, 'short')).rejects.toThrow(
-        'La nueva contraseña debe tener al menos 8 caracteres',
+        WeakPasswordError,
       );
     });
 
-    it('should throw BadRequestException if new password equals current password', async () => {
+    it('should throw SamePasswordError if new password equals current password', async () => {
       // Act & Assert
       await expect(
         service.changePassword(userId, currentPassword, currentPassword),
-      ).rejects.toThrow('La nueva contraseña debe ser diferente a la actual');
+      ).rejects.toThrow(SamePasswordError);
     });
   });
 

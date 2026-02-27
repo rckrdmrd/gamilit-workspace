@@ -863,7 +863,7 @@ UPDATE users SET first_name = split_part(full_name, ' ', 1);
 - `apps/database/ddl/` — Archivos DDL canonicos
 - `apps/database/scripts/init-database.sh` — Script de inicializacion
 - `apps/backend/src/app.module.ts` — Configuracion de datasources
-- `docs/50-guides/backend/GUIA-CREAR-BASE-DATOS.md` — Guia de creacion de BD
+- `docs/50-guides/backend/_archived/GUIA-CREAR-BASE-DATOS.md` — Guia de creacion de BD [ARCHIVED]
 - `docs/50-guides/backend/GUIA-RUNBOOK-POSTGRESQL.md` — Runbook de operaciones
 - `docs/50-guides/integration/GUIA-TYPEORM-CROSS-DATASOURCE.md` — Guia cross-datasource
 - [PostgreSQL ALTER TABLE](https://www.postgresql.org/docs/15/sql-altertable.html) — Documentacion oficial

@@ -1,10 +1,20 @@
+---
+titulo: "ADR-008: Sistema Dual exercise_type + Categorias Pedagogicas"
+tipo: adr
+fecha_creacion: "2025-11-11"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-008: Sistema Dual exercise_type + Categorías Pedagógicas
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-11
 **Autores:** Database Team
 **Decisores:** Tech Lead, Database Architect, Usuario
 **Relacionado:** DB-110, DB-111, DB-112
+
+> **Nota (2026-02-27):** El ENUM original fue disenado con 35 valores. Post-consolidacion (v1.1, 2025-11-11) se removieron 2 mecanicas huerfanas (diario_interactivo, resumen_visual), resultando en **33 valores actuales**. El conteo "35" a lo largo de este ADR refleja la decision original. Ver DDL `exercise_type.sql` para el ENUM vigente.
 
 ---
 

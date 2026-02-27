@@ -1167,8 +1167,8 @@ load_seeds() {
         "progress_tracking/02-exercise-attempts.sql|dev|demo_exercises"
         "progress_tracking/03-manual-reviews.sql|dev|demo_exercises"
         "progress_tracking/08-teacher-notes.sql|dev|demo_data"
-        "progress_tracking/15-student_intervention_alerts.sql|dev|demo_data"
-        "progress_tracking/16-teacher_alert_configurations.sql|dev|demo_data"
+        "progress_tracking/15-student_intervention_alerts.sql|all|core"
+        "progress_tracking/16-teacher_alert_configurations.sql|all|core"
         "audit_logging/01-default-config.sql|all|core"
         "audit_logging/01-audit-logs.sql|dev|demo_data"
         "audit_logging/02-system-metrics.sql|dev|demo_data"
@@ -1188,8 +1188,8 @@ load_seeds() {
         # FASE 12: Communication
         # ==========================================
         "communication/01-conversations.sql|dev|demo_data"
-        "communication/01-system-messages.sql|dev|demo_data"
-        "communication/02-message_participants.sql|dev|demo_data"
+        "communication/01-system-messages.sql|all|core"
+        "communication/02-message_participants.sql|all|core"
     )
 
     should_load_seed_entry() {

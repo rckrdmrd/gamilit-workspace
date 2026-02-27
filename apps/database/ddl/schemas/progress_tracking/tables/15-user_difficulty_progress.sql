@@ -78,7 +78,7 @@ USING (
     EXISTS (
         SELECT 1 FROM auth_management.user_roles ur
         WHERE ur.user_id = auth.uid()
-        AND ur.role_name = 'teacher'
+        AND ur.role = 'admin_teacher'
     )
 );
 

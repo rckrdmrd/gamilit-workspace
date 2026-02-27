@@ -21,7 +21,7 @@ documentation:
       status: implemented
       version: "2.0"
       last_updated: "2025-11-11"
-      changes: "Reconciliación exercise_mechanic ↔ exercise_type. Sistema dual implementado con tabla de mapeo pedagógico. Sincronizado con DDL real (35 exercise_types). Ver ADR-008."
+      changes: "Reconciliación exercise_mechanic ↔ exercise_type. Sistema dual implementado con tabla de mapeo pedagógico. Sincronizado con DDL real (33 exercise_types, 2 removidas en v1.1). Ver ADR-008."
 
     - id: ET-EDU-002
       file: especificaciones/ET-EDU-002-niveles-dificultad.md
@@ -99,7 +99,7 @@ implementation:
         schema: educational_content
         file: apps/database/ddl/schemas/educational_content/tables/21-exercise_mechanic_mapping.sql
         lines: "~120"
-        description: "Mapeo N:M entre categorías pedagógicas universales (31 subcategorías) e implementaciones GAMILIT (35 exercise_types)"
+        description: "Mapeo N:M entre categorías pedagógicas universales (31 subcategorías) e implementaciones GAMILIT (33 exercise_types)"
         rf: RF-EDU-001
         created: "2025-11-11"
         columns_using_enums:
@@ -407,16 +407,16 @@ changelog:
 
       Documentación actualizada:
       - ET-EDU-001 v2.0: Sistema dual implementado (exercise_type + clasificación pedagógica)
-      - RF-EDU-001 v2.0: Actualizado ENUM canónico a exercise_type (35 valores)
+      - RF-EDU-001 v2.0: Actualizado ENUM canónico a exercise_type (33 valores, 2 removidas en v1.1)
       - ADR-008: Decisión arquitectónica documentada (Sistema Dual)
 
       DDL:
       - Tabla exercise_mechanic_mapping: Mapeo N:M categorías pedagógicas ↔ implementaciones GAMILIT
-      - 7 categorías pedagógicas + 31 subcategorías mapeadas a 35 exercise_types
+      - 7 categorías pedagógicas + 31 subcategorías mapeadas a 33 exercise_types
       - 13 GAPs pedagógicos identificados como roadmap
 
       Implementación:
-      - ENUM exercise_type: 35 valores (Módulos 1-5 + Auxiliares)
+      - ENUM exercise_type: 33 valores (Módulos 1-5 + Auxiliares; 2 removidas en v1.1)
       - Índices: category, exercise_type, bloom, tags(GIN)
       - Vista helper: exercises_with_mechanics (opcional)
 

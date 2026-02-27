@@ -7,9 +7,9 @@ Especificaciones de las paginas del portal de administracion de Gamilit.
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| [AdminAlertsPage-Specification.md](./AdminAlertsPage-Specification.md) | Especificacion de la pagina de alertas | Completo |
-| [AdminGamificationPage-Specification.md](./AdminGamificationPage-Specification.md) | Especificacion de la pagina de gamificacion | Completo |
-| [AdminUsersPage-Specification.md](./AdminUsersPage-Specification.md) | Especificacion de la pagina de usuarios | Completo |
+| [ADMIN-ALERTS-PAGE-SPECIFICATION.md](./ADMIN-ALERTS-PAGE-SPECIFICATION.md) | Especificacion de la pagina de alertas | Completo |
+| [ADMIN-GAMIFICATION-PAGE-SPECIFICATION.md](./ADMIN-GAMIFICATION-PAGE-SPECIFICATION.md) | Especificacion de la pagina de gamificacion | Completo |
+| [ADMIN-USERS-PAGE-SPECIFICATION.md](./ADMIN-USERS-PAGE-SPECIFICATION.md) | Especificacion de la pagina de usuarios | Completo |
 
 ## Referencias
 - [Directorio padre](../_MAP.md)

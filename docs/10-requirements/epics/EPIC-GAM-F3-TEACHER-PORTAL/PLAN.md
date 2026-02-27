@@ -34,7 +34,7 @@
 | 21 | US-PM-013 | Notification Preferences | 3 | US-PM-012 | Sprint 18 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Socket.IO 4.8+
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Socket.IO 4.8+
 - **Base de datos:** Schemas `educational_content`, `progress_tracking` (19 paginas, 21 US)
 - **Patron:** Portal SPA con dashboard, RBAC role=teacher, real-time con WebSocket
 

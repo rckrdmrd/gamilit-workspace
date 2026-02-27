@@ -98,7 +98,7 @@ ALTER TABLE notifications.rate_limit_logs ENABLE ROW LEVEL SECURITY;
 -- Users can view their own rate limit logs
 CREATE POLICY rate_limit_logs_select_own ON notifications.rate_limit_logs
     FOR SELECT
-    USING (user_id = auth_management.current_user_id());
+    USING (user_id = gamilit.get_current_user_id());
 
 -- Only system/admin can insert logs (via service)
 CREATE POLICY rate_limit_logs_insert_system ON notifications.rate_limit_logs

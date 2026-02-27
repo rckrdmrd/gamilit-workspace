@@ -1,16 +1,16 @@
-# Mapa de Navegacion - Testing
+# Mapa de Navegacion - Testing impl/
 
 ## Descripcion
 Guias y scripts de testing para el proyecto Gamilit.
 
 ## Contenido
 
-| Archivo | Descripcion | Estado |
-|---------|-------------|--------|
-| [MANUAL-TESTING-GUIDE-US-AE-007.sh](./MANUAL-TESTING-GUIDE-US-AE-007.sh) | Script de guia de testing manual para US-AE-007 | Completo |
+| Archivo | Destino | Estado |
+|---------|---------|--------|
+| MANUAL-TESTING-GUIDE-US-AE-007.sh | **[MOVED]** to `apps/backend/test/scripts/MANUAL-TESTING-GUIDE-US-AE-007.sh` | Relocated |
 
 ## Referencias
 - [Directorio padre](../../_INDEX.md)
 
 ---
-*Ultima actualizacion: 2026-01-04*
+*Ultima actualizacion: 2026-02-27*

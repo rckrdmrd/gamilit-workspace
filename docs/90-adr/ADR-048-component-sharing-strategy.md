@@ -1,6 +1,14 @@
+---
+titulo: "ADR-048: Component Sharing Strategy"
+tipo: adr
+fecha_creacion: "2026-02-21"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-048: Component Sharing Strategy
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-21
 **Deciders:** Frontend Team
 **Tags:** frontend, architecture, components, shared, portals, design-system
@@ -155,7 +163,7 @@ All shared components in a flat `shared/components/` directory with no subdirect
 - No clear distinction between a primitive (Button) and a composite (DataTable).
 - Encourages dumping everything into shared, even portal-specific components.
 
-**Decision:** Rejected. Does not scale with 590+ components across 4 portals.
+**Decision:** Rejected. Does not scale with 575+ components across 4 portals.
 
 ### Alternativa 2: External Design System Package
 
@@ -231,11 +239,11 @@ Organize shared components into `base/`, `common/`, `feedback/`, and domain-spec
 - `apps/frontend/src/apps/student/components/` -- Student portal-specific components
 - [ADR-046: PageShell Pattern](./ADR-046-pageshell-pattern.md)
 - [ADR-049: ConfirmDialog Consolidation](./ADR-049-confirm-dialog-consolidation.md)
-- CLAUDE.md -- 590 production .tsx components, 4 portals, 70 pages
+- CLAUDE.md -- 575 production .tsx components, 4 portals, 70 pages
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-21
 **Last Updated:** 2026-02-21
 **Supersedes:** N/A

@@ -8,7 +8,7 @@ metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
   version: "4.1.0"
-  ultima_actualizacion: "2026-02-19"
+  ultima_actualizacion: "2026-02-27"
   project_root: "."  # Rutas relativas al root del proyecto gamilit-workspace
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -311,12 +311,12 @@ info_proyecto:
 
   metricas:
     schemas: 18
-    tablas: 169
-    endpoints: 904
-    rls_policies: 227
-    entities: 155
-    funciones: 183  # DDL source (249 runtime)
-    triggers: 67
+    tablas: 173                  # Corrected 2026-02-27 (was 169)
+    endpoints: 912               # Corrected 2026-02-27 (was 904)
+    rls_policies: 251            # Corrected 2026-02-27 (was 227). DDL rls-policies/ dirs
+    entities: 156                # Corrected 2026-02-27 (was 155). 156 files, 157 classes
+    funciones: 158               # Corrected 2026-02-27 (was 183). DDL functions/ dirs
+    triggers: 68                 # Corrected 2026-02-27 (was 67). DDL triggers/ dirs
     enums: 42
 
   schemas_principales:

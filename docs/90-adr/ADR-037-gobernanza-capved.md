@@ -1,6 +1,14 @@
+---
+titulo: "ADR-037: Gobernanza de Tareas con Ciclo CAPVED"
+tipo: adr
+fecha_creacion: "2026-02-11"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-037: Gobernanza de Tareas con Ciclo CAPVED
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-11
 **Contexto:** Ciclo de vida de tareas en gamilit standalone
 

@@ -49,7 +49,7 @@
 
 | Aspecto | Detalle |
 |---------|---------|
-| Stack | NestJS 11, React 19, Socket.IO 4.8+, Redis (cache), PostgreSQL 16 |
+| Stack | NestJS 11, React 19, Socket.IO 4.8+, Redis (cache), PostgreSQL 15 |
 | Entidades BD | xp_transactions, levels, rank_definitions, gamification_config, achievements, student_achievements, achievement_categories |
 | Endpoints API | `GET /api/v1/gamification/xp/:studentId` `POST /api/v1/gamification/xp/award` `GET /api/v1/gamification/ranks` `GET /api/v1/gamification/ranks/:studentId` `GET /api/v1/achievements` `GET /api/v1/achievements/:studentId` `POST /api/v1/achievements/check` `GET /api/v1/gamification/dashboard/:studentId` |
 | Componentes FE | XPBar, RankBadge, RankPromotionAnimation, AchievementCard, AchievementShowcase, StreakCounter, GamificationDashboard, XPEarnedToast |

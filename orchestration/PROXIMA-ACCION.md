@@ -1,15 +1,80 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-26
-**Version:** v5.0 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
-**Estado del Proyecto:** MVP 98% completado | **SPRINT 2 COMPLETADO** (13/13 items)
-**Sprint Actual:** Sprint 2 — Normalizacion Documental y Correccion de Discrepancias (2026-02-25 al 2026-03-11)
+**Ultima Actualizacion:** 2026-02-27
+**Version:** v5.4 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
+**Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~92/100
+**Sprint Actual:** Sprint 2 COMPLETADO — Remediacion 17 Gaps COMPLETADA — Sprint 3 backlog listo
 
 ---
 
 ## Estado Actual
 
-### Ultima Tarea Completada: Auditoria Integral BD (2026-02-26)
+### Ultima Tarea Completada: Auditoria BD + Ejercicios + WSL (2026-02-27)
+
+**23 discrepancias cross-layer corregidas. 18 archivos. Build OK. Todas las validaciones PASS.**
+
+Correcciones aplicadas (Fase 1-4):
+1. GUIA-RESPUESTAS: Ej 1.5 Emparejamiento→Sopa de Letras BONUS, ej 2.2 nombre, ej 4.2 Manual, duplicado removido
+2. Backend+Frontend enums: Module 1 reorganizado (COMPLETAR_ESPACIOS, VERDADERO_FALSO → M1; MAPA_CONCEPTUAL, EMPAREJAMIENTO → Auxiliares)
+3. DDL exercise_type.sql: comments de modulos actualizados (M1: 5 activos + 2 aux, M3/M4/M5 teacher-graded)
+4. ET-EDU-001 + RF-EDU-001: conteos 35→27 alineados con DDL COMMENT
+5. recreate-database-dev.sh: WSL2 IP detection automatica
+6. AMBIENTES-DEV-PROD.md: seccion "Scripts de BD y WSL2" agregada
+
+Correcciones adicionales (docs/orchestration sweep):
+7. "35"→"33" en entity, DDL table 21, TRACEABILITY.yml (5 refs), schema-ref 03-education.md
+8. ADR-008: nota aclaratoria 35→33 (cuerpo historico preservado)
+9. PROJECT-STATUS.md + SPRINT-ACTUAL.yml: fechas→2026-02-27
+10. TASK-2026-02-26-RESPONSIVE-AUDIT: README stub→RESP-001
+
+**Reporte:** `orchestration/tareas/TASK-2026-02-27-AUDITORIA-BD-EJERCICIOS/AUDIT-REPORT.md`
+
+### Tarea Anterior: Remediacion 17 Gaps — Phase 6D (2026-02-27)
+
+**17 gaps auditados. 5 falsos positivos. 12 gaps resueltos. Health Score: 84→~92/100 (+8).**
+
+Correcciones aplicadas:
+1. CLAUDE.md: components 572→575, pages 69→72, routes 71→74, parent portal 100%
+2. MASTER_INVENTORY.yml: v14.3.0→v14.4.0 (frontend metrics synced, integration infra noted)
+3. FRONTEND_INVENTORY.yml: v12.4.0→v12.5.0 (parent portal 7/7 pages, routes 74)
+4. BACKEND_INVENTORY.yml: v5.2.0→v5.3.0 (domain errors 42 classes, integration infra, data_warehouse conditional)
+5. TEST_COVERAGE.yml: v2.2.0→v2.3.0 (integration infra 5 files, jest.integration.config.js)
+6. PROXIMA-ACCION.md: S3 backlog items marked resolved/pending per gap status
+
+Gaps resueltos (12):
+- Gap 1: API-REFERENCE gamification paths corregidos (73 endpoints documentados)
+- Gap 2: ~567 endpoints sin docs → 3 portal API refs creados (~513 endpoints)
+- Gap 3: Schema-reference legacy names → 5 archivos corregidos
+- Gap 4: 5 mock M2/M3 APIs → FEATURE_FLAGS pattern aplicado
+- Gap 5: 3 paginas parent portal → 7/7 pages, 100% cobertura
+- Gap 7: ADR-045 domain errors → 42 clases, 129 throws, guia migracion
+- Gap 8: Testing pyramid → integration infra + 5 archivos
+- Gap 10: Data warehouse docs → 16 tablas con detalle a columnas
+- Gap 11: COHERENCE stale paths → 3 rutas corregidas
+- Gap 13: window.innerWidth → PortalLayout corregido
+- Gap 14: Data warehouse datasource → ENABLE_DATA_WAREHOUSE feature flag
+- Gap 15: Teacher-communication verificado (1/8 consumidos, 7 backend-ready)
+
+Falsos positivos (5): Gap 6, 9, 12, 16, 17
+
+**Reporte:** `orchestration/tareas/TASK-REMEDIACION-17-GAPS/REMEDIATION-REPORT.md`
+
+### Tarea Anterior: Auditoria Comprehensiva (2026-02-27)
+
+**7 fases, 14 subagentes. Health Score: 72→84/100 (+12). Metricas SSOT corregidas. Sprint 2 cerrado.**
+
+**Reporte:** `orchestration/tareas/TASK-AUDITORIA-COMPREHENSIVA/AUDIT-FINAL-REPORT.md`
+
+### Tarea Anterior: Remediacion Post-Auditoria (2026-02-27)
+
+**4 fases, 13 sub-fases, 14 agentes. Schema-ref coverage: 39%→98%. 6 pendientes criticos resueltos.**
+
+### Tarea Anterior: Auditoria Integral Documentacion (2026-02-27)
+
+**5 fases, 23 sub-fases, ~18 agentes. Health Score: 72/100. 41 metricas auditadas. 7 inventarios corregidos.**
+**Reporte:** `orchestration/tareas/TASK-2026-02-27-AUDITORIA-INTEGRAL-DOCS/01-INFORME-AUDITORIA-INTEGRAL.md`
+
+### Tarea Anterior: Auditoria Integral BD (2026-02-26)
 
 **9 fases, ~20 agentes, ~30 archivos modificados. 40 UUIDs remediados. Loaders unificados. 0 errores recreacion.**
 
@@ -46,6 +111,20 @@
 |----|-------------|--------|
 | ~~P0-6~~ | ~~AdminAssignmentsPage: rutas reordenadas + export endpoint~~ | **COMPLETADO** 2026-02-26 |
 
+### P0 — Sprint 3 Backlog (Auditoria Comprehensiva)
+
+| # | Descripcion | Tipo | Esfuerzo | Prioridad | Estado |
+|---|-------------|------|----------|-----------|--------|
+| ~~S3-01~~ | ~~Corregir gamification paths en API-REFERENCE.md~~ | Fix | 1h | P0 | **COMPLETADO** (Gap 1) |
+| ~~S3-02~~ | ~~Conectar 5 M2/M3 mock APIs a mechanicsAPI backend~~ | Fix | 2h | P1 | **COMPLETADO** (Gap 4, FEATURE_FLAGS) |
+| ~~S3-03~~ | ~~Crear PORTAL-STUDENT-API-REFERENCE.md~~ | Doc | 5 dias | P0 | **COMPLETADO** (Gap 2, 3 portal refs) |
+| S3-04 | Crear FL-SYS-02 (Exercise Submission Pipeline) | Doc | 4h | P1 | PENDIENTE |
+| S3-05 | Crear FL-SYS-03 (Gamification Reward Chain) | Doc | 3h | P1 | PENDIENTE |
+| ~~S3-06~~ | ~~Corregir 3 stale DDL paths en COHERENCE-ENTITIES-DDL.md~~ | Fix | 0.5h | P2 | **COMPLETADO** (Gap 11) |
+| ~~S3-07~~ | ~~Modernizar schema-reference legacy names~~ | Doc | 3 dias | P0 | **COMPLETADO** (Gap 3) |
+
+**Plan completo Sprint 3-5:** Ver `orchestration/tareas/TASK-AUDITORIA-COMPREHENSIVA/AUDIT-FINAL-REPORT.md` seccion 5.
+
 ### P1 — Pendientes Abiertos (post Sprint 2 o sprint dedicado)
 
 | # | Descripcion | Esfuerzo | Nota |
@@ -54,17 +133,29 @@
 | 42 | A/B Testing Dashboard: implementar backend o remover mock | L | idem |
 | ~~43~~ | ~~Unificar AdminLayout + TeacherLayout en PortalLayout compartido~~ | ~~M~~ | **COMPLETADO** 2026-02-26 |
 | 44 | Integrar Parent portal con detective-theme (usa paleta indigo divergente) | L | depende #43 |
-| 49 | Crear 8 flujos UX admin faltantes + 6 flujos teacher faltantes | L | WS09 |
-| 50 | Documentar 30 API service files no documentados | L | WS09 |
+| 49 | Crear 8 flujos UX admin faltantes + 6 flujos teacher faltantes | L | WS09 (ver S3-04/S3-05) |
+| ~~50~~ | ~~Documentar 30 API service files no documentados~~ | ~~L~~ | **COMPLETADO** (Gap 2 — 3 portal API refs) |
+| **REM-01** | Teacher-communication frontend UI (7/8 endpoints no consumidos) | M | Gap 15 verificado — integrar ParentMessagesPage con backend real |
+| **REM-02** | ADR-045 migration a modulos restantes (auth+gamification done, 21 modulos pendientes) | XL | Expansion gradual por sprint |
+| **REM-03** | Integration test expansion (5 archivos base, expandir a todos los modulos) | L | Infraestructura creada — agregar test cases |
+| **REM-04** | Frontend hook count discrepancy investigation (132 documented vs methodology variation) | S | Verificar si hay nuevos hooks en parent portal pages |
+| **REM-05** | Multi-tenant RLS activation (BYPASSRLS → NOBYPASSRLS para usuarios no-admin) | M | Requiere coordinacion con deploy |
 
-### P1 — BD Pendientes (post auditoria 2026-02-26)
+### ~~P1 — BD Pendientes~~ (TODOS RESUELTOS 2026-02-26)
 
-| ID | Descripcion | Referencia |
-|----|-------------|------------|
-| BD-P01 | ml_coins_transactions duplica welcome bonus (trigger + seed) | `TASK-2026-02-26-AUDITORIA-BD/02-CORRECCIONES.md` P-01 |
-| BD-P02 | 02-message_participants.sql staging/prod bug FK (profiles.user_id vs profiles.id) | idem P-07 |
-| BD-P03 | 7 seeds huerfanos dev (notifications 02-05, audit 03, classroom_modules 16) | idem P-04 |
-| BD-P04 | Notification templates 9-18 solo en dev — decision prod | idem P-08 |
+| ID | Descripcion | Estado |
+|----|-------------|--------|
+| ~~BD-P01~~ | ~~ml_coins_transactions duplica welcome bonus~~ | **COMPLETADO** — welcome_bonus rows eliminados, trigger es fuente autoritativa |
+| ~~BD-P02~~ | ~~message_participants FK bugs staging/prod~~ | **COMPLETADO** — id not user_id, student_id not user_id, status not role |
+| ~~BD-P03~~ | ~~6 seeds huerfanos dev~~ | **COMPLETADO** — movidos a dev/_deprecated/orphaned/ |
+| ~~BD-P04~~ | ~~Notification templates 9-18 solo en staging~~ | **COMPLETADO** — propagados a dev y prod (18 templates en 3 envs) |
+| ~~BD-P05~~ | ~~auth_providers environment "development" en staging/prod~~ | **COMPLETADO** — staging→"staging", prod→"production" |
+| ~~BD-P06~~ | ~~moderation_rules placeholder keywords~~ | **COMPLETADO** — reemplazados con keywords reales educativos |
+| ~~BD-P07~~ | ~~initialize_user_stats comment inconsistente~~ | **COMPLETADO** — comentario actualizado |
+| ~~BD-P08~~ | ~~missions constraints~~ | **SIN ISSUE** — diseno correcto, cerrado |
+| ~~D-01~~ | ~~init-database.sh scope tags vs loaders individuales~~ | **COMPLETADO** — 4 scope tags corregidos (communication + progress_tracking) |
+| ~~DDL-SORT~~ | ~~3 sort-order violations in DDL table files~~ | **COMPLETADO** — 08→08a teacher_reports, 20→05a mission_templates, 19→16a student_intervention_alerts |
+| ~~DDL-FIX~~ | ~~6 DDL errors (enum refs, missing function, bad column, role)~~ | **COMPLETADO** — guild_mission_type idempotent, gamilit_readonly removed, current_user_id fixed, role_name→role, gamilit_role values corrected, 07d idempotent |
 
 ### P1 — Tecnico Diferido
 
@@ -93,12 +184,12 @@
 
 ---
 
-## Metricas Actuales (post-Sprint2 correcciones)
+## Metricas Actuales (post-Remediacion-17-Gaps)
 
 | Categoria | Metrica | Valor |
 |-----------|---------|-------|
 | BD | Tablas (DDL source) | 173 |
-| BD | RLS policies (DDL) | 251 |
+| BD | RLS policies (runtime) | 486 |
 | BD | Funciones (DDL) | 158 |
 | BD | Triggers (DDL) | 68 |
 | BD | Seeds pipeline | 92 entradas, 0 errores |
@@ -106,11 +197,16 @@
 | Backend | Entities | 156 files (157 classes) |
 | Backend | Endpoints | 912 |
 | Backend | Tests | 63 spec files, 2324 tests (2296 passed + 28 skipped) |
-| Frontend | Componentes (.tsx prod) | 577 |
-| Frontend | Hooks | 134 |
-| Frontend | Paginas | 67 |
+| Backend | Domain Error Classes | 42 (25 auth + 17 gamification, ADR-045) |
+| Backend | Integration Test Files | 5 (jest.integration.config.js + infra) |
+| Frontend | Componentes (.tsx prod) | 575 (+3 parent portal) |
+| Frontend | Hooks | 132 |
+| Frontend | Paginas | 72 (+3 parent portal) |
+| Frontend | Routes | 74 (+3 parent portal) |
 | Frontend | Stores Zustand | 13 |
 | Frontend | API Service Files | 65 |
+| Portales | Parent portal | 100% (7/7 pages) |
+| Health Score | Post-remediacion | ~92/100 (era 84) |
 
 > SSOT: `orchestration/inventarios/MASTER_INVENTORY.yml`
 
@@ -123,6 +219,10 @@
 | Historial de sesiones 2026 | `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md` |
 | Sprint actual | `orchestration/scrum/SPRINT-ACTUAL.yml` |
 | Backlog | `orchestration/scrum/BACKLOG.yml` |
+| **Remediacion 17 Gaps 2026-02-27** | **`orchestration/tareas/TASK-REMEDIACION-17-GAPS/REMEDIATION-REPORT.md` — Health 84→92, 12 gaps resueltos** |
+| **Auditoria comprehensiva 2026-02-27** | **`orchestration/tareas/TASK-AUDITORIA-COMPREHENSIVA/AUDIT-FINAL-REPORT.md` — Health 72→84, 17 gaps catalogados** |
+| Remediacion post-auditoria 2026-02-27 | Schema-ref 39%→98%, metrics corrected, inventories aligned |
+| Auditoria integral docs 2026-02-27 | `orchestration/tareas/TASK-2026-02-27-AUDITORIA-INTEGRAL-DOCS/` |
 | Auditoria documentacion 2026-02-25 | `orchestration/tareas/TASK-2026-02-25-AUDITORIA-DOCUMENTACION/` |
 | Remediacion documental 2026-02-26 | `orchestration/tareas/TASK-2026-02-26-REMEDIACION-DOCUMENTAL-GENERAL/` |
 | Analisis portales frontend | `orchestration/tareas/TASK-2026-02-21-ANALISIS-PORTALES/` (17 archivos, 586 KB) |

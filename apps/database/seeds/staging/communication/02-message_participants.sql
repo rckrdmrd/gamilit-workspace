@@ -5,6 +5,7 @@
 -- Dependencies: communication.messages, auth_management.profiles
 -- Order: 02
 -- Created: 2026-01-04 (ISS-SYNC-002)
+-- Updated: 2026-02-26 (BD-P02: Fix FK refs — id not user_id, student_id not user_id, status not role)
 -- =====================================================
 --
 -- PARTICIPANTES INCLUIDOS:
@@ -30,8 +31,8 @@ DECLARE
     v_student RECORD;
     v_counter INTEGER := 0;
 BEGIN
-    -- Obtener teacher default
-    SELECT user_id INTO v_teacher_id
+    -- Obtener teacher profile ID (BD-P02: SELECT id, not user_id — FK references profiles.id)
+    SELECT id INTO v_teacher_id
     FROM auth_management.profiles
     WHERE email = 'teacher@gamilit.com'
     LIMIT 1;
@@ -81,10 +82,10 @@ BEGIN
     -- Crear participantes para estudiantes del classroom DEFAULT
     IF v_default_classroom_id IS NOT NULL THEN
         FOR v_student IN
-            SELECT cm.user_id
+            SELECT cm.student_id
             FROM social_features.classroom_members cm
             WHERE cm.classroom_id = v_default_classroom_id
-              AND cm.role = 'student'
+              AND cm.status = 'active'
             LIMIT 10  -- Máximo 10 estudiantes para seed
         LOOP
             INSERT INTO communication.message_participants (
@@ -98,7 +99,7 @@ BEGIN
             ) VALUES (
                 gen_random_uuid(),
                 v_welcome_message_id,
-                v_student.user_id,
+                v_student.student_id,
                 'recipient',
                 false,  -- Estudiantes aún no han leído
                 NULL,

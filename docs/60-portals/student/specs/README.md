@@ -74,7 +74,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 
 | Documento | Ubicacion | Descripcion |
 |-----------|-----------|-------------|
-| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 577 componentes, 134 hooks, 65 API services |
+| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 575 componentes, 132 hooks, 65 API services |
 | **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 912 endpoints documentados |
 
 ### Tarea Activa
@@ -90,7 +90,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 ```
 docs/60-portals/student/specs/
 ├── README.md (este archivo)
-├── gaps/
+├── _archived/gaps/
 │   ├── STUDENT-GAP-001-missions-rewards.md
 │   ├── STUDENT-GAP-002-missions-update-progress.md
 │   ├── STUDENT-GAP-006-profile-stats.md
@@ -126,24 +126,24 @@ docs/60-portals/student/specs/
    - Estado final del sistema
 
 **Luego revisa gaps específicos:**
-- [GAP-001: Misiones Recompensas](./gaps/STUDENT-GAP-001-missions-rewards.md) - Recompensas ahora funcionan ✅
-- [GAP-002: Misiones Progreso](./gaps/STUDENT-GAP-002-missions-update-progress.md) - Progreso se actualiza vía triggers BD ✅
-- [GAP-006: Perfil](./gaps/STUDENT-GAP-006-profile-stats.md) - Stats dinámicos ✅
-- [GAP-007: Settings](./gaps/STUDENT-GAP-007-settings-persistence.md) - Cambios se guardan ✅
-- [GAP-008: Backend Stats](./gaps/STUDENT-GAP-008-backend-statistics.md) - Backend real implementado ✅
+- [GAP-001: Misiones Recompensas](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md) - Recompensas ahora funcionan ✅
+- [GAP-002: Misiones Progreso](./_archived/gaps/STUDENT-GAP-002-missions-update-progress.md) - Progreso se actualiza vía triggers BD ✅
+- [GAP-006: Perfil](./_archived/gaps/STUDENT-GAP-006-profile-stats.md) - Stats dinámicos ✅
+- [GAP-007: Settings](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md) - Cambios se guardan ✅
+- [GAP-008: Backend Stats](./_archived/gaps/STUDENT-GAP-008-backend-statistics.md) - Backend real implementado ✅
 
 ---
 
 ### Para Developers (Backend)
 
 **Comienza aquí:**
-1. 🔧 [GAP-001: Missions Rewards](./gaps/STUDENT-GAP-001-missions-rewards.md)
+1. 🔧 [GAP-001: Missions Rewards](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md)
    - Implementación de `MissionsService.claimRewards()`
    - Integración con MLCoinsService, UserStatsService, RanksService
    - Detección de promoción de rango
    - Código completo con explicaciones
 
-2. 🔧 [GAP-008: Backend Statistics](./gaps/STUDENT-GAP-008-backend-statistics.md)
+2. 🔧 [GAP-008: Backend Statistics](./_archived/gaps/STUDENT-GAP-008-backend-statistics.md)
    - Implementación de `AuthService.getUserStatistics()`
    - 6 queries reales a BD (SUM aggregations, joins)
    - Integración multi-schema (gamification, progress)
@@ -161,12 +161,12 @@ docs/60-portals/student/specs/
 ### Para Developers (Frontend)
 
 **Comienza aquí:**
-1. 🎨 [GAP-006: Profile Stats](./gaps/STUDENT-GAP-006-profile-stats.md)
+1. 🎨 [GAP-006: Profile Stats](./_archived/gaps/STUDENT-GAP-006-profile-stats.md)
    - Implementación de `useUserStatistics` hook (React Query)
    - Modificación de `ProfilePage` (loading/error states)
    - 0 valores hardcodeados
 
-2. 🎨 [GAP-007: Settings Persistence](./gaps/STUDENT-GAP-007-settings-persistence.md)
+2. 🎨 [GAP-007: Settings Persistence](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md)
    - Implementación de `profileAPI` service (4 métodos)
    - Modificación de `SettingsPage` (3 handlers)
    - Validaciones frontend (passwords, avatar)
@@ -188,17 +188,17 @@ docs/60-portals/student/specs/
 ### Para QA / Testers
 
 **Comienza aquí:**
-1. ✅ [GAP-001: Validación Manual](./gaps/STUDENT-GAP-001-missions-rewards.md#validación)
+1. ✅ [GAP-001: Validación Manual](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#validación)
    - 4 escenarios de prueba (reclamo exitoso, promoción, duplicado, etc.)
    - Comandos curl para testing
    - Validaciones de BD
 
-2. ✅ [GAP-006: Validación Manual](./gaps/STUDENT-GAP-006-profile-stats.md#validación)
+2. ✅ [GAP-006: Validación Manual](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#validación)
    - 5 escenarios de prueba (carga exitosa, refetch, error de red, etc.)
    - React Query DevTools observations
    - Validación de caché
 
-3. ✅ [GAP-007: Validación Manual](./gaps/STUDENT-GAP-007-settings-persistence.md#validación)
+3. ✅ [GAP-007: Validación Manual](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#validación)
    - 8 escenarios de prueba (perfil, avatar, password, validaciones)
    - Errores esperados (email duplicado, password incorrecta)
    - Validaciones frontend
@@ -245,7 +245,7 @@ docs/60-portals/student/specs/
 
 ### GAP-001: Misiones - Recompensas No se Otorgan
 
-**📄 Documento:** [STUDENT-GAP-001-missions-rewards.md](./gaps/STUDENT-GAP-001-missions-rewards.md)
+**📄 Documento:** [STUDENT-GAP-001-missions-rewards.md](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md)
 
 **Problema:**
 - TODO en código (línea 467)
@@ -274,7 +274,7 @@ docs/60-portals/student/specs/
 
 ### GAP-002: Misiones - Progreso No Se Actualiza Correctamente
 
-**📄 Documento:** [STUDENT-GAP-002-missions-update-progress.md](./gaps/STUDENT-GAP-002-missions-update-progress.md)
+**📄 Documento:** [STUDENT-GAP-002-missions-update-progress.md](./_archived/gaps/STUDENT-GAP-002-missions-update-progress.md)
 
 **Problema:**
 - Misiones diarias/semanales generadas por backend tenían tipos de objetivos incorrectos
@@ -316,7 +316,7 @@ docs/60-portals/student/specs/
 
 ### GAP-006: Perfil - Estadísticas Hardcodeadas
 
-**📄 Documento:** [STUDENT-GAP-006-profile-stats.md](./gaps/STUDENT-GAP-006-profile-stats.md)
+**📄 Documento:** [STUDENT-GAP-006-profile-stats.md](./_archived/gaps/STUDENT-GAP-006-profile-stats.md)
 
 **Problema:**
 - Stats hardcodeados (350 coins, 12/50 logros)
@@ -354,7 +354,7 @@ docs/60-portals/student/specs/
 
 ### GAP-007: Settings - Guardar Configuraciones es Mock
 
-**📄 Documento:** [STUDENT-GAP-007-settings-persistence.md](./gaps/STUDENT-GAP-007-settings-persistence.md)
+**📄 Documento:** [STUDENT-GAP-007-settings-persistence.md](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md)
 
 **Problema:**
 - setTimeout mock (línea 94-102)
@@ -401,7 +401,7 @@ docs/60-portals/student/specs/
 
 ### GAP-008: Backend - getUserStatistics() Devuelve Mock Data
 
-**📄 Documento:** [STUDENT-GAP-008-backend-statistics.md](./gaps/STUDENT-GAP-008-backend-statistics.md)
+**📄 Documento:** [STUDENT-GAP-008-backend-statistics.md](./_archived/gaps/STUDENT-GAP-008-backend-statistics.md)
 
 **Problema:**
 - `getUserStatistics()` devolvía valores hardcodeados (todo en 0)
@@ -512,11 +512,11 @@ docs/60-portals/student/specs/
 8. SettingsPage Component - 4 dependencias salientes
 
 **Base de Datos (10):**
-9. gamification.missions
-10. gamification.user_stats
-11. gamification.user_ranks
-12. gamification.user_achievements (NUEVO)
-13. gamification.achievements (NUEVO)
+9. gamification_system.missions
+10. gamification_system.user_stats
+11. gamification_system.user_ranks
+12. gamification_system.user_achievements (NUEVO)
+13. gamification_system.achievements (NUEVO)
 14. economy.ml_coins_transactions
 15. progress_tracking.exercise_submissions (NUEVO)
 16. users.users
@@ -709,25 +709,25 @@ docs/60-portals/student/specs/
 ### Por Tema
 
 **Backend:**
-- [Implementación Missions.claimRewards()](./gaps/STUDENT-GAP-001-missions-rewards.md#implementación)
+- [Implementación Missions.claimRewards()](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#implementación)
 - [Dependencias de MissionsService](./dependencies/DEPENDENCY-MATRIX.md#1-missionsservice)
-- [Triggers de BD](./gaps/STUDENT-GAP-001-missions-rewards.md#comportamiento-del-trigger-de-promoción)
+- [Triggers de BD](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#comportamiento-del-trigger-de-promoción)
 
 **Frontend (Hooks):**
-- [Hook useUserStatistics](./gaps/STUDENT-GAP-006-profile-stats.md#1-appsfront endsrcsharedhooksuseuserstatisticsts-nuevo---41-líneas)
-- [React Query configuration](./gaps/STUDENT-GAP-006-profile-stats.md#31-react-query)
+- [Hook useUserStatistics](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#1-appsfront endsrcsharedhooksuseuserstatisticsts-nuevo---41-líneas)
+- [React Query configuration](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#31-react-query)
 
 **Frontend (Components):**
-- [ProfilePage modificaciones](./gaps/STUDENT-GAP-006-profile-stats.md#3-appsfrontend srcappsstudentpagesprofilepaget sx)
-- [SettingsPage handlers](./gaps/STUDENT-GAP-007-settings-persistence.md#4-appsfront endsrcappsstudentpagessettingspaget sx)
+- [ProfilePage modificaciones](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#3-appsfrontend srcappsstudentpagesprofilepaget sx)
+- [SettingsPage handlers](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#4-appsfront endsrcappsstudentpagessettingspaget sx)
 
 **Frontend (Services):**
-- [profileAPI service](./gaps/STUDENT-GAP-007-settings-persistence.md#1-appsfrontend srcsrc servicesapiprofileapits-nuevo---161-líneas)
-- [Validaciones frontend](./gaps/STUDENT-GAP-007-settings-persistence.md#e-handler-handlepasswordchange-implementado-líneas-127-180-50-líneas)
+- [profileAPI service](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#1-appsfrontend srcsrc servicesapiprofileapits-nuevo---161-líneas)
+- [Validaciones frontend](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#e-handler-handlepasswordchange-implementado-líneas-127-180-50-líneas)
 
 **Base de Datos:**
 - [Tablas afectadas](./dependencies/DEPENDENCY-MATRIX.md#base-de-datos-6-tablas)
-- [Triggers](./gaps/STUDENT-GAP-001-missions-rewards.md#comportamiento-del-trigger-de-promoción)
+- [Triggers](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#comportamiento-del-trigger-de-promoción)
 
 **Dependencias:**
 - [Matriz completa](./dependencies/DEPENDENCY-MATRIX.md)
@@ -735,9 +735,9 @@ docs/60-portals/student/specs/
 - [Diagramas de flujo](./dependencies/DEPENDENCY-MATRIX.md#diagramas-de-flujo-de-datos)
 
 **Testing:**
-- [Escenarios GAP-001](./gaps/STUDENT-GAP-001-missions-rewards.md#pruebas-manuales-realizadas)
-- [Escenarios GAP-006](./gaps/STUDENT-GAP-006-profile-stats.md#pruebas-manuales-realizadas)
-- [Escenarios GAP-007](./gaps/STUDENT-GAP-007-settings-persistence.md#pruebas-manuales-realizadas)
+- [Escenarios GAP-001](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#pruebas-manuales-realizadas)
+- [Escenarios GAP-006](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#pruebas-manuales-realizadas)
+- [Escenarios GAP-007](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#pruebas-manuales-realizadas)
 - [Tests recomendados](./inventory/IMPLEMENTATIONS-2025-11-24.md#tests-recomendados-prioridad)
 
 ---
@@ -829,7 +829,7 @@ docs/60-portals/student/specs/
 - `docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
 
 ### Inventarios
-- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 577 componentes
+- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 575 componentes
 - `orchestration/inventarios/BACKEND_INVENTORY.yml` - 912 endpoints
 - `orchestration/inventarios/DATABASE_INVENTORY.yml` - 18 schemas, 173 tablas
 

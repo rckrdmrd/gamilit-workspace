@@ -66,7 +66,7 @@ updated_date: "2026-01-04"
 **Entonces** debe establecerse conexión WebSocket:
 
 **Configuración del Servidor**:
-- Socket.IO server en puerto 3001 (separado de API REST en 3000)
+- Socket.IO server en puerto 3006 (mismo proceso que API REST — NestJS WebSocketGateway integrado)
 - Autenticación vía JWT token en handshake
 - Rooms por usuario: `user:${userId}` para envío directo
 - Reconnection automática con backoff exponencial (1s → 5s)
@@ -342,7 +342,7 @@ DELETE /api/notifications/:id            // Delete notification
 ## Definición de Hecho (DoD)
 
 ### Desarrollo
-- [x] WebSocket server (Socket.IO) implementado en puerto 3001
+- [x] WebSocket server (Socket.IO) implementado en puerto 3006 (integrado en NestJS, mismo proceso)
 - [x] Redis adapter configurado con 2+ instancias
 - [x] Autenticación JWT en handshake
 - [x] Sistema de prioridades (P0-P3) implementado

@@ -10,7 +10,7 @@
 |---------|-------------|
 | [README.md](./README.md) | Entrada y navegacion rapida de estandares |
 
-## Tabla de Contenidos (24 Estandares Activos)
+## Tabla de Contenidos (25 Estandares Activos)
 
 ### Estandares Generales (19)
 
@@ -32,19 +32,20 @@
 | 14 | ESTANDAR-OBSERVABILIDAD.md | OpenTelemetry, Prometheus, tracing, SLOs |
 | 15 | ESTANDAR-PERFORMANCE.md | Optimizacion y rendimiento |
 | 16 | ESTANDAR-SEGURIDAD.md | RLS, JWT, rate limiting |
-| 17 | ESTANDAR-SKILLS.md | Skills/comandos de agentes |
+| 17 | ESTANDAR-SKILLS.md | [MOVED] a `orchestration/agents/SKILL-STANDARD.md` |
 | 18 | ESTANDAR-TESTING.md | Unit, integration, E2E (piramide 70-20-10) |
 | 19 | ESTANDAR-12-FACTOR-APP.md | Checklist 12-Factor App compliance |
 
-### Estandares Frontend Especificos (5)
+### Estandares Frontend Especificos (6)
 
 | # | Estandar | Proposito |
 |---|----------|-----------|
-| 20 | STANDARD-API.md | APIs frontend: ubicacion canonica, React Query, error handling |
-| 21 | STANDARD-COMPONENT.md | Componentes: exports, props typing, React imports, file naming |
-| 22 | STANDARD-IMPORTS.md | Import order, path aliases, barrels, icon imports |
-| 23 | STANDARD-TYPES.md | Jerarquia de tipos, anti-duplicados, inline types, any policy |
-| 24 | STANDARD-UX-PATTERNS.md | Error/Loading/Empty states, toasts, forms, confirmation dialogs |
+| 20 | ESTANDAR-FRONTEND-API.md | APIs frontend: ubicacion canonica, React Query, error handling |
+| 21 | ESTANDAR-FRONTEND-COMPONENT.md | Componentes: exports, props typing, React imports, file naming |
+| 22 | ESTANDAR-FRONTEND-IMPORTS.md | Import order, path aliases, barrels, icon imports |
+| 23 | ESTANDAR-FRONTEND-RESPONSIVE.md | Responsive design patterns (ADR-050) |
+| 24 | ESTANDAR-FRONTEND-TYPES.md | Jerarquia de tipos, anti-duplicados, inline types, any policy |
+| 25 | ESTANDAR-FRONTEND-UX-PATTERNS.md | Error/Loading/Empty states, toasts, forms, confirmation dialogs |
 
 ## Subdirectorio: backend-profesional/ (8 modulos)
 
@@ -61,4 +62,4 @@
 
 ---
 
-*Ultima actualizacion: 2026-02-20*
+*Ultima actualizacion: 2026-02-27*

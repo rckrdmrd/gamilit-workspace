@@ -1,6 +1,14 @@
+---
+titulo: "ADR-013: Adopcion de React Query (TanStack Query v5) para Data Fetching"
+tipo: adr
+fecha_creacion: "2025-11-23"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-013: Adopción de React Query (TanStack Query v5) para Data Fetching
 
-**Estado:** ✅ Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-23
 **Autores:** Frontend-Developer, Architecture-Analyst
 **Decisión:** Adoptar TanStack Query v5 (React Query) como solución estándar para manejo de estado asíncrono
@@ -798,5 +806,5 @@ Si el proyecto crece significativamente (50+ queries), considerar:
 
 **Versión:** 1.0.0
 **Última actualización:** 2025-11-24
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa

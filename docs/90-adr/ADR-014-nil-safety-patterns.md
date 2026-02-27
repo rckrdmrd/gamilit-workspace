@@ -1,6 +1,14 @@
+---
+titulo: "ADR-014: Adopcion de Nil-Safety Patterns con Optional Chaining y Nullish Coalescing"
+tipo: adr
+fecha_creacion: "2025-11-23"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-014: Adopción de Nil-Safety Patterns con Optional Chaining y Nullish Coalescing
 
-**Estado:** ✅ Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-23
 **Autores:** Frontend-Developer, Architecture-Analyst
 **Decisión:** Adoptar Optional Chaining (`?.`) y Nullish Coalescing (`??`) como patrón estándar para manejo de valores null/undefined
@@ -550,5 +558,5 @@ module.exports = {
 
 **Versión:** 1.0.0
 **Última actualización:** 2025-11-24
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa

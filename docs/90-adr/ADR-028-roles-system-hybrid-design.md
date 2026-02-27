@@ -1,6 +1,14 @@
+---
+titulo: "ADR-028: Sistema de Roles Hibrido (ENUM + RBAC Tables)"
+tipo: adr
+fecha_creacion: "2026-01-27"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-028: Sistema de Roles Híbrido (ENUM + RBAC Tables)
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2026-01-27
 **Autor:** Sistema SIMCO (análisis automatizado)
 **Tarea:** TASK-P2-ROLES-CONSOLIDATION-2026-01-27

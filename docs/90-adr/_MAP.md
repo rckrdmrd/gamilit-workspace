@@ -29,7 +29,7 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 
 ## Contenido
 
-### ADRs (46 total)
+### ADRs (47 total)
 
 #### Fundamentos y Arquitectura (001-005)
 
@@ -55,7 +55,7 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 | ADR-033 | Expansion de Schemas de 8 a 18 | Accepted | Database |
 | ADR-043 | Consolidacion de Base de Datos GAMILIT | Accepted | Database |
 
-#### Frontend (011, 013-015, 019-021, 029-030, 046-049)
+#### Frontend (011, 013-015, 019-021, 029-030, 046-050)
 
 | ADR | Titulo | Estado | Categoria |
 |-----|--------|--------|-----------|
@@ -112,7 +112,13 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 | ADR-044 | Estrategia de Test Coverage | Accepted | Quality |
 | ADR-045 | Clean Architecture Pragmatica | Accepted | Architecture |
 
-**Total ADRs:** 46 | **Numeros libres:** 006, 024, 025
+#### UX y Responsive (050)
+
+| ADR | Titulo | Estado | Categoria |
+|-----|--------|--------|-----------|
+| ADR-050 | Responsive Design Strategy | Accepted | Frontend |
+
+**Total ADRs:** 47 | **Numeros libres:** 006, 024, 025
 
 ---
 
@@ -120,9 +126,10 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 
 | Categoria | Cantidad | ADRs |
 |-----------|----------|------|
-| Architecture | 9 | 001, 002, 003, 004, 005, 010, 017, 028, 038, 040, 045 |
+| Architecture | 11 | 001, 002, 003, 004, 005, 010, 017, 028, 038, 040, 045 |
 | Database | 7 | 007, 008, 012, 020, 027, 033, 043 |
-| Frontend | 10 | 011, 013, 014, 015, 019, 029, 030, 046, 047, 048, 049 |
+| Frontend | 11 | 011, 013, 014, 015, 019, 029, 030, 046, 047, 048, 049 |
+| UX / Responsive | 1 | 050 |
 | Governance | 5 | 035, 036, 037, 039, 041 |
 | Documentation | 2 | 026, 034 |
 | Maintenance | 3 | 018, 022, 023 |
@@ -147,10 +154,10 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 
 ## Proximos ADRs Disponibles
 
-Numeros disponibles para nuevos ADRs: **ADR-006**, **ADR-024**, **ADR-025**, **ADR-050+**
+Numeros disponibles para nuevos ADRs: **ADR-006**, **ADR-024**, **ADR-025**, **ADR-051+**
 
 ---
 
 **Generado:** 2025-11-07
-**Ultima consolidacion:** 2026-02-25 (46 ADRs documentados)
+**Ultima consolidacion:** 2026-02-27 (47 ADRs documentados)
 **Version:** 4.0.0

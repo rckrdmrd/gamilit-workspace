@@ -104,6 +104,9 @@ const ParentLoginPage = lazy(() => import('@/apps/parent/pages/ParentLoginPage')
 const ParentRegisterPage = lazy(() => import('@/apps/parent/pages/ParentRegisterPage'));
 const ParentDashboardPage = lazy(() => import('@/apps/parent/pages/ParentDashboardPage'));
 const ChildProgressPage = lazy(() => import('@/apps/parent/pages/ChildProgressPage'));
+const StudentLinkingPage = lazy(() => import('@/apps/parent/pages/StudentLinkingPage'));
+const StudentActivitiesPage = lazy(() => import('@/apps/parent/pages/StudentActivitiesPage'));
+const ReportsPage = lazy(() => import('@/apps/parent/pages/ReportsPage'));
 
 /**
  * App Component
@@ -705,6 +708,30 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['parent']} redirectTo="/parent/login">
                     <ChildProgressPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/parent/link-student"
+                element={
+                  <ProtectedRoute allowedRoles={['parent']} redirectTo="/parent/login">
+                    <StudentLinkingPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/parent/child/:studentId/activities"
+                element={
+                  <ProtectedRoute allowedRoles={['parent']} redirectTo="/parent/login">
+                    <StudentActivitiesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/parent/reports"
+                element={
+                  <ProtectedRoute allowedRoles={['parent']} redirectTo="/parent/login">
+                    <ReportsPage />
                   </ProtectedRoute>
                 }
               />

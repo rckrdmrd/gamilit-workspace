@@ -20,7 +20,7 @@ Este documento describe cómo el frontend se comunica con el backend de GAMILIT,
 // shared/lib/axios.ts
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3006/api/v1';
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -370,7 +370,7 @@ export const useWebSocket = () => {
   useEffect(() => {
     if (!token) return;
 
-    socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:3000', {
+    socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:3006', {
       auth: { token },
     });
 

@@ -1,6 +1,14 @@
+---
+titulo: "ADR-009: Duracion del Ejercicio 3.4 - Podcast Argumentativo"
+tipo: adr
+fecha_creacion: "2025-11-23"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-009: Duración del Ejercicio 3.4 - Podcast Argumentativo
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-23
 **Autor:** Architecture-Analyst
 **Relacionado con:** DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md, Módulo 3 - Comprensión Crítica y Valorativa
@@ -246,7 +254,7 @@ Esta decisión debe revisarse si:
 
 ---
 
-**Estado:** ✅ ACEPTADO
+**Estado:** Aceptada
 **Implementado en:** v6.4
 **Fecha Original:** 2025-11-23
 **Movido a docs/90-adr/:** 2025-11-23

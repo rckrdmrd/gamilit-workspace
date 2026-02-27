@@ -14,7 +14,8 @@
     "test:cov": "cross-env NODE_OPTIONS=--max-old-space-size=4096 jest --coverage",
     "lint": "eslint \"{src,__tests__}/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
-    "generate:vapid": "node scripts/generate-vapid-keys.js"
+    "generate:vapid": "node scripts/generate-vapid-keys.js",
+    "test:integration": "cross-env NODE_OPTIONS=--max-old-space-size=4096 jest --config jest.integration.config.js --runInBand"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.0.1",

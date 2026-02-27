@@ -137,7 +137,7 @@ npm run start:prod
 ### Health Check
 
 ```bash
-curl http://localhost:3000/api/health
+curl http://localhost:3006/api/health
 ```
 
 Respuesta esperada:
@@ -151,7 +151,7 @@ Respuesta esperada:
 
 ### Swagger UI
 
-Abrir en navegador: `http://localhost:3000/api/docs`
+Abrir en navegador: `http://localhost:3006/api/docs`
 
 ---
 

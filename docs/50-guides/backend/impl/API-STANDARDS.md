@@ -130,7 +130,7 @@ Ejemplos:
 
 ```typescript
 // baseURL contiene: protocolo + dominio + puerto + prefijo global
-const baseURL = 'http://localhost:3000/api';
+const baseURL = 'http://localhost:3006/api';
 
 // endpoint contiene SOLO la ruta del recurso (sin /api)
 const endpoint = '/health';
@@ -362,8 +362,8 @@ X-RateLimit-Reset: 1640000000
 
 ### 9.1 Acceso
 
-- Swagger UI: `http://localhost:3000/api/docs`
-- OpenAPI JSON: `http://localhost:3000/api/docs-json`
+- Swagger UI: `http://localhost:3006/api/docs`
+- OpenAPI JSON: `http://localhost:3006/api/docs-json`
 
 ### 9.2 Configuracion
 
@@ -540,7 +540,7 @@ apiClient.interceptors.request.use((config) => {
 
 ```env
 # .env.development
-VITE_API_URL=http://localhost:3000
+VITE_API_URL=http://localhost:3006
 
 # .env.staging
 VITE_API_URL=https://staging-api.gamilit.com
@@ -715,7 +715,7 @@ export class ExercisesController {
 - [ERROR-HANDLING.md](./ERROR-HANDLING.md) - Manejo de errores detallado
 - [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Estructura de modulos
 - [DTO-CONVENTIONS.md](./DTO-CONVENTIONS.md) - Convenciones de DTOs
-- Swagger UI: `http://localhost:3000/api/docs`
+- Swagger UI: `http://localhost:3006/api/docs`
 
 ---
 

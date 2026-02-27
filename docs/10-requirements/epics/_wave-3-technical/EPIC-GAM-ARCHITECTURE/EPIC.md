@@ -14,11 +14,11 @@
 
 ## Descripcion
 
-Diseno arquitectonico completo de la plataforma gamilit. Incluye la definicion del stack tecnologico (NestJS 11 + React 19 + PostgreSQL 16 + TypeORM + Redis + Socket.IO), el modelo de datos con 18 schemas modulares, la estrategia de multi-tenancy basada en Row Level Security (RLS), la arquitectura del exercise engine con patrones Strategy y Factory para los 23 evaluadores, y el diseno del sistema de gamificacion maya (XP, rangos, ML Coins, logros). Se documentaron las decisiones arquitectonicas en ADR-001 a ADR-004.
+Diseno arquitectonico completo de la plataforma gamilit. Incluye la definicion del stack tecnologico (NestJS 11 + React 19 + PostgreSQL 15 + TypeORM + Redis + Socket.IO), el modelo de datos con 18 schemas modulares, la estrategia de multi-tenancy basada en Row Level Security (RLS), la arquitectura del exercise engine con patrones Strategy y Factory para los 23 evaluadores, y el diseno del sistema de gamificacion maya (XP, rangos, ML Coins, logros). Se documentaron las decisiones arquitectonicas en ADR-001 a ADR-004.
 
 ## Alcance
 
-- Stack tecnologico definido y validado (NestJS 11, React 19, PostgreSQL 16, Redis, Socket.IO)
+- Stack tecnologico definido y validado (NestJS 11, React 19, PostgreSQL 15, Redis, Socket.IO)
 - Arquitectura de gamificacion maya completa (XP, rangos, ML Coins, logros, misiones)
 - Modelo de datos con 18 schemas modulares y estrategia de naming conventions
 - Estrategia RLS multi-tenancy con 282 politicas por tabla
@@ -30,7 +30,7 @@ Diseno arquitectonico completo de la plataforma gamilit. Incluye la definicion d
 
 | Capa | Componentes |
 |------|-------------|
-| Database | 18 schemas: auth, users, tenants, modules, exercises, content, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports, notifications, settings |
+| Database | 18 schemas: auth, auth_management, educational_content, gamification_system, progress_tracking, social_features, content_management, communication, notifications, audit_logging, data_warehouse, admin_dashboard, gamilit, lti_integration, economy, settings |
 | Backend | Arquitectura modular NestJS (23 modulos), exercise engine, gamification engine, Socket.IO gateway |
 | Frontend | Arquitectura SPA React con routing multi-portal, Zustand state management, Socket.IO client |
 | DevOps | Estrategia de deployment definida |

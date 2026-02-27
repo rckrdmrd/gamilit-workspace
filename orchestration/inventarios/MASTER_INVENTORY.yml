@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.0.0"
-fecha: "2026-02-26"  # Inventory validation 2026-02-26: 7 metrics corrected (Foreign Keys, Seeds, Entity classes, Tests, Components, Hooks, Routes)
+version: "14.4.0"
+fecha: "2026-02-27"  # v14.4.0: Remediacion 17 gaps - componentes 572->575, paginas 69->72, routes 71->74, parent portal 100%, integration tests infra, data_warehouse conditional
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -58,15 +58,15 @@ metricas:
     tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 577              # Verified 2026-02-26: 577 production .tsx files
-    hooks: 134                        # Verified 2026-02-26: 134 unique hooks (audit-corrected)
-    paginas: 67                       # Verified 2026-02-21: find *Page.tsx excl tests/legacy
+    componentes_tsx: 575              # +3 parent portal pages (Notifications, Messages, Settings). Reconteo 2026-02-27: 572 strict base
+    hooks: 132                        # Reconteo 2026-02-27: 132 use*.ts en hooks/ dirs (excl. type files, API services, examples)
+    paginas: 72                       # +3 parent portal pages (ParentNotificationsPage, ParentMessagesPage, ParentSettingsPage). Base: 69
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
     api_service_files: 65             # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0)
     api_calls_total: 580              # ~580: +resourceSharingApi calls over previous 575
     portales: 4
     mecanicas_ejercicio: 30           # 30 mecanicas unicas de ejercicio
-    routes: 74                        # 74 routes (Verified 2026-02-26, updated from migration to React Router v7)
+    routes: 74                        # +3 routes for new parent portal pages. Base was 71 (corrected 2026-02-27)
     type_files: 49                    # 49 archivos type definition
     recursos_multimedia:
       meme_svgs: 6                   # public/memes/*.svg (Marie Curie, flat design 600x500px)
@@ -79,9 +79,13 @@ metricas:
     coherencia_ddl_backend: "90.2%"  # 156 entity files / 173 tables (100% bidirectional, 16 DDL-only in data_warehouse + 1 new resource table)
     entity_registration: "100%"     # All entities registered in forFeature()
     cobertura_target: "80%"
-    mock_only_services: 8           # mechanicsAPI, aiServiceAPI + 6 module-specific mechanics APIs (all MOCK-ONLY)
+    mock_only_services: 7           # mechanicsAPI, aiServiceAPI + 5 module-specific mechanics APIs (FEATURE_FLAGS pattern applied in Phase 6D, shopAPI is real)
     dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
     lint_warnings: 104              # 104 warnings (0 errors). Previously 71 — increase from teacher portal re-enable + mobile fixes
+    integration_test_files: 5       # jest.integration.config.js + 5 integration spec files added Phase 6D. Script: test:integration
+    domain_error_classes: 42        # 25 auth + 17 gamification error classes (ADR-045 migration, Phase 6D)
+    domain_error_throws: 129        # 50 auth + 79 gamification throws across modules
+    data_warehouse_datasource: "conditional"  # ENABLE_DATA_WAREHOUSE feature flag — etl/ml/visualization modules conditional
 
 # -------------------------------------------------------------------------------
 # PORTALES
@@ -95,7 +99,7 @@ portales:
   - nombre: "Administrador"
     completitud: "~92%"
   - nombre: "Padres"
-    completitud: "100% backend, 57% pages (4 of 7 flujos)"
+    completitud: "100% backend, 100% frontend (7/7 pages)"
 
 # -------------------------------------------------------------------------------
 # MODULOS EDUCATIVOS
@@ -136,9 +140,9 @@ gamificacion:
 # -------------------------------------------------------------------------------
 
 inventarios_detallados:
-  database: "DATABASE_INVENTORY.yml (v9.0.0)"
-  backend: "BACKEND_INVENTORY.yml (v5.0.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v12.0.0)"
+  database: "DATABASE_INVENTORY.yml (v9.2.0)"
+  backend: "BACKEND_INVENTORY.yml (v5.3.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v12.5.0)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES
@@ -164,13 +168,16 @@ features:
     - "social (60%): DDL+entities completos, all registered in forFeature() (FIX P2), ~40 endpoints unwired in frontend"
     - "team-vs-team: DDL+entity+controller ready, frontend socialAPI mock-gated"
     - "boosts: DDL+entity, pivoteado a comodines"
-    - "parent portal: 4 pages for 7 flujos (57% page coverage), backend 100%"
+    - "teacher-communication: 1/8 endpoints consumed in frontend, 7 backend endpoints backend-ready"
 
   pendientes:
     - "Cobertura tests target 80%"
     - "E2E testing completo"
     - "Kubernetes deployment"
     - "Documentation de deployment actualizada"
+    - "Integration test expansion (5 files done, need remaining modules)"
+    - "ADR-045 migration to remaining modules (auth+gamification done)"
+    - "Teacher-communication frontend UI (7 endpoints unconnected)"
 
 # -------------------------------------------------------------------------------
 # PUERTOS Y CREDENCIALES

@@ -36,11 +36,11 @@ Estos estandares en `docs/40-standards/` definen las reglas obligatorias para to
 
 | Estandar | Aplica a |
 |----------|----------|
-| [STANDARD-API.md](../../../40-standards/STANDARD-API.md) | Ubicacion de APIs, React Query, error handling |
-| [STANDARD-COMPONENT.md](../../../40-standards/STANDARD-COMPONENT.md) | Export patterns, props typing, React imports |
-| [STANDARD-IMPORTS.md](../../../40-standards/STANDARD-IMPORTS.md) | Import order, path aliases (@shared/, @/), barrels |
-| [STANDARD-TYPES.md](../../../40-standards/STANDARD-TYPES.md) | Jerarquia de tipos, anti-duplicados, any policy |
-| [STANDARD-UX-PATTERNS.md](../../../40-standards/STANDARD-UX-PATTERNS.md) | Error/Loading/Empty states, toasts, forms |
+| [ESTANDAR-FRONTEND-API.md](../../../40-standards/ESTANDAR-FRONTEND-API.md) | Ubicacion de APIs, React Query, error handling |
+| [ESTANDAR-FRONTEND-COMPONENT.md](../../../40-standards/ESTANDAR-FRONTEND-COMPONENT.md) | Export patterns, props typing, React imports |
+| [ESTANDAR-FRONTEND-IMPORTS.md](../../../40-standards/ESTANDAR-FRONTEND-IMPORTS.md) | Import order, path aliases (@shared/, @/), barrels |
+| [ESTANDAR-FRONTEND-TYPES.md](../../../40-standards/ESTANDAR-FRONTEND-TYPES.md) | Jerarquia de tipos, anti-duplicados, any policy |
+| [ESTANDAR-FRONTEND-UX-PATTERNS.md](../../../40-standards/ESTANDAR-FRONTEND-UX-PATTERNS.md) | Error/Loading/Empty states, toasts, forms |
 | [ESTANDAR-FRONTEND-PROFESIONAL.md](../../../40-standards/ESTANDAR-FRONTEND-PROFESIONAL.md) | Compound components, HOC, performance, testing |
 
 ---

@@ -1,3 +1,11 @@
+---
+titulo: "ADR-001: Sistema de Gamificacion con Tematica de Cultura Maya"
+tipo: adr
+fecha_creacion: "2025-08-15"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-001: Sistema de Gamificacion con Tematica de Cultura Maya
 
 **Fecha:** 2025-08-15

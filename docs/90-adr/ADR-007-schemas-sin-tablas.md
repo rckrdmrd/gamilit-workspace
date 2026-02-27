@@ -1,6 +1,14 @@
+---
+titulo: "ADR-007: Schemas de Base de Datos Sin Tablas"
+tipo: adr
+fecha_creacion: "2025-11-10"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-007: Schemas de Base de Datos Sin Tablas
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-10
 **Autores:** Equipo Técnico GAMILIT
 **Decisores:** Tech Lead, Database Architect

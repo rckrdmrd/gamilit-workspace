@@ -561,9 +561,9 @@
 - ✅ RanksService.getCurrentRank() - Detecta promoción comparando rangos
 
 **Tablas de BD afectadas:**
-- `gamification.missions` (status='claimed', claimed_at)
+- `gamification_system.missions` (status='claimed', claimed_at)
 - `users.user_stats` (total_xp actualizado)
-- `gamification.user_ranks` (rank actualizado si promoción)
+- `gamification_system.user_ranks` (rank actualizado si promoción)
 - `economy.ml_coins_transactions` (transacción registrada)
 
 ---

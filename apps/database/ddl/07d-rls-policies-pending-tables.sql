@@ -24,11 +24,13 @@
 -- Drop policies from 07b (replaced by more granular policies below)
 DROP POLICY IF EXISTS bulk_operations_admin_only ON admin_dashboard.bulk_operations;
 
+DROP POLICY IF EXISTS bulk_operations_admin_all ON admin_dashboard.bulk_operations;
 CREATE POLICY bulk_operations_admin_all
     ON admin_dashboard.bulk_operations
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS bulk_operations_read_own ON admin_dashboard.bulk_operations;
 CREATE POLICY bulk_operations_read_own
     ON admin_dashboard.bulk_operations
     FOR SELECT
@@ -40,11 +42,13 @@ CREATE POLICY bulk_operations_read_own
 -- Columnas clave: email (text), no tiene user_id directo
 -- =====================================================
 
+DROP POLICY IF EXISTS auth_attempts_admin_read ON auth_management.auth_attempts;
 CREATE POLICY auth_attempts_admin_read
     ON auth_management.auth_attempts
     FOR SELECT
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS auth_attempts_system_insert ON auth_management.auth_attempts;
 CREATE POLICY auth_attempts_system_insert
     ON auth_management.auth_attempts
     FOR INSERT
@@ -61,21 +65,25 @@ DROP POLICY IF EXISTS parent_accounts_admin_all ON auth_management.parent_accoun
 DROP POLICY IF EXISTS parent_accounts_read_own ON auth_management.parent_accounts;
 DROP POLICY IF EXISTS parent_accounts_update_own ON auth_management.parent_accounts;
 
+DROP POLICY IF EXISTS parent_accounts_admin_all ON auth_management.parent_accounts;
 CREATE POLICY parent_accounts_admin_all
     ON auth_management.parent_accounts
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS parent_accounts_read_own ON auth_management.parent_accounts;
 CREATE POLICY parent_accounts_read_own
     ON auth_management.parent_accounts
     FOR SELECT
     USING (profile_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS parent_accounts_update_own ON auth_management.parent_accounts;
 CREATE POLICY parent_accounts_update_own
     ON auth_management.parent_accounts
     FOR UPDATE
     USING (profile_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS parent_accounts_insert_own ON auth_management.parent_accounts;
 CREATE POLICY parent_accounts_insert_own
     ON auth_management.parent_accounts
     FOR INSERT
@@ -91,11 +99,13 @@ CREATE POLICY parent_accounts_insert_own
 DROP POLICY IF EXISTS parent_notifications_admin_all ON auth_management.parent_notifications;
 DROP POLICY IF EXISTS parent_notifications_read_own ON auth_management.parent_notifications;
 
+DROP POLICY IF EXISTS parent_notifications_admin_all ON auth_management.parent_notifications;
 CREATE POLICY parent_notifications_admin_all
     ON auth_management.parent_notifications
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS parent_notifications_read_own ON auth_management.parent_notifications;
 CREATE POLICY parent_notifications_read_own
     ON auth_management.parent_notifications
     FOR SELECT
@@ -104,6 +114,7 @@ CREATE POLICY parent_notifications_read_own
         WHERE profile_id = gamilit.get_current_user_id()
     ));
 
+DROP POLICY IF EXISTS parent_notifications_update_own ON auth_management.parent_notifications;
 CREATE POLICY parent_notifications_update_own
     ON auth_management.parent_notifications
     FOR UPDATE
@@ -112,6 +123,7 @@ CREATE POLICY parent_notifications_update_own
         WHERE profile_id = gamilit.get_current_user_id()
     ));
 
+DROP POLICY IF EXISTS parent_notifications_system_insert ON auth_management.parent_notifications;
 CREATE POLICY parent_notifications_system_insert
     ON auth_management.parent_notifications
     FOR INSERT
@@ -127,11 +139,13 @@ CREATE POLICY parent_notifications_system_insert
 DROP POLICY IF EXISTS parent_student_links_admin_all ON auth_management.parent_student_links;
 DROP POLICY IF EXISTS parent_student_links_read_own ON auth_management.parent_student_links;
 
+DROP POLICY IF EXISTS parent_student_links_admin_all ON auth_management.parent_student_links;
 CREATE POLICY parent_student_links_admin_all
     ON auth_management.parent_student_links
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS parent_student_links_parent_read ON auth_management.parent_student_links;
 CREATE POLICY parent_student_links_parent_read
     ON auth_management.parent_student_links
     FOR SELECT
@@ -140,6 +154,7 @@ CREATE POLICY parent_student_links_parent_read
         WHERE profile_id = gamilit.get_current_user_id()
     ));
 
+DROP POLICY IF EXISTS parent_student_links_parent_manage ON auth_management.parent_student_links;
 CREATE POLICY parent_student_links_parent_manage
     ON auth_management.parent_student_links
     FOR INSERT
@@ -148,6 +163,7 @@ CREATE POLICY parent_student_links_parent_manage
         WHERE profile_id = gamilit.get_current_user_id()
     ));
 
+DROP POLICY IF EXISTS parent_student_links_student_read ON auth_management.parent_student_links;
 CREATE POLICY parent_student_links_student_read
     ON auth_management.parent_student_links
     FOR SELECT
@@ -159,6 +175,7 @@ CREATE POLICY parent_student_links_student_read
 -- Columnas clave: created_by
 -- =====================================================
 
+DROP POLICY IF EXISTS moderation_rules_admin_all ON content_management.moderation_rules;
 CREATE POLICY moderation_rules_admin_all
     ON content_management.moderation_rules
     FOR ALL
@@ -170,11 +187,13 @@ CREATE POLICY moderation_rules_admin_all
 -- Columnas clave: student_id, tenant_id, created_by
 -- =====================================================
 
+DROP POLICY IF EXISTS ml_prediction_logs_admin_read ON data_warehouse.ml_prediction_logs;
 CREATE POLICY ml_prediction_logs_admin_read
     ON data_warehouse.ml_prediction_logs
     FOR SELECT
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS ml_prediction_logs_system_insert ON data_warehouse.ml_prediction_logs;
 CREATE POLICY ml_prediction_logs_system_insert
     ON data_warehouse.ml_prediction_logs
     FOR INSERT
@@ -186,16 +205,19 @@ CREATE POLICY ml_prediction_logs_system_insert
 -- Columnas clave: exercise_id, module_id, created_by, is_active
 -- =====================================================
 
+DROP POLICY IF EXISTS assessment_rubrics_admin_all ON educational_content.assessment_rubrics;
 CREATE POLICY assessment_rubrics_admin_all
     ON educational_content.assessment_rubrics
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS assessment_rubrics_teacher_manage ON educational_content.assessment_rubrics;
 CREATE POLICY assessment_rubrics_teacher_manage
     ON educational_content.assessment_rubrics
     FOR ALL
     USING (created_by = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS assessment_rubrics_read_active ON educational_content.assessment_rubrics;
 CREATE POLICY assessment_rubrics_read_active
     ON educational_content.assessment_rubrics
     FOR SELECT
@@ -207,11 +229,13 @@ CREATE POLICY assessment_rubrics_read_active
 -- Columnas clave: classroom_id, module_id, assigned_by, is_active
 -- =====================================================
 
+DROP POLICY IF EXISTS classroom_modules_admin_all ON educational_content.classroom_modules;
 CREATE POLICY classroom_modules_admin_all
     ON educational_content.classroom_modules
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS classroom_modules_teacher_manage ON educational_content.classroom_modules;
 CREATE POLICY classroom_modules_teacher_manage
     ON educational_content.classroom_modules
     FOR ALL
@@ -223,6 +247,7 @@ CREATE POLICY classroom_modules_teacher_manage
         )
     );
 
+DROP POLICY IF EXISTS classroom_modules_student_read ON educational_content.classroom_modules;
 CREATE POLICY classroom_modules_student_read
     ON educational_content.classroom_modules
     FOR SELECT
@@ -240,16 +265,19 @@ CREATE POLICY classroom_modules_student_read
 -- Columnas clave: tenant_id, created_by, is_active, is_public
 -- =====================================================
 
+DROP POLICY IF EXISTS media_resources_admin_all ON educational_content.media_resources;
 CREATE POLICY media_resources_admin_all
     ON educational_content.media_resources
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS media_resources_creator_manage ON educational_content.media_resources;
 CREATE POLICY media_resources_creator_manage
     ON educational_content.media_resources
     FOR ALL
     USING (created_by = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS media_resources_read_active ON educational_content.media_resources;
 CREATE POLICY media_resources_read_active
     ON educational_content.media_resources
     FOR SELECT
@@ -265,16 +293,19 @@ CREATE POLICY media_resources_read_active
 DROP POLICY IF EXISTS scheduled_missions_admin_teacher ON progress_tracking.scheduled_missions;
 DROP POLICY IF EXISTS scheduled_missions_user_own ON progress_tracking.scheduled_missions;
 
+DROP POLICY IF EXISTS scheduled_missions_admin_all ON progress_tracking.scheduled_missions;
 CREATE POLICY scheduled_missions_admin_all
     ON progress_tracking.scheduled_missions
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS scheduled_missions_teacher_manage ON progress_tracking.scheduled_missions;
 CREATE POLICY scheduled_missions_teacher_manage
     ON progress_tracking.scheduled_missions
     FOR ALL
     USING (scheduled_by = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS scheduled_missions_student_read ON progress_tracking.scheduled_missions;
 CREATE POLICY scheduled_missions_student_read
     ON progress_tracking.scheduled_missions
     FOR SELECT
@@ -295,16 +326,19 @@ CREATE POLICY scheduled_missions_student_read
 -- Drop policy from 07 (replaced by more granular policies below)
 DROP POLICY IF EXISTS intervention_alerts_admin_teacher ON progress_tracking.student_intervention_alerts;
 
+DROP POLICY IF EXISTS student_intervention_alerts_admin_all ON progress_tracking.student_intervention_alerts;
 CREATE POLICY student_intervention_alerts_admin_all
     ON progress_tracking.student_intervention_alerts
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS student_intervention_alerts_student_read ON progress_tracking.student_intervention_alerts;
 CREATE POLICY student_intervention_alerts_student_read
     ON progress_tracking.student_intervention_alerts
     FOR SELECT
     USING (student_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS student_intervention_alerts_teacher_manage ON progress_tracking.student_intervention_alerts;
 CREATE POLICY student_intervention_alerts_teacher_manage
     ON progress_tracking.student_intervention_alerts
     FOR ALL
@@ -315,6 +349,7 @@ CREATE POLICY student_intervention_alerts_teacher_manage
         )
     );
 
+DROP POLICY IF EXISTS student_intervention_alerts_system_insert ON progress_tracking.student_intervention_alerts;
 CREATE POLICY student_intervention_alerts_system_insert
     ON progress_tracking.student_intervention_alerts
     FOR INSERT
@@ -326,11 +361,13 @@ CREATE POLICY student_intervention_alerts_system_insert
 -- Columnas clave: teacher_id, classroom_id, tenant_id
 -- =====================================================
 
+DROP POLICY IF EXISTS teacher_alert_configs_admin_all ON progress_tracking.teacher_alert_configurations;
 CREATE POLICY teacher_alert_configs_admin_all
     ON progress_tracking.teacher_alert_configurations
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS teacher_alert_configs_teacher_own ON progress_tracking.teacher_alert_configurations;
 CREATE POLICY teacher_alert_configs_teacher_own
     ON progress_tracking.teacher_alert_configurations
     FOR ALL
@@ -346,16 +383,19 @@ CREATE POLICY teacher_alert_configs_teacher_own
 DROP POLICY IF EXISTS user_difficulty_progress_admin_teacher ON progress_tracking.user_difficulty_progresses;
 DROP POLICY IF EXISTS user_difficulty_progress_user_own ON progress_tracking.user_difficulty_progresses;
 
+DROP POLICY IF EXISTS user_difficulty_progresses_admin_all ON progress_tracking.user_difficulty_progresses;
 CREATE POLICY user_difficulty_progresses_admin_all
     ON progress_tracking.user_difficulty_progresses
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS user_difficulty_progresses_user_own ON progress_tracking.user_difficulty_progresses;
 CREATE POLICY user_difficulty_progresses_user_own
     ON progress_tracking.user_difficulty_progresses
     FOR ALL
     USING (user_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS user_difficulty_progresses_teacher_read ON progress_tracking.user_difficulty_progresses;
 CREATE POLICY user_difficulty_progresses_teacher_read
     ON progress_tracking.user_difficulty_progresses
     FOR SELECT
@@ -377,6 +417,7 @@ CREATE POLICY user_difficulty_progresses_teacher_read
 DROP POLICY IF EXISTS user_follows_admin ON social_features.user_follows;
 DROP POLICY IF EXISTS user_follows_own ON social_features.user_follows;
 
+DROP POLICY IF EXISTS user_follows_read_own ON social_features.user_follows;
 CREATE POLICY user_follows_read_own
     ON social_features.user_follows
     FOR SELECT
@@ -385,16 +426,19 @@ CREATE POLICY user_follows_read_own
         OR following_id = gamilit.get_current_user_id()
     );
 
+DROP POLICY IF EXISTS user_follows_insert_own ON social_features.user_follows;
 CREATE POLICY user_follows_insert_own
     ON social_features.user_follows
     FOR INSERT
     WITH CHECK (follower_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS user_follows_delete_own ON social_features.user_follows;
 CREATE POLICY user_follows_delete_own
     ON social_features.user_follows
     FOR DELETE
     USING (follower_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS user_follows_admin_all ON social_features.user_follows;
 CREATE POLICY user_follows_admin_all
     ON social_features.user_follows
     FOR ALL
@@ -406,11 +450,13 @@ CREATE POLICY user_follows_admin_all
 -- Columnas clave: user_id, tenant_id
 -- =====================================================
 
+DROP POLICY IF EXISTS notification_settings_admin_all ON system_configuration.notification_settings;
 CREATE POLICY notification_settings_admin_all
     ON system_configuration.notification_settings
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS notification_settings_user_own ON system_configuration.notification_settings;
 CREATE POLICY notification_settings_user_own
     ON system_configuration.notification_settings
     FOR ALL
@@ -422,11 +468,13 @@ CREATE POLICY notification_settings_user_own
 -- Columnas clave: resource_type, is_enabled (no user-specific)
 -- =====================================================
 
+DROP POLICY IF EXISTS rate_limits_admin_all ON system_configuration.rate_limits;
 CREATE POLICY rate_limits_admin_all
     ON system_configuration.rate_limits
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS rate_limits_read_authenticated ON system_configuration.rate_limits;
 CREATE POLICY rate_limits_read_authenticated
     ON system_configuration.rate_limits
     FOR SELECT
@@ -438,11 +486,13 @@ CREATE POLICY rate_limits_read_authenticated
 -- Columnas clave: tenant_id, config_key
 -- =====================================================
 
+DROP POLICY IF EXISTS tenant_configs_admin_all ON system_configuration.tenant_configurations;
 CREATE POLICY tenant_configs_admin_all
     ON system_configuration.tenant_configurations
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS tenant_configs_read_authenticated ON system_configuration.tenant_configurations;
 CREATE POLICY tenant_configs_read_authenticated
     ON system_configuration.tenant_configurations
     FOR SELECT
@@ -457,18 +507,21 @@ CREATE POLICY tenant_configs_read_authenticated
 
 ALTER TABLE progress_tracking.user_learning_paths ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS user_learning_paths_admin_all ON progress_tracking.user_learning_paths;
 CREATE POLICY user_learning_paths_admin_all
     ON progress_tracking.user_learning_paths
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
 -- Usuarios pueden ver y gestionar sus propias rutas de aprendizaje
+DROP POLICY IF EXISTS user_learning_paths_user_own ON progress_tracking.user_learning_paths;
 CREATE POLICY user_learning_paths_user_own
     ON progress_tracking.user_learning_paths
     FOR ALL
     USING (user_id = gamilit.get_current_user_id());
 
 -- Maestros pueden ver rutas de sus estudiantes (lectura)
+DROP POLICY IF EXISTS user_learning_paths_teacher_read ON progress_tracking.user_learning_paths;
 CREATE POLICY user_learning_paths_teacher_read
     ON progress_tracking.user_learning_paths
     FOR SELECT
@@ -489,18 +542,21 @@ CREATE POLICY user_learning_paths_teacher_read
 
 ALTER TABLE progress_tracking.engagement_metrics ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS engagement_metrics_admin_all ON progress_tracking.engagement_metrics;
 CREATE POLICY engagement_metrics_admin_all
     ON progress_tracking.engagement_metrics
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
 -- Usuarios pueden ver sus propias metricas de engagement
+DROP POLICY IF EXISTS engagement_metrics_user_own ON progress_tracking.engagement_metrics;
 CREATE POLICY engagement_metrics_user_own
     ON progress_tracking.engagement_metrics
     FOR SELECT
     USING (user_id = gamilit.get_current_user_id());
 
 -- Maestros pueden ver metricas de sus estudiantes (lectura)
+DROP POLICY IF EXISTS engagement_metrics_teacher_read ON progress_tracking.engagement_metrics;
 CREATE POLICY engagement_metrics_teacher_read
     ON progress_tracking.engagement_metrics
     FOR SELECT
@@ -513,11 +569,13 @@ CREATE POLICY engagement_metrics_teacher_read
     );
 
 -- Sistema puede insertar/actualizar metricas (via triggers/funciones)
+DROP POLICY IF EXISTS engagement_metrics_system_insert ON progress_tracking.engagement_metrics;
 CREATE POLICY engagement_metrics_system_insert
     ON progress_tracking.engagement_metrics
     FOR INSERT
     WITH CHECK (true);
 
+DROP POLICY IF EXISTS engagement_metrics_system_update ON progress_tracking.engagement_metrics;
 CREATE POLICY engagement_metrics_system_update
     ON progress_tracking.engagement_metrics
     FOR UPDATE
@@ -533,18 +591,21 @@ CREATE POLICY engagement_metrics_system_update
 
 ALTER TABLE progress_tracking.progress_snapshots ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS progress_snapshots_admin_all ON progress_tracking.progress_snapshots;
 CREATE POLICY progress_snapshots_admin_all
     ON progress_tracking.progress_snapshots
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
 -- Usuarios pueden ver sus propios snapshots de progreso
+DROP POLICY IF EXISTS progress_snapshots_user_own ON progress_tracking.progress_snapshots;
 CREATE POLICY progress_snapshots_user_own
     ON progress_tracking.progress_snapshots
     FOR SELECT
     USING (user_id = gamilit.get_current_user_id());
 
 -- Maestros pueden ver snapshots de sus estudiantes (lectura)
+DROP POLICY IF EXISTS progress_snapshots_teacher_read ON progress_tracking.progress_snapshots;
 CREATE POLICY progress_snapshots_teacher_read
     ON progress_tracking.progress_snapshots
     FOR SELECT
@@ -557,6 +618,7 @@ CREATE POLICY progress_snapshots_teacher_read
     );
 
 -- Sistema puede insertar snapshots (via jobs automaticos)
+DROP POLICY IF EXISTS progress_snapshots_system_insert ON progress_tracking.progress_snapshots;
 CREATE POLICY progress_snapshots_system_insert
     ON progress_tracking.progress_snapshots
     FOR INSERT
@@ -572,18 +634,21 @@ CREATE POLICY progress_snapshots_system_insert
 
 ALTER TABLE auth_management.two_factor_tokens ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS two_factor_tokens_admin_read ON auth_management.two_factor_tokens;
 CREATE POLICY two_factor_tokens_admin_read
     ON auth_management.two_factor_tokens
     FOR SELECT
     USING (gamilit.is_super_admin());
 
 -- Usuarios solo pueden ver/gestionar sus propios tokens 2FA
+DROP POLICY IF EXISTS two_factor_tokens_user_own ON auth_management.two_factor_tokens;
 CREATE POLICY two_factor_tokens_user_own
     ON auth_management.two_factor_tokens
     FOR ALL
     USING (user_id = gamilit.get_current_user_id());
 
 -- Sistema puede insertar tokens (durante flujo de habilitacion 2FA)
+DROP POLICY IF EXISTS two_factor_tokens_system_insert ON auth_management.two_factor_tokens;
 CREATE POLICY two_factor_tokens_system_insert
     ON auth_management.two_factor_tokens
     FOR INSERT
@@ -600,18 +665,21 @@ CREATE POLICY two_factor_tokens_system_insert
 
 ALTER TABLE social_features.guild_join_requests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS guild_join_requests_admin_all ON social_features.guild_join_requests;
 CREATE POLICY guild_join_requests_admin_all
     ON social_features.guild_join_requests
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
 -- Usuarios pueden ver y crear sus propias solicitudes
+DROP POLICY IF EXISTS guild_join_requests_requester_own ON social_features.guild_join_requests;
 CREATE POLICY guild_join_requests_requester_own
     ON social_features.guild_join_requests
     FOR ALL
     USING (requester_id = gamilit.get_current_user_id());
 
 -- Lideres/officers del gremio pueden ver solicitudes pendientes para su gremio
+DROP POLICY IF EXISTS guild_join_requests_guild_leader_read ON social_features.guild_join_requests;
 CREATE POLICY guild_join_requests_guild_leader_read
     ON social_features.guild_join_requests
     FOR SELECT
@@ -623,6 +691,7 @@ CREATE POLICY guild_join_requests_guild_leader_read
     );
 
 -- Lideres del gremio pueden actualizar solicitudes (aceptar/rechazar)
+DROP POLICY IF EXISTS guild_join_requests_guild_leader_update ON social_features.guild_join_requests;
 CREATE POLICY guild_join_requests_guild_leader_update
     ON social_features.guild_join_requests
     FOR UPDATE
@@ -655,11 +724,13 @@ ALTER TABLE auth_management.auth_attempts FORCE ROW LEVEL SECURITY;
 
 ALTER TABLE gamification_system.user_equipped_items ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS user_equipped_items_admin_all ON gamification_system.user_equipped_items;
 CREATE POLICY user_equipped_items_admin_all
     ON gamification_system.user_equipped_items
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
+DROP POLICY IF EXISTS user_equipped_items_user_own ON gamification_system.user_equipped_items;
 CREATE POLICY user_equipped_items_user_own
     ON gamification_system.user_equipped_items
     FOR ALL
@@ -683,23 +754,27 @@ ALTER TABLE gamification_system.user_equipped_items FORCE ROW LEVEL SECURITY;
 ALTER TABLE gamification_system.user_purchases ENABLE ROW LEVEL SECURITY;
 
 -- Admins: acceso total
+DROP POLICY IF EXISTS user_purchases_admin_all ON gamification_system.user_purchases;
 CREATE POLICY user_purchases_admin_all
     ON gamification_system.user_purchases
     FOR ALL
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
 -- Usuarios: solo ven y crean sus propias compras
+DROP POLICY IF EXISTS user_purchases_user_select ON gamification_system.user_purchases;
 CREATE POLICY user_purchases_user_select
     ON gamification_system.user_purchases
     FOR SELECT
     USING (user_id = gamilit.get_current_user_id());
 
+DROP POLICY IF EXISTS user_purchases_user_insert ON gamification_system.user_purchases;
 CREATE POLICY user_purchases_user_insert
     ON gamification_system.user_purchases
     FOR INSERT
     WITH CHECK (user_id = gamilit.get_current_user_id());
 
 -- Usuarios: pueden actualizar solo sus propias compras (consumed_at, is_active)
+DROP POLICY IF EXISTS user_purchases_user_update ON gamification_system.user_purchases;
 CREATE POLICY user_purchases_user_update
     ON gamification_system.user_purchases
     FOR UPDATE

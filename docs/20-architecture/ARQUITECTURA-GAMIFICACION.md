@@ -88,7 +88,7 @@ XP_final = round(XP_streak)
 Toda otorgacion de XP se registra como transaccion inmutable:
 
 ```sql
--- Tabla: gamification.xp_transactions
+-- Tabla: gamification_system.xp_transactions
 id UUID PRIMARY KEY,
 student_id UUID NOT NULL REFERENCES auth.users(id),
 tenant_id UUID NOT NULL,
@@ -338,7 +338,7 @@ SELECT
   tenant_id,
   SUM(amount) as total_xp,
   RANK() OVER (PARTITION BY classroom_id ORDER BY SUM(amount) DESC) as rank
-FROM gamification.xp_transactions
+FROM gamification_system.xp_transactions
 WHERE created_at >= current_season_start()
 GROUP BY student_id, classroom_id, tenant_id;
 

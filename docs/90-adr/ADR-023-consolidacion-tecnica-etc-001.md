@@ -1,6 +1,14 @@
+---
+titulo: "ADR-023: Consolidacion Tecnica ETC-001"
+tipo: adr
+fecha_creacion: "2026-01-16"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-023: Consolidacion Tecnica ETC-001
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2026-01-16
 **EPIC:** ETC-001
 **Autores:** NEXUS v4.0 + Claude Code

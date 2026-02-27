@@ -18,7 +18,7 @@
 | 5 | US-ETC-005 | Documentacion | 5 | US-ETC-004 | Sprint 11 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Multiples schemas (alineacion de entities con tablas DDL)
 - **Patron:** Refactoring incremental, validacion de coherencia DDL-Backend-Frontend
 

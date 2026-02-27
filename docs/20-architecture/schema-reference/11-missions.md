@@ -141,4 +141,4 @@ Misiones asignadas por maestros a aulas completas.
 
 ---
 
-*Generado: 2026-02-21 | Sistema SIMCO v4.3.0*
+*Generado: 2026-02-21 | Sistema SIMCO v4.0.0*

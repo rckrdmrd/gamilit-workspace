@@ -22,7 +22,7 @@ Se han **actualizado los manuales de usuario** para los portales de **Maestros**
 
 ### 1. Manual del Portal de Maestros (v1.1)
 
-**Archivo:** `docs/finiquito/Manual_Portal_Maestros_ACTUALIZADO.md`
+**Archivo:** `docs/finiquito/Manual-Portal-Maestros-ACTUALIZADO.md`
 **Tamaño:** ~400 líneas
 **Fecha:** 23 de noviembre de 2025
 
@@ -62,7 +62,7 @@ Se han **actualizado los manuales de usuario** para los portales de **Maestros**
 
 ### 2. Manual del Portal de Administrador (v1.1)
 
-**Archivo:** `docs/finiquito/Manual_Portal_Administrador_ACTUALIZADO.md`
+**Archivo:** `docs/finiquito/Manual-Portal-Administrador-ACTUALIZADO.md`
 **Tamaño:** ~650 líneas
 **Fecha:** 23 de noviembre de 2025
 
@@ -428,8 +428,8 @@ Basándose en los manuales actualizados:
 
 ```
 docs/finiquito/
-├── Manual_Portal_Maestros_ACTUALIZADO.md          (~400 líneas) ✅
-├── Manual_Portal_Administrador_ACTUALIZADO.md     (~650 líneas) ✅
+├── Manual-Portal-Maestros-ACTUALIZADO.md          (~400 líneas) ✅
+├── Manual-Portal-Administrador-ACTUALIZADO.md     (~650 líneas) ✅
 └── REPORTE-ACTUALIZACION-MANUALES-2025-11-23.md   (este archivo) ✅
 ```
 

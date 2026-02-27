@@ -21,7 +21,7 @@
 ```sql
 -- apps/database/ddl/00-prerequisites.sql:38-40
 DO $$ BEGIN
-    CREATE TYPE public.auth_provider AS ENUM (
+    CREATE TYPE auth_management.auth_provider AS ENUM (
         'local',     -- Email/password tradicional
         'google',    -- Google OAuth 2.0
         'facebook',  -- Facebook Login
@@ -37,7 +37,7 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- apps/database/ddl/schemas/auth_management/tables/05-auth_providers.sql
 CREATE TABLE auth_management.auth_providers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    provider_name public.auth_provider NOT NULL UNIQUE,
+    provider_name auth_management.auth_provider NOT NULL UNIQUE,
     is_enabled BOOLEAN NOT NULL DEFAULT true,
     client_id TEXT, -- Almacenado encriptado
     client_secret_encrypted TEXT,
@@ -53,7 +53,7 @@ CREATE TABLE auth_management.auth_providers (
 CREATE TABLE auth_management.linked_providers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(user_id) ON DELETE CASCADE,
-    provider public.auth_provider NOT NULL,
+    provider auth_management.auth_provider NOT NULL,
     provider_user_id TEXT NOT NULL, -- ID del usuario en el provider externo
     provider_email TEXT,
     provider_data JSONB, -- Datos adicionales del provider

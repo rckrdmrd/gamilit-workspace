@@ -32,7 +32,7 @@ CREATE TABLE gamification_system.user_purchases (
 
     -- Relations
     user_id uuid NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
-    item_id uuid NOT NULL REFERENCES gamification_system.shop_items(id) ON DELETE SET NULL,
+    item_id uuid NOT NULL REFERENCES gamification_system.shop_items(id) ON DELETE RESTRICT,
     tenant_id uuid REFERENCES auth_management.tenants(id) ON DELETE CASCADE,
 
     -- Purchase details
@@ -61,7 +61,7 @@ COMMENT ON TABLE gamification_system.user_purchases IS 'Historial de compras de 
 
 -- Column comments
 COMMENT ON COLUMN gamification_system.user_purchases.user_id IS 'Usuario que realizó la compra';
-COMMENT ON COLUMN gamification_system.user_purchases.item_id IS 'Item comprado (SET NULL si se elimina del catálogo)';
+COMMENT ON COLUMN gamification_system.user_purchases.item_id IS 'Item comprado (RESTRICT: no se puede eliminar item con compras asociadas)';
 COMMENT ON COLUMN gamification_system.user_purchases.tenant_id IS 'Tenant al que pertenece la compra';
 COMMENT ON COLUMN gamification_system.user_purchases.quantity IS 'Cantidad comprada (para items apilables)';
 COMMENT ON COLUMN gamification_system.user_purchases.price_paid IS 'Precio pagado en ML Coins';

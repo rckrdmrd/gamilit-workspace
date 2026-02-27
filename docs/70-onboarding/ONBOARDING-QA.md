@@ -85,7 +85,7 @@ Lee estos documentos en orden para entender el contexto de QA:
 | Endpoints | 912 |
 | Entities | 156 files (157 classes) |
 | Tablas DB | 173 |
-| Componentes frontend | 577 |
+| Componentes frontend | 575 |
 
 ---
 

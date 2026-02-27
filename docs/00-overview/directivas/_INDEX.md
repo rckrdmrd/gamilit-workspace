@@ -2,7 +2,7 @@
 
 **Proyecto:** GAMILIT
 **Nivel:** STANDALONE
-**Ultima Actualizacion:** 2026-02-11
+**Ultima Actualizacion:** 2026-02-27
 
 ---
 
@@ -56,31 +56,10 @@ STACK:
   frontend: React 19 + TypeScript + Zustand 5.x + Vite 6.x
 ```
 
-### Metricas Actuales (SSOT: orchestration/inventarios/MASTER_INVENTORY.yml v7.0.0)
+### Metricas Actuales
 
-```yaml
-Database:
-  schemas: 18
-  tablas: 170
-  rls_policies: 263
-  funciones: 255
-  triggers: 132
-  enums: 41
-
-Backend:
-  modulos: 22
-  endpoints: 850
-  entities: 152
-  services: 170
-  controllers: 107
-
-Frontend:
-  componentes: 458
-  hooks: 127
-  paginas: 85
-  stores: 32
-  portales: 4
-```
+> **SSOT:** Las metricas del proyecto se mantienen en `orchestration/inventarios/MASTER_INVENTORY.yml`.
+> No se duplican aqui para evitar desincronizacion. Consultar el inventario directamente.
 
 ---
 
@@ -97,4 +76,4 @@ Frontend:
 
 ---
 
-*Actualizado: 2026-02-11*
+*Actualizado: 2026-02-27*

@@ -40,7 +40,7 @@ flowchart TD
 1. Padre accede a `ParentRegisterPage` y se registra via `POST /api/v1/parent-portal/auth/register` con email y password.
 2. Backend (`ParentAuthController`) crea cuenta en `auth_management.parent_accounts` y retorna JWT tokens.
 3. Padre inicia sesion en `ParentLoginPage` via `POST /api/v1/parent-portal/auth/login`.
-4. En `ParentDashboardPage`, padre solicita vinculacion con `POST /api/v1/parent-portal/students/link` enviando `LinkStudentDto` (codigo del estudiante).
+4. En `ParentDashboardPage`, padre solicita vinculacion con `POST /api/v1/parent-portal/students/link` enviando `LinkStudentDto` (codigo del estudiante + `relationshipType`: mother/father/guardian/tutor/stepparent/grandparent/other — campo requerido por NOT NULL en DDL).
 5. `ParentAuthService` valida el codigo, crea registro pendiente en `auth_management.parent_student_links`.
 6. Padre verifica vinculacion con `POST /api/v1/parent-portal/students/verify` enviando `VerifyLinkDto` (codigo de verificacion).
 7. Backend activa el vinculo (status = `active`) en `auth_management.parent_student_links`.

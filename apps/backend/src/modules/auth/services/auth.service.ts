@@ -1,4 +1,18 @@
-import { Injectable, Logger, UnauthorizedException, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  InvalidCredentialsError,
+  InactiveUserError,
+  ProfileNotFoundError,
+  EmailAlreadyExistsError,
+  SessionExpiredError,
+  InvalidRefreshTokenError,
+  UserNotFoundError,
+  WeakPasswordError,
+  SamePasswordError,
+  InvalidPasswordError,
+  EmailInUseError,
+  ProfileSessionNotFoundError,
+} from '../errors/auth.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -108,7 +122,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Email ya registrado');
+      throw new EmailAlreadyExistsError(dto.email);
     }
 
     // 2. Hashear password
@@ -254,13 +268,13 @@ export class AuthService {
         userAgent,
         !user ? 'Usuario no encontrado' : 'Password incorrecto',
       );
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new InvalidCredentialsError();
     }
 
     // 3. Validar estado activo (usando deleted_at ya que status no existe en la tabla)
     if (user.deleted_at) {
       await this.logAuthAttempt(user.id, email, false, ip, userAgent, 'Usuario inactivo (eliminado)');
-      throw new UnauthorizedException('Usuario no activo');
+      throw new InactiveUserError();
     }
 
     // 4. Registrar intento exitoso
@@ -272,7 +286,7 @@ export class AuthService {
     });
 
     if (!profile) {
-      throw new UnauthorizedException('Perfil de usuario no encontrado');
+      throw new ProfileNotFoundError();
     }
 
     // 6. Generar tokens
@@ -341,7 +355,7 @@ export class AuthService {
   async getFullProfile(userAuthId: string): Promise<UserResponseDto> {
     const user = await this.validateUser(userAuthId);
     if (!user) {
-      throw new UnauthorizedException('Usuario no encontrado');
+      throw new UserNotFoundError(userAuthId);
     }
 
     const profile = await this.profileRepository.findOne({
@@ -375,18 +389,18 @@ export class AuthService {
         where: { id: payload.sub },
       });
       if (!profile) {
-        throw new UnauthorizedException('Perfil no encontrado');
+        throw new ProfileSessionNotFoundError();
       }
 
       // 2.1 Validar que el usuario de auth.users esté activo
       if (!profile.user_id) {
-        throw new UnauthorizedException('Perfil sin usuario asociado');
+        throw new ProfileSessionNotFoundError();
       }
       const user = await this.userRepository.findOne({
         where: { id: profile.user_id },
       });
       if (!user || user.deleted_at) {
-        throw new UnauthorizedException('Usuario no encontrado o inactivo');
+        throw new InactiveUserError();
       }
 
       // 3. Hashear refresh token para buscar sesión
@@ -402,13 +416,13 @@ export class AuthService {
       });
 
       if (!session) {
-        throw new UnauthorizedException('Sesión no encontrada o refresh token inválido');
+        throw new InvalidRefreshTokenError();
       }
 
       // 5. Validar que la sesión no haya expirado
       if (new Date() > session.expires_at) {
         await this.sessionRepository.delete({ id: session.id });
-        throw new UnauthorizedException('Sesión expirada');
+        throw new SessionExpiredError();
       }
 
       // 6. Generar nuevos tokens
@@ -430,11 +444,14 @@ export class AuthService {
         refreshToken: newRefreshToken,
       };
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
+      if (error instanceof InvalidRefreshTokenError ||
+          error instanceof SessionExpiredError ||
+          error instanceof ProfileSessionNotFoundError ||
+          error instanceof InactiveUserError) {
         throw error;
       }
       // Error de JWT (token inválido, expirado, malformado, etc.)
-      throw new UnauthorizedException('Refresh token inválido o expirado');
+      throw new InvalidRefreshTokenError();
     }
   }
 
@@ -473,7 +490,7 @@ export class AuthService {
     // 1. Obtener usuario
     const user = await this.userRepository.findOne({ where: { id: userAuthId } });
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError(userAuthId);
     }
 
     // 2. Verificar contraseña actual
@@ -482,15 +499,15 @@ export class AuthService {
       user.encrypted_password,
     );
     if (!isCurrentPasswordValid) {
-      throw new BadRequestException('La contraseña actual es incorrecta');
+      throw new InvalidPasswordError('La contrasena actual es incorrecta');
     }
 
     // 3. Validar nueva contraseña
     if (newPassword.length < 8) {
-      throw new BadRequestException('La nueva contraseña debe tener al menos 8 caracteres');
+      throw new WeakPasswordError('La nueva contrasena debe tener al menos 8 caracteres');
     }
     if (currentPassword === newPassword) {
-      throw new BadRequestException('La nueva contraseña debe ser diferente a la actual');
+      throw new SamePasswordError();
     }
 
     // 4. Hash nueva contraseña
@@ -521,7 +538,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Usuario no encontrado');
+      throw new UserNotFoundError(userAuthId);
     }
 
     // 2. Buscar perfil asociado (profiles.user_id = auth.users.id)
@@ -530,7 +547,7 @@ export class AuthService {
     });
 
     if (!profile) {
-      throw new BadRequestException('Perfil no encontrado');
+      throw new ProfileNotFoundError();
     }
 
     // 3. Actualizar campos del perfil que vienen en el DTO
@@ -560,7 +577,7 @@ export class AuthService {
       });
 
       if (existingUser && existingUser.id !== userAuthId) {
-        throw new ConflictException('Email ya está en uso');
+        throw new EmailInUseError();
       }
 
       user.email = dto.email;
@@ -578,7 +595,7 @@ export class AuthService {
     });
 
     if (!updatedUser) {
-      throw new UnauthorizedException('Usuario no encontrado después de actualización');
+      throw new UserNotFoundError(userAuthId);
     }
 
     return updatedUser;
@@ -594,7 +611,7 @@ export class AuthService {
     });
 
     if (!profile) {
-      throw new UnauthorizedException('Perfil no encontrado');
+      throw new ProfileNotFoundError(userId);
     }
 
     return profile.preferences || {};
@@ -610,7 +627,7 @@ export class AuthService {
     });
 
     if (!profile) {
-      throw new UnauthorizedException('Perfil no encontrado');
+      throw new ProfileNotFoundError(userId);
     }
 
     profile.preferences = preferences;
@@ -641,7 +658,7 @@ export class AuthService {
     }
 
     if (!profile) {
-      throw new UnauthorizedException('Perfil no encontrado');
+      throw new ProfileNotFoundError(userId);
     }
 
     profile.avatar_url = avatarUrl;

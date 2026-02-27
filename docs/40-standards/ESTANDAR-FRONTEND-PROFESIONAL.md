@@ -1139,8 +1139,8 @@ import { UserList, useUsers, User } from '@/features/users';
 
 Los siguientes estandares definen reglas detalladas para aspectos concretos del desarrollo frontend. Aplican como complemento a este documento:
 
-- [STANDARD-API.md](./STANDARD-API.md) -- Ubicacion canonica de APIs, React Query como estandar, error handling
-- [STANDARD-COMPONENT.md](./STANDARD-COMPONENT.md) -- Export patterns, props typing, React imports, file naming
-- [STANDARD-IMPORTS.md](./STANDARD-IMPORTS.md) -- Import order (5 grupos), path aliases, barrels, icon imports
-- [STANDARD-TYPES.md](./STANDARD-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
-- [STANDARD-UX-PATTERNS.md](./STANDARD-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, forms, confirmation dialogs
+- [ESTANDAR-FRONTEND-API.md](./ESTANDAR-FRONTEND-API.md) -- Ubicacion canonica de APIs, React Query como estandar, error handling
+- [ESTANDAR-FRONTEND-COMPONENT.md](./ESTANDAR-FRONTEND-COMPONENT.md) -- Export patterns, props typing, React imports, file naming
+- [ESTANDAR-FRONTEND-IMPORTS.md](./ESTANDAR-FRONTEND-IMPORTS.md) -- Import order (5 grupos), path aliases, barrels, icon imports
+- [ESTANDAR-FRONTEND-TYPES.md](./ESTANDAR-FRONTEND-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
+- [ESTANDAR-FRONTEND-UX-PATTERNS.md](./ESTANDAR-FRONTEND-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, forms, confirmation dialogs

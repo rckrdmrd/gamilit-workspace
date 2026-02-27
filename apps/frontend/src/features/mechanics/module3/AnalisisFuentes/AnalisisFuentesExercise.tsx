@@ -103,7 +103,7 @@ export const AnalisisFuentesExercise = ({
       const data = await fetchSources();
       setSources(data);
       // Initialize ranking with all source IDs in default order
-      setCurrentRanking(data.map((s) => s.id));
+      setCurrentRanking(data.map((s: { id: string }) => s.id));
     } finally {
       setLoading(false);
     }

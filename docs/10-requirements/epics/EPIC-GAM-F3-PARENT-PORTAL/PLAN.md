@@ -17,7 +17,7 @@
 | 4 | US-PP-004 | Notificaciones escuela-familia (FL-PRN-03) | 3 | US-PP-002, F3-NOTIFICATIONS | Sprint 21 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Schema `parents` (parent_student_links), `auth_management.profiles`, `progress_tracking.*`, `analytics.*`, `notifications.*`, `communication.*`
 - **Patron:** Portal separado con acceso via codigo, dashboard read-only de progreso con validacion de vinculacion
 

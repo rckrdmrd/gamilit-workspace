@@ -676,14 +676,14 @@ docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/specifications/
 
 | Documento | Descripción | Completitud |
 |-----------|-------------|-------------|
-| [README.md](../../../sistema-recompensas/README.md) | Índice maestro y quick start | 100% ✅ |
-| [00-INVENTARIO-CAMBIOS.md](../../../sistema-recompensas/00-INVENTARIO-CAMBIOS.md) | Trazabilidad de 15 archivos | 100% ✅ |
-| [01-ARQUITECTURA-SISTEMA.md](../../../sistema-recompensas/01-ARQUITECTURA-SISTEMA.md) | 6 patrones de diseño | 95% ✅ |
-| [02-FLUJO-END-TO-END.md](../../../sistema-recompensas/02-FLUJO-END-TO-END.md) | 12 pasos + timeline | 98% ✅ |
-| [03-API-ENDPOINTS.md](../../../sistema-recompensas/03-API-ENDPOINTS.md) | 6 endpoints + JSON | 95% ✅ |
-| [04-DATABASE-SCHEMA.md](../../../sistema-recompensas/04-DATABASE-SCHEMA.md) | 3 tablas + SQL completo | 100% ✅ |
-| [05-TEST-RESULTS.md](../../../sistema-recompensas/05-TEST-RESULTS.md) | 10/10 tests passed | 98% ✅ |
-| [06-SEEDS-Y-DATOS-INICIALES.md](../../../sistema-recompensas/06-SEEDS-Y-DATOS-INICIALES.md) | 10 usuarios demo | 95% ✅ |
+| [README.md](../../../_archived/sistema-recompensas/README.md) | Índice maestro y quick start | 100% ✅ |
+| [00-INVENTARIO-CAMBIOS.md](../../../_archived/sistema-recompensas/00-INVENTARIO-CAMBIOS.md) | Trazabilidad de 15 archivos | 100% ✅ |
+| [01-ARQUITECTURA-SISTEMA.md](../../../_archived/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md) | 6 patrones de diseño | 95% ✅ |
+| [02-FLUJO-END-TO-END.md](../../../_archived/sistema-recompensas/02-FLUJO-END-TO-END.md) | 12 pasos + timeline | 98% ✅ |
+| [03-API-ENDPOINTS.md](../../../_archived/sistema-recompensas/03-API-ENDPOINTS.md) | 6 endpoints + JSON | 95% ✅ |
+| [04-DATABASE-SCHEMA.md](../../../_archived/sistema-recompensas/04-DATABASE-SCHEMA.md) | 3 tablas + SQL completo | 100% ✅ |
+| [05-TEST-RESULTS.md](../../../_archived/sistema-recompensas/05-TEST-RESULTS.md) | 10/10 tests passed | 98% ✅ |
+| [06-SEEDS-Y-DATOS-INICIALES.md](../../../_archived/sistema-recompensas/06-SEEDS-Y-DATOS-INICIALES.md) | 10 usuarios demo | 95% ✅ |
 
 ---
 
@@ -692,7 +692,7 @@ docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/specifications/
 #### Base de Datos
 ```sql
 -- Función trigger completa
-/docs/sistema-recompensas/04-DATABASE-SCHEMA.md
+/docs/10-requirements/_archived/sistema-recompensas/04-DATABASE-SCHEMA.md
   → Sección: "Función update_user_stats_on_exercise_complete()"
   → Líneas: 45-120 (código SQL completo)
 
@@ -733,13 +733,13 @@ apps/frontend/src/features/gamification/components/CoinBalance.tsx
 ### Diagramas y Visualizaciones
 
 #### Flujo End-to-End
-Ver: [02-FLUJO-END-TO-END.md](../../../sistema-recompensas/02-FLUJO-END-TO-END.md)
+Ver: [02-FLUJO-END-TO-END.md](../../../_archived/sistema-recompensas/02-FLUJO-END-TO-END.md)
 - Diagrama ASCII completo
 - Timeline de 120ms paso a paso
 - Descripción de cada componente
 
 #### Patrones de Diseño
-Ver: [01-ARQUITECTURA-SISTEMA.md](../../../sistema-recompensas/01-ARQUITECTURA-SISTEMA.md)
+Ver: [01-ARQUITECTURA-SISTEMA.md](../../../_archived/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md)
 - Dual-Table Pattern
 - UPSERT Pattern
 - Map-based Lookup
@@ -770,7 +770,7 @@ const coinsEarned = Math.floor(
 );
 ```
 
-Ver: [03-API-ENDPOINTS.md](../../../sistema-recompensas/03-API-ENDPOINTS.md) - Sección "Cálculo de Recompensas"
+Ver: [03-API-ENDPOINTS.md](../../../_archived/sistema-recompensas/03-API-ENDPOINTS.md) - Sección "Cálculo de Recompensas"
 
 #### Progress Calculation
 ```typescript
@@ -794,14 +794,14 @@ const calculateModuleProgress = (
 };
 ```
 
-Ver: [01-ARQUITECTURA-SISTEMA.md](../../../sistema-recompensas/01-ARQUITECTURA-SISTEMA.md) - Sección "Map-based Lookup"
+Ver: [01-ARQUITECTURA-SISTEMA.md](../../../_archived/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md) - Sección "Map-based Lookup"
 
 ---
 
 ### Tests y Validación
 
 #### Suite de Tests
-Ver: [05-TEST-RESULTS.md](../../../sistema-recompensas/05-TEST-RESULTS.md)
+Ver: [05-TEST-RESULTS.md](../../../_archived/sistema-recompensas/05-TEST-RESULTS.md)
 
 **10 Tests Implementados:**
 
@@ -823,7 +823,7 @@ Ver: [05-TEST-RESULTS.md](../../../sistema-recompensas/05-TEST-RESULTS.md)
 ### Datos de Prueba
 
 #### Seeds Iniciales
-Ver: [06-SEEDS-Y-DATOS-INICIALES.md](../../../sistema-recompensas/06-SEEDS-Y-DATOS-INICIALES.md)
+Ver: [06-SEEDS-Y-DATOS-INICIALES.md](../../../_archived/sistema-recompensas/06-SEEDS-Y-DATOS-INICIALES.md)
 
 **10 Usuarios Demo:**
 - 5 estudiantes (student1@example.com - student5@example.com)

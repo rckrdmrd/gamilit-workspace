@@ -21,8 +21,8 @@
 | 8 | US-GAM-008 | Recompensas modulos | 5 | US-GAM-003, F1-EXERCISES | Sprint 9 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Redis
-- **Base de datos:** Schema `gamification` (tablas xp_transactions, ranks, achievements, ml_coin_transactions, store_items)
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Redis
+- **Base de datos:** Schema `gamification_system` (tablas xp_transactions, ranks, achievements, ml_coin_transactions, store_items)
 - **Patron:** Event-driven (exercise completion triggers XP/coins), Observer pattern para achievements
 
 ## Estrategia de Testing

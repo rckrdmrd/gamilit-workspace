@@ -6,6 +6,7 @@
 -- =====================================================
 
 -- Tipos de mision
+DROP TYPE IF EXISTS social_features.guild_mission_type CASCADE;
 CREATE TYPE social_features.guild_mission_type AS ENUM (
     'exercises_completed',
     'total_score',

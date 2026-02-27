@@ -15,35 +15,41 @@
 DO $$ BEGIN
     CREATE TYPE educational_content.exercise_type AS ENUM (
         -- ====================================================================
-        -- MODULOS IMPLEMENTADOS (17 mecanicas) - AUTO-EVALUABLES
+        -- MODULE 1: Comprension Literal (5 activos + 2 auxiliares asignables)
+        -- Activos: crucigrama, linea_tiempo, completar_espacios, verdadero_falso, sopa_letras
+        -- Auxiliares asignables: emparejamiento, mapa_conceptual
         -- ====================================================================
-
-        -- Module 1: Comprension Literal (7 mecanicas)
         'completar_espacios', 'crucigrama', 'emparejamiento', 'linea_tiempo',
         'mapa_conceptual', 'sopa_letras', 'verdadero_falso',
 
-        -- Module 2: Comprension Inferencial (5 mecanicas)
+        -- ====================================================================
+        -- MODULE 2: Comprension Inferencial (5 mecanicas) - AUTO-EVALUABLES
+        -- ====================================================================
         'construccion_hipotesis', 'detective_textual', 'prediccion_narrativa',
         'puzzle_contexto', 'rueda_inferencias',
 
-        -- Module 3: Comprension Critica (5 mecanicas)
+        -- ====================================================================
+        -- MODULE 3: Comprension Critica (5 mecanicas) - EVALUACION MANUAL
+        -- ====================================================================
         'analisis_fuentes', 'debate_digital', 'matriz_perspectivas',
         'podcast_argumentativo', 'tribunal_opiniones',
 
         -- ====================================================================
-        -- BACKLOG: FASE 4 (8 mecanicas) - EVALUACION MANUAL/IA REQUERIDA
+        -- MODULE 4: Lectura Digital (9 mecanicas) - EVALUACION MANUAL
+        -- 5 activos + 4 backlog (chat_literario, email_formal, ensayo_argumentativo, resena_critica)
         -- ====================================================================
-
-        -- Module 4: Lectura Digital (9 mecanicas)
         'analisis_memes', 'infografia_interactiva', 'navegacion_hipertextual',
         'quiz_tiktok', 'verificador_fake_news',
         'chat_literario', 'email_formal', 'ensayo_argumentativo', 'resena_critica',
 
-        -- Module 5: Produccion Lectora (3 mecanicas)
+        -- ====================================================================
+        -- MODULE 5: Produccion Lectora (3 mecanicas) - EVALUACION MANUAL
+        -- ====================================================================
         'comic_digital', 'diario_multimedia', 'video_carta',
 
         -- ====================================================================
-        -- TIPOS AUXILIARES (4) - Sincronizacion con Backend
+        -- TIPOS AUXILIARES (4) - No asignados a modulo especifico
+        -- (mapa_conceptual y emparejamiento estan arriba con M1 pero son auxiliares)
         -- ====================================================================
         'comprension_auditiva',   -- Ejercicio de comprension auditiva
         'collage_prensa',         -- Ejercicio de collage con recortes de prensa

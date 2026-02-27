@@ -382,8 +382,8 @@ type GetUsersParams = paths['/v1/users']['get']['parameters']['query'];
 
 ## 10. Referencias
 
-- **Estandar de tipos (canonica):** [`docs/40-standards/STANDARD-TYPES.md`](../../../40-standards/STANDARD-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
-- **Estandar de imports:** [`docs/40-standards/STANDARD-IMPORTS.md`](../../../40-standards/STANDARD-IMPORTS.md) -- Import order y path aliases
+- **Estandar de tipos (canonica):** [`docs/40-standards/ESTANDAR-FRONTEND-TYPES.md`](../../../40-standards/ESTANDAR-FRONTEND-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
+- **Estandar de imports:** [`docs/40-standards/ESTANDAR-FRONTEND-IMPORTS.md`](../../../40-standards/ESTANDAR-FRONTEND-IMPORTS.md) -- Import order y path aliases
 - **Analisis inicial:** `TYPES-CONSOLIDATION-ANALYSIS.md`
 - **Plan de consolidacion:** `TYPES-CONSOLIDATION-PLAN.md`
 - **Estructura de features:** `ESTRUCTURA-FEATURES.md`

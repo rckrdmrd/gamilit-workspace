@@ -87,7 +87,7 @@ Asignaciones de ejercicios a aulas.
 | id | UUID | NOT NULL | uuid_generate_v4() | PK |
 | tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
 | classroom_id | UUID | NOT NULL | - | FK classrooms.classrooms |
-| exercise_id | UUID | NOT NULL | - | FK education.exercises |
+| exercise_id | UUID | NOT NULL | - | FK educational_content.exercises |
 | assigned_by | UUID | NOT NULL | - | FK auth.users (teacher) |
 | title | VARCHAR(200) | NOT NULL | - | Titulo de la asignacion |
 | instructions | TEXT | NULL | NULL | Instrucciones adicionales |
@@ -111,7 +111,7 @@ Entregas de asignaciones.
 | assignment_id | UUID | NOT NULL | - | FK classrooms.assignments |
 | student_id | UUID | NOT NULL | - | FK auth.users |
 | tenant_id | UUID | NOT NULL | - | FK tenants.tenants |
-| attempt_id | UUID | NULL | NULL | FK education.exercise_attempts |
+| attempt_id | UUID | NULL | NULL | FK educational_content.exercise_attempts |
 | status | submission_status | NOT NULL | 'pending' | Estado |
 | submitted_at | TIMESTAMPTZ | NULL | NULL | Fecha de entrega |
 | score | NUMERIC(5,2) | NULL | NULL | Puntaje |

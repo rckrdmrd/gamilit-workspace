@@ -18,7 +18,7 @@
 | 5 | US-CONT-005 | Import/Export | 5 | US-CONT-003 | Sprint 17 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / TipTap (WYSIWYG)
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / TipTap (WYSIWYG)
 - **Base de datos:** Schema `educational_content` (tablas content_items, content_versions, media_assets, content_categories)
 - **Patron:** CMS headless, versionado con historial, media upload con S3/Cloudinary
 

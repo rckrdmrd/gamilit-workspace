@@ -1,6 +1,14 @@
+---
+titulo: "ADR-010: DocumentoDeDiseno como Fuente de Verdad para Modulos y Ejercicios"
+tipo: adr
+fecha_creacion: "2025-11-23"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-010: DocumentoDeDiseño como Fuente de Verdad para Módulos y Ejercicios
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-23
 **Autor:** Architecture-Analyst
 **Relacionado con:** GAP-MOD1-001, GAP-MOD3-001, REPORTE-DESALINEACION-MODULOS-EJERCICIOS-2025-11-23.md
@@ -235,20 +243,17 @@ Esto indica que:
 
 ### Documentos Relacionados
 
-- **Diseño:** `docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md` (v6.4)
-- **Análisis de Gaps:** `orchestration/agentes/architecture-analyst/gap-analysis/REPORTE-DESALINEACION-MODULOS-EJERCICIOS-2025-11-23.md`
-- **Matriz de Gaps:** `orchestration/agentes/architecture-analyst/gap-analysis/gaps-matrix.yml`
+- **Diseño:** [Archivo no disponible — documento historico] (DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md v6.4, reubicado en restructuraciones posteriores)
+- **Análisis de Gaps:** [Archivo no disponible — documento historico] (REPORTE-DESALINEACION-MODULOS-EJERCICIOS-2025-11-23.md, generado por agente y no persistido)
+- **Matriz de Gaps:** [Archivo no disponible — documento historico] (gaps-matrix.yml, generado por agente y no persistido)
 
 ### Prompts de Agentes
 
-- **Database-Developer:** `orchestration/prompts/PROMPT-DATABASE-AGENT.md`
-- **Architecture-Analyst:** `orchestration/prompts/PROMPT-ARCHITECTURE-ANALYST.md`
+- [Archivo no disponible — documento historico] (orchestration/prompts/ fue eliminado en restructuraciones posteriores; perfiles de agente actuales en `orchestration/agents/perfiles/`)
 
 ### Directivas Aplicables
 
-- `DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md` - Documentar cambios en diseño
-- `DIRECTIVA-VALIDACION-SUBAGENTES.md` - Proceso de validación de implementaciones
-- `POLITICAS-USO-AGENTES.md` - Roles y responsabilidades
+- [Archivo no disponible — documento historico] (directivas reubicadas en `orchestration/directivas/` en restructuraciones posteriores)
 
 ---
 
@@ -325,7 +330,7 @@ Para prevenir futuras desalineaciones, se establece:
 ---
 
 **Versión ADR:** 1.0
-**Estado:** APROBADO (2025-11-23)
+**Estado:** Aceptada (2025-11-23)
 **Próxima Revisión:** Post-correcciones (2025-12-01)
 
 ---

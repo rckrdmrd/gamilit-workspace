@@ -1,6 +1,14 @@
+---
+titulo: "ADR-015: Centralizacion de Rutas API en apiConfig.ts"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-015: Centralización de Rutas API en apiConfig.ts
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-24
 **Autor:** Architecture-Analyst
 **Relacionado con:** GAP-001, GAP-002, GAP-005, GAP-006, ADR-011
@@ -475,5 +483,5 @@ export const STUDENT_ENDPOINTS = {
 
 **Versión:** 1.0.0
 **Fecha de Decisión:** 2025-11-24
-**Estado:** Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa

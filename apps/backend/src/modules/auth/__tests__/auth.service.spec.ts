@@ -2,8 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import {
+  EmailAlreadyExistsError,
+  InvalidCredentialsError,
+  InactiveUserError,
+} from '../errors/auth.errors';
 import { AuthService } from '../services/auth.service';
 import { User, Profile, Tenant, UserSession, AuthAttempt } from '../entities';
 import { RegisterUserDto } from '../dto';
@@ -264,16 +268,16 @@ describe('AuthService', () => {
       // Password should not be exposed in response
     });
 
-    it('should throw ConflictException if email already exists', async () => {
+    it('should throw EmailAlreadyExistsError if email already exists', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(mockUser); // Email ya existe
 
       // Act & Assert
       await expect(service.register(registerDto, '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
-        ConflictException,
+        EmailAlreadyExistsError,
       );
       await expect(service.register(registerDto, '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
-        'Email ya registrado',
+        'ya registrado',
       );
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: registerDto.email },
@@ -429,7 +433,7 @@ describe('AuthService', () => {
       expect(mockSessionRepository.save).toHaveBeenCalled();
     });
 
-    it('should throw UnauthorizedException if user does not exist', async () => {
+    it('should throw InvalidCredentialsError if user does not exist', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(null);
       mockAttemptRepository.create.mockReturnValue({});
@@ -437,15 +441,12 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(service.login('nonexistent@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(service.login('nonexistent@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
-        'Credenciales inválidas',
+        InvalidCredentialsError,
       );
       expect(mockAttemptRepository.save).toHaveBeenCalled(); // Failed attempt logged
     });
 
-    it('should throw UnauthorizedException if password is incorrect', async () => {
+    it('should throw InvalidCredentialsError if password is incorrect', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(mockUser);
       mockAttemptRepository.create.mockReturnValue({});
@@ -456,12 +457,12 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(service.login('test@example.com', 'WrongPassword', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
-        UnauthorizedException,
+        InvalidCredentialsError,
       );
       expect(mockAttemptRepository.save).toHaveBeenCalled(); // Failed attempt logged
     });
 
-    it('should throw UnauthorizedException if user is deleted', async () => {
+    it('should throw InactiveUserError if user is deleted', async () => {
       // Arrange
       const deletedUser = { ...mockUser, deleted_at: new Date() };
       mockUserRepository.findOne.mockResolvedValue(deletedUser);
@@ -471,7 +472,7 @@ describe('AuthService', () => {
 
       // Act & Assert
       await expect(service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
-        UnauthorizedException,
+        InactiveUserError,
       );
       await expect(service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
         'Usuario no activo',

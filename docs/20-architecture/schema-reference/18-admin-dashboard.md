@@ -57,7 +57,7 @@ Reportes generados por administradores del sistema.
 
 **Entity Backend:** `AdminReport` (via DB_TABLES.ADMIN.ADMIN_REPORTS)
 
-### admin_dashboard.materialized_views_config
+### admin_dashboard.materialized_views_config [NO DDL — conceptual only]
 Configuracion de refresh para materialized views del dashboard.
 
 | Columna | Tipo | Nullable | Descripcion |
@@ -68,10 +68,42 @@ Configuracion de refresh para materialized views del dashboard.
 | last_refresh_at | TIMESTAMP | NULL | Ultimo refresh exitoso |
 | is_active | BOOLEAN | NOT NULL | Si el refresh automatico esta habilitado |
 
-### admin_dashboard.metrics_history
-Historial de metricas del sistema para tracking temporal.
+### admin_dashboard.metrics_history [DDL-ACCURATE]
 
-**Entity Backend:** `MetricsHistory` (via DB_TABLES.ADMIN.METRICS_HISTORY)
+**Descripcion:** Almacena historial de metricas del sistema para monitoreo en AdminMonitoringPage.
+
+| Columna | Tipo | Nullable | Default | Descripcion |
+|---------|------|----------|---------|-------------|
+| id | UUID | NOT NULL | gen_random_uuid() | PK |
+| recorded_at | TIMESTAMPTZ | NOT NULL | NOW() | Timestamp de cuando se registro la metrica |
+| memory_total_mb | NUMERIC(10,2) | NOT NULL | - | Memoria total del sistema en MB |
+| memory_used_mb | NUMERIC(10,2) | NOT NULL | - | Memoria usada en MB |
+| memory_free_mb | NUMERIC(10,2) | NOT NULL | - | Memoria libre en MB |
+| memory_usage_percent | NUMERIC(5,2) | NOT NULL | - | Porcentaje de uso de memoria (0-100) |
+| heap_used_mb | NUMERIC(10,2) | NULL | NULL | Heap de Node.js usada en MB |
+| heap_total_mb | NUMERIC(10,2) | NULL | NULL | Heap total de Node.js en MB |
+| cpu_user_ms | NUMERIC(12,2) | NULL | NULL | Tiempo de CPU en modo usuario (ms) |
+| cpu_system_ms | NUMERIC(12,2) | NULL | NULL | Tiempo de CPU en modo sistema (ms) |
+| cpu_usage_percent | NUMERIC(5,2) | NULL | NULL | Porcentaje estimado de uso de CPU |
+| cpu_cores | INTEGER | NULL | NULL | Numero de cores de CPU |
+| load_average_1m | NUMERIC(5,2) | NULL | NULL | Load average del ultimo minuto |
+| load_average_5m | NUMERIC(5,2) | NULL | NULL | Load average de los ultimos 5 minutos |
+| load_average_15m | NUMERIC(5,2) | NULL | NULL | Load average de los ultimos 15 minutos |
+| process_uptime_seconds | INTEGER | NULL | NULL | Uptime del proceso Node.js en segundos |
+| active_handles | INTEGER | NULL | NULL | Handles activos del proceso |
+| active_requests | INTEGER | NULL | NULL | Requests activos del proceso |
+| system_uptime_seconds | INTEGER | NULL | NULL | Uptime del sistema operativo en segundos |
+| node_version | VARCHAR(20) | NULL | NULL | Version de Node.js |
+| platform | VARCHAR(50) | NULL | NULL | Plataforma del sistema operativo |
+| hostname | VARCHAR(255) | NULL | NULL | Hostname del servidor |
+| created_at | TIMESTAMPTZ | NOT NULL | NOW() | - |
+
+**Primary Key:** id
+**Unique:** recorded_at (`uq_metrics_history_recorded_at` -- evita duplicados en el mismo segundo)
+**Indices:** `idx_metrics_history_recorded_at` (recorded_at DESC), `idx_metrics_history_created_at` (created_at), `idx_metrics_history_memory_usage` (memory_usage_percent, parcial WHERE memory_usage_percent > 80)
+**Funcion:** `admin_dashboard.cleanup_old_metrics(p_retention_days INTEGER DEFAULT 30)` -- elimina metricas mas antiguas que N dias
+**Grants:** SELECT, INSERT, DELETE a gamilit_user; EXECUTE cleanup_old_metrics a gamilit_user
+**Entity Backend:** `MetricsHistory` (via DB_TABLES.ADMIN.METRICS_HISTORY, `admin/entities/metrics-history.entity.ts`)
 
 ---
 

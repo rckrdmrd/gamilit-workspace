@@ -192,4 +192,4 @@ ALTER TABLE ONLY progress_tracking.certificates
 -- =====================================================
 
 GRANT ALL ON TABLE progress_tracking.certificates TO gamilit_user;
-GRANT SELECT ON TABLE progress_tracking.certificates TO gamilit_readonly;
+-- Note: gamilit_readonly role removed (not created in current setup)

@@ -53,6 +53,9 @@ apps/frontend/src/
       ParentRegisterPage.tsx      # Pagina de registro
       ParentDashboardPage.tsx     # Dashboard principal
       ChildProgressPage.tsx       # Detalle de progreso por hijo
+      StudentLinkingPage.tsx      # Gestion de vinculacion de hijos
+      StudentActivitiesPage.tsx   # Vista de actividades del estudiante
+      ReportsPage.tsx             # Historial y generacion de reportes
 
   features/parent/
     index.ts                      # Barrel export del feature
@@ -126,7 +129,7 @@ Datasources adicionales inyectados en servicios:
 
 | Capa | Componentes | Servicios | Endpoints | DTOs |
 |------|-------------|-----------|-----------|------|
-| Frontend | 6 (.tsx) | - | - | - |
+| Frontend | 7 (.tsx) | - | - | - |
 | Frontend (store) | - | 1 store | - | - |
 | Frontend (API) | - | 1 (18 funciones) | - | 12 interfaces |
 | Backend | - | 7 services | 16 endpoints | 11 DTOs |
@@ -629,6 +632,9 @@ Definidas en `apps/frontend/src/App.tsx`, envueltas en `ErrorBoundary` con `port
 | `/parent/register` | `ParentRegisterPage` | Publica | Registro de padre |
 | `/parent/dashboard` | `ParentDashboardPage` | `ProtectedRoute(parent)` | Dashboard principal |
 | `/parent/child/:studentId` | `ChildProgressPage` | `ProtectedRoute(parent)` | Progreso de hijo |
+| `/parent/linking` | `StudentLinkingPage` | `ProtectedRoute(parent)` | Gestion de vinculacion de hijos |
+| `/parent/activities` | `StudentActivitiesPage` | `ProtectedRoute(parent)` | Vista de actividades del estudiante |
+| `/parent/reports` | `ReportsPage` | `ProtectedRoute(parent)` | Historial y generacion de reportes |
 
 ### 9.2 Navegacion Interna
 
@@ -653,6 +659,9 @@ const ParentLoginPage = lazy(() => import('@/apps/parent/pages/ParentLoginPage')
 const ParentRegisterPage = lazy(() => import('@/apps/parent/pages/ParentRegisterPage'));
 const ParentDashboardPage = lazy(() => import('@/apps/parent/pages/ParentDashboardPage'));
 const ChildProgressPage = lazy(() => import('@/apps/parent/pages/ChildProgressPage'));
+const StudentLinkingPage = lazy(() => import('@/apps/parent/pages/StudentLinkingPage'));
+const StudentActivitiesPage = lazy(() => import('@/apps/parent/pages/StudentActivitiesPage'));
+const ReportsPage = lazy(() => import('@/apps/parent/pages/ReportsPage'));
 ```
 
 ---
@@ -787,14 +796,15 @@ Las rutas del portal de padres se protegen con `ProtectedRoute` que verifica:
 
 ## 15. Gaps y Pendientes
 
-Funcionalidades referenciadas en el codigo frontend pero que no tienen pagina o ruta implementada:
+Funcionalidades referenciadas en el codigo frontend. Las 3 paginas pendientes ya estan implementadas (StudentLinkingPage, StudentActivitiesPage, ReportsPage):
 
 | Referencia | Ubicacion | Estado |
 |------------|-----------|--------|
+| `/parent/linking` | StudentLinkingPage | Implementado |
+| `/parent/activities` | StudentActivitiesPage | Implementado |
+| `/parent/reports` | ReportsPage | Implementado |
 | `/parent/notifications` | Link en header de ParentDashboardPage | Sin ruta ni pagina |
 | `/parent/settings` | Link en header de ParentDashboardPage | Sin ruta ni pagina |
-| `/parent/activity` | Link "Ver todo" en actividad reciente | Sin ruta ni pagina |
-| `/parent/assignments` | Link "Ver todo" en tareas proximas | Sin ruta ni pagina |
 | `/parent/forgot-password` | Link en ParentLoginPage | Sin ruta ni pagina |
 | Push notifications | Templates solo para email | No implementado |
 | SMS notifications | Mencionado en CLAUDE.md | No implementado |

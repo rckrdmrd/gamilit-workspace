@@ -45,10 +45,10 @@ nano apps/frontend/.env
 
 ```env
 # API Backend
-VITE_API_URL=http://localhost:3000/api/v1
+VITE_API_URL=http://localhost:3006/api/v1
 
 # WebSocket
-VITE_WS_URL=http://localhost:3000
+VITE_WS_URL=http://localhost:3006
 
 # Environment
 VITE_ENV=development
@@ -217,7 +217,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3006',
         changeOrigin: true,
       },
     },

@@ -252,4 +252,4 @@ admin_dashboard:
 ---
 
 *Documento generado como parte de TASK-008-ANALISIS-ERRORES-BACKEND-GAMILIT*
-*Sistema SIMCO v4.3.0 - GAMILIT*
+*Sistema SIMCO v4.0.0 - GAMILIT*

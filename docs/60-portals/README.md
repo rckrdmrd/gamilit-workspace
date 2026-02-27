@@ -9,7 +9,7 @@
 | [Estudiante](./student/) | ~100% | Dashboard, ejercicios, gamificacion, leaderboards | student/ |
 | [Maestro](./teacher/) | ~95% | Gestion de aulas, asignaciones, reportes | teacher/ |
 | [Administrador](./admin/) | ~92% | Gestion de contenido, configuracion, analytics | admin/ |
-| [Padres](./parents/) | 100% backend | Vinculacion, progreso, notificaciones | parents/ |
+| [Padres](./parents/) | 100% | Vinculacion, progreso, notificaciones | parents/ |
 
 ## Estructura por Portal
 

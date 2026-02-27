@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "5.1.0"
-fecha: "2026-02-21"  # Inventory validation 2026-02-21: services 173->172, DTOs 400->401 corrected
+version: "5.3.0"
+fecha: "2026-02-27"  # v5.3.0: Remediacion 17 gaps - data_warehouse conditional datasource, domain error classes (42), integration test infra (5 files)
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -15,7 +15,7 @@ auditoria: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
 
 resumen:
   modulos: 23             # 22 directorios + mail (transitivo)
-  entities: 156          # 156 archivos .entity.ts, 159 @Entity classes (+UserEquippedItem own file, +PendingUserInitialization, +ResourceRating, +ResourceComment, +ResourceDownload, message.entity has 2)
+  entities: 156          # 156 archivos .entity.ts, 157 @Entity classes (message.entity.ts has 2: Message + MessageParticipant). Corrected 2026-02-27 (was 159, overcounted)
   dtos: 401              # 401 *.dto.ts files in modules/. Verified 2026-02-21
   services: 172           # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
   controllers: 108
@@ -25,8 +25,11 @@ resumen:
   interceptors: 6              # +1: tracing.interceptor.ts (new)
   pipes: 6                # 6 clases en 2 archivos .pipe.ts
   filters: 2              # 2 clases en 1 archivo .filter.ts
-  tests_files: 61         # Verified 2026-02-21: 61 .spec.ts files
+  tests_files: 63         # Corrected 2026-02-27: 63 .spec.ts files (was 61, 2 new specs added post-Sprint2)
   tests_cases: 833        # Test cases (jest --verbose count)
+  domain_error_classes: 42   # 25 auth + 17 gamification error classes (ADR-045, Phase 6D remediation)
+  domain_error_throws: 129   # 50 auth + 79 gamification usage sites
+  integration_test_files: 5  # jest.integration.config.js + 5 integration spec files (npm run test:integration)
 
 # -------------------------------------------------------------------------------
 # MODULOS (22 directorios, mapeados a directorios fisicos reales)
@@ -368,6 +371,11 @@ datasources:
     schema: "lti_integration"
     entities_path: "modules/lti/entities/**/*.entity"
     nota: "FIX-CORR-007: 11th datasource created for LTI module"
+  - nombre: "data_warehouse"
+    schema: "data_warehouse"
+    entities_path: "modules/etl + modules/ml + modules/visualization (conditional)"
+    nota: "Conditional — activated when ENABLE_DATA_WAREHOUSE=true env var set. Required by etl/ml/visualization modules (not imported in app.module.ts by default). Phase 6D remediation."
+    estado: "CONDITIONAL"
 
 # -------------------------------------------------------------------------------
 # GUARDS (15 verificados)

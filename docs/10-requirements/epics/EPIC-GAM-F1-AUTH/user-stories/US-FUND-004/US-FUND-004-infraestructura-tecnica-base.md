@@ -113,11 +113,11 @@ backend/
 ```json
 {
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/platform-express": "^10.0.0",
-    "@nestjs/typeorm": "^10.0.0",
-    "@nestjs/jwt": "^10.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/jwt": "^11.0.0",
     "@nestjs/swagger": "^7.0.0",
     "typeorm": "^0.3.17",
     "pg": "^8.11.0",
@@ -200,12 +200,12 @@ frontend/
 ```json
 {
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-router-dom": "^6.14.0",
-    "zustand": "^4.3.9",
+    "zustand": "^5.0.0",
     "axios": "^1.4.0",
-    "tailwindcss": "^3.3.3"
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.3",

@@ -1,6 +1,14 @@
-# ADR-0001: Adopción de Arquitectura Monorepo
+---
+titulo: "ADR-040: Adopcion de Arquitectura Monorepo"
+tipo: adr
+fecha_creacion: "2025-11-01"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
 
-**Status:** ✅ Accepted
+# ADR-040: Adopción de Arquitectura Monorepo
+
+**Estado:** Aceptada
 **Date:** 2025-11-01
 **Deciders:** Tech Lead, Backend Team, Frontend Team
 **Tags:** architecture, repository-structure, devops
@@ -470,7 +478,7 @@ git log --grep="^feat(backend)"
 
 ---
 
-**Status:** ✅ Accepted and Implemented
+**Estado:** Aceptada e Implementada
 **Date Created:** 2025-11-01
 **Last Updated:** 2025-11-07
 **Supersedes:** N/A (primera ADR)

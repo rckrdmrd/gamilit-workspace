@@ -74,7 +74,7 @@
 |---------|---------|-----------|
 | react | 19.x | UI library |
 | react-dom | 19.x | DOM rendering |
-| react-router-dom | 7.x | Client-side routing (73 routes) |
+| react-router-dom | 7.x | Client-side routing (74 routes) |
 | zustand | 5.x | State management (13 stores) |
 | axios | 1.x | HTTP client (67 API services) |
 | socket.io-client | 4.8+ | WebSocket client |

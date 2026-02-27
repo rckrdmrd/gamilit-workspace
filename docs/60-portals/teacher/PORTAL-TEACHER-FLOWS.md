@@ -62,7 +62,7 @@ Usuario navega a /teacher
 │           ├──────► ModuleProgress Repository (progress schema)        │
 │           ├──────► ExerciseSubmission Repository (progress schema)    │
 │           ├──────► StudentInterventionAlert Repository                │
-│           └──────► UserStats Repository (gamification schema)         │
+│           └──────► UserStats Repository (gamification_system schema)   │
 │                                                                        │
 └───────────────────────────────────────────────────────────────────────┘
          │
@@ -535,7 +535,7 @@ async getStudentProgressWithGamification(studentId: string) {
     .where('mp.user_id = :studentId', { studentId })
     .getMany();
 
-  // 2. Gamification schema
+  // 2. gamification_system schema
   const userStats = await this.statsRepo.findOne({
     where: { user_id: studentId },
   });

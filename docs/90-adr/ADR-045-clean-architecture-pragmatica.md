@@ -1,6 +1,14 @@
+---
+titulo: "ADR-045: Clean Architecture Pragmatica"
+tipo: adr
+fecha_creacion: "2026-02-17"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-045: Clean Architecture Pragmatica
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-17
 **Deciders:** Tech Lead, Backend Team
 **Tags:** architecture, backend, clean-architecture, domain-errors, nestjs
@@ -90,7 +98,7 @@ Las entities siguen siendo clases TypeORM con decoradores ORM. No se crean entit
 ### Orden de Adopcion
 
 ```
-Fase 1 (actual):  Domain Errors Hierarchy (MQ-002)
+Fase 1 (completada 2026-02-27):  Domain Errors Hierarchy (MQ-002)
                    +-- DomainError base class
                    +-- Subclases semanticas
                    +-- Global exception filter
@@ -182,7 +190,7 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 
 | Dependencia | Tipo | Estado | Descripcion |
 |-------------|------|--------|-------------|
-| MQ-002 | Pre-requisito | Pendiente | Domain Errors Hierarchy — primer paso hacia domain layer |
+| MQ-002 | Pre-requisito | Completado | Domain Errors Hierarchy — 42 classes (25 auth, 17 gamification), 129 throw sites. Migration guide: docs/50-guides/backend/DOMAIN-ERROR-MIGRATION.md |
 | MQ-005 | Diferida | Pendiente | Repository Pattern — se implementara despues de MQ-002 estable |
 
 ---
@@ -197,10 +205,19 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-17
-**Last Updated:** 2026-02-17
+**Last Updated:** 2026-02-27
 **Supersedes:** N/A
 **Superseded by:** N/A
 
 **Revision:** Esta decision se revisara despues de completar MQ-002 (domain errors) para evaluar si MQ-005 (repository pattern) aporta valor suficiente o si la Fase 1 es suficiente para el proyecto.
+
+---
+
+## Revision History
+
+| Fecha | Cambio | Autor |
+|-------|--------|-------|
+| 2026-02-17 | ADR creado | Tech Lead |
+| 2026-02-27 | MQ-002 marcado como Completado. Implementacion: 42 domain error classes (25 en auth, 17 en gamification), 129 throw sites migrados. Migration guide disponible en docs/50-guides/backend/DOMAIN-ERROR-MIGRATION.md. Fase 1 finalizada — evaluar MQ-005 en proximo sprint. | Backend Team |

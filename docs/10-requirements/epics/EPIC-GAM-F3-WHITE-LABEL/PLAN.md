@@ -16,7 +16,7 @@
 | 3 | US-WL-003 | Platform Name Customization | 8 | US-WL-001 | Sprint 26 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / S3/Cloudinary / CSS Variables
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / S3/Cloudinary / CSS Variables
 - **Base de datos:** Schema `system_configuration` (tabla tenant_branding con 3 tiers)
 - **Patron:** CSS runtime variables, React Context Provider, dynamic branding per tenant
 

@@ -1,7 +1,8 @@
 -- =====================================================
--- Seed: auth_management.auth_providers (DEV)
+-- Seed: auth_management.auth_providers (PRODUCTION)
 -- Description: Configuración de proveedores de autenticación
--- Environment: DEVELOPMENT
+-- Environment: PRODUCTION
+-- Updated: 2026-02-26 (BD-P05: Fix environment metadata to match actual environment)
 -- Dependencies: None
 -- Order: 02
 -- Validated: 2025-11-02
@@ -55,7 +56,7 @@ INSERT INTO auth_management.auth_providers (
     }'::jsonb,
     '{
         "description": "Local authentication using email and password",
-        "environment": "development"
+        "environment": "production"
     }'::jsonb
 ),
 -- Google OAuth (ENABLED for dev)
@@ -79,7 +80,7 @@ INSERT INTO auth_management.auth_providers (
     }'::jsonb,
     '{
         "description": "Google OAuth authentication for development",
-        "environment": "development"
+        "environment": "production"
     }'::jsonb
 ),
 -- Facebook OAuth (DISABLED for dev)
@@ -102,7 +103,7 @@ INSERT INTO auth_management.auth_providers (
     }'::jsonb,
     '{
         "description": "Facebook OAuth authentication (disabled in development)",
-        "environment": "development"
+        "environment": "production"
     }'::jsonb
 ),
 -- Apple Sign In (DISABLED for dev)
@@ -126,7 +127,7 @@ INSERT INTO auth_management.auth_providers (
     }'::jsonb,
     '{
         "description": "Apple Sign In (disabled in development)",
-        "environment": "development"
+        "environment": "production"
     }'::jsonb
 ),
 -- Microsoft OAuth (DISABLED for dev)
@@ -149,7 +150,7 @@ INSERT INTO auth_management.auth_providers (
     }'::jsonb,
     '{
         "description": "Microsoft OAuth authentication (disabled in development)",
-        "environment": "development"
+        "environment": "production"
     }'::jsonb
 ),
 -- GitHub OAuth (ENABLED for dev)
@@ -172,7 +173,7 @@ INSERT INTO auth_management.auth_providers (
     }'::jsonb,
     '{
         "description": "GitHub OAuth authentication for development",
-        "environment": "development"
+        "environment": "production"
     }'::jsonb
 )
 ON CONFLICT (provider_name) DO UPDATE SET

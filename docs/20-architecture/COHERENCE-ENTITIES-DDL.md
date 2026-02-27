@@ -1,8 +1,8 @@
 # COHERENCE: Backend Entities vs DDL Tables
 
 **Proyecto:** GAMILIT
-**Version:** 2.3.0
-**Fecha:** 2026-02-21
+**Version:** 2.4.0
+**Fecha:** 2026-02-27
 **Tarea:** TASK-2026-02-12-ANALISIS-BD-VS-DOCS (Sprint R3)
 
 ---
@@ -17,11 +17,11 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 |---------|-------|
 | Total Entities Backend | 156 files (157 @Entity classes) |
 | Total Tablas DDL | 173 |
-| Tablas con Entity | 156 |
-| Tablas sin Entity | 17 |
+| Tablas con Entity | 157 |
+| Tablas sin Entity | 16 |
 | Cobertura | ~90.2% |
 
-**Nota:** Las 17 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw) + 1 auth.users (gestionada externamente). Las anteriores excepciones auth_management.roles (03b) ahora estan cubiertas indirectamente. Ver seccion "Tablas DDL sin Entity" mas abajo.
+**Nota:** Las 16 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw). Las anteriores excepciones auth_management.roles (03b) y auth.users ahora estan cubiertas indirectamente. Ver seccion "Tablas DDL sin Entity" mas abajo.
 
 **Auditoria:** Verificado en TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION (2026-02-12). Actualizado 2026-02-21 con +3 resource entities (TASK-2026-02-21-COMPLIANCE-AUDIT).
 
@@ -70,7 +70,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | leaderboard-metadata.entity.ts | 09-leaderboard_metadata.sql | gamification_system | MATCH |
 | maya-rank.entity.ts | 13-maya_ranks.sql | gamification_system | MATCH |
 | mission.entity.ts | 06-missions.sql | gamification_system | MATCH |
-| mission-template.entity.ts | 20-mission_templates.sql | gamification_system | MATCH |
+| mission-template.entity.ts | 05a-mission_templates.sql | gamification_system | MATCH |
 | ml-coins-transaction.entity.ts | 05-ml_coins_transactions.sql | gamification_system | MATCH |
 | shop-category.entity.ts | 17-shop_categories.sql | gamification_system | MATCH |
 | shop-item.entity.ts | 18-shop_items.sql | gamification_system | MATCH |
@@ -281,9 +281,9 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | resource-download.entity.ts | 30-resource_downloads.sql | educational_content | MATCH |
 | scheduled-report.entity.ts | 08b-scheduled_reports.sql | social_features | MATCH |
 | shared-report.entity.ts | 08c-shared_reports.sql | social_features | MATCH |
-| student-intervention-alert.entity.ts | 19-student_intervention_alerts.sql | progress_tracking | MATCH |
+| student-intervention-alert.entity.ts | 16a-student_intervention_alerts.sql | progress_tracking | MATCH |
 | teacher-content.entity.ts | 25-teacher_content.sql | educational_content | MATCH |
-| teacher-report.entity.ts | 08-teacher_reports.sql | social_features | MATCH |
+| teacher-report.entity.ts | 08a-teacher_reports.sql | social_features | MATCH |
 
 **Cobertura teacher:** 100% (9/9)
 
@@ -293,7 +293,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Tablas DDL sin Entity Directa (17 tablas)
+## Tablas DDL sin Entity Directa (16 tablas)
 
 ### Categoria 1: Data Warehouse (16 tablas) - Intencional
 
@@ -413,7 +413,7 @@ Para mejorar coherencia frontend:
 | Communication datasource | PENDIENTE (conversation entities huerfanas) |
 | Frontend types incompletos | MEJORABLE |
 
-**Coherencia Global: ~90.2%** (156/173 tablas con entity) - Nivel satisfactorio para produccion.
+**Coherencia Global: ~90.8%** (157/173 tablas con entity) - Nivel satisfactorio para produccion.
 
 ---
 

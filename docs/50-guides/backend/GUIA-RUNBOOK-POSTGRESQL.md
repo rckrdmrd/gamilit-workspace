@@ -1027,7 +1027,7 @@ bash scripts/recreate-database.sh
 
 - `apps/database/ddl/` — Archivos DDL del proyecto
 - `apps/database/scripts/init-database.sh` — Script de inicializacion de BD
-- `docs/50-guides/backend/GUIA-CREAR-BASE-DATOS.md` — Guia de creacion de BD
+- `docs/50-guides/backend/_archived/GUIA-CREAR-BASE-DATOS.md` — Guia de creacion de BD [ARCHIVED]
 - `docs/50-guides/deployment/GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md` — Guia de deploy (incluye backup)
 - [PostgreSQL 15 Documentation](https://www.postgresql.org/docs/15/) — Documentacion oficial
 - [pg_stat_statements](https://www.postgresql.org/docs/15/pgstatstatements.html) — Extension de monitoreo

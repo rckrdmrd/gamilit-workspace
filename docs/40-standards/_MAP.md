@@ -32,7 +32,7 @@ Estandares tecnicos del proyecto GAMILIT. Convenciones, patrones y reglas obliga
 | [ESTANDAR-OBSERVABILIDAD.md](./ESTANDAR-OBSERVABILIDAD.md) | OpenTelemetry, Prometheus, tracing, SLOs | Vigente |
 | [ESTANDAR-PERFORMANCE.md](./ESTANDAR-PERFORMANCE.md) | Estandar de rendimiento y optimizacion | Vigente |
 | [ESTANDAR-SEGURIDAD.md](./ESTANDAR-SEGURIDAD.md) | Estandar de seguridad (RLS, JWT, rate limiting) | Vigente |
-| [ESTANDAR-SKILLS.md](./ESTANDAR-SKILLS.md) | Estandar para skills/comandos de agentes | Vigente |
+| [ESTANDAR-SKILLS.md](./ESTANDAR-SKILLS.md) | [MOVED] a `orchestration/agents/SKILL-STANDARD.md` | Stub |
 | [ESTANDAR-TESTING.md](./ESTANDAR-TESTING.md) | Estandar de testing (unit, integration, e2e) | Vigente |
 | [ESTANDAR-12-FACTOR-APP.md](./ESTANDAR-12-FACTOR-APP.md) | Checklist 12-Factor App compliance | Vigente |
 
@@ -40,11 +40,12 @@ Estandares tecnicos del proyecto GAMILIT. Convenciones, patrones y reglas obliga
 
 | Documento | Descripcion | Estado |
 |-----------|-------------|--------|
-| [STANDARD-API.md](./STANDARD-API.md) | APIs frontend: ubicacion canonica, React Query, error handling | Vigente |
-| [STANDARD-COMPONENT.md](./STANDARD-COMPONENT.md) | Componentes: exports, props typing, React imports, file naming | Vigente |
-| [STANDARD-IMPORTS.md](./STANDARD-IMPORTS.md) | Import order, path aliases, barrels, icon imports | Vigente |
-| [STANDARD-TYPES.md](./STANDARD-TYPES.md) | Jerarquia de tipos, anti-duplicados, inline types, any policy | Vigente |
-| [STANDARD-UX-PATTERNS.md](./STANDARD-UX-PATTERNS.md) | Error/Loading/Empty states, toasts, forms, confirmation dialogs | Vigente |
+| [ESTANDAR-FRONTEND-API.md](./ESTANDAR-FRONTEND-API.md) | APIs frontend: ubicacion canonica, React Query, error handling | Vigente |
+| [ESTANDAR-FRONTEND-COMPONENT.md](./ESTANDAR-FRONTEND-COMPONENT.md) | Componentes: exports, props typing, React imports, file naming | Vigente |
+| [ESTANDAR-FRONTEND-IMPORTS.md](./ESTANDAR-FRONTEND-IMPORTS.md) | Import order, path aliases, barrels, icon imports | Vigente |
+| [ESTANDAR-FRONTEND-RESPONSIVE.md](./ESTANDAR-FRONTEND-RESPONSIVE.md) | Responsive design patterns (ADR-050) | Vigente |
+| [ESTANDAR-FRONTEND-TYPES.md](./ESTANDAR-FRONTEND-TYPES.md) | Jerarquia de tipos, anti-duplicados, inline types, any policy | Vigente |
+| [ESTANDAR-FRONTEND-UX-PATTERNS.md](./ESTANDAR-FRONTEND-UX-PATTERNS.md) | Error/Loading/Empty states, toasts, forms, confirmation dialogs | Vigente |
 
 ## Subdirectorios
 
@@ -62,4 +63,4 @@ Estandares tecnicos del proyecto GAMILIT. Convenciones, patrones y reglas obliga
 
 ---
 
-*Actualizado: 2026-02-20*
+*Actualizado: 2026-02-27*

@@ -13,7 +13,7 @@ import { DifficultyLevelEnum, ExerciseTypeEnum } from '@shared/constants/enums.c
  * Exercise Mechanic Mapping Entity (educational_content.exercise_mechanic_mapping)
  *
  * @description Mapeo N:M entre categorías pedagógicas universales (31 subcategorías)
- *              e implementaciones específicas GAMILIT (35 exercise_types).
+ *              e implementaciones específicas GAMILIT (33 exercise_types).
  *              Sistema Dual que permite clasificación pedagógica sin romper implementación existente.
  *
  * @schema educational_content
@@ -92,7 +92,7 @@ export class ExerciseMechanicMapping {
   // =====================================================
 
   /**
-   * Tipo de ejercicio específico GAMILIT (35 implementaciones)
+   * Tipo de ejercicio específico GAMILIT (33 implementaciones)
    *
    * MÓDULOS:
    * - Módulo 1 (5): crucigrama, linea_tiempo, sopa_letras, mapa_conceptual, emparejamiento

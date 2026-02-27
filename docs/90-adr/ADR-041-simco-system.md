@@ -1,6 +1,14 @@
-# ADR-0002: Implementación del Sistema SIMCO (_MAP.md)
+---
+titulo: "ADR-041: Implementacion del Sistema SIMCO (_MAP.md)"
+tipo: adr
+fecha_creacion: "2025-11-05"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
 
-**Status:** ✅ Accepted
+# ADR-041: Implementación del Sistema SIMCO (_MAP.md)
+
+**Estado:** Aceptada
 **Date:** 2025-11-05
 **Deciders:** Tech Lead, AI Engineering Team
 **Tags:** documentation, ai-agents, navigation, knowledge-management
@@ -673,7 +681,7 @@ export class GamificationService { }
 
 ---
 
-**Status:** ✅ Accepted and In Progress
+**Estado:** Aceptada e Implementada
 **Date Created:** 2025-11-05
 **Last Updated:** 2025-11-07
 **Supersedes:** N/A

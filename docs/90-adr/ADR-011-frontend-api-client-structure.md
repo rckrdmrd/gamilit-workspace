@@ -1,6 +1,14 @@
+---
+titulo: "ADR-011: Estructura de API Clients en Frontend"
+tipo: adr
+fecha_creacion: "2025-11-23"
+ultima_actualizacion: "2026-02-27"
+estado: enmendada
+---
+
 # ADR-011: Estructura de API Clients en Frontend
 
-**Estado:** Aceptado (Amended 2026-02-19)
+**Estado:** Enmendada (2026-02-19)
 **Fecha:** 2025-11-23
 **Autor:** Architecture-Analyst
 **Relacionado con:** BUG-FRONTEND-001, BUG-FRONTEND-002, Frontend API Architecture
@@ -329,7 +337,7 @@ Esta decisión se valida mediante:
 
 ## Amendment (2026-02-19)
 
-The `lib/api/` directory referenced throughout this ADR was migrated to `services/api/` as part of the API standardization effort documented in `STANDARD-API.md`. The new canonical paths are:
+The `lib/api/` directory referenced throughout this ADR was migrated to `services/api/` as part of the API standardization effort documented in `ESTANDAR-FRONTEND-API.md`. The new canonical paths are:
 
 - `lib/api/gamification.api.ts` -> `services/api/gamification/gamificationAPI.ts`
 - `lib/api/progress.api.ts` -> `services/api/progress/progressAPI.ts`
@@ -343,5 +351,5 @@ All import paths using `@/lib/api/` should now use `@/services/api/` or `@/featu
 
 **Versión:** 1.1.0
 **Última actualización:** 2026-02-19
-**Estado:** Aceptado (Amended)
+**Estado:** Enmendada
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa

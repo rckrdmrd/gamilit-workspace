@@ -225,6 +225,6 @@ flowchart TD
 - User Story: US-AE-005 (Admin Gamification Config)
 - Especificacion: `docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/specifications/ET-GAM-001-achievements.md`
 - Especificacion: `docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/specifications/ET-GAM-003-rangos-maya.md`
-- Guia admin: `docs/50-guides/frontend/impl/admin/pages/AdminGamificationPage-Specification.md`
+- Guia admin: `docs/50-guides/frontend/impl/admin/pages/ADMIN-GAMIFICATION-PAGE-SPECIFICATION.md`
 - Portal admin: `docs/60-portals/admin/PORTAL-ADMIN-GUIDE.md`
 - ADR-016: Simplificar Backend XP Acumulacion (`docs/90-adr/ADR-016-simplificar-backend-xp-acumulacion.md`)

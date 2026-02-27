@@ -10,7 +10,7 @@ Arquitectura tecnica del proyecto.
 |-----------|-------------|
 | [STACK-TECNOLOGICO.md](STACK-TECNOLOGICO.md) | NestJS 11, React 19, PostgreSQL 15, stack completo |
 | [ARQUITECTURA-GAMIFICACION.md](ARQUITECTURA-GAMIFICACION.md) | XP, rangos maya, achievements, economia, scoring |
-| [MODELO-DATOS.md](MODELO-DATOS.md) | 18 schemas, 172 tablas, RLS policies, funciones |
+| [MODELO-DATOS.md](MODELO-DATOS.md) | 18 schemas, 173 tablas, RLS policies, funciones |
 | [SCHEMA-REFERENCE.md](SCHEMA-REFERENCE.md) | Referencia detallada de schemas y tablas |
 | [MECANICAS-GAMIFICACION-V6.md](MECANICAS-GAMIFICACION-V6.md) | Indice legacy de mecanicas (contenido segmentado) |
 | [gamificacion/README.md](gamificacion/README.md) | Estructura canonica de gamificacion por subtema y modulo |

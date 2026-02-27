@@ -1,4 +1,4 @@
-import { NotFoundError, BusinessRuleError, ValidationError } from '@shared/exceptions';
+import { NotFoundError, BusinessRuleError, ValidationError, ForbiddenError, ConflictError } from '@shared/exceptions';
 
 export class ShopItemNotFoundError extends NotFoundError {
   constructor(itemId?: string) {
@@ -57,5 +57,47 @@ export class RequiredAchievementMissingError extends BusinessRuleError {
 export class InvalidQuantityError extends ValidationError {
   constructor() {
     super('Quantity must be greater than 0', 'INVALID_QUANTITY');
+  }
+}
+
+export class ItemNotFoundError extends NotFoundError {
+  constructor(itemId?: string) {
+    super('Item', itemId);
+  }
+}
+
+export class ConsumableItemEquipError extends ValidationError {
+  constructor() {
+    super('Cannot equip consumable items. Use them from inventory.', 'CONSUMABLE_ITEM_EQUIP');
+  }
+}
+
+export class ItemNotOwnedError extends ForbiddenError {
+  constructor() {
+    super('You do not own this item', 'ITEM_NOT_OWNED');
+  }
+}
+
+export class ItemNotEquippedError extends NotFoundError {
+  constructor() {
+    super('Item not currently equipped');
+  }
+}
+
+export class ProfileNotFoundError extends NotFoundError {
+  constructor(userId?: string) {
+    super('Profile', userId);
+  }
+}
+
+export class UserStatsAlreadyExistsError extends ConflictError {
+  constructor(userId: string) {
+    super(`User ${userId} already has stats`, 'USER_STATS_ALREADY_EXISTS');
+  }
+}
+
+export class NonNumericFieldError extends ValidationError {
+  constructor(field: string) {
+    super(`Field ${field} is not numeric`, 'NON_NUMERIC_FIELD');
   }
 }

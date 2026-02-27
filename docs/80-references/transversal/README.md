@@ -12,9 +12,7 @@ El contenido historico se consulta en `orchestration/reports/` y `orchestration/
 | Ruta | Uso |
 |------|-----|
 | [arquitectura/FLUJO-INICIALIZACION-USUARIO.md](./arquitectura/FLUJO-INICIALIZACION-USUARIO.md) | Flujo tecnico de inicializacion de usuario |
-| [correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md](./correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md) | Backlog activo de issues backend |
-| [correcciones/ANALISIS-ERROR-404-PROGRESS-MODULES.md](./correcciones/ANALISIS-ERROR-404-PROGRESS-MODULES.md) | Analisis tecnico de error 404 y solucion |
-| [correcciones/_MAP.md](./correcciones/_MAP.md) | Mapa de navegacion del subdominio correcciones |
+| [correcciones/README.md](./correcciones/README.md) | Stub — contenido movido a `orchestration/trazas/correcciones-historicas/` |
 | [_MAP.md](./_MAP.md) | Mapa de esta carpeta |
 
 ## SSOT relacionados

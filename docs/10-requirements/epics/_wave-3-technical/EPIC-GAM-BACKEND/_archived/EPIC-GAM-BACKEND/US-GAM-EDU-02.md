@@ -94,7 +94,7 @@
 
 | Aspecto | Detalle |
 |---------|---------|
-| Stack | NestJS 11, React 19, TypeORM 0.3, PostgreSQL 16 |
+| Stack | NestJS 11, React 19, TypeORM 0.3, PostgreSQL 15 |
 | Entidades BD | exercises, exercise_types, exercise_attempts, exercise_results, exercise_feedback, exercise_config |
 | Endpoints API | `GET /api/v1/exercises` `GET /api/v1/exercises/:id` `POST /api/v1/exercises/:id/submit` `GET /api/v1/exercises/:id/evaluate` `GET /api/v1/exercises/:id/attempts` `POST /api/v1/exercises/:id/feedback` |
 | Componentes FE | ExerciseEngine, CrucigranmaExercise, TimelineExercise, FillBlanksExercise, TrueFalseExercise, WordSearchExercise, DetectiveExercise, HypothesisExercise, PredictionExercise, ContextPuzzleExercise, InferenceWheelExercise, OpinionCourtExercise, DigitalDebateExercise, SourceAnalysisExercise, PodcastExercise, PerspectiveMatrixExercise, FakeNewsExercise, InfographicExercise, TikTokQuizExercise, HypertextNavExercise, MemeAnalysisExercise, MultimediaDiaryExercise, DigitalComicExercise, VideoLetterExercise |

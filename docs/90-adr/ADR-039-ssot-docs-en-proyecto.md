@@ -1,6 +1,14 @@
+---
+titulo: "ADR-039: SSOT - Documentacion del Producto en el Proyecto"
+tipo: adr
+fecha_creacion: "2026-02-11"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-039: SSOT - Documentacion del Producto en el Proyecto
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-11
 **Contexto:** Gobernanza de documentacion en gamilit standalone
 
@@ -105,7 +113,7 @@ depends_on: []
 **Decision:** `orchestration/inventarios/` contiene SSOT de implementacion (no producto):
 - `DATABASE_INVENTORY.yml` — Schemas, tablas, views, funciones (173 tablas)
 - `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (156 entity files/157 classes, 912 endpoints)
-- `FRONTEND_INVENTORY.yml` — Components, pages, stores (577 componentes, 70 paginas)
+- `FRONTEND_INVENTORY.yml` — Components, pages, stores (575 componentes, 72 paginas)
 - `MASTER_INVENTORY.yml` — Metricas consolidadas
 
 **Separacion clara:**

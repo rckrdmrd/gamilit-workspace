@@ -19,7 +19,7 @@
 | 6 | US-PERF-006 | Showcasing Logros | 5 | US-PERF-003, F1-GAMIFICATION | Sprint 17 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / S3 (avatares)
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / S3 (avatares)
 - **Base de datos:** Schema `auth_management` (extension de users con profile_settings, avatars, badges_showcase)
 - **Patron:** Profile micro-service, avatar upload con S3/Cloudinary, dashboard widgets configurables
 

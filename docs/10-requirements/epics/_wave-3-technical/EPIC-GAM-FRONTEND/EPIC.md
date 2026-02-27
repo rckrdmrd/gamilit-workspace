@@ -22,7 +22,7 @@ Implementacion completa del frontend React 19 para la plataforma educativa gamil
 - Portal Maestro (~95%): gestion de aulas y estudiantes (19 paginas), asignacion de ejercicios, reportes de progreso, revision manual de ejercicios
 - Portal Administrador (~90%): gestion de contenido educativo (18 paginas), configuracion del sistema, analytics globales, gestion de usuarios y roles
 - Portal Padres (100%): vinculacion padre-estudiante, dashboard de progreso academico, notificaciones (email, push, SMS), comunicacion maestro-padre
-- 577 componentes React, 134 custom hooks, 13 Zustand stores, 65 API services
+- 575 componentes React, 132 custom hooks, 13 Zustand stores, 65 API services
 - 30 mecanicas de juego visuales (XP bars, rank badges, achievement popups, coin animations)
 - Mobile-first responsive design con TailwindCSS
 - Socket.IO integration para leaderboards y notificaciones en tiempo real
@@ -33,7 +33,7 @@ Implementacion completa del frontend React 19 para la plataforma educativa gamil
 |------|-------------|
 | Database | N/A (indirectamente via API) |
 | Backend | 65 API services consumen 912 endpoints |
-| Frontend | 4 portales, 577 componentes, 70 paginas, 134 hooks, 13 stores, 73 routes, 30 mecanicas |
+| Frontend | 4 portales, 575 componentes, 72 paginas, 132 hooks, 13 stores, 74 routes, 30 mecanicas |
 | DevOps | Vite 6 build config, optimizacion bundle |
 
 ## Dependencias

@@ -17,13 +17,13 @@
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 172 |
+| Tablas | 173 |
 | Views | 22 |
 | Materialized Views | 7 |
 | Functions | 183 |
 | Triggers | 67 (CREATE TRIGGER) / 126 (trigger functions) |
-| RLS Policies | 237 (DDL) / 477 (runtime estimate) |
-| Foreign Keys | 299 |
+| RLS Policies | 251 (DDL) / 477 (runtime estimate) |
+| Foreign Keys | 301 |
 | ENUMs | 42 |
 
 ---
@@ -431,8 +431,8 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 |---------|-------|--------|--------|
 | tr_user_created | auth.users | INSERT | Crear perfil, log audit |
 | tr_exercise_completed | education.exercise_results | INSERT | Calcular XP, actualizar progreso |
-| tr_xp_transaction_created | gamification.xp_transactions | INSERT | Check level/rank, update leaderboard |
-| tr_rank_promotion | gamification.student_gamification | UPDATE | Notificar, otorgar recompensa |
+| tr_xp_transaction_created | gamification_system.xp_transactions | INSERT | Check level/rank, update leaderboard |
+| tr_rank_promotion | gamification_system.student_gamification | UPDATE | Notificar, otorgar recompensa |
 | tr_mission_progress_updated | missions.mission_progress | UPDATE | Check completion, award rewards |
 | tr_assignment_created | classrooms.assignments | INSERT | Notificar estudiantes |
 | tr_audit_log_on_change | (multiple) | UPDATE/DELETE | Registrar cambio en audit |
@@ -504,5 +504,5 @@ Para la lista completa de funciones DDL reales, consultar `apps/database/ddl/` p
 ---
 
 *GAMILIT - Modelo de Datos*
-*18 schemas, 172 tablas, 237 DDL / 477 runtime RLS policies (estimated)*
+*18 schemas, 173 tablas, 251 DDL / 477 runtime RLS policies (estimated)*
 *PostgreSQL 15 con Row-Level Security*

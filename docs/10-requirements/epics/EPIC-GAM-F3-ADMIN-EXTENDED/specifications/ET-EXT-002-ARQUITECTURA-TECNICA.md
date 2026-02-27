@@ -52,7 +52,7 @@
                       │ SQL
                       ▼
 ┌─────────────────────────────────────────────┐
-│         DATABASE (PostgreSQL 14+)           │
+│         DATABASE (PostgreSQL 15+)           │
 │  ┌──────────────────────────────────────┐   │
 │  │   Tables (3 used)                    │   │
 │  │  - system_settings                   │   │

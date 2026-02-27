@@ -16,7 +16,7 @@
 | 3 | US-NOT-001c | Preferences Management | 13 | US-NOT-001b | Sprint 14 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Socket.IO 4.8+ / Redis
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Socket.IO 4.8+ / Redis
 - **Base de datos:** Schema `notifications` (tablas notifications, notification_preferences, notification_templates)
 - **Patron:** Event-driven multi-canal (email, push, in-app, SMS), queue con Redis/Bull
 

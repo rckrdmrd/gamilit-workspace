@@ -124,7 +124,7 @@ BEGIN
         ON CONFLICT (user_id) DO NOTHING;
 
         -- Create initial user rank (starting with Ajaw - lowest rank)
-        -- BUG FIX #2: Use WHERE NOT EXISTS instead of ON CONFLICT (no unique constraint on user_id)
+        -- BUG FIX #2: Use WHERE NOT EXISTS for compatibility with UNIQUE(user_id) constraint
         -- 2025-12-26: Agregado is_current = true explícitamente
         -- DB-125: user_ranks.user_id FK apunta a profiles(id), usar NEW.id
         INSERT INTO gamification_system.user_ranks (

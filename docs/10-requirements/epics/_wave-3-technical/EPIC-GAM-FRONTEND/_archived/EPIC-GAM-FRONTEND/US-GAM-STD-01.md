@@ -49,7 +49,7 @@
 
 | Aspecto | Detalle |
 |---------|---------|
-| Stack | React 19, Zustand 5.x, TailwindCSS 4.x, Vite 7.x |
+| Stack | React 19, Zustand 5.x, TailwindCSS 4.x, Vite 6.x |
 | Componentes FE | StudentDashboard, AvatarEditor, AvatarPreview, ModuleGrid, ProgressRing, StreakFlame, LeaderboardMini, AchievementShowcase, ActivityTimeline, MissionList, NotificationBell |
 | Stores Zustand | useStudentStore, useGamificationStore, useModuleStore, useAvatarStore |
 | Paginas | ~30 (dashboard, modulos, ejercicios, perfil, tienda, leaderboard, misiones, logros, historial, ajustes) |

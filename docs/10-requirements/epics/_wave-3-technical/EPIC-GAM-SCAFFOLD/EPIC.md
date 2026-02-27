@@ -14,14 +14,14 @@
 
 ## Descripcion
 
-Setup inicial del proyecto gamilit como plataforma educativa gamificada basada en cultura maya para comprension lectora. Incluye la creacion de la estructura monorepo completa (apps/backend, apps/frontend, apps/database, apps/devops), configuracion base de NestJS 11, React 19 con Vite 7, PostgreSQL 16, inicializacion del repositorio GitHub, y la generacion del CLAUDE.md inicial con identidad STANDALONE_HEREDERO.
+Setup inicial del proyecto gamilit como plataforma educativa gamificada basada en cultura maya para comprension lectora. Incluye la creacion de la estructura monorepo completa (apps/backend, apps/frontend, apps/database, apps/devops), configuracion base de NestJS 11, React 19 con Vite 6.x, PostgreSQL 15, inicializacion del repositorio GitHub, y la generacion del CLAUDE.md inicial con identidad STANDALONE_HEREDERO.
 
 ## Alcance
 
 - Estructura monorepo con apps/backend, apps/frontend, apps/database, apps/devops
 - Configuracion base NestJS 11 (tsconfig, ESLint, Prettier, Jest)
-- Configuracion base React 19 + Vite 7 (TailwindCSS, Zustand, Vitest)
-- Schema inicial PostgreSQL 16 con estructura multi-schema
+- Configuracion base React 19 + Vite 6.x (TailwindCSS, Zustand, Vitest)
+- Schema inicial PostgreSQL 15 con estructura multi-schema
 - Repositorio GitHub (git@github.com:rckrdmrd/gamilit-workspace.git)
 - CLAUDE.md v1.0.0 con identidad y reglas criticas del proyecto
 
@@ -29,9 +29,9 @@ Setup inicial del proyecto gamilit como plataforma educativa gamificada basada e
 
 | Capa | Componentes |
 |------|-------------|
-| Database | Schema inicial, configuracion PostgreSQL 16 |
+| Database | Schema inicial, configuracion PostgreSQL 15 |
 | Backend | NestJS 11 scaffold, package.json, tsconfig.json, eslint.config |
-| Frontend | React 19 scaffold, Vite 7 config, TailwindCSS setup |
+| Frontend | React 19 scaffold, Vite 6.x config, TailwindCSS setup |
 | DevOps | Git repository, .gitignore, estructura apps/devops |
 
 ## Dependencias

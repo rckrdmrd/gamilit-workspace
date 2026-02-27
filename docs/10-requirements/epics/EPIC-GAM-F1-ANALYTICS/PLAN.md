@@ -19,7 +19,7 @@
 | 6 | US-ANA-006 | Identificacion rezagados | 7 | US-ANA-005, US-ANA-003 | Sprint 9 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Recharts
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Recharts
 - **Base de datos:** Schema `progress_tracking` (tablas exercise_attempts, module_progress, analytics_snapshots)
 - **Patron:** Materialized views para metricas agregadas, CQRS para lecturas pesadas
 

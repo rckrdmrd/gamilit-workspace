@@ -1,7 +1,15 @@
+---
+titulo: "ADR-018: Eliminacion de Carpetas Migrations"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-018: Eliminación de Carpetas Migrations
 
 **Fecha:** 2025-11-24
-**Estado:** ✅ Aprobado
+**Estado:** Aceptada
 **Contexto:** Validación de coherencia multicapa post CORR-001 a CORR-006
 **Issue relacionado:** ISSUE-DB-P1-001
 

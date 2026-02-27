@@ -1,17 +1,17 @@
 # DEPENDENCY GRAPH - GAMILIT
 # Grafo de dependencias entre modulos, schemas y componentes
-# Version: 3.0.0
-# Fecha: 2026-02-14
+# Version: 4.0.0
+# Fecha: 2026-02-27
 # Fuente: Documentation-Maintainer (auditoria gobernanza)
 
-version: "3.0.0"
+version: "4.0.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-02-14"
+fecha_actualizacion: "2026-02-27"
 descripcion: "Grafo de dependencias entre capas (Database -> Backend -> Frontend)"
 estado_proyecto: "98% completado (MVP Produccion Activa)"
 
 # ========================================
-# SCHEMAS DE DATABASE (18 schemas, 169 tablas)
+# SCHEMAS DE DATABASE (18 schemas, 173 tablas)
 # ========================================
 
 database_schemas:
@@ -31,16 +31,16 @@ database_schemas:
       - frontend: ["AuthContext", "authStore"]
 
   educational_content:
-    descripcion: "Modulos educativos, ejercicios (23 tipos), asignaciones, rubricas"
-    tablas: 21
+    descripcion: "Modulos educativos, ejercicios (23 tipos), asignaciones, rubricas, resource sharing"
+    tablas: 24                    # +3 vs prev: resource_ratings (28), resource_comments (29), resource_downloads (30). 2 cross_schema refs: exercise_mechanic_mapping, content_approvals
     dependencias: ["auth_management"]
     usado_por:
       - backend: ["educational", "assignments", "teacher"]
       - frontend: ["ExercisePage", "ModulePage"]
 
   gamification_system:
-    descripcion: "XP, rangos maya, achievements, ML Coins, tienda, misiones, leaderboards"
-    tablas: 21
+    descripcion: "XP, rangos maya, achievements, ML Coins, tienda, misiones, leaderboards, equipamiento"
+    tablas: 21                    # 19 root + 2 _cross_schema (classroom_missions, comodin_uses). 2 cross_schema refs to progress_tracking + social_features
     dependencias: ["auth_management"]
     usado_por:
       - backend: ["gamification", "notifications"]
@@ -48,7 +48,7 @@ database_schemas:
 
   progress_tracking:
     descripcion: "Progreso, intentos, learning paths, mastery, certificados"
-    tablas: 21
+    tablas: 21                    # 1 cross_schema ref from gamification_system (scheduled_missions)
     dependencias: ["auth_management", "educational_content"]
     usado_por:
       - backend: ["progress", "teacher"]
@@ -113,8 +113,8 @@ database_schemas:
     nota: "16 tablas DDL-only (sin entities TypeORM) — intencional"
 
   communication:
-    descripcion: "Mensajeria interna: messages, participants"
-    tablas: 3
+    descripcion: "Mensajeria interna: messages, message_participants, conversations, conversation_participants"
+    tablas: 4
     dependencias: ["auth_management"]
     usado_por:
       - backend: ["communication", "teacher"]
@@ -150,7 +150,9 @@ database_schemas:
     tablas: 0
 
 # ========================================
-# MODULOS DE BACKEND (22 modulos, 899 endpoints)
+# MODULOS DE BACKEND (23 modulos, 912 endpoints)
+# NOTA: etl, ml, visualization existen en disco pero NO importados en app.module.ts
+#       (requieren datasource data_warehouse no configurado — evaluacion pendiente)
 # ========================================
 
 backend_modules:
@@ -188,10 +190,10 @@ backend_modules:
     descripcion: "XP, rangos maya, achievements, ML Coins, missions, leaderboard, store"
     dependencias_db: ["gamification_system"]
     dependencias_backend: ["auth"]
-    entities: 21
-    services: 17
-    controllers: 10
-    endpoints: 69
+    entities: 22
+    services: 18
+    controllers: 11
+    endpoints: 72
     estado: "95%"
 
   social:
@@ -238,10 +240,10 @@ backend_modules:
     descripcion: "Portal docente, asignaciones, reportes, revision manual"
     dependencias_db: ["educational_content", "progress_tracking", "social_features", "communication"]
     dependencias_backend: ["auth", "educational", "progress", "social"]
-    entities: 6
+    entities: 9
     services: 21
     controllers: 10
-    endpoints: 110
+    endpoints: 117
     estado: "95%"
 
   parents:
@@ -255,7 +257,7 @@ backend_modules:
     estado: "100%"
 
   # Otros modulos (resumidos)
-  health: { estado: "100%", endpoints: 1 }
+  health: { estado: "100%", endpoints: 4 }
   profile: { estado: "100%", endpoints: 3 }
   audit: { estado: "100%", endpoints: 0 }
   assignments: { estado: "95%", endpoints: 19 }
@@ -269,35 +271,35 @@ backend_modules:
   visualization: { estado: "50%", endpoints: 21 }
 
 # ========================================
-# COMPONENTES DE FRONTEND (4 portales, 474 componentes)
+# COMPONENTES DE FRONTEND (4 portales, 575 componentes)
 # ========================================
 
 frontend_portals:
   student:
     descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda, misiones"
     paginas: 19
-    componentes: 63
+    componentes: 103
     completitud: "~100%"
     dependencias_backend: ["auth", "educational", "gamification", "progress", "social"]
 
   teacher:
     descripcion: "Gestion aulas, asignaciones, reportes, revision manual"
-    paginas: 19
-    componentes: 68
+    paginas: 16
+    componentes: 44
     completitud: "~95%"
     dependencias_backend: ["auth", "teacher", "educational", "progress", "social"]
 
   admin:
     descripcion: "Dashboard, usuarios, contenido, analytics, monitoreo"
-    paginas: 18
-    componentes: 93
+    paginas: 19
+    componentes: 123
     completitud: "~90%"
     dependencias_backend: ["auth", "admin", "content"]
 
   parent:
-    descripcion: "Dashboard, progreso hijo, login, registro"
-    paginas: 4
-    componentes: 4
+    descripcion: "Dashboard, progreso hijo, login, registro, comunicacion maestro-padre, notificaciones, configuracion"
+    paginas: 7
+    componentes: 7
     completitud: "100%"
     dependencias_backend: ["auth", "parents"]
 
@@ -308,10 +310,10 @@ frontend_portals:
 estado_actual:
   mvp: "98%"
   produccion: "Activa (74.208.126.102)"
-  database: "100% DDL, 90.5% entity coverage"
+  database: "100% DDL, 90.2% entity coverage (156 files/157 classes out of 173 tables, 16 DDL-only en data_warehouse)"
   backend: "95% modulos core"
   frontend: "95% portales core"
-  test_coverage: "833 tests passing (57→59 spec files)"
+  test_coverage: "2324 tests (2296 passed + 28 skipped, 63 spec files)"
 
 # ========================================
 # HISTORIAL
@@ -329,3 +331,7 @@ historial:
   - fecha: "2026-02-14"
     version: "3.0.0"
     cambios: "Rewrite completo: 18 schemas reales, 22 modulos backend, 4 portales frontend. Eliminado Sprint P2 stale (completado). Estado: 98% MVP."
+
+  - fecha: "2026-02-27"
+    version: "4.0.0"
+    cambios: "Actualizacion integral post-auditoria: metricas BD (173 tablas), backend (912 endpoints, 23 modulos), frontend (575 componentes, 72 paginas, 74 routes), parents portal 100% (7/7 paginas), tests (2324)"

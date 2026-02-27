@@ -16,7 +16,7 @@ CREATE TABLE notifications.notifications (
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
 
     -- Tipo de notificación
-    -- Valores: 'achievement', 'mission', 'assignment', 'social', 'system', 'gamification'
+    -- Valores: 'achievement', 'mission', 'assignment', 'social', 'system', 'gamification', 'exercise_feedback'
     type VARCHAR(50) NOT NULL,
 
     -- Contenido
@@ -49,7 +49,7 @@ CREATE TABLE notifications.notifications (
     metadata JSONB DEFAULT '{}'::jsonb,
 
     -- Constraints
-    CONSTRAINT chk_notif_type CHECK (type IN ('achievement', 'mission', 'assignment', 'social', 'system', 'gamification')),
+    CONSTRAINT chk_notif_type CHECK (type IN ('achievement', 'mission', 'assignment', 'social', 'system', 'gamification', 'exercise_feedback')),
     CONSTRAINT chk_notif_priority CHECK (priority IN ('low', 'normal', 'high', 'urgent')),
     CONSTRAINT chk_notif_status CHECK (status IN ('pending', 'sent', 'read', 'failed'))
 );
@@ -71,7 +71,7 @@ CREATE INDEX idx_notif_expires_at ON notifications.notifications(expires_at)
 
 -- Comentarios
 COMMENT ON TABLE notifications.notifications IS 'Notificaciones enviadas a usuarios (in-app, email, push web)';
-COMMENT ON COLUMN notifications.notifications.type IS 'Tipo de notificación: achievement, mission, assignment, social, system, gamification';
+COMMENT ON COLUMN notifications.notifications.type IS 'Tipo de notificación: achievement, mission, assignment, social, system, gamification, exercise_feedback';
 COMMENT ON COLUMN notifications.notifications.data IS 'Datos adicionales en formato JSON (IDs relacionados, payload específico)';
 COMMENT ON COLUMN notifications.notifications.channels IS 'Array de canales por los que se envió: in_app, email, push';
 COMMENT ON COLUMN notifications.notifications.status IS 'Estado: pending, sent, read, failed';

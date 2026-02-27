@@ -10,9 +10,7 @@
 |------|------|--------|
 | Indice | [README.md](./README.md) | Activo |
 | Arquitectura transversal | [arquitectura/FLUJO-INICIALIZACION-USUARIO.md](./arquitectura/FLUJO-INICIALIZACION-USUARIO.md) | Activo |
-| Correcciones (mapa) | [correcciones/_MAP.md](./correcciones/_MAP.md) | Activo |
-| Correcciones (SSOT issues) | [correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md](./correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md) | Activo |
-| Correcciones (caso 404) | [correcciones/ANALISIS-ERROR-404-PROGRESS-MODULES.md](./correcciones/ANALISIS-ERROR-404-PROGRESS-MODULES.md) | Activo |
+| Correcciones (stub) | [correcciones/README.md](./correcciones/README.md) | Movido a `orchestration/trazas/correcciones-historicas/` |
 
 ## Dependencias SSOT
 

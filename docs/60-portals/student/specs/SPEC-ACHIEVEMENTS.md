@@ -238,4 +238,4 @@ CLAIMED (rewardsClaimed: true)
 ---
 
 *Generado: 2026-02-18*
-*Sistema SIMCO v4.3.0*
+*Sistema SIMCO v4.0.0*

@@ -299,7 +299,7 @@ EXECUTE FUNCTION create_default_notification_preferences();
 
 ### Frontend - React Components
 
-**Tecnologías**: React 18, React Hook Form, Zod, TailwindCSS
+**Tecnologías**: React 19, React Hook Form, Zod, TailwindCSS
 
 **NotificationPreferencesPage**:
 
@@ -431,7 +431,7 @@ export function NotificationPreferencesPage() {
 
 ## Stack Tecnológico
 
-**Frontend:** React 18, React Hook Form, Zod, TailwindCSS
+**Frontend:** React 19, React Hook Form, Zod, TailwindCSS
 **Backend:** NestJS, class-validator, PostgreSQL
 **Testing:** Jest, Supertest, Cypress
 

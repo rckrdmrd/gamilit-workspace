@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  UserNotFoundError,
+  EmailAlreadyVerifiedError,
+  InvalidTokenError,
+  ExpiredTokenError,
+  UsedTokenError,
+} from '../errors/auth.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import * as crypto from 'crypto';
@@ -62,13 +69,13 @@ export class EmailVerificationService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError(userAuthId);
     }
 
     // 2. Verificar si ya está verificado
     // Fix: Usar email_confirmed_at en lugar de email_verified
     if (user.email_confirmed_at) {
-      throw new ConflictException('Email ya verificado');
+      throw new EmailAlreadyVerifiedError();
     }
 
     // 3. Invalidar tokens anteriores
@@ -121,16 +128,16 @@ export class EmailVerificationService {
     });
 
     if (!verificationToken) {
-      throw new BadRequestException('Token inválido');
+      throw new InvalidTokenError('Token invalido');
     }
 
     // 3. Validar con helpers
     if (verificationToken.isExpired()) {
-      throw new BadRequestException('Token expirado');
+      throw new ExpiredTokenError();
     }
 
     if (verificationToken.isUsed()) {
-      throw new BadRequestException('Token ya usado');
+      throw new UsedTokenError();
     }
 
     // 4. Buscar usuario
@@ -139,7 +146,7 @@ export class EmailVerificationService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError(verificationToken.user_id);
     }
 
     // 5. Actualizar email_confirmed_at (marca email como verificado)
@@ -169,13 +176,13 @@ export class EmailVerificationService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError(userAuthId);
     }
 
     // 2. Verificar si ya está verificado
     // Fix: Usar email_confirmed_at en lugar de email_verified
     if (user.email_confirmed_at) {
-      throw new ConflictException('Email ya verificado');
+      throw new EmailAlreadyVerifiedError();
     }
 
     // 3. Enviar nuevo email
@@ -194,7 +201,7 @@ export class EmailVerificationService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError(userAuthId);
     }
 
     return { verified: !!user.email_confirmed_at };

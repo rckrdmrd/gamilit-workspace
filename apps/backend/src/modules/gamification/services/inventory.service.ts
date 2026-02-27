@@ -1,10 +1,10 @@
+import { Injectable, Logger } from '@nestjs/common';
 import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-} from '@nestjs/common';
+  ItemNotFoundError,
+  ConsumableItemEquipError,
+  ItemNotOwnedError,
+  ItemNotEquippedError,
+} from '../errors/gamification.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager, In } from 'typeorm';
 import { UserEquippedItem } from '../entities/user-equipped-item.entity';
@@ -88,11 +88,11 @@ export class InventoryService {
     });
 
     if (!item) {
-      throw new NotFoundException(`Item ${itemId} not found`);
+      throw new ItemNotFoundError(itemId);
     }
 
     if (item.is_consumable) {
-      throw new BadRequestException('Cannot equip consumable items. Use them from inventory.');
+      throw new ConsumableItemEquipError();
     }
 
     // 2. Validar propiedad (Ownership)
@@ -105,7 +105,7 @@ export class InventoryService {
     });
 
     if (!purchase) {
-      throw new ForbiddenException('You do not own this item');
+      throw new ItemNotOwnedError();
     }
 
     // 3. Ejecutar equipamiento (UPSERT logic via Transaction)
@@ -189,7 +189,7 @@ export class InventoryService {
     });
 
     if (result.affected === 0) {
-      throw new NotFoundException('Item not currently equipped');
+      throw new ItemNotEquippedError();
     }
 
     this.logger.log(`User ${userId} unequipped item ${itemId}`);

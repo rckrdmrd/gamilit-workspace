@@ -12,7 +12,7 @@
 | **Versión** | 2.3.0 |
 | **Fecha Creación** | 2025-11-07 |
 | **Última Actualización** | 2025-11-28 |
-| **Sistema Actual** | [docs/sistema-recompensas/](../../../sistema-recompensas/) v2.3.0 |
+| **Sistema Actual** | [docs/sistema-recompensas/](../../../_archived/sistema-recompensas/) v2.3.0 [ARCHIVED] |
 | **Autor** | Database Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
 

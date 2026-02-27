@@ -49,7 +49,7 @@
 
 | Aspecto | Detalle |
 |---------|---------|
-| Stack | NestJS 11, PostgreSQL 16 (materialized views), React 19, Recharts |
+| Stack | NestJS 11, PostgreSQL 15 (materialized views), React 19, Recharts |
 | Entidades BD | analytics_events, analytics_snapshots, report_templates, report_instances, report_schedules |
 | Materialized Views | mv_student_progress, mv_classroom_stats, mv_module_analytics, mv_engagement_daily, mv_leaderboard_cache, mv_exercise_performance, mv_retention_metrics |
 | Endpoints API | `GET /api/v1/analytics/student/:id` `GET /api/v1/analytics/classroom/:id` `GET /api/v1/analytics/global` `GET /api/v1/analytics/engagement` `POST /api/v1/reports/generate` `GET /api/v1/reports/scheduled` `GET /api/v1/reports/:id/download` |

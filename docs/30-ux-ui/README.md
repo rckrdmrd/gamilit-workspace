@@ -85,7 +85,7 @@ Diseno de experiencia de usuario e interfaz.
 - **Componentes:** TailwindCSS 4.x custom
 
 **Framework UI:** TailwindCSS 4.x
-**Componentes:** 590 componentes React
+**Componentes:** 575 componentes React
 **Responsivo:** Mobile-first design (38 ejercicios + componentes compartidos con patrones sm: breakpoint)
 
 ### Flujos de Usuario
@@ -148,4 +148,4 @@ Algunos ejercicios requieren recursos multimedia servidos desde `apps/frontend/p
 **Design System:** apps/frontend/src/styles/
 **Componentes:** apps/frontend/src/components/
 
-592 componentes React documentados en orchestration/inventarios/FRONTEND_INVENTORY.yml
+575 componentes React documentados en orchestration/inventarios/FRONTEND_INVENTORY.yml

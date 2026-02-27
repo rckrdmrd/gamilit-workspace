@@ -34,16 +34,16 @@ updated_date: "2026-01-04"
 ### Implementación DDL
 🗄️ **ENUM Canónico:**
 - **Ubicación:** `apps/database/ddl/00-prerequisites.sql:38-40`
-- **Tipo:** `public.auth_provider`
+- **Tipo:** `auth_management.auth_provider`
 - **Valores:** `local`, `google`, `facebook`, `apple`, `microsoft`, `github`
 
 🗄️ **Tablas que usan el ENUM:**
 1. `auth_management.auth_providers` → `apps/database/ddl/schemas/auth_management/tables/05-auth_providers.sql`
-   - Columna: `provider_name public.auth_provider NOT NULL`
+   - Columna: `provider_name auth_management.auth_provider NOT NULL`
    - Configuración de cada proveedor OAuth
 
 2. `auth_management.profiles` → `apps/database/ddl/schemas/auth_management/tables/03-profiles.sql`
-   - Columna: `auth_provider public.auth_provider DEFAULT 'local'`
+   - Columna: `auth_provider auth_management.auth_provider DEFAULT 'local'`
    - Tracking del origen de registro
 
 🗄️ **Funciones:**
@@ -454,7 +454,7 @@ if (existingUser && existingUser.auth_provider !== currentProvider) {
 CREATE TABLE auth_management.linked_providers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(user_id),
-    provider public.auth_provider NOT NULL,
+    provider auth_management.auth_provider NOT NULL,
     provider_user_id TEXT NOT NULL, -- ID del usuario en el provider
     linked_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 

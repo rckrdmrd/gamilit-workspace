@@ -5,7 +5,7 @@
 
 ---
 
-## Indice Completo (46 ADRs)
+## Indice Completo (47 ADRs)
 
 ### Fundamentos y Arquitectura (001-005)
 
@@ -35,7 +35,7 @@
 
 | ADR | Titulo | Estado |
 |-----|--------|--------|
-| [ADR-011](./ADR-011-frontend-api-client-structure.md) | Estructura de API Clients en Frontend | Accepted |
+| [ADR-011](./ADR-011-frontend-api-client-structure.md) | Estructura de API Clients en Frontend | Amended |
 | [ADR-013](./ADR-013-react-query-adoption.md) | Adopcion de React Query (TanStack Query v5) | Accepted |
 | [ADR-014](./ADR-014-nil-safety-patterns.md) | Nil-Safety Patterns con Optional Chaining | Accepted |
 | [ADR-015](./ADR-015-centralized-api-routes-configuration.md) | Centralizacion de Rutas API en apiConfig.ts | Accepted |
@@ -87,7 +87,8 @@
 | [ADR-047](./ADR-047-state-architecture-zustand-react-query.md) | State Architecture — Zustand + React Query | Accepted |
 | [ADR-048](./ADR-048-component-sharing-strategy.md) | Component Sharing Strategy | Accepted |
 | [ADR-049](./ADR-049-confirm-dialog-consolidation.md) | ConfirmDialog Consolidation | Accepted |
+| [ADR-050](./ADR-050-responsive-design-strategy.md) | Responsive Design Strategy | Accepted |
 
 ---
 
-**Total:** 46 ADRs | **Numeros libres:** 006, 024, 025
+**Total:** 47 ADRs | **Numeros libres:** 006, 024, 025

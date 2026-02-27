@@ -1,24 +1,28 @@
+import { apiClient } from '@/services/api/apiClient';
+import { FEATURE_FLAGS } from '@/config/api.config';
 import type { TribunalOpinionesData } from './tribunalOpinionesTypes';
 import { mockTribunalData } from './tribunalOpinionesMockData';
 
 /**
  * Fetch Tribunal de Opiniones exercise data
- * Currently returns mock data, will be replaced with actual API call
  */
 export const fetchTribunal = async (_exerciseId: string): Promise<TribunalOpinionesData> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+  if (FEATURE_FLAGS.USE_MOCK_DATA) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return mockTribunalData;
+  }
 
-  // In production, this would be:
-  // const response = await apiClient.get(`/exercises/${exerciseId}`);
-  // return response.data;
-
-  return mockTribunalData;
+  const { data } = await apiClient.get<{ data: TribunalOpinionesData }>(
+    `/educational/exercises/${_exerciseId}`
+  );
+  return data.data;
 };
 
 /**
  * Submit tribunal evaluations
  * @deprecated Use submitExercise from progressAPI instead
+ * Real submission endpoint: POST /educational/exercises/:exerciseId/submit
  */
 export const submitTribunalAnswers = async (
   _exerciseId: string,

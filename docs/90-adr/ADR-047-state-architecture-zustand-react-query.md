@@ -1,6 +1,14 @@
+---
+titulo: "ADR-047: State Architecture - Zustand + React Query"
+tipo: adr
+fecha_creacion: "2026-02-21"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-047: State Architecture — Zustand + React Query
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-21
 **Deciders:** Frontend Team
 **Tags:** frontend, architecture, state-management, zustand, react-query
@@ -208,7 +216,7 @@ React Query provides automatic cache invalidation via `queryKey` matching. The p
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-21
 **Last Updated:** 2026-02-21
 **Supersedes:** N/A

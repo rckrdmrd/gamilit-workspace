@@ -1315,7 +1315,7 @@ INSERT INTO educational_content.exercise_mechanic_mappings (
 -- Cobertura de exercise_types: 27/27 (100%)
 --
 -- Distribucion por Modulo:
---   - Modulo 1 (Comprension Literal): 7 exercise_types, 13 mappings
+--   - Modulo 1 (Comprension Literal): 5 exercise_types activos + 2 auxiliares asignables, 13 mappings
 --   - Modulo 2 (Comprension Inferencial): 5 exercise_types, 10 mappings
 --   - Modulo 3 (Comprension Critica): 5 exercise_types, 10 mappings
 --   - Modulo 4 (Literacidades Digitales): 9 exercise_types, 18 mappings

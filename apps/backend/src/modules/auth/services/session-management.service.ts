@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { SessionNotFoundError } from '../errors/auth.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import * as crypto from 'crypto';
@@ -89,7 +90,7 @@ export class SessionManagementService {
     const session = await this.validateSession(sessionId);
 
     if (!session) {
-      throw new NotFoundException('Sesión no encontrada o expirada');
+      throw new SessionNotFoundError();
     }
 
     session.expires_at = newExpiresAt;
@@ -112,7 +113,7 @@ export class SessionManagementService {
     });
 
     if (!session) {
-      throw new NotFoundException('Sesión no encontrada');
+      throw new SessionNotFoundError();
     }
 
     session.is_active = false;

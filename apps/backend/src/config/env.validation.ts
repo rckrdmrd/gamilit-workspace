@@ -77,6 +77,11 @@ class EnvironmentVariables {
   @IsOptional()
   REDIS_URL?: string;
 
+  // Data Warehouse (ETL, ML, Visualization modules)
+  @IsString()
+  @IsOptional()
+  ENABLE_DATA_WAREHOUSE?: string;
+
   // CORS
   @IsString()
   @IsOptional()

@@ -1,4 +1,4 @@
-import { useState, useContext, type ReactNode } from 'react';
+import { useState, useEffect, useContext, type ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
@@ -7,6 +7,7 @@ import type { User as UserType, UserGamificationData } from '@shared/types';
 import type { User as AuthUser } from '@features/auth/types/auth.types';
 import { BrandingContext } from '@/app/providers/BrandingProvider';
 import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
+import { useMediaQuery } from '@shared/hooks/useResponsiveLayout';
 
 export interface PortalLayoutProps {
   children: ReactNode;
@@ -44,9 +45,13 @@ export const PortalLayout = ({
   onLogout,
   resolveOrgName,
 }: PortalLayoutProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
-  );
+  const isDesktopViewport = useMediaQuery('(min-width: 1024px)');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    setIsSidebarOpen(isDesktopViewport);
+  }, [isDesktopViewport]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const branding = useContext(BrandingContext);

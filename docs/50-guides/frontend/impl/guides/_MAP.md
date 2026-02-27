@@ -7,7 +7,7 @@ Guias adicionales para el desarrollo del frontend de Gamilit.
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| [Frontend-Alert-System-Guide.md](./Frontend-Alert-System-Guide.md) | Guia del sistema de alertas del frontend | Completo |
+| [FRONTEND-ALERT-SYSTEM-GUIDE.md](./FRONTEND-ALERT-SYSTEM-GUIDE.md) | Guia del sistema de alertas del frontend | Completo |
 
 ## Referencias
 - [Directorio padre](../_MAP.md)

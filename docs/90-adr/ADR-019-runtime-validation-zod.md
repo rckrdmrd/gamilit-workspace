@@ -1,6 +1,14 @@
+---
+titulo: "ADR-019: Adopcion de Zod v3 para Runtime Validation"
+tipo: adr
+fecha_creacion: "2025-11-23"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-019: Adopción de Zod v3 para Runtime Validation
 
-**Estado:** ✅ Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-23
 **Autores:** Frontend-Developer, Architecture-Analyst
 **Decisión:** Adoptar Zod v3 como solución estándar para validación de runtime en frontend
@@ -571,5 +579,5 @@ export const myApi = {
 
 **Versión:** 1.0.0
 **Última actualización:** 2025-11-24
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa

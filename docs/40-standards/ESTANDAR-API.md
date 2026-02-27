@@ -300,7 +300,7 @@ async function bootstrap() {
     .setDescription('API REST para gestion de usuarios del sistema')
     .setVersion('1.0.0')
     .setContact('Equipo Backend', 'https://empresa.com', 'backend@empresa.com')
-    .addServer('http://localhost:3000', 'Desarrollo')
+    .addServer('http://localhost:3006', 'Desarrollo')
     .addServer('https://api.staging.empresa.com', 'Staging')
     .addServer('https://api.empresa.com', 'Produccion')
     .addBearerAuth(
@@ -1167,7 +1167,7 @@ async function bootstrap() {
   // Configuracion CORS
   app.enableCors({
     origin: [
-      'http://localhost:3000',
+      'http://localhost:3006',
       'https://app.empresa.com',
       'https://admin.empresa.com',
     ],

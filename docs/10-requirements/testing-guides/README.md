@@ -1,27 +1,2 @@
-# Testing Guides — GAMILIT
-
-Guias de prueba con respuestas ejemplo para los 5 modulos educativos.
-Cada guia contiene 40-50+ ejemplos de respuestas validas para los ejercicios interactivos.
-
-## Contenido
-
-| Archivo | Modulo | Ejercicios | Descripcion |
-|---------|--------|------------|-------------|
-| `guia-pruebas-modulo-1.md` | Comprension Literal | Crucigrama, linea de tiempo, completar espacios, V/F, sopa de letras | Respuestas ejemplo para ejercicios de comprension literal |
-| `guia-pruebas-modulo-2.md` | Comprension Inferencial | Detective, hipotesis, prediccion, puzzle contexto, rueda inferencias | Respuestas ejemplo para ejercicios inferenciales |
-| `guia-pruebas-modulo-3.md` | Comprension Critica | Tribunal, debate, analisis fuentes, podcast, matriz perspectivas | Respuestas ejemplo para ejercicios de pensamiento critico |
-| `guia-pruebas-modulo-4.md` | Lectura Digital | Fake news, infografia, quiz TikTok, hipertextual, memes | Respuestas ejemplo para ejercicios de literacidad digital |
-| `guia-pruebas-modulo-5.md` | Produccion y Expresion | Diario multimedia, comic digital, video carta | Respuestas ejemplo para ejercicios de produccion textual |
-
-## Uso
-
-Estas guias sirven como referencia para:
-1. **QA/Testing:** Validar que los evaluadores de ejercicios aceptan respuestas correctas
-2. **Desarrollo:** Crear seeds de prueba con datos realistas
-3. **Contenido:** Verificar que los tipos de ejercicio cubren los objetivos pedagogicos
-
-## Referencia
-
-- Estrategia de testing: `../../../docs/00-overview/TESTING-STRATEGY.md`
-- Arquitectura de ejercicios: `../../20-architecture/ARQUITECTURA-GAMIFICACION.md`
-- ADR ejercicios: `../../90-adr/ADR-004-MODULAR-EXERCISE-ENGINE.md`
+> **[MOVED]** This directory has been relocated to `docs/50-guides/testing/exercise-guides/`.
+> See: [docs/50-guides/testing/exercise-guides/](../../50-guides/testing/exercise-guides/)

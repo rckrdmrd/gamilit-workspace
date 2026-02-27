@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.1.0"
-fecha: "2026-02-21"
+version: "12.5.0"
+fecha: "2026-02-27"  # v12.5.0: Remediacion 17 gaps - componentes 572->575, paginas 69->72, routes 71->74, parent portal 7/7 pages (100%)
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -15,16 +15,16 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 576                          # Verified 2026-02-21: find .tsx excl tests/stories/examples/legacy/testing
-  hooks: 128                                    # Verified 2026-02-21: find use*.ts excl tests + type files (user*.types.ts)
-  paginas: 67                                   # Verified 2026-02-21: find *Page.tsx excl tests/legacy. -1 LegacyExercisePage, -3 teacher pages
+  componentes_tsx: 575                          # +3: ParentNotificationsPage, ParentMessagesPage, ParentSettingsPage. Base: 572 (strict 2026-02-27)
+  hooks: 132                                    # Reconteo 2026-02-27: 132 use*.ts en hooks/ dirs (excl. type files, API services, examples)
+  paginas: 72                                   # +3 parent portal pages. Base: 69 (strict 2026-02-27)
   stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003)
   api_service_files: 65                         # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0). +resourceSharingApi.ts
   api_calls_total: 580                          # ~580: +resourceSharingApi calls over previous 575
   type_definition_files: 49                     # 49 archivos, 430+ tipos/interfaces/enums exportados
   portales: 4
   mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
-  routes: 70                                    # 73 - 3 routes removed (teacher communication, content, content-management)
+  routes: 74                                    # +3 parent portal routes added. Base: 71 (corrected 2026-02-27)
   contexts_providers: 4                         # AuthContext, BrandingProvider, ExerciseContext (Exercise Restructuring), barrel
   config_files: 16                              # 14 root + exercise-registry.ts + registrations.ts
   utility_files: 37                             # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1) + difficulty.ts + inventory/utils.ts + downloadCSV.ts
@@ -109,13 +109,20 @@ portales:
 
   - nombre: "Portal Padres"
     directorio: "apps/parent/"
-    completitud: "100%"
-    paginas: 4                                  # Dashboard, ChildProgress, Login, Register
-    componentes_tsx: 4
-    descripcion: "Dashboard, progreso hijo, login, registro"
+    completitud: "100% backend, 100% frontend (7/7 pages)"
+    paginas: 7                                  # Dashboard, ChildProgress, Login, Register, Notifications, Messages, Settings
+    componentes_tsx: 7
+    descripcion: "Dashboard, progreso hijo, login, registro, notificaciones, mensajes, configuracion. Cobertura completa."
+    cambios_recientes: |
+      v12.5.0 (Remediacion 17 gaps 2026-02-27 Phase 6D):
+      - ParentNotificationsPage: vista de notificaciones del portal padres
+      - ParentMessagesPage: mensajeria padre-maestro
+      - ParentSettingsPage: configuracion de cuenta y preferencias
+      - 3 rutas agregadas a App.tsx (/parent/notifications, /parent/messages, /parent/settings)
+      - Portal padres alcanza 100% cobertura (7/7 pages)
 
 # Nota: Paginas compartidas (auth pages, feature-level pages) = 8 adicionales fuera de portales
-# Total paginas: 19+19+19+4+8 = 69
+# Total paginas: 19+16+19+7+8+3(shared_extra) = 72
 
 # -------------------------------------------------------------------------------
 # FEATURES (Verificado contra features/ directory)
@@ -214,7 +221,7 @@ stores:
 # -------------------------------------------------------------------------------
 
 hooks:
-  total: 127                                    # Verified 2026-02-21: find use*.ts excl user*/tests/index.ts
+  total: 129                                    # Verified 2026-02-27: 129 files (126 impl + 3 barrels, excl. type files, API services, examples)
   por_directorio:
     apps_admin_hooks: 31                        # Verified 2026-02-21: 31 use*.ts (excl index.ts)
     apps_teacher_hooks: 24                      # Verified 2026-02-21: 24 use*.ts (excl index.ts). +useSharedResources, +useTeacherContent, +useTeacherMessages, +useAnalytics
@@ -282,17 +289,17 @@ api_services:
   duplicados_identificados: 0                   # All resolved (LTI, auth, manualReviews consolidated; content deleted; progress, achievements domain-split)
 
 # -------------------------------------------------------------------------------
-# ROUTES (73 definiciones en App.tsx)
+# ROUTES (71 definiciones en App.tsx)
 # -------------------------------------------------------------------------------
 
 routes:
-  total: 73                                    # Verified 2026-02-17: 73 <Route path=> in App.tsx
+  total: 74                                    # +3 parent portal routes (notifications, messages, settings). Base: 71 (corrected 2026-02-27)
   desglose:
     public: 7                                   # login, register, forgot-password, reset-password, verify-email, parent/login, parent/register
-    student: 22                                 # role guard: student (dashboard, learning, progress, achievements, etc.)
-    teacher: 19                                 # role guard: teacher, admin_teacher (incl. 1 redirect)
+    student: 21                                 # role guard: student (dashboard, learning, progress, achievements, etc.)
+    teacher: 18                                 # role guard: teacher, admin_teacher (incl. 1 redirect)
     admin: 22                                   # role guard: super_admin (incl. exercises/create and exercises/:id/edit)
-    parent: 2                                   # role guard: parent (dashboard, child/:studentId)
+    parent: 5                                   # role guard: parent (dashboard, child/:studentId, notifications, messages, settings)
     redirect: 1                                 # / -> /dashboard
 
 # -------------------------------------------------------------------------------

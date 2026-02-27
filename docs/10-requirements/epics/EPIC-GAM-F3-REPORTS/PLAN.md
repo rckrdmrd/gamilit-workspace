@@ -18,7 +18,7 @@
 | 5 | US-REP-005 | Visualizaciones Avanzadas | 8 | US-REP-003 | Sprint 19 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Recharts / PDFKit
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Recharts / PDFKit
 - **Base de datos:** Schema `progress_tracking` + materialized views para ETL
 - **Patron:** ETL pipeline, CQRS para lecturas, export multi-formato (PDF, Excel, CSV)
 

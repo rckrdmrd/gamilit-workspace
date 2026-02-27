@@ -16,7 +16,7 @@
 | 3 | US-PEER-003 | Scoring and ML Coins Wagering | 7 | US-PEER-002 | Sprint 25 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Socket.IO 4.8+ / Redis
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Socket.IO 4.8+ / Redis
 - **Base de datos:** Schema `social_features` (tablas peer_challenges, challenge_attempts)
 - **Patron:** Real-time WebSocket para matchmaking y battle updates, wager system con transacciones atomicas
 

@@ -253,6 +253,40 @@ curl -s http://localhost:3006/api/v1/health
 
 ---
 
+## Scripts de Base de Datos y WSL2
+
+Los scripts de recreacion/inicializacion de BD tienen awareness de WSL2 para manejar la conectividad automaticamente:
+
+| Script | WSL2 Awareness | Detalle |
+|--------|---------------|---------|
+| `recreate-database-dev.sh` | Si | Detecta si corre dentro de WSL2 (localhost) o desde Windows (IP WSL2 auto) |
+| `recreate-database.sh` | No (base) | Usa `DB_HOST` del entorno o de config/ |
+| `init-database.sh` | No (base) | Usa `ENV_DB_HOST` de config/ |
+| `scripts/update-wsl-ip.sh` | Si | Script `predev` del backend: detecta distro WSL, resuelve DB_HOST_MODE, valida pg_isready |
+
+### Flujo de Deteccion WSL2 en `recreate-database-dev.sh`
+
+```
+1. Detectar entorno:
+   a. /proc/version contiene "microsoft" → DENTRO de WSL2 → DB_HOST=localhost
+   b. wsl.exe disponible → WINDOWS → DB_HOST = wsl.exe hostname -I (primera IP)
+   c. Ninguno → DB_HOST=localhost (fallback)
+2. Exportar DB_HOST
+3. Ejecutar recreate-database.sh --env dev
+```
+
+### DB_HOST_MODE (Backend `predev`)
+
+El backend usa `scripts/update-wsl-ip.sh` como hook `predev` que lee `DB_HOST_MODE` de `.env.dev`:
+
+| Modo | Comportamiento |
+|------|---------------|
+| `auto` (default) | Detecta IP WSL2, valida alcanzabilidad desde Windows, fallback a localhost |
+| `localhost` | Siempre usa localhost (para PostgreSQL nativo o WSL2 con port forwarding) |
+| `wsl-ip` | Exige IP WSL2 valida; falla rapido si no existe |
+
+---
+
 ## Notas Importantes
 
 1. **NUNCA** usar .env de dev en produccion

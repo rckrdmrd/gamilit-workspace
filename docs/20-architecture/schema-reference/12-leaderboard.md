@@ -2,11 +2,15 @@
 
 > **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
 
+> **[DEPRECATED]** This section describes an early conceptual model that was never implemented as described.
+> The DDL-accurate documentation appears in the updated sections below.
+> **Note:** No `leaderboard` schema exists in DDL. Leaderboard functionality is implemented via materialized views in `gamification_system` (see `gamification_system.leaderboard_metadatas` in `04-gamification.md`).
+
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 
 ---
 
-### leaderboard.leaderboard_entries
+### leaderboard.leaderboard_entries [NO DDL — conceptual only]
 Entradas de ranking por estudiante.
 
 | Columna | Tipo | Nullable | Default | Descripcion |
@@ -29,7 +33,7 @@ Entradas de ranking por estudiante.
 
 ---
 
-### leaderboard.leaderboard_seasons
+### leaderboard.leaderboard_seasons [NO DDL — conceptual only]
 Temporadas de leaderboard.
 
 | Columna | Tipo | Nullable | Default | Descripcion |
@@ -49,7 +53,7 @@ Temporadas de leaderboard.
 
 ---
 
-### leaderboard.leaderboard_history
+### leaderboard.leaderboard_history [NO DDL — conceptual only]
 Historial de posiciones por snapshot.
 
 | Columna | Tipo | Nullable | Default | Descripcion |
@@ -66,7 +70,7 @@ Historial de posiciones por snapshot.
 
 ---
 
-### leaderboard.season_rewards
+### leaderboard.season_rewards [NO DDL — conceptual only]
 Recompensas distribuidas al final de temporada.
 
 | Columna | Tipo | Nullable | Default | Descripcion |

@@ -117,14 +117,11 @@ ALTER TABLE data_warehouse.ml_prediction_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY ml_prediction_logs_admin_policy
     ON data_warehouse.ml_prediction_logs
     FOR ALL
-    TO authenticated
     USING (
         EXISTS (
-            SELECT 1 FROM auth_management.users u
-            JOIN auth_management.user_roles ur ON u.id = ur.user_id
-            JOIN auth_management.roles r ON ur.role_id = r.id
-            WHERE u.id = auth.uid()
-            AND r.name IN ('admin', 'super_admin')
+            SELECT 1 FROM auth_management.user_roles ur
+            WHERE ur.user_id = gamilit.get_current_user_id()
+            AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -132,11 +129,10 @@ CREATE POLICY ml_prediction_logs_admin_policy
 CREATE POLICY ml_prediction_logs_own_policy
     ON data_warehouse.ml_prediction_logs
     FOR SELECT
-    TO authenticated
     USING (
         student_id IN (
             SELECT id FROM auth_management.profiles
-            WHERE user_id = auth.uid()
+            WHERE id = gamilit.get_current_user_id()
         )
     );
 

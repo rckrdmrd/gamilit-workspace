@@ -33,7 +33,7 @@ Documentacion completa del proyecto gamilit como plataforma educativa gamificada
 |------|-------------|
 | Database | DATABASE_INVENTORY.yml (18 schemas, 173 tablas documentados) |
 | Backend | BACKEND_INVENTORY.yml (23 modulos, 912 endpoints documentados), Swagger/OpenAPI |
-| Frontend | FRONTEND_INVENTORY.yml (4 portales, 577 componentes documentados) |
+| Frontend | FRONTEND_INVENTORY.yml (4 portales, 575 componentes documentados) |
 | DevOps | N/A |
 
 ## Dependencias

@@ -114,4 +114,4 @@ Uso: Reportes complejos, datos confidenciales
 ---
 
 *Generado: 2026-01-24*
-*Sistema SIMCO v4.3.0*
+*Sistema SIMCO v4.0.0*

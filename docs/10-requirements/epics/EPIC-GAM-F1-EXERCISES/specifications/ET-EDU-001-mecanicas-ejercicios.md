@@ -28,7 +28,7 @@
 
 🗄️ **ENUMs:**
 - `educational_content.exercise_type` - `apps/database/ddl/00-prerequisites.sql:~85-120`
-  - 35 implementaciones específicas GAMILIT
+  - 27 implementaciones específicas GAMILIT
 - `educational_content.exercise_mechanic_mapping` (tabla) - Mapeo a categorías pedagógicas
   - 7 categorías: Vocabulario, Gramática, Lectura, Escritura, Audio, Pronunciación, Cultura
 
@@ -79,14 +79,14 @@
 **Ubicación:** `apps/database/ddl/00-prerequisites.sql:~85-120`
 
 ```sql
--- Exercise Types - Implementaciones específicas GAMILIT (35 tipos)
+-- Exercise Types - Implementaciones específicas GAMILIT (27 tipos)
 CREATE TYPE educational_content.exercise_type AS ENUM (
-    -- Módulo 1: Comprensión Literal (5)
+    -- Módulo 1: Comprensión Literal (5 activos + 2 auxiliares asignables)
     'crucigrama',
     'linea_tiempo',
+    'completar_espacios',
+    'verdadero_falso',
     'sopa_letras',
-    'mapa_conceptual',
-    'emparejamiento',
 
     -- Módulo 2: Comprensión Inferencial (5)
     'detective_textual',
@@ -114,22 +114,16 @@ CREATE TYPE educational_content.exercise_type AS ENUM (
     'comic_digital',
     'video_carta',
 
-    -- Auxiliares y Futuros (12)
-    'collage_prensa',
-    'verdadero_falso',
-    'mapa_mental',
-    'call_to_action',
-    'flashcard',
-    'completar_espacios',
+    -- Auxiliares (6: comprension_auditiva, collage_prensa, texto_movimiento, call_to_action, mapa_conceptual, emparejamiento)
     'comprension_auditiva',
-    'red_conceptos',
-    'chat_literario',
-    'email_formal',
-    'ensayo_argumentativo',
-    'resena_critica'
+    'collage_prensa',
+    'texto_movimiento',
+    'call_to_action',
+    'mapa_conceptual',
+    'emparejamiento'
 );
 
-COMMENT ON TYPE educational_content.exercise_type IS '35 mecánicas específicas GAMILIT agrupadas en 5 módulos educativos + auxiliares';
+COMMENT ON TYPE educational_content.exercise_type IS '27 mecánicas específicas GAMILIT agrupadas en 5 módulos educativos + auxiliares';
 ```
 
 ### 2. Sistema Dual: exercise_type + Categorías Pedagógicas
@@ -139,7 +133,7 @@ COMMENT ON TYPE educational_content.exercise_type IS '35 mecánicas específicas
 GAMILIT implementa un **sistema dual** que combina:
 
 1. **exercise_type (Implementación):**
-   - 35 mecánicas específicas gamificadas adaptadas al contexto maya yucateco
+   - 27 mecánicas específicas gamificadas adaptadas al contexto maya yucateco
    - Agrupadas por módulos educativos (1-5) + auxiliares
    - Implementación concreta en Frontend/Backend
 
@@ -1240,10 +1234,10 @@ async getExercise(exerciseId: string): Promise<Exercise> {
 
 ---
 
-**Nota v2.0:** Este documento fue actualizado para reflejar la implementación real del sistema (DB-110, DB-111, DB-112). Se mantiene la clasificación pedagógica mediante tabla de mapeo `exercise_mechanic_mapping`, reconciliando el valor pedagógico original con las 35 implementaciones específicas GAMILIT existentes. La decisión arquitectónica está documentada en ADR-008.
+**Nota v2.0:** Este documento fue actualizado para reflejar la implementación real del sistema (DB-110, DB-111, DB-112). Se mantiene la clasificación pedagógica mediante tabla de mapeo `exercise_mechanic_mapping`, reconciliando el valor pedagógico original con las 27 implementaciones específicas GAMILIT existentes. La decisión arquitectónica está documentada en ADR-008.
 
 ---
 
 **Documento:** `docs/01-fase-alcance-inicial/EAI-002-actividades/especificaciones/ET-EDU-001-mecanicas-ejercicios.md`
-**Propósito:** Especificación técnica completa de implementación de las 35 mecánicas GAMILIT + sistema de mapeo pedagógico
+**Propósito:** Especificación técnica completa de implementación de las 27 mecánicas GAMILIT + sistema de mapeo pedagógico
 **Audiencia:** Backend Developers, Frontend Developers, QA Team

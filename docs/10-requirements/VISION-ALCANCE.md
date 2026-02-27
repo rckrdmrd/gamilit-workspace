@@ -275,7 +275,7 @@ El modelo de aislamiento por escuela implementa:
 | EPIC-GAM-ARCHITECTURE | Diseno de Arquitectura | 13 | Documentacion | Completado |
 | EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 173 tablas | Completado |
 | EPIC-GAM-BACKEND | Backend NestJS | 34 | 23 modulos, 912 endpoints | Completado |
-| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 577 componentes | Completado |
+| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 575 componentes | Completado |
 | EPIC-GAM-K8S | Kubernetes Setup | 8 | Deployment configs | En progreso |
 | EPIC-GAM-TESTING | Testing Completo | 13 | 2324 tests | En progreso |
 | EPIC-GAM-DEVOPS | DevOps y CI/CD | 8 | Pipelines | En progreso |

@@ -33,7 +33,7 @@ CREATE TABLE educational_content.exercise_mechanic_mappings (
     -- IMPLEMENTACIÓN GAMILIT
     -- ========================================================================
 
-    -- Tipo de ejercicio específico GAMILIT (35 implementaciones)
+    -- Tipo de ejercicio específico GAMILIT (33 implementaciones)
     -- Referencia: educational_content.exercise_type ENUM
     exercise_type educational_content.exercise_type NOT NULL,
 
@@ -137,7 +137,7 @@ CREATE TRIGGER trg_exercise_mechanic_mappings_updated_at
 -- ============================================================================
 
 COMMENT ON TABLE educational_content.exercise_mechanic_mappings IS
-'Mapeo N:M entre categorías pedagógicas universales (31 subcategorías) e implementaciones específicas GAMILIT (35 exercise_types).
+'Mapeo N:M entre categorías pedagógicas universales (31 subcategorías) e implementaciones específicas GAMILIT (33 exercise_types).
 Sistema Dual que permite clasificación pedagógica sin romper implementación existente.
 Ver ADR-008 para contexto y decisión arquitectónica.';
 
@@ -148,7 +148,7 @@ COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.mechanic_subcat
 'Subcategoría pedagógica genérica (31 valores posibles). Ejemplos: multiple_choice, word_search, inference, free_writing';
 
 COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.exercise_type IS
-'Tipo de ejercicio específico GAMILIT (35 implementaciones). Referencia ENUM educational_content.exercise_type';
+'Tipo de ejercicio específico GAMILIT (33 implementaciones). Referencia ENUM educational_content.exercise_type';
 
 COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.bloom_level IS
 'Nivel en Taxonomia de Bloom (ENUM): recordar, comprender, aplicar, analizar, evaluar, crear.

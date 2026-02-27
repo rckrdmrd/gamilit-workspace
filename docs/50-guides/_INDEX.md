@@ -14,7 +14,7 @@ Guias tecnicas por dominio para desarrolladores, DevOps y QA.
 | [testing/](./testing/) | Guias de testing manual, automatizado, arquitectura, E2E Playwright | ~6 |
 | [troubleshooting/](./troubleshooting/) | Errores comunes por dominio + build errors | ~16 |
 | [integration/](./integration/) | Integracion entre portales, TypeORM, WebSocket | ~4 |
-| [documentation-master/](./documentation-master/) | Analisis master de documentacion (7 fases) | ~11 |
+| [documentation-master/](./documentation-master/) | [MOVED] a `orchestration/tareas/TASK-2026-01-22-DOCUMENTATION-MASTER/` | stub |
 
 ## Archivos Raiz
 

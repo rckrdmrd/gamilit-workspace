@@ -17,7 +17,7 @@
 | 4 | US-LTI-003 | Deep Linking | 10 | US-LTI-001, F1-EXERCISES | Sprint 26 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / LTI 1.3 (IMS Global)
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / LTI 1.3 (IMS Global)
 - **Base de datos:** Schema `auth_management` (tablas lti_consumers, lti_sessions, lti_grade_passbacks)
 - **Patron:** LTI 1.3 standard (OIDC + AGS + Deep Linking), JWT RSA-256, multi-tenant isolation
 

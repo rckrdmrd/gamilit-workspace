@@ -1,6 +1,14 @@
+---
+titulo: "ADR-050: Responsive Design Strategy"
+tipo: adr
+fecha_creacion: "2026-02-26"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-050: Responsive Design Strategy
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-26
 **Deciders:** Frontend Team
 **Tags:** frontend, responsive, mobile, ux, accessibility, tailwind, breakpoints
@@ -11,7 +19,7 @@
 
 ### Situacion Anterior
 
-The GAMILIT frontend (577 production components, 67 pages, 4 portals, 30 exercise mechanics) was built with a desktop-first approach. While Tailwind CSS provides responsive utilities, their usage was inconsistent:
+The GAMILIT frontend (575 production components, 72 pages, 4 portals, 30 exercise mechanics) was built with a desktop-first approach. While Tailwind CSS provides responsive utilities, their usage was inconsistent:
 
 1. **No shared responsive infrastructure:** The `useResponsiveLayout` hook existed only in the student portal (`apps/student/hooks/`), unavailable to admin, teacher, and parent portals.
 
@@ -207,7 +215,7 @@ Build a separate mobile-optimized app instead of making the web app responsive.
 | ADR-049 | Relacionado | Accepted | ConfirmDialog consolidation — button stacking pattern applies |
 | Tailwind CSS 4 | Dependencia | Activo | Breakpoint system and utility classes |
 | shared/hooks/useResponsiveLayout | Entregable | Creado | Shared responsive hook with debounce |
-| STANDARD-RESPONSIVE.md | Entregable | Creado | Responsive design standard document |
+| ESTANDAR-FRONTEND-RESPONSIVE.md | Entregable | Creado | Responsive design standard document |
 
 ---
 
@@ -215,13 +223,13 @@ Build a separate mobile-optimized app instead of making the web app responsive.
 
 - `apps/frontend/src/shared/hooks/useResponsiveLayout.ts` — Shared responsive hook
 - `apps/frontend/src/shared/components/common/Modal.tsx` — Base modal with responsive improvements
-- `docs/40-standards/STANDARD-RESPONSIVE.md` — Responsive design standard
+- `docs/40-standards/ESTANDAR-FRONTEND-RESPONSIVE.md` — Responsive design standard
 - [WCAG 2.5.5 Target Size (Enhanced)](https://www.w3.org/WAI/WCAG21/Understanding/target-size.html)
 - [Tailwind CSS Responsive Design](https://tailwindcss.com/docs/responsive-design)
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-26
 **Last Updated:** 2026-02-26
 **Supersedes:** N/A

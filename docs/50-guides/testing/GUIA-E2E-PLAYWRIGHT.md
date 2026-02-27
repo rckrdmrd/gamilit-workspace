@@ -510,7 +510,7 @@ psql -h "${DB_HOST:-127.0.0.1}" -p "${DB_PORT:-5432}" \
   -U "${DB_USER:-gamilit_user}" -d "${DB_NAME:-gamilit_platform}" <<'EOSQL'
 -- Limpiar datos generados por E2E (mantener seeds base)
 -- Solo eliminar registros creados durante la ejecucion de tests
-DELETE FROM gamification.student_xp_log WHERE created_at > NOW() - INTERVAL '1 hour';
+DELETE FROM gamification_system.student_xp_log WHERE created_at > NOW() - INTERVAL '1 hour';
 DELETE FROM progress.exercise_attempts WHERE created_at > NOW() - INTERVAL '1 hour';
 EOSQL
 ```
@@ -1160,7 +1160,7 @@ await page.waitForTimeout(3000); // PROHIBIDO
 - [ESTANDAR-TESTING](../../40-standards/ESTANDAR-TESTING.md) - Estandar general de testing (piramide, unit, integration, E2E)
 - [GUIA-COVERAGE-TESTING](./GUIA-COVERAGE-TESTING.md) - Estrategia de cobertura y metricas
 - [TESTING-GUIDE](./TESTING-GUIDE.md) - Guia general de testing gamilit (Jest + Vitest)
-- [Guias de Pruebas por Modulo](../../10-requirements/testing-guides/README.md) - Respuestas ejemplo y criterios de validacion para los 23 tipos de ejercicio (5 modulos)
+- [Guias de Pruebas por Modulo](./exercise-guides/README.md) - Respuestas ejemplo y criterios de validacion para los 23 tipos de ejercicio (5 modulos)
 - [Playwright Documentation](https://playwright.dev/docs/intro) - Documentacion oficial
 
 ---

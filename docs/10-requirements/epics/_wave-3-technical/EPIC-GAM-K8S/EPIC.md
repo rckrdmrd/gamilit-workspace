@@ -1,3 +1,5 @@
+> **[CANCELLED]** This epic has been cancelled. Kubernetes deployment is not applicable to the current GAMILIT architecture (single-server PM2 deployment). Retained for historical reference only.
+
 # EPIC-GAM-K8S: Kubernetes Gamilit
 
 | Campo | Valor |

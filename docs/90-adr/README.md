@@ -48,6 +48,11 @@ Registro de decisiones arquitectonicas del proyecto.
 | [ADR-043](ADR-043-consolidacion-bd.md) | Consolidacion BD 2026-01-07 | Aceptada |
 | [ADR-044](ADR-044-test-coverage-strategy.md) | Estrategia Test Coverage (50% enforced, 80% aspiracional) | Aceptada |
 | [ADR-045](ADR-045-clean-architecture-pragmatica.md) | Clean Architecture Pragmatica (incremental, domain errors first) | Aceptada |
+| [ADR-046](ADR-046-pageshell-pattern.md) | PageShell Pattern Replaces HOC Layout Wrappers | Aceptada |
+| [ADR-047](ADR-047-state-architecture-zustand-react-query.md) | State Architecture — Zustand + React Query | Aceptada |
+| [ADR-048](ADR-048-component-sharing-strategy.md) | Component Sharing Strategy | Aceptada |
+| [ADR-049](ADR-049-confirm-dialog-consolidation.md) | ConfirmDialog Consolidation | Aceptada |
+| [ADR-050](ADR-050-responsive-design-strategy.md) | Responsive Design Strategy | Aceptada |
 
 ---
 

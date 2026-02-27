@@ -107,7 +107,7 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 
 | Documento | Proposito |
 |-----------|-----------|
-| `FRONTEND_INVENTORY.yml` | 577 componentes, 134 hooks, 65 APIs |
+| `FRONTEND_INVENTORY.yml` | 575 componentes, 132 hooks, 65 APIs |
 | `BACKEND_INVENTORY.yml` | 912 endpoints documentados |
 
 ### Tareas (orchestration/tareas/)
@@ -198,4 +198,4 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 ---
 
 _Mapa generado: 2026-01-24_
-_Sistema SIMCO v4.3.0_
+_Sistema SIMCO v4.0.0_

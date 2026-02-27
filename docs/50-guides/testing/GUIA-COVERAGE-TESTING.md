@@ -30,6 +30,24 @@
 | Coverage | Sin threshold configurado |
 | Coverage objetivo | 80% |
 
+### Tests de Integracion (Backend — Jest)
+
+| Metrica | Valor |
+|---------|-------|
+| Archivos | 5 en `apps/backend/test/integration/` |
+| Distribucion | 3 auth + 2 gamification |
+| Test runner | Jest con config separada |
+| Config | `apps/backend/jest.integration.config.js` |
+| Script | `npm run test:integration` |
+| Comportamiento | Graceful skip cuando no hay base de datos disponible |
+
+Los tests de integracion usan una base de datos real (PostgreSQL) y son separados de los unit tests para no bloquear el CI cuando la BD no esta disponible. Para ejecutarlos:
+
+```bash
+cd apps/backend
+npm run test:integration
+```
+
 ---
 
 ## Estrategia de Cobertura
@@ -59,7 +77,7 @@
 
 5. FRONTEND COMPONENTS (media prioridad)
    - Componentes criticos: auth, exercises, gamification
-   - 577 componentes, 46 tests actuales (~10%)
+   - 575 componentes, 46 tests actuales (~10%)
    - Priorizar: formularios, integracion API, estado
 ```
 

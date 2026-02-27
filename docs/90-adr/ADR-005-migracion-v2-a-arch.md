@@ -1,3 +1,11 @@
+---
+titulo: "ADR-005: Migracion de Documentacion workspace-v2 a workspace-arch"
+tipo: adr
+fecha_creacion: "2026-02-07"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-005: Migracion de Documentacion workspace-v2 a workspace-arch
 
 **Fecha:** 2026-02-07

@@ -49,4 +49,4 @@ TASK-DB-GAM-003 --> TASK-BE-GAM-002 --> TASK-FE-GAM-002
 ---
 
 **Generado:** 2026-01-04
-**Sistema:** NEXUS v3.4 + SIMCO + SCRUM
+**Sistema:** NEXUS v4.1 + SIMCO + SCRUM

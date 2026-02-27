@@ -106,13 +106,13 @@ Ver: REPORTE-ACTUALIZACION-MANUALES-2025-11-23.md
 
 ## Archivos Consolidados
 
-Este documento consolida:
-- RESUMEN_ACTUALIZACION.md
-- RESUMEN_CORRECCIONES_FINALES.md
-- RESUMEN_MANUALES.md
-- REPORTE-ACTUALIZACION-MANUALES-2025-11-23.md (referencia)
+Este documento consolida y supersedes the following files (retained for historical reference):
+- `RESUMEN-ACTUALIZACION.md` (marked as SUPERSEDED)
+- `RESUMEN-CORRECCIONES-FINALES.md` (marked as SUPERSEDED)
+- `RESUMEN-MANUALES.md` (marked as SUPERSEDED)
+- `REPORTE-ACTUALIZACION-MANUALES-2025-11-23.md` (referencia, standalone report)
 
 ---
 
 **Generado:** 2026-01-04
-**Sistema:** NEXUS v3.4
+**Sistema:** NEXUS v4.1

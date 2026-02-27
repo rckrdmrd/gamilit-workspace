@@ -33,7 +33,7 @@
 | 20 | US-EXT-002 | Sprints Implementados (tracking) | -- | -- | -- |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Schemas multiples (auth_management, system_configuration, progress_tracking)
 - **Patron:** Admin SPA con 18+ paginas, RBAC role=admin, bulk operations, export (PDF/CSV/Excel)
 

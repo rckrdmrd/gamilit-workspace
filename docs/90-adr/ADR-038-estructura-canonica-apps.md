@@ -1,6 +1,14 @@
+---
+titulo: "ADR-038: Estructura Canonica del Directorio apps/"
+tipo: adr
+fecha_creacion: "2026-02-11"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-038: Estructura Canonica del Directorio apps/
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-11
 **Contexto:** Estructura MONOREPO en gamilit standalone
 
@@ -54,8 +62,8 @@ gamilit/
 │   │   └── tsconfig.json
 │   ├── frontend/          # React 19 aplicacion web
 │   │   ├── src/
-│   │   │   ├── components/  # 577 componentes
-│   │   │   ├── pages/       # 70 paginas (4 portales)
+│   │   │   ├── components/  # 575 componentes
+│   │   │   ├── pages/       # 72 paginas (4 portales)
 │   │   │   ├── stores/      # 13 stores Zustand
 │   │   │   └── App.tsx
 │   │   ├── package.json

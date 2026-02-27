@@ -22,7 +22,7 @@
 Esta epica no tiene User Stories formales. Se compone de 5 tareas tecnicas migradas desde el workspace v2 (EMR-001-migracion-bd). El contenido original incluye documentacion de esquema, indices y scripts de instalacion.
 
 ## Enfoque Tecnico
-- **Stack:** PostgreSQL 16, bash scripts, DDL puro
+- **Stack:** PostgreSQL 15, bash scripts, DDL puro
 - **Base de datos:** Schema `gamilit` con 18 schemas modulares
 - **Patron:** Schema-per-module, RLS (Row Level Security) para multi-tenancy
 - **Migracion:** Scripts idempotentes con verificacion de estado previo

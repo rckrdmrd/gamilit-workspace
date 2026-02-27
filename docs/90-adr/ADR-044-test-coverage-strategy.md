@@ -1,6 +1,14 @@
+---
+titulo: "ADR-044: Estrategia de Test Coverage (50% enforced, 80% aspiracional)"
+tipo: adr
+fecha_creacion: "2026-02-17"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-044: Estrategia de Test Coverage (50% enforced, 80% aspiracional)
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-17
 **Deciders:** Tech Lead
 **Tags:** testing, quality, ci, backend
@@ -140,7 +148,7 @@ El proyecto GAMILIT presenta una contradiccion documentada entre la configuracio
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-17
 **Last Updated:** 2026-02-17
 **Supersedes:** N/A

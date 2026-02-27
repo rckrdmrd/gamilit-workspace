@@ -20,16 +20,16 @@
 
 | Archivo | Version | Descripcion |
 |---------|---------|-------------|
-| [Manual_Portal_Administrador_ACTUALIZADO.md](./Manual_Portal_Administrador_ACTUALIZADO.md) | 1.3 | Manual operativo del portal administrador (Ene 2026) |
-| [Manual_Portal_Maestros_ACTUALIZADO.md](./Manual_Portal_Maestros_ACTUALIZADO.md) | 2.0 | Manual operativo del portal maestro (Nov 2025) |
-| [Manual_Portal_Student_v1.0.md](./Manual_Portal_Student_v1.0.md) | 1.1 | Manual operativo del portal estudiante (Nov 2025) |
+| [Manual-Portal-Administrador-ACTUALIZADO.md](./Manual-Portal-Administrador-ACTUALIZADO.md) | 1.3 | Manual operativo del portal administrador (Ene 2026) |
+| [Manual-Portal-Maestros-ACTUALIZADO.md](./Manual-Portal-Maestros-ACTUALIZADO.md) | 2.0 | Manual operativo del portal maestro (Nov 2025) |
+| [Manual-Portal-Student-v1.0.md](./Manual-Portal-Student-v1.0.md) | 1.1 | Manual operativo del portal estudiante (Nov 2025) |
 
 ## Complementarios
 
-- [RESUMEN_ACTUALIZACION.md](./RESUMEN_ACTUALIZACION.md)
-- [RESUMEN_MANUALES.md](./RESUMEN_MANUALES.md)
-- [INSTRUCCIONES_ENTREGA_FINAL.md](./INSTRUCCIONES_ENTREGA_FINAL.md)
-- [GUIA_ENTREGA_USB.md](./GUIA_ENTREGA_USB.md)
+- [RESUMEN-ACTUALIZACION.md](./RESUMEN-ACTUALIZACION.md)
+- [RESUMEN-MANUALES.md](./RESUMEN-MANUALES.md)
+- [INSTRUCCIONES-ENTREGA-FINAL.md](./INSTRUCCIONES-ENTREGA-FINAL.md)
+- [GUIA-ENTREGA-USB.md](./GUIA-ENTREGA-USB.md)
 
 ## Nota de normalizacion
 

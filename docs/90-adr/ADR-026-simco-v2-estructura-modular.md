@@ -1,7 +1,15 @@
+---
+titulo: "ADR-026: Estructura Modular SIMCO v2"
+tipo: adr
+fecha_creacion: "2025-11-07"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-026: Estructura Modular SIMCO v2
 
 **Fecha:** 2025-11-07
-**Estado:** ✅ Aceptado e Implementado
+**Estado:** Aceptada e Implementada
 **Decisor:** @tech-lead, @architect
 **Contexto:** Migración de documentación a SIMCO v2
 

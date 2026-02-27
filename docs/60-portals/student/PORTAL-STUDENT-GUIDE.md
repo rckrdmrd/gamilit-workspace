@@ -1204,7 +1204,7 @@ notificationsStore:
 2. Backend actualiza user_stats.total_xp
    ↓
 3. Backend verifica si XP >= siguiente rank:
-   SELECT * FROM gamification.maya_ranks
+   SELECT * FROM gamification_system.maya_ranks
    WHERE xp_required <= :totalXP
    ORDER BY xp_required DESC LIMIT 1
    ↓
@@ -1716,8 +1716,8 @@ const loadMechanic = (type: string) => {
 ```sql
 -- Indices críticos
 CREATE INDEX idx_exercise_submissions_user ON progress.exercise_submissions(user_id);
-CREATE INDEX idx_user_stats_total_xp ON gamification.user_stats(total_xp DESC);
-CREATE INDEX idx_achievements_trigger ON gamification.achievements(trigger);
+CREATE INDEX idx_user_stats_total_xp ON gamification_system.user_stats(total_xp DESC);
+CREATE INDEX idx_achievements_trigger ON gamification_system.achievements(trigger);
 ```
 
 **Query Optimization:**

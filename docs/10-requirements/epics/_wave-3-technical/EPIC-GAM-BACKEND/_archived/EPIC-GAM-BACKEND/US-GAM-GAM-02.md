@@ -49,7 +49,7 @@
 
 | Aspecto | Detalle |
 |---------|---------|
-| Stack | NestJS 11, React 19, PostgreSQL 16 |
+| Stack | NestJS 11, React 19, PostgreSQL 15 |
 | Entidades BD | store_items, store_purchases, student_inventory, store_categories, ml_coin_transactions, ml_coin_balances |
 | Endpoints API | `GET /api/v1/store/items` `GET /api/v1/store/items/:id` `POST /api/v1/store/purchase` `GET /api/v1/store/inventory/:studentId` `POST /api/v1/store/inventory/:itemId/activate` `GET /api/v1/store/balance/:studentId` `GET /api/v1/store/transactions/:studentId` |
 | Componentes FE | StoreGrid, ItemCard, ItemPreview, PurchaseConfirmation, InventoryGrid, BalanceDisplay, TransactionHistory, PowerUpIndicator, ActiveEffects |

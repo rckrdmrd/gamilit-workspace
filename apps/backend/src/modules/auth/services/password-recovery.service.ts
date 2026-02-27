@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  InvalidTokenError,
+  UserNotFoundError,
+} from '../errors/auth.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import * as crypto from 'crypto';
@@ -137,7 +141,7 @@ export class PasswordRecoveryService {
     const validation = await this.validateToken(dto.token);
 
     if (!validation.valid || !validation.userId) {
-      throw new BadRequestException('Token inválido o expirado');
+      throw new InvalidTokenError('Token invalido o expirado');
     }
 
     // 2. Buscar usuario
@@ -146,7 +150,7 @@ export class PasswordRecoveryService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new UserNotFoundError(validation.userId);
     }
 
     // 3. Hashear nuevo password

@@ -1,6 +1,14 @@
+---
+titulo: "ADR-017: Admin Portal Avanzado vs Alcance Inicial EAI-005"
+tipo: adr
+fecha_creacion: "2025-11-24"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-017: Admin Portal Avanzado vs Alcance Inicial EAI-005
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Fecha:** 2025-11-24
 **Autor:** Architecture-Analyst
 **Relacionado con:** EAI-005, EXT-002, ARCH-ANALYSIS-ADMIN-001
@@ -314,7 +322,7 @@ Esta decisión sienta precedente para futuros desarrollos: **documentar siempre 
 
 ---
 
-**Estado:** Aceptado
+**Estado:** Aceptada
 **Próxima Revisión:** 2025-12-31 (post-implementación de correcciones)
 **Responsable de Seguimiento:** Architecture-Analyst
 **Aprobadores:** [Pendiente de aprobación de stakeholders]

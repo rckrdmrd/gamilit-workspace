@@ -1,6 +1,14 @@
+---
+titulo: "ADR-034: Jerarquia Anidada Profunda para Documentacion de Producto"
+tipo: adr
+fecha_creacion: "2026-02-09"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-034: Jerarquia Anidada Profunda para Documentacion de Producto
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-09
 **Contexto:** TASK-2026-02-09-REESTRUCTURA-ANIDADA
 

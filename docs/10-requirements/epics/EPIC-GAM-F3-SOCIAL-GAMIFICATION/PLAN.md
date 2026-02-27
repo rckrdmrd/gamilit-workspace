@@ -19,7 +19,7 @@
 | 6 | US-GAM-015 | Gestion de Miembros Gremio | 5 | US-GAM-013 | Sprint 24 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Socket.IO 4.8+ / Redis
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Socket.IO 4.8+ / Redis
 - **Base de datos:** Schema `social_features` (7 tablas: friendships, friend_requests, guilds, guild_members, guild_join_requests, guild_missions, guild_mission_contributions)
 - **Patron:** Social graph con friendship model, guild system con roles (lider, oficial, miembro), misiones colaborativas event-driven
 

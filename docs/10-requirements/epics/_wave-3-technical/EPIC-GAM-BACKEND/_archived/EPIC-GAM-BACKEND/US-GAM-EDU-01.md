@@ -59,7 +59,7 @@
 
 | Aspecto | Detalle |
 |---------|---------|
-| Stack | NestJS 11, TypeORM 0.3, PostgreSQL 16, React 19, Socket.IO 4.8+ |
+| Stack | NestJS 11, TypeORM 0.3, PostgreSQL 15, React 19, Socket.IO 4.8+ |
 | Entidades BD | educational_modules, module_progress, module_config, exercises, exercise_types, exercise_attempts, exercise_results, contents, content_versions, student_profiles, student_progress |
 | Endpoints API | `GET /api/v1/modules` `GET /api/v1/modules/:id` `GET /api/v1/modules/:id/progress` `POST /api/v1/modules/:id/unlock-check` `GET /api/v1/modules/:id/exercises` `PATCH /api/v1/modules/:moduleId/config` |
 | Componentes FE | ModuleList, ModuleCard, ModuleProgressBar, ExerciseSelector, UnlockAnimation, ModuleDashboard, DifficultyBadge |

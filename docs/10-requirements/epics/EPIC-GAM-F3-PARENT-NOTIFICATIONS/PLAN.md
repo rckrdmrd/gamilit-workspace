@@ -16,7 +16,7 @@
 | 3 | US-PARENT-003 | Achievement Unlock Notification | 5 | US-PARENT-001, F1-GAMIFICATION | Sprint 22 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / Nodemailer / SendGrid
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / Nodemailer / SendGrid
 - **Base de datos:** Schema `notifications` (tabla parent_notifications, parent_accounts)
 - **Patron:** Cron jobs semanales, alert triggers por umbral, email templates responsivos
 

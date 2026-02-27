@@ -1,3 +1,11 @@
+---
+titulo: "ADR-004: Arquitectura Modular del Exercise Engine (23 Tipos)"
+tipo: adr
+fecha_creacion: "2025-09-01"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-004: Arquitectura Modular del Exercise Engine (23 Tipos)
 
 **Fecha:** 2025-09-01

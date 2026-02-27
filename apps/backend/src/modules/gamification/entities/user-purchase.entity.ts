@@ -50,7 +50,7 @@ export class UserPurchase {
   @Column({ type: 'uuid' })
     item_id!: string;
 
-  @ManyToOne(() => ShopItem, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ShopItem, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'item_id' })
     item?: ShopItem;
 

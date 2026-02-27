@@ -1,7 +1,7 @@
 # Schema Reference - GAMILIT
 
-**Version:** 2.2.0
-**Fecha:** 2026-02-21
+**Version:** 3.0.0
+**Fecha:** 2026-02-27
 **Database:** gamilit_platform
 **Engine:** PostgreSQL 15
 **ORM:** TypeORM 0.3.x
@@ -13,13 +13,13 @@
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 172 |
-| Views | 22 |
+| Tablas | 173 |
+| Views | 18 |
 | Materialized Views | 7 |
-| Functions | 183 |
-| Triggers | 67 |
-| RLS Policies | 234 |
-| Foreign Keys | 299 |
+| Functions | 158 |
+| Triggers | 68 |
+| RLS Policies | 251 |
+| Foreign Keys | 301 |
 | ENUMs | 42 |
 
 > **Complementario a:** [MODELO-DATOS.md](../MODELO-DATOS.md) (vision conceptual) y `orchestration/inventarios/DATABASE_INVENTORY.yml` (inventario operativo).
@@ -60,10 +60,11 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 |---|-------------------|-------------------|--------|---------|
 | 1 | auth | `auth` + `auth_management` | 1+17 | [01-auth.md](01-auth.md) |
 | 2 | tenants | `auth_management` (parcial) | - | [02-tenants.md](02-tenants.md) |
-| 3 | education | `educational_content` + `progress_tracking` | 24+21 | [03-education.md](03-education.md) |
-| 4 | gamification | `gamification_system` (parcial) | 22 | [04-gamification.md](04-gamification.md) |
-| 5 | social | `social_features` (parcial) | 30 | [05-social.md](05-social.md) |
-| 6 | classrooms | `social_features` (parcial) | - | [06-classrooms.md](06-classrooms.md) |
+| 3 | education | `educational_content` | 24 | [03-education.md](03-education.md) |
+| 3b | progress | `progress_tracking` | 21 | [06-progress.md](06-progress.md) |
+| 4 | gamification | `gamification_system` | 27 | [04-gamification.md](04-gamification.md) |
+| 5 | social | `social_features` | 30 | [05-social.md](05-social.md) |
+| 5b | classrooms | `social_features` (parcial) | - | [06-classrooms.md](06-classrooms.md) |
 | 7 | analytics | `data_warehouse` + `admin_dashboard` | 16+4 | [07-analytics.md](07-analytics.md) |
 | 8 | reports | `social_features` (parcial) | 3 | [08-reports.md](08-reports.md) |
 | 9 | notifications | `notifications` | 7 | [09-notifications.md](09-notifications.md) |
@@ -78,6 +79,7 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 | 18 | admin_dashboard | `admin_dashboard` | 4+7v | [18-admin-dashboard.md](18-admin-dashboard.md) |
 | 19 | communication | `communication` | 4 | [19-communication.md](19-communication.md) |
 | 20 | gamilit (utility) | `gamilit` | 0+37f | [20-gamilit-utility.md](20-gamilit-utility.md) |
+| 21 | lti_integration | `lti_integration` | 3 | [21-lti-integration.md](21-lti-integration.md) |
 | - | placeholder/vacios | `public`, `storage`, `optimization` | - | [17-18-placeholder.md](17-18-placeholder.md) |
 
 ## Utilidades
@@ -85,7 +87,7 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 | Seccion | Archivo |
 |---------|---------|
 | Materialized Views, ENUMs, Indices, Trazabilidad | [99-utilities.md](99-utilities.md) |
-| Catalogo de series UUID por schema | [UUID-SERIES-CATALOG.md](UUID-SERIES-CATALOG.md) |
+| Catalogo de series UUID por schema | [UUID-SERIES-CATALOG.md](../UUID-SERIES-CATALOG.md) |
 
 ---
 
@@ -97,8 +99,9 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 |--------------------------|---------------------|--------|------------|-------|
 | auth (01-auth.md) | `auth` + `auth_management` | 1 + 17 | SPLIT | auth = users base; auth_management = perfiles, roles, tenants, RBAC |
 | tenants (02-tenants.md) | `auth_management` (parcial) | - | MERGED | Contenido incluido en auth_management |
-| education (03-education.md) | `educational_content` + `progress_tracking` | 24 + 21 | SPLIT | Contenido educativo (+3 resource tables 2026-02-21) + seguimiento de progreso |
-| gamification (04-gamification.md) | `gamification_system` (parcial) | 22 | PARTIAL | XP, rangos, achievements, equipamiento |
+| education (03-education.md) | `educational_content` | 24 | ~1:1 | Contenido educativo (+3 resource tables 2026-02-21) |
+| progress (06-progress.md) | `progress_tracking` | 21 | ~1:1 | Seguimiento de progreso, sesiones, certificados, intervenciones |
+| gamification (04-gamification.md) | `gamification_system` | 27 | ~1:1 | XP, rangos, achievements, comodines, tienda, misiones |
 | social (05-social.md) | `social_features` (parcial) | 30 | PARTIAL | Amistades, interacciones |
 | classrooms (06-classrooms.md) | `social_features` (parcial) | - | MERGED | Escuelas, aulas, equipos dentro de social_features |
 | analytics (07-analytics.md) | `data_warehouse` + `admin_dashboard` | 16 + 4 | SPLIT | Star schema + dashboard admin |
@@ -116,11 +119,10 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 
 | Schema Fisico (DDL) | Tablas | Funciones | Views | Tipo | Notas |
 |---------------------|--------|-----------|-------|------|-------|
-| `communication` | 4 | - | - | domain | Mensajeria interna (conversations, messages) |
 | `data_warehouse` | 16 | - | 3 | analytics | Star schema: 8 dims + 4 facts + 2 ML + 2 ETL |
 | `admin_dashboard` | 4 | - | 7+3mv | support | Dashboard admin, bulk ops, reportes |
 | `gamilit` | 0 | 37 | 1 | utility | Funciones compartidas: now_mexico(), RLS helpers, triggers |
-| `lti_integration` | 3 | - | - | integration | LTI 1.3: consumers, sessions, grade passback |
+| `lti_integration` | 3 | - | - | integration | LTI 1.3: consumers, sessions, grade passback — ver [21-lti-integration.md](21-lti-integration.md) |
 | `optimization` | 0 | - | - | performance | Indexes de rendimiento |
 
 > **Referencia DDL:** `apps/database/ddl/schemas/{nombre_fisico}/`
@@ -129,5 +131,5 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 
 ---
 
-*GAMILIT - Schema Reference Index v2.2.0*
-*172 tablas | 18 schemas | 237 RLS policies (DDL) | 42 ENUMs | PostgreSQL 15*
+*GAMILIT - Schema Reference Index v3.0.0*
+*173 tablas (~170 documentadas, ~98% cobertura) | 18 schemas | 251 RLS policies (DDL rls-policies/) | 42 ENUMs | PostgreSQL 15*

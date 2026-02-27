@@ -16,7 +16,7 @@ schema-reference/
   01-auth.md                <- Schema 1: auth (8 tablas)
   02-tenants.md             <- Schema 2: tenants (4 tablas)
   03-education.md           <- Schema 3: education (13 tablas)
-  04-gamification.md        <- Schema 4: gamification (8 tablas)
+  04-gamification.md        <- Schema 4: gamification_system (8 tablas)
   05-social.md              <- Schema 5: social (7 tablas)
   06-classrooms.md          <- Schema 6: classrooms (7 tablas)
   07-analytics.md           <- Schema 7: analytics (5 tablas)
@@ -33,4 +33,4 @@ schema-reference/
   99-utilities.md           <- Materialized Views, ENUMs, Indices, Trazabilidad
 ```
 
-*172 tablas | 18 schemas | 237 RLS policies (DDL) | 42 ENUMs | PostgreSQL 15*
+*173 tablas | 18 schemas | 251 RLS policies (DDL) | 42 ENUMs | PostgreSQL 15*

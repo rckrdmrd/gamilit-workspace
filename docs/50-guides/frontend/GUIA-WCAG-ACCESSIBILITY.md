@@ -11,7 +11,7 @@ estado: vigente
 
 ## 1. Proposito
 
-Implementar WCAG 2.1 nivel AA en los 590 componentes React de gamilit. Esta guia establece
+Implementar WCAG 2.1 nivel AA en los 575 componentes React de gamilit. Esta guia establece
 los criterios, patrones y herramientas necesarios para garantizar que la plataforma educativa
 sea accesible para todos los estudiantes, incluidos aquellos con discapacidades visuales,
 auditivas, motoras o cognitivas.
@@ -495,8 +495,8 @@ Cobertura actual tras Wave 9 de accesibilidad (51 paginas, 4 portales):
 
 ### Estandares relacionados del proyecto
 
-- [`STANDARD-UX-PATTERNS.md`](../../40-standards/STANDARD-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, confirmation dialogs
-- [`STANDARD-COMPONENT.md`](../../40-standards/STANDARD-COMPONENT.md) -- Props typing, export patterns, file naming
+- [`ESTANDAR-FRONTEND-UX-PATTERNS.md`](../../40-standards/ESTANDAR-FRONTEND-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, confirmation dialogs
+- [`ESTANDAR-FRONTEND-COMPONENT.md`](../../40-standards/ESTANDAR-FRONTEND-COMPONENT.md) -- Props typing, export patterns, file naming
 - [`ESTANDAR-FRONTEND-PROFESIONAL.md`](../../40-standards/ESTANDAR-FRONTEND-PROFESIONAL.md) -- Compound components, performance, testing
 
 ---

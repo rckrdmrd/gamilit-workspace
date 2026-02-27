@@ -19,7 +19,7 @@ El `README.md` es solo puerta de entrada y evita duplicar definiciones SSOT.
 | [PORTALES.md](./PORTALES.md) | Portales estudiante, maestro, admin y padres |
 | [GAMIFICACION.md](./GAMIFICACION.md) | XP, misiones, logros y referencias canonicas |
 | [METRICAS.md](./METRICAS.md) | Metricas de referencia, SSOT en inventarios |
-| [GOBIERNO-SIMCO.md](./GOBIERNO-SIMCO.md) | Modelo de gobernanza SIMCO/NEXUS/CAPVED |
+| [GOBIERNO-SIMCO.md](./GOBIERNO-SIMCO.md) | [REDIRECT] Stub — ver `orchestration/directivas/simco/` |
 | [REQUERIMIENTOS.md](./REQUERIMIENTOS.md) | RF/RNF y trazabilidad funcional |
 | [ESTRUCTURA-DOCS.md](./ESTRUCTURA-DOCS.md) | Estructura documental y reglas SSOT |
 | [ESTADO-ACTUAL.md](./ESTADO-ACTUAL.md) | Estado funcional del MVP y pendientes |

@@ -1,6 +1,14 @@
+---
+titulo: "ADR-046: PageShell Pattern Replaces HOC Layout Wrappers"
+tipo: adr
+fecha_creacion: "2026-02-19"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-046: PageShell Pattern Replaces HOC Layout Wrappers
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-19
 **Deciders:** Frontend Team
 **Tags:** frontend, architecture, patterns, portals, layout
@@ -187,7 +195,7 @@ The `withTeacherLayout` HOC was removed in the Teacher Portal Audit (2026-02-20)
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-19
 **Last Updated:** 2026-02-19
 **Supersedes:** N/A

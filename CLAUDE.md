@@ -1,6 +1,6 @@
 # CLAUDE.md - gamilit
 
-**Sistema:** SIMCO v4.0.0 + NEXUS v4.1 | **Version:** 4.0.0 | **Fecha:** 2026-02-11
+**Sistema:** SIMCO v4.0.0 + NEXUS v4.1 | **Version:** 4.1.0 | **Fecha:** 2026-02-27
 
 ---
 
@@ -167,7 +167,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 **Total:** 23 modulos, 156 entities (157 classes), 172 services, 108 controllers, 912 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
-> Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` no configurado), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
+> Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` configurado condicionalmente via ENABLE_DATA_WAREHOUSE feature flag), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
 
 ---
 
@@ -362,7 +362,7 @@ gamilit/
 |   +-- 60-portals/              <- Manuales de portales (student, teacher, admin)
 |   +-- 70-onboarding/           <- Guias de onboarding por rol
 |   +-- 80-references/           <- Referencias tecnicas
-|   +-- 90-adr/                  <- ADRs del proyecto (47 ADRs normalizados)
+|   +-- 90-adr/                  <- ADRs del proyecto (47 ADRs, incl. ADR-050)
 |   +-- 99-delivery/             <- Documentos de entrega
 +-- orchestration/
     +-- _INDEX.yml
@@ -420,11 +420,12 @@ proyecto:
 - Analytics globales
 - Gestion de usuarios y roles
 
-### Portal Padres (100%)
+### Portal Padres (100% backend, 100% frontend)
 - Vinculacion padre-estudiante
 - Dashboard de progreso academico
 - Notificaciones (email, push, SMS)
 - Comunicacion maestro-padre
+- **Nota:** Backend 100% operativo. Frontend 7/7 paginas implementadas (Dashboard, ChildProgress, Login, Register, Notifications, Messages, Settings).
 
 ---
 
@@ -454,17 +455,17 @@ proyecto:
 | Endpoints | 912 |
 | Guards | 15 |
 | Decorators | 18 |
-| Tests | 833 passing (63 spec files) |
+| Tests | 2324 total (2296 passed + 28 skipped, 63 spec files) |
 
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 577 |
-| Hooks | 134 |
-| Paginas | 67 |
+| Componentes (.tsx prod) | 575 |
+| Hooks | 132 |
+| Paginas | 72 |
 | Stores Zustand | 13 |
 | API Service Files | 65 |
-| API Calls Total | ~575 |
+| API Calls Total | ~580 |
 | Portales | 4 |
 | Mecanicas Ejercicio | 30 |
 | Routes | 74 |

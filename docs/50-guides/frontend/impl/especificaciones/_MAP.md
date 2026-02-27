@@ -7,7 +7,7 @@ Especificaciones de UI detalladas para componentes y paginas del frontend de Gam
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| [AdminReportsPage-UI-Specification.md](./AdminReportsPage-UI-Specification.md) | Especificacion de UI de la pagina de reportes del admin | Completo |
+| [ADMIN-REPORTS-PAGE-UI-SPECIFICATION.md](./ADMIN-REPORTS-PAGE-UI-SPECIFICATION.md) | Especificacion de UI de la pagina de reportes del admin | Completo |
 
 ## Referencias
 - [Directorio padre](../_MAP.md)

@@ -159,4 +159,4 @@ Para recibir solo las que me interesan por los canales que prefiero
 ---
 
 **Generado:** 2026-01-04
-**Sistema:** NEXUS v3.4 + SIMCO
+**Sistema:** NEXUS v4.1 + SIMCO

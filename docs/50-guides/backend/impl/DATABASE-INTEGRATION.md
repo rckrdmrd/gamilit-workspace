@@ -364,4 +364,4 @@ export const SCHEMAS = {
 ## Ver También
 
 - [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Estructura de módulos
-- [../../GUIA-CREAR-BASE-DATOS.md](../GUIA-CREAR-BASE-DATOS.md) - Crear BD desde cero
+- [GUIA-CREAR-BASE-DATOS.md](../_archived/GUIA-CREAR-BASE-DATOS.md) - Crear BD desde cero [ARCHIVED]

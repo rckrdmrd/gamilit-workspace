@@ -3,7 +3,7 @@
 **Sistema:** SIMCO v4.0.0 + NEXUS v4.1
 **Proyecto:** Gamilit
 **Nivel:** STANDALONE (L2A)
-**Fecha:** 2026-02-26
+**Fecha:** 2026-02-27
 
 ---
 
@@ -29,7 +29,7 @@
 
 ---
 
-## Metricas Actuales (Auditadas 2026-02-25)
+## Metricas Actuales (Auditadas 2026-02-27)
 
 | Capa | Metrica | Valor |
 |------|---------|-------|
@@ -45,9 +45,10 @@
 | Backend | Controllers | 108 |
 | Backend | Endpoints | 912 |
 | Backend | Build | PASS |
-| Frontend | Components | 577 |
-| Frontend | Hooks | 134 |
-| Frontend | Pages | 67 |
+| Frontend | Components | 575 |
+| Frontend | Hooks | 132 |
+| Frontend | Pages | 72 |
+| Frontend | Routes | 74 |
 | Frontend | API services | 65 |
 | Frontend | Build | PASS |
 | Seeds | Dev files | 92 (0 errores) |
@@ -83,7 +84,7 @@
 
 ---
 
-*Actualizado: 2026-02-26*
+*Actualizado: 2026-02-27*
 *Estandar: SIMCO v4.0.0*
-*Ultima auditoria: TASK-2026-02-25-ACTUALIZACION-METRICAS*
+*Ultima auditoria: TASK-2026-02-27-AUDITORIA-BD-EJERCICIOS*
 *Metricas DDL actuales: 173 tablas, 158 funciones, 68 triggers, 251 RLS, 42 ENUMs, 301 FKs*

@@ -1,7 +1,7 @@
 # Glosario de Terminos - GAMILIT
 
-**Version:** 2.0.0
-**Fecha:** 2026-02-11
+**Version:** 2.1.0
+**Fecha:** 2026-02-27
 **Audiencia:** Todos (desarrolladores, PMs, stakeholders)
 **SSOT:** orchestration/inventarios/MASTER_INVENTORY.yml
 
@@ -62,11 +62,27 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 
 | Termino | Definicion |
 |---------|------------|
-| **exercise_type** | Tipo especifico de ejercicio (ej: crucigrama, detective_textual). 23 tipos en total. |
-| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 30 mecanicas. |
+| **exercise_type** | Tipo especifico de ejercicio (ej: crucigrama, detective_textual). 33 valores en el ENUM DDL. |
+| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 30 mecanicas frontend. |
 | **Evaluacion Automatica** | Ejercicios evaluados por el sistema (M1, M2). No hay auto-scoring en M3-M5. |
 | **Evaluacion Manual** | Ejercicios que requieren revision por maestro (todos los de M3, M4 y M5, incluyendo Quiz TikTok). |
 | **Spaced Repetition** | Motor de repeticion espaciada para reforzar aprendizaje. |
+| **Submission** | Entrega de un ejercicio por parte del estudiante. Una submission contiene las respuestas y puede tener multiples intentos (attempts). Tabla: `educational_content.assignment_submissions`. |
+| **Attempt** | Intento individual dentro de una submission. Cada attempt registra respuestas especificas y puntaje. |
+| **Mecanica (Mechanic)** | Tipo especifico de interaccion de ejercicio (ej: crucigrama, sopa de letras). Cada ejercicio tiene una mecanica asociada via `exercise_mechanic_mapping`. No confundir con "tipo de ejercicio" que agrupa mecanicas por modulo. |
+
+### Conteo de Tipos de Ejercicio
+
+Los documentos del proyecto mencionan diferentes cantidades de ejercicios dependiendo del contexto:
+
+| Conteo | Significado |
+|--------|------------|
+| **23** | Tipos de ejercicio originales (5 modulos x ~4-5 tipos) |
+| **27** | Mecanicas semanticas documentadas (agrupacion por modulo, excluye auxiliares) |
+| **30** | Mecanicas frontend implementadas (30 directorios en `features/mechanics/`) |
+| **33** | Valores totales en el ENUM `exercise_type` del DDL (incluye auxiliares y backlog) |
+
+**SSOT:** El DDL enum `educational_content.exercise_type` es la fuente autoritativa con 33 valores.
 
 ### Evaluacion
 
@@ -110,10 +126,10 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 
 | Termino | Definicion |
 |---------|------------|
-| **Component** | Elemento de UI reutilizable. 577 componentes. |
-| **Hook** | Funcion para manejar estado y efectos. 134 hooks. |
+| **Component** | Elemento de UI reutilizable. 575 componentes. |
+| **Hook** | Funcion para manejar estado y efectos. 132 hooks. |
 | **Store** | Estado global de la aplicacion (Zustand). 13 stores. |
-| **Page** | Componente que representa una ruta. 67 paginas. |
+| **Page** | Componente que representa una ruta. 72 paginas. |
 | **API Service** | Servicio para comunicacion con backend. 65 API service files. |
 
 ### Arquitectura
@@ -139,6 +155,18 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 | **Trigger** | Verificacion automatica que se activa pre/post tarea. 11 triggers. |
 | **Inventario** | Archivo YAML con conteo y estado de artefactos por capa. 4 inventarios principales. |
 | **Traza** | Log de ejecucion de tareas por dominio (database, backend, frontend). |
+
+---
+
+## Sinonimos Aceptados
+
+| Termino Preferido | Sinonimos Validos | Contexto |
+|-------------------|-------------------|----------|
+| Docente / Maestro | Teacher, Profesor | Intercambiable en docs |
+| Estudiante / Alumno | Student | Intercambiable en docs |
+| Comodines | Power-ups, Wildcards | Sistema de gamificacion |
+| Aula | Classroom, Salon | Modulo de aulas |
+| ML Coins | Monedas ML, Coins | Economia virtual |
 
 ---
 
@@ -213,4 +241,4 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 ---
 
 *GAMILIT - Glosario de Terminos*
-*Actualizado: 2026-02-11*
+*Actualizado: 2026-02-27*

@@ -14,7 +14,7 @@ Las politicas RLS que referencian tablas en otros schemas sin usar nombres compl
 1. La politica RLS usa un nombre de tabla sin prefijo de schema (ej: `users` en vez de `auth_management.users`)
 2. El `search_path` de la sesion no incluye el schema donde reside la tabla referenciada
 3. Durante la evaluacion de la politica, PostgreSQL busca la tabla en los schemas del search_path y no la encuentra
-4. Con 18 schemas y 207 politicas RLS, las referencias cross-schema son frecuentes (especialmente hacia `auth_management`, `gamilit`, y `tenant_management`)
+4. Con 18 schemas y 251 politicas RLS, las referencias cross-schema son frecuentes (especialmente hacia `auth_management`, `gamilit`, y `tenant_management`)
 
 ## Solucion
 

@@ -21,7 +21,7 @@
 | 8 | US-FUND-003 | Dashboard Principal Estudiante | 8 | US-FUND-007, US-FUND-002 | Sprint 3 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Schema `auth_management` (tablas users, roles, sessions, tenants)
 - **Patron:** JWT + Passport + RBAC, multi-tenant con RLS
 

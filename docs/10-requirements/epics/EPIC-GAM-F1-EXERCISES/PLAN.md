@@ -21,7 +21,7 @@
 | 8 | US-ACT-008 | Navegacion actividades | 7 | US-ACT-007 | Sprint 6 |
 
 ## Enfoque Tecnico
-- **Stack:** NestJS 11 / TypeScript / PostgreSQL 16 / React 19 / Vite 7.x
+- **Stack:** NestJS 11 / TypeScript / PostgreSQL 15 / React 19 / Vite 6.x
 - **Base de datos:** Schema `educational_content` (tablas exercises, exercise_types, exercise_attempts)
 - **Patron:** Strategy pattern por tipo de ejercicio, validadores especificos por mecanica
 

@@ -1,6 +1,14 @@
+---
+titulo: "ADR-036: Adopcion del Sistema NEXUS v4.1 (Gestion de Contexto)"
+tipo: adr
+fecha_creacion: "2026-02-11"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-036: Adopcion del Sistema NEXUS v4.1 (Gestion de Contexto)
 
-**Estado:** Accepted
+**Estado:** Aceptada
 **Fecha:** 2026-02-11
 **Contexto:** Gestion de contexto jerarquico en gamilit standalone
 

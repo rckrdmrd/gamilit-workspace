@@ -1,10 +1,14 @@
+import { Injectable, Logger } from '@nestjs/common';
 import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-  UnauthorizedException,
-  Logger,
-} from '@nestjs/common';
+  TwoFactorAlreadyEnabledError,
+  TwoFactorNotEnabledError,
+  TwoFactorPendingSetupNotFoundError,
+  TwoFactorLockedError,
+  TwoFactorCodeExpiredError,
+  TwoFactorInvalidCodeError,
+  TwoFactorRateLimitError,
+  SessionNotFoundError,
+} from '../errors/auth.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
@@ -69,7 +73,7 @@ export class TwoFactorAuthService {
     });
 
     if (existing) {
-      throw new BadRequestException('2FA ya está habilitado. Desactívalo primero para cambiar el método.');
+      throw new TwoFactorAlreadyEnabledError();
     }
 
     // Generate 6-digit OTP
@@ -113,20 +117,18 @@ export class TwoFactorAuthService {
     });
 
     if (!config) {
-      throw new NotFoundException('No hay configuración de 2FA pendiente');
+      throw new TwoFactorPendingSetupNotFoundError();
     }
 
     // Check if locked
     if (config.isLocked()) {
-      throw new BadRequestException(
-        `Demasiados intentos. Intenta de nuevo en ${this.LOCKOUT_MINUTES} minutos.`
-      );
+      throw new TwoFactorLockedError(this.LOCKOUT_MINUTES);
     }
 
     // Check if expired
     if (config.isExpired()) {
       await this.twoFactorRepository.delete({ id: config.id });
-      throw new BadRequestException('El código ha expirado. Solicita uno nuevo.');
+      throw new TwoFactorCodeExpiredError();
     }
 
     // Verify code
@@ -141,7 +143,7 @@ export class TwoFactorAuthService {
       }
 
       await this.twoFactorRepository.save(config);
-      throw new UnauthorizedException('Código incorrecto');
+      throw new TwoFactorInvalidCodeError();
     }
 
     // Enable 2FA
@@ -172,7 +174,7 @@ export class TwoFactorAuthService {
     });
 
     if (!config) {
-      throw new BadRequestException('2FA no está habilitado para este usuario');
+      throw new TwoFactorNotEnabledError();
     }
 
     // Generate new OTP
@@ -206,19 +208,17 @@ export class TwoFactorAuthService {
     });
 
     if (!config) {
-      throw new BadRequestException('2FA no está habilitado');
+      throw new TwoFactorNotEnabledError();
     }
 
     // Check if locked
     if (config.isLocked()) {
-      throw new BadRequestException(
-        `Cuenta bloqueada. Intenta de nuevo en ${this.LOCKOUT_MINUTES} minutos.`
-      );
+      throw new TwoFactorLockedError(this.LOCKOUT_MINUTES);
     }
 
     // Check if expired
     if (config.isExpired()) {
-      throw new BadRequestException('El código ha expirado. Solicita uno nuevo.');
+      throw new TwoFactorCodeExpiredError();
     }
 
     // Check regular OTP
@@ -238,7 +238,7 @@ export class TwoFactorAuthService {
         backupCodes = JSON.parse(config.backup_codes_encrypted);
       } catch {
         this.logger.warn(`Corrupt backup codes for user ${config.user_id}`);
-        throw new BadRequestException('Invalid backup codes configuration');
+        throw new TwoFactorInvalidCodeError();
       }
       const index = backupCodes.indexOf(hashedCode);
 
@@ -261,7 +261,7 @@ export class TwoFactorAuthService {
     }
 
     await this.twoFactorRepository.save(config);
-    throw new UnauthorizedException('Código incorrecto');
+    throw new TwoFactorInvalidCodeError();
   }
 
   /**
@@ -274,7 +274,7 @@ export class TwoFactorAuthService {
     });
 
     if (!config) {
-      throw new BadRequestException('2FA no está habilitado');
+      throw new TwoFactorNotEnabledError();
     }
 
     await this.twoFactorRepository.delete({ id: config.id });
@@ -292,7 +292,7 @@ export class TwoFactorAuthService {
     });
 
     if (!config) {
-      throw new NotFoundException('No hay configuración de 2FA');
+      throw new SessionNotFoundError();
     }
 
     // Check rate limiting (can't resend within 1 minute)
@@ -300,7 +300,7 @@ export class TwoFactorAuthService {
       const lastSent = new Date(config.last_attempt_at).getTime();
       const now = Date.now();
       if (now - lastSent < 60000) {
-        throw new BadRequestException('Espera 1 minuto antes de solicitar otro código');
+        throw new TwoFactorRateLimitError();
       }
     }
 

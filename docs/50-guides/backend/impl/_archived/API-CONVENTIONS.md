@@ -323,8 +323,8 @@ async findOne(
 ## Documentación Swagger
 
 ### Acceso
-- URL: `http://localhost:3000/api/docs`
-- JSON: `http://localhost:3000/api/docs-json`
+- URL: `http://localhost:3006/api/docs`
+- JSON: `http://localhost:3006/api/docs-json`
 
 ### Configuración
 
@@ -391,4 +391,4 @@ SwaggerModule.setup('api/docs', app, document);
 
 - [ERROR-HANDLING.md](../ERROR-HANDLING.md) - Manejo de errores
 - [ESTRUCTURA-MODULOS.md](../ESTRUCTURA-MODULOS.md) - Estructura de módulos
-- Swagger UI: `http://localhost:3000/api/docs`
+- Swagger UI: `http://localhost:3006/api/docs`

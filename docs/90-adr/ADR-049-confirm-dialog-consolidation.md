@@ -1,6 +1,14 @@
+---
+titulo: "ADR-049: ConfirmDialog Consolidation"
+tipo: adr
+fecha_creacion: "2026-02-21"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-049: ConfirmDialog Consolidation
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date:** 2026-02-21
 **Deciders:** Frontend Team
 **Tags:** frontend, components, ux, accessibility, confirm-dialog, shared
@@ -11,7 +19,7 @@
 
 ### Situacion Anterior
 
-The GAMILIT frontend used three different approaches for confirmation and alert flows across its 4 portals and 590 production components:
+The GAMILIT frontend used three different approaches for confirmation and alert flows across its 4 portals and 575 production components:
 
 1. **Native `window.confirm()` calls:** Used in 20+ locations across all portals for destructive actions (delete classroom, remove student, cancel mission, etc.). These produce browser-native dialogs that are unstyled, inaccessible to screen readers in some browsers, and block the JavaScript thread.
 
@@ -240,11 +248,11 @@ Each portal implements its own confirmation dialog with portal-specific styling.
 - [ADR-048: Component Sharing Strategy](./ADR-048-component-sharing-strategy.md)
 - [react-hot-toast Documentation](https://react-hot-toast.com/)
 - [WCAG 2.1 — Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-- CLAUDE.md -- 590 production .tsx components, 4 portals, detective/maya design system
+- CLAUDE.md -- 575 production .tsx components, 4 portals, detective/maya design system
 
 ---
 
-**Status:** Accepted
+**Estado:** Aceptada
 **Date Created:** 2026-02-21
 **Last Updated:** 2026-02-21
 **Supersedes:** N/A

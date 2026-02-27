@@ -1,7 +1,7 @@
 # ERR-DB-006: Foreign Key Cross-Schema sin Search Path
 
 ## Descripcion
-Las foreign keys que referencian tablas en schemas diferentes sin usar el nombre completamente calificado (`schema.tabla`) fallan durante la creacion, porque PostgreSQL no puede resolver la tabla destino usando solo el search_path por defecto. Con 299 foreign keys repartidas entre 18 schemas, las referencias cross-schema son frecuentes.
+Las foreign keys que referencian tablas en schemas diferentes sin usar el nombre completamente calificado (`schema.tabla`) fallan durante la creacion, porque PostgreSQL no puede resolver la tabla destino usando solo el search_path por defecto. Con 301 foreign keys repartidas entre 18 schemas, las referencias cross-schema son frecuentes.
 
 ## Sintomas
 - Error: `relation "tabla" does not exist` al ejecutar DDL de creacion de tabla

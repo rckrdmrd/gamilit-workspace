@@ -1,3 +1,11 @@
+---
+titulo: "ADR-003: Row-Level Security (RLS) para Multi-tenancy con Aislamiento de Escuelas"
+tipo: adr
+fecha_creacion: "2025-08-18"
+ultima_actualizacion: "2026-02-27"
+estado: aceptada
+---
+
 # ADR-003: Row-Level Security (RLS) para Multi-tenancy con Aislamiento de Escuelas
 
 **Fecha:** 2025-08-18
