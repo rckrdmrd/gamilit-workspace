@@ -1,10 +1,16 @@
+---
+titulo: Estandar - Referencias Cross-Schema
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-17
+ultima_actualizacion: 2026-02-27
+---
+
 # Estandar: Referencias Cross-Schema
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-17
 **Aplica a:** Todo agente que trabaje con entidades, DDL, o seeds que crucen schemas
-
----
 
 ## 1. Foreign Keys a Usuarios
 

@@ -1,9 +1,15 @@
+---
+titulo: Estandar Frontend - Imports y Path Resolution
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-19
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-FRONTEND-IMPORTS — Estándar de Imports y Path Resolution
 
 **Version:** 1.0.0 | **Fecha:** 2026-02-19 | **Estado:** Activo
 **Basado en:** Audits 01-05 (cn() paths, React imports, type imports)
-
----
 
 ## 1. Import Order
 

@@ -1,3 +1,11 @@
+---
+titulo: Estandar de Nomenclatura API (snake_case/camelCase)
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-01-20
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-NOMENCLATURA-API
 
 ## Metadata
@@ -11,8 +19,6 @@
 | Fecha Creacion | 2026-01-20 |
 | Autor | Arquitecto de Estandares |
 | Relacionado | GAP-SP-004 |
-
----
 
 ## 1. Problema Identificado
 

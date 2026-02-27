@@ -1,11 +1,17 @@
+---
+titulo: Estandar - Diagramas Entidad-Relacion (ER) ASCII
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-03
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR: DIAGRAMAS ENTIDAD-RELACION (ER) ASCII
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-03
 **Aplica a:** Documentacion de base de datos en gamilit (18 schemas, 173 tablas)
 **Obligatoriedad:** RECOMENDADO para documentacion tecnica
-
----
 
 ## 1. PROPOSITO
 

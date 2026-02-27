@@ -1,12 +1,14 @@
 ---
+titulo: Estandar de Seguridad
 tipo: estandar-workspace
 scope: workspace
 version: 2.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
 herencia: |
   Este estandar aplica a nivel WORKSPACE.
   Los proyectos pueden EXTENDER (no contradecir) con estandares locales.
   Ejemplo: workspace-projects/projects/{proyecto}/docs/SECURITY-STANDARDS.md para requisitos especificos.
-actualizado: 2026-02-14
 tags:
   - seguridad
   - owasp

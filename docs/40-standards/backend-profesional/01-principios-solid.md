@@ -1,8 +1,15 @@
+---
+titulo: Estandar Backend Profesional - Principios SOLID Aplicados a NestJS
+tipo: estandar-proyecto
+subtipo: backend-profesional
+version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
+---
+
 # Estandar Backend Profesional - Principios SOLID Aplicados a NestJS
 
 > **Parte de:** [Estandar Backend Profesional](./_INDEX.md) | **Seccion 1 de 8**
-
----
 
 ## 1. Principios SOLID Aplicados a NestJS
 

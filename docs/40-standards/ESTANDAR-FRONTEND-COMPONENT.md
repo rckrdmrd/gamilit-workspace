@@ -1,9 +1,15 @@
+---
+titulo: Estandar Frontend - Componentes
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-19
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-FRONTEND-COMPONENT — Estándar de Componentes Frontend
 
 **Version:** 1.0.0 | **Fecha:** 2026-02-19 | **Estado:** Activo
 **Basado en:** 01-AUDIT-COMPONENT-PATTERNS.md (602 archivos analizados)
-
----
 
 ## 1. Export Patterns
 

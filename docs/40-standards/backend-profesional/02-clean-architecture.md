@@ -1,8 +1,15 @@
+---
+titulo: Estandar Backend Profesional - Clean Architecture en NestJS
+tipo: estandar-proyecto
+subtipo: backend-profesional
+version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
+---
+
 # Estandar Backend Profesional - Clean Architecture en NestJS
 
 > **Parte de:** [Estandar Backend Profesional](./_INDEX.md) | **Seccion 2 de 8**
-
----
 
 ## 2. Clean Architecture en NestJS
 

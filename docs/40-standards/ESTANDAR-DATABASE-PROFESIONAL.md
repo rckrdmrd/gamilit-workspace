@@ -1,12 +1,14 @@
 ---
+titulo: Estandar Database Profesional
 tipo: estandar-workspace
 scope: workspace
+version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
 herencia: |
   Este estandar aplica a nivel WORKSPACE.
   Los proyectos pueden EXTENDER (no contradecir) con estandares locales.
   Ejemplo: workspace-projects/projects/{proyecto}/docs/DATABASE-STANDARDS.md para configuraciones especificas.
-actualizado: 2026-02-02
-version: 1.0.0
 ---
 
 # Estandar de Base de Datos Profesional

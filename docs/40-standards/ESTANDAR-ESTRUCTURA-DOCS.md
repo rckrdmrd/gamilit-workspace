@@ -1,11 +1,17 @@
+---
+titulo: Estandar de Estructura de Documentacion
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-01-03
+ultima_actualizacion: 2026-02-27
+---
+
 # Estandar de Estructura de Documentacion
 
 **Version:** 1.0.0
 **Sistema:** NEXUS v3.4 + SIMCO
 **Fecha:** 2026-01-03
 **EPIC:** EPIC-002 - Documentacion en Todos los Niveles
-
----
 
 ## 1. Vision General
 

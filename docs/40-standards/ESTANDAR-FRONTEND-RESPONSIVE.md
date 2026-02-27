@@ -1,11 +1,17 @@
+---
+titulo: Estandar Frontend - Responsive Design Patterns
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-26
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-FRONTEND-RESPONSIVE: Responsive Design Patterns
 
 **Version:** 1.0.0
 **Date:** 2026-02-26
 **ADR:** ADR-050 (Responsive Design Strategy)
 **Stack:** Tailwind CSS 4 + React 19
-
----
 
 ## 1. Breakpoint System
 

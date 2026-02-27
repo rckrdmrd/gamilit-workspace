@@ -1,8 +1,15 @@
+---
+titulo: Estandar Backend Profesional - Manejo de Errores
+tipo: estandar-proyecto
+subtipo: backend-profesional
+version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
+---
+
 # Estandar Backend Profesional - Manejo de Errores
 
 > **Parte de:** [Estandar Backend Profesional](./_INDEX.md) | **Seccion 5 de 8**
-
----
 
 ## 5. Manejo de Errores
 

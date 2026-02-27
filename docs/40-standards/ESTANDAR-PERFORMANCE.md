@@ -1,12 +1,14 @@
 ---
+titulo: Estandar de Performance
 tipo: estandar-proyecto
 scope: proyecto
 version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
 herencia: |
   Este estandar aplica al proyecto gamilit (standalone).
   No hay herencia a otros proyectos (ver CLAUDE.md RC3).
   Ejemplo: Metricas especificas del proyecto en orchestration/inventarios/
-actualizado: 2026-02-02
 tags:
   - performance
   - metricas

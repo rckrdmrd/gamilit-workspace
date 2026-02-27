@@ -1,3 +1,11 @@
+---
+titulo: Estandar de Git
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
+---
+
 # Estándar de Git
 
 > Convenciones para commits, branches y pull requests

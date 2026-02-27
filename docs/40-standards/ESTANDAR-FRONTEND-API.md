@@ -1,9 +1,15 @@
+---
+titulo: Estandar Frontend - APIs e Integracion
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-19
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-FRONTEND-API — Estándar de APIs e Integración Frontend
 
 **Version:** 1.0.0 | **Fecha:** 2026-02-19 | **Estado:** Activo
 **Basado en:** 02-AUDIT-API-PATTERNS.md (53 archivos API, ~565 llamadas)
-
----
 
 ## 1. Ubicación Canónica de APIs
 

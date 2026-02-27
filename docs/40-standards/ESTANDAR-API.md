@@ -1,12 +1,14 @@
 ---
+titulo: Estandar de API
 tipo: estandar-workspace
 scope: workspace
 version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
 herencia: |
   Este estandar aplica a nivel WORKSPACE.
   Los proyectos pueden EXTENDER (no contradecir) con estandares locales.
   Ejemplo: workspace-projects/projects/{proyecto}/docs/API-STANDARDS.md para endpoints especificos.
-actualizado: 2026-02-02
 tags:
   - api
   - rest
@@ -1157,228 +1159,25 @@ export class HealthController {
 
 ## 8. Seguridad en APIs
 
-### 8.1 CORS Configuration
+> **Referencia completa:** La seguridad de APIs esta documentada en detalle en los estandares de seguridad dedicados.
 
-```typescript
-// main.ts
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+| Tema | Referencia |
+|------|-----------|
+| OWASP Web Top 10 | [ESTANDAR-SEGURIDAD.md](ESTANDAR-SEGURIDAD.md) §1 |
+| OWASP API Security Top 10 | [ESTANDAR-SEGURIDAD.md](ESTANDAR-SEGURIDAD.md) §1 |
+| Validacion de Input (class-validator) | [ESTANDAR-SEGURIDAD.md](ESTANDAR-SEGURIDAD.md) §2 |
+| Sanitizacion de Output | [ESTANDAR-SEGURIDAD.md](ESTANDAR-SEGURIDAD.md) §3 |
+| Headers de Seguridad (Helmet) | [ESTANDAR-SEGURIDAD.md](ESTANDAR-SEGURIDAD.md) §7 |
 
-  // Configuracion CORS
-  app.enableCors({
-    origin: [
-      'http://localhost:3006',
-      'https://app.empresa.com',
-      'https://admin.empresa.com',
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-      'X-API-Version',
-    ],
-    exposedHeaders: [
-      'X-RateLimit-Limit',
-      'X-RateLimit-Remaining',
-      'X-RateLimit-Reset',
-    ],
-    credentials: true,
-    maxAge: 86400, // 24 horas de cache para preflight
-  });
+### Resumen Rapido
 
-  await app.listen(3000);
-}
+Los endpoints de GAMILIT DEBEN cumplir:
 
-// Configuracion dinamica por ambiente
-const corsOptions: CorsOptions = {
-  origin: (origin, callback) => {
-    const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [];
-
-    // Permitir requests sin origin (mobile apps, Postman)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  credentials: true,
-};
-```
-
-### 8.2 Validacion de Input
-
-```typescript
-// main.ts - ValidationPipe global
-app.useGlobalPipes(
-  new ValidationPipe({
-    whitelist: true,              // Elimina propiedades no decoradas
-    forbidNonWhitelisted: true,   // Error si hay propiedades extra
-    transform: true,              // Transforma tipos automaticamente
-    transformOptions: {
-      enableImplicitConversion: true,
-    },
-    disableErrorMessages: process.env.NODE_ENV === 'production',
-    exceptionFactory: (errors) => {
-      const formattedErrors = errors.map(error => ({
-        field: error.property,
-        constraints: Object.values(error.constraints || {}),
-      }));
-      return new BadRequestException({
-        code: 'VALIDATION_ERROR',
-        message: 'Error de validacion',
-        errors: formattedErrors,
-      });
-    },
-  }),
-);
-
-// Validacion adicional con Pipes personalizados
-@Injectable()
-export class SanitizePipe implements PipeTransform {
-  transform(value: any): any {
-    if (typeof value === 'string') {
-      // Remover caracteres peligrosos
-      return value
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/javascript:/gi, '')
-        .trim();
-    }
-    return value;
-  }
-}
-```
-
-### 8.3 Sanitizacion de Output
-
-```typescript
-// interceptors/sanitize.interceptor.ts
-@Injectable()
-export class SanitizeInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(
-      map(data => this.sanitize(data)),
-    );
-  }
-
-  private sanitize(data: any): any {
-    if (data === null || data === undefined) {
-      return data;
-    }
-
-    if (Array.isArray(data)) {
-      return data.map(item => this.sanitize(item));
-    }
-
-    if (typeof data === 'object') {
-      const sanitized: any = {};
-      for (const key of Object.keys(data)) {
-        // Nunca exponer estos campos
-        if (['password', 'passwordHash', 'refreshToken', 'secret'].includes(key)) {
-          continue;
-        }
-        sanitized[key] = this.sanitize(data[key]);
-      }
-      return sanitized;
-    }
-
-    return data;
-  }
-}
-
-// Excluir campos sensibles con class-transformer
-export class UserResponseDto {
-  id: string;
-  email: string;
-  name: string;
-
-  @Exclude() // Nunca serializar
-  password: string;
-
-  @Exclude()
-  refreshToken: string;
-}
-
-// Aplicar transformacion
-app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-```
-
-### 8.4 Headers de Seguridad
-
-```typescript
-// main.ts
-import helmet from 'helmet';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Helmet configura multiples headers de seguridad
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-          scriptSrc: ["'self'"],
-        },
-      },
-      crossOriginEmbedderPolicy: true,
-      crossOriginOpenerPolicy: true,
-      crossOriginResourcePolicy: { policy: 'same-site' },
-      dnsPrefetchControl: { allow: false },
-      frameguard: { action: 'deny' },
-      hidePoweredBy: true,
-      hsts: {
-        maxAge: 31536000, // 1 ano
-        includeSubDomains: true,
-        preload: true,
-      },
-      ieNoOpen: true,
-      noSniff: true,
-      originAgentCluster: true,
-      permittedCrossDomainPolicies: { permittedPolicies: 'none' },
-      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-      xssFilter: true,
-    }),
-  );
-
-  await app.listen(3000);
-}
-```
-
-### 8.5 Proteccion contra Ataques Comunes
-
-```typescript
-// Proteccion CSRF para APIs con cookies
-import * as csurf from 'csurf';
-
-// Solo si usas cookies para autenticacion
-if (process.env.AUTH_METHOD === 'cookie') {
-  app.use(csurf({ cookie: true }));
-}
-
-// Limitar tamano del body
-app.use(json({ limit: '10mb' }));
-app.use(urlencoded({ extended: true, limit: '10mb' }));
-
-// Timeout para requests
-import * as timeout from 'connect-timeout';
-app.use(timeout('30s'));
-
-// Proteccion SQL Injection - usar parametros en queries
-// CORRECTO
-const user = await this.userRepository
-  .createQueryBuilder('user')
-  .where('user.email = :email', { email: dto.email })
-  .getOne();
-
-// INCORRECTO - Vulnerable a SQL Injection
-const user = await this.userRepository.query(
-  `SELECT * FROM users WHERE email = '${dto.email}'`
-);
-```
+1. **CORS:** Configurado via `@nestjs/common` con whitelist de origenes permitidos
+2. **Input:** Todos los DTOs usan `class-validator` + `ValidationPipe` global
+3. **Output:** Response DTOs con `@Exclude()` para campos sensibles
+4. **Headers:** Helmet middleware habilitado globalmente
+5. **Rate Limiting:** `@nestjs/throttler` con limites por endpoint (ver §7 de este documento)
 
 ---
 
@@ -1428,14 +1227,15 @@ const user = await this.userRepository.query(
 
 ### 9.6 Checklist Seguridad
 
-- [ ] CORS configurado correctamente
-- [ ] ValidationPipe global activo
-- [ ] Whitelist habilitado en validacion
-- [ ] Helmet configurado
-- [ ] Rate limiting implementado
-- [ ] Campos sensibles sanitizados
-- [ ] SQL Injection prevenido (parametros)
-- [ ] XSS prevenido (sanitizacion)
+> Ver checklist completo en [ESTANDAR-SEGURIDAD.md](ESTANDAR-SEGURIDAD.md).
+
+Verificaciones minimas para endpoints de esta API:
+
+- [ ] CORS configurado con whitelist de origenes (ver §8 de este documento)
+- [ ] ValidationPipe global activo con `whitelist: true`
+- [ ] Helmet middleware habilitado globalmente
+- [ ] Rate limiting implementado (ver §7 de este documento)
+- [ ] Response DTOs con `@Exclude()` en campos sensibles
 
 ---
 

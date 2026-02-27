@@ -1,9 +1,10 @@
 ---
+titulo: Estandar de Observabilidad
 tipo: estandar
 scope: gamilit
 version: 1.0.0
 fecha_creacion: 2026-02-14
-ultima_actualizacion: 2026-02-14
+ultima_actualizacion: 2026-02-27
 autor: Equipo de Arquitectura
 categoria: estandares
 tags:

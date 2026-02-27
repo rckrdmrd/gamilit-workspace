@@ -1,8 +1,9 @@
 ---
-title: Estandar Frontend Profesional
+titulo: Estandar Frontend Profesional
+tipo: estandar-proyecto
 version: 1.0.0
-created: 2026-02-02
-updated: 2026-02-02
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
 status: active
 applies_to:
   - all_frontend_projects

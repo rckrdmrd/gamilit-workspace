@@ -1,11 +1,14 @@
 ---
+titulo: Estandar de Codigo
 tipo: estandar-proyecto
 scope: proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-02
+ultima_actualizacion: 2026-02-27
 herencia: |
   Este estandar aplica al proyecto gamilit (standalone).
   No hay herencia a otros proyectos (ver CLAUDE.md RC3).
   Ejemplo: Reglas especificas del proyecto en orchestration/directivas/
-actualizado: 2026-01-16
 ---
 
 # Estandar de Codigo

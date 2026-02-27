@@ -1,9 +1,15 @@
+---
+titulo: Estandar Frontend - Patrones UX (Error, Loading, Forms)
+tipo: estandar-proyecto
+version: 1.0.0
+fecha_creacion: 2026-02-19
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-FRONTEND-UX-PATTERNS — Estándar de Patrones UX (Error, Loading, Forms)
 
 **Version:** 1.0.0 | **Fecha:** 2026-02-19 | **Estado:** Activo
 **Basado en:** 05-AUDIT-ERROR-LOADING-FORMS.md (277 try/catch, 163 empty states, 25+ forms)
-
----
 
 ## 1. Error Handling
 

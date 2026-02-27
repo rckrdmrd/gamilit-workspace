@@ -1,13 +1,19 @@
+---
+titulo: Estandar - Metadata Items
+tipo: estandar-proyecto
+version: 2.0.0
+fecha_creacion: 2026-02-21
+ultima_actualizacion: 2026-02-27
+---
+
 # ESTANDAR-METADATA-ITEMS
 
 > Contrato canonico para `metadata` JSONB de items visuales en `gamification_system.shop_items`.
 
 **Fecha:** 2026-02-21
 **Version:** 2.0.0
-**Contexto:** Integracion Tienda Visual (`shop_items.metadata` + `user_equipped_items`).  
+**Contexto:** Integracion Tienda Visual (`shop_items.metadata` + `user_equipped_items`).
 **Referencias:** `docs/20-architecture/gamificacion/ANALISIS-RECURSOS-VISUALES.md`, `docs/20-architecture/gamificacion/DISENO-SISTEMA-EQUIPAMIENTO.md`.
-
----
 
 ## 1. Alcance y objetivo
 
