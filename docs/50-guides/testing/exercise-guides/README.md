@@ -1,3 +1,11 @@
+---
+titulo: Testing Guides - GAMILIT
+tipo: guia-testing
+fecha_creacion: 2025-10-01
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Testing Guides — GAMILIT
 
 Guias de prueba con respuestas ejemplo para los 5 modulos educativos.

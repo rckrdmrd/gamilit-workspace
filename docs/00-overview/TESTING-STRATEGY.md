@@ -1,3 +1,11 @@
+---
+titulo: "Testing Strategy - Redirect"
+tipo: overview
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Testing Strategy - Redirect
 
 > **Este documento es un redirect.** La estrategia de testing se mantiene en ubicaciones especializadas.
@@ -27,13 +35,13 @@ GAMILIT usa una piramide de tests con Jest (backend) y Vitest (frontend). El umb
 ## Comandos Rapidos
 
 ```bash
-# Backend tests
+## Backend tests
 cd apps/backend && npm run test && npm run test:cov
 
-# Frontend tests
+## Frontend tests
 cd apps/frontend && npm run test && npm run test:coverage
 
-# Database validation
+## Database validation
 bash apps/database/scripts/recreate-database.sh
 ```
 

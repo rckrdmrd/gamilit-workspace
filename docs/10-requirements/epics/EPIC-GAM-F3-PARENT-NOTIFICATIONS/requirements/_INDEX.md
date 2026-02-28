@@ -1,3 +1,11 @@
+---
+titulo: "_INDEX - Requerimientos EPIC-GAM-F3-PARENT-NOTIFICATIONS"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # _INDEX - Requerimientos EPIC-GAM-F3-PARENT-NOTIFICATIONS
 
 > Requerimientos de notificaciones a padres.

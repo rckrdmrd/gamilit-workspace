@@ -1,3 +1,11 @@
+---
+titulo: "PLAN DE CORRECCION: Sistema de Notificaciones EXT-003"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # PLAN DE CORRECCION: Sistema de Notificaciones EXT-003
 
 **Version:** 1.1.0
@@ -351,16 +359,16 @@ import { NotificationBell } from '@/features/notifications/components/Notificati
 ## 6. COMANDOS DE VALIDACION
 
 ```bash
-# Backend - Build y tests
+## Backend - Build y tests
 cd apps/backend
 npm run build
 npm run test -- --grep "notification"
 
-# Frontend - Build
+## Frontend - Build
 cd apps/frontend
 npm run build
 
-# Database - Recrear y validar
+## Database - Recrear y validar
 cd apps/database
 ./recreate-database.sh
 ```

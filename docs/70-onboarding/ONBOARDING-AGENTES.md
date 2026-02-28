@@ -1,3 +1,11 @@
+---
+titulo: "Onboarding para Agentes IA"
+tipo: onboarding
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Onboarding para Agentes IA
 
 > For complete project context, see [`../../CLAUDE.md`](../../CLAUDE.md).
@@ -17,13 +25,13 @@
 ## Tool Verification Commands
 
 ```bash
-# Backend — must pass before closing any task
+## Backend — must pass before closing any task
 cd apps/backend && npm run build && npm run lint && npm run test
 
-# Frontend — must pass before closing any task
+## Frontend — must pass before closing any task
 cd apps/frontend && npm run build && npm run lint && npm run typecheck
 
-# Database — recreate from DDL if schema changed
+## Database — recreate from DDL if schema changed
 bash apps/database/scripts/recreate-database.sh
 ```
 

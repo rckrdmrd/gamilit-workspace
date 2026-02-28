@@ -1,3 +1,11 @@
+---
+titulo: "Manual del Portal de Administrador - GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 > **[HISTORICAL SNAPSHOT — 2025-11-16]** Stack references in this document reflect the November 2025 delivery state (PostgreSQL 16.x, Vite 7.x). Current stack: PostgreSQL 15, Vite 6.x. Content preserved as-is for audit trail.
 
 > **[SUPERSEDED]** This manual has been superseded by the updated version: `MANUAL-USUARIO-PORTAL-ADMINISTRADOR.md` (v2.0.0, Feb 2026).
@@ -84,7 +92,7 @@ Este manual ha sido **actualizado con las funcionalidades realmente implementada
 
 ---
 
-# Capítulo 1: Bienvenida
+## Capítulo 1: Bienvenida
 
 ## 1.1 ¿Qué puede hacer como Administrador?
 
@@ -136,7 +144,7 @@ Como **Administrador del sistema GAMILIT**, usted tiene control total sobre:
 
 ---
 
-# Capítulo 2: Primeros Pasos
+## Capítulo 2: Primeros Pasos
 
 ## 2.1 Acceso al Portal de Administrador
 
@@ -198,7 +206,7 @@ Verificar:
 
 ---
 
-# Capítulo 3: Gestión de Usuarios
+## Capítulo 3: Gestión de Usuarios
 
 ## ⏳ Estado: PENDIENTE DE IMPLEMENTACIÓN
 
@@ -222,7 +230,7 @@ Actualmente, la gestión de usuarios se realiza:
 
 ---
 
-# Capítulo 4: Gestión de Instituciones
+## Capítulo 4: Gestión de Instituciones
 
 ## 4.1 ✅ Ver Instituciones Existentes
 
@@ -267,7 +275,7 @@ Verificar:
 
 ---
 
-# Capítulo 5: Gestión de Contenido
+## Capítulo 5: Gestión de Contenido
 
 ## ⏳ Estado: FASE 3 - POST-MVP
 
@@ -558,7 +566,7 @@ El sistema de gestión de contenido permitirá a los administradores controlar e
 
 ---
 
-# Capítulo 6: Sistema de Aprobaciones
+## Capítulo 6: Sistema de Aprobaciones
 
 ## ⏳ Estado: FASE 3 - POST-MVP
 
@@ -770,7 +778,7 @@ Si Rejected → [Draft] (vuelve a Teacher con comentarios)
 
 ---
 
-# Capítulo 7: Configuración de Gamificación (US-AE-005)
+## Capítulo 7: Configuración de Gamificación (US-AE-005)
 
 ## ⭐ Historia de Usuario: US-AE-005
 **Estado:** ✅ **IMPLEMENTADA COMPLETAMENTE**
@@ -1097,7 +1105,7 @@ Para modificar insignias mientras esta funcionalidad está en desarrollo:
 
 ---
 
-# Capítulo 8: Gestión de Classroom-Teacher (US-AE-007)
+## Capítulo 8: Gestión de Classroom-Teacher (US-AE-007)
 
 ## ⭐ Historia de Usuario: US-AE-007
 **Estado:** ✅ **IMPLEMENTADA COMPLETAMENTE**
@@ -1390,7 +1398,7 @@ Verificar:
 
 ---
 
-# Capítulo 9: Reportes del Sistema
+## Capítulo 9: Reportes del Sistema
 
 ## ⏳ Estado: PENDIENTE DE IMPLEMENTACIÓN
 
@@ -1414,7 +1422,7 @@ Esta sección describe funcionalidades planificadas pero **no implementadas aún
 
 ---
 
-# Capítulo 10: Roles y Permisos
+## Capítulo 10: Roles y Permisos
 
 ## ⏳ Estado: PARCIALMENTE IMPLEMENTADO
 
@@ -1454,7 +1462,7 @@ El sistema actualmente tiene **roles fijos** definidos en el código:
 
 ---
 
-# Capítulo 11: Monitoreo del Sistema
+## Capítulo 11: Monitoreo del Sistema
 
 ## ⏳ Estado: PENDIENTE DE IMPLEMENTACIÓN
 
@@ -1482,7 +1490,7 @@ Esta sección describe funcionalidades planificadas pero **no implementadas aún
 
 ---
 
-# Capítulo 12: Configuración Global
+## Capítulo 12: Configuración Global
 
 ## ⏳ Estado: PENDIENTE DE IMPLEMENTACIÓN
 
@@ -1511,7 +1519,7 @@ Esta sección describe funcionalidades planificadas pero **no implementadas aún
 
 ---
 
-# Capítulo 13: Preguntas Frecuentes
+## Capítulo 13: Preguntas Frecuentes
 
 ## 13.1 ¿Cómo ajusto los puntos XP por ejercicio?
 
@@ -1635,7 +1643,7 @@ El header del portal muestra **sus propios datos de gamificación** en tiempo re
 
 ---
 
-# Capítulo 14: ✅ Checklist de Validación
+## Capítulo 14: ✅ Checklist de Validación
 
 ## 14.1 Checklist US-AE-005: Configuración de Gamificación
 
@@ -1795,7 +1803,7 @@ Validar las siguientes funcionalidades:
 
 ---
 
-# Capítulo 15: Soporte y Ayuda
+## Capítulo 15: Soporte y Ayuda
 
 ## 15.1 Recursos de Soporte
 
@@ -1980,7 +1988,7 @@ Contactar al equipo de desarrollo o consultar la documentación técnica en `doc
 
 ---
 
-# Capítulo 16: ✅ Correcciones y Mejoras (25-Nov-2025)
+## Capítulo 16: ✅ Correcciones y Mejoras (25-Nov-2025)
 
 ## 16.0 Resumen de Correcciones Implementadas
 
@@ -2122,7 +2130,7 @@ Este documento incluye:
 
 ---
 
-# Capítulo 17: ✅ Funcionalidades Adicionales Implementadas
+## Capítulo 17: ✅ Funcionalidades Adicionales Implementadas
 
 ## 17.1 Resumen
 
@@ -2473,7 +2481,7 @@ Algunas funcionalidades están implementadas **pero no accesibles** desde el men
 
 ---
 
-# Capítulo 18: Actualizaciones v1.3 (2026-01-25)
+## Capítulo 18: Actualizaciones v1.3 (2026-01-25)
 
 ## 18.1 Resumen de Cambios
 

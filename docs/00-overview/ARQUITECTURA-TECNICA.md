@@ -1,33 +1,14 @@
-# Arquitectura Tecnica
+---
+titulo: "Arquitectura Técnica"
+tipo: redirect
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
 
-> Resumen tecnico operativo del monorepo.
+# Arquitectura Técnica
 
-## Stack
-
-- Backend: NestJS 11
-- Frontend: React 19 + Vite
-- Database: PostgreSQL 15 + TypeORM
-- Cache/Realtime: Redis + Socket.IO
-
-## Estructura
-
-```text
-gamilit-workspace/
-|- apps/
-|- docs/
-`- orchestration/
-```
-
-## Ambientes y puertos
-
-| Servicio | Dev | Produccion |
-|----------|-----|------------|
-| Frontend | 3005 | Nginx/HTTPS |
-| Backend | 3006 | Nginx/HTTPS |
-| PostgreSQL | 5432 | Interno |
-| Redis | 6379 | Interno |
-
-## Referencias
-
-- [../20-architecture/README.md](../20-architecture/README.md)
-- [../20-architecture/AMBIENTES-DEV-PROD.md](../20-architecture/AMBIENTES-DEV-PROD.md)
+> **Documento movido.** Ver la documentación de arquitectura completa en:
+> - [docs/20-architecture/](../20-architecture/_INDEX.md)
+> - [STACK-TECNOLOGICO.md](../20-architecture/STACK-TECNOLOGICO.md)
+> - [MODELO-DATOS.md](../20-architecture/MODELO-DATOS.md)

@@ -7,10 +7,10 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-BE-004: Datasource Entity Path Incorrecto
 
-## Descripcion
+### Descripcion
 Las entidades de TypeORM no se encuentran porque su archivo no esta incluido en el array `entities` del datasource correcto en `app.module.ts`. Esto causa errores de inyeccion de repositorio en tiempo de ejecucion.
 
-## Sintomas
+### Sintomas
 - Error: `No repository for "EntityName" was found. Looks like this entity is not registered in current "default" connection`
 - Error: `EntityMetadataNotFoundError: No metadata for "EntityName" was found`
 - Error: `RepositoryNotFoundError` al inyectar con `@InjectRepository(Entity, 'datasource_name')`
@@ -18,14 +18,14 @@ Las entidades de TypeORM no se encuentran porque su archivo no esta incluido en 
 - Tests pasan pero la aplicacion crashea al arrancar
 - Relaciones `@ManyToOne` o `@OneToMany` a entities de otros modulos fallan silenciosamente
 
-## Causa Raiz
+### Causa Raiz
 1. **Entity no registrado en ningun datasource:** El archivo `.entity.ts` existe pero su glob path no esta en ninguna configuracion `TypeOrmModule.forRootAsync()` en `app.module.ts`
 2. **Entity en datasource incorrecto:** El entity esta registrado pero en un datasource diferente al que se usa con `@InjectRepository(Entity, 'nombre_datasource')`
 3. **Relaciones cross-datasource no declaradas:** Un entity A en datasource X tiene relacion `@ManyToOne` con entity B en datasource Y, pero entity B no esta duplicado en datasource X
 4. **Glob path no cubre el archivo:** El patron glob (ej: `__dirname + '/modules/auth/entities/**/*.entity{.ts,.js}'`) no alcanza el directorio donde realmente esta el entity
 5. **Entidades de modulo nuevo sin datasource:** Se crea un modulo nuevo con entities pero se olvida configurar o extender un datasource
 
-## Solucion
+### Solucion
 
 ### 1. Identificar a que datasource pertenece el entity
 Revisar el schema de la tabla en la DDL y mapear al datasource correspondiente:
@@ -83,7 +83,7 @@ constructor(
 __dirname + '/modules/otro/entities/entity-necesario.entity{.ts,.js}',
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Siempre verificar datasource** antes de crear un entity nuevo: revisar `app.module.ts` para confirmar que el glob path cubre el directorio del entity
 2. **Documentar relaciones cross-datasource** con comentario `// FIX-BE-XXX` cada vez que se agrega un entity a un datasource que no es su "hogar"
@@ -112,7 +112,7 @@ grep -n "entities:" apps/backend/src/app.module.ts -A 5
 grep -n "FIX-BE-" apps/backend/src/app.module.ts
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Controlador/Entity | Ruta Incorrecta | Estado |
 |-------|---------------------|-----------------|--------|
@@ -125,7 +125,7 @@ grep -n "FIX-BE-" apps/backend/src/app.module.ts
 | 2026-01-28 | Module, Exercise | FIX-BE-015: ModuleProgress->Module en progress datasource | Resuelto |
 | 2026-02-13 | Conversation entities | communication datasource creado para entities de comunicacion | Resuelto |
 
-## Referencias
+### Referencias
 
 - **app.module.ts:** `apps/backend/src/app.module.ts` (10 datasources, lineas 62-330)
 - **TypeORM Multiple Connections:** https://typeorm.io/multiple-connections

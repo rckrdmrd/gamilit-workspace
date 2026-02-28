@@ -1,3 +1,11 @@
+---
+titulo: "ENDPOINTS-INVENTORY-EQUIP"
+tipo: api
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ENDPOINTS-INVENTORY-EQUIP
 
 > Contrato API para equipamiento cosmético de tienda visual.

@@ -1,3 +1,11 @@
+---
+titulo: "PLAN DE EJECUCION: EAI-007 - Correccion Discrepancia DTO Frontend-Backend M4/M5"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # PLAN DE EJECUCION: EAI-007 - Correccion Discrepancia DTO Frontend-Backend M4/M5
 
 **Agente:** Tech-Leader-Agent (Orquestador)

@@ -7,23 +7,23 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-DB-004: Conflictos RLS entre Schemas
 
-## Descripcion
+### Descripcion
 Las politicas RLS que referencian tablas en otros schemas sin usar nombres completamente calificados (schema.tabla) fallan porque PostgreSQL resuelve el nombre usando el search_path actual, que durante la evaluacion de la politica puede no incluir el schema destino.
 
-## Sintomas
+### Sintomas
 - Error: `relation "tabla" does not exist` durante evaluacion de politica RLS
 - Error: `permission denied for table tabla` a pesar de que el rol tiene permisos correctos
 - Queries que funcionan como superusuario pero fallan con usuario de aplicacion
 - Registros "invisibles" para usuarios que deberian tener acceso
 - Comportamiento inconsistente: la misma query funciona en un schema pero no en otro
 
-## Causa Raiz
+### Causa Raiz
 1. La politica RLS usa un nombre de tabla sin prefijo de schema (ej: `users` en vez de `auth_management.users`)
 2. El `search_path` de la sesion no incluye el schema donde reside la tabla referenciada
 3. Durante la evaluacion de la politica, PostgreSQL busca la tabla en los schemas del search_path y no la encuentra
 4. Con 18 schemas y 251 politicas RLS, las referencias cross-schema son frecuentes (especialmente hacia `auth_management`, `gamilit`, y `tenant_management`)
 
-## Solucion
+### Solucion
 
 ### 1. Identificar politicas con referencias no calificadas
 ```bash
@@ -88,7 +88,7 @@ SELECT * FROM educational.student_progress LIMIT 5;
 RESET ROLE;
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Regla de desarrollo**: Toda referencia a tabla en politica RLS DEBE usar nombre completamente calificado (`schema.tabla`)
 2. **Code review**: Verificar que no haya nombres de tabla sin schema en archivos de politicas
@@ -110,7 +110,7 @@ grep -rn "FROM [a-z_]*[^.]" apps/database/ddl/schemas/*/policies/*.sql | \
   grep -v "FROM UNNEST\|FROM generate\|FROM json"
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Schema Origen | Schema Destino | Politica | Estado |
 |-------|---------------|----------------|----------|--------|
@@ -118,7 +118,7 @@ grep -rn "FROM [a-z_]*[^.]" apps/database/ddl/schemas/*/policies/*.sql | \
 | 2026-01-10 | gamification | auth_management | xp_transactions_user_access | Resuelto |
 | 2025-12-20 | progress | tenant_management | module_progress_tenant_check | Resuelto |
 
-## Referencias
+### Referencias
 
 - **DDL Politicas:** `apps/database/ddl/schemas/*/policies/`
 - **Schema Reference:** `docs/20-architecture/schema-reference/`

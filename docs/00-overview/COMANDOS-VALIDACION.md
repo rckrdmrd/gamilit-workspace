@@ -1,31 +1,13 @@
-# Comandos de Validacion
+---
+titulo: "Comandos de Validación"
+tipo: redirect
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
 
-> Comandos base por capa para validaciones tecnicas.
+# Comandos de Validación
 
-## Backend
-
-```bash
-cd apps/backend
-npm run build
-npm run lint
-npm run test
-```
-
-## Frontend
-
-```bash
-cd apps/frontend
-npm run build
-npm run lint
-npm run typecheck
-```
-
-## Database
-
-```bash
-bash apps/database/scripts/recreate-database.sh
-```
-
-## Referencias
-
-- [../../CLAUDE.md](../../CLAUDE.md)
+> **Documento consolidado.** Los comandos de validación están definidos en:
+> - [CLAUDE.md](../../CLAUDE.md) — Sección "VALIDACIONES OBLIGATORIAS"
+> - [docs/50-guides/](../50-guides/_INDEX.md) — Guías de desarrollo

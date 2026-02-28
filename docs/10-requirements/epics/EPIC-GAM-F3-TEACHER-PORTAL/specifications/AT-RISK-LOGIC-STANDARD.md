@@ -1,3 +1,11 @@
+---
+titulo: "Estándar: Lógica de Detección At-Risk"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Estándar: Lógica de Detección At-Risk
 
 ## Metadata

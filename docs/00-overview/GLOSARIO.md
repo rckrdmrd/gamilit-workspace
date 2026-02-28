@@ -1,3 +1,11 @@
+---
+titulo: "Glosario de Terminos - GAMILIT"
+tipo: overview
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Glosario de Terminos - GAMILIT
 
 **Version:** 2.1.0
@@ -129,7 +137,7 @@ Los documentos del proyecto mencionan diferentes cantidades de ejercicios depend
 | **Component** | Elemento de UI reutilizable. 575 componentes. |
 | **Hook** | Funcion para manejar estado y efectos. 132 hooks. |
 | **Store** | Estado global de la aplicacion (Zustand). 13 stores. |
-| **Page** | Componente que representa una ruta. 72 paginas. |
+| **Page** | Componente que representa una ruta. 70 paginas. |
 | **API Service** | Servicio para comunicacion con backend. 65 API service files. |
 
 ### Arquitectura

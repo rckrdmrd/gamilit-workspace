@@ -1,3 +1,11 @@
+---
+titulo: Mapa de Navegacion - Admin Pages
+tipo: mapa-navegacion
+fecha_creacion: 2025-10-01
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Mapa de Navegacion - Admin Pages
 
 ## Descripcion

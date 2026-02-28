@@ -1,15 +1,58 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-27
-**Version:** v5.5 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
-**Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~98/100
-**Sprint Actual:** Sprint 2 COMPLETADO — Doc Health Remediation 85->98 COMPLETADA — Sprint 3 funcional pendiente
+**Ultima Actualizacion:** 2026-02-28
+**Version:** v5.7 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
+**Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~99/100
+**Sprint Actual:** Sprint 2 COMPLETADO — Doc Health + Code-Doc Alignment + Doc Remediation COMPLETADAS — Sprint 3 funcional pendiente
 
 ---
 
 ## Estado Actual
 
-### Ultima Tarea Completada: Doc Health Remediation 85→98/100 (2026-02-27)
+### Ultima Tarea Completada: Documentation Remediation — 6 Pending Items (2026-02-28)
+
+**4 items ejecutados, 2 descartados (no requerian accion). 13 subagentes. Health Score: ~98→~99/100.**
+
+Cambios aplicados:
+1. FASE 1: Portal API refs estandarizados — 4 SSOT en 60-portals/, 4 redirect stubs en 40-api/ (Student+Parents movidos, Teacher+Admin stubs creados)
+2. FASE 2: _wave-3-technical archivado — 70 archivos movidos a _archived/wave-3-technical/, redirect stub creado, 3 index files actualizados
+3. FASE 3: 10 archivos sobredimensionados split — ~51 archivos nuevos en 10 subdirectorios, hub pages <100 lineas cada uno
+   - API-REFERENCE.md (1690L→64L hub + 7 splits)
+   - PORTAL-ADMIN-GUIDE.md (2235L→53L hub + 4 splits)
+   - PORTAL-STUDENT-GUIDE.md (1850L→48L hub + 5 splits)
+   - PORTAL-TEACHER-API-REFERENCE.md (1199L→53L hub + 6 splits)
+   - STUDENT-HOOKS-SPEC.md (1243L→51L hub + 6 splits)
+   - GUIA-DESIGN-PATTERNS-NESTJS.md (1206L→55L hub + 5 splits)
+   - GUIA-E2E-PLAYWRIGHT.md (1168L→52L hub + 5 splits)
+   - ESTANDAR-API.md (1253L→57L hub + 5 splits)
+   - ESTANDAR-FRONTEND-PROFESIONAL.md (1147L→56L hub + 5 splits)
+   - GUIA-RUNBOOK-POSTGRESQL.md (1039L→49L hub + 6 splits)
+4. FASE 4: 596 TASK-* wrapper dirs aplanados — 596 dirs eliminados, 280 _INDEX.md actualizados
+5. Items descartados: Ghost table guild_mission_contributions (EXISTE en DDL), ADR-039 misplaced files (ya resueltos con redirect stubs)
+
+**Reporte:** `orchestration/tareas/TASK-2026-02-28-DOC-REMEDIATION/REMEDIATION-REPORT.md`
+
+### Tarea Anterior: Documentation Audit & Cleanup (2026-02-28)
+
+**4 fases, 18 subagentes. Health Score: 88→96/100 (+8). Frontmatter: 28%→100% (2191 files).**
+
+**Reporte:** `orchestration/tareas/TASK-2026-02-28-DOC-AUDIT/FINAL-REPORT.md`
+
+### Tarea Anterior: Code-Doc Alignment Remediation (2026-02-27)
+
+**4 fases, ~4 subagentes. Stack versions corrected (17), env vars fixed, page count corrected (72→70), 24 new flow docs, ADR-045 updated, API coverage 69%→71%.**
+
+Cambios aplicados:
+1. FASE 1 (P0 Critical): STACK-TECNOLOGICO.md 17 correcciones (redis, bcrypt, swagger v11, framer-motion v12, recharts v3, zod v4, vitest v3, +react-query, -headlessui, -msw). `.env.production.example` DB_NAME→DB_DATABASE fixed. `.env.example` creado (310 lines, 64 variables). MODELO-DATOS.md 6 table name corrections (profiles, user_sessions, auth_providers, password_reset_tokens, auth_attempts, memberships).
+2. FASE 2 (P1 Config & Metrics): ADR-045 updated "Infrastructure Ready, Adoption Pending" (45 classes, 39 active throws, 683 HTTP exceptions). AMBIENTES-DEV-PROD.md expanded (13 subsections, ~60+ env vars). Page count corrected 72→70 in CLAUDE.md + MASTER_INVENTORY + PROJECT-CONTEXT. CommunicationModule import verified. BACKEND_INVENTORY updated for etl/ml/viz conditional import status.
+3. FASE 3 (Flow Documentation): 4 system flows (FL-SYS-02..05), 9 teacher flows (FL-TCH-09..17), 11 admin flows (FL-ADM-12..22) = 24 new flow docs + index/map files.
+4. FASE 4 (API Documentation): API-REFERENCE.md +Profile(3) +BonusCoins(1) +ResourceSharing(13) = +17 endpoints. Parents API confirmed complete (18/18). LTI GAP-14 confirmed not in code (no action).
+
+API Coverage: ~631→~648/912 (~69%→~71%). Flow docs: +24 new. MASTER_INVENTORY: v14.5.0→v14.6.0.
+
+**Reporte:** `orchestration/tareas/TASK-2026-02-27-CODE-DOC-ALIGNMENT/REMEDIATION-REPORT.md`
+
+### Tarea Anterior: Doc Health Remediation 85→98/100 (2026-02-27)
 
 **5 fases, ~23 subagentes, ~296 operaciones (230 mod + 57 creados + 9 renombrados). Health Score: 85→~98/100.**
 
@@ -142,8 +185,8 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 | ~~S3-01~~ | ~~Corregir gamification paths en API-REFERENCE.md~~ | Fix | 1h | P0 | **COMPLETADO** (Gap 1) |
 | ~~S3-02~~ | ~~Conectar 5 M2/M3 mock APIs a mechanicsAPI backend~~ | Fix | 2h | P1 | **COMPLETADO** (Gap 4, FEATURE_FLAGS) |
 | ~~S3-03~~ | ~~Crear PORTAL-STUDENT-API-REFERENCE.md~~ | Doc | 5 dias | P0 | **COMPLETADO** (Gap 2, 3 portal refs) |
-| S3-04 | Crear FL-SYS-02 (Exercise Submission Pipeline) | Doc | 4h | P1 | PENDIENTE |
-| S3-05 | Crear FL-SYS-03 (Gamification Reward Chain) | Doc | 3h | P1 | PENDIENTE |
+| ~~S3-04~~ | ~~Crear FL-SYS-02 (Exercise Submission Pipeline)~~ | Doc | 4h | P1 | **COMPLETADO** (FL-SYS-02..05 creados) |
+| ~~S3-05~~ | ~~Crear FL-SYS-03 (Gamification Reward Chain)~~ | Doc | 3h | P1 | **COMPLETADO** (FL-SYS-02..05 creados) |
 | ~~S3-06~~ | ~~Corregir 3 stale DDL paths en COHERENCE-ENTITIES-DDL.md~~ | Fix | 0.5h | P2 | **COMPLETADO** (Gap 11) |
 | ~~S3-07~~ | ~~Modernizar schema-reference legacy names~~ | Doc | 3 dias | P0 | **COMPLETADO** (Gap 3) |
 
@@ -157,13 +200,15 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 | 42 | A/B Testing Dashboard: implementar backend o remover mock | L | idem |
 | ~~43~~ | ~~Unificar AdminLayout + TeacherLayout en PortalLayout compartido~~ | ~~M~~ | **COMPLETADO** 2026-02-26 |
 | 44 | Integrar Parent portal con detective-theme (usa paleta indigo divergente) | L | depende #43 |
-| 49 | Crear 8 flujos UX admin faltantes + 6 flujos teacher faltantes | L | WS09 (ver S3-04/S3-05) |
+| ~~49~~ | ~~Crear flujos UX faltantes (8 admin + 6 teacher)~~ | ~~L~~ | **COMPLETADO** (24 flow docs: FL-SYS-02..05, FL-TCH-09..17, FL-ADM-12..22) |
 | ~~50~~ | ~~Documentar 30 API service files no documentados~~ | ~~L~~ | **COMPLETADO** (Gap 2 — 3 portal API refs) |
 | **REM-01** | Teacher-communication frontend UI (7/8 endpoints no consumidos) | M | Gap 15 verificado — integrar ParentMessagesPage con backend real |
-| **REM-02** | ADR-045 migration a modulos restantes (auth+gamification done, 21 modulos pendientes) | XL | Expansion gradual por sprint |
+| **REM-02** | ADR-045 migration a modulos restantes (auth+gamification done, 21 modulos pendientes) | XL | Expansion gradual por sprint. Status: Infrastructure Ready (45 classes, 39 throws, 683 HTTP exceptions) |
 | **REM-03** | Integration test expansion (5 archivos base, expandir a todos los modulos) | L | Infraestructura creada — agregar test cases |
 | **REM-04** | Frontend hook count discrepancy investigation (132 documented vs methodology variation) | S | Verificar si hay nuevos hooks en parent portal pages |
 | **REM-05** | Multi-tenant RLS activation (BYPASSRLS → NOBYPASSRLS para usuarios no-admin) | M | Requiere coordinacion con deploy |
+| **REM-06** | Lint warnings reduccion (104 activos) | M | Objetivo: <50. Aumento post teacher-portal re-enable + mobile fixes |
+| **REM-07** | Frontend dead code: NotificationService.ts (0 importers) — deprecate or remove | S | Marcado como deprecated P6, confirmar eliminacion segura |
 
 ### ~~P1 — BD Pendientes~~ (TODOS RESUELTOS 2026-02-26)
 
@@ -219,21 +264,24 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 | BD | Seeds pipeline | 92 entradas, 0 errores |
 | Backend | Modulos | 23 |
 | Backend | Entities | 156 files (157 classes) |
-| Backend | Endpoints | 912 |
+| Backend | Endpoints | 914 |
 | Backend | Tests | 63 spec files, 2324 tests (2296 passed + 28 skipped) |
 | Backend | Domain Error Classes | 42 (25 auth + 17 gamification, ADR-045) |
 | Backend | Integration Test Files | 5 (jest.integration.config.js + infra) |
 | Frontend | Componentes (.tsx prod) | 575 (+3 parent portal) |
 | Frontend | Hooks | 132 |
-| Frontend | Paginas | 72 (+3 parent portal) |
+| Frontend | Paginas | 70 (corrected from 72 — overcounting fixed 2026-02-27) |
 | Frontend | Routes | 74 (+3 parent portal) |
 | Frontend | Stores Zustand | 13 |
 | Frontend | API Service Files | 65 |
 | Portales | Parent portal | 100% (7/7 pages) |
 | Health Score | Post-remediacion | ~98/100 (era 92, prev 84) |
-| Docs | API Coverage | ~631/912 (~69%, era 513/56%) |
+| Docs | API Coverage | ~648/914 (~71%, era 631/912 ~69%, era 513/912 ~56%) |
 | Docs | Frontmatter | >90% (~209 archivos) |
 | Docs | Standards files | 35 (era 17 pre-split) |
+| Docs | Flow docs | +24 nuevos (FL-SYS-02..05, FL-TCH-09..17, FL-ADM-12..22) |
+| Config | .env.example | Creado: 310 lineas, 64 variables |
+| Stack | Versiones corregidas | 17 correcciones en STACK-TECNOLOGICO.md |
 
 > SSOT: `orchestration/inventarios/MASTER_INVENTORY.yml`
 
@@ -243,6 +291,7 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 
 | Recurso | Ubicacion |
 |---------|-----------|
+| **Code-Doc Alignment Remediation 2026-02-27** | **`orchestration/tareas/TASK-2026-02-27-CODE-DOC-ALIGNMENT/REMEDIATION-REPORT.md` — stack versions, .env.example, 24 flow docs, API 69%→71%** |
 | **Doc Health Remediation 2026-02-27** | **`orchestration/tareas/TASK-2026-02-27-DOC-HEALTH-100/REMEDIATION-REPORT.md` — Health 85→98, ~296 ops** |
 | Historial de sesiones 2026 | `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md` |
 | Sprint actual | `orchestration/scrum/SPRINT-ACTUAL.yml` |

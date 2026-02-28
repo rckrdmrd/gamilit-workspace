@@ -1,3 +1,11 @@
+---
+titulo: "99-delivery — Mapa de Navegacion"
+tipo: mapa-navegacion
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # 99-delivery — Mapa de Navegacion
 
 ## Estructura

@@ -1,3 +1,11 @@
+---
+titulo: "Documentacion de Portales"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Documentacion de Portales
 
 > Manuales y especificaciones de los 4 portales diferenciados de gamilit.

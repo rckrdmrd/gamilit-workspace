@@ -1,3 +1,11 @@
+---
+titulo: "US-ETC-001: Consolidacion de APIs Frontend"
+tipo: user-story
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # US-ETC-001: Consolidacion de APIs Frontend
 
 **Historia de Usuario ID:** US-ETC-001

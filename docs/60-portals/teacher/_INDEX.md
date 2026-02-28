@@ -1,3 +1,11 @@
+---
+titulo: "Portal Maestro — Indice"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Portal Maestro — Indice
 
 > Documentacion del portal de maestro de GAMILIT. Cubre gestion de aulas, asignaciones, revision manual de ejercicios M3-M5, analitica docente y flujos de integracion backend-frontend.

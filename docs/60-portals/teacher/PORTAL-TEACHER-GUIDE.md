@@ -914,7 +914,7 @@ if (process.env.NODE_ENV === 'development') {
 
 ### Guias Generales
 
-- [REACT-QUERY-MIGRATION-GUIDE.md](../../50-guides/REACT-QUERY-MIGRATION-GUIDE.md) - Guia de migracion a React Query
+- [REACT-QUERY-MIGRATION-GUIDE.md](../../50-guides/frontend/REACT-QUERY-MIGRATION-GUIDE.md) - Guia de migracion a React Query
 - [COMPONENT-PATTERNS.md](../../50-guides/frontend/impl/COMPONENT-PATTERNS.md) - Patrones de componentes
 - [HOOK-PATTERNS.md](../../50-guides/frontend/impl/HOOK-PATTERNS.md) - Patrones de hooks
 - [DTO-CONVENTIONS.md](../../50-guides/backend/impl/DTO-CONVENTIONS.md) - Convenciones de DTOs

@@ -1,3 +1,11 @@
+---
+titulo: "Guía de Respuestas Esperadas - Ejercicios GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Guía de Respuestas Esperadas - Ejercicios GAMILIT
 
 **Versión:** 1.0.0 | **Fecha:** Febrero 2026 | **Uso:** Exclusivo para docentes

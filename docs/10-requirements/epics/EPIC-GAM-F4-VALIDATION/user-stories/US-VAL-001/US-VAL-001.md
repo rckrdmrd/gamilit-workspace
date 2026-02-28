@@ -55,11 +55,11 @@ updated_date: "2026-02-10"
 
 | Task | Titulo | Capa |
 |------|--------|------|
-| [TASK-VAL-001-F0-INFRA](TASK-VAL-001-F0-INFRA/) | Verificar WSL + PostgreSQL + Redis | Infra |
-| [TASK-VAL-001-F0-DATABASE](TASK-VAL-001-F0-DATABASE/) | Recrear BD gamilit | Database |
-| [TASK-VAL-001-F0-DATABASE-SEEDS](TASK-VAL-001-F0-DATABASE-SEEDS/) | Verificar seeds dev | Database |
-| [TASK-VAL-001-F0-BACKEND](TASK-VAL-001-F0-BACKEND/) | Build backend | Backend |
-| [TASK-VAL-001-F0-FRONTEND](TASK-VAL-001-F0-FRONTEND/) | Build frontend | Frontend |
+| [TASK-VAL-001-F0-INFRA](TASK-VAL-001-F0-INFRA.md) | Verificar WSL + PostgreSQL + Redis | Infra |
+| [TASK-VAL-001-F0-DATABASE](TASK-VAL-001-F0-DATABASE.md) | Recrear BD gamilit | Database |
+| [TASK-VAL-001-F0-DATABASE-SEEDS](TASK-VAL-001-F0-DATABASE-SEEDS.md) | Verificar seeds dev | Database |
+| [TASK-VAL-001-F0-BACKEND](TASK-VAL-001-F0-BACKEND.md) | Build backend | Backend |
+| [TASK-VAL-001-F0-FRONTEND](TASK-VAL-001-F0-FRONTEND.md) | Build frontend | Frontend |
 
 ---
 

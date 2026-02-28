@@ -1,3 +1,11 @@
+---
+titulo: "_INDEX - EPIC-GAM-F2-DB-MIGRATION"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # _INDEX - EPIC-GAM-F2-DB-MIGRATION
 
 **Migracion Base de Datos** | Original: EMR-001 | SP: 20 | Estado: COMPLETADO

@@ -1,3 +1,11 @@
+---
+titulo: "TASK-XXX: Título de la tarea"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # TASK-XXX: Título de la tarea
 
 ## 1) Identificación

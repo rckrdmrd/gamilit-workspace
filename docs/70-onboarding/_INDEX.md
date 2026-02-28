@@ -1,3 +1,11 @@
+---
+titulo: "Onboarding - Indice"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Onboarding - Indice
 
 > Guias de incorporacion para diferentes roles en el proyecto gamilit

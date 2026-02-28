@@ -176,6 +176,8 @@ const rankColors: Record<string, string> = {
 | Weekly | 7 días | Lunes | Ganar 500 ML |
 | Special | Variable | Evento | Evento aniversario |
 
+> **Nota UI (2026-02-28):** La pestaña "Especiales" ha sido eliminada de MissionsPage en el portal frontend. Solo se muestran las pestañas "Diarias" y "Semanales". El endpoint `/gamification/missions/special` sigue activo en el backend para uso futuro.
+
 ### 8.2 Estados de Misión
 
 ```
@@ -208,13 +210,15 @@ interface Mission {
 
 ### 9.1 Tipos de Ranking
 
-| Tipo | Descripción | Filtros |
-|------|-------------|---------|
-| Global | Todos los usuarios | Período |
-| School | Usuarios de la escuela | Período |
-| Grade | Usuarios del grado | Período |
-| Classroom | Usuarios del aula | Período |
-| Friends | Amigos del usuario | Período |
+| Tipo | Descripción | Filtros | UI |
+|------|-------------|---------|-----|
+| Global | Todos los usuarios | Período | Visible |
+| School | Usuarios de la escuela | Período | Solo backend |
+| Grade | Usuarios del grado | Período | Solo backend |
+| Classroom | Usuarios del aula | Período | Solo backend |
+| Friends | Amigos del usuario | Período | Solo backend |
+
+> **Nota UI (2026-02-28):** LeaderboardPage solo muestra el scope **Global**. Las pestañas "Escuela", "Grado", "Mi Aula" y "Amigos" han sido eliminadas del portal frontend. Los endpoints de backend correspondientes siguen activos para uso futuro.
 
 ### 9.2 Períodos
 

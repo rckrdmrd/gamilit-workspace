@@ -1,3 +1,11 @@
+---
+titulo: "US-ETC-005: Actualizacion de Documentacion"
+tipo: user-story
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # US-ETC-005: Actualizacion de Documentacion
 
 **Historia de Usuario ID:** US-ETC-005
@@ -104,7 +112,7 @@ Esta HU depende de la completitud de:
 ## Template ADR
 
 ```markdown
-# ADR-022: Consolidacion Tecnica 2026-01
+## ADR-022: Consolidacion Tecnica 2026-01
 
 ## Estado
 Aceptado

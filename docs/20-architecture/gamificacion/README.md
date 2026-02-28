@@ -1,3 +1,11 @@
+---
+titulo: "Arquitectura de Gamificacion"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Arquitectura de Gamificacion
 
 > Segmentacion canonica de mecanicas, rangos y economia.

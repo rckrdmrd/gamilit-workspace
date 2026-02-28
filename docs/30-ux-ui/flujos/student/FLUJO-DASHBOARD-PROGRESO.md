@@ -1,3 +1,11 @@
+---
+titulo: FL-STU-13 - Student Dashboard / Progress Overview
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-STU-13 - Student Dashboard / Progress Overview
 
 **ID:** FL-STU-13

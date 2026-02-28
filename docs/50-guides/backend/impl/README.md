@@ -1,3 +1,11 @@
+---
+titulo: Guías de Desarrollo Backend
+tipo: guia-backend
+fecha_creacion: 2025-11-28
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Guías de Desarrollo Backend
 
 **Versión:** 1.0.0

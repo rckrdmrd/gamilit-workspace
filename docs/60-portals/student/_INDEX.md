@@ -1,3 +1,11 @@
+---
+titulo: "Portal Estudiante — Indice"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Portal Estudiante — Indice
 
 > Documentacion del portal de estudiante de GAMILIT. Cubre arquitectura de componentes, especificaciones por dominio funcional, contratos API y trazas de correccion.
@@ -7,6 +15,7 @@
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
 | `PORTAL-STUDENT-GUIDE.md` | Guia principal — arquitectura, componentes, flujos de 30 mecanicas de ejercicio | Actualizado 2026-02-27 |
+| `PORTAL-STUDENT-API-REFERENCE.md` | Referencia API del portal estudiante — 98 endpoints en 6 dominios (SSOT) | Actualizado 2026-02-28 |
 
 ## Subdirectorios
 

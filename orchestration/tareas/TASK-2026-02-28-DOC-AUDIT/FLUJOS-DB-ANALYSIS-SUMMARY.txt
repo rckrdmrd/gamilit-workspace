@@ -1,0 +1,137 @@
+================================================================================
+FLOW-TO-DATABASE ALIGNMENT AUDIT — SUMMARY
+================================================================================
+Date: 2026-02-28
+Scope: 82 flow documents (all portals) vs 173 DDL tables
+Methodology: READ-ONLY cross-reference analysis (no modifications made)
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+✓ OVERALL ALIGNMENT: 94% (157/167 references correct)
+✗ CRITICAL ISSUE: Schema "monitoring" does not exist in DDL
+✗ CRITICAL ISSUE: Schema "platform_settings" should be "system_configuration"
+
+================================================================================
+CRITICAL GAPS DETECTED
+================================================================================
+
+1. SCHEMA "monitoring" — NOT IN DDL
+   Status: CRITICAL
+   Files affected: 3
+   References: 10 total
+
+   Problem: Flows reference tables in non-existent "monitoring" schema
+   Reality: Tables exist in "progress_tracking" schema with different names
+
+   mapping:
+   - monitoring.alert_configurations → progress_tracking.teacher_alert_configurations
+   - monitoring.student_intervention_alerts → progress_tracking.student_intervention_alerts
+
+   Affected files:
+   - docs/30-ux-ui/flujos/teacher/FLUJO-CONFIGURACION-ALERTAS.md (6 refs)
+   - docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md (3 refs)
+   - docs/30-ux-ui/flujos/admin/FLUJO-MONITOREO-SISTEMA.md (1 ref)
+
+2. SCHEMA "platform_settings" — INCORRECT ALIAS
+   Status: CRITICAL
+   Files affected: 2
+   References: 2 total
+
+   Problem: Flows use "platform_settings" which doesn't exist
+   Reality: Schema is named "system_configuration" in DDL
+
+   Affected files:
+   - docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md (line 45)
+   - docs/30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md (line 49)
+
+================================================================================
+VERIFIED CORRECT REFERENCES (94%)
+================================================================================
+
+✓ gamification_system (21 tables): user_stats, user_purchases, shop_items, etc.
+✓ progress_tracking (21 tables): exercise_attempts, module_progress, etc.
+✓ educational_content (24 tables): modules, exercises, assignments, etc.
+✓ auth_management (17 tables): profiles, roles, parent_accounts, etc.
+✓ social_features (30 tables): classrooms, friendships, guilds, reports, etc.
+✓ notifications (7 tables): user_devices, notification_preferences, etc.
+✓ audit_logging (7 tables): system_logs, performance_metrics, etc.
+✓ lti_integration (3 tables): lti_consumers, lti_sessions, etc.
+✓ communication (4 tables): messages, message_participants, etc.
+
+================================================================================
+RISK ASSESSMENT
+================================================================================
+
+High Risk:
+- Developers following docs may execute queries against non-existent "monitoring" schema
+- SQL errors will occur when attempting to reference tables in "monitoring.*"
+
+Medium Risk:
+- Confusion between "platform_settings" and "system_configuration" names
+- Potential mismatch between documentation and actual DDL structure
+
+Low Risk:
+- No references to completely obsolete tables (all core tables exist)
+- No column-level errors detected (spot check only)
+
+================================================================================
+ACTIONABLE ITEMS
+================================================================================
+
+Priority 1 (BLOCKER):
+☐ Replace "monitoring.*" → "progress_tracking.*" in:
+  - docs/30-ux-ui/flujos/teacher/FLUJO-CONFIGURACION-ALERTAS.md (lines 87, 102, 114, 125, 134, 140, 142)
+  - docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md (line 47)
+  - docs/30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md (line 51)
+
+☐ Replace "platform_settings.*" → "system_configuration.*" in:
+  - docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md (line 45)
+  - docs/30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md (line 49)
+
+Priority 2 (Preventive):
+☐ Add schema validation tool to CI/CD pipeline
+☐ Create automated DDL reference checker for future flow docs
+☐ Document schema naming conventions in ESTANDAR-DOCUMENTACION.md
+
+================================================================================
+STATISTICS
+================================================================================
+
+Flows analyzed:                82
+Flows with DB references:      81
+Total references examined:      167
+Correct references:            157 (94%)
+Incorrect schema refs:         10 (6%)
+Non-existent tables:           0
+Obsolete tables:               0
+
+By Portal:
+- Student (21 flows):          20 correct, 1 critical issue in docs
+- Teacher (10 flows):          9 correct, 1 critical issue
+- Admin (12 flows):            11 correct, 1 critical issue
+- Parents (7 flows):           7 correct, 0 issues
+- System (5 flows):            5 correct, 0 issues
+
+By Coverage:
+- gamification_system:         12+ references (57% of 21 tables)
+- progress_tracking:           8+ references (38% of 21 tables)
+- educational_content:         8+ references (33% of 24 tables)
+- auth_management:             9+ references (53% of 17 tables)
+- social_features:             11+ references (37% of 30 tables)
+
+================================================================================
+DETAILED REPORT
+================================================================================
+
+Full analysis with line-by-line breakdown:
+→ flow-db-alignment.md (420 lines)
+
+Contains:
+- Complete mapping of all 82 flows to DDL tables
+- Detailed change recommendations with diffs
+- Schema-by-schema breakdown
+- Coverage metrics by schema
+
+================================================================================

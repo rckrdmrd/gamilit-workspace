@@ -1,3 +1,11 @@
+---
+titulo: "ET-GAM-004: Tipos Compartidos de Gamificación"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-GAM-004: Tipos Compartidos de Gamificación
 
 ## 📋 Metadata
@@ -448,14 +456,14 @@ export const RARITY_REWARDS: Record<AchievementRarityEnum, number> = {
 ### Comando de Sincronización
 
 ```bash
-# Ejecutar desde raíz del proyecto
+## Ejecutar desde raíz del proyecto
 npm run sync:enums
 
-# Output esperado:
-# ✅ Base de Datos: 14 ENUMs leídos
-# ✅ Backend: enums.constants.ts actualizado
-# ✅ Frontend: enums.constants.ts sincronizado
-# ✅ Sincronización completada exitosamente
+## Output esperado:
+## ✅ Base de Datos: 14 ENUMs leídos
+## ✅ Backend: enums.constants.ts actualizado
+## ✅ Frontend: enums.constants.ts sincronizado
+## ✅ Sincronización completada exitosamente
 ```
 
 ### Reglas de Sincronización

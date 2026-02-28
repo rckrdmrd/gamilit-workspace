@@ -1,3 +1,11 @@
+---
+titulo: Guias de Implementacion
+tipo: readme
+fecha_creacion: 2025-10-01
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Guias de Implementacion
 
 > Guias tecnicas para desarrollo, deployment, testing e integracion del proyecto gamilit.

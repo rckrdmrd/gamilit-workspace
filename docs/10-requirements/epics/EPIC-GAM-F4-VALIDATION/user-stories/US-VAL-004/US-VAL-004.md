@@ -45,11 +45,11 @@ ProtectedRoute + role guards redirigen correctamente, tests pasan
 
 | Task | Titulo | Portal |
 |------|--------|--------|
-| [TASK-VAL-004-F3-FRONTEND-STUDENT](TASK-VAL-004-F3-FRONTEND-STUDENT/) | Student portal (24 pags) | Student |
-| [TASK-VAL-004-F3-FRONTEND-TEACHER](TASK-VAL-004-F3-FRONTEND-TEACHER/) | Teacher portal (19 pags) | Teacher |
-| [TASK-VAL-004-F3-FRONTEND-ADMIN](TASK-VAL-004-F3-FRONTEND-ADMIN/) | Admin portal (18 pags) | Admin |
-| [TASK-VAL-004-F3-FRONTEND-PARENT](TASK-VAL-004-F3-FRONTEND-PARENT/) | Parent portal (4 pags) | Parent |
-| [TASK-VAL-004-F3-FRONTEND-GUARDS](TASK-VAL-004-F3-FRONTEND-GUARDS/) | Route guards + tests | Guards |
+| [TASK-VAL-004-F3-FRONTEND-STUDENT](TASK-VAL-004-F3-FRONTEND-STUDENT.md) | Student portal (24 pags) | Student |
+| [TASK-VAL-004-F3-FRONTEND-TEACHER](TASK-VAL-004-F3-FRONTEND-TEACHER.md) | Teacher portal (19 pags) | Teacher |
+| [TASK-VAL-004-F3-FRONTEND-ADMIN](TASK-VAL-004-F3-FRONTEND-ADMIN.md) | Admin portal (18 pags) | Admin |
+| [TASK-VAL-004-F3-FRONTEND-PARENT](TASK-VAL-004-F3-FRONTEND-PARENT.md) | Parent portal (4 pags) | Parent |
+| [TASK-VAL-004-F3-FRONTEND-GUARDS](TASK-VAL-004-F3-FRONTEND-GUARDS.md) | Route guards + tests | Guards |
 
 ---
 

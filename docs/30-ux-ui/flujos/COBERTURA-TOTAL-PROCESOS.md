@@ -1,3 +1,11 @@
+---
+titulo: Cobertura Total de Procesos End-to-End
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Cobertura Total de Procesos End-to-End
 
 **Version:** 1.4.0
@@ -38,9 +46,9 @@ Consolidar la cobertura total de procesos del sistema en una sola matriz trazabl
 | FL-TCH-03 | Teacher | Monitoreo y alertas docentes | EPIC-GAM-F3-NOTIFICATIONS | `apps/teacher/pages/TeacherAlerts.tsx` | ack/resolucion alerta | `/api/v1/teacher/alerts/*` | `notifications.*`, `analytics.*` | `teacher/FLUJO-MONITOREO-ALERTAS.md` |
 | FL-TCH-07 | Teacher | Configuracion docente y mensajeria | EPIC-GAM-F3-TEACHER-PORTAL | `apps/teacher/pages/TeacherSettings.tsx` | actualizar preferencias/canales | `/api/v1/teacher/settings/*`, `/api/v1/messages/*` | `auth_management.profiles`, `communication.*` | `shared/FLUJO-PERFIL-CONFIGURACION.md` |
 | FL-ADM-01 | Admin | Gestion de usuarios y roles | EPIC-GAM-F1-ADMIN | `apps/admin/pages/AdminUsersPage.tsx` | alta/edicion/rol de usuario | `/api/v1/admin/users/*`, `/api/v1/admin/roles/*` | `auth.users`, `auth_management.profiles`, `auth_management.user_roles` | `admin/FLUJO-GESTION-USUARIOS-ROLES.md` |
-| FL-ADM-02 | Admin | Configuracion global del sistema | EPIC-GAM-F1-CONFIG | `apps/admin/pages/AdminAdvancedPage.tsx` | guardar configuracion | `/api/v1/settings/*`, `/api/v1/admin/config/*` | `platform_settings.*` | `admin/FLUJO-CONFIGURACION-SISTEMA.md` |
+| FL-ADM-02 | Admin | Configuracion global del sistema | EPIC-GAM-F1-CONFIG | `apps/admin/pages/AdminAdvancedPage.tsx` | guardar configuracion | `/api/v1/settings/*`, `/api/v1/admin/config/*` | `system_configuration.*` | `admin/FLUJO-CONFIGURACION-SISTEMA.md` |
 | FL-ADM-03 | Admin | Aprobacion de contenido | EPIC-GAM-F3-CONTENT | `apps/admin/components/content/ContentApprovalQueue.tsx` | aprobar/rechazar contenido | `/api/v1/admin/content/approvals/*` | `educational_content.content_approvals`, `content_tags` | `admin/FLUJO-APROBACION-CONTENIDO.md` |
-| FL-ADM-04 | Admin | Salud operativa y alertas de plataforma | EPIC-GAM-F3-ADMIN-EXTENDED | `apps/admin/components/monitoring/SystemHealthIndicators.tsx` | consultar indicadores/alertas | `/health`, `/api/v1/admin/monitoring/*` | `monitoring.*`, `audit.*` | `admin/FLUJO-MONITOREO-SISTEMA.md` |
+| FL-ADM-04 | Admin | Salud operativa y alertas de plataforma | EPIC-GAM-F3-ADMIN-EXTENDED | `apps/admin/components/monitoring/SystemHealthIndicators.tsx` | consultar indicadores/alertas | `/health`, `/api/v1/admin/monitoring/*` | `audit_logging.*`, `audit.*` | `admin/FLUJO-MONITOREO-SISTEMA.md` |
 | FL-ADM-05 | Admin | Integraciones LTI | EPIC-GAM-F3-LTI | `features/admin/lti/AdminLtiPage.tsx` | configurar plataforma LTI | `/lti/consumers`, `/lti/consumers/:id`, `/lti/consumers/:id/test-connection` | `lti_integration.lti_consumers` | `admin/FLUJO-INTEGRACIONES-LTI.md` |
 | FL-ADM-06 | Admin | Audit logs | EPIC-GAM-F3-ADMIN-EXTENDED | `apps/admin/pages/AdminAuditLogsPage.tsx` | consultar auditoria | `/admin/system/audit-log` | `audit_logging.system_logs`, `audit_logging.user_activity`, `auth_management.login_attempts` | `admin/FLUJO-AUDIT-LOGS.md` |
 | FL-PRN-01 | Parents | Vinculacion padre-estudiante | EPIC-GAM-F3-PARENT-PORTAL | Portal padres (requerimiento) | alta de vinculacion/codigo invitacion | `/api/v1/parents/links/*` | `auth_management.parent_student_links`, `auth_management.parent_accounts`, `auth_management.profiles`, `auth_management.profiles` | `parents/FLUJO-VINCULACION-PADRE-ESTUDIANTE.md` |

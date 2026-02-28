@@ -98,7 +98,7 @@ docs/10-requirements/epics/
 
 **Ejemplo:**
 ```yaml
-# orchestration/work-items/epics/EPIC-GAM-F1-MODULOS-EDUCATIVOS.yml
+## orchestration/work-items/epics/EPIC-GAM-F1-MODULOS-EDUCATIVOS.yml
 id: "EPIC-GAM-F1-MODULOS-EDUCATIVOS"
 status: "completed"
 story_points: 89
@@ -112,8 +112,8 @@ depends_on: []
 
 **Decision:** `orchestration/inventarios/` contiene SSOT de implementacion (no producto):
 - `DATABASE_INVENTORY.yml` — Schemas, tablas, views, funciones (173 tablas)
-- `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (156 entity files/157 classes, 912 endpoints)
-- `FRONTEND_INVENTORY.yml` — Components, pages, stores (575 componentes, 72 paginas)
+- `BACKEND_INVENTORY.yml` — Modules, entities, controllers, endpoints (156 entity files/157 classes, 914 endpoints)
+- `FRONTEND_INVENTORY.yml` — Components, pages, stores (575 componentes, 70 paginas)
 - `MASTER_INVENTORY.yml` — Metricas consolidadas
 
 **Separacion clara:**

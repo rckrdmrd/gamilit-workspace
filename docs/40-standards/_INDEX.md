@@ -1,3 +1,11 @@
+---
+titulo: "40 - Estandares"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # 40 - Estandares
 
 > Guias de estilo, convenciones de codigo y estandares de calidad.

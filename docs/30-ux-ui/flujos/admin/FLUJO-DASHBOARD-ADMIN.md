@@ -1,3 +1,11 @@
+---
+titulo: FL-ADM-09 - Dashboard Administrador
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-ADM-09 - Dashboard Administrador
 
 **ID:** FL-ADM-09

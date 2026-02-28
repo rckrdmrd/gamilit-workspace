@@ -1,3 +1,11 @@
+---
+titulo: "ET-ANA-005: Automated Reports"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-ANA-005: Automated Reports
 
 ## Metadata

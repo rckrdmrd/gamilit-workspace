@@ -27,7 +27,7 @@ tags:
 
 > Referencia oficial: https://owasp.org/API-Security/
 >
-> Las APIs representan la superficie de ataque principal en aplicaciones modernas. gamilit expone 912 endpoints REST que requieren proteccion especifica mas alla del OWASP Top 10 web tradicional. Esta seccion cubre los 10 riesgos criticos de seguridad en APIs segun OWASP 2023, con ejemplos concretos del stack NestJS 11 + TypeORM + PostgreSQL de gamilit.
+> Las APIs representan la superficie de ataque principal en aplicaciones modernas. gamilit expone 914 endpoints REST que requieren proteccion especifica mas alla del OWASP Top 10 web tradicional. Esta seccion cubre los 10 riesgos criticos de seguridad en APIs segun OWASP 2023, con ejemplos concretos del stack NestJS 11 + TypeORM + PostgreSQL de gamilit.
 
 ---
 
@@ -250,7 +250,7 @@ export class StudentResponseDto {
 **Controles obligatorios:**
 - `whitelist: true` en ValidationPipe global (activo en gamilit)
 - `forbidNonWhitelisted: true` para rechazar propiedades no declaradas
-- DTOs separados para crear, actualizar y responder (399 DTOs en gamilit)
+- DTOs separados para crear, actualizar y responder (401 DTOs en gamilit)
 - Usar `@Exclude()` de class-transformer en propiedades sensibles de respuesta
 - Nunca retornar entities directamente; siempre mapear a DTOs de respuesta
 - Campos sensibles (`role`, `tenantId`, `permissions`) solo modificables por admin
@@ -668,7 +668,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 ### 1.9 API9:2023 — Improper Inventory Management
 
-**Riesgo:** Endpoints obsoletos, no documentados, o de versiones anteriores quedan expuestos sin proteccion. En gamilit con 912 endpoints, mantener un inventario preciso es critico para evitar superficies de ataque desconocidas.
+**Riesgo:** Endpoints obsoletos, no documentados, o de versiones anteriores quedan expuestos sin proteccion. En gamilit con 914 endpoints, mantener un inventario preciso es critico para evitar superficies de ataque desconocidas.
 
 **Mitigacion en gamilit:**
 
@@ -708,8 +708,8 @@ export class ExercisesController {
 ```
 
 ```yaml
-# orchestration/inventarios/BACKEND_INVENTORY.yml
-# Inventario SSOT sincronizado con el codigo fuente
+## orchestration/inventarios/BACKEND_INVENTORY.yml
+## Inventario SSOT sincronizado con el codigo fuente
 endpoints:
   total: 905
   por_modulo:
@@ -728,7 +728,7 @@ endpoints:
 ```
 
 **Controles obligatorios:**
-- Todos los 912 endpoints documentados con decoradores Swagger (`@ApiTags`, `@ApiOperation`)
+- Todos los 914 endpoints documentados con decoradores Swagger (`@ApiTags`, `@ApiOperation`)
 - Inventario SSOT en `BACKEND_INVENTORY.yml` sincronizado con codigo fuente
 - Auditar periodicamente endpoints sin `@UseGuards()` — solo health y docs deben ser publicos
 - Versionado de API con prefijo `/api/v1/` para facilitar deprecacion
@@ -834,7 +834,7 @@ export class LtiContentDto {
 |---|------------------|--------------------------|---------------------|
 | API1 | BOLA | `ResourceOwnershipGuard` + RLS | `shared/guards/resource-ownership.guard.ts` |
 | API2 | Auth Rota | `JwtAuthGuard` + refresh rotation | `modules/auth/guards/jwt-auth.guard.ts` |
-| API3 | BOPLA | `ValidationPipe(whitelist)` + DTOs | `main.ts` + 399 DTOs |
+| API3 | BOPLA | `ValidationPipe(whitelist)` + DTOs | `main.ts` + 401 DTOs |
 | API4 | Consumo sin limite | `ThrottlerModule` + paginacion | Config global + DTOs de query |
 | API5 | BFLA | `RolesGuard` + `@Roles()` | `modules/auth/guards/roles.guard.ts` |
 | API6 | Flujos sensibles | Rate limiting por flujo + Redis | `modules/notifications/guards/rate-limit.guard.ts` |

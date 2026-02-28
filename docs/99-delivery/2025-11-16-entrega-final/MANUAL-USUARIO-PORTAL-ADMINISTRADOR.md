@@ -1,3 +1,11 @@
+---
+titulo: "Manual de Usuario — Portal de Administrador GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Manual de Usuario — Portal de Administrador GAMILIT
 ## **Versión: 2.0.0**
 ## **Fecha: Febrero 2026**

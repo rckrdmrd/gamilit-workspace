@@ -48,12 +48,12 @@ Exactamente 18 schemas y 173 tablas
 
 | Task | Titulo | Subtipo |
 |------|--------|---------|
-| [TASK-VAL-002-F1-DATABASE](TASK-VAL-002-F1-DATABASE/) | Query schemas + tables count | Schemas |
-| [TASK-VAL-002-F1-DATABASE-FKS](TASK-VAL-002-F1-DATABASE-FKS/) | Validar FKs + constraints | FKs |
-| [TASK-VAL-002-F1-DATABASE-RLS](TASK-VAL-002-F1-DATABASE-RLS/) | Validar RLS policies | RLS |
-| [TASK-VAL-002-F1-DATABASE-TRIGGERS](TASK-VAL-002-F1-DATABASE-TRIGGERS/) | Test trigger cascade | Triggers |
-| [TASK-VAL-002-F1-DATABASE-SEEDS](TASK-VAL-002-F1-DATABASE-SEEDS/) | Integridad seed data | Seeds |
-| [TASK-VAL-002-F1-DATABASE-ENUMS](TASK-VAL-002-F1-DATABASE-ENUMS/) | Comparar ENUMs DDL vs TS | Enums |
+| [TASK-VAL-002-F1-DATABASE](TASK-VAL-002-F1-DATABASE.md) | Query schemas + tables count | Schemas |
+| [TASK-VAL-002-F1-DATABASE-FKS](TASK-VAL-002-F1-DATABASE-FKS.md) | Validar FKs + constraints | FKs |
+| [TASK-VAL-002-F1-DATABASE-RLS](TASK-VAL-002-F1-DATABASE-RLS.md) | Validar RLS policies | RLS |
+| [TASK-VAL-002-F1-DATABASE-TRIGGERS](TASK-VAL-002-F1-DATABASE-TRIGGERS.md) | Test trigger cascade | Triggers |
+| [TASK-VAL-002-F1-DATABASE-SEEDS](TASK-VAL-002-F1-DATABASE-SEEDS.md) | Integridad seed data | Seeds |
+| [TASK-VAL-002-F1-DATABASE-ENUMS](TASK-VAL-002-F1-DATABASE-ENUMS.md) | Comparar ENUMs DDL vs TS | Enums |
 
 ---
 

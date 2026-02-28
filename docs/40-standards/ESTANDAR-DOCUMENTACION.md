@@ -14,7 +14,7 @@ ultima_actualizacion: 2026-02-27
 
 ### Encabezado Obligatorio
 ```markdown
-# Titulo del Documento
+## Titulo del Documento
 
 > Descripcion breve en una linea (blockquote)
 
@@ -32,7 +32,7 @@ ultima_actualizacion: 2026-02-27
 
 ### Titulos
 ```markdown
-# H1 - Solo uno por documento (titulo principal)
+## H1 - Solo uno por documento (titulo principal)
 ## H2 - Secciones principales
 ### H3 - Subsecciones
 #### H4 - Detalles (usar con moderacion)
@@ -102,7 +102,7 @@ const example = "code";
 
 ### Documento General
 ```markdown
-# Nombre del Documento
+## Nombre del Documento
 
 > Descripcion en una linea
 
@@ -126,7 +126,7 @@ Explicacion del proposito del documento.
 
 ### ADR
 ```markdown
-# ADR-NNNN: Titulo de la Decision
+## ADR-NNNN: Titulo de la Decision
 
 ## Estado
 Propuesto | Aceptado | Deprecado | Reemplazado por ADR-XXXX

@@ -1,3 +1,11 @@
+---
+titulo: "Schema 7: analytics"
+tipo: arquitectura
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Schema 7: analytics (5 tablas, 18 RLS policies)
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

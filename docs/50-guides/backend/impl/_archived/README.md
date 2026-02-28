@@ -1,3 +1,11 @@
+---
+titulo: Archivos Archivados - Backend Impl
+tipo: readme
+fecha_creacion: 2025-10-01
+ultima_actualizacion: 2026-02-28
+estado: archivado
+---
+
 # Archivos Archivados
 
 Esta carpeta contiene documentos que han sido consolidados en documentos principales.

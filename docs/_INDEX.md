@@ -1,3 +1,11 @@
+---
+titulo: "INDEX - docs/"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # INDEX - docs/
 
 > Tabla de contenidos de primer nivel.

@@ -7,23 +7,23 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-FE-004: Archivo Utility Duplicado
 
-## Descripcion
-Existen dos o mas archivos que exportan la misma funcion o utilidad, causando confusion sobre cual importar y riesgo de comportamiento inconsistente si las implementaciones divergen con el tiempo. Esto es particularmente problematico en un codebase con 580 componentes que pueden importar de cualquiera de las copias.
+### Descripcion
+Existen dos o mas archivos que exportan la misma funcion o utilidad, causando confusion sobre cual importar y riesgo de comportamiento inconsistente si las implementaciones divergen con el tiempo. Esto es particularmente problematico en un codebase con 575 componentes que pueden importar de cualquiera de las copias.
 
-## Sintomas
+### Sintomas
 - Dos archivos con nombres similares en el mismo directorio o directorios adyacentes (ej: `cn.ts` y `cn.util.ts`)
 - Componentes diferentes importan la misma funcion desde rutas distintas
 - Al modificar una utilidad, los cambios no se reflejan en todos los consumidores (porque algunos usan la otra copia)
 - Busqueda de codigo muestra definiciones duplicadas de la misma funcion
 - Confusion en code review: "cual archivo es el correcto?"
 
-## Causa Raiz
+### Causa Raiz
 1. Un desarrollador crea una copia del archivo en vez de importar desde el original
 2. Se renombra un archivo (ej: `cn.ts` a `cn.util.ts`) pero la version anterior no se elimina
 3. Se mueve una utilidad de `shared/utils/` a `lib/` (o viceversa) sin eliminar el original
 4. Refactorizacion parcial que crea la nueva version pero no limpia la anterior
 
-## Solucion
+### Solucion
 
 ### 1. Identificar archivos duplicados
 ```bash
@@ -81,7 +81,7 @@ git rm src/shared/utils/cn.ts
 cd apps/frontend && npm run build && npm run typecheck
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Buscar antes de crear**: Antes de crear un archivo utility, buscar si ya existe uno con funcionalidad similar
 2. **Convencion de nombres**: Usar sufijo `.util.ts` para utilidades, `.helper.ts` para helpers, `.constant.ts` para constantes
@@ -105,14 +105,14 @@ find src -name "*.ts" -o -name "*.tsx" | \
   done
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Archivos Duplicados | Funcion | Resolucion | Estado |
 |-------|---------------------|---------|------------|--------|
 | 2026-02-13 | cn.ts / cn.util.ts | cn() (class merge utility) | Consolidado en cn.util.ts | Resuelto |
 | 2026-02-13 | shared/utils/cn.ts (segunda copia) | cn() | Identificado como duplicado adicional | Pendiente |
 
-## Referencias
+### Referencias
 
 - **Estructura utilidades:** `apps/frontend/src/shared/utils/`
 - **Convencion de nombres:** `docs/40-standards/FRONTEND-NAMING-CONVENTIONS.md`

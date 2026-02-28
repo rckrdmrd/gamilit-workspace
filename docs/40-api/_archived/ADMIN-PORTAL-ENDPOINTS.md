@@ -1,3 +1,11 @@
+---
+titulo: "P2 Admin Portal Endpoints Implementation"
+tipo: api
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # P2 Admin Portal Endpoints Implementation
 
 **Fecha**: 2026-01-07

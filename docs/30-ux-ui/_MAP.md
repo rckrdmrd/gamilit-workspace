@@ -1,3 +1,11 @@
+---
+titulo: 30-ux-ui — Mapa de Navegacion
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # 30-ux-ui — Mapa de Navegacion
 
 ## Estructura
@@ -44,8 +52,11 @@
 
 ## Subdirectorios
 
-- **flujos/** — Flujos de usuario por portal (admin, auth, parents, student, teacher, system)
-  - **admin/** — Flujos del portal administrador (11 flujos: aprobacion, audit, configuracion, constructor, dashboard, gamificacion, gestion usuarios/instituciones, integraciones, monitoreo, reportes)
-  - **auth/** — Flujos de autenticacion (registro, login, recuperacion password, verificacion email)
-  - **parents/** — Flujos del portal padres (dashboard, vinculacion, progreso)
-  - **system/** — Flujos del sistema (notificaciones, mensajeria)
+- **flujos/** — Flujos de usuario por portal (admin, auth, parents, student, teacher, system, shared)
+  - **admin/** — Flujos del portal administrador (22 flujos: originales 11 + nuevos 11 2026-02-27)
+  - **auth/** — Flujos de autenticacion (3 flujos: registro, login, recuperacion password)
+  - **parents/** — Flujos del portal padres (7 flujos: login, registro, dashboard, seguimiento, notificaciones, vinculacion, progreso hijo)
+  - **shared/** — Flujos transversales (2 flujos: sesion-seguridad, perfil-configuracion, white-label theming)
+  - **student/** — Flujos del portal estudiante (25+ flujos por dominio funcional)
+  - **system/** — Flujos del sistema (6 flujos: exercise-submission-pipeline, gamification-reward-chain, two-factor-auth, multi-tenant-onboarding, multi-tenant-isolation)
+  - **teacher/** — Flujos del portal docente (17 flujos: access, management, evaluation, monitoring, notifications, config)

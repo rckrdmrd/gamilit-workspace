@@ -18,67 +18,67 @@ wave3_epics:
       title: "Scaffolding Gamilit"
       sp: 5
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-SCAFFOLD/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-SCAFFOLD/EPIC.md"
 
     - id: "EPIC-GAM-REQUIREMENTS"
       title: "Requerimientos Gamilit"
       sp: 13
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-REQUIREMENTS/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-REQUIREMENTS/EPIC.md"
 
     - id: "EPIC-GAM-ARCHITECTURE"
       title: "Arquitectura Gamificacion"
       sp: 13
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-ARCHITECTURE/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-ARCHITECTURE/EPIC.md"
 
     - id: "EPIC-GAM-DATABASE"
       title: "Esquema BD Gamilit"
       sp: 21
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-DATABASE/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-DATABASE/EPIC.md"
 
     - id: "EPIC-GAM-BACKEND"
       title: "Backend Gamilit"
       sp: 34
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-BACKEND/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-BACKEND/EPIC.md"
 
     - id: "EPIC-GAM-FRONTEND"
       title: "Frontend Gamilit"
       sp: 34
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-FRONTEND/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-FRONTEND/EPIC.md"
 
     - id: "EPIC-GAM-K8S"
       title: "Kubernetes Gamilit"
       sp: 8
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-K8S/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-K8S/EPIC.md"
 
     - id: "EPIC-GAM-TESTING"
       title: "Tests Gamilit"
       sp: 13
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-TESTING/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-TESTING/EPIC.md"
 
     - id: "EPIC-GAM-DEVOPS"
       title: "DevOps Gamilit"
       sp: 8
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-DEVOPS/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-DEVOPS/EPIC.md"
 
     - id: "EPIC-GAM-DOCS"
       title: "Documentacion Gamilit"
       sp: 8
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-DOCS/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-DOCS/EPIC.md"
 
     - id: "EPIC-GAM-INTEGRATION"
       title: "Integracion Gamilit"
       sp: 5
       status: "completed"
-      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-INTEGRATION/EPIC.md"
+      docs_path: "docs/10-requirements/epics/_archived/wave-3-technical/EPIC-GAM-INTEGRATION/EPIC.md"
 
 # F1 — Alcance Inicial (Funcionales)
 f1_epics:

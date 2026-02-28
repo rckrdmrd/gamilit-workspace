@@ -1,3 +1,11 @@
+---
+titulo: Flujo Auth - Verificacion de Email
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo Auth - Verificacion de Email
 
 **Version:** 1.0.0  

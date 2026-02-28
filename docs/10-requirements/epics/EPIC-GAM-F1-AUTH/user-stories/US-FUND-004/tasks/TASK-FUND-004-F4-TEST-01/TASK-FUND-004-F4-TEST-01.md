@@ -1,3 +1,0 @@
-# TASK-FUND-004-F4-TEST-01: Tests infraestructura
-
-**US:** US-FUND-004 | **Tipo:** Testing | **Estado:** Done | **Est:** 4h | **Sub:** 4

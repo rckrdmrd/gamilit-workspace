@@ -1,3 +1,11 @@
+---
+titulo: "User Stories — EPIC-GAM-F3-CONTENT"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # User Stories — EPIC-GAM-F3-CONTENT
 
 **Total:** 5 user stories

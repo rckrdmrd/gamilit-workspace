@@ -7,23 +7,23 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-FE-003: Import Barrel Roto
 
-## Descripcion
+### Descripcion
 Los archivos barrel (`index.ts`) que re-exportan desde archivos eliminados o renombrados causan fallos en el build de Vite y errores de importacion en cascada. Esto ocurre frecuentemente durante consolidacion de utilidades o refactorizacion de la estructura de archivos.
 
-## Sintomas
+### Sintomas
 - Error de Vite: `[vite] Internal server error: Failed to resolve import "./archivo-eliminado" from "src/shared/utils/index.ts"`
 - Error de build: `Module not found: Error: Can't resolve './archivo' in '/src/lib/api'`
 - Dev server de Vite se reinicia en loop al guardar archivos
 - TypeScript compila sin errores pero Vite falla (porque TS puede resolver tipos pero Vite necesita el archivo fisico)
 - Errores en cascada: multiples componentes fallan porque todos importan desde el mismo barrel roto
 
-## Causa Raiz
+### Causa Raiz
 1. Se elimina o renombra un archivo (ej: `educational.api.ts`) pero el barrel `index.ts` sigue exportando `export * from './educational.api'`
 2. Se consolidan dos archivos (ej: `cn.ts` absorbido en `cn.util.ts`) sin actualizar el barrel
 3. Se mueve un archivo a otra carpeta sin actualizar re-exports
 4. Se genera un barrel automaticamente (con herramientas) sin verificar que todos los archivos existan
 
-## Solucion
+### Solucion
 
 ### 1. Identificar el barrel roto
 ```bash
@@ -73,7 +73,7 @@ import { getModules } from '@/services/api/educational.service';
 cd apps/frontend && npm run build && npm run typecheck
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Regla de eliminacion**: Al eliminar/renombrar un archivo, SIEMPRE buscar y actualizar todos los barrels que lo referencian
 2. **Script de validacion**: Ejecutar verificacion de barrels antes de commit
@@ -104,14 +104,14 @@ find src -name "index.ts" -o -name "index.tsx" | while read barrel; do
 done
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Barrel | Export Roto | Causa | Estado |
 |-------|--------|------------|-------|--------|
 | 2026-02-13 | src/lib/api/index.ts | educational.api | Archivo eliminado en consolidacion | Resuelto |
 | 2026-02-13 | src/shared/utils/index.ts | cn | Consolidado en cn.util.ts | Resuelto |
 
-## Referencias
+### Referencias
 
 - **Estructura frontend:** `apps/frontend/src/`
 - **Vite docs resolving:** https://vite.dev/guide/dep-pre-bundling

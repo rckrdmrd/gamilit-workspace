@@ -1,3 +1,11 @@
+---
+titulo: "ET-PP-001: Progress View"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-PP-001: Progress View
 
 ## Metadata

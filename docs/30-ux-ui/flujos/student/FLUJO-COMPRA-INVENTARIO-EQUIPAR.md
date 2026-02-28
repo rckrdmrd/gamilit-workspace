@@ -1,3 +1,11 @@
+---
+titulo: Flujo Student - Compra Inventario Equipar
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo Student - Compra Inventario Equipar
 
 **Version:** 1.1.0  

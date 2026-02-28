@@ -1,3 +1,11 @@
+---
+titulo: "Datos Seed (Iniciales y de Prueba) - GAMILIT Platform"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Datos Seed (Iniciales y de Prueba) - GAMILIT Platform
 
 **Épica:** EMR-001 - Migración y Robustecimiento de BD
@@ -37,19 +45,19 @@
 ## 2. Orden de Ejecución
 
 ```bash
-# 1. Achievements (SIEMPRE PRIMERO)
+## 1. Achievements (SIEMPRE PRIMERO)
 psql -f seed_data/01_achievements_seed.sql
 
-# 2. Configuración del Sistema
+## 2. Configuración del Sistema
 psql -f seed_data/02_system_config_seed.sql
 
-# 3. Módulos Educativos
+## 3. Módulos Educativos
 psql -f seed_data/03_educational_modules_seed.sql
 
-# 4. Datos de Demo (OPCIONAL - solo dev/staging)
+## 4. Datos de Demo (OPCIONAL - solo dev/staging)
 psql -f seed_data/04_demo_users_and_data_seed.sql
 
-# 5. Content Enhancements (OPCIONAL)
+## 5. Content Enhancements (OPCIONAL)
 psql -f seed_data/05_enhanced_crossword.sql
 psql -f seed_data/06_enhanced_timeline_update.sql
 psql -f seed_data/07_enhanced_wordsearch_update.sql

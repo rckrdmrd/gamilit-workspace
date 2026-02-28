@@ -238,14 +238,14 @@ async function bootstrap() {
 **Mitigacion:**
 
 ```bash
-# Auditoria regular de dependencias
+## Auditoria regular de dependencias
 npm audit
 npm audit fix
 
-# Usar Snyk para monitoreo continuo
+## Usar Snyk para monitoreo continuo
 npx snyk test
 
-# Actualizar dependencias
+## Actualizar dependencias
 npm outdated
 npm update
 ```
@@ -895,7 +895,7 @@ const validationSchema = Joi.object({
 ### 6.2 Gitignore Obligatorio
 
 ```gitignore
-# .gitignore - NUNCA commitear
+## .gitignore - NUNCA commitear
 .env
 .env.local
 .env.*.local

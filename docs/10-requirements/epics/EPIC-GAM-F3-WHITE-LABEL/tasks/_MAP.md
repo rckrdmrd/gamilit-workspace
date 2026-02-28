@@ -1,3 +1,11 @@
+---
+titulo: "Tareas - EXT-008-white-label"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Tareas - EXT-008-white-label
 
 **EPIC:** EXT-008-white-label

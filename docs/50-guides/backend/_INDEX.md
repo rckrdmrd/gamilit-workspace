@@ -1,3 +1,11 @@
+---
+titulo: Backend Guides Index
+tipo: indice
+fecha_creacion: 2025-10-01
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Backend Guides
 
 Guias tecnicas para desarrollo backend con NestJS, DTOs, entities, modulos, base de datos, observabilidad y patrones de arquitectura.

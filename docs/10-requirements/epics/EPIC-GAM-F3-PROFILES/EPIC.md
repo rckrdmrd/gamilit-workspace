@@ -1,3 +1,11 @@
+---
+titulo: "EXT-004: Sistema de Perfiles y Personalización"
+tipo: epic
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # EXT-004: Sistema de Perfiles y Personalización
 
 **Proyecto:** GAMILIT

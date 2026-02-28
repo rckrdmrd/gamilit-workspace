@@ -1,3 +1,11 @@
+---
+titulo: "EPIC-GAM-F1-PORTAL-ADMIN: Portal de Administracion"
+tipo: epic
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # EPIC-GAM-F1-PORTAL-ADMIN: Portal de Administracion
 
 | Campo | Valor |

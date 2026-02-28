@@ -1,3 +1,11 @@
+---
+titulo: "Manual del Portal de Maestros - GAMILIT v2.0"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 > **[SUPERSEDED]** This manual has been superseded by the updated version: `MANUAL-USUARIO-PORTAL-MAESTROS.md` (v3.0.0, Feb 2026).
 > This file is retained for historical reference only.
 

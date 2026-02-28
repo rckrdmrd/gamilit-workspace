@@ -1,3 +1,11 @@
+---
+titulo: "Tareas - EXT-002-admin-extendido"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Tareas - EXT-002-admin-extendido
 
 **EPIC:** EXT-002-admin-extendido

@@ -1,3 +1,11 @@
+---
+titulo: "ET-GAM-006: Narrative System"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-GAM-006: Narrative System
 
 ## Metadata

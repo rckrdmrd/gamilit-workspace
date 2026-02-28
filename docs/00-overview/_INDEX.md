@@ -1,3 +1,11 @@
+---
+titulo: "00 - Overview"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # 00 - Overview
 
 > Vision general del proyecto GAMILIT, modulos, metricas y directivas.
@@ -26,7 +34,6 @@
 | [VISION-ALCANCE.md](./VISION-ALCANCE.md) | Redirect a docs/10-requirements/ |
 | [ONBOARDING.md](./ONBOARDING.md) | Redirect a docs/70-onboarding/ |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Arquitectura de deployment y servidor de produccion |
-| [MODULOS.md](./MODULOS.md) | Catalogo de modulos del sistema (23 modulos) |
 | [REPORTE-INTEGRAL-2026-01-20.md](./REPORTE-INTEGRAL-2026-01-20.md) | [MOVED] Stub — original en `orchestration/trazas/REPORTE-INTEGRAL-2026-01-20.md` |
 
 ## Secciones Relacionadas

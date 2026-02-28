@@ -1,3 +1,11 @@
+---
+titulo: "Scripts de Instalación y Setup - GAMILIT Platform"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Scripts de Instalación y Setup - GAMILIT Platform
 
 **Épica:** EMR-001 - Migración y Robustecimiento de BD

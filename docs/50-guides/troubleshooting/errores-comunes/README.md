@@ -1,3 +1,11 @@
+---
+titulo: Base de Conocimiento - Errores Comunes
+tipo: readme
+fecha_creacion: 2025-12-28
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Base de Conocimiento: Errores Comunes
 
 **Proyecto:** GAMILIT

@@ -1,3 +1,11 @@
+---
+titulo: "Tareas - EAI-003-EXT-gamificacion-social"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Tareas - EAI-003-EXT-gamificacion-social
 
 **EPIC:** EAI-003-EXT-gamificacion-social

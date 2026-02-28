@@ -1,3 +1,11 @@
+---
+titulo: "Onboarding para Desarrolladores"
+tipo: onboarding
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Onboarding para Desarrolladores
 
 > Guia para desarrolladores humanos que se unen al proyecto gamilit
@@ -6,7 +14,7 @@
 
 ### Herramientas Instaladas
 ```bash
-# Verificar versiones
+## Verificar versiones
 node --version    # >= 18.x (recomendado 20.x)
 npm --version     # >= 9.x
 git --version     # >= 2.30
@@ -24,62 +32,62 @@ psql --version    # PostgreSQL >= 15
 
 ### 1. Clonar el Repositorio
 ```bash
-# Monorepo - clon simple (NO hay submodules)
+## Monorepo - clon simple (NO hay submodules)
 git clone git@github.com:rckrdmrd/gamilit-workspace.git
 cd gamilit-workspace
 ```
 
 ### 2. Instalar Dependencias
 ```bash
-# Backend (NestJS 11)
+## Backend (NestJS 11)
 cd apps/backend
 npm install
 
-# Frontend (React 19 + Vite 6.x)
+## Frontend (React 19 + Vite 6.x)
 cd apps/frontend
 npm install
 ```
 
 ### 3. Configurar Variables de Entorno
 ```bash
-# Copiar template
+## Copiar template
 cp .env.example .env
 
-# Valores de desarrollo:
-# DATABASE_HOST=127.0.0.1
-# DATABASE_PORT=5432
-# DATABASE_NAME=gamilit_platform
-# DATABASE_USER=gamilit_user
-# DATABASE_PASSWORD=gamilit_dev_2026
-# REDIS_HOST=127.0.0.1
-# REDIS_PORT=6379
-# REDIS_DB=0
-# BACKEND_PORT=3006
-# FRONTEND_PORT=3005
+## Valores de desarrollo:
+## DATABASE_HOST=127.0.0.1
+## DATABASE_PORT=5432
+## DATABASE_NAME=gamilit_platform
+## DATABASE_USER=gamilit_user
+## DATABASE_PASSWORD=gamilit_dev_2026
+## REDIS_HOST=127.0.0.1
+## REDIS_PORT=6379
+## REDIS_DB=0
+## BACKEND_PORT=3006
+## FRONTEND_PORT=3005
 ```
 
 ### 4. Inicializar Base de Datos
 ```bash
-# Crear base de datos
+## Crear base de datos
 createdb gamilit_platform
 
-# Ejecutar DDL completo (18 schemas, 173 tablas)
+## Ejecutar DDL completo (18 schemas, 173 tablas)
 bash apps/database/scripts/recreate-database.sh
 
-# Cargar seeds (datos iniciales)
+## Cargar seeds (datos iniciales)
 cd apps/database/seeds
-# Ejecutar scripts de seeds segun documentacion
+## Ejecutar scripts de seeds segun documentacion
 ```
 
 ### 5. Verificar Setup
 ```bash
-# Backend
+## Backend
 cd apps/backend
 npm run build    # Debe compilar sin errores
 npm run lint     # Debe pasar sin errores
 npm run test     # 2324 tests (2296 passed + 28 skipped) deben pasar
 
-# Frontend
+## Frontend
 cd apps/frontend
 npm run build      # Debe compilar sin errores
 npm run lint       # Debe pasar sin errores
@@ -95,7 +103,7 @@ gamilit-workspace/
 ├── CLAUDE.md                 # Instrucciones para agentes IA (leer primero)
 ├── ecosystem.config.js       # PM2 config (backend:3006, frontend:3005)
 ├── apps/                     # MONOREPO (todo en mismo repo Git)
-│   ├── backend/              # NestJS 11 (23 modulos, 912 endpoints)
+│   ├── backend/              # NestJS 11 (23 modulos, 914 endpoints)
 │   │   └── src/modules/      # Modulos del backend (@BACKEND)
 │   ├── frontend/             # React 19 + Zustand + TailwindCSS
 │   │   └── src/              # Codigo frontend (@FRONTEND)
@@ -135,7 +143,7 @@ gamilit-workspace/
 
 ### Antes de Commit
 ```bash
-# Validar todo
+## Validar todo
 cd apps/backend && npm run build && npm run lint && npm run test
 cd apps/frontend && npm run build && npm run lint && npm run typecheck
 ```
@@ -200,31 +208,31 @@ Tipos: `[GAM-FEAT]`, `[GAM-FIX]`, `[GAM-DOC]`, `[GAM-REFACTOR]`, `[GAM-TEST]`, `
 
 ### Desarrollo
 ```bash
-# Backend - modo desarrollo (puerto 3006)
+## Backend - modo desarrollo (puerto 3006)
 cd apps/backend && npm run start:dev
 
-# Frontend - modo desarrollo (puerto 3005)
+## Frontend - modo desarrollo (puerto 3005)
 cd apps/frontend && npm run dev
 ```
 
 ### Base de Datos
 ```bash
-# Recrear base de datos completa desde DDL
+## Recrear base de datos completa desde DDL
 bash apps/database/scripts/recreate-database.sh
 
-# Conectar a PostgreSQL
+## Conectar a PostgreSQL
 psql -U gamilit_user -d gamilit_platform -h 127.0.0.1
 ```
 
 ### Testing
 ```bash
-# Todos los tests (2324 tests, 2296 passed + 28 skipped)
+## Todos los tests (2324 tests, 2296 passed + 28 skipped)
 cd apps/backend && npm run test
 
-# Tests en modo watch
+## Tests en modo watch
 npm run test:watch
 
-# Cobertura
+## Cobertura
 npm run test:cov
 ```
 

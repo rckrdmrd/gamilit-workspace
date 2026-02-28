@@ -42,10 +42,10 @@ Submissions malformados rechazados con errores claros
 
 | Task | Titulo | Nivel |
 |------|--------|-------|
-| [TASK-VAL-006-F4-INTEG-M1](TASK-VAL-006-F4-INTEG-M1/) | Submit 7 tipos M1 | Literal |
-| [TASK-VAL-006-F4-INTEG-M2](TASK-VAL-006-F4-INTEG-M2/) | Submit 5 tipos M2 | Inferencial |
-| [TASK-VAL-006-F4-INTEG-M3](TASK-VAL-006-F4-INTEG-M3/) | Submit 5 tipos M3 | Critico |
-| [TASK-VAL-006-F4-INTEG-MALFORMED](TASK-VAL-006-F4-INTEG-MALFORMED/) | Malformed rejections | Validation |
+| [TASK-VAL-006-F4-INTEG-M1](TASK-VAL-006-F4-INTEG-M1.md) | Submit 7 tipos M1 | Literal |
+| [TASK-VAL-006-F4-INTEG-M2](TASK-VAL-006-F4-INTEG-M2.md) | Submit 5 tipos M2 | Inferencial |
+| [TASK-VAL-006-F4-INTEG-M3](TASK-VAL-006-F4-INTEG-M3.md) | Submit 5 tipos M3 | Critico |
+| [TASK-VAL-006-F4-INTEG-MALFORMED](TASK-VAL-006-F4-INTEG-MALFORMED.md) | Malformed rejections | Validation |
 
 ---
 

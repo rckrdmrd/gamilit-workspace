@@ -58,7 +58,7 @@ The codebase has organically converged on the hybrid approach:
 | `notificationsStore` | `features/notifications/store/` | Notification bell unread count |
 | `studentAssignmentsStore` | `features/assignments/store/` | Assignment list filters/sorting |
 
-- **127 hooks** handle data fetching, with the majority using React Query (`useQuery`, `useMutation`) for server state.
+- **132 hooks** handle data fetching, with the majority using React Query (`useQuery`, `useMutation`) for server state.
 - A deprecated `missionsStore` was already deleted (replaced by `useMissions` React Query hook).
 
 ---
@@ -212,7 +212,7 @@ React Query provides automatic cache invalidation via `queryKey` matching. The p
 - [TanStack Query Documentation](https://tanstack.com/query/latest)
 - [Zustand Documentation](https://github.com/pmndrs/zustand)
 - [ADR-046: PageShell Pattern](./ADR-046-pageshell-pattern.md)
-- CLAUDE.md -- 13 Zustand stores (verified), 127 hooks, React Query as primary server-state pattern
+- CLAUDE.md -- 13 Zustand stores (verified), 132 hooks, React Query as primary server-state pattern
 
 ---
 

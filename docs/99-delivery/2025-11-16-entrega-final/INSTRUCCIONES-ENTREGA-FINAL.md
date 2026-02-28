@@ -1,3 +1,11 @@
+---
+titulo: "Instrucciones de Entrega Final - Proyecto GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Instrucciones de Entrega Final - Proyecto GAMILIT
 
 **Fecha de Entrega:** Sábado 16 de noviembre de 2025 - 19:00 hrs

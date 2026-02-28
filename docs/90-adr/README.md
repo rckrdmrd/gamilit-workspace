@@ -1,3 +1,11 @@
+---
+titulo: "Architecture Decision Records (ADRs) - GAMILIT"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Architecture Decision Records (ADRs) - GAMILIT
 
 Registro de decisiones arquitectonicas del proyecto.
@@ -61,7 +69,7 @@ Registro de decisiones arquitectonicas del proyecto.
 Cada ADR sigue el formato:
 
 ```markdown
-# ADR-XXX: Titulo
+## ADR-XXX: Titulo
 
 **Fecha:** YYYY-MM-DD
 **Estado:** Aceptada / Rechazada / Deprecated

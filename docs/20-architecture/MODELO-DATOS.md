@@ -43,13 +43,13 @@ ultima_actualizacion: 2026-02-27
 | Tabla | Descripcion | RLS |
 |-------|-------------|-----|
 | users | Usuarios del sistema (todos los roles) | Si |
-| user_profiles | Perfiles extendidos por rol | Si |
+| profiles | Perfiles extendidos por rol | Si |
 | user_preferences | Preferencias de usuario | Si |
-| sessions | Sesiones activas | Si |
+| user_sessions | Sesiones activas | Si |
 | refresh_tokens | Tokens de refresco | Si |
-| oauth_connections | Conexiones OAuth externas | Si |
-| password_resets | Solicitudes de reset de password | Si |
-| login_attempts | Intentos de login (seguridad) | Si |
+| auth_providers | Conexiones OAuth externas | Si |
+| password_reset_tokens | Solicitudes de reset de password | Si |
+| auth_attempts | Intentos de login (seguridad) | Si |
 
 **Functions:** validate_user_role(), hash_password(), generate_refresh_token()
 **Triggers:** tr_user_created, tr_login_attempt_check
@@ -64,7 +64,7 @@ ultima_actualizacion: 2026-02-27
 | tenants | Registro de escuelas/instituciones | No |
 | tenant_settings | Configuracion por tenant | Si |
 | tenant_subscriptions | Planes y suscripciones | Si |
-| tenant_members | Relacion usuario-tenant | Si |
+| memberships | Relacion usuario-tenant | Si |
 
 **Functions:** get_current_tenant(), set_tenant_context(), validate_tenant_access()
 **Triggers:** tr_tenant_created_setup

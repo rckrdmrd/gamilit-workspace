@@ -1,3 +1,11 @@
+---
+titulo: "Ruta Legacy — MAPEO Requerimientos → Implementación"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Ruta Legacy — MAPEO Requerimientos → Implementación
 
 > **Este documento es una ruta puente.** El mapeo original ha sido consolidado en la documentación de arquitectura.

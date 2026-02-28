@@ -1,3 +1,11 @@
+---
+titulo: "ET-EDU-005: Validación de Texto Abierto (Rueda de Inferencias)"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-EDU-005: Validación de Texto Abierto (Rueda de Inferencias)
 
 **Fecha:** 2025-11-21

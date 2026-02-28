@@ -1,3 +1,11 @@
+---
+titulo: "Ruta Legacy — Test Results Sistema Recompensas"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # Ruta Legacy — Test Results Sistema Recompensas
 
 > **Este documento es una ruta puente.** Los resultados de tests están documentados en EVOLUCION-SISTEMA-RECOMPENSAS.

@@ -7,22 +7,22 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-DB-001: Formato UUID Incorrecto en Seeds
 
-## Descripcion
+### Descripcion
 Los archivos de seeds contienen UUIDs con formato incorrecto o duplicados, causando errores de insercion o violaciones de constraints.
 
-## Sintomas
+### Sintomas
 - Error: `invalid input syntax for type uuid`
 - Error: `duplicate key value violates unique constraint`
 - Seeds no se ejecutan completamente
 - Datos de referencia faltantes en aplicacion
 
-## Causa Raiz
+### Causa Raiz
 1. UUIDs generados manualmente sin verificar formato
 2. Copy-paste de UUIDs entre archivos sin cambiarlos
 3. Uso de UUIDs de prueba (ej: `00000000-0000-0000-0000-000000000001`)
 4. Falta de validacion antes de commit
 
-## Solucion
+### Solucion
 
 ### 1. Validar formato UUID
 Un UUID v4 valido tiene el formato:
@@ -65,7 +65,7 @@ INSERT INTO tabla (id, ...) VALUES ('12345678-1234-1234-1234-123456789012', ...)
 INSERT INTO tabla (id, ...) VALUES ('a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c4d5', ...);
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Usar generadores**: Nunca escribir UUIDs manualmente
 2. **Revisar PRs**: Validar UUIDs en archivos de seeds
@@ -78,7 +78,7 @@ Posicion 13: siempre "4" (version)
 Posicion 17: "8", "9", "a", o "b" (variante)
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Archivo | Commit | Estado |
 |-------|---------|--------|--------|
@@ -86,7 +86,7 @@ Posicion 17: "8", "9", "a", o "b" (variante)
 | 2025-12-26 | seeds/prod/auth_management/03-profiles.sql | - | Resuelto |
 | 2025-11-24 | Multiples seeds | - | Resuelto |
 
-## Referencias
+### Referencias
 
 - **Documentacion seeds:** `apps/database/seeds/README.md`
 - **Validacion script:** `apps/database/scripts/validate-seeds.sh`

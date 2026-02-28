@@ -33,15 +33,15 @@ updated_date: "2026-02-10"
 0 type mismatches entre columnas DB y campos entity
 
 ### CA-03: Endpoint Coverage
-912 endpoints mapeados a controllers
+914 endpoints mapeados a controllers
 
 ## Tasks
 
 | Task | Titulo | Capa |
 |------|--------|------|
-| [TASK-VAL-008-F4-AUDIT-TABLES](TASK-VAL-008-F4-AUDIT-TABLES/) | Table-Entity mapping | Tables |
-| [TASK-VAL-008-F4-AUDIT-COLUMNS](TASK-VAL-008-F4-AUDIT-COLUMNS/) | Column-Field alignment | Columns |
-| [TASK-VAL-008-F4-AUDIT-ENDPOINTS](TASK-VAL-008-F4-AUDIT-ENDPOINTS/) | Endpoint-Controller coverage | Endpoints |
+| [TASK-VAL-008-F4-AUDIT-TABLES](TASK-VAL-008-F4-AUDIT-TABLES.md) | Table-Entity mapping | Tables |
+| [TASK-VAL-008-F4-AUDIT-COLUMNS](TASK-VAL-008-F4-AUDIT-COLUMNS.md) | Column-Field alignment | Columns |
+| [TASK-VAL-008-F4-AUDIT-ENDPOINTS](TASK-VAL-008-F4-AUDIT-ENDPOINTS.md) | Endpoint-Controller coverage | Endpoints |
 
 ---
 

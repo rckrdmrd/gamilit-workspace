@@ -1,3 +1,11 @@
+---
+titulo: Flujo Student - Logros y Misiones (Claim Rewards)
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo Student - Logros y Misiones (Claim Rewards)
 
 **Version:** 2.1.0

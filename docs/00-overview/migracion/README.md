@@ -1,3 +1,11 @@
+---
+titulo: "Migracion Documental (Legacy)"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Migracion Documental (Legacy)
 
 > Carpeta de referencia historica del proceso de migracion documental.

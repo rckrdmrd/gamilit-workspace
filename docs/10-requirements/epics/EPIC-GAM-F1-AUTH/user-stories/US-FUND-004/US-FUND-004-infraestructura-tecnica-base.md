@@ -303,23 +303,23 @@ volumes:
 
 **.env.example (Backend):**
 ```env
-# Application
+## Application
 NODE_ENV=development
 PORT=3006
 APP_URL=http://localhost:3006
 
-# Database
+## Database
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_DATABASE=gamilit
 
-# JWT
+## JWT
 JWT_SECRET=your-super-secret-key-change-in-production
 JWT_EXPIRES_IN=24h
 
-# Email (para US-FUND-001)
+## Email (para US-FUND-001)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
@@ -499,17 +499,17 @@ VITE_APP_NAME=GAMILIT
 
 ### Tests de Infraestructura
 ```bash
-# Backend
+## Backend
 npm install          # Should complete successfully
 npm run build        # Should compile without errors
 npm run migration:run # Should run migrations
 
-# Frontend
+## Frontend
 npm install          # Should complete successfully
 npm run build        # Should build production bundle
 npm run lint         # Should pass linting
 
-# Docker
+## Docker
 docker-compose up -d # Should start all services
 curl http://localhost:3006/health # Should return 200
 curl http://localhost:3005 # Should serve frontend

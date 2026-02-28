@@ -1,3 +1,11 @@
+---
+titulo: "Guía de Entrega en USB - Proyecto GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 > **[HISTORICAL SNAPSHOT — 2025-11-16]** Stack references in this document reflect the November 2025 delivery state (PostgreSQL 16.x, Vite 7.x). Current stack: PostgreSQL 15, Vite 6.x. Content preserved as-is for audit trail.
 
 # Guía de Entrega en USB - Proyecto GAMILIT
@@ -118,7 +126,7 @@ Copiar el proyecto completo excluyendo archivos innecesarios:
 ### Paso 1: Crear Estructura de Carpetas
 
 ```bash
-# En el USB, crear estructura:
+## En el USB, crear estructura:
 mkdir -p /media/usb/GAMILIT_ENTREGA_2025-11-16
 cd /media/usb/GAMILIT_ENTREGA_2025-11-16
 
@@ -132,7 +140,7 @@ mkdir -p 05-MANUALES
 ### Paso 2: Copiar Documentos de Entrega
 
 ```bash
-# Copiar documentos de entrega
+## Copiar documentos de entrega
 cp /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/finiquito/*.docx \
    /media/usb/GAMILIT_ENTREGA_2025-11-16/01-DOCUMENTOS-ENTREGA/
 ```
@@ -140,7 +148,7 @@ cp /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/finiquit
 ### Paso 3: Copiar Código Fuente (Excluyendo Git)
 
 ```bash
-# Usar rsync para copiar excluyendo carpetas innecesarias
+## Usar rsync para copiar excluyendo carpetas innecesarias
 rsync -av --progress \
   --exclude 'node_modules' \
   --exclude '.git' \
@@ -156,8 +164,8 @@ rsync -av --progress \
 ### Paso 4: Copiar Documentación de Planeación
 
 ```bash
-# Copiar carpetas de documentación (ya están en el código fuente)
-# Crear accesos directos o copiar específicamente:
+## Copiar carpetas de documentación (ya están en el código fuente)
+## Crear accesos directos o copiar específicamente:
 cp -r /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/ \
       /media/usb/GAMILIT_ENTREGA_2025-11-16/03-DOCUMENTACION-PLANEACION/
 ```
@@ -165,13 +173,13 @@ cp -r /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/ \
 ### Paso 5: Backup de Base de Datos
 
 ```bash
-# Crear dump de la base de datos
+## Crear dump de la base de datos
 export PGPASSWORD='3RZ2uYhCnJBXQqEwPPbZK3NFfk4T4W4Q'
 pg_dump -h localhost -U gamilit_user -d gamilit_platform \
   --clean --if-exists --create \
   -f /media/usb/GAMILIT_ENTREGA_2025-11-16/04-BASE-DATOS/BACKUP/dump_gamilit_2025-11-16.sql
 
-# Copiar DDL y Seeds
+## Copiar DDL y Seeds
 cp -r /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/ \
       /media/usb/GAMILIT_ENTREGA_2025-11-16/04-BASE-DATOS/DDL/
 
@@ -182,24 +190,24 @@ cp -r /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/datab
 ### Paso 6: Crear Templates de Configuración
 
 ```bash
-# Crear template de .env (sin credenciales reales)
+## Crear template de .env (sin credenciales reales)
 cat > /media/usb/GAMILIT_ENTREGA_2025-11-16/05-MANUALES/.env.template << 'EOF'
-# Backend Configuration
+## Backend Configuration
 NODE_ENV=production
 PORT=3006
 
-# Database
+## Database
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=gamilit_platform
 DB_USER=gamilit_user
 DB_PASSWORD=***CAMBIAR***
 
-# JWT
+## JWT
 JWT_SECRET=***GENERAR_NUEVA_CLAVE_SEGURA***
 JWT_EXPIRES_IN=1h
 
-# Frontend
+## Frontend
 VITE_API_URL=http://localhost:3006
 EOF
 ```

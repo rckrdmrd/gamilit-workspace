@@ -1,3 +1,11 @@
+---
+titulo: "Ruta Legacy — Features Pendientes"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # Ruta Legacy — Features Pendientes
 
 > **Este documento es una ruta puente.** Las features pendientes están reflejadas en el backlog de epics F3/F4.

@@ -1,3 +1,11 @@
+---
+titulo: Reporte Final de Conformidad - Cobertura Total
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Reporte Final de Conformidad - Cobertura Total
 
 **Version:** 1.2.0  

@@ -1,3 +1,11 @@
+---
+titulo: "Requerimientos Funcionales - EAI-003-EXT"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Requerimientos Funcionales - EAI-003-EXT
 
 **EPIC:** EAI-003-EXT - Gamificacion Social

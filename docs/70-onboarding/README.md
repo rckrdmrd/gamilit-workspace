@@ -1,3 +1,11 @@
+---
+titulo: "Guias de Onboarding"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Guias de Onboarding
 
 > Guias de incorporacion por rol para nuevos integrantes del proyecto gamilit.

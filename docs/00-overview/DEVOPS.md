@@ -1,3 +1,11 @@
+---
+titulo: "DevOps - GAMILIT"
+tipo: overview
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # DevOps - GAMILIT
 
 **Version:** 1.0.0
@@ -33,7 +41,7 @@ En desarrollo local (Windows), PostgreSQL y Redis corren dentro de WSL2 (Ubuntu-
 ### Docker Compose (Desarrollo Local)
 
 ```yaml
-# docker-compose.yml
+## docker-compose.yml
 version: '3.9'
 services:
   backend:
@@ -87,16 +95,16 @@ volumes:
 ### Recrear Base de Datos
 
 ```bash
-# Recrear BD completa desde DDL
+## Recrear BD completa desde DDL
 bash apps/database/scripts/recreate-database.sh
 
-# Conectar a BD
+## Conectar a BD
 psql -U gamilit_user -d gamilit_platform -h localhost -p 5432
 
-# Backup
+## Backup
 pg_dump -U gamilit_user -h localhost gamilit_platform > backup_$(date +%Y%m%d).sql
 
-# Restore
+## Restore
 psql -U gamilit_user -h localhost gamilit_platform < backup.sql
 ```
 
@@ -115,14 +123,14 @@ psql -U gamilit_user -h localhost gamilit_platform < backup.sql
 ```bash
 cd apps/backend
 
-# Desarrollo
+## Desarrollo
 npm run start:dev       # Hot reload en puerto 3006
 
-# Build produccion
+## Build produccion
 npm run build           # Genera dist/ con tsc
 npm run start:prod      # Ejecuta build de produccion
 
-# Validaciones
+## Validaciones
 npm run lint            # ESLint
 npm run test            # Jest (2324 tests: 2296 passed + 28 skipped, 63 spec files)
 npm run test:cov        # Cobertura de tests
@@ -132,14 +140,14 @@ npm run test:cov        # Cobertura de tests
 ```bash
 cd apps/frontend
 
-# Desarrollo
+## Desarrollo
 npm run dev             # Vite dev server en puerto 3005
 
-# Build produccion
+## Build produccion
 npm run build           # Vite build -> dist/
 npm run preview         # Preview de build de produccion
 
-# Validaciones
+## Validaciones
 npm run lint            # ESLint
 npm run typecheck       # TypeScript compiler check
 npm run test            # Vitest
@@ -256,7 +264,7 @@ Ejemplo: [GAM-042] feat: add exercise spaced repetition engine
 
 ### Monorepo Workflow
 ```bash
-# Todo en un solo commit+push
+## Todo en un solo commit+push
 git add .
 git commit -m "[GAM-XXX] tipo: descripcion"
 git push origin master

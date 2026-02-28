@@ -1,3 +1,11 @@
+---
+titulo: "CREDENCIALES Y ACCESOS - PLATAFORMA GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # CREDENCIALES Y ACCESOS - PLATAFORMA GAMILIT
 
 > **[SECURITY WARNING]** This file contains credentials intended for the delivery package.
@@ -48,10 +56,10 @@
 
 ### Comandos de Conexión
 ```bash
-# Conexión local
+## Conexión local
 psql -U gamilit_user -d gamilit_platform
 
-# Conexión remota
+## Conexión remota
 psql -h 74.208.126.102 -U gamilit_user -d gamilit_platform
 ```
 
@@ -61,22 +69,22 @@ psql -h 74.208.126.102 -U gamilit_user -d gamilit_platform
 
 ### Backend (.env en apps/backend/)
 ```env
-# Base de Datos
+## Base de Datos
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=gamilit_platform
 DB_USER=gamilit_user
 DB_PASSWORD=gamilit_secure_pass_2024
 
-# JWT Authentication
+## JWT Authentication
 JWT_SECRET=gamilit_jwt_secret_key_2024_very_secure_random_string_12345
 JWT_EXPIRES_IN=24h
 
-# Application
+## Application
 NODE_ENV=production
 PORT=3006
 
-# URLs
+## URLs
 FRONTEND_URL=http://74.208.126.102:5173
 CORS_ORIGIN=http://74.208.126.102:5173
 ```
@@ -140,11 +148,11 @@ MAIL_FROM=noreply@gamilit.com
 
 ### Iniciar Servicios
 ```bash
-# Backend
+## Backend
 cd apps/backend
 npm run prod
 
-# Frontend
+## Frontend
 cd apps/frontend
 npm run build
 npm run preview
@@ -152,19 +160,19 @@ npm run preview
 
 ### Ver Logs
 ```bash
-# Logs de backend (si usa PM2)
+## Logs de backend (si usa PM2)
 pm2 logs gamilit-backend
 
-# Logs de PostgreSQL
+## Logs de PostgreSQL
 sudo tail -f /var/log/postgresql/postgresql-16-main.log
 ```
 
 ### Reiniciar Servicios
 ```bash
-# Reiniciar backend
+## Reiniciar backend
 pm2 restart gamilit-backend
 
-# Reiniciar PostgreSQL
+## Reiniciar PostgreSQL
 sudo systemctl restart postgresql
 ```
 

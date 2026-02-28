@@ -54,14 +54,14 @@ Usage tracked, cooldown enforced
 
 | Task | Titulo | Mecanica |
 |------|--------|----------|
-| [TASK-VAL-007-F4-INTEG-XP](TASK-VAL-007-F4-INTEG-XP/) | XP calculation | XP |
-| [TASK-VAL-007-F4-INTEG-RANKS](TASK-VAL-007-F4-INTEG-RANKS/) | Maya rank progression | Ranks |
-| [TASK-VAL-007-F4-INTEG-COINS](TASK-VAL-007-F4-INTEG-COINS/) | ML Coins lifecycle | Coins |
-| [TASK-VAL-007-F4-INTEG-ACHIEVEMENTS](TASK-VAL-007-F4-INTEG-ACHIEVEMENTS/) | Achievements unlock | Achievements |
-| [TASK-VAL-007-F4-INTEG-MISSIONS](TASK-VAL-007-F4-INTEG-MISSIONS/) | Missions generation + completion | Missions |
-| [TASK-VAL-007-F4-INTEG-LEADERBOARD](TASK-VAL-007-F4-INTEG-LEADERBOARD/) | Leaderboard rankings | Leaderboard |
-| [TASK-VAL-007-F4-INTEG-SHOP](TASK-VAL-007-F4-INTEG-SHOP/) | Shop purchase + inventory | Shop |
-| [TASK-VAL-007-F4-INTEG-COMODINES](TASK-VAL-007-F4-INTEG-COMODINES/) | Comodines use + cooldown | Comodines |
+| [TASK-VAL-007-F4-INTEG-XP](TASK-VAL-007-F4-INTEG-XP.md) | XP calculation | XP |
+| [TASK-VAL-007-F4-INTEG-RANKS](TASK-VAL-007-F4-INTEG-RANKS.md) | Maya rank progression | Ranks |
+| [TASK-VAL-007-F4-INTEG-COINS](TASK-VAL-007-F4-INTEG-COINS.md) | ML Coins lifecycle | Coins |
+| [TASK-VAL-007-F4-INTEG-ACHIEVEMENTS](TASK-VAL-007-F4-INTEG-ACHIEVEMENTS.md) | Achievements unlock | Achievements |
+| [TASK-VAL-007-F4-INTEG-MISSIONS](TASK-VAL-007-F4-INTEG-MISSIONS.md) | Missions generation + completion | Missions |
+| [TASK-VAL-007-F4-INTEG-LEADERBOARD](TASK-VAL-007-F4-INTEG-LEADERBOARD.md) | Leaderboard rankings | Leaderboard |
+| [TASK-VAL-007-F4-INTEG-SHOP](TASK-VAL-007-F4-INTEG-SHOP.md) | Shop purchase + inventory | Shop |
+| [TASK-VAL-007-F4-INTEG-COMODINES](TASK-VAL-007-F4-INTEG-COMODINES.md) | Comodines use + cooldown | Comodines |
 
 ---
 

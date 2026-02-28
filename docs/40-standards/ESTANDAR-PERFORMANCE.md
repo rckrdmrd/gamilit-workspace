@@ -179,7 +179,7 @@ const CACHE_TTL = {
 ### 5.2 Umbrales de Alerta
 
 ```yaml
-# Ejemplo de configuracion de alertas
+## Ejemplo de configuracion de alertas
 alerts:
   api_latency_p95:
     warning: 200ms

@@ -1,3 +1,11 @@
+---
+titulo: "Ruta Legacy — Fase 4 Backlog"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Ruta Legacy — Fase 4 Backlog
 
 > **Este documento es una ruta puente.** El backlog de fase 4 ha sido integrado en el índice de epics.

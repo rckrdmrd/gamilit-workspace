@@ -1,3 +1,11 @@
+---
+titulo: "Mapa de Documentacion - Student Portal"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # MAPA DE DOCUMENTACION - STUDENT PORTAL
 
 **Proyecto:** GAMILIT
@@ -108,7 +116,7 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 | Documento | Proposito |
 |-----------|-----------|
 | `FRONTEND_INVENTORY.yml` | 575 componentes, 132 hooks, 65 APIs |
-| `BACKEND_INVENTORY.yml` | 912 endpoints documentados |
+| `BACKEND_INVENTORY.yml` | 914 endpoints documentados |
 
 ### Tareas (orchestration/tareas/)
 

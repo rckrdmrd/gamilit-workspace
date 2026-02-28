@@ -1,3 +1,11 @@
+---
+titulo: Matriz de Trazabilidad de Flujos
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Matriz de Trazabilidad de Flujos
 
 **Version:** 1.8.0
@@ -32,11 +40,11 @@
 | FL-SHR-02 | [FLUJO-SESION-SEGURIDAD.md](./shared/FLUJO-SESION-SEGURIDAD.md) **(Compuesto)** | `features/auth/components/RegisterForm.tsx`, `LoginForm.tsx`, `ForgotPasswordPage.tsx`, `PasswordResetPage.tsx` | Sub-flujos: FL-AUTH-01, FL-AUTH-02, FL-AUTH-03 | `auth.users`, `auth_management.profiles`, `auth_management.password_reset_tokens`, `auth_management.email_verification_tokens` |
 | FL-TCH-01 | [FLUJO-REVISION-MANUAL-M3-M5.md](./teacher/FLUJO-REVISION-MANUAL-M3-M5.md) | `apps/teacher/pages/TeacherReviewPanel.tsx`, `apps/teacher/components/review-panel/ReviewDetail.tsx` | `/api/v1/teacher/reviews/*`, `manual-review.service.ts` | `progress_tracking.manual_reviews`, `exercise_submissions`, `gamification_system.user_stats` |
 | FL-TCH-02 | [FLUJO-ASIGNACIONES-CLASE.md](./teacher/FLUJO-ASIGNACIONES-CLASE.md) | `apps/teacher/pages/TeacherAssignments.tsx`, `apps/teacher/components/assignments/AssignmentCreator.tsx` | `/api/v1/teacher/assignments/*` | `educational_content.*`, `progress_tracking.*` |
-| FL-TCH-03 | [FLUJO-MONITOREO-ALERTAS.md](./teacher/FLUJO-MONITOREO-ALERTAS.md) v1.1.0 | `apps/teacher/pages/TeacherAlerts.tsx`, `apps/teacher/components/alerts/AlertCard.tsx`, `TeacherMonitoringPage.tsx`, `useClassroomRealtime.ts` | `/api/v1/teacher/alerts/*`, WebSocket: 7 eventos (exercise_started/completed, achievement_unlocked, level_up, student_online/offline, help_requested) | `progress_tracking.student_intervention_alerts`, `progress_tracking.teacher_alert_configurations` |
+| FL-TCH-03 | [FLUJO-MONITOREO-ALERTAS.md](./teacher/FLUJO-MONITOREO-ALERTAS.md) v1.1.0 | `apps/teacher/pages/TeacherAlerts.tsx`, `apps/teacher/components/alerts/AlertCard.tsx`, `TeacherMonitoringPage.tsx`, `useClassroomRealtime.ts` | `/api/v1/teacher/alerts/*`, WebSocket: 7 eventos (exercise_started/completed, achievement_unlocked, level_up, student_online/offline, help_requested) | `progress_tracking.student_intervention_alerts`, `progress_tracking.alert_configurations` |
 | FL-ADM-01 | [FLUJO-GESTION-USUARIOS-ROLES.md](./admin/FLUJO-GESTION-USUARIOS-ROLES.md) | `apps/admin/pages/AdminUsersPage.tsx` | `/api/v1/admin/users/*`, `/api/v1/admin/roles/*` | `auth.users`, `auth_management.user_roles`, `auth_management.profiles` |
-| FL-ADM-02 | [FLUJO-CONFIGURACION-SISTEMA.md](./admin/FLUJO-CONFIGURACION-SISTEMA.md) v1.1.0 | `apps/admin/pages/AdminAdvancedPage.tsx`, `apps/admin/components/shared/AdminPageShell.tsx`, `apps/admin/components/shared/AdminTabBar.tsx`, `apps/admin/components/settings/*` | `/api/v1/settings/*`, `/api/v1/admin/config/*` | `platform_settings.*`, `audit.*` |
+| FL-ADM-02 | [FLUJO-CONFIGURACION-SISTEMA.md](./admin/FLUJO-CONFIGURACION-SISTEMA.md) v1.1.0 | `apps/admin/pages/AdminAdvancedPage.tsx`, `apps/admin/components/shared/AdminPageShell.tsx`, `apps/admin/components/shared/AdminTabBar.tsx`, `apps/admin/components/settings/*` | `/api/v1/settings/*`, `/api/v1/admin/config/*` | `system_configuration.*`, `audit.*` |
 | FL-ADM-03 | [FLUJO-APROBACION-CONTENIDO.md](./admin/FLUJO-APROBACION-CONTENIDO.md) v1.1.0 | `apps/admin/pages/AdminContentPage.tsx`, `apps/admin/components/content/ContentPreviewModal.tsx`, `ContentVersionsTab.tsx`, `MediaLibraryTab.tsx`, `PendingExercisesTab.tsx`, `RejectExerciseModal.tsx`, `apps/admin/hooks/useContentQueries.ts` | `/api/v1/admin/content/approvals/*` | `educational_content.content_approvals`, `educational_content.content_tags` |
-| FL-ADM-04 | [FLUJO-MONITOREO-SISTEMA.md](./admin/FLUJO-MONITOREO-SISTEMA.md) v1.1.0 | `apps/admin/pages/AdminMonitoringPage.tsx`, `apps/admin/components/shared/AdminPageShell.tsx`, `AdminTabBar.tsx`, `apps/admin/components/monitoring/SystemHealthIndicators.tsx` | `/health`, `/api/v1/admin/monitoring/*` | `monitoring.*`, `audit.*` |
+| FL-ADM-04 | [FLUJO-MONITOREO-SISTEMA.md](./admin/FLUJO-MONITOREO-SISTEMA.md) v1.1.0 | `apps/admin/pages/AdminMonitoringPage.tsx`, `apps/admin/components/shared/AdminPageShell.tsx`, `AdminTabBar.tsx`, `apps/admin/components/monitoring/SystemHealthIndicators.tsx` | `/health`, `/api/v1/admin/monitoring/*` | `audit_logging.*`, `audit.*` |
 | FL-PRN-01 | [FLUJO-VINCULACION-PADRE-ESTUDIANTE.md](./parents/FLUJO-VINCULACION-PADRE-ESTUDIANTE.md) | `portal padres (vinculacion)` | `/api/v1/parents/links/*` | `auth_management.parent_student_links`, `auth_management.parent_accounts`, `auth_management.profiles` |
 | FL-PRN-02 | [FLUJO-SEGUIMIENTO-PROGRESO.md](./parents/FLUJO-SEGUIMIENTO-PROGRESO.md) | `portal padres (dashboard progreso)` | `/api/v1/parents/students/:id/progress` | `progress_tracking.*`, `analytics.*` |
 | FL-PRN-03 | [FLUJO-NOTIFICACIONES-PADRES.md](./parents/FLUJO-NOTIFICACIONES-PADRES.md) | `portal padres (inbox)` | `/api/v1/parents/notifications/*` | `notifications.*`, `communication.*` |

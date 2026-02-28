@@ -1,3 +1,11 @@
+---
+titulo: "REPORTE: Actualización de Manuales con Funcionalidades Reales"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # REPORTE: Actualización de Manuales con Funcionalidades Reales
 ## Fecha: 23 de noviembre de 2025
 

@@ -1,3 +1,11 @@
+---
+titulo: "Especificaciones Tecnicas - EXT-001"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Especificaciones Tecnicas - EXT-001
 
 **EPIC:** EXT-001 - Portal de Maestros

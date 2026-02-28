@@ -1,3 +1,11 @@
+---
+titulo: _INDEX - Flujos Student
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # _INDEX - Flujos Student
 
 > Catalogo de flujos del portal estudiante.

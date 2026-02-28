@@ -132,7 +132,7 @@ reconciled_metrics:
     entities: 156  # ACTUALIZADO 2026-02-25: 156 files (157 @Entity classes)
     services: 172  # ACTUALIZADO 2026-02-25
     controllers: 108  # ACTUALIZADO 2026-02-25
-    endpoints: 912  # ACTUALIZADO 2026-02-25
+    endpoints: 914  # ACTUALIZADO 2026-02-28 (was 912, +2 autosave)
     coherencia_bd: "99%"
 
   frontend:

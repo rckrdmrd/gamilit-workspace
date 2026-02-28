@@ -1,3 +1,11 @@
+---
+titulo: Flujo Teacher - Revision Manual y Calificacion
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo Teacher - Revision Manual y Calificacion (Modulos 3-5)
 
 **Version:** 1.2.0

@@ -1,3 +1,11 @@
+---
+titulo: "Especificación Técnica: Gaps Críticos Portal Students → Admin"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Especificación Técnica: Gaps Críticos Portal Students → Admin
 
 **Versión:** 1.0.0

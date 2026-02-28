@@ -45,11 +45,11 @@ Sin X-Tenant-ID → 401, con header → 200 (RLS filtra por tenant)
 
 | Task | Titulo | Subtipo |
 |------|--------|---------|
-| [TASK-VAL-003-F2-BACKEND](TASK-VAL-003-F2-BACKEND/) | Health check endpoint | Health |
-| [TASK-VAL-003-F2-BACKEND-AUTH](TASK-VAL-003-F2-BACKEND-AUTH/) | Auth flow completo | Auth |
-| [TASK-VAL-003-F2-BACKEND-SMOKE](TASK-VAL-003-F2-BACKEND-SMOKE/) | Smoke test 23 modulos | Smoke |
-| [TASK-VAL-003-F2-BACKEND-WEBSOCKET](TASK-VAL-003-F2-BACKEND-WEBSOCKET/) | WebSocket handshake | WebSocket |
-| [TASK-VAL-003-F2-BACKEND-TENANCY](TASK-VAL-003-F2-BACKEND-TENANCY/) | Multi-tenancy verification | Tenancy |
+| [TASK-VAL-003-F2-BACKEND](TASK-VAL-003-F2-BACKEND.md) | Health check endpoint | Health |
+| [TASK-VAL-003-F2-BACKEND-AUTH](TASK-VAL-003-F2-BACKEND-AUTH.md) | Auth flow completo | Auth |
+| [TASK-VAL-003-F2-BACKEND-SMOKE](TASK-VAL-003-F2-BACKEND-SMOKE.md) | Smoke test 23 modulos | Smoke |
+| [TASK-VAL-003-F2-BACKEND-WEBSOCKET](TASK-VAL-003-F2-BACKEND-WEBSOCKET.md) | WebSocket handshake | WebSocket |
+| [TASK-VAL-003-F2-BACKEND-TENANCY](TASK-VAL-003-F2-BACKEND-TENANCY.md) | Multi-tenancy verification | Tenancy |
 
 ---
 

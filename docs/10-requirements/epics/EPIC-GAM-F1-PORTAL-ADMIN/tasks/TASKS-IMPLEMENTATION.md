@@ -1,3 +1,11 @@
+---
+titulo: "Tareas -- EPIC-GAM-F1-PORTAL-ADMIN"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Tareas -- EPIC-GAM-F1-PORTAL-ADMIN
 
 Estado: COMPLETADO | US: 0 (legacy archivado) | Modulos: 4 | Tareas: 12 | Subtareas: 28

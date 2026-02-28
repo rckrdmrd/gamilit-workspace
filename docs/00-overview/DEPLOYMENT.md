@@ -1,3 +1,11 @@
+---
+titulo: "DEPLOYMENT - Redirect"
+tipo: overview
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # DEPLOYMENT - Redirect
 
 > **Este documento es un redirect.** El contenido de deployment se mantiene en ubicaciones especializadas.

@@ -1,3 +1,11 @@
+---
+titulo: "Manual del Usuario - Portal de Estudiantes GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 > **[SUPERSEDED]** This manual has been superseded by the updated version: `MANUAL-USUARIO-PORTAL-ESTUDIANTE.md` (v2.0.0, Feb 2026).
 > This file is retained for historical reference only.
 

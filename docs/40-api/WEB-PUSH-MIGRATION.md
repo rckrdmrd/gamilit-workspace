@@ -1,3 +1,11 @@
+---
+titulo: "Migración a Web Push Nativo (VAPID)"
+tipo: api
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Migración a Web Push Nativo (VAPID)
 
 **Fecha:** 2025-11-29
@@ -181,7 +189,7 @@ npm run generate:vapid
 Agregar las claves generadas a `.env.production`:
 
 ```bash
-# Web Push VAPID Keys
+## Web Push VAPID Keys
 VAPID_PUBLIC_KEY=<clave-publica-generada>
 VAPID_PRIVATE_KEY=<clave-privada-generada>
 VAPID_SUBJECT=mailto:admin@gamilit.com
@@ -340,7 +348,7 @@ if (error instanceof InvalidSubscriptionError) {
 ### 1. Verificar Inicialización
 
 ```bash
-# Logs al iniciar backend
+## Logs al iniciar backend
 [PushNotificationService] Web Push initialized successfully with VAPID keys
 ```
 
@@ -378,7 +386,7 @@ await this.pushNotificationService.sendToUser(userId, {
 **Solución:**
 ```bash
 npm run generate:vapid
-# Copiar output a .env
+## Copiar output a .env
 ```
 
 ### Problema: "Invalid device token format"
@@ -413,7 +421,7 @@ git checkout HEAD~1 -- src/modules/notifications/services/push-notification.serv
 
 3. Restaurar variables de entorno:
 ```bash
-# Usar FIREBASE_* en lugar de VAPID_*
+## Usar FIREBASE_* en lugar de VAPID_*
 ```
 
 ## Referencias

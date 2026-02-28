@@ -1,3 +1,11 @@
+---
+titulo: "Ruta Legacy — Análisis Features P3 Estratégicas"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # Ruta Legacy — Análisis Features P3 Estratégicas
 
 > **Este documento es una ruta puente.** El análisis P3 está incorporado en los epics F3.

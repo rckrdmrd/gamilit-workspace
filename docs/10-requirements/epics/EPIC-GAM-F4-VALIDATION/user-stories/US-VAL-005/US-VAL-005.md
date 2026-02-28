@@ -42,10 +42,10 @@ Parent registrado y vinculado a student ve progreso correctamente
 
 | Task | Titulo | Subtipo |
 |------|--------|---------|
-| [TASK-VAL-005-F4-INTEG-REGISTER](TASK-VAL-005-F4-INTEG-REGISTER/) | Student registration cascade | Register |
-| [TASK-VAL-005-F4-INTEG-ORG](TASK-VAL-005-F4-INTEG-ORG/) | Organization chain | Org |
-| [TASK-VAL-005-F4-INTEG-RBAC](TASK-VAL-005-F4-INTEG-RBAC/) | RBAC verification | RBAC |
-| [TASK-VAL-005-F4-INTEG-PARENT](TASK-VAL-005-F4-INTEG-PARENT/) | Parent linking | Parent |
+| [TASK-VAL-005-F4-INTEG-REGISTER](TASK-VAL-005-F4-INTEG-REGISTER.md) | Student registration cascade | Register |
+| [TASK-VAL-005-F4-INTEG-ORG](TASK-VAL-005-F4-INTEG-ORG.md) | Organization chain | Org |
+| [TASK-VAL-005-F4-INTEG-RBAC](TASK-VAL-005-F4-INTEG-RBAC.md) | RBAC verification | RBAC |
+| [TASK-VAL-005-F4-INTEG-PARENT](TASK-VAL-005-F4-INTEG-PARENT.md) | Parent linking | Parent |
 
 ---
 

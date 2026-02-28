@@ -1,3 +1,11 @@
+---
+titulo: "Especificacion Tecnica - Sistema de Exportacion CSV"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Especificacion Tecnica - Sistema de Exportacion CSV
 
 **Epic:** EXT-002 - Admin Extendido
@@ -161,12 +169,12 @@ export class ExportQueryDto {
 
 **Ejemplo de Request:**
 ```bash
-# Exportar todos los estudiantes
+## Exportar todos los estudiantes
 curl -X GET "https://api.gamilit.com/api/admin/progress/export?type=students" \
   -H "Authorization: Bearer <admin_jwt_token>" \
   -o "progress-students-2026-01-20.csv"
 
-# Exportar estudiantes de un aula especifica
+## Exportar estudiantes de un aula especifica
 curl -X GET "https://api.gamilit.com/api/admin/progress/export?type=students&classroom_id=123e4567-e89b-12d3-a456-426614174000" \
   -H "Authorization: Bearer <admin_jwt_token>" \
   -o "progress-students-classroom-2026-01-20.csv"
@@ -729,7 +737,7 @@ def export_analytics(api_url: str, token: str, export_type: str) -> str:
 
     return filename
 
-# Uso
+## Uso
 filename = export_analytics('https://api.gamilit.com', jwt_token, 'users')
 print(f'Archivo descargado: {filename}')
 ```

@@ -1,3 +1,11 @@
+---
+titulo: "US-ETC-004: Validacion de Integracion E2E"
+tipo: user-story
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # US-ETC-004: Validacion de Integracion E2E
 
 **Historia de Usuario ID:** US-ETC-004

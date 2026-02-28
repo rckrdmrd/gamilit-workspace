@@ -1,8 +1,16 @@
+---
+titulo: "MAP Legacy - Fase 5"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # MAP Legacy - Fase 5
 
-**Fase:** 5  
-**Tipo:** Mapa legacy de migracion  
-**Estado:** Completado (ruta puente)  
+**Fase:** 5
+**Tipo:** Mapa legacy de migracion
+**Estado:** Completado (ruta puente)
 **Ultima actualizacion:** 2026-02-17
 
 ---

@@ -1,3 +1,11 @@
+---
+titulo: "Epics — Mapa de Navegacion"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Epics — Mapa de Navegacion
 
 ## Estructura
@@ -8,7 +16,8 @@ epics/
 ├── _MAP.md
 ├── _TEMPLATE-TASK-TRAZABILIDAD.md
 ├── README.md
-├── _wave-3-technical/
+├── _archived/wave-3-technical/  ← Archivado 2026-02-28 (era _wave-3-technical/)
+├── _wave-3-technical/           ← Redirect stub solamente
 ├── EPIC-GAM-F1-AUTH/
 ├── EPIC-GAM-F1-EXERCISES/
 ├── EPIC-GAM-F1-GAMIFICATION/
@@ -45,7 +54,8 @@ epics/
 
 | Directorio | Contenido |
 |------------|-----------|
-| `_wave-3-technical/` | 11 EPICs tecnicas (Scaffolding, Requerimientos, Arquitectura, BD, Backend, Frontend, K8s, Testing, DevOps, Docs, Integracion) |
+| `_archived/wave-3-technical/` | 11 EPICs tecnicas archivadas (Scaffolding, Requerimientos, Arquitectura, BD, Backend, Frontend, K8s, Testing, DevOps, Docs, Integracion) — Archivado 2026-02-28 |
+| `_wave-3-technical/` | Redirect stub — apunta a `_archived/wave-3-technical/` |
 
 ## Fases Funcionales
 

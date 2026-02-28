@@ -1,3 +1,11 @@
+---
+titulo: "VISION-ALCANCE: GAMILIT"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # VISION-ALCANCE: GAMILIT
 
 **Sistema:** SIMCO v4.0.0 | **Tipo:** Vision y Alcance
@@ -18,7 +26,7 @@ GAMILIT (Gamificacion Maya para la Lectoescritura en Tecnologia) es una **plataf
 STANDALONE_HEREDERO (Nivel 2A)
   |
   v
-gamilit (23 modulos, 173 tablas, 912 endpoints)
+gamilit (23 modulos, 173 tablas, 914 endpoints)
   |
   v
 shared/catalog/ (exporta patrones generalizables)
@@ -274,7 +282,7 @@ El modelo de aislamiento por escuela implementa:
 | EPIC-GAM-REQUIREMENTS | Requerimientos y US | 13 | Documentacion | Completado |
 | EPIC-GAM-ARCHITECTURE | Diseno de Arquitectura | 13 | Documentacion | Completado |
 | EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 173 tablas | Completado |
-| EPIC-GAM-BACKEND | Backend NestJS | 34 | 23 modulos, 912 endpoints | Completado |
+| EPIC-GAM-BACKEND | Backend NestJS | 34 | 23 modulos, 914 endpoints | Completado |
 | EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 575 componentes | Completado |
 | EPIC-GAM-K8S | Kubernetes Setup | 8 | Deployment configs | En progreso |
 | EPIC-GAM-TESTING | Testing Completo | 13 | 2324 tests | En progreso |

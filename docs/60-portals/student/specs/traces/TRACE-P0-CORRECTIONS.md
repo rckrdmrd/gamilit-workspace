@@ -264,7 +264,7 @@ Task({
 
 **14:35-14:40:** Lectura de archivos relevantes
 ```bash
-# Archivos leídos:
+## Archivos leídos:
 - apps/backend/src/modules/gamification/services/missions.service.ts
 - apps/backend/src/modules/economy/services/ml-coins.service.ts
 - apps/backend/src/modules/users/services/user-stats.service.ts
@@ -381,7 +381,7 @@ Listo para testing manual.
 
 **14:35-14:40:** Lectura de archivos relevantes
 ```bash
-# Archivos leídos:
+## Archivos leídos:
 - apps/frontend/src/apps/student/pages/ProfilePage.tsx
 - apps/frontend/src/services/api/apiClient.ts
 - orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/08-PLAN-CORRECCIONES.md
@@ -515,7 +515,7 @@ Listo para testing manual.
 
 **14:35-14:45:** Lectura de archivos relevantes
 ```bash
-# Archivos leídos:
+## Archivos leídos:
 - apps/frontend/src/apps/student/pages/SettingsPage.tsx
 - apps/frontend/src/services/api/apiClient.ts
 - orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/08-PLAN-CORRECCIONES.md

@@ -23,7 +23,7 @@ Gamilit adopta desde su inicio la estructura canonica `apps/` que workspace-arch
 ```
 gamilit/
 ├── apps/
-│   ├── backend/           # NestJS 11 (23 modulos, 912 endpoints)
+│   ├── backend/           # NestJS 11 (23 modulos, 914 endpoints)
 │   ├── frontend/          # React 19 + Zustand + TailwindCSS
 │   ├── database/          # PostgreSQL 15 DDL (18 schemas, 173 tablas)
 │   ├── devops/            # Deployment scripts
@@ -63,7 +63,7 @@ gamilit/
 │   ├── frontend/          # React 19 aplicacion web
 │   │   ├── src/
 │   │   │   ├── components/  # 575 componentes
-│   │   │   ├── pages/       # 72 paginas (4 portales)
+│   │   │   ├── pages/       # 70 paginas (4 portales)
 │   │   │   ├── stores/      # 13 stores Zustand
 │   │   │   └── App.tsx
 │   │   ├── package.json

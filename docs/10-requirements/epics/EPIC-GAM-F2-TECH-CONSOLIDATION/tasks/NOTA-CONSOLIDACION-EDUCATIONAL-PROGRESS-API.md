@@ -1,3 +1,11 @@
+---
+titulo: "NOTA: Consolidacion de educationalAPI y progressAPI"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # NOTA: Consolidacion de educationalAPI y progressAPI
 
 **Fecha:** 2026-01-16

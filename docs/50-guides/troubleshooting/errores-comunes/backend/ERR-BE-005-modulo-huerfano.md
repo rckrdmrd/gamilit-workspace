@@ -7,10 +7,10 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-BE-005: Modulo Sin Registrar en AppModule (Modulo Huerfano)
 
-## Descripcion
+### Descripcion
 Un directorio de modulo NestJS existe en `apps/backend/src/modules/` pero carece de archivo `.module.ts`, o tiene el archivo pero no esta importado en `app.module.ts`. Esto causa que sus providers, controllers y entities no sean accesibles en el contenedor de inyeccion de dependencias.
 
-## Sintomas
+### Sintomas
 - Error: `Nest can't resolve dependencies of the XxxService. Please make sure that the argument "XxxRepository" is available in the current context`
 - Error: `Error: Unknown injection token! The requested provider "XxxService" is not registered`
 - Entities del modulo no se registran en ningun datasource TypeORM
@@ -18,13 +18,13 @@ Un directorio de modulo NestJS existe en `apps/backend/src/modules/` pero carece
 - Servicios no son inyectables en otros modulos aunque se exporten correctamente
 - El directorio tiene archivos `.service.ts`, `.controller.ts`, `.entity.ts` pero no tienen efecto
 
-## Causa Raiz
+### Causa Raiz
 1. **Archivo .module.ts faltante:** El directorio del modulo fue creado con entities y services pero nunca se creo el archivo `xxx.module.ts` con la clase decorada con `@Module()`
 2. **Modulo no importado en AppModule:** El archivo `.module.ts` existe pero no fue agregado al array `imports` de `AppModule` en `app.module.ts`
 3. **Modulo creado como placeholder:** El directorio se creo durante planificacion pero la implementacion quedo incompleta
 4. **Modulo deshabilitado intencionalmente:** Algunos modulos estan excluidos del AppModule a proposito (ej: modulos en desarrollo, features experimentales) pero esto no esta documentado
 
-## Solucion
+### Solucion
 
 ### 1. Verificar si el modulo tiene archivo .module.ts
 ```bash
@@ -87,18 +87,17 @@ TypeOrmModule.forRootAsync({
 }),
 ```
 
-### 5. Para modulos deshabilitados intencionalmente, documentar
+### 5. Para modulos con import especial, documentar
 ```typescript
-// app.module.ts - Al final de imports[]
-// NOTA: Los siguientes modulos NO estan importados intencionalmente:
-// - EtlModule: Modulo ETL para importacion masiva (en desarrollo)
-// - LtiModule: Integracion LTI con LMS externos (pendiente)
-// - MailModule: Procesamiento de email (integrado en NotificationsModule)
-// - MlModule: Machine Learning predictions (en desarrollo)
-// - VisualizationModule: Graficos avanzados (pendiente)
+// app.module.ts - Lineas 441-491
+// NOTA: Modulos con import status especial:
+// - ETLModule, MLModule, VisualizationModule: Importados CONDICIONALMENTE (ENABLE_DATA_WAREHOUSE=true)
+// - CommunicationModule: Importado en linea 490 (datasource 'communication')
+// - LtiModule: Importado en linea 491 (LTI 1.3 integration)
+// - MailModule: NO importado directamente (funcionalidad integrada en NotificationsModule, cargado transitivamente)
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Usar NestJS CLI** para generar modulos: `nest g module nombre` crea automaticamente el .module.ts y actualiza AppModule
 2. **Verificar imports en AppModule** despues de crear cualquier directorio nuevo en `modules/`
@@ -135,23 +134,23 @@ grep -c "Module," apps/backend/src/app.module.ts
 grep "Module" apps/backend/src/app.module.ts | grep "import {" | head -30
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Modulo | Problema | Estado |
 |-------|--------|----------|--------|
-| 2026-02-13 | communication | Entities existian pero faltaba .module.ts y datasource | Resuelto: CommunicationModule creado + datasource 'communication' |
-| 2026-02-13 | etl | Directorio existe, .module.ts existe, NO importado en AppModule | Intencional: En desarrollo |
-| 2026-02-13 | lti | Directorio existe, .module.ts existe, NO importado en AppModule | Intencional: Pendiente integracion LMS |
-| 2026-02-13 | mail | Directorio existe, .module.ts existe, NO importado en AppModule | Intencional: Funcionalidad en NotificationsModule |
-| 2026-02-13 | ml | Directorio existe, .module.ts existe, NO importado en AppModule | Intencional: En desarrollo |
-| 2026-02-13 | visualization | Directorio existe, .module.ts existe, NO importado en AppModule | Intencional: Pendiente |
+| 2026-02-13 | communication | Entities existian pero faltaba .module.ts y datasource | Resuelto (2026-02-27): CommunicationModule creado + datasource 'communication' + importado en app.module.ts:490 |
+| 2026-02-13 | etl | Directorio existe, .module.ts existe, NO importado en AppModule | Resuelto (2026-02-27): Importacion condicional via ENABLE_DATA_WAREHOUSE=true (app.module.ts:465) |
+| 2026-02-13 | lti | Directorio existe, .module.ts existe, NO importado en AppModule | Resuelto (2026-02-27): Importado en app.module.ts:491 |
+| 2026-02-13 | mail | Directorio existe, .module.ts existe, NO importado en AppModule | Intencional: Funcionalidad integrada en NotificationsModule (cargado transitivamente) |
+| 2026-02-13 | ml | Directorio existe, .module.ts existe, NO importado en AppModule | Resuelto (2026-02-27): Importacion condicional via ENABLE_DATA_WAREHOUSE=true (app.module.ts:467) |
+| 2026-02-13 | visualization | Directorio existe, .module.ts existe, NO importado en AppModule | Resuelto (2026-02-27): Importacion condicional via ENABLE_DATA_WAREHOUSE=true (app.module.ts:469) |
 
-## Referencias
+### Referencias
 
 - **app.module.ts:** `apps/backend/src/app.module.ts` (imports en lineas 332-349)
 - **NestJS Modules:** https://docs.nestjs.com/modules
 - **ERR-BE-004:** Datasource entity path incorrecto (error relacionado)
-- **MEMORY.md:** "5 modules not imported in app.module.ts: etl, lti, mail, ml, visualization"
+- **MEMORY.md:** See history notes (updated 2026-02-27: CommunicationModule + LtiModule now imported, etl/ml/visualization conditionally imported)
 - **Backend Inventory:** `orchestration/inventarios/BACKEND_INVENTORY.yml`
 
 ---

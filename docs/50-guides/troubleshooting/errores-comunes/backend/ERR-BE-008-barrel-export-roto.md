@@ -7,10 +7,10 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-BE-008: Barrel Export Referencia Archivo Inexistente
 
-## Descripcion
+### Descripcion
 Un archivo `index.ts` (barrel file) re-exporta desde un modulo que fue eliminado, renombrado o movido durante consolidacion o refactorizacion. Esto causa errores de compilacion TypeScript que pueden bloquear el build completo del backend o frontend.
 
-## Sintomas
+### Sintomas
 - Error de build: `Module not found: Can't resolve './deleted-file'`
 - Error TypeScript: `TS2307: Cannot find module './nombre-archivo' or its corresponding type declarations`
 - `npm run build` falla pero el IDE no siempre marca el error inmediatamente
@@ -18,14 +18,14 @@ Un archivo `index.ts` (barrel file) re-exporta desde un modulo que fue eliminado
 - Error en cadena: multiples archivos fallan porque todos importan del barrel roto
 - CI/CD pipeline falla con error de modulo no encontrado
 
-## Causa Raiz
+### Causa Raiz
 1. **Archivo eliminado sin actualizar barrel:** Se elimina `some-feature.service.ts` pero `index.ts` aun tiene `export * from './some-feature.service'`
 2. **Archivo renombrado sin actualizar barrel:** Se renombra `old-name.ts` a `new-name.ts` pero el barrel sigue exportando de `./old-name`
 3. **Archivo movido a otro directorio:** Se mueve un archivo durante reorganizacion pero los barrels en el directorio original no se actualizan
 4. **Consolidacion incompleta:** Durante merge de archivos duplicados, se elimina uno de los duplicados pero consumidores y barrels apuntan al eliminado
 5. **Barrel en frontend apunta a API service inexistente:** El archivo `lib/api/index.ts` re-exporta de un API service que fue consolidado o eliminado
 
-## Solucion
+### Solucion
 
 ### 1. Identificar el barrel roto
 ```bash
@@ -82,7 +82,7 @@ grep -rn "export.*getExercises" apps/frontend/src/lib/api/
 grep -rn "export.*getContent" apps/frontend/src/lib/api/
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Buscar imports antes de eliminar:** Antes de eliminar cualquier archivo, buscar todas las referencias con `grep -rn "nombre-archivo" apps/`
 2. **Actualizar barrels atomicamente:** En el mismo commit que elimina o renombra un archivo, actualizar todos los barrels e imports que lo referencian
@@ -118,14 +118,14 @@ done
 cd apps/backend && npm run build && cd ../frontend && npm run build
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Archivo Barrel | Export Roto | Estado |
 |-------|---------------|-------------|--------|
 | 2026-02-13 | apps/frontend/src/lib/api/index.ts | `export * from './educational.api'` (archivo no existe) | Resuelto: linea eliminada, funciones migradas |
 | 2026-01-30 | apps/backend/src/modules/social/index.ts | Export de service consolidado durante cleanup | Resuelto: barrel actualizado |
 
-## Referencias
+### Referencias
 
 - **TypeScript Barrel Files:** https://basarat.gitbook.io/typescript/main-1/barrel
 - **NestJS Module Exports:** https://docs.nestjs.com/modules#module-re-exporting

@@ -1,3 +1,11 @@
+---
+titulo: "ET-INIT-001: Especificación Técnica - Trigger de Inicialización de Usuario"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-INIT-001: Especificación Técnica - Trigger de Inicialización de Usuario
 
 **Proyecto:** GAMILIT

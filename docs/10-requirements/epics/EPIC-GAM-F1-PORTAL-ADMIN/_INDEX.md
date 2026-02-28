@@ -1,3 +1,11 @@
+---
+titulo: "_INDEX - EPIC-GAM-F1-PORTAL-ADMIN"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # _INDEX - EPIC-GAM-F1-PORTAL-ADMIN
 
 **Portal de Administracion** | Original: EAI-008 | SP: 40 | Estado: COMPLETADO

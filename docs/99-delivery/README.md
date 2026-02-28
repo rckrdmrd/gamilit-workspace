@@ -1,3 +1,11 @@
+---
+titulo: "Documentos de Entrega"
+tipo: readme
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Documentos de Entrega
 
 > Documentacion formal de entregas del proyecto gamilit.

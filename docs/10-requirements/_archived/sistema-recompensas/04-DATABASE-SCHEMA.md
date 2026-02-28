@@ -1,3 +1,11 @@
+---
+titulo: "Ruta Legacy — Database Schema Sistema Recompensas"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # Ruta Legacy — Database Schema Sistema Recompensas
 
 > **Este documento es una ruta puente.** El schema está en EVOLUCION-SISTEMA-RECOMPENSAS y DDL.

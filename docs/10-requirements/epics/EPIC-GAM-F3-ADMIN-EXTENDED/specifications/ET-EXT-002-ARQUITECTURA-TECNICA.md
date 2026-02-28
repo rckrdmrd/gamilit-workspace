@@ -1,3 +1,11 @@
+---
+titulo: "Especificaciones Técnicas - Admin Portal Extendido"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Especificaciones Técnicas - Admin Portal Extendido
 ## Arquitectura y Diseño Técnico - Sprints 1, 2, 3
 
@@ -599,15 +607,15 @@ describe('Admin Dashboard (e2e)', () => {
 ### 8.1 Variables de Entorno
 
 ```env
-# Database Connections
+## Database Connections
 DATABASE_URL_AUTH=postgresql://user:pass@host:5432/auth_db
 DATABASE_URL_EDUCATIONAL=postgresql://user:pass@host:5432/educational_db
 
-# JWT
+## JWT
 JWT_SECRET=your-secret-key
 JWT_EXPIRATION=1h
 
-# System Config
+## System Config
 DEFAULT_RETENTION_DAYS_LOGS=90
 DEFAULT_RETENTION_DAYS_ACTIVITY=180
 ```
@@ -615,13 +623,13 @@ DEFAULT_RETENTION_DAYS_ACTIVITY=180
 ### 8.2 Migraciones
 
 ```bash
-# Crear migración para content_approvals
+## Crear migración para content_approvals
 npm run migration:generate -- -n CreateContentApprovals
 
-# Ejecutar migraciones
+## Ejecutar migraciones
 npm run migration:run
 
-# Revertir si es necesario
+## Revertir si es necesario
 npm run migration:revert
 ```
 

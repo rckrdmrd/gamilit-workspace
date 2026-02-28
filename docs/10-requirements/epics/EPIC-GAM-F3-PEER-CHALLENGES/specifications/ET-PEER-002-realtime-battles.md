@@ -1,3 +1,11 @@
+---
+titulo: "ET-PEER-002: Realtime Battles"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-PEER-002: Realtime Battles
 
 ## Metadata
@@ -525,14 +533,14 @@ export function useBattle(challengeId: string): UseBattleReturn {
 ## Redis Data Structures
 
 ```redis
-# Estado de batalla
+## Estado de batalla
 HSET battle:{challengeId}:state
   status "active"
   startedAt "2026-01-27T10:00:00Z"
   endsAt "2026-01-27T10:05:00Z"
   exerciseId "ex-123"
 
-# Estado de jugador 1
+## Estado de jugador 1
 HSET battle:{challengeId}:player:{playerId1}
   score 350
   correctAnswers 7
@@ -541,7 +549,7 @@ HSET battle:{challengeId}:player:{playerId1}
   isConnected true
   isReady true
 
-# Estado de jugador 2
+## Estado de jugador 2
 HSET battle:{challengeId}:player:{playerId2}
   score 280
   correctAnswers 5
@@ -550,7 +558,7 @@ HSET battle:{challengeId}:player:{playerId2}
   isConnected true
   isReady true
 
-# TTL: 1 hora despues de finalizar
+## TTL: 1 hora despues de finalizar
 EXPIRE battle:{challengeId}:* 3600
 ```
 

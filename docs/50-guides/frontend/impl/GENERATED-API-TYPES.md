@@ -13,7 +13,7 @@ ultima_actualizacion: 2026-02-27
 
 ---
 
-## 📋 Resumen
+### 📋 Resumen
 
 Este sistema genera automáticamente tipos TypeScript desde la especificación OpenAPI/Swagger del backend, asegurando sincronización perfecta entre frontend y backend.
 
@@ -27,7 +27,7 @@ Este sistema genera automáticamente tipos TypeScript desde la especificación O
 
 ---
 
-## 🚀 Inicio Rápido
+### 🚀 Inicio Rápido
 
 ### 1. Iniciar Backend
 
@@ -82,7 +82,7 @@ type GetUserStatsResponse = paths['/v1/gamification/users/{userId}/stats']['get'
 
 ---
 
-## 📖 Uso Detallado
+### 📖 Uso Detallado
 
 ### Schemas (DTOs)
 
@@ -166,7 +166,7 @@ async function login(credentials: LoginRequest): Promise<void> {
 
 ---
 
-## 💡 Ejemplos Prácticos
+### 💡 Ejemplos Prácticos
 
 ### Ejemplo 1: Migrar API Module Existente
 
@@ -282,7 +282,7 @@ export function LoginForm() {
 
 ---
 
-## 🔄 Workflow de Desarrollo
+### 🔄 Workflow de Desarrollo
 
 ### Cuando Backend Cambia
 
@@ -333,7 +333,7 @@ npm run generate:api-types:watch
 
 ---
 
-## 🛠️ Troubleshooting
+### 🛠️ Troubleshooting
 
 ### Error: Backend no está corriendo
 
@@ -389,7 +389,7 @@ Si regeneraste tipos pero VS Code no los muestra:
 
 ---
 
-## 📁 Estructura de Archivos
+### 📁 Estructura de Archivos
 
 ```
 apps/frontend/
@@ -423,7 +423,7 @@ apps/frontend/
 
 ---
 
-## 🔗 Integración con CI/CD
+### 🔗 Integración con CI/CD
 
 ### GitHub Actions
 
@@ -479,7 +479,7 @@ jobs:
 
 ---
 
-## 📚 Referencias
+### 📚 Referencias
 
 - [openapi-typescript Documentation](https://github.com/drwpow/openapi-typescript)
 - [NestJS Swagger](https://docs.nestjs.com/openapi/introduction)
@@ -488,7 +488,7 @@ jobs:
 
 ---
 
-## ✅ Checklist de Migración
+### ✅ Checklist de Migración
 
 Para migrar módulo API existente a tipos generados:
 

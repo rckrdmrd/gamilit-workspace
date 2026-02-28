@@ -1,3 +1,11 @@
+---
+titulo: Flujos End-to-End - GAMILIT
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujos End-to-End - GAMILIT
 
 **Version:** 1.5.0

@@ -1,3 +1,11 @@
+---
+titulo: Flujo Shared - Perfil y Configuracion
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo Shared - Perfil y Configuracion (Student/Teacher/Admin)
 
 **Version:** 1.2.0

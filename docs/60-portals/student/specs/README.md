@@ -1,3 +1,11 @@
+---
+titulo: "Documentacion Tecnica - Student Portal"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # DOCUMENTACION TECNICA - STUDENT PORTAL
 ## GAMILIT Platform
 
@@ -21,7 +29,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 | **Paginas analizadas** | 27 (15 principales + 12 complementarias) |
 | **Componentes identificados** | 580 |
 | **Hooks personalizados** | 123 |
-| **APIs consumidas** | 66 API services |
+| **APIs consumidas** | 65 API services |
 | **Mecanicas de ejercicios** | 30 (23 M1-M3 + 5 M4 + 2 M5 auxiliares) |
 | **Test coverage actual** | ~13% (meta: 40%) |
 | **Gaps de coherencia identificados** | 8 (2 resueltos, 4 documentados, 2 en backlog) |
@@ -75,7 +83,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 | Documento | Ubicacion | Descripcion |
 |-----------|-----------|-------------|
 | **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 575 componentes, 132 hooks, 65 API services |
-| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 912 endpoints documentados |
+| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 914 endpoints documentados |
 
 ### Tarea Activa
 
@@ -830,7 +838,7 @@ docs/60-portals/student/specs/
 
 ### Inventarios
 - `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 575 componentes
-- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 912 endpoints
+- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 914 endpoints
 - `orchestration/inventarios/DATABASE_INVENTORY.yml` - 18 schemas, 173 tablas
 
 ### Codebase

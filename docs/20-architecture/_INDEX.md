@@ -1,3 +1,11 @@
+---
+titulo: "20 - Arquitectura"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # 20 - Arquitectura
 
 > Documentacion de arquitectura del sistema GAMILIT: stack tecnologico, modelo de datos, esquemas de base de datos, gamificacion y ambientes.

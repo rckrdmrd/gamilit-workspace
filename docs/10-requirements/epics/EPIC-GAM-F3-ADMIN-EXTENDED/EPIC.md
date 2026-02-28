@@ -1,3 +1,11 @@
+---
+titulo: "EXT-002: Admin Extendido"
+tipo: epic
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # EXT-002: Admin Extendido
 
 **Proyecto:** GAMILIT

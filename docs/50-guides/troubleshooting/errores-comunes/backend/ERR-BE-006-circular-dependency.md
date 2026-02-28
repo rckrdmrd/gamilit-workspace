@@ -7,10 +7,10 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-BE-006: Dependencia Circular entre Modulos
 
-## Descripcion
+### Descripcion
 Dos o mas modulos NestJS se importan mutuamente creando un ciclo de dependencia. TypeORM y el contenedor de inyeccion de NestJS no pueden resolver el orden de inicializacion, causando errores en tiempo de arranque o valores `undefined` en tiempo de ejecucion.
 
-## Sintomas
+### Sintomas
 - Error: `Nest cannot resolve dependencies of the XxxService (?). Please make sure that the argument dependency at index [N] is available in the XxxModule context`
 - Error: `TypeError: Cannot read properties of undefined (reading 'someMethod')` al invocar un service inyectado
 - Warning en consola: `A circular dependency has been detected`
@@ -18,13 +18,13 @@ Dos o mas modulos NestJS se importan mutuamente creando un ciclo de dependencia.
 - Tests unitarios pasan pero tests de integracion o e2e fallan con errores de dependencia
 - Hot reload se rompe intermitentemente durante desarrollo
 
-## Causa Raiz
+### Causa Raiz
 1. **Importacion mutua directa:** ModuleA importa ModuleB y ModuleB importa ModuleA en sus respectivos `imports[]`
 2. **Inyeccion circular de services:** ServiceA depende de ServiceB y ServiceB depende de ServiceA sin usar `forwardRef()`
 3. **Relaciones bidireccionales de TypeORM:** Entity A referencia Entity B y viceversa, forzando que ambos modulos se importen mutuamente para resolver repositories
 4. **Acoplamiento excesivo:** Demasiada logica compartida entre dos modulos que deberia estar en un modulo comun
 
-## Solucion
+### Solucion
 
 ### 1. Usar forwardRef() para inyeccion circular de services
 ```typescript
@@ -115,7 +115,7 @@ npm run start:dev 2>&1 | grep -i "circular"
 # Si no hay output, la dependencia circular esta resuelta
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Diseno modular unidireccional:** Definir una jerarquia clara donde modulos de nivel inferior no dependan de modulos de nivel superior
 2. **Usar eventos** para comunicacion entre modulos del mismo nivel en lugar de inyeccion directa
@@ -152,7 +152,7 @@ grep -rl "forwardRef" apps/backend/src --include="*.ts" | \
   sed 's|.*/modules/||' | sed 's|/.*||' | sort | uniq -c | sort -rn
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Modulos Involucrados | Tipo de Circular | Estado |
 |-------|---------------------|-----------------|--------|
@@ -162,7 +162,7 @@ grep -rl "forwardRef" apps/backend/src --include="*.ts" | \
 | 2026-01-22 | gamification/peer-challenges (BattleSessionService <-> PeerChallengesService, ChallengeParticipantsService) | Service-level forwardRef (2x) | Resuelto: doble forwardRef() en battle-session.service.ts |
 | 2026-01-28 | progress (ModuleProgressService <-> CertificateService) | Service-level forwardRef | Resuelto: forwardRef() en module-progress.service.ts |
 
-## Referencias
+### Referencias
 
 - **NestJS Circular Dependency:** https://docs.nestjs.com/fundamentals/circular-dependency
 - **NestJS Events:** https://docs.nestjs.com/techniques/events

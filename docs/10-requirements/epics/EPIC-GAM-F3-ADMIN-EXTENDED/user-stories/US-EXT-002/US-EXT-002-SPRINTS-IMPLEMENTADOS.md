@@ -1,3 +1,11 @@
+---
+titulo: "Historias de Usuario - Admin Portal Extendido"
+tipo: user-story
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Historias de Usuario - Admin Portal Extendido
 ## Sprints 1, 2 y 3 Implementados
 

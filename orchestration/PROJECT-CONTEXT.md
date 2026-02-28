@@ -1,6 +1,6 @@
 # PROJECT-CONTEXT - GAMILIT
 
-**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.1.1 | **Fecha:** 2026-02-27
+**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.1.2 | **Fecha:** 2026-02-28
 
 ---
 
@@ -121,22 +121,22 @@ teachers, parents, analytics, reports
 
 ## METRICAS ACTUALES
 
-**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v14.5.0)
+**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v14.6.0)
 
 ### Base de Datos
 18 schemas | 173 tablas | 18 views | 7 MVs | 158 funciones (DDL) | 68 triggers | 251 RLS policies | 42 ENUMs
 
 ### Backend
-23 modulos | 156 files (157 classes) | 401 DTOs | 172 services | 108 controllers | 912 endpoints | 15 guards | 18 decorators
+23 modulos | 156 files (157 classes) | 401 DTOs | 172 services | 108 controllers | 914 endpoints | 15 guards | 18 decorators
 
 ### Frontend
-575 componentes | 132 hooks | 72 paginas | 74 routes | 13 stores | 65 API services | 4 portales | 30 mecanicas
+575 componentes | 132 hooks | 70 paginas | 74 routes | 13 stores | 65 API services | 4 portales | 30 mecanicas | .env.example creado (64 vars)
 
 ### Testing
 2324 tests (2296 passed + 28 skipped, 63 spec files) | Target 80% cobertura | Coherencia DDL-Backend: 90.2%
 
 ### Documentacion
-Health Score: ~98/100 (era 85/100, remediacion completada 2026-02-27) | API coverage: ~69% (631/912 endpoints) | Frontmatter: >90% | Standards: 35 archivos (post-split)
+Health Score: ~99/100 (era 98, remediacion 2026-02-28: 10 file splits, portal API standardization, wave-3 archive, TASK flatten) | API coverage: ~71% (648/914 endpoints) | Frontmatter: 100% (2191 files) | Standards: 35 archivos (post-split) | Flow docs: 24 (FL-SYS/TCH/ADM) | Stack: 17 versiones corregidas | Files >1000L in scope: 0 (was 10)
 
 ---
 
@@ -184,4 +184,4 @@ git add . && git commit -m "[GAM-XXX] desc" && git push origin master
 
 *Sistema NEXUS v4.1 - Context Management L1*
 *SSOT: orchestration/inventarios/MASTER_INVENTORY.yml*
-*Ultima actividad: 2026-02-27 — Doc Health Remediation 85->98/100 completada*
+*Ultima actividad: 2026-02-27 — Code-Doc Alignment Remediation completada (stack versions, env vars, page count, 24 flow docs, ADR-045 update, API coverage 69%→71%)*

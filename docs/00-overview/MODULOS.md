@@ -1,3 +1,11 @@
+---
+titulo: "Modulos del Sistema - GAMILIT"
+tipo: overview
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Modulos del Sistema - GAMILIT
 
 **Version:** 1.1.0
@@ -432,7 +440,7 @@ Generacion de reportes y exportaciones.
 | 21 | analytics | 2 | ~25 | 5 | 3 | 85% |
 | 22 | reports | 3 | ~20 | 3 | 2 | 75% |
 | 23 | mail | - | - | 2 | - | 100% |
-| **TOTAL** | | **156** | **912** | **172** | **108** | **~98%** |
+| **TOTAL** | | **156** | **914** | **172** | **108** | **~98%** |
 
 ---
 

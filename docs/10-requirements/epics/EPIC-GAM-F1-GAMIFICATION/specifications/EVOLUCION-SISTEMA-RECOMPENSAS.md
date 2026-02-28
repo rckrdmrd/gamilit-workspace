@@ -1,3 +1,11 @@
+---
+titulo: "Evolución del Sistema de Recompensas"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Evolución del Sistema de Recompensas
 
 **Épica:** EAI-003 - Gamificación

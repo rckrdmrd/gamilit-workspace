@@ -1,3 +1,11 @@
+---
+titulo: "Portal Padres — Indice"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Portal Padres — Indice
 
 > Documentacion del portal de padres de GAMILIT. Cubre vinculacion padre-estudiante, seguimiento de progreso academico, notificaciones y comunicacion con maestros.
@@ -7,6 +15,7 @@
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
 | `PORTAL-PARENTS-GUIDE.md` | Guia principal — arquitectura, 7 paginas implementadas, flujos de vinculacion, reportes semanales, notificaciones (v2.0.0) | Actualizado 2026-02-27 |
+| `PORTAL-PARENTS-API-REFERENCE.md` | Referencia API del portal padres — auth separado, vinculacion, dashboard, progreso, reportes, notificaciones (SSOT) | Actualizado 2026-02-28 |
 | `_MAP.md` | Mapa de navegacion del directorio parents | Actualizado 2026-02-27 |
 
 ## Paginas Implementadas (7/7)

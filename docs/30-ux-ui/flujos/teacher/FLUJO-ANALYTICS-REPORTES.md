@@ -1,3 +1,11 @@
+---
+titulo: FL-TCH-04 - Teacher Analytics / Reports
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-TCH-04 - Teacher Analytics / Reports
 
 **ID:** FL-TCH-04

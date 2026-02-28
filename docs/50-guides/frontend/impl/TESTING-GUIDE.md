@@ -28,7 +28,7 @@ GAMILIT utiliza Vitest como framework de testing para el frontend, junto con Rea
 
 ---
 
-## Ejecutar Tests
+### Ejecutar Tests
 
 ```bash
 # Todos los tests
@@ -49,7 +49,7 @@ npm run test -- RankBadge.test.tsx
 
 ---
 
-## Estructura de Tests
+### Estructura de Tests
 
 ```
 features/gamification/
@@ -69,7 +69,7 @@ features/gamification/
 
 ---
 
-## Testing de Componentes
+### Testing de Componentes
 
 ### Test Básico
 
@@ -166,7 +166,7 @@ describe('ComodinCard', () => {
 
 ---
 
-## Testing de Hooks
+### Testing de Hooks
 
 ### Hook con React Query
 
@@ -274,7 +274,7 @@ describe('useAuthStore', () => {
 
 ---
 
-## Mocking de API con MSW
+### Mocking de API con MSW
 
 ### Setup
 
@@ -355,7 +355,7 @@ describe('GamificationPage', () => {
 
 ---
 
-## Testing de Formularios
+### Testing de Formularios
 
 ```typescript
 // features/auth/components/__tests__/LoginForm.test.tsx
@@ -412,7 +412,7 @@ describe('LoginForm', () => {
 
 ---
 
-## Providers Wrapper
+### Providers Wrapper
 
 ```typescript
 // test/utils/test-utils.tsx
@@ -467,7 +467,7 @@ describe('MyComponent', () => {
 
 ---
 
-## Coverage Thresholds
+### Coverage Thresholds
 
 ```typescript
 // vite.config.ts
@@ -496,7 +496,7 @@ export default defineConfig({
 
 ---
 
-## Buenas Prácticas
+### Buenas Prácticas
 
 1. **Testear comportamiento, no implementación**: Qué hace, no cómo lo hace
 2. **Queries accesibles primero**: `getByRole`, `getByLabelText`
@@ -508,7 +508,7 @@ export default defineConfig({
 
 ---
 
-## Ver También
+### Ver También
 
 - [ESTRUCTURA-FEATURES.md](./ESTRUCTURA-FEATURES.md) - Dónde ubicar tests
 - [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md) - Testing de stores

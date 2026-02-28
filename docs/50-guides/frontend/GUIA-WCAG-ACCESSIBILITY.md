@@ -9,7 +9,7 @@ estado: vigente
 
 # Guia de Accesibilidad WCAG para React
 
-## 1. Proposito
+### 1. Proposito
 
 Implementar WCAG 2.1 nivel AA en los 575 componentes React de gamilit. Esta guia establece
 los criterios, patrones y herramientas necesarios para garantizar que la plataforma educativa
@@ -18,7 +18,7 @@ auditivas, motoras o cognitivas.
 
 ---
 
-## 2. Criterios WCAG 2.1 AA Prioritarios
+### 2. Criterios WCAG 2.1 AA Prioritarios
 
 | Principio | Criterio | Aplicacion en Gamilit |
 |-----------|----------|----------------------|
@@ -35,7 +35,7 @@ auditivas, motoras o cognitivas.
 
 ---
 
-## 3. Patrones React para Accesibilidad
+### 3. Patrones React para Accesibilidad
 
 ### 3.1 Botones y Links
 
@@ -185,7 +185,7 @@ auditivas, motoras o cognitivas.
 
 ---
 
-## 4. Contraste de Colores
+### 4. Contraste de Colores
 
 ### Ratios Minimos
 
@@ -229,7 +229,7 @@ Tailwind CSS incluye esta clase por defecto como `sr-only`.
 
 ---
 
-## 5. Focus Management
+### 5. Focus Management
 
 ### Focus Visible
 
@@ -307,7 +307,7 @@ const closeModal = () => {
 
 ---
 
-## 6. Testing de Accesibilidad
+### 6. Testing de Accesibilidad
 
 ### Tests Automaticos con axe-core
 
@@ -367,7 +367,7 @@ test('leaderboard tiene tabla accesible', async ({ page }) => {
 
 ---
 
-## 7. Componentes Prioritarios para a11y
+### 7. Componentes Prioritarios para a11y
 
 ### Prioridad Alta (impacto directo en aprendizaje)
 
@@ -398,7 +398,7 @@ test('leaderboard tiene tabla accesible', async ({ page }) => {
 
 ---
 
-## 8. Checklist WCAG para Componentes Nuevos
+### 8. Checklist WCAG para Componentes Nuevos
 
 Antes de marcar un componente como completado, verificar:
 
@@ -418,7 +418,7 @@ Antes de marcar un componente como completado, verificar:
 
 ---
 
-## 9. Patrones Especificos de Gamilit
+### 9. Patrones Especificos de Gamilit
 
 ### Barras de Progreso (XP, Modulos)
 
@@ -485,7 +485,7 @@ Cobertura actual tras Wave 9 de accesibilidad (51 paginas, 4 portales):
 
 ---
 
-## 10. Referencias
+### 10. Referencias
 
 - **WCAG 2.1 Quick Reference:** https://www.w3.org/WAI/WCAG21/quickref/
 - **React Accessibility:** https://react.dev/reference/react-dom/components#form-components

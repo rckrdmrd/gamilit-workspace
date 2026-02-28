@@ -1,3 +1,11 @@
+---
+titulo: "Resumen de Actualización de Documentos de Finiquito"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 > **[HISTORICAL SNAPSHOT — 2025-11-16]** Stack references in this document reflect the November 2025 delivery state (PostgreSQL 16.x, Vite 7.x). Current stack: PostgreSQL 15, Vite 6.x. Content preserved as-is for audit trail.
 
 > **[SUPERSEDED]** This summary has been superseded by the consolidated version: `RESUMEN-CONSOLIDADO-ENTREGA.md` (Jan 2026).
@@ -201,9 +209,9 @@ Antes de entregar el USB, verificar:
 **Para preparar la entrega:**
 
 ```bash
-# 1. Conectar USB (si es físico)
-# 2. Identificar punto de montaje (ej: /media/usb)
-# 3. Ejecutar script de preparación
+## 1. Conectar USB (si es físico)
+## 2. Identificar punto de montaje (ej: /media/usb)
+## 3. Ejecutar script de preparación
 
 cd /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/finiquito
 ./prepare_usb_delivery.sh /media/usb/GAMILIT_ENTREGA

@@ -254,7 +254,7 @@ La aplicacion 12-Factor usa una separacion estricta entre las etapas de build, r
 1. **Implementar git tags para cada deploy a produccion:**
 
 ```bash
-# Al hacer deploy exitoso
+## Al hacer deploy exitoso
 git tag -a v1.2.3 -m "Release v1.2.3 - descripcion breve"
 git push origin v1.2.3
 ```
@@ -263,18 +263,18 @@ git push origin v1.2.3
 
 ```bash
 #!/bin/bash
-# scripts/release.sh
+## scripts/release.sh
 VERSION=$1
 if [ -z "$VERSION" ]; then
   echo "Uso: ./scripts/release.sh v1.2.3"
   exit 1
 fi
 
-# Verificar que el build es exitoso
+## Verificar que el build es exitoso
 cd apps/backend && npm run build && cd ..
 cd apps/frontend && npm run build && cd ..
 
-# Crear tag
+## Crear tag
 git tag -a "$VERSION" -m "Release $VERSION - $(date +%Y-%m-%d)"
 git push origin "$VERSION"
 

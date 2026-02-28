@@ -1,3 +1,11 @@
+---
+titulo: "VALIDACION: EAI-007 - Correccion Discrepancia DTO Frontend-Backend M4/M5"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # VALIDACION: EAI-007 - Correccion Discrepancia DTO Frontend-Backend M4/M5
 
 **Agente:** Tech-Leader-Agent
@@ -24,11 +32,11 @@
 
 ### Ejecucion de Seeds
 ```bash
-# Comando ejecutado
+## Comando ejecutado
 PGPASSWORD=*** psql -h localhost -U gamilit_user -d gamilit_platform \
   -f seeds/dev/educational_content/11-exercise_validation_config_m4_m5.sql
 
-# Resultado
+## Resultado
 INSERT 0 8
 NOTICE: Configuraciones M4: 5 de 5
 NOTICE: Configuraciones M5: 3 de 3

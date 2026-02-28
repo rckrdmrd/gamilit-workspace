@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.5.0"
-fecha: "2026-02-27"  # v14.5.0: Doc health remediation 85->98 - ~296 ops (230 mod, 57 created, 9 renamed), +118 endpoints documented, +33 nav files, frontmatter campaign ~209 files, ESTANDAR splits
+version: "14.8.0"
+fecha: "2026-02-28"  # v14.8.0: Doc remediation — 10 oversized files split (14K→51 files), 596 TASK-* dirs flattened, portal API refs standardized (4 SSOT in 60-portals/), wave-3-technical archived (70 files). Health ~99/100. Previous: v14.7.0 Integration audit
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -49,7 +49,7 @@ metricas:
     dtos: 401                    # 401 *.dto.ts files in modules/. Verified 2026-02-21
     services: 172                # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
     controllers: 108
-    endpoints: 912               # Verified 2026-02-21: +7 ResourceSharing endpoints on teacher-content.controller (rate, comments GET/POST, download, resources list/get)
+    endpoints: 914               # Verified 2026-02-28: 914 = 856 active + 58 conditional (data_warehouse). +2 autosave endpoints. Integration audit confirmed.
     guards: 15
     decorators: 18               # 18 symbols en 9 archivos
     interceptors: 6
@@ -60,13 +60,13 @@ metricas:
   frontend:
     componentes_tsx: 575              # +3 parent portal pages (Notifications, Messages, Settings). Reconteo 2026-02-27: 572 strict base
     hooks: 132                        # Reconteo 2026-02-27: 132 use*.ts en hooks/ dirs (excl. type files, API services, examples)
-    paginas: 72                       # +3 parent portal pages (ParentNotificationsPage, ParentMessagesPage, ParentSettingsPage). Base: 69
+    paginas: 70                       # Corrected 2026-02-27: 70 routable page components (was 72 — overcounted 2 items). Incl. student, teacher, admin, parent portals.
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
     api_service_files: 65             # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0)
     api_calls_total: 580              # ~580: +resourceSharingApi calls over previous 575
     portales: 4
     mecanicas_ejercicio: 30           # 30 mecanicas unicas de ejercicio
-    routes: 74                        # +3 routes for new parent portal pages. Base was 71 (corrected 2026-02-27)
+    routes: 74                        # 74 routes in App.tsx. Base was 71 (corrected 2026-02-27)
     type_files: 49                    # 49 archivos type definition
     recursos_multimedia:
       meme_svgs: 6                   # public/memes/*.svg (Marie Curie, flat design 600x500px)
@@ -75,18 +75,23 @@ metricas:
     tests_frontend: 236               # +23 CompletionModal accessibility tests, +51 USE_PROXY tests (api.config.test.ts)
 
   docs:
-    health_score: 98                 # 98/100 (conservador, post-remediacion 2026-02-27). Era 85/100 pre-remediacion. Era 65/100 pre-auditoria integral
+    health_score: 99                 # 99/100 (post-remediation 2026-02-28: 10 splits, portal standardization, TASK flatten, wave-3 archive). Era 98 post-audit, 85 pre-remediacion, 65 pre-auditoria
     standards_md_files: 35           # 35 .md en docs/40-standards/ (incl. ESTANDAR-SEGURIDAD-API, -WEB, ESTANDAR-TESTING-UNIT/INTEGRATION/E2E/ARCHITECTURE post-split)
     standards_prev: 17               # 17 archivos pre-split (ESTANDAR-SEGURIDAD + ESTANDAR-TESTING eran monolitos)
-    api_coverage_endpoints: 631      # ~631/912 = ~69% (prev 513). +118 nuevos: ExerciseValidation(21)+Notifications(32)+ClassroomMissions(5)+TeacherGrades(2)+condicionales ETL/ML/Viz(58)
+    api_coverage_endpoints: 648      # ~648/914 = ~71% (prev 631/912 ~69%, prev 513/912 ~56%). +17 nuevos: Profile(3)+BonusCoins(1)+ResourceSharing(13). Parents API already complete (18/18).
     api_coverage_conditional: 58     # 58 endpoints condicionales (ETL/ML/Visualization, ENABLE_DATA_WAREHOUSE=true)
     nav_index_files: 18              # +18 _INDEX.md creados en FASE 3A
     nav_map_files: 33                # +33 _MAP.md creados (23 EPIC + 10 non-EPIC) en FASE 3B/3C
     frontmatter_coverage: ">90%"     # FASE 5: ~209 archivos con frontmatter (standards 31, architecture 47, guides ~100+, portals 31)
     schema_ref_coverage: "~98%"      # ~170/173 tablas documentadas (post-remediacion previa)
     ghost_tables_removed: 37         # 37 [NO DDL] definiciones fantasma eliminadas (FASE 1D, ~740 lineas)
+    flow_docs_total: 57              # 24 new flows created (FL-SYS-02..05 + FL-TCH-09..17 + FL-ADM-12..22) + ~33 pre-existing. With index/map files.
+    stack_versions_corrected: 17     # Phase 1: redis, bcrypt, swagger v11, framer-motion v12, recharts v3, zod v4, vitest v3, +react-query, -headlessui, -msw, others
+    env_file_created: ".env.example" # 310 lines, 64 variables created 2026-02-27 (was missing)
+    adr_045_status: "Infrastructure Ready, Adoption Pending (45 classes, 39 active throws, 683 HTTP exceptions)"
     remediation_report: "orchestration/tareas/TASK-2026-02-27-DOC-HEALTH-100/REMEDIATION-REPORT.md"
-    nota_remediation: "Remediacion documentacion completada 2026-02-27. 5 fases, ~23 subagentes, ~296 operaciones. Health Score: 85->98/100"
+    alignment_remediation_report: "orchestration/tareas/TASK-2026-02-27-CODE-DOC-ALIGNMENT/REMEDIATION-REPORT.md"
+    nota_remediation: "Doc remediacion completada 2026-02-27. Health Score: 85->98/100. Code-doc alignment completada 2026-02-27: stack versions, env vars, page count, flow docs (24 new), ADR-045 update."
 
   calidad:
     tests_total: 2324                # 2324 total (2296 passed + 28 skipped), 63 spec files. Verified 2026-02-26
@@ -97,8 +102,8 @@ metricas:
     dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
     lint_warnings: 104              # 104 warnings (0 errors). Previously 71 — increase from teacher portal re-enable + mobile fixes
     integration_test_files: 5       # jest.integration.config.js + 5 integration spec files added Phase 6D. Script: test:integration
-    domain_error_classes: 42        # 25 auth + 17 gamification error classes (ADR-045 migration, Phase 6D)
-    domain_error_throws: 129        # 50 auth + 79 gamification throws across modules
+    domain_error_classes: 45        # 25 auth + 17 gamification + 3 educational error classes (ADR-045, verified 2026-02-27)
+    domain_error_throws: 39         # 32 auth + 7 gamification actual throws in services (corrected from 129 — see ADR-045 Estado de Migracion)
     data_warehouse_datasource: "conditional"  # ENABLE_DATA_WAREHOUSE feature flag — etl/ml/visualization modules conditional
 
 # -------------------------------------------------------------------------------
@@ -177,6 +182,15 @@ features:
     - "ResourceSharing full-stack (3 DDL tables + 3 entities + 7 endpoints + API + hook)"
     - "CI/CD pipelines (frontend-ci + backend-ci working, 24 standards indexed)"
     - "Lint warnings 911 -> 71 (MQ-007 any reduction)"
+    - "Stack versions corrected in STACK-TECNOLOGICO.md (17 corrections)"
+    - ".env.example created (310 lines, 64 variables)"
+    - ".env.production.example fixed (DB_NAME→DB_DATABASE)"
+    - "MODELO-DATOS.md table names corrected (6 corrections: profiles, user_sessions, auth_providers, etc.)"
+    - "24 system/teacher/admin flow docs created (FL-SYS-02..05 + FL-TCH-09..17 + FL-ADM-12..22)"
+    - "AMBIENTES-DEV-PROD.md expanded (13 subsections, ~60+ env vars documented)"
+    - "ADR-045 updated to reflect Infrastructure Ready, Adoption Pending status"
+    - "CommunicationModule verified imported in app.module.ts"
+    - "BACKEND_INVENTORY updated for etl/ml/viz conditional import status"
 
   parciales:
     - "social (60%): DDL+entities completos, all registered in forFeature() (FIX P2), ~40 endpoints unwired in frontend"
@@ -210,5 +224,5 @@ credenciales:
   redis_db: 0
 
 # ===============================================================================
-# FIN MASTER INVENTORY v14.5.0
+# FIN MASTER INVENTORY v14.6.0
 # ===============================================================================

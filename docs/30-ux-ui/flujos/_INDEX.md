@@ -1,3 +1,11 @@
+---
+titulo: _INDEX - Flujos End-to-End
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # _INDEX - Flujos End-to-End
 
 > Indice de flujos, auditorias y matrices de trazabilidad.
@@ -27,4 +35,5 @@
 | [parents/](./parents/) | Flujos portal padres |
 | [shared/](./shared/) | Flujos transversales |
 | [student/](./student/) | Flujos portal estudiante |
+| [system/](./system/) | Flujos de sistema (pipelines, cadenas, seguridad, multi-tenant) |
 | [teacher/](./teacher/) | Flujos portal docente |

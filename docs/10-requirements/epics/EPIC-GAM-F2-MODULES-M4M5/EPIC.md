@@ -1,3 +1,11 @@
+---
+titulo: "EPIC-GAM-F2-MODULES-M4M5: Modulos M4-M5 (Lectura Digital + Produccion)"
+tipo: epic
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # EPIC-GAM-F2-MODULES-M4M5: Modulos M4-M5 (Lectura Digital + Produccion)
 
 | Campo | Valor |

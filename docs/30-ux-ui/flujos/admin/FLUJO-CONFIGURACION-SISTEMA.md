@@ -1,3 +1,11 @@
+---
+titulo: FL-ADM-02 - Configuracion Global del Sistema
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-ADM-02 - Configuracion Global del Sistema
 
 **Version:** 1.1.0

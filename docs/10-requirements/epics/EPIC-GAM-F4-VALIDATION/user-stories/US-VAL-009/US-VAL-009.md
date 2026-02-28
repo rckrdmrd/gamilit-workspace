@@ -42,10 +42,10 @@ YAML tracking + _INDEX.md + BACKLOG.yml actualizados
 
 | Task | Titulo | Tipo |
 |------|--------|------|
-| [TASK-VAL-009-F5-DOC-REPORT](TASK-VAL-009-F5-DOC-REPORT/) | Generate VALIDATION-REPORT | Report |
-| [TASK-VAL-009-F5-DOC-PLAN](TASK-VAL-009-F5-DOC-PLAN/) | Correction plan | Plan |
-| [TASK-VAL-009-F5-DOC-SYNC](TASK-VAL-009-F5-DOC-SYNC/) | Sync inventories | Sync |
-| [TASK-VAL-009-F5-DOC-TRACKING](TASK-VAL-009-F5-DOC-TRACKING/) | YAML + INDEX + BACKLOG | Tracking |
+| [TASK-VAL-009-F5-DOC-REPORT](TASK-VAL-009-F5-DOC-REPORT.md) | Generate VALIDATION-REPORT | Report |
+| [TASK-VAL-009-F5-DOC-PLAN](TASK-VAL-009-F5-DOC-PLAN.md) | Correction plan | Plan |
+| [TASK-VAL-009-F5-DOC-SYNC](TASK-VAL-009-F5-DOC-SYNC.md) | Sync inventories | Sync |
+| [TASK-VAL-009-F5-DOC-TRACKING](TASK-VAL-009-F5-DOC-TRACKING.md) | YAML + INDEX + BACKLOG | Tracking |
 
 ---
 

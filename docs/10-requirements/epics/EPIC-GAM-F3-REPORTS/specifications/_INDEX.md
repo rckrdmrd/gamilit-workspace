@@ -1,3 +1,11 @@
+---
+titulo: "_INDEX - Especificaciones EPIC-GAM-F3-REPORTS"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # _INDEX - Especificaciones EPIC-GAM-F3-REPORTS
 
 > Especificaciones tecnicas de reportes.

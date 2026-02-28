@@ -150,7 +150,7 @@ database_schemas:
     tablas: 0
 
 # ========================================
-# MODULOS DE BACKEND (23 modulos, 912 endpoints)
+# MODULOS DE BACKEND (23 modulos, 914 endpoints)
 # NOTA: etl, ml, visualization existen en disco pero NO importados en app.module.ts
 #       (requieren datasource data_warehouse no configurado — evaluacion pendiente)
 # ========================================

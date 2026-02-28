@@ -7,10 +7,10 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-INT-004: Relacion Entity Cross-Datasource sin Include
 
-## Descripcion
+### Descripcion
 Cuando una entidad en un datasource tiene una relacion TypeORM (`@ManyToOne`, `@OneToMany`, `@OneToOne`) hacia una entidad que solo esta registrada en otro datasource, TypeORM falla porque no puede encontrar la metadata de la entidad relacionada. Este es uno de los errores mas frecuentes en gamilit, con 8+ FIX-BE-* entries documentados directamente en `app.module.ts`.
 
-## Sintomas
+### Sintomas
 - Error: `No metadata for "Profile" was found` al cargar una entidad con relacion eager
 - Error: `EntityMetadataNotFoundError: No metadata for "User" was found`
 - Queries con `relations: ['user']` fallan aunque la FK existe en la base de datos
@@ -18,13 +18,13 @@ Cuando una entidad en un datasource tiene una relacion TypeORM (`@ManyToOne`, `@
 - Error solo aparece cuando se usa `leftJoinAndSelect`, `relations`, o `eager: true`
 - Build compila exitosamente; el error es puramente de runtime
 
-## Causa Raiz
+### Causa Raiz
 1. TypeORM requiere que TODAS las entidades involucradas en una relacion esten registradas en el MISMO datasource
 2. Entidad A esta en `educationalDataSource` y tiene `@ManyToOne(() => User)`, pero User solo esta en `defaultDataSource`
 3. Esto es una limitacion de TypeORM con multiples datasources: no puede resolver relaciones cross-datasource
 4. La solucion historica en gamilit ha sido duplicar los entity paths en multiples datasources (ver comentarios `FIX-BE-*` en `app.module.ts`)
 
-## Solucion
+### Solucion
 
 ### 1. Identificar la relacion cross-datasource
 ```bash
@@ -92,7 +92,7 @@ const student = await this.studentRepo.findOne({
 cd apps/backend && npm run build && npm run test
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Entidades comunes pre-incluidas**: User, Profile, Tenant, School, Module, Exercise deben estar en TODOS los datasources que los referencien
 2. **Comentarios FIX-BE-***: Documentar cada duplicacion con numero secuencial y razon
@@ -127,7 +127,7 @@ grep -rn "@ManyToOne\|@OneToMany\|@OneToOne\|@ManyToMany" src/modules/*/entities
 # Las entidades con mas referencias son las que mas probablemente necesiten duplicacion
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | FIX ID | Entity Duplicada | Datasource Destino | Relacion Rota | Estado |
 |-------|--------|------------------|--------------------|----|--------|
@@ -140,7 +140,7 @@ grep -rn "@ManyToOne\|@OneToMany\|@OneToOne\|@ManyToMany" src/modules/*/entities
 | 2026-01-15 | FIX-BE-016 | User | gamificationDataSource | Achievement.user | Resuelto |
 | 2026-01-10 | FIX-BE-017 | User | socialDataSource | TeamMember.user | Resuelto |
 
-## Referencias
+### Referencias
 
 - **app.module.ts:** `apps/backend/src/app.module.ts` (ver comentarios FIX-BE-*)
 - **TypeORM Multiple Datasources:** https://typeorm.io/multiple-data-sources

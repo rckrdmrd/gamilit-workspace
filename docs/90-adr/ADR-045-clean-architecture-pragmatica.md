@@ -13,6 +13,13 @@ estado: aceptada
 **Deciders:** Tech Lead, Backend Team
 **Tags:** architecture, backend, clean-architecture, domain-errors, nestjs
 
+> **ESTADO DE IMPLEMENTACION (verificado 2026-02-27):**
+> Infrastructure lista, adopcion pendiente.
+> - 45 domain error classes creadas (25 auth + 17 gamification + 3 educational + 6 base compartidas).
+> - Adoption real: solo 2 modulos han migrado parcialmente (auth: 100%, gamification: ~10%).
+> - 683 HTTP exceptions activas en `.service.ts` files. 93 service files (de 172 total) aun sin migrar.
+> - Ver seccion "Estado de Migracion" mas abajo para detalle por modulo.
+
 ---
 
 ## Context
@@ -40,7 +47,7 @@ Implementar esto de golpe implicaria:
 - Refactorizar 172 services para separar logica de dominio de acceso a datos.
 - Duplicar 156 entity files (una version dominio, otra ORM).
 - Crear ~150+ interfaces de repositorio con sus implementaciones.
-- Riesgo de regresion masivo en un sistema con 912 endpoints en produccion activa.
+- Riesgo de regresion masivo en un sistema con 914 endpoints en produccion activa.
 
 ### Evaluacion
 
@@ -98,13 +105,17 @@ Las entities siguen siendo clases TypeORM con decoradores ORM. No se crean entit
 ### Orden de Adopcion
 
 ```
-Fase 1 (completada 2026-02-27):  Domain Errors Hierarchy (MQ-002)
-                   +-- DomainError base class
-                   +-- Subclases semanticas
-                   +-- Global exception filter
-                   +-- Migracion gradual de services
+Fase 1 (infraestructura completa, adopcion parcial):
+                   Domain Errors Hierarchy (MQ-002)
+                   +-- DomainError base class              [DONE]
+                   +-- Subclases semanticas (6 base)       [DONE]
+                   +-- Global exception filter             [DONE]
+                   +-- auth module: 100% migrado           [DONE]
+                   +-- gamification: ~10% migrado          [EN PROGRESO]
+                   +-- 21 modulos restantes                [PENDIENTE]
 
-Fase 2 (futura):  Repository Pattern selectivo (MQ-005)
+Fase 2 (diferida — MQ-005 bloqueado hasta MQ-002 >=50%):
+                   Repository Pattern selectivo
                    +-- Solo modulos con logica compleja
                    +-- Interfaces + implementaciones
                    +-- Inyeccion via NestJS DI
@@ -113,6 +124,41 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
                    +-- Solo para flujos de negocio criticos
                    +-- Evaluacion caso por caso
 ```
+
+---
+
+## Estado de Migracion
+
+> Seccion de estado real. Actualizar despues de cada wave de migracion.
+
+### Resumen (verificado 2026-02-27)
+
+| Metrica | Valor |
+|---------|-------|
+| Domain error classes creadas | 45 total (25 auth + 17 gamification + 3 educational + 6 base compartidas) |
+| Service files con domain errors | 8 de 172 (4.6%) |
+| Domain error throws en `.service.ts` | 39 (32 auth + 7 gamification) |
+| HTTP exceptions en `.service.ts` | 683 throw sites |
+| Service files sin migrar | 164 de 172 (95.3%) |
+
+### Por Modulo
+
+| Modulo | Estado | HTTP Exceptions | Domain Error Throws | Notas |
+|--------|--------|-----------------|---------------------|-------|
+| **auth** | COMPLETADO | 0 | 32 en 5/6 services | Unico modulo 100% migrado |
+| **gamification** | EN PROGRESO | 72 | 7 en 3/18 services | inventory, shop, user-stats migrados parcialmente |
+| **educational** | INFRAESTRUCTURA LISTA | ~65+ | 0 | 3 error classes creadas, ninguna en uso |
+| Todos los demas (20 modulos) | PENDIENTE | 608 | 0 | Sin migracion iniciada |
+
+### Clarificacion: "129 throw sites migrados"
+
+La entrada del 2026-02-27 en el historial de revisiones afirmaba "129 throw sites migrados". Esta cifra no corresponde al estado real del codigo. El conteo verificado es:
+
+- **39 domain error throws** en archivos `.service.ts` (32 en auth, 7 en gamification).
+- **683 HTTP exceptions** activas en archivos `.service.ts`.
+- La cifra de 129 probablemente incluyó lanzamientos en tests, guards, o conteo erroneo.
+
+**Conclusion:** La infraestructura (clases, filtro global, registration en `main.ts`) esta completa. La migracion de services es la tarea pendiente.
 
 ---
 
@@ -127,7 +173,7 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 
 **Cons:**
 - Refactoring de 172 services, 156 entity files.
-- Alto riesgo de regresion en sistema en produccion (912 endpoints).
+- Alto riesgo de regresion en sistema en produccion (914 endpoints).
 - Duplicacion significativa de modelos.
 - Tiempo estimado: 3-4 sprints solo para la migracion.
 
@@ -190,7 +236,7 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 
 | Dependencia | Tipo | Estado | Descripcion |
 |-------------|------|--------|-------------|
-| MQ-002 | Pre-requisito | Completado | Domain Errors Hierarchy — 42 classes (25 auth, 17 gamification), 129 throw sites. Migration guide: docs/50-guides/backend/DOMAIN-ERROR-MIGRATION.md |
+| MQ-002 | Pre-requisito | Infraestructura Completa / Adopcion Pendiente | Domain Errors Hierarchy — 45 classes (25 auth, 17 gamification, 3 educational, 6 base compartidas). 39 throw sites en services (32 auth + 7 gamification). 683 HTTP exceptions activas en services. Migration guide: docs/50-guides/backend/DOMAIN-ERROR-MIGRATION.md |
 | MQ-005 | Diferida | Pendiente | Repository Pattern — se implementara despues de MQ-002 estable |
 
 ---
@@ -220,4 +266,4 @@ Fase 3 (evaluacion): Use Cases (si se justifica)
 | Fecha | Cambio | Autor |
 |-------|--------|-------|
 | 2026-02-17 | ADR creado | Tech Lead |
-| 2026-02-27 | MQ-002 marcado como Completado. Implementacion: 42 domain error classes (25 en auth, 17 en gamification), 129 throw sites migrados. Migration guide disponible en docs/50-guides/backend/DOMAIN-ERROR-MIGRATION.md. Fase 1 finalizada — evaluar MQ-005 en proximo sprint. | Backend Team |
+| 2026-02-27 | MQ-002: Infraestructura completada (45 domain error classes, DomainExceptionFilter registrado). Adopcion real: auth 100% migrado (32 domain throws, 0 HTTP exceptions en services), gamification ~10% migrado (7 domain throws, 72 HTTP exceptions restantes), 20 modulos sin iniciar. Total: 39 domain throws vs 683 HTTP exceptions activas en services. NOTA: entrada anterior indicaba "129 throw sites migrados" — cifra incorrecta, corregida a 39. Fase 1 infraestructura finalizada; migracion de services pendiente. MQ-005 bloqueado hasta MQ-002 >=50%. | Backend Team |

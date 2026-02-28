@@ -1,0 +1,24 @@
+---
+titulo: "TASK-VAL-003-F2-BACKEND-WEBSOCKET: WebSocket handshake"
+tipo: tarea
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
+# TASK-VAL-003-F2-BACKEND-WEBSOCKET: WebSocket handshake
+
+**US:** US-VAL-003 | **Tipo:** Backend | **Estado:** Pendiente | **SP:** 2
+
+## Descripcion
+Verificar WebSocket Socket.IO handshake con autenticacion JWT.
+
+## Acciones
+1. Obtener JWT via /auth/login
+2. Conectar Socket.IO client con auth token
+3. Verificar evento 'authenticated' recibido
+4. Verificar reconexion automatica
+
+## Criterio Pass
+- Conexion WebSocket exitosa
+- Evento 'authenticated' recibido

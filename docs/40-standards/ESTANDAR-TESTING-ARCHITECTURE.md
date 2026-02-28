@@ -108,13 +108,13 @@ describe('Architecture Rules', () => {
 ### 10.5 Deteccion de Dependencias Circulares
 
 ```bash
-# Verificar dependencias circulares en backend
+## Verificar dependencias circulares en backend
 cd apps/backend && npx madge --circular --extensions ts src/
 
-# Verificar dependencias circulares en frontend
+## Verificar dependencias circulares en frontend
 cd apps/frontend && npx madge --circular --extensions ts,tsx src/
 
-# Generar grafico visual de dependencias
+## Generar grafico visual de dependencias
 npx madge --image graph.svg --extensions ts src/modules/
 ```
 

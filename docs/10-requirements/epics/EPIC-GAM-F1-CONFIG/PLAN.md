@@ -1,3 +1,11 @@
+---
+titulo: "Plan de Desarrollo: EPIC-GAM-F1-CONFIG"
+tipo: plan
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Plan de Desarrollo: EPIC-GAM-F1-CONFIG
 
 **Version:** 1.0.0 | **Fecha:** 2026-02-10

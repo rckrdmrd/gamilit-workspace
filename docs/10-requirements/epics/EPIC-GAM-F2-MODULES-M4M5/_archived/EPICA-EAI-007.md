@@ -1,3 +1,11 @@
+---
+titulo: "ÉPICA: EAI-007 - Módulos 4 y 5: Lectura Digital y Producción"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # ÉPICA: EAI-007 - Módulos 4 y 5: Lectura Digital y Producción
 
 ### Metadata

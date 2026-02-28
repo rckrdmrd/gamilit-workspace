@@ -1,10 +1,9 @@
 ---
-version: "1.0.0"
-created: "2026-02-11"
-rol: "QA"
-tiempo_estimado: "30 min"
-prerrequisitos:
-  - Lectura de ONBOARDING-DESARROLLADORES.md
+titulo: "Onboarding para QA"
+tipo: onboarding
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
 ---
 
 # Onboarding para QA
@@ -82,7 +81,7 @@ Lee estos documentos en orden para entender el contexto de QA:
 | Metrica | Valor |
 |---------|-------|
 | Tests passing | 2324 (2296 passed + 28 skipped) |
-| Endpoints | 912 |
+| Endpoints | 914 |
 | Entities | 156 files (157 classes) |
 | Tablas DB | 173 |
 | Componentes frontend | 575 |
@@ -102,24 +101,24 @@ Lee estos documentos en orden para entender el contexto de QA:
 ### Ejecucion de Pruebas
 
 ```bash
-# Unit tests backend (2324 tests in 63 spec files)
+## Unit tests backend (2324 tests in 63 spec files)
 cd apps/backend
 npm run test
 
-# Tests con cobertura
+## Tests con cobertura
 npm run test:cov
 
-# Tests en modo watch
+## Tests en modo watch
 npm run test:watch
 
-# Tests de un archivo especifico
+## Tests de un archivo especifico
 npm run test -- path/to/file.spec.ts
 
-# Frontend - typecheck
+## Frontend - typecheck
 cd apps/frontend
 npm run typecheck
 
-# Frontend - lint
+## Frontend - lint
 npm run lint
 ```
 

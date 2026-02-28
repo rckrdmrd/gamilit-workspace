@@ -1,3 +1,11 @@
+---
+titulo: "Historias de Usuario - EXT-011"
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Historias de Usuario - EXT-011
 
 **EPIC:** EXT-011 - Parent Portal

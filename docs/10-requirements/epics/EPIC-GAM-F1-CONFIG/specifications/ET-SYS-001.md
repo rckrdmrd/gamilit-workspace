@@ -1,3 +1,11 @@
+---
+titulo: "ET-SYS-001: Especificacion Sistema de Configuracion"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-SYS-001: Especificacion Sistema de Configuracion
 
 **Version:** 1.0.0

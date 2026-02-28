@@ -1,3 +1,11 @@
+---
+titulo: "Estado Actual"
+tipo: overview
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Estado Actual
 
 > Estado funcional del proyecto y frentes pendientes.

@@ -7,10 +7,10 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-INT-003: Modulo Registrado sin Entidades en Datasource
 
-## Descripcion
+### Descripcion
 Un modulo NestJS esta importado en `app.module.ts` pero sus entidades no estan incluidas en ninguno de los 10 datasources de TypeORM, causando errores de metadata al intentar inyectar repositorios. Con 156 entity files distribuidas en 11 datasources, es facil omitir la configuracion de entities al agregar o mover modulos.
 
-## Sintomas
+### Sintomas
 - Error: `No metadata for "EntityName" was found. Entity metadata was not found.`
 - Error: `Repository "EntityName" was not found. Was it imported within a module that is connected to a TypeORM DataSource?`
 - Error: `Cannot find metadata for "EntityName". Make sure the entity is registered in the module.`
@@ -18,13 +18,13 @@ Un modulo NestJS esta importado en `app.module.ts` pero sus entidades no estan i
 - Los tests unitarios pasan (mocks) pero los tests de integracion fallan
 - El `npm run build` compila exitosamente porque es un error de configuracion, no de tipado
 
-## Causa Raiz
+### Causa Raiz
 1. Se crea un nuevo modulo con entidades pero no se agregan los paths de entidades al datasource correspondiente en `app.module.ts`
 2. Se mueve una entidad de un modulo a otro sin actualizar el array `entities` del datasource
 3. El modulo tiene un `.module.ts` que importa `TypeOrmModule.forFeature([Entity])` pero la entidad no esta en el datasource global
 4. Confusion sobre CUAL de los 10 datasources debe contener la entidad (cada schema de PostgreSQL tiene su propio datasource)
 
-## Solucion
+### Solucion
 
 ### 1. Identificar el datasource correcto
 ```typescript
@@ -105,7 +105,7 @@ export class MiService {
 cd apps/backend && npm run build && npm run test
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Mapa de datasources**: Mantener documentado que schemas y modulos pertenecen a cada datasource
 2. **Checklist de modulo nuevo**: Incluir paso de "agregar entities a datasource" en el checklist
@@ -147,7 +147,7 @@ for ef in $entity_files; do
 done
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Modulo | Entity | Datasource Faltante | Estado |
 |-------|--------|--------|---------------------|--------|
@@ -155,7 +155,7 @@ done
 | 2026-01-10 | social | TeamMember | socialDataSource | Resuelto |
 | 2025-12-22 | gamification | Achievement | gamificationDataSource | Resuelto |
 
-## Referencias
+### Referencias
 
 - **app.module.ts:** `apps/backend/src/app.module.ts`
 - **Inventario Backend:** `orchestration/inventarios/BACKEND_INVENTORY.yml`

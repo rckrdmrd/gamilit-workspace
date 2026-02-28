@@ -1,3 +1,11 @@
+---
+titulo: "Resumen de Correcciones Finales - Documentos de Entrega"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 > **[HISTORICAL SNAPSHOT — 2025-11-16]** Stack references in this document reflect the November 2025 delivery state (PostgreSQL 16.x, Vite 7.x). Current stack: PostgreSQL 15, Vite 6.x. Content preserved as-is for audit trail.
 
 > **[SUPERSEDED]** This summary has been superseded by the consolidated version: `RESUMEN-CONSOLIDADO-ENTREGA.md` (Jan 2026).

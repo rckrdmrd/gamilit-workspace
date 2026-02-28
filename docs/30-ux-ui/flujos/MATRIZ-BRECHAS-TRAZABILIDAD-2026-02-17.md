@@ -1,3 +1,11 @@
+---
+titulo: Matriz de Brechas de Trazabilidad
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Matriz de Brechas de Trazabilidad
 
 **Version:** 1.0.1

@@ -1,3 +1,11 @@
+---
+titulo: "00 - Overview"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # 00 - Overview
 
 > Indice canonico de vision general del proyecto GAMILIT.
@@ -14,7 +22,7 @@ El `README.md` es solo puerta de entrada y evita duplicar definiciones SSOT.
 | [IDENTIDAD.md](./IDENTIDAD.md) | Identidad del proyecto, tipo, repositorio, stack y alcance |
 | [VISION.md](./VISION.md) | Problema, propuesta de valor y objetivos academicos |
 | [ARQUITECTURA-TECNICA.md](./ARQUITECTURA-TECNICA.md) | Monorepo, ambientes, puertos y componentes |
-| [MODULOS-SISTEMA.md](./MODULOS-SISTEMA.md) | 23 modulos por dominio funcional |
+| [MODULOS.md](./MODULOS.md) | 23 modulos por dominio funcional |
 | [MODULOS-EDUCATIVOS.md](./MODULOS-EDUCATIVOS.md) | 5 modulos y 23 tipos de ejercicios |
 | [PORTALES.md](./PORTALES.md) | Portales estudiante, maestro, admin y padres |
 | [GAMIFICACION.md](./GAMIFICACION.md) | XP, misiones, logros y referencias canonicas |

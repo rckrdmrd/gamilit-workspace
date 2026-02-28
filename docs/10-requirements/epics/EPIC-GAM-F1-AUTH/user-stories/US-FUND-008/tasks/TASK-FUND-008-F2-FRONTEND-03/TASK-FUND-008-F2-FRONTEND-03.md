@@ -1,3 +1,0 @@
-# TASK-FUND-008-F2-FRONTEND-03: Responsive testing
-
-**US:** US-FUND-008 | **Tipo:** Frontend | **Estado:** Done | **Est:** 4h | **Sub:** 0

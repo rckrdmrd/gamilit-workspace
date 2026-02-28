@@ -11,23 +11,23 @@ ultima_actualizacion: 2026-02-27
 
 La migracion de `lib/api/` a `services/api/` fue completada. Los 4 archivos restantes en `lib/api/` (`gamification.api.ts`, `progress.api.ts`, `branding.api.ts`, `lti.api.ts`) fueron migrados a sus ubicaciones canonicas en `services/api/`. Ver ESTANDAR-FRONTEND-API.md para la estructura actual.
 
-## Descripcion
+### Descripcion
 El frontend tenia servicios API duplicados en dos ubicaciones: `src/lib/api/` (version inicial) y `src/services/api/` (version estandar). Ambos archivos hacian las mismas llamadas HTTP pero con patrones de error handling, tipado, y transformacion diferentes, causando inconsistencias en la aplicacion. Se identificaron 6 pares duplicados.
 
-## Sintomas
+### Sintomas
 - Un componente usa `lib/api/achievements.api.ts` y otro usa `services/api/achievements.service.ts` para la misma operacion
 - Error handling inconsistente: un servicio muestra toast de error, el otro falla silenciosamente
 - Tipos de retorno diferentes para la misma llamada API (uno transforma snake_case, el otro no)
 - Al corregir un bug en un servicio API, el bug persiste en componentes que usan la otra copia
 - Confusion en code review: "de donde deberia importar este endpoint?"
 
-## Causa Raiz
+### Causa Raiz
 1. Desarrollo inicial coloco servicios API en `src/lib/api/` sin convencion clara
 2. Posteriormente se establecio `src/services/api/` como ubicacion canonica con patrones estandarizados
 3. Los servicios en `lib/api/` no fueron eliminados despues de crear sus equivalentes en `services/api/`
 4. Diferentes desarrolladores/agentes usan diferentes ubicaciones segun lo que encuentran primero
 
-## Solucion
+### Solucion
 
 ### 1. Identificar todos los pares duplicados
 ```bash
@@ -94,7 +94,7 @@ git rm src/lib/api/achievements.api.ts
 cd apps/frontend && npm run build && npm run typecheck
 ```
 
-## Prevencion
+### Prevencion
 
 1. **Ubicacion canonica**: Todos los servicios API van en `src/services/api/` exclusivamente
 2. **Eliminar lib/api/**: Una vez migrados todos los pares, eliminar el directorio `src/lib/api/` completamente
@@ -137,7 +137,7 @@ for f in src/lib/api/*.ts; do
 done
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Par Duplicado | Consumidores Afectados | Estado |
 |-------|---------------|------------------------|--------|
@@ -148,7 +148,7 @@ done
 | 2026-02-13 | content (lib vs services) | 4+ componentes | Documentado |
 | 2026-02-13 | lti (lib vs services) | 2+ componentes | Documentado |
 
-## Referencias
+### Referencias
 
 - **Servicios canonicos:** `apps/frontend/src/services/api/`
 - **Servicios legacy:** `apps/frontend/src/lib/api/`

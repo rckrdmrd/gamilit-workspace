@@ -43,7 +43,7 @@
 | Backend | Entities | 156 files (157 classes) |
 | Backend | Services | 172 |
 | Backend | Controllers | 108 |
-| Backend | Endpoints | 912 |
+| Backend | Endpoints | 914 |
 | Backend | Build | PASS |
 | Frontend | Components | 575 |
 | Frontend | Hooks | 132 |

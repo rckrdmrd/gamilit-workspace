@@ -1,3 +1,11 @@
+---
+titulo: Validacion - Analisis Inicial vs Integracion Documental
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Validacion - Analisis Inicial vs Integracion Documental
 
 **Version:** 1.3.0  

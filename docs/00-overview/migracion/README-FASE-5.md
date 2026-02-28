@@ -1,7 +1,15 @@
+---
+titulo: "Fase 5 (Legacy): Guias y Referencias"
+tipo: readme
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Fase 5 (Legacy): Guias y Referencias
 
-**Tipo:** Referencia historica  
-**Estado:** Completado (legacy)  
+**Tipo:** Referencia historica
+**Estado:** Completado (legacy)
 **Ultima actualizacion:** 2026-02-17
 
 ---

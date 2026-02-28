@@ -1,3 +1,11 @@
+---
+titulo: "ANALISIS PRE-EJECUCION: EAI-007 - Correccion Discrepancia DTO Frontend-Backend M4/M5"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ANALISIS PRE-EJECUCION: EAI-007 - Correccion Discrepancia DTO Frontend-Backend M4/M5
 
 **Agente:** Tech-Leader-Agent (Orquestador)
@@ -41,14 +49,14 @@ Los usuarios no pueden completar ejercicios de M4/M5 debido a errores de validac
 
 **Comandos ejecutados:**
 ```bash
-# Busqueda de DTOs M4/M5
+## Busqueda de DTOs M4/M5
 find apps/backend -name "*module4*" -o -name "*module5*"
-# Resultado: Encontrados 8 DTOs (4 M4 + 3 M5 + quiz_tiktok)
+## Resultado: Encontrados 8 DTOs (4 M4 + 3 M5 + quiz_tiktok)
 
-# Busqueda de componentes frontend
+## Busqueda de componentes frontend
 ls apps/frontend/src/features/mechanics/module4/
 ls apps/frontend/src/features/mechanics/module5/
-# Resultado: 7 componentes de ejercicios afectados
+## Resultado: 7 componentes de ejercicios afectados
 ```
 
 ### Objetos Existentes Relacionados

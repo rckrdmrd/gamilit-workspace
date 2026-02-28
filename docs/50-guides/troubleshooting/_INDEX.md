@@ -1,3 +1,11 @@
+---
+titulo: Troubleshooting Guides Index
+tipo: indice
+fecha_creacion: 2025-10-01
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Troubleshooting Guides
 
 Guias para resolucion de problemas comunes, errores de build, y debugging en el proyecto.

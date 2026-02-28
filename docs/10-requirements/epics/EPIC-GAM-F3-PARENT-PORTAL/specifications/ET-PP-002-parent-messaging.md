@@ -1,3 +1,11 @@
+---
+titulo: "ET-PP-002: Parent Messaging"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-PP-002: Parent Messaging
 
 ## Metadata

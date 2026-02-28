@@ -1,3 +1,11 @@
+---
+titulo: "User Stories — EPIC-GAM-F1-ANALYTICS"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # User Stories — EPIC-GAM-F1-ANALYTICS
 
 **Total:** 6 user stories

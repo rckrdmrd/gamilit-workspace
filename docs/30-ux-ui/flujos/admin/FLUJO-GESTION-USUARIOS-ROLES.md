@@ -1,3 +1,11 @@
+---
+titulo: FL-ADM-01 - Gestion de Usuarios y Roles
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-ADM-01 - Gestion de Usuarios y Roles (Admin)
 
 **Portal:** Admin

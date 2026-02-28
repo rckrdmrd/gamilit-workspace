@@ -1,3 +1,11 @@
+---
+titulo: "Manual de Usuario — Portal de Estudiantes GAMILIT"
+tipo: entrega
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Manual de Usuario — Portal de Estudiantes GAMILIT
 
 ## **1. PORTADA**

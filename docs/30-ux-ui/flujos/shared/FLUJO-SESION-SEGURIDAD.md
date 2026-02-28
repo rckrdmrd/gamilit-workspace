@@ -1,3 +1,11 @@
+---
+titulo: FL-SHR-02 - Sesion, Seguridad y Recuperacion de Acceso
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-SHR-02 - Sesion, Seguridad y Recuperacion de Acceso
 
 **ID:** FL-SHR-02
@@ -103,6 +111,9 @@ Este flujo delega a sus sub-flujos. Los escenarios principales son:
 - **JWT:** Tokens de acceso con expiracion corta + refresh tokens para renovacion.
 - **Audit trail:** Todos los eventos de sesion quedan registrados en `auth_management.login_attempts`.
 - **No revelar existencia de cuentas:** `POST /auth/forgot-password` retorna 200 independientemente de si el email existe.
+- **401-refresh-retry queue (frontend):** El interceptor de `apiClient` implementa una cola `failedQueue`/`isRefreshing` que serializa multiples peticiones concurrentes con token expirado: solo una llama a `POST /auth/refresh`, el resto espera en cola y se reintenta con el nuevo token.
+- **Envelope de refresh:** `POST /auth/refresh` retorna `{ success, data: { accessToken, refreshToken } }`. El frontend lee `data.accessToken` con fallback a `accessToken` directo para compatibilidad.
+- **Rotacion de refresh token:** Cada refresh exitoso persiste el nuevo `refreshToken` si el backend lo incluye en la respuesta, invalidando el token anterior.
 
 ## 7. Manejo de errores
 

@@ -1,3 +1,11 @@
+---
+titulo: FL-ADM-04 - Monitoreo y Salud del Sistema
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-ADM-04 - Monitoreo y Salud del Sistema
 
 **Version:** 1.1.0
@@ -43,6 +51,7 @@ flowchart TD
     apiTrends --> monService
     apiLogs --> sysService
     monService --> db[(audit_logging.system_logs + audit_logging.performance_metrics)]
+    sysService --> db
     healthService --> dbCheck[(PostgreSQL connectivity + Redis check)]
     sysService --> db
     db --> ui[Dashboard con semaforizacion y graficos]

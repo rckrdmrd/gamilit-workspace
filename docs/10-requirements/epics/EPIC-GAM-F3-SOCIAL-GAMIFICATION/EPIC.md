@@ -1,3 +1,11 @@
+---
+titulo: "EAI-003-EXT: Gamificacion Social"
+tipo: epic
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # EAI-003-EXT: Gamificacion Social
 
 **Proyecto:** GAMILIT

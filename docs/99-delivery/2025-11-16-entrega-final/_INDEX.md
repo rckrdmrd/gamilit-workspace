@@ -1,3 +1,11 @@
+---
+titulo: "Entrega Final - 2025-11-16"
+tipo: indice
+fecha_creacion: "2025-11-16"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Entrega Final - 2025-11-16
 
 ## Contenido

@@ -71,7 +71,7 @@ Organizados por fase CAPVED:
 Fase_A_Analisis:
   - TRIGGER-ANTI-DUPLICACION (verificar catalogos antes de crear)
   - TRIGGER-ANALISIS-DEPENDENCIAS (apps/backend, apps/frontend, apps/database)
-  - TRIGGER-DUPLICADOS (156 entity files (157 classes), 912 endpoints)
+  - TRIGGER-DUPLICADOS (156 entity files (157 classes), 914 endpoints)
 
 Fase_E_Ejecucion:
   - TRIGGER-FETCH-OBLIGATORIO (git fetch antes de operar)

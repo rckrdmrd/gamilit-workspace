@@ -1,3 +1,11 @@
+---
+titulo: MAPA DE NAVEGACION - Flujos
+tipo: mapa-navegacion
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # MAPA DE NAVEGACION - Flujos
 
 > Acceso rapido por portal y trazabilidad.
@@ -10,6 +18,7 @@
 - Parents: [parents/](./parents/)
 - Auth: [auth/](./auth/)
 - Shared: [shared/](./shared/)
+- System: [system/](./system/)
 
 ## Trazabilidad y auditorias
 

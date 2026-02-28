@@ -149,7 +149,40 @@ apiClient.interceptors.request.use(
 
 ### Response Interceptor
 
+El interceptor de respuesta maneja la renovacion automatica de tokens expirados mediante una cola de peticiones paralelas (`failedQueue` / `isRefreshing`). Usa **axios raw** (no `apiClient`) para evitar un bucle recursivo de 401.
+
+El backend envuelve la respuesta de `/auth/refresh` en el envelope estandar: `{ success, data: { accessToken, refreshToken } }`. El interceptor lee primero `envelope.data.accessToken` y hace fallback a `envelope.accessToken` para compatibilidad.
+
+Cada refresh exitoso rota el refresh token: si el backend devuelve un nuevo `refreshToken`, se persiste en `localStorage`.
+
 ```typescript
+// Cola de peticiones en espera mientras se refresca el token
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (err: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+  failedQueue = [];
+};
+
+// Interfaz del envelope de /auth/refresh
+// Backend retorna: { success, data: { accessToken, refreshToken } }
+interface RefreshEnvelope {
+  success?: boolean;
+  data?: { accessToken: string; refreshToken?: string };
+  accessToken?: string;
+  refreshToken?: string;
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -157,23 +190,55 @@ apiClient.interceptors.response.use(
 
     // Handle 401 - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Encolar peticion mientras se refresca
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const refreshToken = localStorage.getItem('refresh-token');
-        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-          refreshToken,
-        });
 
-        localStorage.setItem('auth-token', data.token);
-        originalRequest.headers.Authorization = `Bearer ${data.token}`;
+        // Raw axios (not apiClient) to avoid recursive 401 interceptor.
+        // Backend wraps in envelope: { success, data: { accessToken, refreshToken } }
+        const { data: envelope } = await axios.post<RefreshEnvelope>(
+          `${API_BASE_URL}/auth/refresh`,
+          { refreshToken },
+        );
+
+        const newToken = envelope.data?.accessToken ?? envelope.accessToken;
+        if (!newToken) {
+          throw new Error('Refresh response missing accessToken');
+        }
+
+        // Refresh token rotation: persist new refresh token if provided
+        const newRefreshToken = envelope.data?.refreshToken ?? envelope.refreshToken;
+        localStorage.setItem('auth-token', newToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refresh-token', newRefreshToken);
+        }
+
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        processQueue(null, newToken);
 
         return apiClient(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
         // Redirect to login
         localStorage.clear();
         window.location.href = '/login';
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

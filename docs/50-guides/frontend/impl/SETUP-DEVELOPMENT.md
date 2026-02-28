@@ -1,3 +1,11 @@
+---
+titulo: Setup de Desarrollo Frontend
+tipo: guia-frontend
+fecha_creacion: 2025-11-28
+ultima_actualizacion: 2026-02-28
+estado: activo
+---
+
 # Setup de Desarrollo Frontend
 
 **Versión:** 1.0.0

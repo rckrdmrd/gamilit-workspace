@@ -14,7 +14,7 @@ ultima_actualizacion: 2026-02-27
 
 ---
 
-## 1. Principios Fundamentales
+### 1. Principios Fundamentales
 
 ### 1.1 Single Source of Truth (SSOT)
 
@@ -36,7 +36,7 @@ ultima_actualizacion: 2026-02-27
 
 ---
 
-## 2. Fuentes de Verdad (SSOT) por Categoría
+### 2. Fuentes de Verdad (SSOT) por Categoría
 
 ### 2.1 Types Compartidos
 
@@ -66,7 +66,7 @@ ultima_actualizacion: 2026-02-27
 
 ---
 
-## 3. Reglas de Importación
+### 3. Reglas de Importación
 
 ### 3.1 Imports Correctos
 
@@ -100,7 +100,7 @@ import { MayaRank } from '@shared/types/gamification.types';
 
 ---
 
-## 4. Convenciones de Naming
+### 4. Convenciones de Naming
 
 ### 4.1 Campos de Base de Datos (snake_case)
 
@@ -147,7 +147,7 @@ type AchievementId = string;
 
 ---
 
-## 5. Estructura de Archivos de Types
+### 5. Estructura de Archivos de Types
 
 ### 5.1 Archivo de Types Estándar
 
@@ -192,7 +192,7 @@ export * from './educational.types';
 
 ---
 
-## 6. Proceso para Agregar Nuevos Types
+### 6. Proceso para Agregar Nuevos Types
 
 ### 6.1 Checklist Pre-Creación
 
@@ -226,7 +226,7 @@ export interface MyNewType { ... }
 
 ---
 
-## 7. Política de No Conflicto de Nombres
+### 7. Política de No Conflicto de Nombres
 
 ### 7.1 Nombres Reservados
 
@@ -255,7 +255,7 @@ interface MayaRank { ... }  // Conflicto con enum MayaRank
 
 ---
 
-## 8. Mantenimiento y Auditoría
+### 8. Mantenimiento y Auditoría
 
 ### 8.1 Revisión Periódica
 
@@ -286,7 +286,7 @@ grep -r "from '@shared/types'" apps/frontend/src/ | wc -l
 
 ---
 
-## 9. Sincronizacion con Backend
+### 9. Sincronizacion con Backend
 
 ### 9.1 Fuentes de Verdad
 
@@ -387,7 +387,7 @@ type GetUsersParams = paths['/v1/users']['get']['parameters']['query'];
 
 ---
 
-## 10. Referencias
+### 10. Referencias
 
 - **Estandar de tipos (canonica):** [`docs/40-standards/ESTANDAR-FRONTEND-TYPES.md`](../../../40-standards/ESTANDAR-FRONTEND-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
 - **Estandar de imports:** [`docs/40-standards/ESTANDAR-FRONTEND-IMPORTS.md`](../../../40-standards/ESTANDAR-FRONTEND-IMPORTS.md) -- Import order y path aliases
@@ -402,7 +402,7 @@ type GetUsersParams = paths['/v1/users']['get']['parameters']['query'];
 
 ---
 
-## 11. Changelog
+### 11. Changelog
 
 | Versión | Fecha | Cambios |
 |---------|-------|---------|

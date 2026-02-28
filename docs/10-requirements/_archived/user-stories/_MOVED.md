@@ -1,3 +1,11 @@
+---
+titulo: "User Stories - Movidas (Legacy)"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: archivado
+---
+
 # User Stories - Movidas (Legacy)
 
 > Este archivo se conserva como puente historico.  

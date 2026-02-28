@@ -1,3 +1,11 @@
+---
+titulo: "User Stories — EPIC-GAM-F4-VALIDATION"
+tipo: indice
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # User Stories — EPIC-GAM-F4-VALIDATION
 
 > Indice de historias de usuario para la validacion integral de gamilit.
@@ -90,7 +98,7 @@
 > | Funciones (DDL source) | **158** |
 > | Triggers (DDL source) | **68** |
 > | Entities | **156 files (157 classes)** |
-> | Endpoints | **912** |
+> | Endpoints | **914** |
 > | Tests | **2324 (2296 passed + 28 skipped)** |
 
 ---

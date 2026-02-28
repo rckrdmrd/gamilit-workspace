@@ -1,3 +1,11 @@
+---
+titulo: "Flujo de Registro, Login e Inicializacion de Usuario"
+tipo: referencia
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo de Registro, Login e Inicializacion de Usuario
 
 **Version:** 1.1.0

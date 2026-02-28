@@ -13,7 +13,7 @@ estado: vigente
 
 ---
 
-## 1. Principio Fundamental
+### 1. Principio Fundamental
 
 **Las dependencias SIEMPRE apuntan hacia el dominio (hacia adentro).**
 
@@ -35,7 +35,7 @@ Esto significa que las capas externas (infraestructura) conocen a las capas inte
 
 ---
 
-## 2. Reglas de Import para gamilit
+### 2. Reglas de Import para gamilit
 
 ### 2.1 Regla 1: Controllers NO importan Repositories directamente
 
@@ -182,7 +182,7 @@ import { GamilityRoleEnum } from '@/shared/constants';
 
 ---
 
-## 3. Deteccion de Violaciones
+### 3. Deteccion de Violaciones
 
 ### 3.1 ESLint con Plugin de Boundaries
 
@@ -312,7 +312,7 @@ grep -rn "from '@/modules/[^']*/" apps/backend/src/modules/ \
 
 ---
 
-## 4. Dependencias Circulares
+### 4. Dependencias Circulares
 
 ### 4.1 Deteccion
 
@@ -418,7 +418,7 @@ export class GamificationListener {
 
 ---
 
-## 5. Diagrama de Dependencias Permitidas entre Modulos gamilit
+### 5. Diagrama de Dependencias Permitidas entre Modulos gamilit
 
 El siguiente diagrama muestra las dependencias permitidas entre los 23 modulos principales. Las flechas indican "depende de" (A <- B significa "B depende de A").
 
@@ -498,7 +498,7 @@ PROHIBIDO:
 
 ---
 
-## 6. Checklist de Dependency Rules
+### 6. Checklist de Dependency Rules
 
 ### Pre-Desarrollo
 

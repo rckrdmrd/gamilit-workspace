@@ -1,3 +1,11 @@
+---
+titulo: "Plan de Implementación: Gaps P0 - Portal Students → Admin"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Plan de Implementación: Gaps P0 - Portal Students → Admin
 
 **Versión:** 1.1.0

@@ -278,7 +278,7 @@ api_services:
   # lib/api/index.ts — re-exports from new locations for backward compat
 
   cobertura_backend:
-    endpoints_backend_total: 912
+    endpoints_backend_total: 914
     endpoints_llamados_frontend: "350-400"      # ~40-45% cobertura global
     cobertura_por_portal:
       parent: "~90-100%"                        # 17 endpoints, API file dedicado

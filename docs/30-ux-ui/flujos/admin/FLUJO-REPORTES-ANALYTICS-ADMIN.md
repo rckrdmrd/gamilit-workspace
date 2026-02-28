@@ -1,3 +1,11 @@
+---
+titulo: FL-ADM-11 - Reportes y Analytics Administrador
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-ADM-11 - Reportes y Analytics Administrador
 
 **ID:** FL-ADM-11

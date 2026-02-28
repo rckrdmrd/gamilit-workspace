@@ -1,3 +1,11 @@
+---
+titulo: "Plan de Desarrollo: EPIC-GAM-F3-SOCIAL-GAMIFICATION"
+tipo: plan
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Plan de Desarrollo: EPIC-GAM-F3-SOCIAL-GAMIFICATION
 
 **Version:** 1.2.0 | **Fecha:** 2026-02-17

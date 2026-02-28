@@ -1,3 +1,11 @@
+---
+titulo: "Schema Reference - Utilidades"
+tipo: arquitectura
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Schema Reference - Utilidades
 
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT

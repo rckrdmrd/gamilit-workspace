@@ -19,7 +19,7 @@ GAMILIT utiliza Jest como framework de testing para el backend. Esta guía cubre
 
 ---
 
-## Estructura de Tests
+### Estructura de Tests
 
 ```
 apps/backend/
@@ -41,7 +41,7 @@ apps/backend/
 
 ---
 
-## Ejecutar Tests
+### Ejecutar Tests
 
 ### Tests Unitarios
 
@@ -59,7 +59,7 @@ npm run test:watch
 npm run test -- user-stats.service.spec.ts
 ```
 
-### Tests E2E
+#### Tests E2E
 
 ```bash
 npm run test:e2e
@@ -67,7 +67,7 @@ npm run test:e2e
 
 ---
 
-## Tests Unitarios de Servicios
+### Tests Unitarios de Servicios
 
 ### Estructura Básica
 
@@ -161,7 +161,7 @@ describe('UserStatsService', () => {
 
 ---
 
-## Tests de Controladores
+### Tests de Controladores
 
 ```typescript
 // modules/gamification/controllers/__tests__/user-stats.controller.spec.ts
@@ -211,7 +211,7 @@ describe('UserStatsController', () => {
 
 ---
 
-## Mocking Dependencias Comunes
+### Mocking Dependencias Comunes
 
 ### TypeORM Repository
 
@@ -272,7 +272,7 @@ const mockEntityManager = {
 
 ---
 
-## Testing Excepciones
+### Testing Excepciones
 
 ```typescript
 describe('findOne', () => {
@@ -294,7 +294,7 @@ describe('findOne', () => {
 
 ---
 
-## Tests E2E
+### Tests E2E
 
 ```typescript
 // test/gamification.e2e-spec.ts
@@ -350,7 +350,7 @@ describe('Gamification (e2e)', () => {
 
 ---
 
-## Coverage Thresholds
+### Coverage Thresholds
 
 ### jest.config.js
 
@@ -376,7 +376,7 @@ module.exports = {
 
 ---
 
-## Fixtures y Factories
+### Fixtures y Factories
 
 ### Crear Factory
 
@@ -410,7 +410,7 @@ mockRepository.findOne.mockResolvedValue(stats);
 
 ---
 
-## Testing de Validación
+### Testing de Validación
 
 ```typescript
 import { validate } from 'class-validator';
@@ -443,7 +443,7 @@ describe('CreateAchievementDto', () => {
 
 ---
 
-## Buenas Prácticas
+### Buenas Prácticas
 
 1. **Nombrar tests descriptivamente**: `it('should throw NotFoundException when user not found')`
 2. **Un assert por test** cuando sea posible
@@ -455,7 +455,7 @@ describe('CreateAchievementDto', () => {
 
 ---
 
-## Ver También
+### Ver También
 
 - [../../testing/TESTING-GUIDE.md](../../testing/TESTING-GUIDE.md) - Guía general de testing
 - [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Dónde ubicar tests

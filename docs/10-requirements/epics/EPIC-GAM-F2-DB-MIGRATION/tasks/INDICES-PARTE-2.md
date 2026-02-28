@@ -1,3 +1,11 @@
+---
+titulo: "Índices y Optimización - Parte 2: Progress, Social y Mantenimiento"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Índices y Optimización - Parte 2: Progress, Social y Mantenimiento
 
 **Épica:** EMR-001 - Migración y Robustecimiento de BD

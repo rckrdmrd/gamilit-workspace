@@ -1,3 +1,11 @@
+---
+titulo: Flujo Student - Ejercicio Completo (M1-M2)
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # Flujo Student - Ejercicio Completo (M1-M2 Auto-Grade)
 
 **Version:** 1.2.0

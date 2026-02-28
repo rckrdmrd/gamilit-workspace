@@ -39,11 +39,11 @@ ultima_actualizacion: 2026-02-27
 | @nestjs/typeorm | 11.x | TypeORM integration |
 | @nestjs/passport | 11.x | Authentication strategies |
 | @nestjs/jwt | 11.x | JWT token handling |
-| @nestjs/swagger | 8.x | OpenAPI documentation |
+| @nestjs/swagger | 11.x | OpenAPI documentation |
 | @nestjs/websockets | 11.x | WebSocket support |
 | @nestjs/platform-socket.io | 11.x | Socket.IO adapter |
 | @nestjs/terminus | 11.x | Health checks |
-| @nestjs/schedule | 5.x | Scheduled tasks (cron) |
+| @nestjs/schedule | 6.x | Scheduled tasks (cron) |
 | @nestjs/throttler | 6.x | Rate limiting |
 
 ### Database & ORM
@@ -51,7 +51,7 @@ ultima_actualizacion: 2026-02-27
 |---------|---------|-----------|
 | typeorm | 0.3.x | ORM con support para PostgreSQL |
 | pg | 8.x | PostgreSQL driver |
-| ioredis | 5.x | Redis client |
+| redis | 5.x | Redis client |
 | class-validator | 0.14.x | DTO validation |
 | class-transformer | 0.5.x | DTO transformation |
 
@@ -61,7 +61,7 @@ ultima_actualizacion: 2026-02-27
 | passport | 0.7.x | Authentication middleware |
 | passport-jwt | 4.x | JWT strategy |
 | passport-local | 1.x | Local strategy |
-| bcryptjs | 2.x | Password hashing |
+| bcrypt | 5.x | Password hashing |
 
 ### Testing Backend
 | Paquete | Version | Proposito |
@@ -69,7 +69,7 @@ ultima_actualizacion: 2026-02-27
 | jest | 29.x | Test framework |
 | ts-jest | 29.x | TypeScript transformer |
 | @nestjs/testing | 11.x | NestJS testing utilities |
-| supertest | 7.x | HTTP integration testing |
+| supertest | 6.x | HTTP integration testing |
 
 ---
 
@@ -81,41 +81,40 @@ ultima_actualizacion: 2026-02-27
 | react | 19.x | UI library |
 | react-dom | 19.x | DOM rendering |
 | react-router-dom | 7.x | Client-side routing (74 routes) |
+| @tanstack/react-query | 5.x | Server state management y caching |
 | zustand | 5.x | State management (13 stores) |
-| axios | 1.x | HTTP client (67 API services) |
+| axios | 1.x | HTTP client (65 API services) |
 | socket.io-client | 4.8+ | WebSocket client |
 
 ### UI & Styling
 | Paquete | Version | Proposito |
 |---------|---------|-----------|
 | tailwindcss | 4.x | Utility-first CSS |
-| @headlessui/react | 2.x | Accessible UI primitives |
-| lucide-react | 0.4x | Icon library |
-| framer-motion | 11.x | Animations (gamification effects) |
-| recharts | 2.x | Charts for analytics |
+| lucide-react | 0.5x | Icon library |
+| framer-motion | 12.x | Animations (gamification effects) |
+| recharts | 3.x | Charts for analytics |
 | react-hot-toast | 2.x | Toast notifications |
 
 ### Forms & Validation
 | Paquete | Version | Proposito |
 |---------|---------|-----------|
 | react-hook-form | 7.x | Form management |
-| zod | 3.x | Schema validation |
-| @hookform/resolvers | 3.x | Zod integration |
+| zod | 4.x | Schema validation |
+| @hookform/resolvers | 5.x | Zod integration |
 
 ### Testing Frontend
 | Paquete | Version | Proposito |
 |---------|---------|-----------|
-| vitest | 2.x | Test framework |
+| vitest | 3.x | Test framework |
 | @testing-library/react | 16.x | React testing utilities |
 | @testing-library/user-event | 14.x | User interaction simulation |
-| msw | 2.x | Mock Service Worker |
-| jsdom | 25.x | DOM implementation for tests |
+| jsdom | 27.x | DOM implementation for tests |
 
 ### Build & Dev
 | Paquete | Version | Proposito |
 |---------|---------|-----------|
 | vite | 6.x | Build tool and dev server |
-| @vitejs/plugin-react | 5.x | React support for Vite |
+| @vitejs/plugin-react | 4.x | React support for Vite |
 | typescript | 5.x | TypeScript compiler |
 | eslint | 9.x | Linting |
 | prettier | 3.x | Code formatting |
@@ -204,7 +203,7 @@ Browser (React 19)
 | Validacion | class-validator / zod | DTOs en backend, schemas en frontend |
 | Rate Limiting | @nestjs/throttler | 100 req/min por IP |
 | CORS | NestJS CORS | Origenes especificos por ambiente |
-| Password | bcryptjs | Hash con salt rounds = 12 |
+| Password | bcrypt | Hash con salt rounds = 12 |
 | SQL Injection | TypeORM | Parameterized queries |
 
 ---

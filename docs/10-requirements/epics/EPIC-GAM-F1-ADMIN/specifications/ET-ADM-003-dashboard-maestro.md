@@ -1,3 +1,11 @@
+---
+titulo: "ET-ADM-003: Implementacion de Dashboard de Maestro"
+tipo: especificacion-tecnica
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # ET-ADM-003: Implementacion de Dashboard de Maestro
 
 ## Metadata

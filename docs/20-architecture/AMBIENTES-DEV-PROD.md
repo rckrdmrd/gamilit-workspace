@@ -6,8 +6,8 @@ ultima_actualizacion: 2026-02-27
 
 # Diferencias Dev (WSL) vs Prod (Servidor)
 
-**Version:** 1.1.0
-**Fecha:** 2026-02-20
+**Version:** 1.2.0
+**Fecha:** 2026-02-27
 
 ---
 
@@ -156,35 +156,177 @@ Identica en ambos ambientes:
 
 ## Variables de Entorno
 
-| Variable | Dev | Prod |
-|----------|-----|------|
-| NODE_ENV | development | production |
-| DB_HOST_MODE | `auto` (recomendado), `localhost`, `wsl-ip` | N/A |
-| DB_HOST | Gestionado por `predev` segun `DB_HOST_MODE` | localhost |
-| REDIS_ENABLED | false (recomendado) o true si local disponible | true (OBLIGATORIO) |
-| REDIS_URL | redis://localhost:6379 (si enabled=true) | redis://localhost:6379 (o remoto) |
-| REDIS_PASSWORD | undefined | Rotado en prod (ver .env.production) |
-| CORS_ORIGIN | http://localhost:3005 | https://74.208.126.102,https://74.208.126.102:3005 |
-| ENABLE_SWAGGER | true | false |
-| JWT_SECRET | dev_secret | prod_secret (rotado) |
-| LOG_LEVEL | debug | warn |
+### Servidor y Aplicacion
+
+| Variable | Dev | Prod | Config file |
+|----------|-----|------|-------------|
+| `NODE_ENV` | `development` | `production` | env.config.ts |
+| `PORT` | `3006` | `3006` | env.config.ts |
+| `API_PREFIX` | `api` | `api` | env.config.ts |
+| `APP_NAME` | `GAMILIT` | `GAMILIT` | env.config.ts |
+| `APP_VERSION` | `4.1.0` | `4.1.0` | env.config.ts |
+| `LOG_LEVEL` | `debug` | `warn` | env.config.ts |
+| `LOG_TO_FILE` | `false` | `true` | env.config.ts |
+| `MAINTENANCE_MODE` | `false` | `false` | app.config.ts |
+| `ENABLE_SWAGGER` | `true` | `false` (OBLIGATORIO) | env.config.ts |
+| `ENABLE_CORS` | `true` | `true` | env.config.ts |
+| `CORS_ORIGIN` | `http://localhost:3005,http://localhost:3006` | `https://74.208.126.102,https://74.208.126.102:3005` | app.config.ts |
+| `ALLOWED_ORIGINS` | `http://localhost:3005,http://localhost:3006` | (mismo que CORS_ORIGIN) | env.config.ts |
+| `FRONTEND_URL` | `http://localhost:3005` | `https://74.208.126.102:3005` | app.config.ts |
+
+### Base de Datos
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `DB_HOST_MODE` | `auto` (recomendado), `localhost`, `wsl-ip` | N/A | Solo backend predev hook |
+| `DB_HOST` | Gestionado por `predev` segun `DB_HOST_MODE` | `localhost` | database.config.ts |
+| `DB_PORT` | `5432` | `5432` | database.config.ts |
+| `DB_DATABASE` | `gamilit_platform` | `gamilit_platform` | database.config.ts |
+| `DB_USERNAME` | `gamilit_user` | `gamilit_user` | Leido por TypeORM (database.config.ts) |
+| `DB_USER` | `gamilit_user` | `gamilit_user` | Leido por scripts DDL/seeds |
+| `DB_PASSWORD` | `gamilit_dev_2026` | Rotado en prod (ver .env.production) | database.config.ts |
+| `DB_SYNCHRONIZE` | `false` | `false` (NUNCA true en prod) | database.config.ts |
+| `DB_LOGGING` | `false` | `false` | database.config.ts |
+| `DB_SSL` | `false` | `false` (Nginx termina SSL) | database.config.ts |
+| `DB_POOL_MAX` | `2` | `2` (2 × 11 datasources = 22 total) | database.config.ts |
+| `DB_CONNECTION_TIMEOUT` | `15000` | `15000` | ms; database.config.ts |
+| `DB_IDLE_TIMEOUT` | `30000` | `30000` | ms; database.config.ts |
+| `DB_RETRY_ATTEMPTS` | `5` | `5` | database.config.ts |
+| `DB_RETRY_DELAY` | `5000` | `5000` | ms; database.config.ts |
+
+### JWT y Autenticacion
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `JWT_SECRET` | `dev-only-jwt-secret-...` | Rotado, 32+ chars (OBLIGATORIO) | jwt.config.ts |
+| `JWT_EXPIRES_IN` | `24h` | `15m` (recomendado en prod) | jwt.config.ts |
+| `JWT_REFRESH_SECRET` | `dev-only-refresh-secret-...` | Rotado, 32+ chars, distinto de JWT_SECRET | jwt.config.ts |
+| `JWT_REFRESH_EXPIRES_IN` | `7d` | `7d` | jwt.config.ts |
+| `JWT_ISSUER` | `gamilit-api` | `gamilit-api` | jwt.config.ts |
+| `JWT_AUDIENCE` | `gamilit-app` | `gamilit-app` | jwt.config.ts |
+
+> **Prod OBLIGATORIO:** `JWT_SECRET` y `JWT_REFRESH_SECRET` deben ser distintos, >= 32 chars. El backend no arranca si son iguales o inseguros.
+
+### Session
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `SESSION_SECRET` | `dev-only-session-secret-...` | Rotado, 32+ chars (OBLIGATORIO en prod) | app.config.ts |
+| `SESSION_MAX_AGE` | `86400000` | `86400000` | ms (24h); app.config.ts |
+
+### Rate Limiting
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `RATE_LIMIT_TTL` | `60` | `60` | segundos por ventana; app.config.ts |
+| `RATE_LIMIT_MAX` | `100` | `100` | requests por ventana por IP; app.config.ts |
+
+> Implementado via `ThrottlerModule` en `app.module.ts`. Auth y password endpoints tienen limites mas estrictos via `@Throttle()`.
+
+### Redis (Socket.IO y Message Persistence)
+
+Ver seccion detallada **Redis: Requerido vs Opcional** mas arriba para la logica de habilitacion.
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `REDIS_ENABLED` | `false` (recomendado) o `true` si local disponible | `true` (OBLIGATORIO) | redis.config.ts |
+| `REDIS_URL` | `redis://127.0.0.1:6379` (si enabled=true) | `redis://localhost:6379` (o remoto) | redis.config.ts |
+| `REDIS_PASSWORD` | vacío | Rotado en prod (ver .env.production) | redis.config.ts |
+| `REDIS_SOCKET_DB` | `0` | `0` | DB number para Socket.IO adapter |
+| `REDIS_SOCKET_PREFIX` | `gamilit:socket:` | `gamilit:socket:` | Prefix keys Socket.IO |
+| `REDIS_MESSAGE_PREFIX` | `gamilit:pending:` | `gamilit:pending:` | Prefix keys message persistence |
+| `REDIS_MESSAGE_TTL` | `86400` | `86400` | segundos (24h) TTL mensajes pendientes |
+| `REDIS_MAX_PENDING_MESSAGES` | `100` | `100` | max mensajes offline por usuario |
+| `REDIS_RETRY_DELAY_MS` | `1000` | `1000` | ms entre reintentos de conexion |
+| `REDIS_MAX_RETRIES` | `5` | `5` | max reintentos de conexion |
+
+### Cron Jobs
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `CRON_ENABLED` | `false` (recomendado — 19 jobs saturan pool DB) | `true` | tasks.module.ts + main.ts |
+
+### Email (SMTP / SendGrid)
+
+El servicio de email (`MailService`) soporta SMTP generico y SendGrid. Si no se configura ninguno, los emails se loggean en consola (graceful degradation).
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `EMAIL_FROM` | `noreply@gamilit.com` | `noreply@gamilit.com` | Alias remitente; app.config.ts |
+| `EMAIL_REPLY_TO` | `support@gamilit.com` | `support@gamilit.com` | Reply-to header; app.config.ts |
+| `SMTP_FROM` | (vacio — logs only) | `GAMILIT <notifications@gamilit.com>` | Usado por MailService directamente |
+| `SMTP_HOST` | (vacio — modo log) | p.ej. `smtp.mailtrap.io` | mail.service.ts |
+| `SMTP_PORT` | (vacio — modo log) | `587` | mail.service.ts |
+| `SMTP_USER` | (vacio — modo log) | Credencial SMTP | mail.service.ts |
+| `SMTP_PASS` | (vacio — modo log) | Credencial SMTP | mail.service.ts |
+| `SMTP_SECURE` | `false` | `false` (587 usa STARTTLS) | mail.service.ts |
+| `SENDGRID_API_KEY` | (vacio — usa SMTP si configurado) | SendGrid API Key (alternativa a SMTP) | mail.service.ts; toma precedencia sobre SMTP |
+| `FRONTEND_URL` | `http://localhost:3005` | `https://74.208.126.102:3005` | Links en emails de reset/verify |
+
+> **Logica de seleccion:** Si `SENDGRID_API_KEY` esta definido, se usa SendGrid (via SMTP relay). Si no, se usa SMTP generico con `SMTP_HOST/PORT/USER/PASS`. Si ninguno esta configurado, los emails solo se loggean.
+
+### Web Push Notifications (VAPID)
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `VAPID_PUBLIC_KEY` | `dev-placeholder-public-key` | Generar con `npx web-push generate-vapid-keys` | Compartida con frontend |
+| `VAPID_PRIVATE_KEY` | `dev-placeholder-private-key` | Clave privada generada (SECRETO) | Nunca exponer al cliente |
+| `VAPID_SUBJECT` | `mailto:admin@gamilit.com` | `mailto:admin@gamilit.com` | Contacto del servidor |
+
+> Si no se configuran en prod, push notifications quedan deshabilitadas (graceful degradation).
+
+### SMS Notifications (Twilio)
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `TWILIO_ACCOUNT_SID` | `dev-placeholder` | Account SID de Twilio (empieza con `AC...`) | notifications module |
+| `TWILIO_AUTH_TOKEN` | `dev-placeholder` | Auth Token de Twilio | notifications module |
+| `TWILIO_PHONE_NUMBER` | `+1234567890` | Numero Twilio en formato E.164 | notifications module |
+
+> Si no se configuran, SMS queda deshabilitado (graceful degradation).
+
+### Feature Flags
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `ENABLE_DATA_WAREHOUSE` | `false` | `false` (hasta que data_warehouse schema este provisionado) | app.module.ts; habilita modulos ETL, ML, Visualization |
+
+> Con `ENABLE_DATA_WAREHOUSE=true`, se cargan condicionalmente los modulos `etl`, `ml`, y `visualization`. Requiere que el schema `data_warehouse` exista en PostgreSQL.
+
+### Observabilidad (OpenTelemetry) — Opcional
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `OTEL_ENABLED` | `false` | `false` (opcional) | telemetry.ts; habilita tracing distribuido |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:4318` | URL del colector OTLP | telemetry.ts |
+| `OTEL_PROMETHEUS_PORT` | `9464` | `9464` | Puerto para metricas Prometheus |
+
+### Paginacion y Uploads — Opcionales
+
+| Variable | Dev | Prod | Notas |
+|----------|-----|------|-------|
+| `PAGINATION_DEFAULT_LIMIT` | `20` | `20` | app.config.ts |
+| `PAGINATION_MAX_LIMIT` | `100` | `100` | app.config.ts |
+| `MAX_FILE_SIZE` | `5242880` | `5242880` | bytes (5MB); app.config.ts |
+| `UPLOAD_DESTINATION` | `./uploads` | `./uploads` | app.config.ts |
+| `ALLOWED_MIME_TYPES` | `image/jpeg,image/png,image/gif,application/pdf` | (mismo) | app.config.ts |
 
 ## Scripts de Produccion
 
 ```bash
-# Deploy completo
+## Deploy completo
 scripts/deploy-production.sh
 
-# Actualizar desde git
+## Actualizar desde git
 scripts/update-production.sh
 
-# Diagnosticar problemas
+## Diagnosticar problemas
 scripts/diagnose-production.sh
 
-# Validar deployment
+## Validar deployment
 scripts/validate-deployment.sh
 
-# SSL setup
+## SSL setup
 scripts/setup-ssl-certbot.sh
 ```
 
@@ -196,8 +338,32 @@ scripts/setup-ssl-certbot.sh
    - `auto`: usa IP WSL2 solo si es alcanzable desde Windows; si no, fallback a `localhost`.
    - `localhost`: no intenta usar IP WSL2.
    - `wsl-ip`: exige IP WSL2 valida; falla rapido si no existe.
-4. `predev` valida PostgreSQL (`pg_isready`) y falla rapido si no queda listo.
+4. `predev` valida PostgreSQL con un check TCP de Node.js antes de intentar conectar TypeORM. Falla rapido si el puerto no esta listo.
 5. Resultado: el backend no arranca con host estancado o ambiguo.
+
+### Connection Stagger (Windows Dev Only)
+
+En Windows, la inicializacion simultanea de 11+ datasources TypeORM puede saturar el proxy TCP de `svchost.exe` (WSL2 localhost forwarding) o el firewall Hyper-V, causando `ECONNREFUSED` / `ECONNRESET` en las primeras conexiones.
+
+**Solucion:** `app.module.ts` implementa un stagger de conexion escalonado:
+- Cada datasource espera `n x 500ms` antes de conectar (donde `n` = indice del datasource, comenzando en 0).
+- Total: ~5.5s de delay escalonado para 11 datasources activos.
+- **Deshabilitado automaticamente** en produccion y en plataformas no-Windows.
+- Controlado por: `process.platform === 'win32' && process.env.NODE_ENV !== 'production'`
+
+**Prerequisito en Windows:** Regla de firewall Hyper-V para el puerto 5432. Sin esta regla, el forwarding TCP de WSL2 puede ser bloqueado por el firewall de Hyper-V antes de llegar al proxy de `svchost.exe`:
+
+```powershell
+New-NetFirewallHyperVRule `
+  -Name 'WSL2-PostgreSQL-5432' `
+  -Direction Inbound `
+  -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' `
+  -Protocol TCP `
+  -LocalPorts 5432 `
+  -Action Allow
+```
+
+> **Nota:** Este stagger no aplica en produccion (Linux). PM2 en el servidor inicia con conexiones directas sin delay.
 
 ## Recreacion de Base de Datos por Ambiente
 
@@ -218,32 +384,32 @@ scripts/setup-ssl-certbot.sh
 ### DEV: Recrear BD via WSL
 
 ```powershell
-# 1. Verificar PostgreSQL activo
+## 1. Verificar PostgreSQL activo
 wsl -d Ubuntu-24.04 -u developer -- sudo systemctl status postgresql --no-pager
 
-# 2. Recrear completo
+## 2. Recrear completo
 wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/recreate-database.sh' --env dev --force
 
-# 3. Verificar
+## 3. Verificar
 wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform -c "\dn"
 ```
 
 ### PROD: Recrear BD via SSH
 
 ```bash
-# 1. Conectar al servidor
+## 1. Conectar al servidor
 ssh isem@74.208.126.102
 
-# 2. BACKUP OBLIGATORIO
+## 2. BACKUP OBLIGATORIO
 sudo -u postgres pg_dump gamilit_platform > /home/isem/backups/gamilit_platform_$(date +%Y%m%d_%H%M%S).sql
 
-# 3. Detener backend
+## 3. Detener backend
 pm2 stop ecosystem.config.js
 
-# 4. Recrear
+## 4. Recrear
 bash /home/isem/gamilit-workspace/apps/database/scripts/recreate-database.sh --env prod --force
 
-# 5. Reiniciar backend + smoke test
+## 5. Reiniciar backend + smoke test
 pm2 restart ecosystem.config.js
 curl -s http://localhost:3006/api/v1/health
 ```

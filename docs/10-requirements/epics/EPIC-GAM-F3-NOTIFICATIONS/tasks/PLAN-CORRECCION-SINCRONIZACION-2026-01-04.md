@@ -1,3 +1,11 @@
+---
+titulo: "PLAN DE CORRECCION: Sincronizacion Backend-Frontend-Seeds EXT-003"
+tipo: requerimiento-funcional
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # PLAN DE CORRECCION: Sincronizacion Backend-Frontend-Seeds EXT-003
 
 **Version:** 1.1.0
@@ -459,21 +467,21 @@ COMMIT;
 ## 5. COMANDOS DE VALIDACION
 
 ```bash
-# Backend - Build y verificar entities
+## Backend - Build y verificar entities
 cd apps/backend
 npm run build
 npm run lint
 
-# Frontend - Build y verificar tipos
+## Frontend - Build y verificar tipos
 cd apps/frontend
 npm run build
 npm run lint
 
-# Database - Recrear y validar seeds
+## Database - Recrear y validar seeds
 cd apps/database
 ./scripts/recreate-database.sh --env dev
 
-# Verificar tablas de notificaciones
+## Verificar tablas de notificaciones
 PGPASSWORD=$DB_PASSWORD psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT table_name,
        (SELECT count(*) FROM information_schema.columns

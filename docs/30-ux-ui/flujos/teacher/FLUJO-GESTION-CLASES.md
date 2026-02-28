@@ -1,3 +1,11 @@
+---
+titulo: FL-TCH-09 - Gestion de Clases
+tipo: flujo
+fecha_creacion: "2025-10-01"
+ultima_actualizacion: "2026-02-28"
+estado: activo
+---
+
 # FL-TCH-09 - Gestion de Clases
 
 **ID:** FL-TCH-09

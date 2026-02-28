@@ -7,24 +7,24 @@ ultima_actualizacion: 2026-02-27
 
 # ERR-INT-001: Database-Backend Desalineado
 
-## Descripcion
+### Descripcion
 Las entities de TypeORM no coinciden con las tablas DDL, causando errores en runtime, queries fallidos, o datos corruptos.
 
-## Sintomas
+### Sintomas
 - Error: `column "xxx" does not exist`
 - Error: `relation "xxx" does not exist`
 - Queries retornan `null` en campos que deberian tener datos
 - Tipos de datos no coinciden (ej: `string` vs `number`)
 - Relaciones (OneToMany, ManyToOne) no funcionan
 
-## Causa Raiz
+### Causa Raiz
 1. Cambios en DDL sin actualizar entities
 2. Cambios en entities sin actualizar DDL
 3. Tipos de datos mal mapeados
 4. Nombres de columnas con case mismatch (snake_case vs camelCase)
 5. Falta de sincronizacion despues de migraciones
 
-## Solucion
+### Solucion
 
 ### 1. Verificar alineacion
 ```bash
@@ -79,7 +79,7 @@ otherEntity: OtherEntity;
 otherEntityId: string;
 ```
 
-## Prevencion
+### Prevencion
 
 1. **DDL-First**: Siempre crear DDL antes que entity
 2. **Checklist de cambios**:
@@ -98,7 +98,7 @@ ls apps/database/ddl/schemas/*/tables/*.sql | wc -l
 ls apps/backend/src/modules/*/entities/*.entity.ts | wc -l
 ```
 
-## Ocurrencias
+### Ocurrencias
 
 | Fecha | Tabla/Entity | Issue | Estado |
 |-------|--------------|-------|--------|
@@ -107,7 +107,7 @@ ls apps/backend/src/modules/*/entities/*.entity.ts | wc -l
 | 2025-12-26 | user_sessions | Tipos incorrectos | Resuelto |
 | 2025-11-28 | achievements | Relaciones incorrectas | Resuelto |
 
-## Referencias
+### Referencias
 
 - **Inventario DB:** `orchestration/inventarios/DATABASE_INVENTORY.yml`
 - **Inventario BE:** `orchestration/inventarios/BACKEND_INVENTORY.yml`

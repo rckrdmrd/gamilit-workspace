@@ -119,7 +119,7 @@ El `README.md` es el **punto de entrada principal**. Debe contener:
 
 **Template:**
 ```markdown
-# Documentacion de {Nombre del Proyecto}
+## Documentacion de {Nombre del Proyecto}
 
 > {Descripcion breve del proyecto en 1-2 lineas}
 
@@ -249,7 +249,7 @@ Usar tablas para:
 Usar un script de validacion documental del proyecto para verificar cumplimiento:
 
 ```bash
-# Ejemplo
+## Ejemplo
 ./scripts/validate-docs.sh /path/to/project
 ```
 
