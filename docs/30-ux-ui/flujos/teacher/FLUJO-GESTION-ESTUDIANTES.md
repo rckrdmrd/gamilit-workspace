@@ -72,11 +72,11 @@ flowchart TD
 
 6. FE: Para cada classroom, GET /api/v1/teacher/classrooms/:id/students
 7. BE: TeacherClassroomsController.getClassroomStudents() -> students del aula con progreso
-8. DB: SELECT u.*, sp.*, cm.* FROM auth.users u
-       JOIN student_tracking.student_profiles sp ON u.id = sp.user_id
-       JOIN social_features.classroom_members cm ON sp.user_id = cm.user_id
+8. DB: SELECT p.*, cm.* FROM auth_management.profiles p
+       JOIN social_features.classroom_members cm ON cm.student_id = p.id
        WHERE cm.classroom_id = :classroomId AND cm.status = 'active'
        (RLS filtra automaticamente por tenant)
+       -- DB-125: teacherId = req.user.id = profiles.id (NO auth.users.id)
 9. BE: Retorna { data: StudentSummary[], total, page, limit }
 10. FE: Enriquece datos: agrega classroom_name, calcula performance_level desde score_average
 
@@ -179,6 +179,7 @@ flowchart TD
 | Nota unica por par (teacher, student, classroom) | DB | UNIQUE constraint en teacher_notes, upsert en conflicto |
 | performance_level calculado en FE | FE | high >= 80, medium >= 50, low < 50 basado en score_average |
 | Paginacion en classroomStudents | BE | default limit 20, max parametrizable |
+| DB-125: convencion de identidad | BE | `teacherId = req.user.id = profiles.id` (NO `auth.users.id`). JOINs a perfiles parten de `auth_management.profiles p` usando `classroom_members.student_id = p.id`. Schema `student_tracking` no existe como esquema de perfiles — los datos de perfil viven en `auth_management.profiles`. |
 
 ---
 

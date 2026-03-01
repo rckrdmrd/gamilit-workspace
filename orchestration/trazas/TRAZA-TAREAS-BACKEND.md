@@ -550,5 +550,41 @@ modules/lti/ (NUEVO módulo)
 
 ---
 
+## TASK-DB125-TEACHER-FIX: Fix DB-125 Convention in Teacher Services ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0
+**Asignado:** Claude Opus 4.6
+**Fecha:** 2026-03-01
+
+### Resumen
+Corrección de 4 instancias donde servicios del módulo teacher confundían `user_id` (auth.users.id) con `profile.id` (profiles.id). La convención DB-125 establece que `req.user.id = profiles.id` (JWT sub = profiles.id), pero `exercise-responses.service.ts` y `teacher-classrooms-crud.service.ts` trataban ese valor como `auth.users.id`, causando 404 en `/teacher/classrooms` y 500 en `/teacher/attempts`.
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `apps/backend/src/modules/teacher/services/exercise-responses.service.ts` | `getTeacherProfile()`: dual-lookup DB-125 (id first, user_id fallback). Catch block: re-throw typed HTTP exceptions. |
+| `apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts` | `getClassrooms()`: profileRepo en vez de userRepo. `createClassroom()`: single lookup sin redundancia. `getClassroomTeachers()`: lookup por profiles.id, derivar userIds. JSDoc fix. |
+
+### Validaciones Aplicadas
+
+| Aspecto | Resultado |
+|---------|-----------|
+| Build (tsc) | PASS |
+| PM2 restart | PASS (online, fork mode) |
+| Health check | PASS (DB healthy, Redis degraded — expected) |
+| HTTPS Nginx | PASS |
+| Patrón DB-125 | Consistente con teacher-content.service.ts (referencia) |
+
+### Métricas
+
+- **Archivos modificados:** 2
+- **Bugs corregidos:** 4 instancias
+- **Build:** PASS
+- **Deploy:** PM2 restart exitoso en producción
+
+---
+
 
 *Archivado: 2026-02-11 | Tareas anteriores en `_archive/TRAZA-TAREAS-BACKEND-HISTORICO.md`*

@@ -16,6 +16,8 @@ ultima_actualizacion: 2026-02-27
 
 ## 3. Classrooms APIs
 
+> **Nota DB-125:** En todos los endpoints de este módulo, el `teacherId` extraído del JWT (`req.user.id`) corresponde a `auth_management.profiles.id`, NO a `auth.users.id`. Los servicios backend usan este valor directamente como FK en `social_features.classrooms.teacher_id` y `social_features.teacher_classrooms.teacher_id`.
+
 ### 3.1 GET /teacher/classrooms
 
 Lista todas las aulas del teacher.

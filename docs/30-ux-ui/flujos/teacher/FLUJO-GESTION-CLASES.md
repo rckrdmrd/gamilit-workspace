@@ -75,8 +75,9 @@ flowchart TD
 8. FE: GET /api/v1/teacher/classrooms/:classroomId/students
 9. BE: TeacherClassroomsController.getClassroomStudents()
 10. DB: SELECT FROM social_features.classroom_members cm
-        JOIN auth_management.profiles p ON cm.user_id = p.user_id
+        JOIN auth_management.profiles p ON cm.student_id = p.id
         WHERE cm.classroom_id = :classroomId (RLS)
+        -- DB-125: classroom_members.student_id references profiles.id (NOT auth.users.id)
 11. BE: Retorna array de { studentId, name, avatar, lastActive, exercisesCompleted, avgGrade }
 12. FE: Renderiza tabla de estudiantes con columnas ordenables
 
@@ -140,6 +141,7 @@ flowchart TD
 | Busqueda case-insensitive | BE | Filtro por nombre usando ILIKE |
 | Estudiante en multiples aulas | BE | Vista consolidada usa DISTINCT para evitar duplicados |
 | Ordenamiento configurable | BE | Por nombre, ultima actividad, promedio, XP |
+| DB-125: convencion de identidad | BE | `req.user.id` = `profiles.id` (NO `auth.users.id`). `classroom_members.student_id` referencia `auth_management.profiles.id` directamente. El JOIN correcto es `ON cm.student_id = p.id`, no `ON cm.user_id = p.user_id`. |
 
 ---
 

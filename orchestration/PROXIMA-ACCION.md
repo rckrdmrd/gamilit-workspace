@@ -9,6 +9,12 @@
 
 ## Estado Actual
 
+### [2026-03-01] TASK-DB125-TEACHER-FIX: Fix DB-125 Convention in Teacher Services ✅
+- **Archivos:** `exercise-responses.service.ts`, `teacher-classrooms-crud.service.ts`
+- **Fix:** 4 instancias de confusión user_id vs profile.id corregidas
+- **Resultado:** Teacher portal classrooms (404) y attempts (500) resueltos
+- **Build:** PASS | **Deploy:** PM2 restart OK | **Health:** OK
+
 ### Ultima Tarea Completada: Desactivar comprension_auditiva (2026-02-28)
 
 **Tarea completada.** Marcada como BACKLOG en 4 archivos (2 docs + 2 inventarios):

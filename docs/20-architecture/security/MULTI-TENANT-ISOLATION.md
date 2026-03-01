@@ -204,7 +204,21 @@ request.rlsContext = {
 
 **Estado actual:** El interceptor adjunta el contexto al objeto request pero NO ejecuta `SET LOCAL app.current_user_id` en la conexion de PostgreSQL. El comentario en el codigo (linea 98-99) indica que la aplicacion automatica de SET LOCAL esta pendiente para implementacion futura.
 
-### 6.4 Decoradores de Soporte
+### 6.4 DB-125 en Teacher Services (2026-03-01)
+
+Los servicios del módulo teacher implementan el patrón DB-125 de la siguiente manera:
+
+| Servicio | Método | Patrón |
+|----------|--------|--------|
+| `exercise-responses.service.ts` | `getTeacherProfile()` | Dual-lookup: `profileRepo.findOne({ id: userId })` primero, fallback `{ user_id: userId }` |
+| `teacher-classrooms-crud.service.ts` | `getClassrooms()` | Single-lookup: `profileRepo.findOne({ id: teacherId })` |
+| `teacher-classrooms-crud.service.ts` | `createClassroom()` | Dual-lookup con fallback |
+| `teacher-classrooms-crud.service.ts` | `getClassroomTeachers()` | Batch: `profileRepo.find({ id: In(teacherIds) })`, deriva `userIds` desde profiles |
+| `teacher-content.service.ts` | `create()` | Dual-lookup (referencia original) |
+
+**Anti-patrón deprecado:** `profileRepo.findOne({ user_id: userId })` como lookup primario — `userId` del JWT ya es `profiles.id`, no `auth.users.id`.
+
+### 6.5 Decoradores de Soporte
 
 **Archivo:** `apps/backend/src/shared/decorators/tenant.decorator.ts`
 

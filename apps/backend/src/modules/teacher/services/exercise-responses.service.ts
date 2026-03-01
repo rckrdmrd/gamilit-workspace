@@ -47,16 +47,25 @@ export class ExerciseResponsesService {
   ) {}
 
   /**
-   * Get teacher's profile from user_id
-   * @param userId - User ID from auth.users
+   * Get teacher's profile from profile ID (DB-125: JWT sub = profiles.id)
+   * @param userId - Profile ID from JWT (req.user.id = profiles.id per DB-125)
    * @returns Teacher's profile with id and tenant_id
    * @throws UnauthorizedException if profile not found
    */
   private async getTeacherProfile(userId: string): Promise<{ id: string; tenant_id: string }> {
-    const profile = await this.profileRepository.findOne({
-      where: { user_id: userId },
+    // DB-125: JWT sub = profiles.id, try that first
+    let profile = await this.profileRepository.findOne({
+      where: { id: userId },
       select: ['id', 'tenant_id'],
     });
+
+    if (!profile) {
+      // Fallback: userId might be auth.users.id
+      profile = await this.profileRepository.findOne({
+        where: { user_id: userId },
+        select: ['id', 'tenant_id'],
+      });
+    }
 
     if (!profile) {
       throw new UnauthorizedException('Teacher profile not found');
@@ -283,6 +292,10 @@ export class ExerciseResponsesService {
         stats, // P2-03: Include server-calculated stats
       };
     } catch (error: unknown) {
+      // Re-throw typed HTTP exceptions as-is (UnauthorizedException, NotFoundException, etc.)
+      if (error instanceof UnauthorizedException || error instanceof NotFoundException || error instanceof ForbiddenException) {
+        throw error;
+      }
       this.logger.error(`getAttempts failed: ${error instanceof Error ? error.message : error}`);
       const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(

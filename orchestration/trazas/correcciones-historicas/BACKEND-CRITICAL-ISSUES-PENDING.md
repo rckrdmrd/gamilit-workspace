@@ -60,6 +60,8 @@ async getProfileIdFromAuthUser(authUserId: string): Promise<string> {
 }
 ```
 
+> **NOTA DB-125 (2026-03-01):** Este patrón (`getProfileIdFromAuthUser()` con lookup por `user_id`) es LEGACY. Desde DB-125, `req.user.id = profiles.id` — los servicios teacher deben usar `profileRepo.findOne({ id: userId })` directamente. Ver `exercise-responses.service.ts` y `teacher-classrooms-crud.service.ts` como referencia correcta.
+
 ---
 
 ### P0-005: Password Recovery - IMPLEMENTADO

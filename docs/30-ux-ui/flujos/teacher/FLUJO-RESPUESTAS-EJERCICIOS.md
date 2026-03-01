@@ -68,13 +68,13 @@ flowchart TD
 2. FE: GET /api/v1/teacher/attempts?limit=20&page=1
 3. BE: ExerciseResponsesController.getAttempts() -> ExerciseResponsesService.getAttempts(userId, query)
 4. DB: SELECT ea.id, ea.score, ea.is_correct, ea.submitted_at, ea.time_spent,
-              u.full_name as student_name, e.title as exercise_title, m.name as module_name
+              p.full_name as student_name, e.title as exercise_title, m.name as module_name
         FROM progress_tracking.exercise_attempts ea
-        JOIN auth.users u ON ea.user_id = u.id
+        JOIN auth_management.profiles p ON ea.user_id = p.id
         JOIN educational_content.exercises e ON ea.exercise_id = e.id
         JOIN educational_content.modules m ON e.module_id = m.id
         WHERE ea.user_id IN (
-          SELECT cm.user_id FROM social_features.classroom_members cm
+          SELECT cm.student_id FROM social_features.classroom_members cm
           JOIN social_features.teacher_classrooms tc ON cm.classroom_id = tc.classroom_id
           WHERE tc.teacher_id = :teacherId
         )
@@ -108,8 +108,8 @@ flowchart TD
 20. FE: Desde vista de ejercicio, navega a ver todas las respuestas
 21. FE: GET /api/v1/teacher/exercises/:exerciseId/responses
 22. BE: ExerciseResponsesController.getExerciseResponses() -> ExerciseResponsesService.getExerciseResponses()
-23. DB: SELECT ea.*, u.full_name FROM progress_tracking.exercise_attempts ea
-         JOIN auth.users u ON ea.user_id = u.id
+23. DB: SELECT ea.*, p.full_name FROM progress_tracking.exercise_attempts ea
+         JOIN auth_management.profiles p ON ea.user_id = p.id
          WHERE ea.exercise_id = :exerciseId
            AND ea.user_id IN (students de mis classrooms)
          ORDER BY ea.score DESC
@@ -176,6 +176,7 @@ flowchart TD
 | Validacion de acceso en detalle | BE | ExerciseResponsesService verifica ownership antes de retornar |
 | Paginacion obligatoria en lista | BE | Default limit 20, max configurable via query param |
 | Filtros acumulables | BE | Todos los query params son opcionales e independientes |
+| DB-125: convencion de identidad | BE | `req.user.id` = `profiles.id` (NO `auth.users.id`). `ExerciseResponsesService.getTeacherProfile()` usa dual-lookup: `profileRepo.findOne({ id: userId })` primero, fallback `{ user_id: userId }`. Los JOINs a perfiles usan `auth_management.profiles p ON ea.user_id = p.id`. |
 
 ---
 

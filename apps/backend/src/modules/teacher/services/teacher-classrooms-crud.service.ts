@@ -105,7 +105,7 @@ export class TeacherClassroomsCrudService {
   /**
    * Obtiene todos los classrooms del teacher autenticado
    *
-   * @param teacherId - ID del teacher (user_id)
+   * @param teacherId - ID del teacher (profiles.id per DB-125)
    * @param query - Parámetros de búsqueda y filtrado
    * @returns Lista paginada de classrooms
    *
@@ -117,9 +117,10 @@ export class TeacherClassroomsCrudService {
   ): Promise<PaginatedTeacherClassroomsResponseDto> {
     const { page = 1, limit = 10, search, status, grade_level, subject } = query;
 
-    // Validar que el teacher existe
-    const teacher = await this.userRepo.findOne({ where: { id: teacherId } });
-    if (!teacher) {
+    // DB-125: teacherId is profiles.id from JWT (req.user.id = profiles.id)
+    // Validate teacher exists via profile lookup (not auth.users)
+    const teacherProfile = await this.profileRepo.findOne({ where: { id: teacherId } });
+    if (!teacherProfile) {
       throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
     }
 
@@ -508,20 +509,21 @@ export class TeacherClassroomsCrudService {
     // Obtener IDs de teachers
     const teacherIds = teacherClassrooms.map((tc) => tc.teacher_id);
 
-    // Obtener información de profiles
+    // DB-125: teacherIds are profiles.id (teacher_classrooms.teacher_id = profiles.id)
     const profiles = await this.profileRepo.find({
-      where: { user_id: In(teacherIds) },
-    });
-
-    // Obtener información de users
-    const users = await this.userRepo.find({
       where: { id: In(teacherIds) },
     });
 
+    // Derive real auth.users.id from profiles to fetch user records
+    const userIds = profiles.map((p) => p.user_id).filter(Boolean);
+    const users = userIds.length > 0
+      ? await this.userRepo.find({ where: { id: In(userIds) } })
+      : [];
+
     // Mapear a DTO
     return teacherClassrooms.map((tc) => {
-      const profile = profiles.find((p) => p.user_id === tc.teacher_id);
-      const user = users.find((u) => u.id === tc.teacher_id);
+      const profile = profiles.find((p) => p.id === tc.teacher_id);
+      const user = profile ? users.find((u) => u.id === profile.user_id) : undefined;
       return this.mapToTeacherInClassroomDto(tc, profile, user);
     });
   }
@@ -726,10 +728,18 @@ export class TeacherClassroomsCrudService {
     teacherId: string,
     dto: CreateTeacherClassroomDto,
   ): Promise<TeacherClassroomResponseDto> {
-    // Validar que el teacher existe
-    const teacher = await this.userRepo.findOne({ where: { id: teacherId } });
-    if (!teacher) {
+    // DB-125: teacherId is profiles.id from JWT (req.user.id = profiles.id)
+    // Single lookup — reuse result for both validation and tenant_id extraction
+    let teacherProfile = await this.profileRepo.findOne({ where: { id: teacherId } });
+    if (!teacherProfile) {
+      // Fallback: teacherId might be auth.users.id
+      teacherProfile = await this.profileRepo.findOne({ where: { user_id: teacherId } });
+    }
+    if (!teacherProfile) {
       throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
+    }
+    if (!teacherProfile.tenant_id) {
+      throw new BadRequestException('Teacher profile tenant_id not found');
     }
 
     // Validar que el código no esté en uso (si se proporciona)
@@ -741,23 +751,6 @@ export class TeacherClassroomsCrudService {
       if (existingClassroom) {
         throw new ConflictException(`Classroom with code "${dto.code}" already exists`);
       }
-    }
-
-    // Obtener tenant_id del teacher
-    // DB-125: Try profile.id first (JWT sub = profiles.id)
-    let teacherProfile = await this.profileRepo.findOne({
-      where: { id: teacherId },
-    });
-
-    if (!teacherProfile) {
-      // Fallback: teacherId might be auth.users.id
-      teacherProfile = await this.profileRepo.findOne({
-        where: { user_id: teacherId },
-      });
-    }
-
-    if (!teacherProfile || !teacherProfile.tenant_id) {
-      throw new BadRequestException('Teacher profile or tenant_id not found');
     }
 
     // Desestructurar DTO para manejar settings separadamente

@@ -173,7 +173,47 @@ bajo: 2 (100% resuelto)
 
 ---
 
-**Última actualización:** 2026-01-25
+### BUG-TEACHER-DB125-001: Teacher services confunden user_id vs profile.id (DB-125)
+
+**Fecha detección:** 2026-03-01
+**Fecha resolución:** 2026-03-01
+**Módulo afectado:** Backend (teacher module - exercise-responses, teacher-classrooms-crud)
+**Severidad:** Crítico
+**Estado:** Resuelto
+
+**Síntoma:**
+```
+GET /api/v1/teacher/classrooms → 404 Not Found
+GET /api/v1/teacher/attempts → 500 "Teacher profile not found"
+```
+
+**Causa raíz:**
+Los servicios del módulo teacher trataban `req.user.id` (que es `profiles.id` per DB-125) como si fuera `auth.users.id`. Esto causaba queries incorrectas:
+- `profileRepo.findOne({ user_id: userId })` — `userId` ya es `profiles.id`, no `auth.users.id`
+- `userRepo.findOne({ id: teacherId })` — `teacherId` es `profiles.id`, no `auth.users.id`
+
+**Solución:**
+1. `exercise-responses.service.ts`: Cambiar `getTeacherProfile()` para usar dual-lookup DB-125 (`{ id: userId }` primero, fallback `{ user_id: userId }`)
+2. `exercise-responses.service.ts`: Re-throw de excepciones tipadas (UnauthorizedException, NotFoundException) en catch block en vez de envolverlas como InternalServerErrorException
+3. `teacher-classrooms-crud.service.ts` `getClassrooms()`: Cambiar validación de `userRepo.findOne({ id })` a `profileRepo.findOne({ id })`
+4. `teacher-classrooms-crud.service.ts` `createClassroom()`: Eliminar doble-query redundante, usar single lookup con fallback
+5. `teacher-classrooms-crud.service.ts` `getClassroomTeachers()`: Cambiar `profileRepo.find({ user_id: In(teacherIds) })` a `{ id: In(teacherIds) }`, derivar userIds desde profiles encontrados
+
+**Archivos modificados:**
+- `apps/backend/src/modules/teacher/services/exercise-responses.service.ts`
+  - Líneas 55-72: `getTeacherProfile()` — dual-lookup DB-125
+  - Líneas 285-294: catch block — re-throw excepciones tipadas
+- `apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts`
+  - Líneas 120-124: `getClassrooms()` — profileRepo en vez de userRepo
+  - Líneas 511-526: `getClassroomTeachers()` — lookup por profiles.id
+  - Líneas 731-748: `createClassroom()` — single lookup eliminando redundancia
+
+**Origen del bug:**
+Confusión histórica entre `auth.users.id` y `auth_management.profiles.id`. La convención DB-125 (JWT sub = profiles.id) fue establecida pero no aplicada consistentemente en todos los servicios teacher. Los servicios `teacher-content.service.ts` y `classroom-ownership.guard.ts` ya implementaban el patrón correcto.
+
+---
+
+**Última actualización:** 2026-03-01
 **Mantenido por:** Bug-Fixer Agent / QA Team
 
 *Archivado: 2026-02-11 | Bugs anteriores en `_archive/TRAZA-BUGS-HISTORICO.md`*

@@ -16,6 +16,8 @@ ultima_actualizacion: 2026-02-27
 
 ## 4. Student Progress APIs
 
+> **Nota DB-125:** Todos los parámetros `:studentId` en rutas aceptan `profiles.id`. El `req.user.id` del teacher autenticado también es `profiles.id`.
+
 ### 4.1 GET /teacher/students/:studentId/progress
 
 Obtiene progreso completo de un estudiante.
