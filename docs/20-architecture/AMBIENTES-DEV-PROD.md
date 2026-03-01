@@ -15,10 +15,10 @@ ultima_actualizacion: 2026-02-27
 
 | Aspecto | Dev (WSL Windows) | Prod (74.208.126.102) |
 |---------|-------------------|----------------------|
-| Backend URL | http://localhost:3006 | https://74.208.126.102 (via Nginx:443) |
-| Frontend URL | http://localhost:3005 | https://74.208.126.102 (via Nginx:443) |
-| Frontend API Mode | **Proxy** (`VITE_API_HOST=proxy`) — URLs relativas via Vite dev server | **Absoluto** (`VITE_API_HOST=74.208.126.102:3006`) |
-| WebSocket | Auto-detecta `window.location.hostname:3006` | wss://74.208.126.102:3006 |
+| Backend URL | http://localhost:3006 | https://74.208.126.102/api/ (via Nginx:443 → localhost:3006) |
+| Frontend URL | http://localhost:3005 | https://74.208.126.102 (via Nginx:443 → localhost:3005) |
+| Frontend API Mode | **Proxy** (`VITE_API_HOST=proxy`) — URLs relativas via Vite dev server | **Proxy** (`VITE_API_HOST=proxy`) — URLs relativas `/api/v1/...`, Nginx rutea `/api/` a backend:3006 |
+| WebSocket | Auto-detecta `window.location.hostname:3006` | wss://74.208.126.102/socket.io/ (via Nginx:443 → localhost:3006) |
 | CORS LAN | Auto-acepta IPs privadas (192.168.x, 10.x, 172.16-31.x) | Solo whitelist explicita |
 | DB Host | Deterministico via `DB_HOST_MODE` + `npm run predev` (`wsl-ip` o `localhost`) | localhost |
 | DB Port | 5432 | 5432 |
@@ -26,11 +26,31 @@ ultima_actualizacion: 2026-02-27
 | DB Timeout | 15000ms | 15000ms |
 | Redis | Configurable via `REDIS_ENABLED` (true/false, defecto=true) | REQUERIDO (localhost:6379) |
 
-## SSL/HTTPS
+## SSL/HTTPS — Arquitectura Nginx en Produccion
 
 - **Dev:** Sin SSL, HTTP directo en puertos 3005/3006
-- **Prod:** Nginx reverse proxy con SSL (self-signed o Let's Encrypt via Certbot)
+- **Prod:** Nginx reverse proxy con SSL (Let's Encrypt via Certbot)
 - **CORS:** Manejado SOLO por NestJS (NUNCA duplicar en Nginx)
+
+### Flujo de Trafico en Produccion (Puerto Unico: 443)
+
+```
+Browser
+  │
+  ├─ https://74.208.126.102/api/v1/...   ──→ Nginx :443 ──→ proxy_pass 127.0.0.1:3006 (Backend)
+  ├─ wss://74.208.126.102/socket.io/     ──→ Nginx :443 ──→ proxy_pass 127.0.0.1:3006 (WebSocket)
+  ├─ https://74.208.126.102/*.js,*.css    ──→ Nginx :443 ──→ proxy_pass 127.0.0.1:3005 (Static assets)
+  └─ https://74.208.126.102/             ──→ Nginx :443 ──→ proxy_pass 127.0.0.1:3005 (SPA HTML)
+```
+
+**Puertos 3005 y 3006 son INTERNOS (localhost only).** El browser nunca accede directamente a estos puertos.
+Nginx escucha en **puerto 443** y usa **location blocks** para dirigir el trafico:
+- `/api/` y `/api/v1/auth/` → backend (3006)
+- `/socket.io/` → backend (3006) con upgrade WebSocket
+- `*.js, *.css, *.png, ...` → frontend (3005) con cache 1 año
+- `/` (todo lo demas) → frontend (3005) sin cache (SPA entry point)
+
+**Config Nginx:** `apps/devops/nginx/gamilit.conf` (copiar a `/etc/nginx/sites-available/gamilit`)
 
 ## Redis: Requerido vs Opcional
 
@@ -132,8 +152,8 @@ En produccion, CORS es estrictamente por whitelist explicita (sin auto-accept).
 
 | Variable | Dev (proxy) | Prod (absoluto) |
 |----------|-------------|-----------------|
-| `VITE_API_HOST` | `proxy` | `74.208.126.102:3006` |
-| `VITE_WS_HOST` | (vacio) | `74.208.126.102:3006` |
+| `VITE_API_HOST` | `proxy` | `proxy` (Nginx rutea `/api/` a backend:3006 — URLs relativas) |
+| `VITE_WS_HOST` | (vacio) | (vacio) (usa `window.location.host` — Nginx rutea `/socket.io/`) |
 | `VITE_API_PROTOCOL` | `http` | `https` |
 | `VITE_WS_PROTOCOL` | `ws` | `wss` |
 
@@ -170,9 +190,9 @@ Identica en ambos ambientes:
 | `MAINTENANCE_MODE` | `false` | `false` | app.config.ts |
 | `ENABLE_SWAGGER` | `true` | `false` (OBLIGATORIO) | env.config.ts |
 | `ENABLE_CORS` | `true` | `true` | env.config.ts |
-| `CORS_ORIGIN` | `http://localhost:3005,http://localhost:3006` | `https://74.208.126.102,https://74.208.126.102:3005` | app.config.ts |
+| `CORS_ORIGIN` | `http://localhost:3005,http://localhost:3006` | `https://74.208.126.102` (origen del browser via Nginx:443) | app.config.ts |
 | `ALLOWED_ORIGINS` | `http://localhost:3005,http://localhost:3006` | (mismo que CORS_ORIGIN) | env.config.ts |
-| `FRONTEND_URL` | `http://localhost:3005` | `https://74.208.126.102:3005` | app.config.ts |
+| `FRONTEND_URL` | `http://localhost:3005` | `https://74.208.126.102` (URL publica via Nginx, sin puerto) | app.config.ts |
 
 ### Base de Datos
 
@@ -261,7 +281,7 @@ El servicio de email (`MailService`) soporta SMTP generico y SendGrid. Si no se 
 | `SMTP_PASS` | (vacio — modo log) | Credencial SMTP | mail.service.ts |
 | `SMTP_SECURE` | `false` | `false` (587 usa STARTTLS) | mail.service.ts |
 | `SENDGRID_API_KEY` | (vacio — usa SMTP si configurado) | SendGrid API Key (alternativa a SMTP) | mail.service.ts; toma precedencia sobre SMTP |
-| `FRONTEND_URL` | `http://localhost:3005` | `https://74.208.126.102:3005` | Links en emails de reset/verify |
+| `FRONTEND_URL` | `http://localhost:3005` | `https://74.208.126.102` (URL publica via Nginx, sin puerto) | Links en emails de reset/verify |
 
 > **Logica de seleccion:** Si `SENDGRID_API_KEY` esta definido, se usa SendGrid (via SMTP relay). Si no, se usa SMTP generico con `SMTP_HOST/PORT/USER/PASS`. Si ninguno esta configurado, los emails solo se loggean.
 

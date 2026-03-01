@@ -28,10 +28,12 @@ Project Path: /home/isem/gamilit-workspace
 │  SERVIDOR PRODUCCIÓN: 74.208.126.102                    │
 │                                                         │
 │  ┌──────────── Nginx (SSL Termination) ──────────────┐  │
-│  │  :443 (HTTPS) ──→ :3005 (HTTP) Frontend           │  │
-│  │  :443 (HTTPS) ──→ :3006 (HTTP) Backend API        │  │
-│  │  Certs: /etc/nginx/ssl/gamilit.{crt,key}          │  │
+│  │  :443 /          ──→ :3005 (HTTP) Frontend SPA    │  │
+│  │  :443 /api/      ──→ :3006 (HTTP) Backend API     │  │
+│  │  :443 /socket.io/──→ :3006 (HTTP) WebSocket       │  │
+│  │  Certs: /etc/letsencrypt/live/gamilit.isem.edu.mx/│  │
 │  │  Config: /etc/nginx/sites-enabled/gamilit          │  │
+│  │  Browser solo accede puerto 443 (3005/3006 intern) │  │
 │  └───────────────────────────────────────────────────┘  │
 │                                                         │
 │  ┌──── PM2 (Process Manager) ────┐                      │
@@ -203,7 +205,8 @@ CHECKLIST de variables críticas:
   [ ] DB_USER y DB_USERNAME existen y son iguales
   [ ] DB_PASSWORD es el password de producción
   [ ] PORT=3006
-  [ ] CORS_ORIGIN incluye https://74.208.126.102:3005
+  [ ] CORS_ORIGIN incluye https://74.208.126.102 (URL publica via Nginx:443, sin puerto)
+  [ ] FRONTEND_URL=https://74.208.126.102 (URL publica via Nginx:443, sin puerto)
   [ ] ENABLE_SWAGGER=false
   [ ] NODE_ENV=production
 ```
@@ -248,20 +251,22 @@ pm2 save
 ### Paso 11: Validación Post-Deploy
 
 ```bash
-# Health check backend (puerto INTERNO, ruta: /health SIN prefijo /api)
+# Health check backend (puerto INTERNO directo, sin pasar por Nginx)
 curl -f http://localhost:3006/api/v1/health || echo "BACKEND HEALTH FAILED"
 
-# Verificar frontend
+# Verificar frontend (puerto INTERNO directo)
 curl -f http://localhost:3005 || echo "FRONTEND HEALTH FAILED"
 
-# Verificar acceso externo con SSL
-curl -fk https://74.208.126.102:3006/api/v1/health || echo "BACKEND HTTPS FAILED"
-curl -fk https://74.208.126.102:3005 || echo "FRONTEND HTTPS FAILED"
+# Verificar acceso externo con SSL (a traves de Nginx puerto 443)
+# NOTA: Nginx rutea /api/ a backend:3006 y / a frontend:3005 internamente.
+# El browser NUNCA accede a puertos 3005/3006 directamente.
+curl -fk https://74.208.126.102/api/v1/health || echo "BACKEND HTTPS FAILED"
+curl -fk https://74.208.126.102 || echo "FRONTEND HTTPS FAILED"
 
-# Verificar CORS headers
-curl -sk -H "Origin: https://74.208.126.102:3005" \
+# Verificar CORS headers (Origin = URL publica sin puerto, via Nginx:443)
+curl -sk -H "Origin: https://74.208.126.102" \
   -H "Access-Control-Request-Method: GET" \
-  -X OPTIONS https://74.208.126.102:3006/api/v1/health \
+  -X OPTIONS https://74.208.126.102/api/v1/health \
   -D - -o /dev/null | grep -i "access-control"
 
 # Verificar PM2 status
