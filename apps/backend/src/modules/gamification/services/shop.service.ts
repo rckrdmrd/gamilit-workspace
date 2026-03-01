@@ -12,7 +12,8 @@ import { MLCoinsTransaction } from '../entities/ml-coins-transaction.entity';
 import { UserAchievement } from '../entities/user-achievement.entity';
 import { PurchaseResponseDto } from '../dto/shop/purchase-response.dto';
 import { ShopItemResponseDto } from '../dto/shop/shop-item-response.dto';
-import { TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { ComodinTypeEnum, TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { ComodinesService } from './comodines.service';
 import {
   ShopItemNotFoundError,
   UserStatsNotFoundError,
@@ -47,6 +48,17 @@ import { mergeVisualConfig } from '../utils/visual-config.util';
 export class ShopService {
   private readonly logger = new Logger(ShopService.name);
 
+  /**
+   * Mapping de effect_data.type de shop items a ComodinTypeEnum.
+   * Solo tipos que corresponden a comodines de ejercicio; boosts (xp_boost,
+   * coins_boost) se excluyen intencionalmente — no sincronizan inventario.
+   */
+  private static readonly SHOP_EFFECT_TO_COMODIN: Record<string, string> = {
+    hint: 'PISTAS',
+    highlight: 'VISION_LECTORA',
+    retry: 'SEGUNDA_OPORTUNIDAD',
+  };
+
   constructor(
     @InjectRepository(ShopItem, 'gamification')
     private readonly shopItemRepository: Repository<ShopItem>,
@@ -61,6 +73,7 @@ export class ShopService {
     @InjectRepository(UserAchievement, 'gamification')
     private readonly userAchievementRepository: Repository<UserAchievement>,
     private readonly notificationService: NotificationService,
+    private readonly comodinesService: ComodinesService,
   ) {}
 
   /**
@@ -177,6 +190,10 @@ export class ShopService {
     if (quantity <= 0) {
       throw new InvalidQuantityError();
     }
+
+    // Captured inside the transaction and used after it commits for comodines sync
+    let item_is_consumable = false;
+    let effect_type: string | undefined;
 
     const purchaseResult = await this.shopItemRepository.manager.transaction(async (manager) => {
       const itemRepo = manager.getRepository(ShopItem);
@@ -309,6 +326,12 @@ export class ShopService {
         `User ${userId} purchased ${quantity}x ${item.name} for ${totalCost} ML Coins`,
       );
 
+      // Capture consumable metadata for post-transaction comodines sync
+      item_is_consumable = item.is_consumable;
+      effect_type = typeof item.effect_data?.type === 'string'
+        ? item.effect_data.type
+        : undefined;
+
       return {
         success: true,
         purchase_id: savedPurchase.id,
@@ -318,6 +341,29 @@ export class ShopService {
         message: `Successfully purchased ${quantity}x ${item.name}`,
       };
     });
+
+    // Sync consumable shop purchase to comodines inventory (non-blocking)
+    if (purchaseResult && item_is_consumable && effect_type) {
+      const comodinType = ShopService.SHOP_EFFECT_TO_COMODIN[effect_type];
+      if (comodinType) {
+        try {
+          await this.comodinesService.incrementFromShopPurchase(
+            userId,
+            comodinType as ComodinTypeEnum,
+            quantity,
+            purchaseResult.purchase_id,
+          );
+          this.logger.log(
+            `Synced ${quantity}x ${comodinType} to comodines inventory for user ${userId}`,
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to sync comodines inventory for user ${userId}: ${error}`,
+          );
+          // Non-blocking: shop purchase already succeeded
+        }
+      }
+    }
 
     // Notificación no bloqueante para historial in-app de compras.
     try {

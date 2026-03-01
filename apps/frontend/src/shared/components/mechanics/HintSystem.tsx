@@ -3,22 +3,44 @@
  * Provides hints for exercises
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 
 export interface HintSystemProps {
   hints: string[];
   maxHints?: number;
   onHintUsed?: (hintIndex: number) => void;
+  /** Number of hints to reveal programmatically (from comodines pistas usage) */
+  externalRevealCount?: number;
 }
 
 export const HintSystem = ({
   hints,
   maxHints = hints.length,
   onHintUsed,
+  externalRevealCount,
 }: HintSystemProps) => {
   const [revealedHints, setRevealedHints] = useState<number[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Auto-reveal hints when triggered externally (e.g., from pistas comodin)
+  useEffect(() => {
+    if (externalRevealCount === undefined || externalRevealCount <= 0) return;
+
+    const targetCount = Math.min(externalRevealCount, Math.min(hints.length, maxHints));
+    if (targetCount > revealedHints.length) {
+      const newRevealed = Array.from({ length: targetCount }, (_, i) => i);
+      setRevealedHints(newRevealed);
+      setIsExpanded(true);
+      // Notify for each newly revealed hint
+      for (let i = revealedHints.length; i < targetCount; i++) {
+        onHintUsed?.(i);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalRevealCount]);
+  // Note: intentionally NOT including revealedHints/hints/maxHints/onHintUsed in deps
+  // to avoid re-triggering on internal state changes
 
   const revealNextHint = (): void => {
     const nextHintIndex = revealedHints.length;

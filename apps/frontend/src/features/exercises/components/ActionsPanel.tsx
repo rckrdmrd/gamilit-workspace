@@ -30,6 +30,7 @@ export const ActionsPanel = () => {
     hasUnsavedChanges,
     mechanicActionsRef,
     hints,
+    comodinesContext,
   } = useExerciseContext();
 
   return (
@@ -118,6 +119,7 @@ export const ActionsPanel = () => {
         {hints.length > 0 && (
           <HintSystem
             hints={hints}
+            externalRevealCount={comodinesContext.hintsRevealed}
             onHintUsed={(_hintIndex) => {
               // Hints cost is now handled via comodines
             }}

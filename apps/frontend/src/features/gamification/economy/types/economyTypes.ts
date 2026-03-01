@@ -202,6 +202,7 @@ export interface ShopItem {
   rarity: ItemRarity;
   tags?: string[];           // For search and filtering
   isOwned?: boolean;         // Whether user owns this item
+  ownedQuantity?: number;    // Quantity owned for consumable items
   isPurchasable?: boolean;   // Whether can be purchased (not sold out, etc.)
   requirements?: ShopItemRequirements;
   previewData?: unknown;    // Category-specific preview data

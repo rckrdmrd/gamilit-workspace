@@ -493,4 +493,84 @@ export class ComodinesService {
     const inventory = await this.getInventory(userId);
     return inventory.hasStock(comodinType, quantity);
   }
+
+  /**
+   * Incrementa el inventario de comodines a partir de una compra externa en la tienda.
+   *
+   * @description Llamado por ShopService después de que una compra de consumible
+   * se completa exitosamente. NO deduce ML Coins — el shop ya procesó el pago.
+   * Crea un registro de auditoría en InventoryTransaction con source='shop_bridge'.
+   *
+   * @param userId - ID del usuario (UUID)
+   * @param comodinType - Tipo de comodín a incrementar
+   * @param quantity - Cantidad comprada (>= 1)
+   * @param shopPurchaseId - ID del UserPurchase para trazabilidad
+   * @returns Inventario actualizado
+   *
+   * @example
+   * const inventory = await service.incrementFromShopPurchase(
+   *   userId,
+   *   ComodinTypeEnum.PISTAS,
+   *   3,
+   *   purchase.id,
+   * );
+   * // pistas_available += 3, pistas_purchased_total += 3
+   */
+  async incrementFromShopPurchase(
+    userId: string,
+    comodinType: ComodinTypeEnum,
+    quantity: number,
+    shopPurchaseId: string,
+  ): Promise<ComodinesInventory> {
+    const inventory = await this.getInventory(userId);
+
+    // Actualizar inventario según tipo (wide table) — sin deducir ML Coins
+    switch (comodinType) {
+      case ComodinTypeEnum.PISTAS:
+        inventory.pistas_available += quantity;
+        inventory.pistas_purchased_total += quantity;
+        break;
+      case ComodinTypeEnum.VISION_LECTORA:
+        inventory.vision_lectora_available += quantity;
+        inventory.vision_lectora_purchased_total += quantity;
+        break;
+      case ComodinTypeEnum.SEGUNDA_OPORTUNIDAD:
+        inventory.segunda_oportunidad_available += quantity;
+        inventory.segunda_oportunidad_purchased_total += quantity;
+        break;
+      default:
+        throw new BadRequestException(`Invalid comodin type: ${comodinType}`);
+    }
+
+    // Actualizar metadata
+    inventory.metadata = {
+      ...inventory.metadata,
+      last_purchase_date: new Date().toISOString(),
+      last_purchase_type: comodinType,
+      source: 'shop_bridge',
+    };
+
+    const updated = await this.inventoryRepo.save(inventory);
+
+    // Crear transacción de auditoría
+    const transaction = this.transactionRepo.create({
+      user_id: userId,
+      item_id: `comodin_${comodinType}`,
+      transaction_type: 'PURCHASE',
+      quantity: quantity,
+      metadata: {
+        comodin_type: comodinType,
+        shop_purchase_id: shopPurchaseId,
+        source: 'shop_bridge',
+        quantity,
+      },
+    });
+    await this.transactionRepo.save(transaction);
+
+    this.logger.log(
+      `Incremented ${quantity}x ${comodinType} for user ${userId} via shop_bridge (purchase: ${shopPurchaseId})`,
+    );
+
+    return updated;
+  }
 }

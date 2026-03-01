@@ -92,28 +92,35 @@ export function ShopItemCard({ item, userBalance, onPurchase, index }: ShopItemC
                 Adquirido
               </span>
             ) : (
-              <DetectiveButton
-                variant="primary"
-                size="md"
-                onClick={() => onPurchase(item)}
-                disabled={!item.isPurchasable || !canAfford}
-                className="w-full"
-                leftIcon={
-                  !item.isPurchasable ? (
-                    <Ban className="h-4 w-4" />
-                  ) : !canAfford ? (
-                    <Coins className="h-4 w-4" />
-                  ) : (
-                    <ShoppingCart className="h-4 w-4" />
-                  )
-                }
-              >
-                {!item.isPurchasable
-                  ? 'No Disponible'
-                  : !canAfford
-                    ? 'Insuficientes'
-                    : 'Comprar'}
-              </DetectiveButton>
+              <>
+                {item.ownedQuantity !== undefined && item.ownedQuantity > 0 && (
+                  <div className="text-center text-xs text-detective-text-secondary">
+                    Tienes: {item.ownedQuantity}
+                  </div>
+                )}
+                <DetectiveButton
+                  variant="primary"
+                  size="md"
+                  onClick={() => onPurchase(item)}
+                  disabled={!item.isPurchasable || !canAfford}
+                  className="w-full"
+                  leftIcon={
+                    !item.isPurchasable ? (
+                      <Ban className="h-4 w-4" />
+                    ) : !canAfford ? (
+                      <Coins className="h-4 w-4" />
+                    ) : (
+                      <ShoppingCart className="h-4 w-4" />
+                    )
+                  }
+                >
+                  {!item.isPurchasable
+                    ? 'No Disponible'
+                    : !canAfford
+                      ? 'Insuficientes'
+                      : 'Comprar'}
+                </DetectiveButton>
+              </>
             )}
           </div>
         </div>

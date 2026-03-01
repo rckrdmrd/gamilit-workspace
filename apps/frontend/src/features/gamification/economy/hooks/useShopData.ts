@@ -38,9 +38,11 @@ export const shopKeys = {
 function transformApiItems(
   items: ApiShopItem[],
   ownedItemIds: Set<string>,
+  purchaseQuantityMap: Map<string, number>,
 ): ShopItem[] {
   return items.map((item) => {
-    const isOwned = ownedItemIds.has(item.id);
+    // Consumable items are never "owned" — they can be re-purchased
+    const isOwned = item.is_consumable ? false : ownedItemIds.has(item.id);
     const isAvailable = item.is_available !== false;
     const hasStock = item.stock === null || item.stock === undefined || item.stock > 0;
     const isPurchasable = isAvailable && hasStock && !isOwned;
@@ -58,6 +60,7 @@ function transformApiItems(
       rarity: item.rarity as ItemRarity,
       tags: item.tags || [],
       isOwned,
+      ownedQuantity: item.is_consumable ? (purchaseQuantityMap.get(item.id) ?? 0) : undefined,
       isPurchasable,
       metadata: {
         ...rawMetadata,
@@ -122,7 +125,12 @@ export function useShopData(selectedCategory: ShopCategory | 'all'): UseShopData
     const ownedIds = new Set(
       purchases.filter((p) => p.status === 'completed').map((p) => p.item_id),
     );
-    return transformApiItems(rawItems, ownedIds);
+    // Build a quantity map for consumable items
+    const purchaseQuantityMap = new Map<string, number>();
+    for (const p of purchases.filter((p) => p.status === 'completed')) {
+      purchaseQuantityMap.set(p.item_id, (purchaseQuantityMap.get(p.item_id) ?? 0) + (p.quantity ?? 1));
+    }
+    return transformApiItems(rawItems, ownedIds, purchaseQuantityMap);
   }, [rawItems, purchases]);
 
   return {
