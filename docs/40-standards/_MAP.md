@@ -55,6 +55,7 @@ Estandares tecnicos del proyecto GAMILIT. Convenciones, patrones y reglas obliga
 | Documento | Descripcion | Estado |
 |-----------|-------------|--------|
 | [ESTANDAR-FRONTEND-API.md](./ESTANDAR-FRONTEND-API.md) | APIs frontend: ubicacion canonica, React Query, error handling | Vigente |
+| [ESTANDAR-FRONTEND-CARD-TRUNCATION.md](./ESTANDAR-FRONTEND-CARD-TRUNCATION.md) | Truncación de texto en cards: line-clamp + title tooltip | Vigente |
 | [ESTANDAR-FRONTEND-COMPONENT.md](./ESTANDAR-FRONTEND-COMPONENT.md) | Componentes: exports, props typing, React imports, file naming | Vigente |
 | [ESTANDAR-FRONTEND-IMPORTS.md](./ESTANDAR-FRONTEND-IMPORTS.md) | Import order, path aliases, barrels, icon imports | Vigente |
 | [ESTANDAR-FRONTEND-RESPONSIVE.md](./ESTANDAR-FRONTEND-RESPONSIVE.md) | Responsive design patterns (ADR-050) | Vigente |

@@ -114,7 +114,7 @@ export const ExerciseAttemptCard = ({
         <div className="min-w-0 flex-1">
           {/* Title and Status */}
           <div className="mb-2 flex items-start justify-between">
-            <h4 className="mr-2 line-clamp-1 text-base font-semibold text-gray-900">
+            <h4 className="mr-2 line-clamp-1 text-base font-semibold text-gray-900" title={exercise.title}>
               {exercise.title}
             </h4>
             <span
@@ -128,7 +128,7 @@ export const ExerciseAttemptCard = ({
           </div>
 
           {/* Description */}
-          <p className="mb-3 line-clamp-2 text-sm text-gray-600">{exercise.description}</p>
+          <p className="mb-3 line-clamp-2 text-sm text-gray-600" title={exercise.description}>{exercise.description}</p>
 
           {/* Stats Row */}
           <div className="mb-3 flex items-center space-x-4">

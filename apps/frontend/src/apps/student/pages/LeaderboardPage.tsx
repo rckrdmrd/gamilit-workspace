@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Trophy, RefreshCw, AlertCircle } from 'lucide-react';
 
 // Leaderboard Components
-import { LeaderboardTabs } from '@/features/gamification/social/components/Leaderboards/LeaderboardTabs';
 import { SeasonSelector } from '@/features/gamification/social/components/Leaderboards/SeasonSelector';
 import { LeaderboardLayout } from '@/features/gamification/social/components/Leaderboards/LeaderboardLayout';
 import { UserPositionCard } from '../components/leaderboard/UserPositionCard';
@@ -18,21 +17,16 @@ import { StudentPageShell } from '../components/shared/StudentPageShell';
 // Hooks
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
 import { useBatchEquipment } from '@/features/gamification/social/hooks/useBatchEquipment';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useUserClassroom } from '../hooks/useUserClassroom';
 import { useDashboardData } from '../hooks/useDashboardData';
 
 // Utils
 import { cn } from '@shared/utils/cn';
 
 export default function LeaderboardPage() {
-  const { user } = useAuth();
-  const { classroomId: userClassroomId } = useUserClassroom(user?.id);
   const { progress, achievements } = useDashboardData();
 
   const {
     currentLeaderboard,
-    selectedType,
     selectedPeriod,
     loading,
     error: leaderboardError,
@@ -67,13 +61,8 @@ export default function LeaderboardPage() {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    refreshLeaderboard(selectedType === 'classroom' ? userClassroomId || undefined : undefined);
+    refreshLeaderboard();
     setTimeout(() => setIsRefreshing(false), 1000);
-  };
-
-  const handleTypeChange = (type: typeof selectedType) => {
-    if (type === 'classroom' && !userClassroomId) return;
-    setLeaderboardType(type, type === 'classroom' ? userClassroomId || undefined : undefined);
   };
 
   const userEntry = getUserEntry();
@@ -121,14 +110,6 @@ export default function LeaderboardPage() {
             </motion.button>
           </div>
 
-          <div className="mb-4">
-            <LeaderboardTabs
-              selectedType={selectedType}
-              onTypeChange={handleTypeChange}
-              hasClassroom={!!userClassroomId}
-            />
-          </div>
-
           <SeasonSelector selectedPeriod={selectedPeriod} onPeriodChange={setTimePeriod} />
         </div>
       </motion.header>
@@ -157,16 +138,7 @@ export default function LeaderboardPage() {
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-xl font-bold text-detective-text">
                   <Trophy className="h-6 w-6 text-detective-gold" />
-                  Clasificacion{' '}
-                  {selectedType === 'global'
-                    ? 'Global'
-                    : selectedType === 'school'
-                      ? 'Escuela'
-                      : selectedType === 'grade'
-                        ? 'Grado'
-                        : selectedType === 'classroom'
-                          ? 'Mi Aula'
-                          : 'Amigos'}
+                  Clasificacion Global
                 </h2>
                 <button
                   onClick={() => setAutoScrollEnabled(!autoScrollEnabled)}

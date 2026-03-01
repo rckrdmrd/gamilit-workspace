@@ -34,7 +34,7 @@ import {
   adaptToDiarioMultimediaData,
   adaptToComicDigitalData,
   adaptToVideoCartaData,
-  adaptToComprensionAuditivaData,
+  // adaptToComprensionAuditivaData, // BACKLOG: comprension_auditiva desactivada
   adaptToBaseExercise,
 } from '@shared/utils/exerciseAdapter';
 
@@ -230,11 +230,12 @@ registerExercise('collage_prensa', {
   meta: { displayName: 'Collage de Prensa', module: 0, category: 'auxiliar', icon: 'scissors' },
 });
 
-registerExercise('comprension_auditiva', {
-  loader: () => import('@/features/mechanics/auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise'),
-  adapter: adaptToComprensionAuditivaData,
-  meta: { displayName: 'Comprensión Auditiva', module: 0, category: 'auxiliar', icon: 'headphones' },
-});
+// BACKLOG: comprension_auditiva desactivada. Requiere infraestructura audio. Componente preservado en auxiliar/ComprensiónAuditiva/.
+// registerExercise('comprension_auditiva', {
+//   loader: () => import('@/features/mechanics/auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise'),
+//   adapter: adaptToComprensionAuditivaData,
+//   meta: { displayName: 'Comprensión Auditiva', module: 0, category: 'auxiliar', icon: 'headphones' },
+// });
 
 registerExercise('texto_movimiento', {
   loader: () => import('@/features/mechanics/auxiliar/TextoEnMovimiento/TextoEnMovimientoExercise'),

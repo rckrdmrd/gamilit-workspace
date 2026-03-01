@@ -132,9 +132,11 @@ export const DetectiveTextualExercise = ({
   onProgressUpdate,
   initialData,
   actionsRef,
+  comodinesContext,
 }: DetectiveTextualExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   /**
    * FIX 2024-11-29: Transform exercise data from API to component format
@@ -280,6 +282,20 @@ export const DetectiveTextualExercise = ({
       });
       setSubmissionResult({ correctAnswers });
 
+      // Second chance: if score < 70 and comodin active, allow retry
+      if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+        setSecondChanceUsed(true);
+        setSubmissionResult(null);
+        setFeedback({
+          type: 'info' as FeedbackData['type'],
+          title: '¡Segunda Oportunidad!',
+          message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Revisa tus respuestas e intenta de nuevo.',
+          score: response.score,
+        });
+        setShowFeedback(true);
+        return;
+      }
+
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
@@ -389,7 +405,9 @@ export const DetectiveTextualExercise = ({
             <Book className="h-5 w-5" />
             <h3 className="text-lg font-semibold">Pasaje de Lectura</h3>
           </div>
-          <p className="text-base leading-relaxed text-detective-text">{exerciseData.passage}</p>
+          <div className="exercise-passage">
+            <p className="text-base leading-relaxed text-detective-text">{exerciseData.passage}</p>
+          </div>
         </div>
 
         {/* Questions */}

@@ -120,7 +120,7 @@ Los seeds de GAMILIT usan UUIDs estructurados (prefijos legibles) para facilitar
 
 1. **`reference_id` en ml_coins_transactions:** Los UUIDs en el campo `reference_id` (formato `9000000X-000Y-...`) son identificadores informativos que sugieren la entidad relacionada pero NO necesariamente coinciden con los PKs de achievements (`9000000X-0000-...`). No hay FK constraint en este campo — es intencional para flexibilidad.
 
-2. **UUIDs de produccion:** Los 45 usuarios de produccion usan UUIDs RFC 4122 v4 genuinos (generados por PostgreSQL). Solo los seeds de testing/demo usan prefijos estructurados.
+2. **UUIDs de produccion:** Los 50 usuarios de produccion usan UUIDs RFC 4122 v4 genuinos (generados por PostgreSQL). Solo los seeds de testing/demo usan prefijos estructurados.
 
 3. **`gen_random_uuid()` en seeds:** Evitar en PKs o campos de unique constraints. Usar UUIDs deterministicos para garantizar idempotencia. Ver TASK-2026-02-20-UUID-AUDIT para el analisis completo.
 

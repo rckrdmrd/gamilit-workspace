@@ -24,6 +24,7 @@ export interface CompletarEspaciosExerciseProps {
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }
 
 export const CompletarEspaciosExercise = ({
@@ -31,10 +32,12 @@ export const CompletarEspaciosExercise = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
+  comodinesContext,
 }: CompletarEspaciosExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   const [blanks, setBlanks] = useState<BlankSpace[]>(
     exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })),
@@ -176,6 +179,20 @@ export const CompletarEspaciosExercise = ({
 
       // Submit to backend API
       const response = await submitAsync({ blanks: answersObj });
+
+      // Second chance: if score < 70 and comodin active, allow retry
+      if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+        setSecondChanceUsed(true);
+        setShowResults(false);
+        setFeedback({
+          type: 'info' as FeedbackData['type'],
+          title: '¡Segunda Oportunidad!',
+          message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Revisa tus respuestas e intenta de nuevo.',
+          score: response.score,
+        });
+        setShowFeedback(true);
+        return;
+      }
 
       // Show backend response
       setFeedback({
@@ -337,7 +354,7 @@ export const CompletarEspaciosExercise = ({
       >
         {/* Text with Blanks */}
         <div className="mb-6">
-          <div className="text-lg leading-relaxed">{renderTextWithBlanks()}</div>
+          <div className="exercise-passage text-lg leading-relaxed">{renderTextWithBlanks()}</div>
         </div>
 
         {/* Word Bank */}

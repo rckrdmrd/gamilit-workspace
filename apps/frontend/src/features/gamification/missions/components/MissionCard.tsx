@@ -238,12 +238,12 @@ export function MissionCard({
 
             <div className="min-w-0 flex-1">
               {/* Title */}
-              <h3 className="mb-1 line-clamp-1 text-lg font-bold text-gray-800">
+              <h3 className="mb-1 line-clamp-2 text-base font-bold text-gray-800" title={mission.title || 'Sin título'}>
                 {mission.title || 'Sin título'}
               </h3>
 
               {/* Description */}
-              <p className="line-clamp-2 text-sm text-gray-600">
+              <p className="line-clamp-3 text-sm text-gray-600" title={mission.description || 'Sin descripción'}>
                 {mission.description || 'Sin descripción'}
               </p>
             </div>

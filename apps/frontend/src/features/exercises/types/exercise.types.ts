@@ -60,7 +60,7 @@ export type ExerciseType =
   | 'comic_digital'
   | 'video_carta'
   // Auxiliares
-  | 'comprension_auditiva'
+  | 'comprension_auditiva' // BACKLOG: desactivada, requiere infraestructura audio
   | 'collage_prensa'
   | 'texto_movimiento'
   | 'call_to_action'

@@ -9,9 +9,10 @@ import { CrucigramaData, CrucigramaCell } from './crucigramaTypes';
 import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { cn } from '@shared/utils/cn';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useInvalidateDashboard } from '@/shared/hooks';
+import { useInvalidateDashboard, useContainerSize } from '@/shared/hooks';
 
 export interface CrucigramaExerciseProps {
   exercise: CrucigramaData;
@@ -31,6 +32,7 @@ export interface CrucigramaExerciseProps {
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }
 
 export const CrucigramaExercise = ({
@@ -38,10 +40,12 @@ export const CrucigramaExercise = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
+  comodinesContext,
 }: CrucigramaExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   const [grid, setGrid] = useState<CrucigramaCell[][]>(
     exercise.grid.map((row) => row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))),
@@ -52,6 +56,28 @@ export const CrucigramaExercise = ({
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+
+  // Responsive grid sizing
+  const [containerRef, containerSize] = useContainerSize<HTMLDivElement>();
+  const numCols = grid[0]?.length || 1;
+
+  const DEFAULT_CELL_SIZE = 40;
+  const MIN_CELL_SIZE = 26;
+  const GRID_PADDING = 16; // p-2 = 8px each side on mobile (CrucigramaGrid wrapper)
+  const GAP_PX = 1;
+
+  const availableWidth = containerSize.width > 0
+    ? containerSize.width - GRID_PADDING
+    : DEFAULT_CELL_SIZE * numCols + (numCols - 1) * GAP_PX;
+
+  const totalGapWidth = (numCols - 1) * GAP_PX;
+  const calculatedCellSize = Math.min(
+    DEFAULT_CELL_SIZE,
+    Math.floor((availableWidth - totalGapWidth) / numCols)
+  );
+  const cellSize = Math.max(MIN_CELL_SIZE, calculatedCellSize);
+  const actualGridWidth = cellSize * numCols + totalGapWidth + GRID_PADDING;
+  const gridNeedsScroll = containerSize.width > 0 && actualGridWidth > containerSize.width;
 
   // FE-059: Calculate clue length from grid instead of using answer field
   const getClueLength = (clue: (typeof exercise.clues)[0]): number => {
@@ -216,6 +242,19 @@ export const CrucigramaExercise = ({
       // Submit to backend API
       const response = await submitAsync({ clues: answersObj });
 
+      // Second chance: if score < 70 and comodin active, allow retry
+      if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+        setSecondChanceUsed(true);
+        setFeedback({
+          type: 'info' as FeedbackData['type'],
+          title: '¡Segunda Oportunidad!',
+          message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Revisa tus respuestas e intenta de nuevo.',
+          score: response.score,
+        });
+        setShowFeedback(true);
+        return;
+      }
+
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
@@ -297,19 +336,29 @@ export const CrucigramaExercise = ({
         {/* Main Content */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Grid */}
-          <div className="flex justify-center lg:col-span-2">
+          <div ref={containerRef} className="lg:col-span-2 min-w-0">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
+              className={cn(
+                'flex justify-center',
+                gridNeedsScroll && 'overflow-x-auto pb-2'
+              )}
             >
               <CrucigramaGrid
                 grid={grid}
                 selectedCell={selectedCell}
                 onCellClick={(row, col) => setSelectedCell({ row, col })}
                 onCellInput={handleCellInput}
+                cellSize={cellSize}
               />
             </motion.div>
+            {gridNeedsScroll && (
+              <p className="mt-1 text-center text-xs text-detective-text-secondary">
+                Desliza horizontalmente para ver el crucigrama completo
+              </p>
+            )}
           </div>
 
           {/* Clues - Unified Display */}

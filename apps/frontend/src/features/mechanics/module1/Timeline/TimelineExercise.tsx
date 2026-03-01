@@ -19,10 +19,12 @@ export const TimelineExercise = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
+  comodinesContext,
 }: TimelineExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   const [events, setEvents] = useState<TimelineEventType[]>(
     [...exercise.events].sort(() => Math.random() - 0.5),
@@ -80,6 +82,19 @@ export const TimelineExercise = ({
     try {
       // Submit to backend API with DTO format: { events: ["e1", "e2", "e3"] }
       const response = await submitAsync({ events: userOrder });
+
+      // Second chance: if score < 70 and comodin active, allow retry
+      if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+        setSecondChanceUsed(true);
+        setFeedback({
+          type: 'info' as FeedbackData['type'],
+          title: '¡Segunda Oportunidad!',
+          message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Reordena los eventos e intenta de nuevo.',
+          score: response.score,
+        });
+        setShowFeedback(true);
+        return;
+      }
 
       // Show backend response
       setFeedback({

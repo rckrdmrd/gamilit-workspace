@@ -9,7 +9,46 @@
 
 ## Estado Actual
 
-### Ultima Tarea Completada: Documentation Remediation — 6 Pending Items (2026-02-28)
+### Ultima Tarea Completada: Desactivar comprension_auditiva (2026-02-28)
+
+**Tarea completada.** Marcada como BACKLOG en 4 archivos (2 docs + 2 inventarios):
+1. GUIA-RESPUESTAS: "(BACKLOG — desactivada)" agregado a tabla row + header section
+2. MANUAL-PORTAL-STUDENT-V1.0: "(BACKLOG — desactivada)" agregado a tabla row
+3. MASTER_INVENTORY: v14.8.3 → v14.8.4 (mecanicas_ejercicio 30→29, ejercicios_con_recursos 2→1)
+4. PROXIMA-ACCION: entrada completada registrada aqui
+
+**Status:** Cambios aplicados, inventarios actualizados, docs marcadas con BACKLOG notices. Sin cambios de codigo (is_active=false comentado en prior task).
+
+### Tarea Anterior: Resolucion GAP-P3-001 — Vision Lectora CSS Scoped (2026-02-28)
+
+**5 fases, 8 subagentes (4 Sonnet + 4 Haiku). 9 archivos modificados. Build/Lint/Typecheck: 0 errores.**
+
+Cambios aplicados:
+1. FASE 2 (CSS Refactor): Selectores CSS blanket `p, span, li` → scoped `.exercise-passage p, .exercise-passage li` con border-left accent
+2. FASE 2 (Wrappers): DetectiveTextualExercise.tsx wrap pasaje en `<div class="exercise-passage">`, CompletarEspaciosExercise.tsx agrega clase al contenedor
+3. FASE 4 (ADR-051): Creado ADR-051-vision-lectora-frontend-only.md — documenta decision y alternativas evaluadas
+4. FASE 4 (ET-GAM-002): generateReadingVision() marcado como pseudocodigo v2, ref ADR-051
+5. FASE 4 (SPEC-EXERCISES): GAP-P3-001 marcado "Resuelto"
+
+**Reporte:** Implementacion directa sin reporte dedicado (3 archivos codigo + 6 archivos docs)
+
+### Tarea Anterior: Integracion Tienda — Rank Card Cosmeticos + Consumibles en Ejercicios (2026-02-28)
+
+**5 fases, ~14 subagentes (4 Sonnet + 10 Haiku). 18 archivos modificados. Build/Lint/Typecheck: 0 errores.**
+
+Cambios aplicados:
+1. FASE 2 (Rank Card): RankProgressWidget integra `useEquippedVisuals` — muestra frame border y badge equipado del inventario de la tienda
+2. FASE 3.1 (ExerciseContext): `handleSubmit` incluye `getUsedComodinTypes()` en payload `powerupsUsed[]`
+3. FASE 3.2 (ExerciseLayout): Efectos visuales de comodines — ExerciseGuide `forceExpanded`, clase CSS `vision-lectora-active`, banner "Segunda Oportunidad activa"
+4. FASE 3.3 (7 Mecanicas M1-M2): `comodinesContext` prop + logica segunda oportunidad (intercepta score < 70 en primer intento)
+5. FASE 4 (Validacion): TypeScript 0 errores, Build exitoso (20.7s), Lint 0 errores (98 warnings, baja de 104)
+6. FASE 5 (Documentacion): MASTER_INVENTORY v14.8.1, FRONTEND_INVENTORY v12.5.1, docs actualizados
+
+**Archivos modificados (18):** RankProgressWidget, ExerciseContext, ExerciseLayout, ExerciseGuide, index.css, 7 mecanicas + 4 type files, 2 inventarios
+
+**Reporte:** `orchestration/tareas/TASK-2026-02-28-SHOP-INTEGRATION/INTEGRATION-REPORT.md`
+
+### Tarea Anterior: Documentation Remediation — 6 Pending Items (2026-02-28)
 
 **4 items ejecutados, 2 descartados (no requerian accion). 13 subagentes. Health Score: ~98→~99/100.**
 

@@ -306,7 +306,7 @@ const AlertCard = ({
             </span>
           </div>
 
-          <p className="text-detective-small mb-3 line-clamp-2 text-gray-400">{alert.message}</p>
+          <p className="text-detective-small mb-3 line-clamp-2 text-gray-400" title={alert.message}>{alert.message}</p>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs text-gray-500">

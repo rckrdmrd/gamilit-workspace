@@ -96,4 +96,5 @@ export interface DetectiveTextualExerciseProps {
   initialData?: Partial<DetectiveTextualProgress>;
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<DetectiveTextualActions | undefined>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }

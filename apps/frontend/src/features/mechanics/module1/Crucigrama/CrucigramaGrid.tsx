@@ -8,15 +8,21 @@ export interface CrucigramaGridProps {
   selectedCell: { row: number; col: number } | null;
   onCellClick: (row: number, col: number) => void;
   onCellInput: (row: number, col: number, value: string) => void;
+  cellSize?: number;
 }
 
 export const CrucigramaGrid = ({
   grid,
   selectedCell,
   onCellClick,
-  onCellInput
+  onCellInput,
+  cellSize = 40
 }: CrucigramaGridProps) => {
   const cellRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+
+  const fontSize = Math.max(10, Math.floor(cellSize * 0.45));
+  const numberFontSize = Math.max(7, Math.floor(cellSize * 0.25));
+  const enableHover = cellSize >= 36;
 
   useEffect(() => {
     if (selectedCell) {
@@ -44,7 +50,7 @@ export const CrucigramaGrid = ({
   };
 
   return (
-    <div className="inline-block bg-white p-4 rounded-lg shadow-lg">
+    <div className="inline-block bg-white p-2 sm:p-4 rounded-lg shadow-lg">
       <div
         role="grid"
         aria-label="Grid del crucigrama"
@@ -65,7 +71,8 @@ export const CrucigramaGrid = ({
                     aria-rowindex={rowIndex + 1}
                     aria-colindex={colIndex + 1}
                     aria-label="Celda bloqueada"
-                    className="w-10 h-10 bg-gray-800"
+                    style={{ width: cellSize, height: cellSize }}
+                    className="bg-gray-800"
                   />
                 );
               }
@@ -80,9 +87,10 @@ export const CrucigramaGrid = ({
                   role="gridcell"
                   aria-rowindex={rowIndex + 1}
                   aria-colindex={colIndex + 1}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={enableHover ? { scale: 1.05 } : undefined}
+                  style={{ width: cellSize, height: cellSize }}
                   className={cn(
-                    'w-10 h-10 bg-white relative cursor-pointer',
+                    'bg-white relative cursor-pointer',
                     isSelected && 'ring-2 ring-detective-orange bg-detective-orange/20'
                   )}
                   onClick={() => onCellClick(cell.row, cell.col)}
@@ -90,14 +98,16 @@ export const CrucigramaGrid = ({
                   {/* Display multiple numbers if they exist */}
                   {cell.numbers && cell.numbers.length > 0 ? (
                     <span
-                      className="absolute top-0 left-0.5 text-[10px] font-bold text-detective-text-secondary leading-tight"
+                      style={{ fontSize: `${numberFontSize}px` }}
+                      className="absolute top-0 left-0.5 font-bold text-detective-text-secondary leading-tight"
                       aria-hidden="true"
                     >
                       {cell.numbers.join(',')}
                     </span>
                   ) : cell.number ? (
                     <span
-                      className="absolute top-0 left-0.5 text-xs font-bold text-detective-text-secondary"
+                      style={{ fontSize: `${numberFontSize}px` }}
+                      className="absolute top-0 left-0.5 font-bold text-detective-text-secondary"
                       aria-hidden="true"
                     >
                       {cell.number}
@@ -113,8 +123,8 @@ export const CrucigramaGrid = ({
                     }
                     onKeyDown={(e) => handleKeyDown(e, cell.row, cell.col)}
                     aria-label={cellLabel}
-                    className="w-full h-full text-center text-lg font-bold uppercase bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-detective-orange focus:ring-inset"
-                    style={{ caretColor: 'transparent' }}
+                    className="w-full h-full text-center font-bold uppercase bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-detective-orange focus:ring-inset"
+                    style={{ caretColor: 'transparent', fontSize: `${fontSize}px` }}
                   />
                 </motion.div>
               );

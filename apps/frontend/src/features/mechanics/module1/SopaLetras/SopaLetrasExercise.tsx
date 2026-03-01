@@ -28,6 +28,7 @@ export interface SopaLetrasExerciseProps {
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }
 
 export const SopaLetrasExercise = ({
@@ -35,12 +36,14 @@ export const SopaLetrasExercise = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
+  comodinesContext,
 }: SopaLetrasExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
 
   const [_isSubmitting, _setIsSubmitting] = useState(false);
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   // FE-059: Initialize words from words list only (wordsPositions field is sanitized)
   // User will discover positions by selecting cells in the grid
@@ -249,6 +252,19 @@ export const SopaLetrasExercise = ({
 
         // Submit to backend API
         const response = await submitAsync({ words: foundWordsList });
+
+        // Second chance: if score < 70 and comodin active, allow retry
+        if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+          setSecondChanceUsed(true);
+          setFeedback({
+            type: 'info' as FeedbackData['type'],
+            title: '¡Segunda Oportunidad!',
+            message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Revisa e intenta de nuevo.',
+            score: response.score,
+          });
+          setShowFeedback(true);
+          return;
+        }
 
         // Show backend response
         setFeedback({

@@ -3,7 +3,7 @@
  *
  * Full-featured missions page with:
  * - Hero section with stats
- * - Tab navigation (Daily, Weekly, Special)
+ * - Tab navigation (Daily, Weekly)
  * - Mission cards grid with animations
  * - Active mission tracker sidebar
  * - Rewards preview
@@ -34,7 +34,6 @@ import { MissionDetailModal } from '@/features/gamification/missions/components/
 // Hooks
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
 import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
-import { useUserModules } from '@/apps/student/hooks/useUserModules';
 import toast from 'react-hot-toast';
 
 export default function MissionsPage() {
@@ -47,20 +46,18 @@ export default function MissionsPage() {
   // Dashboard invalidation hook - FIX: Invalidate cache after claiming missions
   const { syncAndInvalidate } = useInvalidateDashboard();
 
-  // User modules for resolving required_module (integer) to module UUID
-  const { modules: userModules } = useUserModules();
-
   // Handle card click to show detail modal
   const handleCardClick = (mission: Mission) => setSelectedMission(mission);
 
-  // Get tab from URL or default to 'daily'
-  const tabFromUrl = (searchParams.get('tab') as MissionType) || 'daily';
+  // Get tab from URL or default to 'daily'. Redirect 'special' to 'daily' — tab removed from UI.
+  const rawTab = searchParams.get('tab') as MissionType | null;
+  const tabFromUrl: 'daily' | 'weekly' =
+    rawTab === 'daily' || rawTab === 'weekly' ? rawTab : 'daily';
 
   // Hook
   const {
     dailyMissions,
     weeklyMissions,
-    specialMissions,
     activeMissions,
     allMissions,
     currentTab,
@@ -88,7 +85,7 @@ export default function MissionsPage() {
   }, [tabFromUrl]);
 
   // Update URL when tab changes
-  const handleTabChange = (tab: MissionType) => {
+  const handleTabChange = (tab: 'daily' | 'weekly') => {
     setCurrentTab(tab);
     setSearchParams({ tab });
   };
@@ -100,64 +97,26 @@ export default function MissionsPage() {
         return dailyMissions;
       case 'weekly':
         return weeklyMissions;
-      case 'special':
-        return specialMissions;
       default:
         return dailyMissions;
     }
-  }, [currentTab, dailyMissions, weeklyMissions, specialMissions]);
+  }, [currentTab, dailyMissions, weeklyMissions]);
 
   /**
-   * Navigate to the appropriate module/exercise for a special mission.
-   * Resolves required_module (integer 1-5) to a module UUID using the
-   * userModules list (sorted by order_index, 0-based).
+   * Navigate to the exercise linked to a mission via exercise_id.
+   * Special-missions module routing removed — 'special' tab is hidden from UI.
    */
   const navigateToMissionExercise = useCallback(
     (missionId: string) => {
       const mission = allMissions.find((m) => m.id === missionId);
       if (!mission) return;
 
-      // Priority 1: Direct exercise link via exercise_id
+      // Direct exercise link via exercise_id
       if (mission.exercise_id) {
         navigate(`/exercises/${mission.exercise_id}`);
-        return;
       }
-
-      // Priority 2: Only special missions with constraints navigate to modules
-      if (mission.type !== 'special') return;
-
-      // Extract exercise constraints from the first objective
-      const firstObjective = mission.objectives?.[0];
-      if (!firstObjective) return;
-
-      const requiredModule = firstObjective.required_module;
-      const requiredExerciseType = firstObjective.required_exercise_type;
-
-      // If there's a required module, navigate to that module's detail page
-      if (requiredModule && userModules.length > 0) {
-        // required_module is 1-based (module 1-5), userModules are ordered by order_index (0-based)
-        const targetModule = userModules[requiredModule - 1];
-        if (targetModule) {
-          const params = new URLSearchParams();
-          params.set('mission_id', missionId);
-          if (requiredExerciseType) {
-            params.set('exercise_type', requiredExerciseType);
-          }
-          navigate(`/modules/${targetModule.id}?${params.toString()}`);
-          return;
-        }
-      }
-
-      // Fallback: if no required_module but has exercise_type, go to learning page
-      if (requiredExerciseType) {
-        navigate(`/learning?mission_id=${missionId}&exercise_type=${requiredExerciseType}`);
-        return;
-      }
-
-      // Final fallback: go to learning hub
-      navigate('/learning');
     },
-    [allMissions, userModules, navigate],
+    [allMissions, navigate],
   );
 
   // Handle mission start
@@ -168,15 +127,10 @@ export default function MissionsPage() {
       trackMission(missionId);
       toast.success('Mision iniciada! Buena suerte');
 
-      // Navigate to exercise if mission has a direct exercise link or exercise constraints
+      // Navigate to exercise if mission has a direct exercise link
       const mission = allMissions.find((m) => m.id === missionId);
       if (mission?.exercise_id) {
         navigate(`/exercises/${mission.exercise_id}`);
-      } else if (mission?.type === 'special') {
-        const firstObjective = mission.objectives?.[0];
-        if (firstObjective?.required_module || firstObjective?.required_exercise_type) {
-          navigateToMissionExercise(missionId);
-        }
       }
     } else {
       toast.error(result.message || 'Error al iniciar la mision');
@@ -221,8 +175,6 @@ export default function MissionsPage() {
         return '¡Vuelve mañana para nuevas misiones diarias!';
       case 'weekly':
         return 'Nuevas misiones semanales el próximo lunes';
-      case 'special':
-        return 'No hay eventos especiales activos actualmente';
       default:
         return 'No hay misiones disponibles';
     }
@@ -256,7 +208,6 @@ export default function MissionsPage() {
           onTabChange={handleTabChange}
           dailyMissions={dailyMissions}
           weeklyMissions={weeklyMissions}
-          specialMissions={specialMissions}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
         />
@@ -271,11 +222,7 @@ export default function MissionsPage() {
             <h3 className="mb-2 text-2xl font-bold">¡Increíble! 🎉</h3>
             <p className="text-lg">
               Has completado todas las misiones{' '}
-              {currentTab === 'daily'
-                ? 'diarias'
-                : currentTab === 'weekly'
-                  ? 'semanales'
-                  : 'especiales'}
+              {currentTab === 'daily' ? 'diarias' : 'semanales'}
             </p>
           </motion.div>
         )}

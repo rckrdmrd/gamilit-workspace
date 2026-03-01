@@ -84,7 +84,7 @@ export function DiscoverGuildsTab({
                   {renderGuildStatusBadge(guild.status)}
                 </div>
 
-                <p className="line-clamp-2 text-sm text-detective-text-secondary">
+                <p className="line-clamp-2 text-sm text-detective-text-secondary" title={guild.description}>
                   {guild.description}
                 </p>
 

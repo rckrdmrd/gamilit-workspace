@@ -17,13 +17,14 @@
 -- - tenant_id = Tenant principal (GAMILIT Platform)
 -- - Nombres vacios permitidos (el usuario puede completarlos despues)
 --
--- EXCLUIDO: rckrdmrd@gmail.com (por solicitud explicita)
+-- EXCLUIDO: rckrdmrd@gmail.com (por solicitud explicita, usuario dev del owner)
+-- EXCLUIDO: adredsi26@gmail.com (cuenta runtime registrada 2026-02-21 — nunca fue seed)
 -- =====================================================
 
 SET search_path TO auth_management, public;
 
 -- =====================================================
--- INSERT: Additional Production User Profiles (32 perfiles)
+-- INSERT: Additional Production User Profiles (37 perfiles)
 -- =====================================================
 
 INSERT INTO auth_management.profiles (
@@ -734,5 +735,6 @@ BEGIN
 END $$;
 
 -- =====================================================
--- NOTA: rckrdmrd@gmail.com fue EXCLUIDO intencionalmente
+-- NOTA: rckrdmrd@gmail.com fue EXCLUIDO intencionalmente (solicitud explicita)
+-- NOTA: adredsi26@gmail.com fue EXCLUIDO intencionalmente (cuenta runtime, no seed)
 -- =====================================================

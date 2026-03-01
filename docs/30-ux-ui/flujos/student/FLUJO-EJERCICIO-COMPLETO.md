@@ -77,6 +77,7 @@ sequenceDiagram
 - Prevención de doble submit (guard frontend + backend idempotency).
 - Guard de completado en ExerciseContext previene acceso directo por URL a ejercicios ya completados.
 - Asignación atómica de recompensas o manejo de compensación.
+- Comodines usados incluidos en payload de submission (`powerupsUsed[]` merge de legacy + comodin types).
 
 ## Implementación Técnica v2.0
 
@@ -91,9 +92,10 @@ ExercisePage.tsx (thin shell, ~30 líneas)
     └── ExerciseLayout
         ├── GamifiedHeader
         ├── ExercisePageHeader
-        ├── ExerciseGuide (pedagogicalGuide del context)
-        ├── ExerciseLoader (carga dinámica via registry)
-        │   └── MechanicCompatWrapper → [30 mecánicas]
+        ├── ExerciseGuide (pedagogicalGuide, forceExpanded cuando hintsRevealed > 0)
+        ├── Banner "Segunda Oportunidad activa" (condicional: comodinesContext.hasSecondChance)
+        ├── ExerciseLoader (con clase .vision-lectora-active si comodinesContext.visionActive)
+        │   └── MechanicCompatWrapper → [30 mecánicas con comodinesContext prop]
         ├── ExerciseSidebar
         │   ├── ConsumablesPanel (comodines reales del backend)
         │   ├── ActionsPanel (guardar, enviar, reiniciar, verificar)
@@ -119,6 +121,12 @@ No requiere modificar: ExercisePage, ExerciseLayout, App.tsx routing.
 
 Tipos: pistas (máx 3/intento), visión lectora (máx 1), segunda oportunidad (máx 1).
 Reemplaza el mock data de `PowerUpBar` con inventario real.
+
+**Efectos en UI (implementado):**
+- `hintsRevealed > 0` → ExerciseGuide se auto-expande via `forceExpanded` prop
+- `visionActive` → Clase CSS `vision-lectora-active` resalta texto con underline amber
+- `hasSecondChance` → Banner visual + mecánicas M1-M2 permiten reintento si score < 70
+- `handleSubmit` incluye `getUsedComodinTypes()` en el payload `powerupsUsed[]`
 
 ### Detección de Logros Post-Submission
 

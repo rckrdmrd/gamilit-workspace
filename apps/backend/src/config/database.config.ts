@@ -17,15 +17,14 @@ export default registerAs('database', () => {
     );
   }
 
-  // Warn if using localhost on Windows — svchost.exe proxy saturates with 11+ datasources
+  // Info: localhost on Windows uses connection stagger (see app.module.ts dsStagger)
   if (
     process.platform === 'win32' &&
-    (dbHost === '127.0.0.1' || dbHost === 'localhost')
+    (dbHost === '127.0.0.1' || dbHost === 'localhost') &&
+    process.env.NODE_ENV !== 'production'
   ) {
-    console.warn(
-      '[database] WARNING: DB_HOST is localhost on Windows. ' +
-        'With 11 datasources, svchost.exe proxy may cause ECONNRESET. ' +
-        'Run "npm run predev" to auto-detect WSL2 IP, or set DB_HOST to WSL2 IP manually.',
+    console.log(
+      '[database] DB_HOST is localhost on Windows — connection stagger enabled (500ms × 11 datasources).',
     );
   }
 

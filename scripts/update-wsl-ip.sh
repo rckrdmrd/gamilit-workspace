@@ -86,7 +86,21 @@ detect_wsl_ip() {
 
 check_tcp_from_windows() {
   local host="$1"
-  powershell.exe -NoProfile -Command "\$ok=(Test-NetConnection -ComputerName '${host}' -Port ${POSTGRES_PORT} -WarningAction SilentlyContinue).TcpTestSucceeded; if (\$ok) { exit 0 } else { exit 1 }" >/dev/null 2>&1
+  # Use node for TCP check — runs in the SAME process context as NestJS,
+  # avoiding PowerShell/WSL network stack discrepancies (see: ECONNREFUSED false-negative).
+  if command -v node >/dev/null 2>&1; then
+    node -e "
+      const net = require('net');
+      const s = new net.Socket();
+      s.setTimeout(4000);
+      s.connect(${POSTGRES_PORT}, '${host}', () => { s.destroy(); process.exit(0); });
+      s.on('error', () => { s.destroy(); process.exit(1); });
+      s.on('timeout', () => { s.destroy(); process.exit(1); });
+    " 2>/dev/null
+  else
+    # Fallback to PowerShell if node is unavailable
+    powershell.exe -NoProfile -Command "\$ok=(Test-NetConnection -ComputerName '${host}' -Port ${POSTGRES_PORT} -WarningAction SilentlyContinue).TcpTestSucceeded; if (\$ok) { exit 0 } else { exit 1 }" >/dev/null 2>&1
+  fi
 }
 
 wait_postgres_ready() {
@@ -111,7 +125,7 @@ log "DB_HOST_MODE=${DB_HOST_MODE}"
 
 case "${DB_HOST_MODE}" in
   localhost)
-    TARGET_DB_HOST="localhost"
+    TARGET_DB_HOST="127.0.0.1"
     ;;
   wsl-ip)
     TARGET_DB_HOST="$(detect_wsl_ip)"

@@ -142,12 +142,30 @@ apiClient.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        const { data } = await axios.post(`${API_CONFIG.baseURL}/auth/refresh`, {
-          refreshToken,
-        });
+        // Raw axios (not apiClient) to avoid recursive 401 interceptor.
+        // Backend wraps in envelope: { success, data: { accessToken, refreshToken } }
+        interface RefreshEnvelope {
+          success?: boolean;
+          data?: { accessToken: string; refreshToken?: string };
+          accessToken?: string;
+          refreshToken?: string;
+        }
 
-        const newToken = data.token;
+        const { data: envelope } = await axios.post<RefreshEnvelope>(
+          `${API_CONFIG.baseURL}/auth/refresh`,
+          { refreshToken },
+        );
+
+        const newToken = envelope.data?.accessToken ?? envelope.accessToken;
+        if (!newToken) {
+          throw new Error('Refresh response missing accessToken');
+        }
+
+        const newRefreshToken = envelope.data?.refreshToken ?? envelope.refreshToken;
         localStorage.setItem('auth-token', newToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refresh-token', newRefreshToken);
+        }
 
         // Update header for subsequent requests
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;

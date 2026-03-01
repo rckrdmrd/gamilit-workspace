@@ -41,7 +41,7 @@ Esta guía proporciona las soluciones exactas y los criterios de evaluación par
 | 5.1 | Diario Multimedia | Creativo | M5 | Intermedio | 100 | **Manual** |
 | 5.2 | Cómic Digital | Narrativo | M5 | Intermedio | 100 | **Manual** |
 | 5.3 | Video-Carta | Expresivo | M5 | Avanzado | 100 | **Manual** |
-| AUX | Comprensión Auditiva | Escucha | Aux | Intermedio | 100 | Automática |
+| AUX | Comprensión Auditiva (BACKLOG — desactivada) | Escucha | Aux | Intermedio | 100 | Automática |
 
 ---
 
@@ -323,7 +323,7 @@ Esta guía proporciona las soluciones exactas y los criterios de evaluación par
 
 ---
 
-## Auxiliar: Comprension Auditiva
+## Auxiliar: Comprension Auditiva (BACKLOG — desactivada)
 
 ### Ejercicio AUX-01
 - **¿Dónde nació?** Polonia (Índice 1).

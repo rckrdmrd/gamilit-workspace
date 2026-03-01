@@ -69,4 +69,5 @@ export interface PuzzleContextoExerciseProps {
   }) => void;
   initialData?: Partial<PuzzleContextoState>;
   actionsRef?: React.MutableRefObject<PuzzleContextoActions | undefined>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }

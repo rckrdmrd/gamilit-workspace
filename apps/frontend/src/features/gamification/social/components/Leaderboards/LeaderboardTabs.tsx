@@ -1,6 +1,11 @@
 /**
  * LeaderboardTabs Component
- * Tab navigation for different leaderboard types
+ * Tab navigation for different leaderboard types.
+ *
+ * @deprecated-ui This component is no longer rendered in the student portal
+ * (LeaderboardPage.tsx). The UI has been simplified to show only the Global
+ * leaderboard. The component and its props are preserved so it can be
+ * re-introduced without changes if other scopes are re-enabled in the future.
  */
 
 import type { ElementType } from 'react';

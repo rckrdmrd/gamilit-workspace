@@ -165,7 +165,7 @@ Las siguientes mecanicas estaban en el enum pero fueron removidas:
 |----------|---------|------------|-----|
 | Call to Action | CallToAction/ | CallToActionExercise.tsx | Ejercicios de engagement |
 | Collage Prensa | CollagePrensa/ | CollagePrensaExercise.tsx | Ejercicios creativos |
-| Comprension Auditiva | ComprensiónAuditiva/ | ComprensiónAuditivaExercise.tsx | Ejercicios de audio |
+| Comprension Auditiva | ComprensiónAuditiva/ | ComprensiónAuditivaExercise.tsx | Ejercicios de audio — BACKLOG — desactivada |
 | Texto en Movimiento | TextoEnMovimiento/ | TextoEnMovimientoExercise.tsx | Ejercicios dinamicos |
 
 ---

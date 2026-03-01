@@ -121,7 +121,7 @@ export const ShopItem = ({ item, onPurchase: _onPurchase }: ShopItemProps) => {
         <h3 className="mb-2 truncate text-detective-lg font-bold text-detective-text">
           {item.name}
         </h3>
-        <p className="mb-4 line-clamp-2 text-detective-sm text-detective-text-secondary">
+        <p className="mb-4 line-clamp-2 text-detective-sm text-detective-text-secondary" title={item.description}>
           {item.description}
         </p>
 

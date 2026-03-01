@@ -50,16 +50,17 @@ estado: activo
 | 20d | ESTANDAR-TESTING-ARCHITECTURE.md | Architecture tests (ts-arch, circular deps) |
 | 21 | ESTANDAR-12-FACTOR-APP.md | Checklist 12-Factor App compliance |
 
-### Estandares Frontend Especificos (6)
+### Estandares Frontend Especificos (7)
 
 | # | Estandar | Proposito |
 |---|----------|-----------|
 | 20 | ESTANDAR-FRONTEND-API.md | APIs frontend: ubicacion canonica, React Query, error handling |
-| 21 | ESTANDAR-FRONTEND-COMPONENT.md | Componentes: exports, props typing, React imports, file naming |
-| 22 | ESTANDAR-FRONTEND-IMPORTS.md | Import order, path aliases, barrels, icon imports |
-| 23 | ESTANDAR-FRONTEND-RESPONSIVE.md | Responsive design patterns (ADR-050) |
-| 24 | ESTANDAR-FRONTEND-TYPES.md | Jerarquia de tipos, anti-duplicados, inline types, any policy |
-| 25 | ESTANDAR-FRONTEND-UX-PATTERNS.md | Error/Loading/Empty states, toasts, forms, confirmation dialogs |
+| 21 | ESTANDAR-FRONTEND-CARD-TRUNCATION.md | Truncación de texto en cards: line-clamp + title tooltip |
+| 22 | ESTANDAR-FRONTEND-COMPONENT.md | Componentes: exports, props typing, React imports, file naming |
+| 23 | ESTANDAR-FRONTEND-IMPORTS.md | Import order, path aliases, barrels, icon imports |
+| 24 | ESTANDAR-FRONTEND-RESPONSIVE.md | Responsive design patterns (ADR-050) |
+| 25 | ESTANDAR-FRONTEND-TYPES.md | Jerarquia de tipos, anti-duplicados, inline types, any policy |
+| 26 | ESTANDAR-FRONTEND-UX-PATTERNS.md | Error/Loading/Empty states, toasts, forms, confirmation dialogs |
 
 ## Subdirectorio: backend-profesional/ (8 modulos)
 

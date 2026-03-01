@@ -40,3 +40,5 @@ export {
   type Orientation,
   type ResponsiveLayoutState,
 } from './useResponsiveLayout';
+export { useContainerSize } from './useContainerSize';
+export type { ContainerSize } from './useContainerSize';

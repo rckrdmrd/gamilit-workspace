@@ -127,10 +127,10 @@ export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardPro
 
         {/* Content */}
         <div className="mb-4 flex-1">
-          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-detective-text">
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-detective-text" title={module.title}>
             {module.title}
           </h3>
-          <p className="line-clamp-2 text-sm text-detective-text-secondary">{module.description}</p>
+          <p className="line-clamp-2 text-sm text-detective-text-secondary" title={module.description}>{module.description}</p>
         </div>
 
         {/* Progress bar */}

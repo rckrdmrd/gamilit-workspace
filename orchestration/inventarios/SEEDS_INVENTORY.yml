@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 3.3.0
-  fecha: '2026-02-21'
+  version: 3.4.0
+  fecha: '2026-02-28'
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
@@ -40,8 +40,8 @@ seeds_inventory:
       2025-12-18 (Carga Usuarios Producción desde Backup):
       ========================================================
       NUEVOS SEEDS:
-      - auth/02-production-users.sql: 44 usuarios de producción
-      - auth_management/06-profiles-production.sql: 44 perfiles corregidos
+      - auth/02-production-users.sql: 50 usuarios de producción
+      - auth_management/06-profiles-production.sql: 50 perfiles corregidos (13 en 06 + 37 en 07)
 
       FUENTE DE DATOS:
       - backup-prod/auth_users_2025-12-18.csv
@@ -147,12 +147,12 @@ seeds_inventory:
             descripcion: Usuarios estudiantes registrados en producción
             tablas:
               - users
-            registros_estimados: 45
+            registros_estimados: 50
             version: 3.0.0
             fecha_actualizacion: '2025-12-18'
             fuente: backup-prod/auth_users_2025-12-18.csv
             notas: |
-              - 45 estudiantes reales de producción
+              - 50 estudiantes reales de producción
               - Excluido: rckrdmrd@gmail.com (usuario pruebas owner)
               - Preserva UUIDs originales para integridad FK
               - Preserva hashes bcrypt originales
@@ -162,7 +162,7 @@ seeds_inventory:
               - fecha: 2025-11-24
                 cantidad: 23
               - fecha: 2025-11-25
-                cantidad: 6
+                cantidad: 7
               - fecha: 2025-12-08/17
                 cantidad: 2
             dependencias: []
@@ -227,12 +227,12 @@ seeds_inventory:
             descripcion: Perfiles para usuarios de producción
             tablas:
               - profiles
-            registros_estimados: 45
+            registros_estimados: 13
             version: 3.0.0
             fecha_actualizacion: '2025-12-18'
             fuente: backup-prod/profiles_2025-12-18.csv
             notas: |
-              - 45 perfiles de estudiantes de producción
+              - 13 perfiles de estudiantes de producción (Lote 1 únicamente)
               - Excluido: rckrdmrd@gmail.com (usuario pruebas owner)
               - profiles.id = user_id para TODOS (corregido)
               - tenant_id = GAMILIT Platform principal
@@ -241,17 +241,46 @@ seeds_inventory:
               - fecha: 2025-11-18
                 cantidad: 13
               - fecha: 2025-11-24
-                cantidad: 23
+                cantidad: 0
               - fecha: 2025-11-25
-                cantidad: 6
+                cantidad: 0
               - fecha: 2025-12-08/17
-                cantidad: 3
+                cantidad: 0
             dependencias:
               - auth/02-production-users.sql
               - auth_management.tenants
             estado: activo
 
-          - nombre: 07-user_roles.sql
+          - nombre: 07-profiles-production-additional.sql
+            descripcion: Perfiles adicionales para usuarios Lotes 2-5 de producción
+            tablas:
+              - profiles
+            registros_estimados: 37
+            version: 2.0.0
+            fecha_actualizacion: '2026-02-21'
+            fuente: backup-prod (Lotes 2-5)
+            notas: |
+              - 37 perfiles de estudiantes de producción (Lotes 2-5)
+              - Excluido: rckrdmrd@gmail.com (por solicitud explicita)
+              - Excluido: adredsi26@gmail.com (cuenta runtime — nunca fue seed)
+              - profiles.id = user_id para TODOS (consistente con 06)
+              - tenant_id = GAMILIT Platform principal
+            lotes:
+              - fecha: 2025-11-24
+                cantidad: 23
+              - fecha: 2025-11-25
+                cantidad: 7
+              - fecha: 2025-12-08/17
+                cantidad: 2
+              - fecha: 2026-02-20
+                cantidad: 5
+            dependencias:
+              - auth/02-production-users.sql
+              - auth_management/06-profiles-production.sql
+              - auth_management.tenants
+            estado: activo
+
+          - nombre: 08-user_roles.sql
             descripcion: Asignación de roles a usuarios (P0 AUDIT-DB-001)
             tablas:
               - user_roles

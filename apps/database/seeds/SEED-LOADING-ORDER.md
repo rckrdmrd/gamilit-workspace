@@ -113,6 +113,22 @@ All seeds not listed above are intended to be identical. Key core seeds:
 
 ---
 
+## Usuarios Excluidos de Seeds
+
+Los siguientes usuarios de producción NO están incluidos en los seed files por diseño:
+
+| Email | UUID (producción) | Razón de Exclusión | Fecha |
+|-------|-------------------|-------------------|-------|
+| `rckrdmrd@gmail.com` | `2c9af9ac-0229-4baf-bbe8-fc24fca3296d` | Usuario dev/owner — cuenta de desarrollo, no debe estar en seeds | 2025-11 |
+| `adredsi26@gmail.com` | `a6230bab-fac1-4436-a02e-1fbe342f14ce` | Cuenta runtime registrada en producción el 2026-02-21 — nunca fue incluida en seeds | 2026-02 |
+
+**Nota:** Estos usuarios existen en la base de datos de producción como cuentas registradas en runtime. Los backups de BD los incluyen correctamente. Los seed files deliberadamente los excluyen porque:
+1. Los seeds representan datos base que se cargan en entornos nuevos
+2. Estas cuentas se crean via registro normal de la aplicación
+3. Incluirlos en seeds causaría conflictos ON CONFLICT en producción
+
+---
+
 ## Non-v4 UUID Namespaces (Deliberate)
 
 These are intentional sequential seed IDs, not placeholders:

@@ -17,10 +17,12 @@ export const VerdaderoFalsoExercise = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
+  comodinesContext,
 }: VerdaderoFalsoExerciseProps) => {
   const { user } = useAuth(); // Get authenticated user
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   const [statements, setStatements] = useState<VerdaderoFalsoStatement[]>(
     exercise.statements.map((stmt) => ({ ...stmt, userAnswer: null })),
@@ -121,6 +123,20 @@ export const VerdaderoFalsoExercise = ({
       // CORRECCION-004: Usar correctAnswersCount (progressAPI) y agregar rewards
       const correctCount = response.correctAnswersCount ?? 0;
       const rewards = response.rewards || { mlCoins: 0, xp: 0 };
+
+      // Second chance: if score < 70 and comodin active, allow retry
+      if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+        setSecondChanceUsed(true);
+        setShowResults(false);
+        setFeedback({
+          type: 'info' as FeedbackData['type'],
+          title: '¡Segunda Oportunidad!',
+          message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Revisa tus respuestas e intenta de nuevo.',
+          score: response.score,
+        });
+        setShowFeedback(true);
+        return;
+      }
 
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',

@@ -244,15 +244,15 @@ export function ModuleGridCardEnhanced({
 
         {/* Content */}
         <div className="mb-4 flex-1">
-          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-detective-text">
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-detective-text" title={module.title}>
             {module.title}
           </h3>
           {module.subtitle && (
-            <p className="mb-2 line-clamp-1 text-xs text-detective-text-secondary">
+            <p className="mb-2 line-clamp-1 text-xs text-detective-text-secondary" title={module.subtitle}>
               {module.subtitle}
             </p>
           )}
-          <p className="line-clamp-2 text-sm text-detective-text-secondary">{module.description}</p>
+          <p className="line-clamp-2 text-sm text-detective-text-secondary" title={module.description}>{module.description}</p>
         </div>
 
         {/* Rewards Info (if module has rewards) */}

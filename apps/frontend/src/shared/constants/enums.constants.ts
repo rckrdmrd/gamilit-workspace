@@ -480,7 +480,7 @@ export enum ProcessingStatusEnum {
  * @note Module 3: Comprensión Crítica (5 mecánicas)
  * @note Module 4: Lectura Digital (9 mecánicas)
  * @note Module 5: Producción Lectora (3 mecánicas)
- * @note Auxiliares (6 mecánicas: comprension_auditiva, collage_prensa, texto_movimiento, call_to_action, mapa_conceptual, emparejamiento)
+ * @note Auxiliares (5 activas + 1 BACKLOG: collage_prensa, texto_movimiento, call_to_action, mapa_conceptual, emparejamiento | BACKLOG: comprension_auditiva)
  * @version 1.1 (2025-11-11) - Removidas 2 mecánicas huérfanas sin implementación (diario_interactivo, resumen_visual)
  * @version 1.0 - Sincronizado con DDL educational_content.exercise_type
  */
@@ -523,8 +523,8 @@ export enum ExerciseTypeEnum {
   COMIC_DIGITAL = 'comic_digital',
   VIDEO_CARTA = 'video_carta',
 
-  // Auxiliares (6 mecánicas — mapa_conceptual y emparejamiento son asignables a M1 pero se clasifican como auxiliares)
-  COMPRENSION_AUDITIVA = 'comprension_auditiva',
+  // Auxiliares (5 activas + 1 BACKLOG — mapa_conceptual y emparejamiento son asignables a M1 pero se clasifican como auxiliares)
+  COMPRENSION_AUDITIVA = 'comprension_auditiva', // BACKLOG: desactivada, requiere infraestructura audio
   COLLAGE_PRENSA = 'collage_prensa',
   TEXTO_MOVIMIENTO = 'texto_movimiento',
   CALL_TO_ACTION = 'call_to_action',

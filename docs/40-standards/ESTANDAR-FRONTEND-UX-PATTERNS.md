@@ -219,3 +219,9 @@ if (window.confirm('¿Estás seguro?')) { handleDelete(); }
 **Prioridad 3:** Envolver rutas de portal en ErrorBoundary
 **Prioridad 4:** Reemplazar `window.confirm` → `ConfirmDialog` (9 archivos)
 **Prioridad 5 (Gradual):** Migrar forms manuales → react-hook-form + Zod
+
+---
+
+## Estándares Relacionados
+
+- [ESTANDAR-FRONTEND-CARD-TRUNCATION.md](./ESTANDAR-FRONTEND-CARD-TRUNCATION.md) — Truncación de texto en cards: line-clamp + title tooltip

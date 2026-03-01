@@ -101,6 +101,24 @@ interface CompletionModalProps {
   onRetry: () => void;
   onNextExercise?: () => void;
 }
+
+// ExerciseMechanicProps (each mechanic receives these from ExerciseLoader)
+interface ExerciseMechanicProps {
+  exercise: ExerciseData;
+  onComplete?: (score?: number, timeSpent?: number) => void;
+  onProgressUpdate?: (data: ProgressUpdateData) => void;
+  actionsRef?: MutableRefObject<MechanicActions>;
+  comodinesContext?: ExerciseComodinesContext;  // Hints, vision lectora, segunda oportunidad
+}
+
+// ExerciseComodinesContext (provided by useExerciseComodines hook)
+interface ExerciseComodinesContext {
+  hintsRevealed: number;         // Number of hints revealed via comodin
+  visionActive: boolean;         // Vision lectora highlighting active
+  hasSecondChance: boolean;      // Segunda oportunidad protection active
+  timeExtension: number;         // Extra time in seconds
+  multiplierActive: boolean;     // Score multiplier active
+}
 ```
 
 ---
@@ -162,7 +180,7 @@ interface ExerciseSubmissionData {
   answers: any;                   // Respuestas del usuario
   startedAt: Date;
   hintsUsed: number;
-  powerupsUsed: string[];
+  powerupsUsed: string[];         // Legacy power-ups + comodin types (e.g., 'pistas', 'vision_lectora', 'segunda_oportunidad')
 }
 
 // Submission Result
@@ -308,13 +326,13 @@ registerExercise('crucigrama', {
 
 ### 10.3 Registry de Mecánicas
 
-30 mecánicas registradas en `features/exercises/registry/registrations.ts`:
+29 mecánicas registradas en `features/exercises/registry/registrations.ts`:
 - Módulo 1 (7): crucigrama, timeline, sopa_letras, mapa_conceptual, emparejamiento, verdadero_falso, completar_espacios
 - Módulo 2 (6): detective_textual, lectura_inferencial, construccion_hipotesis, prediccion_narrativa, puzzle_contexto, rueda_inferencias
 - Módulo 3 (5): analisis_fuentes, debate_digital, matriz_perspectivas, podcast_argumentativo, tribunal_opiniones
 - Módulo 4 (5): verificador_fake_news, quiz_tiktok, navegacion_hipertextual, analisis_memes, infografia_interactiva
 - Módulo 5 (3): diario_multimedia, comic_digital, video_carta
-- Auxiliar (4): call_to_action, collage_prensa, comprension_auditiva, texto_movimiento
+- Auxiliar (3 activas + 1 BACKLOG): call_to_action, collage_prensa, texto_movimiento — comprension_auditiva (BACKLOG: desactivada)
 
 ---
 
@@ -326,6 +344,7 @@ registerExercise('crucigrama', {
 | GAP-P1-004 | Backend sync de power-ups es fire-and-forget | Media | Pendiente |
 | GAP-P2-003 | Loading state genérico para mecánicas | Baja | Pendiente |
 | GAP-P2-004 | CORR-010 debug logs en producción | Baja | Pendiente |
+| GAP-P3-001 | Vision lectora CSS scoped `.exercise-passage` — blanket highlight corregido. Backend `generateReadingVision()` es pseudocodigo (ADR-051) | Media | Resuelto |
 
 ---
 
@@ -350,6 +369,23 @@ const comodinTypeMap: Record<string, string> = {
   'powerup-004': 'pistas',
 };
 ```
+
+### 12.3 Efectos de Comodines en Mecánicas
+
+Los comodines activados desde el `ConsumablesPanel` producen efectos visibles en los ejercicios:
+
+| Comodín | Efecto en ExerciseLayout | Efecto en Mecánica |
+|---------|--------------------------|---------------------|
+| pistas (hints) | ExerciseGuide se expande automáticamente (`forceExpanded`) | N/A (hints mostrados a nivel layout) |
+| vision_lectora | Clase CSS `vision-lectora-active` aplicada al área del ejercicio (resaltado amber en texto) | N/A (efecto visual a nivel layout) |
+| segunda_oportunidad | Banner informativo "Segunda Oportunidad activa" | Si score < 70 en primer intento, permite reintentar sin penalización |
+
+**Flujo de Segunda Oportunidad en mecánicas M1-M2:**
+1. Estudiante envía respuestas → Backend responde con `score < 70`
+2. Si `comodinesContext.hasSecondChance && !secondChanceUsed` → Intercepción
+3. Muestra feedback tipo `info` ("¡Segunda Oportunidad!")
+4. Desbloquea UI para editar respuestas
+5. Segundo envío se procesa normalmente (sin protección)
 
 ---
 

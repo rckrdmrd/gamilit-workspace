@@ -1150,7 +1150,9 @@ INSERT INTO educational_content.exercise_mechanic_mappings (
 -- TIPOS AUXILIARES (4 exercise_types - NUEVOS/COMPLETADOS GAP-002)
 -- ============================================================================
 
--- comprension_auditiva: audio + comprender (NUEVO - GAP-002)
+-- BACKLOG: comprension_auditiva desactivada. Requiere infraestructura audio. Mejora futura.
+-- Mappings preservados para reactivacion futura.
+/*
 INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
@@ -1188,6 +1190,7 @@ INSERT INTO educational_content.exercise_mechanic_mappings (
     interaction_type = EXCLUDED.interaction_type,
     cognitive_load = EXCLUDED.cognitive_load,
     tags = EXCLUDED.tags;
+*/
 
 -- collage_prensa: cultura + crear
 INSERT INTO educational_content.exercise_mechanic_mappings (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, BookOpen, Lightbulb, Target, GraduationCap } from 'lucide-react';
@@ -48,6 +48,11 @@ interface ExerciseGuideProps {
   defaultExpanded?: boolean;
 
   /**
+   * Force expansion when comodin "pistas" is activated
+   */
+  forceExpanded?: boolean;
+
+  /**
    * Custom CSS classes
    */
   className?: string;
@@ -69,9 +74,14 @@ export const ExerciseGuide = ({
   recommended_strategy,
   pedagogical_notes,
   defaultExpanded = false,
+  forceExpanded,
   className = '',
 }: ExerciseGuideProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+  useEffect(() => {
+    if (forceExpanded) setIsExpanded(true);
+  }, [forceExpanded]);
 
   // Build sections array from available content
   const sections: Section[] = [

@@ -184,3 +184,4 @@ Los siguientes estandares definen reglas detalladas para aspectos concretos del 
 - [ESTANDAR-FRONTEND-IMPORTS.md](../ESTANDAR-FRONTEND-IMPORTS.md) -- Import order (5 grupos), path aliases, barrels, icon imports
 - [ESTANDAR-FRONTEND-TYPES.md](../ESTANDAR-FRONTEND-TYPES.md) -- Jerarquia de tipos, anti-duplicados, inline types, any policy
 - [ESTANDAR-FRONTEND-UX-PATTERNS.md](../ESTANDAR-FRONTEND-UX-PATTERNS.md) -- Error/Loading/Empty states, toasts, forms, confirmation dialogs
+- [ESTANDAR-FRONTEND-CARD-TRUNCATION.md](../ESTANDAR-FRONTEND-CARD-TRUNCATION.md) -- Truncación de texto en cards: line-clamp + title tooltip

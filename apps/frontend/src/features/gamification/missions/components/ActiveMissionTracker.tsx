@@ -151,7 +151,7 @@ function TrackedMissionItem({ mission, index, onClaim, onUntrack }: TrackedMissi
       </button>
 
       {/* Title */}
-      <h4 className="mb-2 line-clamp-1 pr-6 text-sm font-bold text-gray-800">{mission.title}</h4>
+      <h4 className="mb-2 line-clamp-1 pr-6 text-sm font-bold text-gray-800" title={mission.title}>{mission.title}</h4>
 
       {/* Progress */}
       <div className="mb-3">

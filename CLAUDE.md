@@ -39,7 +39,7 @@ SIN FETCH = ESTADO INCOMPLETO
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
   DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/157 classes, 16 DDL-only en data_warehouse)
-  Backend -> Frontend: Endpoints documentados (912 endpoints)
+  Backend -> Frontend: Endpoints documentados (914 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
 SI HAY GAPS: DOCUMENTAR + BLOQUEAR avance hasta resolver
@@ -164,10 +164,13 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
 | 23 | mail | Transporte email (transitivo via auth/notifications/teacher/parents/progress) | 100% |
 
-**Total:** 23 modulos, 156 entities (157 classes), 172 services, 108 controllers, 912 endpoints
+**Total:** 23 modulos, 156 entities (157 classes), 172 services, 108 controllers, 914 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
-> Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` configurado condicionalmente via ENABLE_DATA_WAREHOUSE feature flag), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
+> Adicionalmente, módulos con import status especial:
+> - `etl`, `ml`, `visualization`: Importados CONDICIONALMENTE via ENABLE_DATA_WAREHOUSE=true (requieren datasource `data_warehouse` configurado, líneas 441-471 en app.module.ts)
+> - `mail`: Cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress` (NO importado directamente en app.module.ts)
+> - `communication`, `lti`: Importados directamente (líneas 490-491 en app.module.ts)
 
 ---
 
@@ -337,7 +340,7 @@ gamilit/
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
-|   +-- backend/                 <- NestJS 11 (23 modulos, 912 endpoints)
+|   +-- backend/                 <- NestJS 11 (23 modulos, 914 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
 |   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 173 tablas)
 |   +-- devops/                  <- Deployment scripts
@@ -362,7 +365,7 @@ gamilit/
 |   +-- 60-portals/              <- Manuales de portales (student, teacher, admin)
 |   +-- 70-onboarding/           <- Guias de onboarding por rol
 |   +-- 80-references/           <- Referencias tecnicas
-|   +-- 90-adr/                  <- ADRs del proyecto (47 ADRs, incl. ADR-050)
+|   +-- 90-adr/                  <- ADRs del proyecto (48 ADRs, incl. ADR-051)
 |   +-- 99-delivery/             <- Documentos de entrega
 +-- orchestration/
     +-- _INDEX.yml
@@ -452,7 +455,7 @@ proyecto:
 | DTOs | 401 |
 | Services | 172 |
 | Controllers | 108 |
-| Endpoints | 912 |
+| Endpoints | 914 |
 | Guards | 15 |
 | Decorators | 18 |
 | Tests | 2324 total (2296 passed + 28 skipped, 63 spec files) |
@@ -462,7 +465,7 @@ proyecto:
 |---------|-------|
 | Componentes (.tsx prod) | 575 |
 | Hooks | 132 |
-| Paginas | 72 |
+| Paginas | 70 |
 | Stores Zustand | 13 |
 | API Service Files | 65 |
 | API Calls Total | ~580 |

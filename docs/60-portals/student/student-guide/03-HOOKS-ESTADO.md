@@ -138,6 +138,66 @@ POST /api/v1/gamification/comodines/use
 - `getActivePowerUps()`
 - `checkPowerUpActive(type: string)`
 
+### 5.6 useEquippedVisuals
+
+**Propósito:** Extrae configuración visual de items cosméticos equipados del inventario del usuario.
+
+**Fuente:** `features/gamification/social/hooks/useEquippedVisuals.ts`
+
+**Return value:**
+
+```typescript
+{
+  avatar: { assetUrl: string } | null,
+  frame: { borderColor: string; cssClass: string; assetUrl: string } | null,
+  badge: { assetUrl: string; name: string } | null,
+  title: { text: string } | null,
+  background: { assetUrl: string; cssClass: string } | null,
+}
+```
+
+**Usado en:**
+- `RankProgressWidget.tsx` — muestra frame border y badge en el dashboard
+- `ProfileHero.tsx` — muestra todos los cosméticos en la página de perfil
+- `GamifiedHeader.tsx` — muestra avatar y frame en el header
+
+### 5.7 useExerciseComodines
+
+**Propósito:** Gestión de comodines/consumibles reales via API backend durante ejercicios.
+
+**Fuente:** `features/exercises/hooks/useExerciseComodines.ts`
+
+**API:**
+
+```typescript
+GET /gamification/comodines/inventory/:userId  // Inventario
+POST /gamification/comodines/use               // Activar comodín
+```
+
+**Return value:**
+
+```typescript
+{
+  inventory: ComodinItem[],           // Items disponibles
+  comodinesContext: {                  // Estado de efectos activos
+    hintsRevealed: number,
+    visionActive: boolean,
+    hasSecondChance: boolean,
+    timeExtension: number,
+    multiplierActive: boolean,
+  },
+  useComodin: (type: string) => void, // Activar comodín
+  getUsedComodinTypes: () => string[], // Tipos usados (para payload submit)
+  loading: boolean,
+  error: string | null,
+}
+```
+
+**Efectos:**
+- `hintsRevealed > 0` → ExerciseGuide auto-expande
+- `visionActive` → Resaltado amber en texto del ejercicio
+- `hasSecondChance` → Banner + mecánicas permiten reintento si score < 70
+
 ---
 
 ## 6. APIs del Portal Student

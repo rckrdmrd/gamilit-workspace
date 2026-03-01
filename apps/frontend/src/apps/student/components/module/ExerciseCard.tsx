@@ -77,7 +77,7 @@ export function ExerciseCard({ exercise, completed = false }: ExerciseCardProps)
 
       {/* Description */}
       {exercise.description && (
-        <p className="mb-3 line-clamp-2 text-xs text-gray-600">{exercise.description}</p>
+        <p className="mb-3 line-clamp-2 text-xs text-gray-600" title={exercise.description}>{exercise.description}</p>
       )}
 
       {/* Badges */}

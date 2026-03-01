@@ -74,7 +74,7 @@ export function ShopItemCard({ item, userBalance, onPurchase, index }: ShopItemC
           {/* Item Info */}
           <div>
             <h3 className="mb-1 text-lg font-bold text-detective-text">{item.name}</h3>
-            <p className="line-clamp-2 text-sm text-detective-text-secondary">
+            <p className="line-clamp-2 text-sm text-detective-text-secondary" title={item.description}>
               {item.description}
             </p>
           </div>

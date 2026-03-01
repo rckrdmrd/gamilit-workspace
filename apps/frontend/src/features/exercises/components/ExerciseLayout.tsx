@@ -25,6 +25,7 @@ import { ExerciseErrorState } from './ExerciseErrorState';
 import { ExerciseCompletedState } from './ExerciseCompletedState';
 import { ExerciseLoader } from './ExerciseLoader';
 import { ExerciseSidebar } from './ExerciseSidebar';
+import { cn } from '@shared/utils/cn';
 
 export const ExerciseLayout = () => {
   const {
@@ -42,6 +43,7 @@ export const ExerciseLayout = () => {
     showFeedback,
     setShowFeedback,
     navigateBack,
+    comodinesContext,
   } = useExerciseContext();
 
   // === Loading state ===
@@ -88,14 +90,23 @@ export const ExerciseLayout = () => {
             recommended_strategy={pedagogicalGuide.recommended_strategy}
             pedagogical_notes={pedagogicalGuide.pedagogical_notes}
             defaultExpanded={false}
+            forceExpanded={comodinesContext.hintsRevealed > 0}
             className="mb-6"
           />
+        )}
+
+        {/* Second Chance indicator */}
+        {comodinesContext.hasSecondChance && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800">
+            <span className="text-lg">🛡️</span>
+            Segunda Oportunidad activa — tu primer error no penaliza
+          </div>
         )}
 
         {/* Main Grid Layout */}
         <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-4">
           {/* Exercise Area (3/4) */}
-          <div className="lg:col-span-3">
+          <div className={cn('lg:col-span-3', comodinesContext.visionActive && 'vision-lectora-active')}>
             <ExerciseLoader />
           </div>
 

@@ -4,7 +4,6 @@
  * Tab navigation for switching between mission types:
  * - Daily missions
  * - Weekly missions
- * - Special missions
  *
  * Features:
  * - Active tab indicator with animation
@@ -16,16 +15,15 @@
  */
 
 import { motion } from 'framer-motion';
-import { Calendar, CalendarRange, Star, Filter } from 'lucide-react';
-import type { MissionType, MissionStatus, Mission } from '../types/missionsTypes';
+import { Calendar, CalendarRange, Filter } from 'lucide-react';
+import type { MissionStatus, Mission } from '../types/missionsTypes';
 import { cn } from '@shared/utils/cn';
 
 interface MissionTabsProps {
-  currentTab: MissionType;
-  onTabChange: (tab: MissionType) => void;
+  currentTab: 'daily' | 'weekly';
+  onTabChange: (tab: 'daily' | 'weekly') => void;
   dailyMissions: Mission[];
   weeklyMissions: Mission[];
-  specialMissions: Mission[];
   statusFilter: MissionStatus | 'all';
   onStatusFilterChange: (status: MissionStatus | 'all') => void;
 }
@@ -35,7 +33,6 @@ export function MissionTabs({
   onTabChange,
   dailyMissions,
   weeklyMissions,
-  specialMissions,
   statusFilter,
   onStatusFilterChange,
 }: MissionTabsProps) {
@@ -45,25 +42,18 @@ export function MissionTabs({
 
   const tabs = [
     {
-      id: 'daily' as MissionType,
+      id: 'daily' as const,
       label: 'Diarias',
       icon: Calendar,
       color: 'blue',
       count: getIncompletCount(dailyMissions),
     },
     {
-      id: 'weekly' as MissionType,
+      id: 'weekly' as const,
       label: 'Semanales',
       icon: CalendarRange,
       color: 'purple',
       count: getIncompletCount(weeklyMissions),
-    },
-    {
-      id: 'special' as MissionType,
-      label: 'Especiales',
-      icon: Star,
-      color: 'orange',
-      count: getIncompletCount(specialMissions),
     },
   ];
 
@@ -173,12 +163,6 @@ export function MissionTabs({
             se renuevan cada semana. Más difíciles, mejores recompensas.
           </p>
         )}
-        {currentTab === 'special' && (
-          <p>
-            <span className="font-semibold text-orange-600">Misiones Especiales:</span> Eventos
-            limitados con recompensas únicas. ¡No las dejes pasar!
-          </p>
-        )}
       </motion.div>
     </div>
   );
@@ -191,7 +175,6 @@ function getTabGradient(color: string): string {
   const gradients: Record<string, string> = {
     blue: 'from-blue-500 to-cyan-500',
     purple: 'from-purple-500 to-pink-500',
-    orange: 'from-orange-500 to-amber-500',
   };
   return gradients[color] || gradients.blue;
 }

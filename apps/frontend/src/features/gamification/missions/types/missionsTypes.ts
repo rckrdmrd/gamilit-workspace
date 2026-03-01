@@ -10,6 +10,10 @@
  * P2-001: Types consolidation - SSOT for Mission
  */
 
+/**
+ * 'special' is retained for backend compatibility (WebSocket events, API responses).
+ * It is intentionally hidden from the student portal UI — no tab or view renders it.
+ */
 export type MissionType = 'daily' | 'weekly' | 'special';
 
 export type MissionCategory =

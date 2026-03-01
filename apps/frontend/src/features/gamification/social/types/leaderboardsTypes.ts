@@ -3,6 +3,13 @@
  * Defines all types for the leaderboard system
  */
 
+/**
+ * @ui-note Only 'global' is currently active in the student portal UI.
+ * The other scopes ('school', 'grade', 'classroom', 'friends') are supported
+ * by the backend but the LeaderboardTabs component is no longer rendered in
+ * LeaderboardPage. The type union is kept intact so backend/store code remains
+ * unchanged and can be re-enabled in the future without a type migration.
+ */
 // Legacy types
 export type LeaderboardType = 'global' | 'school' | 'grade' | 'friends' | 'classroom';
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'all-time';

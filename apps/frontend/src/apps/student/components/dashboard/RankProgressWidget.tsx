@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, TrendingUp, Award, Crown, Star, Sparkles } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { MAYA_RANKS as MAYA_RANKS_SSOT, type MayaRank } from '@/shared/constants/ranks.constants';
 import type { RankData } from '../../hooks/useDashboardData';
+import { useEquippedVisuals } from '@/features/gamification/social/hooks/useEquippedVisuals';
 
 interface RankProgressWidgetProps {
   data: RankData | null;
@@ -34,6 +36,9 @@ function getRankDisplay(rankName: string) {
 }
 
 export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
+  const { frame, badge } = useEquippedVisuals();
+  const [badgeFailed, setBadgeFailed] = useState(false);
+
   const rankInfo = data
     ? getRankDisplay(data.currentRank)
     : getRankDisplay('Nacom');
@@ -73,10 +78,12 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
       transition={{ duration: 0.4 }}
       className={cn(
         'relative overflow-hidden rounded-xl bg-white shadow-lg',
-        'h-full max-h-[600px] border-2',
-        rankInfo.border,
+        'h-full max-h-[600px]',
+        frame?.borderColor ? 'border-[3px]' : 'border-2',
+        !frame?.borderColor && rankInfo.border,
         rankInfo.shadow,
       )}
+      style={frame?.borderColor ? { borderColor: frame.borderColor } : undefined}
     >
       {/* Gradient background overlay */}
       <div className={cn('absolute inset-0 opacity-10', 'bg-gradient-to-br', rankInfo.color)} />
@@ -167,18 +174,36 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
                 </div>
               </div>
 
-              <motion.div
-                animate={{
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 2,
-                  ease: 'easeInOut',
-                }}
-              >
-                <Award className="h-8 w-8 text-white/80" />
-              </motion.div>
+              <div className="flex items-center gap-2">
+                {badge && (
+                  <span className="inline-flex items-center">
+                    {badge.assetUrl && !badgeFailed ? (
+                      <img
+                        src={badge.assetUrl}
+                        alt={badge.name || 'Emblema'}
+                        className="h-8 w-8"
+                        onError={() => setBadgeFailed(true)}
+                      />
+                    ) : badge.name ? (
+                      <span className="rounded-full bg-white/30 px-2 py-0.5 text-xs font-semibold text-white">
+                        {badge.name}
+                      </span>
+                    ) : null}
+                  </span>
+                )}
+                <motion.div
+                  animate={{
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  <Award className="h-8 w-8 text-white/80" />
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>

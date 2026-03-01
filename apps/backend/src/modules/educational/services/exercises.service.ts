@@ -312,7 +312,7 @@ export class ExercisesService {
         break;
 
       case ExerciseTypeEnum.DETECTIVE_TEXTUAL:
-      case ExerciseTypeEnum.COMPRENSION_AUDITIVA:
+      case ExerciseTypeEnum.COMPRENSION_AUDITIVA: // BACKLOG: desactivada, fall-through preservado
         // Detective textual requiere text/audio y clues
         if (!content.text && !content.audio_url) {
           throw new BadRequestException(

@@ -32,7 +32,7 @@
 SET search_path TO auth, public;
 
 -- =====================================================
--- INSERT: Production Registered Users (45 usuarios)
+-- INSERT: Production Registered Users (50 usuarios)
 -- =====================================================
 
 INSERT INTO auth.users (
@@ -623,7 +623,7 @@ INSERT INTO auth.users (
 ),
 
 -- =====================================================
--- LOTE 3: USUARIOS 2025-11-25 (6 usuarios)
+-- LOTE 3: USUARIOS 2025-11-25 (7 usuarios)
 -- =====================================================
 
 -- USUARIO 37: bryan@betanzos.com

@@ -103,6 +103,8 @@ El docente revisa anotaciones del estudiante sobre memes SVG:
 
 ### Comprension Auditiva (Auxiliar)
 
+> **BACKLOG:** Comprensión Auditiva desactivada. Requiere infraestructura audio. Mejora futura.
+
 El docente revisa respuestas de seleccion multiple vinculadas a un audio:
 - Las respuestas incluyen timestamps indicando cuando se desbloquearon las preguntas.
 - Audio disponible en `public/audio/marie-curie-biografia.mp3` para referencia del docente.

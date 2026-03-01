@@ -164,6 +164,95 @@ export class LoadStatusResponseDto {
 }
 
 /**
+ * Operation Status DTO
+ *
+ * @description Status of an individual operation within a phase
+ */
+export class OperationStatusDto {
+  @ApiProperty({
+    description: 'Operation name',
+    example: 'fact-exercise-completion',
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: 'Operation status',
+    enum: LoadStatus,
+  })
+  status!: LoadStatus;
+
+  @ApiProperty({
+    description: 'Records processed',
+    example: 5000,
+  })
+  recordsProcessed!: number;
+
+  @ApiProperty({
+    description: 'Duration in milliseconds',
+    example: 30000,
+  })
+  duration!: number;
+
+  @ApiPropertyOptional({
+    description: 'Error message if failed',
+  })
+  errorMessage?: string;
+}
+
+/**
+ * Phase Status DTO
+ *
+ * @description Status of a single ETL phase
+ */
+export class PhaseStatusDto {
+  @ApiProperty({
+    description: 'Phase name',
+    example: 'load',
+  })
+  phase!: string;
+
+  @ApiProperty({
+    description: 'Phase status',
+    enum: LoadStatus,
+    example: LoadStatus.COMPLETED,
+  })
+  status!: LoadStatus;
+
+  @ApiPropertyOptional({
+    description: 'When the phase started',
+  })
+  startedAt?: Date;
+
+  @ApiPropertyOptional({
+    description: 'When the phase completed',
+  })
+  completedAt?: Date;
+
+  @ApiProperty({
+    description: 'Duration in milliseconds',
+    example: 90000,
+  })
+  duration!: number;
+
+  @ApiProperty({
+    description: 'Records processed in this phase',
+    example: 10000,
+  })
+  recordsProcessed!: number;
+
+  @ApiPropertyOptional({
+    description: 'Error message if failed',
+  })
+  errorMessage?: string;
+
+  @ApiProperty({
+    description: 'Individual operations in this phase',
+    type: () => [OperationStatusDto],
+  })
+  operations!: OperationStatusDto[];
+}
+
+/**
  * Pipeline Status Response DTO
  *
  * @description Response for full ETL pipeline status
@@ -228,95 +317,6 @@ export class PipelineStatusResponseDto {
     example: 50000,
   })
   totalRecordsProcessed!: number;
-}
-
-/**
- * Phase Status DTO
- *
- * @description Status of a single ETL phase
- */
-export class PhaseStatusDto {
-  @ApiProperty({
-    description: 'Phase name',
-    example: 'load',
-  })
-  phase!: string;
-
-  @ApiProperty({
-    description: 'Phase status',
-    enum: LoadStatus,
-    example: LoadStatus.COMPLETED,
-  })
-  status!: LoadStatus;
-
-  @ApiPropertyOptional({
-    description: 'When the phase started',
-  })
-  startedAt?: Date;
-
-  @ApiPropertyOptional({
-    description: 'When the phase completed',
-  })
-  completedAt?: Date;
-
-  @ApiProperty({
-    description: 'Duration in milliseconds',
-    example: 90000,
-  })
-  duration!: number;
-
-  @ApiProperty({
-    description: 'Records processed in this phase',
-    example: 10000,
-  })
-  recordsProcessed!: number;
-
-  @ApiPropertyOptional({
-    description: 'Error message if failed',
-  })
-  errorMessage?: string;
-
-  @ApiProperty({
-    description: 'Individual operations in this phase',
-    type: () => [OperationStatusDto],
-  })
-  operations!: OperationStatusDto[];
-}
-
-/**
- * Operation Status DTO
- *
- * @description Status of an individual operation within a phase
- */
-export class OperationStatusDto {
-  @ApiProperty({
-    description: 'Operation name',
-    example: 'fact-exercise-completion',
-  })
-  name!: string;
-
-  @ApiProperty({
-    description: 'Operation status',
-    enum: LoadStatus,
-  })
-  status!: LoadStatus;
-
-  @ApiProperty({
-    description: 'Records processed',
-    example: 5000,
-  })
-  recordsProcessed!: number;
-
-  @ApiProperty({
-    description: 'Duration in milliseconds',
-    example: 30000,
-  })
-  duration!: number;
-
-  @ApiPropertyOptional({
-    description: 'Error message if failed',
-  })
-  errorMessage?: string;
 }
 
 /**

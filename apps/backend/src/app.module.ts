@@ -46,6 +46,23 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
 import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor';
 import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
 
+// ---------------------------------------------------------------------------
+// Connection stagger for Windows WSL2 development.
+// Windows Hyper-V firewall and svchost.exe proxy drop TCP connections
+// (ECONNREFUSED/ECONNRESET) when overwhelmed by 11+ simultaneous connects.
+// Each datasource waits (n × 500ms) so connections are serialized.
+// Disabled in production and on non-Windows platforms.
+// ---------------------------------------------------------------------------
+let _dsConnIndex = 0;
+const DS_STAGGER_MS =
+  process.platform === 'win32' && process.env.NODE_ENV !== 'production'
+    ? 500
+    : 0;
+const dsStagger = (): Promise<void> => {
+  const delay = _dsConnIndex++ * DS_STAGGER_MS;
+  return delay > 0 ? new Promise((r) => setTimeout(r, delay)) : Promise.resolve();
+};
+
 @Module({
   imports: [
     // Global configuration
@@ -95,8 +112,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'auth',  // Connection name for @InjectRepository(Entity, 'auth')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -122,7 +139,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -131,8 +148,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'educational',  // Connection name for @InjectRepository(Entity, 'educational')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -155,7 +172,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -163,8 +180,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'gamification',  // Connection name for @InjectRepository(Entity, 'gamification')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -185,7 +202,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -197,8 +214,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'progress',  // Connection name for @InjectRepository(Entity, 'progress')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -225,7 +242,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -235,8 +252,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'social',  // Connection name for @InjectRepository(Entity, 'social')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -261,7 +278,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -269,8 +286,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'content',  // Connection name for @InjectRepository(Entity, 'content')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -283,7 +300,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -291,8 +308,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'audit',  // Connection name for @InjectRepository(Entity, 'audit')
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -316,7 +333,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -324,8 +341,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'notifications',  // 8th datasource for multi-channel notifications
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -342,7 +359,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -350,8 +367,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'communication',  // 9th datasource for teacher-student communication
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -367,7 +384,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -378,8 +395,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'admin_dashboard',  // 10th datasource for admin reports
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -400,7 +417,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -409,8 +426,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     TypeOrmModule.forRootAsync({
       name: 'lti',  // 11th datasource for LTI integration
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
+      useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+        type: 'postgres' as const,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
@@ -429,7 +446,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         extra: configService.get('database.extra'),
         retryAttempts: configService.get('database.retryAttempts', 5),
         retryDelay: configService.get('database.retryDelay', 5000),
-      }),
+      } as TypeOrmModuleOptions; },
       inject: [ConfigService],
     }),
 
@@ -444,8 +461,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
           TypeOrmModule.forRootAsync({
             name: 'data_warehouse',
             imports: [ConfigModule],
-            useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
-              type: 'postgres',
+            useFactory: async (configService: ConfigService) => { await dsStagger(); return {
+              type: 'postgres' as const,
               host: configService.get('database.host'),
               port: configService.get('database.port'),
               username: configService.get('database.username'),
@@ -458,7 +475,7 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
               extra: configService.get('database.extra'),
               retryAttempts: configService.get('database.retryAttempts', 5),
               retryDelay: configService.get('database.retryDelay', 5000),
-            }),
+            } as TypeOrmModuleOptions; },
             inject: [ConfigService],
           }),
           // ETL: Extract-Transform-Load pipeline (data_warehouse + audit + progress + auth + social + gamification)

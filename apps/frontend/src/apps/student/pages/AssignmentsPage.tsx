@@ -101,7 +101,7 @@ function AssignmentCard({ assignment, onClick }: AssignmentCardProps) {
         {/* Header */}
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="line-clamp-2 font-semibold text-gray-900">
+            <h3 className="line-clamp-2 font-semibold text-gray-900" title={assignment.assignment.title}>
               {assignment.assignment.title}
             </h3>
             <span className="text-xs capitalize text-gray-500">
@@ -118,7 +118,7 @@ function AssignmentCard({ assignment, onClick }: AssignmentCardProps) {
 
         {/* Description */}
         {assignment.assignment.description && (
-          <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+          <p className="mb-3 line-clamp-2 text-sm text-gray-600" title={assignment.assignment.description}>
             {assignment.assignment.description}
           </p>
         )}

@@ -45,4 +45,5 @@ export interface VerdaderoFalsoExerciseProps {
     handleReset?: () => void;
     handleCheck?: () => void;
   }>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }

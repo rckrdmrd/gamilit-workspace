@@ -264,6 +264,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     isImplemented: false,
     componentPath: '/features/mechanics/auxiliar/CollagePrensa/CollajePrensaExercise',
   },
+  // BACKLOG: comprension_auditiva desactivada. Requiere infraestructura audio. Mejora futura.
   [ExerciseType.COMPRENSION_AUDITIVA]: {
     component: null,
     displayName: 'Comprensión Auditiva',

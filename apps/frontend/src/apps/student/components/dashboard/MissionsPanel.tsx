@@ -162,7 +162,7 @@ const MissionCard = ({ mission, index, onMissionClick }: MissionCardProps) => {
             </div>
             <div className="min-w-0 flex-1">
               <h4 className="text-sm font-semibold leading-tight text-gray-900">{mission.title}</h4>
-              <p className="mt-1 line-clamp-2 text-xs text-gray-600">{mission.description}</p>
+              <p className="mt-1 line-clamp-2 text-xs text-gray-600" title={mission.description}>{mission.description}</p>
             </div>
           </div>
 

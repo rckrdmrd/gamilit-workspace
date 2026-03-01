@@ -113,6 +113,8 @@ import { Card, CardHeader, CardBody, CardFooter } from '@/shared/components/ui';
 </Card>
 ```
 
+> **Truncación de texto:** Todo card que use `line-clamp-N` para truncar texto DEBE incluir el atributo `title=` con el texto completo para tooltip nativo. Ver [ESTANDAR-FRONTEND-CARD-TRUNCATION.md](../../../40-standards/ESTANDAR-FRONTEND-CARD-TRUNCATION.md).
+
 ### Badge
 
 ```typescript

@@ -198,12 +198,12 @@ const ModuleCard = ({ module, index, onModuleClick }: ModuleCardProps) => {
 
           <div className="flex-1 min-w-0">
             {/* Title */}
-            <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
+            <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1" title={module.title}>
               {module.title}
             </h3>
 
             {/* Description */}
-            <p className="text-sm text-gray-600 line-clamp-2">
+            <p className="text-sm text-gray-600 line-clamp-2" title={module.description}>
               {module.description}
             </p>
           </div>

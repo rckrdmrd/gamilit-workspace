@@ -103,12 +103,13 @@ BEGIN
             'Puedes reproducir el audio varias veces'
         ],
         80, 15,
-        true, false
+        false, false  -- BACKLOG: comprension_auditiva desactivada (is_active=false). Requiere infraestructura audio. Mejora futura.
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
         solution = EXCLUDED.solution,
+        is_active = EXCLUDED.is_active,
         updated_at = NOW();
 
-    RAISE NOTICE '✓ Ejercicio auxiliar Comprensión Auditiva insertado';
+    RAISE NOTICE '✓ Ejercicio auxiliar Comprensión Auditiva insertado (BACKLOG — is_active=false)';
 
 END $$;

@@ -201,12 +201,13 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
 
     try {
       const usedPowerUpsList = powerUps.getUsedPowerUps();
+      const usedComodinTypes = comodines.getUsedComodinTypes();
 
       const result = await submitExercise(exerciseId, {
         answers: progressHook.userAnswers,
         startedAt: progressHook.startTime.getTime(),
         hintsUsed: progressHook.progress.hintsUsed || 0,
-        powerupsUsed: usedPowerUpsList || [],
+        powerupsUsed: [...(usedPowerUpsList || []), ...usedComodinTypes],
       });
 
       await syncAndInvalidate();
@@ -282,7 +283,7 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
       });
       setShowFeedback(true);
     }
-  }, [exerciseId, progressHook, powerUps, syncAndInvalidate]);
+  }, [exerciseId, progressHook, powerUps, comodines, syncAndInvalidate]);
 
   const handleSkip = useCallback(() => {
     setShowSkipConfirm(true);

@@ -69,7 +69,7 @@ export const AlertCard = ({
         <div>
           <h3 className="mb-2 text-lg font-bold text-detective-text">{alert.title}</h3>
           {alert.description && (
-            <p className="line-clamp-2 text-sm text-detective-text-secondary">
+            <p className="line-clamp-2 text-sm text-detective-text-secondary" title={alert.description}>
               {alert.description}
             </p>
           )}

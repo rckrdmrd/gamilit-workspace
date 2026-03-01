@@ -81,6 +81,7 @@ const AchievementCard = ({ userAchievement, onClick }: {
           'text-center font-semibold mb-2 line-clamp-1',
           isLocked ? 'text-gray-500' : 'text-gray-900'
         )}
+        title={achievement?.name || 'Logro'}
       >
         {achievement?.name || 'Logro'}
       </h3>
@@ -91,6 +92,7 @@ const AchievementCard = ({ userAchievement, onClick }: {
           'text-sm text-center mb-4 line-clamp-2',
           isLocked ? 'text-gray-400' : 'text-gray-600'
         )}
+        title={achievement?.description || 'Sin descripción'}
       >
         {achievement?.description || ''}
       </p>

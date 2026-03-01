@@ -20,12 +20,14 @@ export const PuzzleContextoExercise = ({
   onProgressUpdate,
   initialData,
   actionsRef,
+  comodinesContext,
 }: PuzzleContextoExerciseProps) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
 
   const [_isSubmitting, setIsSubmitting] = useState(false);
+  const [secondChanceUsed, setSecondChanceUsed] = useState(false);
 
   // Shuffle fragments initially
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -144,6 +146,20 @@ export const PuzzleContextoExercise = ({
 
       // CORRECCION-003: Agregar rewards al feedback
       const rewards = response.rewards || { mlCoins: 0, xp: 0 };
+
+      // Second chance: if score < 70 and comodin active, allow retry
+      if (response.score < 70 && comodinesContext?.hasSecondChance && !secondChanceUsed) {
+        setSecondChanceUsed(true);
+        setShowResults(false);
+        setFeedback({
+          type: 'info' as FeedbackData['type'],
+          title: '¡Segunda Oportunidad!',
+          message: 'Tu puntuación fue baja, pero tienes una segunda oportunidad. Reordena los fragmentos e intenta de nuevo.',
+          score: response.score,
+        });
+        setShowFeedback(true);
+        return;
+      }
 
       // Show backend response
       setFeedback({

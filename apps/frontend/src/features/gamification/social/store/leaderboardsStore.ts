@@ -47,6 +47,9 @@ interface LeaderboardsStore {
   loading: boolean;
   error: string | null;
 
+  /** @ui-note Called only with 'global' from the student portal UI (LeaderboardPage.tsx).
+   *  Other type values (school, grade, classroom, friends) are supported by the
+   *  implementation but not triggered from the UI since LeaderboardTabs was removed. */
   setLeaderboardType: (type: LeaderboardType, classroomId?: string) => Promise<void>;
   setTimePeriod: (period: TimePeriod) => Promise<void>;
   refreshLeaderboard: (classroomId?: string) => Promise<void>;

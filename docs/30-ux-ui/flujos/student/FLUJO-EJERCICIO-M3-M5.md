@@ -119,6 +119,8 @@ El ejercicio `analisis_memes` soporta multiples memes en un solo ejercicio. El a
 
 ### Auxiliar — Comprension Auditiva
 
+> **BACKLOG:** Comprensión Auditiva desactivada. Requiere infraestructura audio. Mejora futura.
+
 El ejercicio `comprension_auditiva` reproduce audio narrado y desbloquea preguntas en timestamps especificos.
 
 **Flujo:**

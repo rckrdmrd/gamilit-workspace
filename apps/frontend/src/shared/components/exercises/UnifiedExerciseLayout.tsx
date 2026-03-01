@@ -80,12 +80,12 @@ export const UnifiedExerciseLayout = ({
                         gradientClassName={gradientClassName}
                         className={cn(
                             'mb-6 rounded-t-lg',
-                            // Calculate negative margins based on padding to make header flush
+                            // Negative margins match DetectiveCard responsive padding
                             cardPadding === 'none' && 'mx-0 -mt-0',
-                            cardPadding === 'sm' && '-mx-4 -mt-4',
-                            cardPadding === 'md' && '-mx-6 -mt-6',
-                            cardPadding === 'lg' && '-mx-8 -mt-8',
-                            cardPadding === 'xl' && '-mx-10 -mt-10'
+                            cardPadding === 'sm' && '-mx-2 -mt-2 sm:-mx-4 sm:-mt-4',
+                            cardPadding === 'md' && '-mx-3 -mt-3 sm:-mx-4 sm:-mt-4 md:-mx-6 md:-mt-6',
+                            cardPadding === 'lg' && '-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 md:-mx-8 md:-mt-8',
+                            cardPadding === 'xl' && '-mx-6 -mt-6 sm:-mx-8 sm:-mt-8 md:-mx-10 md:-mt-10'
                         )}
                     >
                         {headerChildren}

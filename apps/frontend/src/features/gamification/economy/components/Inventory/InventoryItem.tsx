@@ -40,7 +40,7 @@ export const InventoryItem = ({ item, index }: InventoryItemProps) => {
               <Sparkles className="w-4 h-4 text-detective-gold animate-pulse" />
             )}
           </div>
-          <p className="text-detective-xs text-detective-text-secondary line-clamp-1">
+          <p className="text-detective-xs text-detective-text-secondary line-clamp-1" title={item.description}>
             {item.description}
           </p>
           <div className="flex items-center gap-2 mt-2">

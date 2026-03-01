@@ -44,12 +44,6 @@ export const ProgressCard = ({ module, progress, onClick }: ProgressCardProps) =
     0;
   const lastAccessed = progress?.last_accessed_at;
 
-  // Truncate description
-  const truncatedDescription =
-    module.description && module.description.length > 120
-      ? module.description.substring(0, 120) + '...'
-      : module.description || '';
-
   return (
     <div
       onClick={onClick}
@@ -97,7 +91,7 @@ export const ProgressCard = ({ module, progress, onClick }: ProgressCardProps) =
       <div className="p-4">
         {/* Title and Status Badge */}
         <div className="mb-2 flex items-start justify-between">
-          <h3 className="mr-2 line-clamp-2 flex-1 text-lg font-semibold text-gray-900">
+          <h3 className="mr-2 line-clamp-2 flex-1 text-lg font-semibold text-gray-900" title={module.title}>
             {module.title}
           </h3>
           <span
@@ -111,7 +105,7 @@ export const ProgressCard = ({ module, progress, onClick }: ProgressCardProps) =
         </div>
 
         {/* Description */}
-        <p className="mb-4 line-clamp-2 text-sm text-gray-600">{truncatedDescription}</p>
+        <p className="mb-4 line-clamp-2 text-sm text-gray-600" title={module.description || ''}>{module.description || ''}</p>
 
         {/* Progress Bar */}
         {progress && (

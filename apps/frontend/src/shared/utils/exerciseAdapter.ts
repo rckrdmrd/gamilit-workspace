@@ -835,6 +835,7 @@ export const adaptToVideoCartaData = (exercise: ExerciseData): any => {
 
 /**
  * Adapts ExerciseData to ComprensiónAuditivaData format
+ * BACKLOG: comprension_auditiva desactivada. Adapter preservado para reactivacion futura.
  * Auxiliary - Listening comprehension with timed questions
  *
  * Maps content.audioUrl, content.questions[] and audio metadata.
@@ -934,6 +935,7 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
   // ========================================
   // AUXILIARY MECHANICS
   // ========================================
+  // BACKLOG: comprension_auditiva desactivada. Adapter router branch preservado.
   else if (type.includes('comprension_auditiva') || type.includes('comprensión_auditiva')) {
     return adaptToComprensionAuditivaData(exercise);
   }

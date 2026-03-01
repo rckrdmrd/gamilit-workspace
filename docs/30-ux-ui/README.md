@@ -144,7 +144,7 @@ Algunos ejercicios requieren recursos multimedia servidos desde `apps/frontend/p
 | Tipo | Ubicacion | Ejercicio | Cantidad |
 |------|-----------|-----------|----------|
 | SVG Memes | `public/memes/*.svg` | M4: Analisis de Memes | 6 (600x500px, flat design) |
-| Audio MP3 | `public/audio/*.mp3` | Auxiliar: Comprension Auditiva | 1 (~2 min, gTTS español) |
+| Audio MP3 | `public/audio/*.mp3` | Auxiliar: Comprension Auditiva (BACKLOG — desactivada) | 1 (~2 min, gTTS español) |
 | Script | `public/audio/narration-script.txt` | (referencia para regenerar audio) | 1 |
 
 **Adapters:** Los recursos se vinculan via `content` JSON en BD. Los adapters en `exerciseAdapter.ts` mapean los campos del JSON a las props que cada componente espera (`memeUrl`, `audioUrl`, etc.).

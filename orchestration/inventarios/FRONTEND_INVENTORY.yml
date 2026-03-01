@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.5.0"
-fecha: "2026-02-27"  # v12.5.0: Remediacion 17 gaps - componentes 572->575, paginas 69->72, routes 71->74, parent portal 7/7 pages (100%)
+version: "12.5.2"
+fecha: "2026-02-28"  # v12.5.2: Card truncation standard — 18 componentes remediados con title= tooltip per ESTANDAR-FRONTEND-CARD-TRUNCATION.md. Previous: v12.5.1 Shop integration
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -433,6 +433,13 @@ hallazgos:
       Phase 4A: lib/api/ migration to services/api/ (4 files moved)
       Phase 4B: Teacher API additions (scheduledReports, sharedReports)
       Phase 5: PageShell pattern (StudentPageShell, TeacherPageShell + pageSetup hooks)
+
+  - id: "HF-11"
+    tipo: "UI_STANDARD"
+    detalle: "Card text truncation inconsistency — 18 card components lacked title= tooltip, risking UX issues when text exceeds container widths"
+    prioridad: "P2"
+    estado: "RESOLVED"
+    resolucion: "18 componentes remediados per ESTANDAR-FRONTEND-CARD-TRUNCATION.md (AchievementCard, ExerciseAttemptCard, MissionCard, DetectiveCard, etc. with title={originalText} on truncated elements, 2026-02-28)"
 
 # ===============================================================================
 # FIN FRONTEND INVENTORY v12.0.0

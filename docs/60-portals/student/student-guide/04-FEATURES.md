@@ -31,8 +31,13 @@ last_updated: "2026-02-28"
      answers: {...},
      timeSpent: 180,
      hintsUsed: 1,
-     powerupsUsed: ['hint_revealer']
+     powerupsUsed: ['hint_revealer', 'pistas', 'segunda_oportunidad']  // Legacy + comodines usados
    }
+   ↓
+6b. Si comodín "Segunda Oportunidad" activo y score < 70:
+    - FeedbackModal tipo "info" (no penaliza)
+    - Estudiante reintenta (UI desbloqueada)
+    - Segundo envío procesado normalmente
    ↓
 7. Backend procesa submission:
    - **M1-M2 (auto-grade):** Calcula score, XP ganado, ML Coins automaticamente
@@ -59,6 +64,8 @@ last_updated: "2026-02-28"
 10. Si achievement desbloqueado → AchievementToast (solo M1-M2 inmediato)
    ↓
 11. Si rank up → RankUpModal (solo M1-M2 inmediato)
+   ↓
+11b. Si cosméticos equipados → RankProgressWidget muestra frame/badge en dashboard
    ↓
 12. Redirect a /modules o /dashboard
 ```

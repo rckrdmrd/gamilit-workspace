@@ -146,7 +146,7 @@ export class Exercise {
    *       analisis_fuentes, podcast_argumentativo, matriz_perspectivas,
    *       verificador_fake_news, infografia_interactiva, quiz_tiktok,
    *       navegacion_hipertextual, analisis_memes, diario_multimedia,
-   *       comic_digital, video_carta, comprension_auditiva, collage_prensa,
+   *       comic_digital, video_carta, comprension_auditiva (BACKLOG), collage_prensa,
    *       texto_movimiento, call_to_action, verdadero_falso, completar_espacios,
    *       diario_interactivo, resumen_visual
    */

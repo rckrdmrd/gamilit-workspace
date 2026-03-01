@@ -61,6 +61,7 @@ Registro de decisiones arquitectonicas del proyecto.
 | [ADR-048](ADR-048-component-sharing-strategy.md) | Component Sharing Strategy | Aceptada |
 | [ADR-049](ADR-049-confirm-dialog-consolidation.md) | ConfirmDialog Consolidation | Aceptada |
 | [ADR-050](ADR-050-responsive-design-strategy.md) | Responsive Design Strategy | Aceptada |
+| [ADR-051](ADR-051-vision-lectora-frontend-only.md) | Vision Lectora — Frontend-Only CSS Scoped | Aceptada |
 
 ---
 

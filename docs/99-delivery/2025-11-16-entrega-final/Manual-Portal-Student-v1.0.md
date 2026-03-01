@@ -602,7 +602,7 @@ Mecánicas adicionales que complementan los módulos principales:
 | Mecánica | Descripción |
 |----------|-------------|
 | **Collage de Prensa** | Crear collage con recortes de noticias |
-| **Comprensión Auditiva** | Escuchar y responder preguntas |
+| **Comprensión Auditiva (BACKLOG — desactivada)** | Escuchar y responder preguntas |
 | **Texto en Movimiento** | Leer texto animado |
 | **Call to Action** | Crear llamados a la acción |
 

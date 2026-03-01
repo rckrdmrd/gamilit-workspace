@@ -43,4 +43,5 @@ export interface TimelineExerciseProps {
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
   }>;
+  comodinesContext?: import('@/features/exercises/types/exercise-mechanic.types').ExerciseComodinesContext;
 }

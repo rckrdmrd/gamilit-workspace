@@ -106,7 +106,7 @@ Las 27 **implementaciones GAMILIT** (exercise_type) se clasifican en **7 categor
 | **Gramática** | - | Comprensión y aplicación de reglas | 8 |
 | **Lectura** | detective_textual, construccion_hipotesis, prediccion_narrativa, analisis_fuentes, puzzle_contexto | Comprensión de textos | 0 |
 | **Escritura** | ensayo_argumentativo, resena_critica, diario_multimedia, comic_digital, email_formal, chat_literario | Producción escrita | 0 |
-| **Audio** | comprension_auditiva, podcast_argumentativo | Comprensión auditiva | 1 |
+| **Audio** | comprension_auditiva (BACKLOG: desactivada), podcast_argumentativo | Comprensión auditiva | 1 |
 | **Pronunciación** | - | Producción oral | 2 |
 | **Cultura** | tribunal_opiniones, collage_prensa, call_to_action | Conocimiento cultural maya | 1 |
 
@@ -559,7 +559,7 @@ Las 27 **implementaciones GAMILIT** (exercise_type) se clasifican en **7 categor
 
 ### Categoría 5: Audio (3 mecánicas)
 
-#### 5.1. Listening Comprehension (Comprensión Auditiva)
+#### 5.1. Listening Comprehension (Comprensión Auditiva) — BACKLOG: desactivada
 
 **ID:** `listening_comprehension`
 **Descripción:** Responder preguntas sobre audio

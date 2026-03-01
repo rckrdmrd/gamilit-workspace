@@ -38,7 +38,8 @@ export { ComicDigitalExercise } from './module5/ComicDigital/ComicDigitalExercis
 export { VideoCartaExercise } from './module5/VideoCarta/VideoCartaExercise';
 
 // Auxiliary Mechanics
-export { ComprensiónAuditivaExercise } from './auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise';
+// BACKLOG: comprension_auditiva desactivada. Componente preservado en auxiliar/ComprensiónAuditiva/.
+// export { ComprensiónAuditivaExercise } from './auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise';
 export { CollagePrensaExercise } from './auxiliar/CollagePrensa/CollagePrensaExercise';
 export { TextoEnMovimientoExercise } from './auxiliar/TextoEnMovimiento/TextoEnMovimientoExercise';
 export { CallToActionExercise } from './auxiliar/CallToAction/CallToActionExercise';

@@ -33,13 +33,12 @@ interface UseMissionsResult {
   // Data
   dailyMissions: Mission[];
   weeklyMissions: Mission[];
-  specialMissions: Mission[];
   allMissions: Mission[];
   activeMissions: Mission[]; // Tracked missions
 
-  // Current tab
-  currentTab: MissionType;
-  setCurrentTab: (tab: MissionType) => void;
+  // Current tab (only 'daily' | 'weekly' — 'special' tab removed from UI)
+  currentTab: 'daily' | 'weekly';
+  setCurrentTab: (tab: 'daily' | 'weekly') => void;
 
   // Actions
   startMission: (missionId: string) => Promise<MissionActionResult>;
@@ -66,7 +65,6 @@ export function useMissions(_userId?: string): UseMissionsResult {
   // State
   const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
   const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
-  const [specialMissions, setSpecialMissions] = useState<Mission[]>([]);
   const [stats, setStats] = useState<MissionStats>({
     todayCompleted: 0,
     todayTotal: 0,
@@ -78,7 +76,7 @@ export function useMissions(_userId?: string): UseMissionsResult {
     currentStreak: 0,
     longestStreak: 0,
   });
-  const [currentTab, setCurrentTab] = useState<MissionType>('daily');
+  const [currentTab, setCurrentTab] = useState<'daily' | 'weekly'>('daily');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -106,16 +104,14 @@ export function useMissions(_userId?: string): UseMissionsResult {
       setError(null);
 
       // Fetch from real API
-      const [dailyRes, weeklyRes, specialRes, statsRes] = await Promise.all([
+      const [dailyRes, weeklyRes, statsRes] = await Promise.all([
         fetchMissionsByType('daily'),
         fetchMissionsByType('weekly'),
-        fetchMissionsByType('special'),
         fetchMissionStats(),
       ]);
 
       setDailyMissions(dailyRes);
       setWeeklyMissions(weeklyRes);
-      setSpecialMissions(specialRes);
       setStats(statsRes);
     } catch (err) {
       console.error('Error fetching missions:', err);
@@ -124,7 +120,6 @@ export function useMissions(_userId?: string): UseMissionsResult {
       // Set empty data on error
       setDailyMissions([]);
       setWeeklyMissions([]);
-      setSpecialMissions([]);
       setStats({
         todayCompleted: 0,
         todayTotal: 0,
@@ -150,7 +145,6 @@ export function useMissions(_userId?: string): UseMissionsResult {
       // Establecer estados vacíos
       setDailyMissions([]);
       setWeeklyMissions([]);
-      setSpecialMissions([]);
       setStats({
         todayCompleted: 0,
         todayTotal: 0,
@@ -209,9 +203,8 @@ export function useMissions(_userId?: string): UseMissionsResult {
       setDailyMissions(updateFn);
     } else if (updatedMission.type === 'weekly') {
       setWeeklyMissions(updateFn);
-    } else if (updatedMission.type === 'special') {
-      setSpecialMissions(updateFn);
     }
+    // 'special' type: silent no-op — UI tab removed, backend WebSocket events still accepted
   }, []);
 
   /**
@@ -367,8 +360,8 @@ export function useMissions(_userId?: string): UseMissionsResult {
 
   // Computed: All missions
   const allMissions = useMemo(
-    () => [...dailyMissions, ...weeklyMissions, ...specialMissions],
-    [dailyMissions, weeklyMissions, specialMissions],
+    () => [...dailyMissions, ...weeklyMissions],
+    [dailyMissions, weeklyMissions],
   );
 
   // Computed: Active (tracked) missions
@@ -379,12 +372,7 @@ export function useMissions(_userId?: string): UseMissionsResult {
 
   // Computed: Rewards summary
   const rewardsSummary = useMemo((): MissionRewardsSummary => {
-    const currentMissions =
-      currentTab === 'daily'
-        ? dailyMissions
-        : currentTab === 'weekly'
-          ? weeklyMissions
-          : specialMissions;
+    const currentMissions = currentTab === 'daily' ? dailyMissions : weeklyMissions;
 
     const potential = currentMissions
       .filter((m) => m.status !== 'claimed')
@@ -423,13 +411,12 @@ export function useMissions(_userId?: string): UseMissionsResult {
         bonusMLCoins: 0,
       },
     };
-  }, [dailyMissions, weeklyMissions, specialMissions, currentTab]);
+  }, [dailyMissions, weeklyMissions, currentTab]);
 
   return {
     // Data
     dailyMissions,
     weeklyMissions,
-    specialMissions,
     allMissions,
     activeMissions,
 

@@ -122,8 +122,8 @@ CREATE TYPE educational_content.exercise_type AS ENUM (
     'comic_digital',
     'video_carta',
 
-    -- Auxiliares (6: comprension_auditiva, collage_prensa, texto_movimiento, call_to_action, mapa_conceptual, emparejamiento)
-    'comprension_auditiva',
+    -- Auxiliares (6: comprension_auditiva [BACKLOG: desactivada], collage_prensa, texto_movimiento, call_to_action, mapa_conceptual, emparejamiento)
+    'comprension_auditiva', -- BACKLOG: desactivada
     'collage_prensa',
     'texto_movimiento',
     'call_to_action',

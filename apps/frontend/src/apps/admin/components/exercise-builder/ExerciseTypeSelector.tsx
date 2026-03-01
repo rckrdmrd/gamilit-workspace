@@ -207,7 +207,7 @@ export function ExerciseTypeSelector({
                 </span>
               </div>
               <h3 className="mb-1 text-sm font-semibold text-detective-text">{type.name}</h3>
-              <p className="text-xs text-gray-400 line-clamp-2">{type.description}</p>
+              <p className="text-xs text-gray-400 line-clamp-2" title={type.description}>{type.description}</p>
               <div className="mt-2">
                 <span className="rounded bg-gray-700/50 px-2 py-0.5 text-xs text-gray-400">
                   {type.moduleName}

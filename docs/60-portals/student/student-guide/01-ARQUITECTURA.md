@@ -74,7 +74,7 @@ student/
 │   ├── dashboard/                      # Componentes del dashboard
 │   │   ├── BottomNavigation.tsx        # ⭐ Navegación móvil (6 tabs)
 │   │   ├── EnhancedStatsGrid.tsx       # Estadísticas detective
-│   │   ├── RankProgressWidget.tsx      # Widget de rango Maya
+│   │   ├── RankProgressWidget.tsx      # Widget de rango Maya + cosméticos equipados (frame, badge)
 │   │   ├── MLCoinsWidget.tsx           # Balance de ML Coins
 │   │   ├── MissionsPanel.tsx           # Misiones activas
 │   │   ├── ModulesSection.tsx          # Grid de módulos

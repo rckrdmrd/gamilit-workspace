@@ -17,9 +17,9 @@ estado: activo
 | **Título** | Implementación del Sistema de Comodines (Power-ups) |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 2.3.0 |
+| **Versión** | 2.4.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-28 |
+| **Última Actualización** | 2026-02-28 |
 | **Sistema Actual** | [docs/sistema-recompensas/](../../../_archived/sistema-recompensas/) v2.3.0 [ARCHIVED] |
 | **Autor** | Database Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
@@ -775,6 +775,8 @@ export class ComodinService {
     // Generar efecto según tipo
     let effect = null;
 
+    // NOTE: En MVP v1, solo generateHint() está implementado.
+    // generateReadingVision() es pseudocódigo — vision_lectora usa CSS frontend-only (ADR-051)
     if (dto.comodinType === ComodinTypeEnum.PISTAS) {
       effect = await this.generateHint(dto.exerciseId, usageResult.hint_number);
     } else if (dto.comodinType === ComodinTypeEnum.VISION_LECTORA) {
@@ -843,6 +845,13 @@ export class ComodinService {
 
   /**
    * Generar efecto de Visión Lectora
+   *
+   * ⚠️ DISEÑO v2 — NO IMPLEMENTADO EN MVP
+   * Este método es PSEUDOCÓDIGO de diseño. En la implementación real (MVP v1):
+   * - Backend: use_comodin() retorna { success, comodin_type, remaining_quantity } SIN effect
+   * - Frontend: CSS scoped `.exercise-passage` containers (ver ADR-051)
+   * - highlightedSentences[] NO existe en código real
+   * Ref: ADR-051-vision-lectora-frontend-only.md
    */
   private async generateReadingVision(exerciseId: string): Promise<{
     highlightedSentences: number[]; // Índices de oraciones a resaltar
@@ -1153,6 +1162,7 @@ CREATE INDEX idx_comodin_usage_log_user ON gamification_system.comodin_usage_log
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
 | 1.1 | 2025-11-11 | Database Team | Actualización de costos a valores DDL implementados (pistas: 15, vision_lectora: 25, segunda_oportunidad: 40) |
+| 2.4 | 2026-02-28 | Claude Code | Estado implementación vision_lectora v1 MVP documentado. generateReadingVision() marcado como pseudocódigo v2. Ref ADR-051. |
 
 ---
 
