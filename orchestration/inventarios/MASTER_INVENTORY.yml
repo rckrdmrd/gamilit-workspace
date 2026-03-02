@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.8.9"
-fecha: "2026-03-02"  # v14.8.9: Exercise fixes phase 2 — TikTok timer top-center, bottom flex-col, DnD icon support in DraggableCard+DroppableZone. Previous: v14.8.8 frame rendering visual_type
+version: "14.9.1"
+fecha: "2026-03-02"  # v14.9.1: SopaLetras responsive fix — dynamic cell sizing via useContainerSize hook (Crucigrama pattern). Previous: v14.9.0 ML Coins balance fix
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -160,8 +160,8 @@ gamificacion:
 
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v9.2.0)"
-  backend: "BACKEND_INVENTORY.yml (v5.3.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v12.5.3)"
+  backend: "BACKEND_INVENTORY.yml (v5.3.2)"
+  frontend: "FRONTEND_INVENTORY.yml (v12.5.8)"
   shop: "Shop categories: 3 active (consumables, cosmetics, boosts) — guild/social removed (out of scope). Items: 31 total (was 38 pre-cleanup)"
 
 # -------------------------------------------------------------------------------
@@ -232,12 +232,36 @@ credenciales:
 
 changelog:
   - date: "2026-03-02"
+    version: "v14.9.0"
+    changes:
+      - "fix(gamification): ML Coins balance inconsistency — header showed 675, shop showed 175 (stale localStorage)"
+      - "fix(shop-page): fetchBalance() on component mount fetches latest balance from backend"
+      - "fix(websocket): ['userGamification'] query key invalidated on socket updates + Zustand economy store synced"
+      - "fix(shop-purchase): instant balance update from purchase response + BonusCoins audit trail via MLCoinsTransaction"
+    files_modified: 4
+    build_status: "PASS"
+
+  - date: "2026-03-02"
+    version: "v14.8.9"
+    changes:
+      - "fix(exercises): Exercise fixes phase 2 — TikTok timer repositioned top-center z-10, bottom layout refactored to flex-col, DnD icons via iconMap"
+    files_modified: 7
+    build_status: "PASS"
+
+  - date: "2026-03-02"
+    version: "v14.8.8"
+    changes:
+      - "fix(frame-rendering): visual_type slot system for cosmetics/frames, UNIQUE(user_id, visual_type), removed frames from avatars"
+    files_modified: 12
+    build_status: "PASS"
+
+  - date: "2026-03-02"
     version: "v14.8.7"
     changes:
       - "fix(exercises): backend findByModuleId filters is_active:true (comprension_auditiva hidden)"
-      - "fix(quiz-tiktok): timer 20s default, urgency visual <=5s, onTimeout auto-advance, button contrast (white borders on dark bg)"
-      - "fix(infografia): Lucide icon rendering from card.icon string, DataVisualization position.x/y uses % CSS units, section.title fallback, manual eval badge"
-      - "fix(seeds): added title field to infografia sections (3 envs dev/staging/prod)"
+      - "fix(quiz-tiktok): timer 20s default, urgency visual <=5s, onTimeout auto-advance, button contrast"
+      - "fix(infografia): Lucide icon rendering, DataVisualization position units, section.title fallback"
+      - "fix(seeds): added title field to infografia sections (3 envs)"
     files_modified: 12
     build_status: "PASS"
 
@@ -248,5 +272,5 @@ changelog:
     files_modified: 25
 
 # ===============================================================================
-# FIN MASTER INVENTORY v14.8.7
+# FIN MASTER INVENTORY v14.9.0
 # ===============================================================================

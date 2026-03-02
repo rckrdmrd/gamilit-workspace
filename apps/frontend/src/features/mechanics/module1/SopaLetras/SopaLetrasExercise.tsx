@@ -9,7 +9,7 @@ import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useInvalidateDashboard } from '@/shared/hooks';
+import { useInvalidateDashboard, useContainerSize } from '@/shared/hooks';
 
 export interface SopaLetrasExerciseProps {
   exercise: SopaLetrasData;
@@ -41,6 +41,28 @@ export const SopaLetrasExercise = ({
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
+  // Responsive grid sizing — mirrors CrucigramaExercise pattern
+  const [containerRef, containerSize] = useContainerSize<HTMLDivElement>();
+  const numCols = exercise.content.grid[0]?.length || 10;
+
+  const DEFAULT_CELL_SIZE = 40;
+  const MIN_CELL_SIZE = 24;
+  const GRID_PADDING = 16; // SopaLetrasGrid p-2 on mobile (8px each side)
+  const GAP_PX = 4;        // gap-1 = 4px
+
+  const availableWidth = containerSize.width > 0
+    ? containerSize.width - GRID_PADDING
+    : DEFAULT_CELL_SIZE * numCols + (numCols - 1) * GAP_PX;
+
+  const totalGapWidth = (numCols - 1) * GAP_PX;
+  const calculatedCellSize = Math.min(
+    DEFAULT_CELL_SIZE,
+    Math.floor((availableWidth - totalGapWidth) / numCols)
+  );
+  const cellSize = Math.max(MIN_CELL_SIZE, calculatedCellSize);
+  const actualGridWidth = cellSize * numCols + totalGapWidth + GRID_PADDING;
+  const gridNeedsScroll = containerSize.width > 0 && actualGridWidth > containerSize.width;
 
   const [_isSubmitting, _setIsSubmitting] = useState(false);
   const [secondChanceUsed, setSecondChanceUsed] = useState(false);
@@ -372,13 +394,21 @@ export const SopaLetrasExercise = ({
         }
       >
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <SopaLetrasGrid
-              grid={exercise.content.grid}
-              selectedCells={selectedCells}
-              foundCells={foundCells}
-              onCellSelect={handleCellSelect}
-            />
+          <div ref={containerRef} className="lg:col-span-2 min-w-0">
+            <div className={`flex justify-center${gridNeedsScroll ? ' overflow-x-auto pb-2' : ''}`}>
+              <SopaLetrasGrid
+                grid={exercise.content.grid}
+                selectedCells={selectedCells}
+                foundCells={foundCells}
+                onCellSelect={handleCellSelect}
+                cellSize={cellSize}
+              />
+            </div>
+            {gridNeedsScroll && (
+              <p className="mt-1 text-center text-xs text-detective-text-secondary">
+                Desliza horizontalmente para ver la sopa de letras completa
+              </p>
+            )}
 
             {/* Botones de validar/cancelar para móvil - Aparecen cuando hay selección */}
             {selectedCells.length > 0 && (

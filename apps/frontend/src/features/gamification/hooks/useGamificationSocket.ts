@@ -16,6 +16,7 @@
 
 import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 // ---------------------------------------------------------------------------
 // Event payload interfaces (match backend SocketEvent DTOs)
@@ -95,6 +96,7 @@ export function useGamificationEvents() {
     setShowXpPopup(data);
     queryClient.invalidateQueries({ queryKey: ['userStats'] });
     queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    queryClient.invalidateQueries({ queryKey: ['userGamification'] });
     // Auto-dismiss after 3 seconds
     setTimeout(() => setShowXpPopup(null), 3000);
   }, [queryClient]);
@@ -103,26 +105,31 @@ export function useGamificationEvents() {
     setShowCoinsPopup(data);
     queryClient.invalidateQueries({ queryKey: ['userStats'] });
     queryClient.invalidateQueries({ queryKey: ['balance'] });
+    queryClient.invalidateQueries({ queryKey: ['userGamification'] });
+    useEconomyStore.getState().updateBalance({ current: data.totalCoins });
     setTimeout(() => setShowCoinsPopup(null), 3000);
   }, [queryClient]);
 
   const handleBalanceUpdated = useCallback((data: BalanceUpdatedData) => {
-    void data; // silent update — no popup
     queryClient.invalidateQueries({ queryKey: ['userStats'] });
     queryClient.invalidateQueries({ queryKey: ['balance'] });
     queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    queryClient.invalidateQueries({ queryKey: ['userGamification'] });
+    useEconomyStore.getState().updateBalance({ current: data.mlCoins });
   }, [queryClient]);
 
   const handleAchievementUnlocked = useCallback((data: AchievementUnlockedData) => {
     setShowAchievement(data);
     queryClient.invalidateQueries({ queryKey: ['achievements'] });
     queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    queryClient.invalidateQueries({ queryKey: ['userGamification'] });
   }, [queryClient]);
 
   const handleRankUpdated = useCallback((data: RankUpdatedData) => {
     setShowRankUp(data);
     queryClient.invalidateQueries({ queryKey: ['userStats'] });
     queryClient.invalidateQueries({ queryKey: ['ranks'] });
+    queryClient.invalidateQueries({ queryKey: ['userGamification'] });
   }, [queryClient]);
 
   const handleMissionCompleted = useCallback((data: MissionCompletedData) => {

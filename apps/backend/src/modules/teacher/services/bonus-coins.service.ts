@@ -12,7 +12,8 @@ import { Classroom } from '@modules/social/entities/classroom.entity';
 import { Profile } from '@modules/auth/entities/profile.entity';
 import { GrantBonusDto, GrantBonusResponseDto } from '../dto/grant-bonus.dto';
 // CORR-CASCADA-001: Import MayaRank para alinear con entity corregida
-import { MayaRank } from '@shared/constants/enums.constants';
+import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { MLCoinsTransaction } from '@modules/gamification/entities/ml-coins-transaction.entity';
 
 /**
  * BonusCoinsService
@@ -156,6 +157,23 @@ export class BonusCoinsService {
 
       // 6. Guardar cambios (dentro de la transacción)
       await userStatsRepo.save(userStats);
+
+      // 6b. Create ml_coins_transactions audit entry (within same transaction)
+      const transactionRepo = manager.getRepository(MLCoinsTransaction);
+      const txRecord = transactionRepo.create({
+        user_id: studentId,
+        tenant_id: userStats.tenant_id || studentProfile.tenant_id || '00000000-0000-0000-0000-000000000000',
+        amount: dto.amount,
+        balance_before: previousBalance,
+        balance_after: userStats.ml_coins,
+        transaction_type: TransactionTypeEnum.EARNED_BONUS,
+        description: `Teacher bonus: ${dto.reason || 'Sin razon especificada'}`,
+        reason: 'teacher_bonus',
+        reference_id: teacherId,
+        reference_type: 'admin' as const,
+        metadata: { teacher_id: teacherId, reason: dto.reason },
+      });
+      await transactionRepo.save(txRecord);
 
       this.logger.log(
         `Teacher ${teacherId} granted ${dto.amount} ML Coins to student ${studentId}. ` +

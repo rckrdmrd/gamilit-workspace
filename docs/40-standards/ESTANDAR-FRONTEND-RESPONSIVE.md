@@ -1,9 +1,9 @@
 ---
 titulo: Estandar Frontend - Responsive Design Patterns
 tipo: estandar-proyecto
-version: 1.0.0
+version: 1.1.0
 fecha_creacion: 2026-02-26
-ultima_actualizacion: 2026-02-27
+ultima_actualizacion: 2026-03-02
 ---
 
 # ESTANDAR-FRONTEND-RESPONSIVE: Responsive Design Patterns
@@ -158,10 +158,36 @@ All interactive elements must be at least **44x44px**:
 // PROHIBITED: direct window access
 if (window.innerWidth >= 1024) { ... }
 
-// CORRECT: reactive hook
+// CORRECT: reactive hook (viewport-based)
 const { isDesktop } = useResponsiveLayout();
 if (isDesktop) { ... }
 ```
+
+### 6.1 Element-Dimension Sizing (Container Queries)
+
+For components that must fit within a specific container (e.g., grid-based exercise mechanics),
+use `useContainerSize` instead of `useResponsiveLayout`:
+
+```tsx
+import { useContainerSize } from '@/shared/hooks';
+
+const [containerRef, containerSize] = useContainerSize<HTMLDivElement>();
+const cellSize = Math.max(MIN, Math.min(MAX, Math.floor((containerSize.width - gaps) / numCols)));
+
+// Attach ref to the measured container + add min-w-0 to allow shrinking
+<div ref={containerRef} className="lg:col-span-2 min-w-0">
+  <div className={gridNeedsScroll ? 'overflow-x-auto' : ''}>
+    <Grid cellSize={cellSize} />
+  </div>
+</div>
+```
+
+| Hook | Measures | Use Case |
+|------|----------|----------|
+| `useResponsiveLayout` | Viewport width | Layout decisions (show/hide sidebar, stack columns) |
+| `useContainerSize` | Element dimensions (ResizeObserver) | Dynamic cell/item sizing within a container |
+
+**Consumers:** CrucigramaExercise, SopaLetrasExercise (grid cell sizing)
 
 ---
 
@@ -210,6 +236,7 @@ Test all responsive changes at these viewports:
 
 **References:**
 - ADR-050: Responsive Design Strategy
-- `shared/hooks/useResponsiveLayout.ts` — Canonical hook
+- `shared/hooks/useResponsiveLayout.ts` — Viewport-based responsive hook
+- `shared/hooks/useContainerSize.ts` — Element-dimension sizing hook (ResizeObserver)
 - `shared/components/common/Modal.tsx` — Base modal
 - `shared/styles/detective-theme.css` — CSS utilities

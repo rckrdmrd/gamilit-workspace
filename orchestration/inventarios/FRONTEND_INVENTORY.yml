@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.5.6"
-fecha: "2026-03-02"  # v12.5.6: Exercise fixes phase 2 — TikTok timer repositioned to top-center z-10 (was hidden by Menu button), bottom layout refactored from 3 absolute layers to 1 flex-col, DraggableCard+DroppableZone now render Lucide icons via iconMap. Previous: v12.5.5 exercise fixes phase 1
+version: "12.5.8"
+fecha: "2026-03-02"  # v12.5.8: SopaLetras responsive fix — dynamic cell sizing via useContainerSize (Crucigrama pattern), MIN_CELL_SIZE=24, overflow-x-auto fallback. Previous: v12.5.7 ML Coins balance fix
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -447,22 +447,34 @@ hallazgos:
 
 changelog:
   - date: "2026-03-02"
+    version: "v12.5.7"
+    changes:
+      - "fix(shop-page): fetchBalance() on mount resolves header/shop balance desync (header 675 vs shop 175)"
+      - "fix(websocket): useGamificationSocket invalidates ['userGamification'] query key, syncs Zustand economy store"
+      - "fix(shop-purchase): instant balance update from purchase response + BonusCoins audit trail integration"
+    files_modified: 3
+    build_status: "PASS"
+
+  - date: "2026-03-02"
+    version: "v12.5.6"
+    changes:
+      - "fix(exercise): Exercise fixes phase 2 — TikTok timer top-center z-10, bottom flex-col, DnD iconMap"
+    files_modified: 5
+
+  - date: "2026-03-02"
     version: "v12.5.5"
     changes:
       - "fix(quiz-tiktok): TikTokCard timer 20s default, urgency visual <=5s, onTimeout auto-advance"
-      - "fix(quiz-tiktok): button contrast fix (white borders on dark bg), native button elements"
-      - "fix(infografia): InteractiveCard renders Lucide icons from card.icon string"
-      - "fix(infografia): DataVisualization position.x/y uses % CSS units (not px)"
-      - "fix(infografia): section.title fallback in exerciseAdapter + manual eval badge"
+      - "fix(infografia): InteractiveCard Lucide icons, DataVisualization % CSS units, section.title fallback"
     files_modified: 7
     build_status: "PASS"
 
   - date: "2026-03-02"
     version: "v12.5.4"
     changes:
-      - "fix(shop): ShopCategory type guild/social removed, ShopNavigation tabs updated, mockData/stores/schemas cleaned"
+      - "fix(shop): ShopCategory type guild/social removed, ShopNavigation tabs updated"
     files_modified: 15
 
 # ===============================================================================
-# FIN FRONTEND INVENTORY v12.5.5
+# FIN FRONTEND INVENTORY v12.5.7
 # ===============================================================================

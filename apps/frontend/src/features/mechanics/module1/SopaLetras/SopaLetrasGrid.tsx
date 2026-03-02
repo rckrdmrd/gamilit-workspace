@@ -6,14 +6,18 @@ interface SopaLetrasGridProps {
   selectedCells: {row:number,col:number}[];
   foundCells?: {row:number,col:number}[]; // Celdas de palabras ya encontradas
   onCellSelect: (r:number,c:number) => void;
+  cellSize?: number;
 }
 
 export const SopaLetrasGrid = ({
   grid,
   selectedCells,
   foundCells = [],
-  onCellSelect
+  onCellSelect,
+  cellSize = 40,
 }: SopaLetrasGridProps) => {
+  const fontSize = Math.max(10, Math.floor(cellSize * 0.45));
+  const enableHover = cellSize >= 36;
   const isSelected = (r: number, c: number) => selectedCells.some(cell => cell.row === r && cell.col === c);
   const isFound = (r: number, c: number) => foundCells.some(cell => cell.row === r && cell.col === c);
 
@@ -31,22 +35,22 @@ export const SopaLetrasGrid = ({
   };
 
   return (
-    <div className="inline-block bg-white p-4 rounded-lg shadow-lg">
+    <div className="inline-block bg-white p-2 sm:p-4 rounded-lg shadow-lg">
       <div className="grid gap-1">
         {grid.map((row, rowIdx) => (
           <div key={rowIdx} className="flex gap-1">
             {row.map((letter, colIdx) => (
               <motion.button
                 key={`${rowIdx}-${colIdx}`}
-                whileHover={{ scale: 1.1 }}
+                whileHover={enableHover ? { scale: 1.1 } : undefined}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onCellSelect(rowIdx, colIdx)}
                 onContextMenu={(e) => {
                   e.preventDefault();
-                  // Click derecho no hace nada, solo previene el menú contextual
                 }}
+                style={{ width: cellSize, height: cellSize, fontSize }}
                 className={cn(
-                  'w-10 h-10 flex items-center justify-center font-bold text-lg rounded transition-colors',
+                  'flex items-center justify-center font-bold rounded transition-colors',
                   getCellStyle(rowIdx, colIdx)
                 )}
               >

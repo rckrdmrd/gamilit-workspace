@@ -9,6 +9,47 @@
 
 ## Estado Actual
 
+### [2026-03-02] SopaLetras Responsive Fix: Mobile Grid Overflow ✅
+
+**Problem:** SopaLetras grid (exercise 5, module 1) used fixed 40x40px cells — needed 468px but only ~280px available on mobile. User had to zoom out to 73%.
+
+**Solution:** Adapted Crucigrama's proven `useContainerSize` pattern:
+1. **SopaLetrasGrid.tsx:** Added `cellSize` prop, replaced fixed `w-10 h-10 text-lg` with dynamic `style={{ width, height, fontSize }}`, responsive wrapper padding `p-2 sm:p-4`, conditional hover at cellSize >= 36
+2. **SopaLetrasExercise.tsx:** Added `useContainerSize` hook, cell size calculation (DEFAULT=40, MIN=24, clamped), `containerRef` with `min-w-0`, conditional `overflow-x-auto` scroll wrapper with hint text
+
+**Sizing results:** 390px+ phones: no scroll (25-28px cells). 360px: minor 12px scroll (24px cells). Desktop: unchanged 40px cells.
+
+**Files modified (2):** SopaLetrasGrid.tsx, SopaLetrasExercise.tsx
+**Validation:** Build OK, Lint 0 errors, Type-check OK. 20/20 functional checks PASS.
+**Inventarios:** MASTER v14.9.0→v14.9.1, FRONTEND v12.5.7→v12.5.8
+
+---
+
+### [2026-03-02] ML Coins Balance Fix: Header/Shop Desync ✅
+
+**Problem:** User saw ML Coins balance of 675 in header (GamifiedHeader) but 175 in shop (ShopPage). Root cause: stale localStorage value — header loaded from Zustand store (updated by WebSocket), but shop displayed cached balance.
+
+**Solution implemented:**
+1. **ShopPage.tsx:** Added `fetchBalance()` call on component mount to fetch latest balance from backend before rendering shop
+2. **useGamificationSocket.ts:** Added `['userGamification']` query key to invalidation list on socket updates + sync Zustand `economyStore` directly
+3. **useShopPurchase.ts:** Instant balance update from purchase response DTO (`remaining_balance` field)
+4. **bonus-coins.service.ts:** Added MLCoinsTransaction audit entry for teacher bonus grants (improves auditability)
+
+**Files modified (4):**
+- `apps/frontend/src/apps/student/pages/ShopPage.tsx` — fetchBalance on mount
+- `apps/frontend/src/features/gamification/hooks/useGamificationSocket.ts` — query key + store sync
+- `apps/frontend/src/features/gamification/economy/hooks/useShopPurchase.ts` — instant balance update
+- `apps/backend/src/modules/gamification/services/bonus-coins.service.ts` — audit trail via MLCoinsTransaction
+
+**Validation:** Build OK, Lint 0 errors, Tests OK. Balance now consistent across header/shop/real-time.
+
+**Inventarios actualizados:**
+- MASTER_INVENTORY: v14.8.9 → v14.9.0
+- FRONTEND_INVENTORY: v12.5.6 → v12.5.7
+- BACKEND_INVENTORY: v5.4.1 → v5.3.2
+
+---
+
 ### [2026-03-02] Exercise Fixes Phase 2: Timer Repositioning + DnD Icons ✅
 
 **5 archivos frontend modificados. Build/Lint/Typecheck: 0 errores.**

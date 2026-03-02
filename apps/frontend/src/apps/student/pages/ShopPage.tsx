@@ -8,7 +8,7 @@
  * - ML Coins balance display
  */
 
-import { useState, useMemo, type ElementType } from 'react';
+import { useState, useMemo, useEffect, type ElementType } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShoppingBag,
@@ -31,6 +31,7 @@ import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
 import { useShopData } from '@/features/gamification/economy/hooks/useShopData';
 import { useShopPurchase } from '@/features/gamification/economy/hooks/useShopPurchase';
 import { cn } from '@shared/utils/cn';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import type { ShopItem, ShopCategory } from '@/features/gamification/economy/types/economyTypes';
 
 const VISUAL_SUBTYPES = [
@@ -44,6 +45,8 @@ const VISUAL_SUBTYPES = [
 
 export default function ShopPage() {
   const { balance } = useCoins();
+  const fetchBalance = useEconomyStore((state) => state.fetchBalance);
+  useEffect(() => { fetchBalance(); }, [fetchBalance]);
 
   // State
   const [selectedCategory, setSelectedCategory] = useState<ShopCategory | 'all'>('all');

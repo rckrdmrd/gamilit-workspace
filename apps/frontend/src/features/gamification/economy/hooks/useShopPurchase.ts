@@ -46,7 +46,10 @@ export function useShopPurchase(): UseShopPurchaseReturn {
     onSuccess: (response) => {
       // Invalidate shop queries to refresh ownership
       queryClient.invalidateQueries({ queryKey: shopKeys.all });
-      // Refresh balance
+      // Instantly update balance from purchase response (visual feedback)
+      queryClient.invalidateQueries({ queryKey: ['userGamification'] });
+      useEconomyStore.getState().updateBalance({ current: response.new_balance });
+      // Also fetch full balance (gets lifetime, spent totals)
       fetchBalance();
       syncAndInvalidate();
 
