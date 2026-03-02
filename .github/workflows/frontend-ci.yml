@@ -156,7 +156,7 @@ jobs:
 
       - name: Upload build artifacts
         if: matrix.build-mode == 'production'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-dist-${{ github.sha }}
           path: apps/frontend/dist/
@@ -194,7 +194,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-${{ github.sha }}
           path: apps/frontend/playwright-report/
@@ -202,7 +202,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-results-${{ github.sha }}
           path: apps/frontend/playwright-results.json
