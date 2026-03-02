@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type MutableRefObject, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Eye, Save, Download, Send, Loader2, CheckCircle, Sparkles } from 'lucide-react';
+import { BarChart3, Eye, Save, Download, Send, Loader2, CheckCircle, Sparkles, ClipboardCheck } from 'lucide-react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -476,6 +476,12 @@ export const InfografiaInteractivaExercise = ({
         }
         cardPadding="lg"
       >
+        {/* Manual Evaluation Banner */}
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          <ClipboardCheck className="h-5 w-5 flex-shrink-0" />
+          <span>Este ejercicio será evaluado por tu maestro/a</span>
+        </div>
+
         {/* Data Visualization */}
         {!useDragDrop && (
           <div className="mb-6">
@@ -509,6 +515,7 @@ export const InfografiaInteractivaExercise = ({
                     <DroppableZone
                       id={card.id}
                       title={card.title}
+                      icon={card.icon}
                       position={card.position}
                       isCorrect={droppedCards[card.id] === card.id}
                       isOccupied={!!droppedCards[card.id]}
@@ -535,6 +542,7 @@ export const InfografiaInteractivaExercise = ({
                       id={card.id}
                       title={card.title}
                       content={card.content}
+                      icon={card.icon}
                     />
                   </motion.div>
                 ))}
@@ -548,6 +556,7 @@ export const InfografiaInteractivaExercise = ({
                   id={activeCard.id}
                   title={activeCard.title}
                   content={activeCard.content}
+                  icon={activeCard.icon}
                   isDragging
                 />
               ) : null}

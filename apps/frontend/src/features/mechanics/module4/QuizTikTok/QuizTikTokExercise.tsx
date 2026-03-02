@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type MutableRefObject, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown, Menu, X, Save, Award, Send, Loader2, CheckCircle, PlayCircle } from 'lucide-react';
+import { ChevronUp, ChevronDown, Menu, X, Save, Award, Send, Loader2, CheckCircle, PlayCircle, Clock } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -133,6 +133,7 @@ export const QuizTikTokExercise = ({
   const [timeSpent, setTimeSpent] = useState(0);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [timeoutMessage, setTimeoutMessage] = useState<string | null>(null);
 
   const {
     submitAsync,
@@ -212,6 +213,17 @@ export const QuizTikTokExercise = ({
     const newAnswers = [...answers];
     newAnswers[currentIndex] = optionIndex;
     setAnswers(newAnswers);
+  };
+
+  // Handle timeout - auto advance to next question
+  const handleTimeout = () => {
+    setTimeoutMessage('¡Tiempo agotado!');
+    setTimeout(() => {
+      setTimeoutMessage(null);
+      if (currentIndex < currentExercise.questions.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      }
+    }, 1500);
   };
 
   // Handle reset
@@ -344,68 +356,88 @@ export const QuizTikTokExercise = ({
                 question={currentExercise.questions[currentIndex]}
                 onAnswer={handleAnswer}
                 selectedAnswer={answers[currentIndex]}
+                timeLimit={currentExercise.timeLimit || 20}
+                onTimeout={handleTimeout}
               />
             </AnimatePresence>
 
-            {/* Justification Input - shown after answering */}
-            {answers[currentIndex] !== undefined && (
+            {/* Timeout Message */}
+            {timeoutMessage && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute bottom-40 left-4 right-4 z-20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm"
               >
-                <div className="rounded-detective bg-white/95 backdrop-blur-md p-3 shadow-lg border border-detective-border">
-                  <label className="block text-detective-sm font-semibold text-detective-text mb-1">
-                    Justifica tu respuesta (min. 30 caracteres):
-                  </label>
-                  <textarea
-                    value={justifications[currentIndex] || ''}
-                    onChange={(e) => setJustifications(prev => ({ ...prev, [currentIndex]: e.target.value }))}
-                    placeholder="Explica por qué elegiste esta respuesta..."
-                    className="w-full resize-none rounded-detective border border-detective-border p-2 text-sm focus:border-detective-orange focus:ring-1 focus:ring-detective-orange/50"
-                    rows={2}
-                  />
-                  <p className={`mt-1 text-xs ${(justifications[currentIndex] || '').trim().length >= 30 ? 'text-detective-success' : 'text-detective-text-secondary'}`}>
-                    {(justifications[currentIndex] || '').trim().length}/30 min
-                  </p>
+                <div className="flex items-center gap-3 rounded-xl bg-red-600/90 px-8 py-4 text-white shadow-lg">
+                  <Clock className="h-6 w-6" />
+                  <span className="text-xl font-bold">{timeoutMessage}</span>
                 </div>
               </motion.div>
             )}
 
-            {/* Navigation Controls - Bottom */}
-            <div className="absolute bottom-24 left-0 right-0 z-20 flex justify-center gap-4">
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={() => handleSwipe('up')}
-                  disabled={currentIndex === 0}
-                  icon={<ChevronUp />}
-                  className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+            {/* Bottom Controls Container */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col items-center gap-3 p-4 pb-6">
+              {/* Justification Input - shown after answering */}
+              {answers[currentIndex] !== undefined && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full"
                 >
-                  Anterior
-                </DetectiveButton>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={() => handleSwipe('down')}
-                  disabled={currentIndex === currentExercise.questions.length - 1}
-                  icon={<ChevronDown />}
-                  className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
-                >
-                  Siguiente
-                </DetectiveButton>
-              </motion.div>
-            </div>
+                  <div className="rounded-detective bg-white/95 backdrop-blur-md p-3 shadow-lg border border-detective-border">
+                    <label className="block text-detective-sm font-semibold text-detective-text mb-1">
+                      Justifica tu respuesta (min. 30 caracteres):
+                    </label>
+                    <textarea
+                      value={justifications[currentIndex] || ''}
+                      onChange={(e) => setJustifications(prev => ({ ...prev, [currentIndex]: e.target.value }))}
+                      placeholder="Explica por qué elegiste esta respuesta..."
+                      className="w-full resize-none rounded-detective border border-detective-border p-2 text-sm focus:border-detective-orange focus:ring-1 focus:ring-detective-orange/50"
+                      rows={2}
+                    />
+                    <p className={`mt-1 text-xs ${(justifications[currentIndex] || '').trim().length >= 30 ? 'text-detective-success' : 'text-detective-text-secondary'}`}>
+                      {(justifications[currentIndex] || '').trim().length}/30 min
+                    </p>
+                  </div>
+                </motion.div>
+              )}
 
-            {/* Progress Indicator - Bottom */}
-            <div className="absolute bottom-8 left-0 right-0 z-20 flex items-center justify-center gap-3 text-center text-sm font-medium text-white">
-              <span className="rounded-full bg-black/50 px-4 py-2 backdrop-blur-md">
-                Pregunta {currentIndex + 1} / {currentExercise.questions.length}
-              </span>
-              <span className="rounded-full bg-detective-orange/80 px-4 py-2 backdrop-blur-md">
-                {answers.length} respondidas
-              </span>
+              {/* Navigation Controls */}
+              <div className="flex justify-center gap-4">
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <DetectiveButton
+                    variant="secondary"
+                    onClick={() => handleSwipe('up')}
+                    disabled={currentIndex === 0}
+                    icon={<ChevronUp />}
+                    className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+                  >
+                    Anterior
+                  </DetectiveButton>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <DetectiveButton
+                    variant="secondary"
+                    onClick={() => handleSwipe('down')}
+                    disabled={currentIndex === currentExercise.questions.length - 1}
+                    icon={<ChevronDown />}
+                    className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+                  >
+                    Siguiente
+                  </DetectiveButton>
+                </motion.div>
+              </div>
+
+              {/* Progress Indicator */}
+              <div className="flex items-center justify-center gap-3 text-center text-sm font-medium text-white">
+                <span className="rounded-full bg-black/50 px-4 py-2 backdrop-blur-md">
+                  Pregunta {currentIndex + 1} / {currentExercise.questions.length}
+                </span>
+                <span className="rounded-full bg-detective-orange/80 px-4 py-2 backdrop-blur-md">
+                  {answers.length} respondidas
+                </span>
+              </div>
             </div>
 
             {/* Sidebar Toggle Button - Top Right */}

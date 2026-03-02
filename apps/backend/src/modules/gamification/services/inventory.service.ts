@@ -56,8 +56,9 @@ export class InventoryService {
     const map: Record<string, any> = {};
 
     equipped.forEach((entry) => {
-      if (entry.category && entry.item) {
-        map[entry.category.name] = {
+      if (entry.item) {
+        const key = entry.visual_type || (entry.item.metadata?.type as string) || 'cosmetics';
+        map[key] = {
           itemId: entry.item.id,
           name: entry.item.name,
           assetUrl: entry.item.metadata?.asset_url,
@@ -77,7 +78,7 @@ export class InventoryService {
    * 1. El item debe existir.
    * 2. El usuario debe poseer el item (compra completed).
    * 3. El item no debe ser consumible (solo cosméticos persistentes).
-   * 4. Reemplaza cualquier item previo de la misma categoría.
+   * 4. Reemplaza cualquier item previo del mismo visual_type (slot independiente).
    */
   async equipItem(userId: string, dto: EquipItemDto): Promise<UserEquippedItem> {
     const { item_id: itemId } = dto;
@@ -108,16 +109,21 @@ export class InventoryService {
       throw new ItemNotOwnedError();
     }
 
-    // 3. Ejecutar equipamiento (UPSERT logic via Transaction)
+    // 3. Derive visual_type from item metadata (avatar, profile_frame, etc.)
+    const visualType = (item.effect_data as Record<string, unknown>)?.type as string
+      || (item.metadata as Record<string, unknown>)?.type as string
+      || 'cosmetics';
+
+    // 4. Ejecutar equipamiento (UPSERT logic via Transaction)
     // Usamos transaction para garantizar atomicidad
     return this.equippedRepo.manager.transaction(async (manager) => {
       const repo = manager.getRepository(UserEquippedItem);
 
-      // Buscar si ya hay algo equipado en esta categoría
+      // Buscar si ya hay algo equipado en este visual_type slot
       const existing = await repo.findOne({
         where: {
           user_id: userId,
-          category_id: item.category_id,
+          visual_type: visualType,
         },
       });
 
@@ -125,7 +131,7 @@ export class InventoryService {
         // Actualizar existente
         existing.item_id = itemId;
         existing.equipped_at = new Date();
-        this.logger.log(`User ${userId} swapped ${existing.category_id} to item ${itemId}`);
+        this.logger.log(`User ${userId} swapped visual_type=${visualType} to item ${itemId}`);
         return await repo.save(existing);
       } else {
         // Crear nuevo
@@ -133,8 +139,9 @@ export class InventoryService {
           user_id: userId,
           category_id: item.category_id,
           item_id: itemId,
+          visual_type: visualType,
         });
-        this.logger.log(`User ${userId} equipped new ${item.category_id}: ${itemId}`);
+        this.logger.log(`User ${userId} equipped new visual_type=${visualType}: ${itemId}`);
         return await repo.save(newEquipped);
       }
     });
@@ -158,14 +165,15 @@ export class InventoryService {
     const result: Record<string, Record<string, { itemId: string; name: string; assetUrl?: string; type?: string; data: Record<string, unknown> }>> = {};
 
     for (const eq of equipped) {
-      if (!eq.category || !eq.item) continue;
+      if (!eq.item) continue;
 
       mergeVisualConfig(eq.item);
 
       if (!result[eq.user_id]) {
         result[eq.user_id] = {};
       }
-      result[eq.user_id][eq.category.name] = {
+      const key = eq.visual_type || (eq.item.metadata?.type as string) || 'cosmetics';
+      result[eq.user_id][key] = {
         itemId: eq.item.id,
         name: eq.item.name,
         assetUrl: eq.item.metadata?.asset_url as string | undefined,

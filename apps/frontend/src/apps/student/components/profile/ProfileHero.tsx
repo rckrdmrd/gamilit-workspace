@@ -32,14 +32,13 @@ interface ProfileHeroProps {
   rankType: RankType;
   stats: ProfileStat[];
   equippedAvatarUrl?: string;
-  equippedFrameColor?: string;
   equippedBackground?: CosmeticItemData;
   equippedTitle?: CosmeticItemData;
   equippedBadge?: CosmeticItemData;
   onAvatarClick: () => void;
 }
 
-export function ProfileHero({ user, rankType, stats, equippedAvatarUrl, equippedFrameColor, equippedBackground, equippedTitle, equippedBadge, onAvatarClick }: ProfileHeroProps) {
+export function ProfileHero({ user, rankType, stats, equippedAvatarUrl, equippedBackground, equippedTitle, equippedBadge, onAvatarClick }: ProfileHeroProps) {
   const [avatarFailed, setAvatarFailed] = useState(false);
   const [badgeFailed, setBadgeFailed] = useState(false);
   const [bgFailed, setBgFailed] = useState(false);
@@ -80,10 +79,7 @@ export function ProfileHero({ user, rankType, stats, equippedAvatarUrl, equipped
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 260, damping: 20 }}
               className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white/20 backdrop-blur-sm"
-              style={equippedFrameColor
-                ? { borderWidth: 4, borderStyle: 'solid', borderColor: equippedFrameColor }
-                : { borderWidth: 4, borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.3)' }
-              }
+              style={{ borderWidth: 4, borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.3)' }}
             >
               {(equippedAvatarUrl || user?.avatar_url) && !avatarFailed ? (
                 <img

@@ -73,7 +73,7 @@ export default function InventoryPage() {
 
       if (activeTab === 'all') return true;
       if (activeTab === 'cosmetics')
-        return 'category' in item && ['cosmetics', 'profile', 'guild', 'social'].includes(item.category);
+        return 'category' in item && ['cosmetics', 'profile'].includes(item.category);
       if (activeTab === 'powerups') return isPowerUp(item);
       return false; // 'active' tab shows separate component
     });

@@ -1,13 +1,108 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-03-01
-**Version:** v5.8 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
+**Ultima Actualizacion:** 2026-03-02
+**Version:** v5.9 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
 **Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~99/100
 **Sprint Actual:** Sprint 2 COMPLETADO — Doc Health + Code-Doc Alignment + Doc Remediation COMPLETADAS — Sprint 3 funcional pendiente
 
 ---
 
 ## Estado Actual
+
+### [2026-03-02] Exercise Fixes Phase 2: Timer Repositioning + DnD Icons ✅
+
+**5 archivos frontend modificados. Build/Lint/Typecheck: 0 errores.**
+
+**Problemas resueltos:**
+1. **Quiz TikTok timer oculto (CRITICO):** Timer en `top-6 right-6` (sin z-index) quedaba completamente detrás del botón "Menú" (`right-4 top-4 z-30`). Fix: Timer movido a `top-4 left-1/2 -translate-x-1/2 z-10` — centrado horizontalmente entre Salir y Menú.
+2. **Quiz TikTok bottom overcrowding (MEDIO):** 3 capas absolutas separadas (`bottom-40`, `bottom-24`, `bottom-8`) se solapaban en pantallas pequeñas. Fix: Refactorizado a un solo contenedor flex-col (`absolute bottom-0 flex flex-col gap-3`) con flujo natural.
+3. **Infografía DnD sin iconos (MEDIO):** En modo Drag & Drop (default), DraggableCard y DroppableZone no mostraban iconos temáticos. Fix: Agregado `iconMap` + `getIconComponent()` + prop `icon?: string` a ambos componentes. Mismo patrón que InteractiveCard (modo Click).
+
+**Archivos modificados (5):**
+- `TikTokCard.tsx` — Timer position CSS (top-center z-10)
+- `QuizTikTokExercise.tsx` — Bottom layout: 3 absolute → 1 flex-col
+- `DraggableCard.tsx` — icon prop + iconMap + Lucide rendering
+- `DroppableZone.tsx` — icon prop + iconMap + Lucide rendering
+- `InfografiaInteractivaExercise.tsx` — Pass icon={card.icon} a DraggableCard (x2) y DroppableZone (x1)
+
+**Validación:** Build OK, Lint 0 errors (98 warnings baseline), Type-check OK. Code review 11/11 checks PASS.
+
+---
+
+### [2026-03-02] Frame Rendering Fix: visual_type Slot System ✅
+
+**4 problemas de rendering de marcos resueltos. ~12 archivos modificados. Build/Lint/Typecheck/DB: 0 errores.**
+
+**Problemas resueltos:**
+1. **Frames en avatar (CRITICO):** ProfileHero, GamifiedHeader, EnhancedStatsGrid, CompletionModal/Header aplicaban `frameColor` al avatar circle. Removido — frames solo en RankProgressWidget (rank card).
+2. **SVG distorsionado:** RankProgressWidget SVG frame usaba `inset-0 h-full w-full` que estiraba 1:1 a ~1.5:1. Fix: `aspect-square` + centrado vertical con `-translate-y-1/2`.
+3. **Slot equipamiento compartido (CRITICO):** DDL UNIQUE `(user_id, category_id)` causaba que equipar avatar REEMPLAZARA frame (ambos `cosmetics`). Nueva columna `visual_type` con UNIQUE `(user_id, visual_type)` permite slots independientes.
+4. **Labels incorrectos:** `getEquipLabel()` fallback `category === 'cosmetics'` etiquetaba TODO como "Aplicar Marco". Switch por `metadata.type` con labels correctos por tipo.
+
+**DDL (2 archivos):** `21-user_equipped_items.sql` (visual_type + nuevo UNIQUE), migration script `2026-03-02-visual-type-equip-slot.sql`
+**Backend (2 archivos):** `user-equipped-item.entity.ts` (visual_type column + @Unique), `inventory.service.ts` (equipItem + maps usan visual_type)
+**Frontend (8 archivos):** ProfileHero, EnhancedProfilePage, GamifiedHeader, RankProgressWidget, EnhancedStatsGrid, ProfileInventoryTab, CompletionModal, CompletionHeader, CosmeticAvatar
+**Seeds (1 archivo):** `19-user_equipped_items-demo.sql` (visual_type + ON CONFLICT fix)
+**Docs (3 archivos):** FLUJO-RENDERING-COSMETICOS.md, schema-reference 04-gamification.md, MASTER_INVENTORY
+
+**Inventarios actualizados:**
+- MASTER_INVENTORY: v14.8.7 → v14.8.8
+
+**Validacion:** Backend build 0 errors, lint 0 errors. Frontend build 0 errors, lint 0 errors, typecheck 0 errors. DB recreada exitosamente, `visual_type` column + UNIQUE verificados.
+
+---
+
+### [2026-03-02] Exercise Fixes: M1 is_active, M4 TikTok, M4 Infografia ✅
+
+**4 exercise issues resueltas. 12 archivos modificados. Build/Lint/Typecheck: 0 errores.**
+
+**Problemas resueltos:**
+1. **M1 Comprension Auditiva visible (BACKLOG):** exercises.service.ts findByModuleId() ahora filtra `is_active: true`, ocultando automáticamente ejercicios en estado BACKLOG (comprension_auditiva)
+2. **M4 Quiz TikTok timer insuficiente:** TikTokCard timeout default 30→20s, urgency visual activado <=5s, onTimeout auto-avanza al siguiente ejercicio, button contrast fix (white borders on dark bg)
+3. **M4 Infografia Interactiva display issues:**
+   - InteractiveCard renderiza Lucide icons desde `card.icon` string (no hardcoded values)
+   - DataVisualization position.x/y usa `%` CSS units (no px) para responsive
+   - exerciseAdapter extrae `timeLimit` de config y proporciona fallback `section.title`
+   - Agregado manual evaluation badge
+4. **M4 Infografia seed titles missing:** Agregado campo `title` a todas las secciones de infografia en 3 envs (dev/staging/prod)
+
+**Archivos backend (1):** exercises.service.ts (findByModuleId is_active filter)
+**Archivos frontend (7):** TikTokCard.tsx, QuizTikTokExercise.tsx, exerciseAdapter.ts, InteractiveCard.tsx, DataVisualization.tsx, InfografiaInteractivaExercise.tsx, types (QuizTikTokData timeLimit)
+**Archivos seeds (3):** infografia sections con title field (dev/staging/prod)
+
+**Inventarios actualizados:**
+- MASTER_INVENTORY: v14.8.6 → v14.8.7 (changelog entry)
+- FRONTEND_INVENTORY: v12.5.4 → v12.5.5 (changelog entry)
+- BACKEND_INVENTORY: v5.4.0 → v5.4.1 (changelog entry)
+
+**Validacion:** Build 0 errors, Lint 0 errors, Typecheck 0 errors
+
+**Deferred items:**
+- Infografia drag-drop (concept grouping) — requires significant redesign (non-trivial)
+- Infografia custom student pairs — new feature (backlog)
+
+---
+
+### [2026-03-02] Shop Social/Guild Cleanup — Inventory Update ✅
+
+**Shop categories cleanup completado. Removidas categorias guild/social (fuera de scope). Inventarios actualizados.**
+
+**Cambios aplicados:**
+- Shop categories: 5 → 3 active (consumables, cosmetics, boosts). Guild y social scopes removidos.
+- Shop items: 38 → 31 total (guild/social items removidos de seeds)
+- Categoria removida: `shop_category_type` ENUM value 'social' no mas usada
+- Seeds actualizadas: 12-shop_categories (5→3 registros), 13-shop_items (20→16), 16-shop_items_metadata (18→15)
+
+**Inventarios actualizados:**
+- MASTER_INVENTORY: v14.8.5 → v14.8.6 (shop metrics, nota changelog)
+- FRONTEND_INVENTORY: v12.5.3 → v12.5.4 (ShopCategory type reduction, ShopNavigation)
+- SEEDS_INVENTORY: v3.4.0 → v3.5.0 (shop seed counts, removal notes)
+
+**Nota arquitectonica:** Social features module permanece a 60% completitud per MASTER_INVENTORY, pero shop integration es ahora limpio — social module puede permanecer en backlog sin afectar tienda de consumibles/cosmeticos/boosts.
+
+**Validacion:** Inventarios SSOT actualizados, DDL alineado con seeds, no hay bloqueantes de deploy.
+
+---
 
 ### [2026-03-01] Documentation Remediation: Comodines/Consumables System ✅
 

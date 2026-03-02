@@ -464,9 +464,7 @@ export const useEconomyStore = create<EconomyState>()(
         const categorySpending: Record<ShopCategory, number> = {
           cosmetics: 0,
           profile: 0,
-          guild: 0,
           premium: 0,
-          social: 0,
           consumable: 0,
         };
         state.inventory.forEach((item) => {

@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.8.5"
-fecha: "2026-03-01"  # v14.8.5: +1 standard (ESTANDAR-FRONTEND-MODAL-RESPONSIVE), modal responsive remediation (30+ files fixed, scroll wrappers, responsive grids, touch targets). Previous: v14.8.4 comprension_auditiva BACKLOG
+version: "14.8.9"
+fecha: "2026-03-02"  # v14.8.9: Exercise fixes phase 2 — TikTok timer top-center, bottom flex-col, DnD icon support in DraggableCard+DroppableZone. Previous: v14.8.8 frame rendering visual_type
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -162,6 +162,7 @@ inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v9.2.0)"
   backend: "BACKEND_INVENTORY.yml (v5.3.0)"
   frontend: "FRONTEND_INVENTORY.yml (v12.5.3)"
+  shop: "Shop categories: 3 active (consumables, cosmetics, boosts) — guild/social removed (out of scope). Items: 31 total (was 38 pre-cleanup)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES
@@ -226,5 +227,26 @@ credenciales:
   redis_db: 0
 
 # ===============================================================================
-# FIN MASTER INVENTORY v14.6.0
+# CHANGELOG
+# ===============================================================================
+
+changelog:
+  - date: "2026-03-02"
+    version: "v14.8.7"
+    changes:
+      - "fix(exercises): backend findByModuleId filters is_active:true (comprension_auditiva hidden)"
+      - "fix(quiz-tiktok): timer 20s default, urgency visual <=5s, onTimeout auto-advance, button contrast (white borders on dark bg)"
+      - "fix(infografia): Lucide icon rendering from card.icon string, DataVisualization position.x/y uses % CSS units, section.title fallback, manual eval badge"
+      - "fix(seeds): added title field to infografia sections (3 envs dev/staging/prod)"
+    files_modified: 12
+    build_status: "PASS"
+
+  - date: "2026-03-02"
+    version: "v14.8.6"
+    changes:
+      - "fix(shop): removed guild/social categories (out of scope), items 38→31, categories 5→3 active"
+    files_modified: 25
+
+# ===============================================================================
+# FIN MASTER INVENTORY v14.8.7
 # ===============================================================================

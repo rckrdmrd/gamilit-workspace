@@ -454,6 +454,12 @@ Catalogo de categorias de tienda (marcos, avatares, efectos, etc.).
 **Indices:** `idx_shop_categories_active`, `idx_shop_categories_order`
 **Constraint:** `name` UNIQUE
 
+**Nota de cambio (2026-03-02):**
+- Categorias `guild` y `social` ahora tienen `is_active=false` (desactivadas, no eliminadas)
+- Guild items (4 total) han sido re-categorizados como cosmeticos: `guild_banner`→`profile_frame`, `guild_emblem`/`guild_shield`→`badge`
+- Social items (6 total) removidos de tienda + 1 item `Efecto Obsidiana` (total 7 items inactivos)
+- Categorias activas: cosmetics, boosts, avatar, frame, badge (5)
+
 ---
 
 ### gamification_system.shop_items
@@ -491,6 +497,13 @@ Catalogo de items comercializables en tienda.
 **Referencia de contrato:** `docs/40-standards/ESTANDAR-METADATA-ITEMS.md`
 **Indices:** `idx_shop_items_category`, `idx_shop_items_category_id`, `idx_shop_items_available`, `idx_shop_items_rarity`, `idx_shop_items_price`, `idx_shop_items_tags_gin`, `idx_shop_items_tenant`
 
+**Nota de cambios (2026-03-02):**
+- **Items removidos:** 7 items ahora tienen `is_available=false` (6 sociales + 1 Efecto Obsidiana)
+- **Items migrados:** 4 guild items re-categorizados a cosmetics (is_available=true, category='cosmetics')
+  - `guild_banner` → metadata.type='profile_frame'
+  - `guild_emblem`, `guild_shield` → metadata.type='badge'
+- Items respeto `shop_items.category` enum sigue siendo funcional para queries; `shop_categories.is_active` controla visibilidad en UI
+
 ---
 
 ### gamification_system.user_purchases
@@ -526,14 +539,16 @@ Estado actual de equipamiento cosmetico por usuario.
 |---------|------|----------|---------|-------------|
 | id | UUID | NOT NULL | gen_random_uuid() | PK |
 | user_id | UUID | NOT NULL | - | FK auth_management.profiles |
-| category_id | UUID | NOT NULL | - | FK gamification_system.shop_categories |
+| category_id | UUID | NOT NULL | - | FK gamification_system.shop_categories (para display) |
 | item_id | UUID | NOT NULL | - | FK gamification_system.shop_items |
+| visual_type | TEXT | NOT NULL | 'cosmetics' | Slot visual: avatar, profile_frame, profile_background, title, badge |
 | equipped_at | TIMESTAMPTZ | NULL | gamilit.now_mexico() | Fecha de equipamiento |
 | metadata | JSONB | NULL | '{}' | Metadata de contexto |
 
-**Constraint clave:** unicidad por `(user_id, category_id)`.
-**Indices:** `idx_user_equipped_user`, `idx_user_equipped_category`, `idx_user_equipped_unique_category` (UNIQUE)
+**Constraint clave:** unicidad por `(user_id, visual_type)` — permite equipar avatar + frame + background simultaneamente.
+**Indices:** `idx_user_equipped_user`, `idx_user_equipped_category`, `idx_user_equipped_unique_visual_type` (UNIQUE)
 **RLS:** habilitado (self + admin)
+**Migration:** `apps/database/ddl/migrations/2026-03-02-visual-type-equip-slot.sql`
 
 ---
 

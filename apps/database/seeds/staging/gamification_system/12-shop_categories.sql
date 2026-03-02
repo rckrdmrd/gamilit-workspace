@@ -11,11 +11,11 @@
 -- CATEGORÍAS INCLUIDAS:
 -- - cosmetics: Cosméticos visuales (avatares, marcos, fondos)
 -- - profile: Items de perfil (títulos, badges)
--- - guild: Items de gremio (banderas, emblemas)
--- - social: Items sociales (emojis, stickers)
 -- - consumable: Consumibles (boosts, power-ups)
+-- [INACTIVO] guild: Items de gremio (banderas, emblemas)
+-- [INACTIVO] social: Items sociales (emojis, stickers)
 --
--- TOTAL: 5 categorías
+-- TOTAL: 5 categorías (3 activas + 2 inactivas)
 --
 -- IMPORTANTE: Estas categorías estructuran la tienda virtual
 -- y permiten organizar los items por tipo.
@@ -61,7 +61,7 @@ INSERT INTO gamification_system.shop_categories (
     'crown',
     'from-yellow-500 to-orange-500',
     3,
-    true
+    false
 ),
 (
     'social',
@@ -70,7 +70,7 @@ INSERT INTO gamification_system.shop_categories (
     'star',
     'from-green-500 to-emerald-500',
     4,
-    true
+    false
 ),
 (
     'consumable',

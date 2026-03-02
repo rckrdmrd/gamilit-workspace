@@ -139,11 +139,11 @@ export const mockTransactions: Transaction[] = [
     type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -25,
     source: 'shop',
-    description: 'Purchased Celebration Emote Pack',
+    description: 'Purchased Marco Bandera Dorada',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 9),
     balanceAfter: 1260,
     metadata: {
-      itemId: 'social_001',
+      itemId: 'guild_001',
     },
   },
   {
@@ -304,9 +304,9 @@ export const mockEarningSourcesData: EarningSourceData[] = [
 export const mockSpendingCategoryData: SpendingCategoryData[] = [
   {
     category: 'cosmetics',
-    amount: 420,
-    percentage: 42,
-    itemCount: 6,
+    amount: 550,
+    percentage: 55,
+    itemCount: 10,
     color: '#f97316',
   },
   {
@@ -322,20 +322,6 @@ export const mockSpendingCategoryData: SpendingCategoryData[] = [
     percentage: 15,
     itemCount: 4,
     color: '#3b82f6',
-  },
-  {
-    category: 'guild',
-    amount: 100,
-    percentage: 10,
-    itemCount: 2,
-    color: '#8b5cf6',
-  },
-  {
-    category: 'social',
-    amount: 30,
-    percentage: 3,
-    itemCount: 3,
-    color: '#10b981',
   },
 ];
 

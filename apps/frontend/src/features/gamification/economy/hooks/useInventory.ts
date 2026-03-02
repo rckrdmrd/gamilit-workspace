@@ -47,9 +47,7 @@ export const useInventory = () => {
     const categories: Record<ShopCategory, ShopItem[]> = {
       cosmetics: [],
       profile: [],
-      guild: [],
       premium: [],
-      social: [],
       consumable: [],
     };
 

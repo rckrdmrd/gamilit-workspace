@@ -1,8 +1,8 @@
 /**
- * Shop Items Mock Data - 50+ Items Across 5 Categories
+ * Shop Items Mock Data - Items Across 4 Categories
  *
  * Comprehensive mock data for the GLIT Platform ML Coins Shop
- * Categories: Cosmetics, Profile, Guild, Premium, Social
+ * Categories: Cosmetics, Profile, Premium, Consumable
  */
 
 import type { ShopItem } from '../types/economyTypes';
@@ -342,141 +342,80 @@ const profileItems: ShopItem[] = [
 ];
 
 /**
- * GUILD FEATURES (100-300 ML)
- * Guild perks, banners, emotes, boosts
+ * COSMETICS - Former Guild Items (migrated to cosmetics)
+ * Profile frames and badges previously in the guild category
  */
-const guildItems: ShopItem[] = [
+const formerGuildItems: ShopItem[] = [
   {
     id: 'guild_001',
-    name: 'Guild Banner Template',
-    description: 'Create custom banners for your guild.',
-    category: 'guild',
+    name: 'Marco Bandera Dorada',
+    description: 'Elegante marco de perfil con bandera dorada.',
+    category: 'cosmetics',
     price: 100,
     icon: '🏴',
     rarity: 'common',
-    tags: ['banner', 'customization', 'guild'],
+    tags: ['frame', 'profile_frame', 'gold'],
     isOwned: false,
     isPurchasable: true,
-    requirements: {
-      guildMember: true,
+    metadata: {
+      type: 'profile_frame',
+      effectDescription: 'Marco de perfil Bandera Dorada',
+      stackable: false,
+      tradeable: true,
     },
   },
   {
     id: 'guild_002',
-    name: 'Guild Chat Boost',
-    description: 'Unlock advanced chat features for your guild.',
-    category: 'guild',
+    name: 'Marco Estandarte Básico',
+    description: 'Marco de perfil con diseño de estandarte clásico.',
+    category: 'cosmetics',
     price: 150,
-    icon: '💬',
+    icon: '🚩',
     rarity: 'rare',
-    tags: ['chat', 'boost', 'communication'],
+    tags: ['frame', 'profile_frame', 'banner'],
     isOwned: false,
     isPurchasable: true,
-    requirements: {
-      guildMember: true,
-    },
     metadata: {
-      duration: 30,
-      effectDescription: '30 days of enhanced guild chat',
+      type: 'profile_frame',
+      effectDescription: 'Marco de perfil Estandarte Básico',
+      stackable: false,
+      tradeable: true,
     },
   },
   {
     id: 'guild_003',
-    name: 'Custom Guild Emblem',
-    description: 'Design a unique emblem for your guild.',
-    category: 'guild',
+    name: 'Badge Dragón Lector',
+    description: 'Badge exclusivo del Dragón Lector para lectores excepcionales.',
+    category: 'cosmetics',
     price: 200,
-    icon: '⚜️',
+    icon: '🐉',
     rarity: 'epic',
-    tags: ['emblem', 'customization', 'guild'],
+    tags: ['badge', 'dragon', 'reader'],
     isOwned: false,
     isPurchasable: true,
-    requirements: {
-      guildMember: true,
+    metadata: {
+      type: 'badge',
+      effectDescription: 'Badge Dragón Lector',
+      stackable: false,
+      tradeable: false,
     },
   },
   {
     id: 'guild_004',
-    name: 'Guild XP Multiplier',
-    description: '+20% XP for all guild members for 7 days.',
-    category: 'guild',
+    name: 'Badge Escudo del Conocimiento',
+    description: 'Badge del Escudo del Conocimiento para defensores del saber.',
+    category: 'cosmetics',
     price: 300,
-    icon: '⚡',
+    icon: '🛡️',
     rarity: 'epic',
-    tags: ['boost', 'xp', 'multiplier'],
+    tags: ['badge', 'shield', 'knowledge'],
     isOwned: false,
     isPurchasable: true,
-    requirements: {
-      guildMember: true,
-    },
     metadata: {
-      duration: 7,
-      effectDescription: '+20% XP boost for 7 days',
-    },
-  },
-  {
-    id: 'guild_005',
-    name: 'Guild Emote Pack',
-    description: 'Exclusive emotes for guild chat.',
-    category: 'guild',
-    price: 120,
-    icon: '😀',
-    rarity: 'rare',
-    tags: ['emote', 'chat', 'social'],
-    isOwned: false,
-    isPurchasable: true,
-    requirements: {
-      guildMember: true,
-    },
-  },
-  {
-    id: 'guild_006',
-    name: 'Guild Hall Decoration',
-    description: 'Decorative items for your guild hall.',
-    category: 'guild',
-    price: 180,
-    icon: '🏛️',
-    rarity: 'rare',
-    tags: ['decoration', 'hall', 'guild'],
-    isOwned: false,
-    isPurchasable: true,
-    requirements: {
-      guildMember: true,
-    },
-  },
-  {
-    id: 'guild_007',
-    name: 'Guild Challenge Boost',
-    description: 'Unlock special guild challenges.',
-    category: 'guild',
-    price: 250,
-    icon: '🎯',
-    rarity: 'epic',
-    tags: ['challenge', 'boost', 'activity'],
-    isOwned: false,
-    isPurchasable: true,
-    requirements: {
-      guildMember: true,
-      rank: 'Ajaw',
-    },
-  },
-  {
-    id: 'guild_008',
-    name: 'Guild Coin Multiplier',
-    description: '+10% ML Coins for guild activities for 14 days.',
-    category: 'guild',
-    price: 280,
-    icon: '💰',
-    rarity: 'epic',
-    tags: ['boost', 'coins', 'multiplier'],
-    isOwned: false,
-    isPurchasable: true,
-    requirements: {
-      guildMember: true,
-    },
-    metadata: {
-      duration: 14,
-      effectDescription: '+10% ML Coins from guild activities',
+      type: 'badge',
+      effectDescription: 'Badge Escudo del Conocimiento',
+      stackable: false,
+      tradeable: false,
     },
   },
 ];
@@ -621,127 +560,22 @@ const premiumItems: ShopItem[] = [
 ];
 
 /**
- * SOCIAL FEATURES (10-50 ML)
- * Emotes, stickers, reaction packs, gifts
- */
-const socialItems: ShopItem[] = [
-  {
-    id: 'social_001',
-    name: 'Celebration Emote Pack',
-    description: 'Fun celebration emotes for chat.',
-    category: 'social',
-    price: 25,
-    icon: '🎉',
-    rarity: 'common',
-    tags: ['emote', 'celebration', 'chat'],
-    isOwned: false,
-    isPurchasable: true,
-  },
-  {
-    id: 'social_002',
-    name: 'Science Sticker Set',
-    description: 'Scientific-themed stickers for messages.',
-    category: 'social',
-    price: 30,
-    icon: '⚛️',
-    rarity: 'common',
-    tags: ['sticker', 'science', 'messaging'],
-    isOwned: false,
-    isPurchasable: true,
-  },
-  {
-    id: 'social_003',
-    name: 'Reaction Animation Pack',
-    description: 'Animated reactions for social interactions.',
-    category: 'social',
-    price: 50,
-    icon: '😄',
-    rarity: 'rare',
-    tags: ['reaction', 'animation', 'social'],
-    isOwned: false,
-    isPurchasable: true,
-  },
-  {
-    id: 'social_004',
-    name: 'Gift Box',
-    description: 'Send surprise gifts to friends!',
-    category: 'social',
-    price: 40,
-    icon: '🎁',
-    rarity: 'common',
-    tags: ['gift', 'friend', 'social'],
-    isOwned: false,
-    isPurchasable: true,
-    metadata: {
-      stackable: true,
-      tradeable: true,
-    },
-  },
-  {
-    id: 'social_005',
-    name: 'Detective Emotes',
-    description: 'Detective-themed emotes and expressions.',
-    category: 'social',
-    price: 35,
-    icon: '🔍',
-    rarity: 'common',
-    tags: ['emote', 'detective', 'chat'],
-    isOwned: false,
-    isPurchasable: true,
-  },
-  {
-    id: 'social_006',
-    name: 'Kudos Token',
-    description: 'Give kudos to helpful community members.',
-    category: 'social',
-    price: 10,
-    icon: '👍',
-    rarity: 'common',
-    tags: ['kudos', 'appreciation', 'social'],
-    isOwned: false,
-    isPurchasable: true,
-    metadata: {
-      stackable: true,
-      tradeable: false,
-    },
-  },
-  {
-    id: 'social_007',
-    name: 'Virtual High Five',
-    description: 'Send virtual high fives to teammates!',
-    category: 'social',
-    price: 15,
-    icon: '✋',
-    rarity: 'common',
-    tags: ['gesture', 'team', 'social'],
-    isOwned: false,
-    isPurchasable: true,
-    metadata: {
-      stackable: true,
-    },
-  },
-];
-
-/**
  * All Shop Items Combined
  */
 export const allShopItems: ShopItem[] = [
   ...cosmeticsItems,
+  ...formerGuildItems,
   ...profileItems,
-  ...guildItems,
   ...premiumItems,
-  ...socialItems,
 ];
 
 /**
  * Shop Items by Category
  */
 export const shopItemsByCategory = {
-  cosmetics: cosmeticsItems,
+  cosmetics: [...cosmeticsItems, ...formerGuildItems],
   profile: profileItems,
-  guild: guildItems,
   premium: premiumItems,
-  social: socialItems,
 };
 
 /**

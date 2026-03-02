@@ -2,7 +2,7 @@
  * Shop API - Client for shop endpoints
  *
  * API client for the new unified shop system supporting all categories:
- * - cosmetics, profile, guild, social, consumable
+ * - cosmetics, profile, premium, consumable
  *
  * Integrates with backend endpoints created by Backend-Agent:
  * - GET /gamification/shop/categories - Get active categories
@@ -19,7 +19,7 @@ import { apiClient } from '@/services/api/apiClient';
 // TYPES
 // ============================================================================
 
-export type ShopItemCategory = 'cosmetics' | 'profile' | 'guild' | 'social' | 'consumable';
+export type ShopItemCategory = 'cosmetics' | 'profile' | 'premium' | 'consumable';
 export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary';
 
 export interface ShopCategory {

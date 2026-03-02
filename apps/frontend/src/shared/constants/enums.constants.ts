@@ -208,7 +208,9 @@ export enum ComodinTypeEnum {
 export enum ShopItemCategoryEnum {
   COSMETICS = 'cosmetics',
   PROFILE = 'profile',
+  /** @deprecated Guild items re-categorized as cosmetics — category deactivated in DB */
   GUILD = 'guild',
+  /** @deprecated Social features out of scope — category deactivated in DB */
   SOCIAL = 'social',
   CONSUMABLE = 'consumable',
 }

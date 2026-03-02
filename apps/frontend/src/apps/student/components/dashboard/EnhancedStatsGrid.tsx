@@ -95,7 +95,7 @@ export const EnhancedStatsGrid = ({
   error,
   compact = false,
 }: EnhancedStatsGridProps & { compact?: boolean }) => {
-  const { frame, badge } = useEquippedVisuals();
+  const { badge } = useEquippedVisuals();
 
   // Handle error state
   if (error && !loading) {
@@ -281,7 +281,6 @@ export const EnhancedStatsGrid = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
             className="flex items-center gap-2 rounded-full border border-yellow-200 bg-gradient-to-r from-yellow-100 to-orange-100 px-4 py-2"
-            style={frame?.borderColor ? { borderColor: frame.borderColor, borderWidth: 2 } : undefined}
           >
             {badge?.assetUrl ? (
               <img src={badge.assetUrl} alt="" className="h-4 w-4" />

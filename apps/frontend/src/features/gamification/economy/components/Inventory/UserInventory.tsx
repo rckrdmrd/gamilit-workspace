@@ -54,9 +54,8 @@ export const UserInventory = () => {
           <option value="all">All Categories</option>
           <option value="cosmetics">Cosmetics</option>
           <option value="profile">Profile</option>
-          <option value="guild">Guild</option>
           <option value="premium">Premium</option>
-          <option value="social">Social</option>
+          <option value="consumable">Consumable</option>
         </select>
       </div>
 

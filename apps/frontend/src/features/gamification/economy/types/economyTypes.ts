@@ -6,10 +6,10 @@
  */
 
 /**
- * Shop Categories - 6 main categories for the virtual economy
+ * Shop Categories - 4 main categories for the virtual economy
  * NOTE: 'premium' is legacy for power-ups, 'consumable' is new unified category
  */
-export type ShopCategory = 'cosmetics' | 'profile' | 'guild' | 'premium' | 'social' | 'consumable';
+export type ShopCategory = 'cosmetics' | 'profile' | 'premium' | 'consumable';
 
 /**
  * Item Rarity Levels - Affects pricing and visual appearance

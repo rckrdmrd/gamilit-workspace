@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "5.4.0"
-fecha: "2026-02-28"  # v5.4.0: Integration audit — endpoints 912→914, connection stagger for WSL2 (app.module.ts), Swagger 92-95% verified, RLS gaps documented (BYPASSRLS + no SET LOCAL)
+version: "5.4.1"
+fecha: "2026-03-02"  # v5.4.1: Exercise fixes — exercises.service.ts findByModuleId now filters is_active:true, hides comprension_auditiva (BACKLOG). Previous: v5.4.0 integration audit
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -493,5 +493,24 @@ filters:
       archivo: "shared/filters/http-exception.filter.ts"
 
 # ===============================================================================
-# FIN BACKEND INVENTORY v5.0.0
+# CHANGELOG
+# ===============================================================================
+
+changelog:
+  - date: "2026-03-02"
+    version: "v5.4.1"
+    changes:
+      - "fix(exercises): findByModuleId filters is_active:true (hides BACKLOG comprension_auditiva)"
+      - "fix(seeds): added title field to infografia sections (3 envs)"
+    files_modified: 4
+    build_status: "PASS"
+
+  - date: "2026-02-28"
+    version: "v5.4.0"
+    changes:
+      - "audit(integration): endpoints 912→914, connection stagger WSL2, RLS gaps documented"
+    files_modified: 5
+
+# ===============================================================================
+# FIN BACKEND INVENTORY v5.4.1
 # ===============================================================================

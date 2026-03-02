@@ -158,7 +158,7 @@ echo "=============================================="
 | **Ejercicios** | `educational_content.exercises` | 23 |
 | **Rangos Maya** | `gamification_system.maya_ranks` | 5 |
 | **Logros** | `gamification_system.achievements` | 30 |
-| **Categorias Tienda** | `gamification_system.shop_categories` | 5 |
+| **Categorias Tienda** | `gamification_system.shop_categories` | 5 (3 activas: cosmetics/profile/consumable, 2 inactivas: guild/social) |
 | **Items Tienda** | `gamification_system.shop_items` | 20 |
 | **Escuelas** | `social_features.schools` | 2 |
 | **Aulas** | `social_features.classrooms` | 4 |

@@ -8,12 +8,12 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
  * UserEquippedItem Entity
  *
  * Representa un item cosmético equipado activamente por el usuario.
- * Garantiza unicidad por categoría (solo 1 avatar, 1 marco, etc.).
+ * Garantiza unicidad por tipo visual (solo 1 avatar, 1 marco, etc.).
  *
  * @see gamification_system.user_equipped_items
  */
 @Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: DB_TABLES.GAMIFICATION.USER_EQUIPPED_ITEMS })
-@Unique(['user_id', 'category_id']) // Enforce unique constraint in ORM
+@Unique(['user_id', 'visual_type']) // Enforce unique constraint in ORM — one item per visual slot
 export class UserEquippedItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,6 +26,9 @@ export class UserEquippedItem {
 
   @Column({ type: 'uuid' })
   item_id: string;
+
+  @Column({ type: 'text', default: 'cosmetics' })
+  visual_type!: string;
 
   @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

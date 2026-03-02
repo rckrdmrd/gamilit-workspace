@@ -13,9 +13,7 @@ import { motion } from 'framer-motion';
 import {
   ShoppingBag,
   Search,
-  Star,
   Sparkles,
-  Crown,
   Palette,
   Users,
   Package,
@@ -64,8 +62,6 @@ export default function ShopPage() {
     const iconMap: Record<string, ElementType> = {
       cosmetics: Palette,
       profile: Users,
-      guild: Crown,
-      social: Star,
       consumable: Sparkles,
       premium: Sparkles,
     };

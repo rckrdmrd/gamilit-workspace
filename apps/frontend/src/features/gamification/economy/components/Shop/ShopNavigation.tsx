@@ -3,7 +3,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { Store, Palette, Shield, Star, MessageCircle } from 'lucide-react';
+import { Store, Palette, Shield, Star } from 'lucide-react';
 import type { ShopCategory } from '../../types/economyTypes';
 
 interface ShopNavigationProps {
@@ -19,9 +19,7 @@ export const ShopNavigation = ({
     { id: 'all' as const, name: 'All Items', icon: Store, color: 'detective-text' },
     { id: 'cosmetics' as const, name: 'Cosmetics', icon: Palette, color: 'detective-orange' },
     { id: 'profile' as const, name: 'Profile', icon: Shield, color: 'detective-blue' },
-    { id: 'guild' as const, name: 'Guild', icon: Shield, color: 'rank-capitan-from' },
     { id: 'premium' as const, name: 'Premium', icon: Star, color: 'detective-gold' },
-    { id: 'social' as const, name: 'Social', icon: MessageCircle, color: 'detective-success' },
   ];
 
   return (

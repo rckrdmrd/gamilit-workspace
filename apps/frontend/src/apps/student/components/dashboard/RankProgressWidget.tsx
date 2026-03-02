@@ -90,7 +90,7 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
         'relative overflow-hidden rounded-xl bg-white shadow-lg',
         'h-full max-h-[600px]',
         showFrameOverlay
-          ? 'border-2'
+          ? 'border-2 border-transparent'
           : frame?.cssClass
             ? cn('border-2', frame.cssClass)
             : frame?.borderColor
@@ -116,7 +116,7 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
       <div className={cn('absolute inset-0 opacity-10', 'bg-gradient-to-br', rankInfo.color)} />
 
       {/* Content */}
-      <div className="relative z-10 h-full overflow-y-auto p-6">
+      <div className={cn('relative z-10 h-full overflow-y-auto', showFrameOverlay ? 'px-8 py-10' : 'p-6')}>
         {/* Header with colorful icon */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">

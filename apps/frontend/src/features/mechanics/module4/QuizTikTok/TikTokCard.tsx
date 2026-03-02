@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TikTokQuestion } from './quizTikTokTypes';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 
 interface TikTokCardProps {
   question: TikTokQuestion;
   onAnswer: (idx: number) => void;
   selectedAnswer?: number;
   timeLimit?: number;
+  onTimeout?: () => void;
 }
 
 export const TikTokCard = ({
   question,
   onAnswer,
   selectedAnswer,
-  timeLimit = 30,
+  timeLimit = 20,
+  onTimeout,
 }: TikTokCardProps) => {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit);
 
@@ -31,6 +32,13 @@ export const TikTokCard = ({
     setTimeRemaining(timeLimit);
   }, [question.id, timeLimit]);
 
+  // Auto-advance when time runs out
+  useEffect(() => {
+    if (timeRemaining === 0 && selectedAnswer === undefined && onTimeout) {
+      onTimeout();
+    }
+  }, [timeRemaining, selectedAnswer, onTimeout]);
+
   return (
     <motion.div
       initial={{ y: '100vh' }}
@@ -42,8 +50,12 @@ export const TikTokCard = ({
     >
       {/* Timer Display */}
       {selectedAnswer === undefined && (
-        <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-md rounded-detective px-4 py-2 text-white">
-          <span className="text-lg font-bold">{timeRemaining}s</span>
+        <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-10 backdrop-blur-md rounded-detective px-4 py-2 text-white ${
+          timeRemaining <= 5 ? 'bg-red-600/80 animate-pulse' : 'bg-black/50'
+        }`}>
+          <span className={`text-lg font-bold ${timeRemaining <= 5 ? 'text-white' : ''}`}>
+            {timeRemaining}s
+          </span>
         </div>
       )}
 
@@ -51,17 +63,22 @@ export const TikTokCard = ({
       <h2 className="text-lg sm:text-2xl font-bold text-white text-center mb-8">{question.question}</h2>
 
       {/* Options */}
-      <div className="space-y-4 w-full">
+      <div className="space-y-3 w-full bg-black/30 backdrop-blur-sm rounded-xl p-4">
         {question.options.map((option, idx) => (
-          <DetectiveButton
+          <button
             key={idx}
-            variant={selectedAnswer === idx ? 'gold' : 'primary'}
             onClick={() => onAnswer(idx)}
-            className="w-full py-4 text-lg"
             disabled={selectedAnswer !== undefined}
+            className={`w-full py-4 px-6 text-lg font-semibold rounded-lg transition-all ${
+              selectedAnswer === idx
+                ? 'bg-detective-gold text-detective-text border-2 border-white/60 scale-[1.02]'
+                : selectedAnswer !== undefined
+                  ? 'bg-white/10 border-2 border-white/30 text-white/60 cursor-not-allowed'
+                  : 'bg-white/15 backdrop-blur-md border-2 border-white/50 text-white hover:bg-white/25 hover:border-white/70 active:scale-[0.98]'
+            }`}
           >
             {option}
-          </DetectiveButton>
+          </button>
         ))}
       </div>
     </motion.div>

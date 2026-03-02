@@ -416,16 +416,19 @@ BEGIN
                     {
                         "id": "timeline",
                         "type": "visual timeline",
+                        "title": "Cronología de Marie Curie",
                         "data": "1867-1934: Principales hitos de su vida"
                     },
                     {
                         "id": "discoveries",
                         "type": "icon grid",
+                        "title": "Descubrimientos Científicos",
                         "data": "Radio, Polonio, Radioactividad"
                     },
                     {
                         "id": "impact",
                         "type": "flowchart",
+                        "title": "Impacto Mundial",
                         "data": "Sus descubrimientos → Medicina nuclear → Tratamientos de cáncer"
                     }
                 ],

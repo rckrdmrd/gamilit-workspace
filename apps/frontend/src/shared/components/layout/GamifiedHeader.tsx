@@ -58,13 +58,12 @@ export const GamifiedHeader = ({
   const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
   const logoIconUrl = branding?.config?.logoIconUrl ?? DEFAULT_BRANDING.logoIconUrl;
 
-  // Equipped cosmetics (avatar, frame)
-  const { avatar, frame } = useEquippedVisuals();
+  // Equipped cosmetics (avatar only — frame renders in RankProgressWidget)
+  const { avatar } = useEquippedVisuals();
   const avatarSrc =
     avatar?.src ||
     (user && 'avatar_url' in user ? (user.avatar_url as string | undefined) : null) ||
     null;
-  const frameColor = frame?.borderColor || null;
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -255,9 +254,6 @@ export const GamifiedHeader = ({
                 <AvatarDisplay
                   src={avatarSrc}
                   name={user ? getUserFullName(user) : 'U'}
-                  frameColor={frameColor}
-                  frameClass={frame?.cssClass}
-                  frameSrc={frame?.assetUrl}
                   glowColor={avatar?.glowColor}
                   size="sm"
                 />
@@ -286,9 +282,6 @@ export const GamifiedHeader = ({
                         <AvatarDisplay
                           src={avatarSrc}
                           name={user ? getUserFullName(user) : 'U'}
-                          frameColor={frameColor}
-                          frameClass={frame?.cssClass}
-                          frameSrc={frame?.assetUrl}
                           glowColor={avatar?.glowColor}
                           size="md"
                         />

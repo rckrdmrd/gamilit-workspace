@@ -257,10 +257,9 @@ interface Mission {
 
 - Cosmetics
 - Profile
-- Guild
-- Social
+- Guild [INACTIVO]
+- Social [INACTIVO]
 - Consumable
-- Premium
 
 ### 10.2 Rarezas
 

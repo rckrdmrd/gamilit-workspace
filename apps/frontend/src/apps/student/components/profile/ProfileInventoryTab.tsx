@@ -67,24 +67,32 @@ interface ProfileInventoryTabProps {
  */
 function getEquipLabel(item: PurchasedItem): string {
   const metadataType = item.item?.metadata?.type as string | undefined;
-  const category = item.item?.category || item.metadata?.category || '';
 
-  if (metadataType === 'profile_frame' || category === 'cosmetics') return 'Aplicar Marco';
-  if (metadataType === 'name_effect' || category === 'profile') return 'Aplicar Titulo';
-  if (metadataType === 'theme_color') return 'Aplicar Tema';
-  if (category === 'guild') return 'Equipar';
-  if (category === 'social') return 'Aplicar';
-  return 'Equipar';
+  switch (metadataType) {
+    case 'avatar': return 'Equipar Avatar';
+    case 'profile_frame': return 'Aplicar Marco';
+    case 'profile_background': return 'Aplicar Fondo';
+    case 'badge': return 'Equipar Emblema';
+    case 'title':
+    case 'name_effect': return 'Aplicar Titulo';
+    case 'theme_color': return 'Aplicar Tema';
+    default: return 'Equipar';
+  }
 }
 
 function getUnequipLabel(item: PurchasedItem): string {
   const metadataType = item.item?.metadata?.type as string | undefined;
-  const category = item.item?.category || item.metadata?.category || '';
 
-  if (metadataType === 'profile_frame' || category === 'cosmetics') return 'Quitar Marco';
-  if (metadataType === 'name_effect' || category === 'profile') return 'Quitar Titulo';
-  if (metadataType === 'theme_color') return 'Quitar Tema';
-  return 'Desequipar';
+  switch (metadataType) {
+    case 'avatar': return 'Quitar Avatar';
+    case 'profile_frame': return 'Quitar Marco';
+    case 'profile_background': return 'Quitar Fondo';
+    case 'badge': return 'Quitar Emblema';
+    case 'title':
+    case 'name_effect': return 'Quitar Titulo';
+    case 'theme_color': return 'Quitar Tema';
+    default: return 'Desequipar';
+  }
 }
 
 export function ProfileInventoryTab({ userId, equippedItems }: ProfileInventoryTabProps) {

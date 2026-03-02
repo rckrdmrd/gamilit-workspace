@@ -17,7 +17,6 @@ interface CompletionHeaderProps {
   success: boolean;
   performanceMessage: string;
   avatarSrc: string | null;
-  frameColor: string | null;
   userName: string | null;
 }
 
@@ -25,7 +24,6 @@ export function CompletionHeader({
   success,
   performanceMessage,
   avatarSrc,
-  frameColor,
   userName,
 }: CompletionHeaderProps) {
   return (
@@ -54,7 +52,6 @@ export function CompletionHeader({
             <AvatarDisplay
               src={avatarSrc}
               name={userName}
-              frameColor={frameColor}
               size="lg"
               className="border-2 border-white/30"
             />

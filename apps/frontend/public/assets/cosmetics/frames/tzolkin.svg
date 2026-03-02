@@ -1,40 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" preserveAspectRatio="none">
   <defs>
     <linearGradient id="r" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#8D6E63"/><stop offset="100%" stop-color="#6D4C41"/>
     </linearGradient>
   </defs>
-  <circle cx="64" cy="64" r="62" fill="none" stroke="url(#r)" stroke-width="4"/>
-  <circle cx="64" cy="64" r="56" fill="none" stroke="#8D6E63" stroke-width="2"/>
-  <circle cx="64" cy="64" r="42" fill="none" stroke="#6D4C41" stroke-width="2"/>
-  <circle cx="64" cy="64" r="38" fill="none" stroke="#8D6E63" stroke-width="1"/>
+  <circle cx="64" cy="64" r="63" fill="none" stroke="url(#r)" stroke-width="2"/>
+  <circle cx="64" cy="64" r="59" fill="none" stroke="#8D6E63" stroke-width="1"/>
+  <circle cx="64" cy="64" r="52" fill="none" stroke="#6D4C41" stroke-width="1"/>
+  <circle cx="64" cy="64" r="50" fill="none" stroke="#8D6E63" stroke-width="0.5"/>
   <!-- 10 day glyphs at 36deg intervals -->
   <g fill="#6D4C41" opacity=".8">
-    <rect x="60" y="4" width="8" height="6" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/>
-    <g transform="rotate(36 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
-    <g transform="rotate(72 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
-    <g transform="rotate(108 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
-    <g transform="rotate(144 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
-    <g transform="rotate(180 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
-    <g transform="rotate(216 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
-    <g transform="rotate(252 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
-    <g transform="rotate(288 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
-    <g transform="rotate(324 64 64)"><rect x="60" y="4" width="8" height="6" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
+    <rect x="61" y="5" width="6" height="4" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/>
+    <g transform="rotate(36 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
+    <g transform="rotate(72 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
+    <g transform="rotate(108 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
+    <g transform="rotate(144 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
+    <g transform="rotate(180 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
+    <g transform="rotate(216 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
+    <g transform="rotate(252 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
+    <g transform="rotate(288 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><circle cx="64" cy="7" r="1.5" fill="#4E342E"/></g>
+    <g transform="rotate(324 64 64)"><rect x="61" y="5" width="6" height="4" rx="1"/><path d="M62 5L66 5 64 9Z" fill="#4E342E"/></g>
   </g>
   <!-- 8 number dots inner ring -->
   <g fill="#FF6F00">
-    <circle cx="64" cy="24" r="2.5"/>
-    <g transform="rotate(45 64 64)"><circle cx="64" cy="24" r="2"/></g>
-    <g transform="rotate(90 64 64)"><circle cx="64" cy="24" r="2"/></g>
-    <g transform="rotate(135 64 64)"><circle cx="64" cy="24" r="2.5"/></g>
-    <g transform="rotate(180 64 64)"><circle cx="64" cy="24" r="2"/></g>
-    <g transform="rotate(225 64 64)"><circle cx="64" cy="24" r="2"/></g>
-    <g transform="rotate(270 64 64)"><circle cx="64" cy="24" r="2.5"/></g>
-    <g transform="rotate(315 64 64)"><circle cx="64" cy="24" r="2"/></g>
+    <circle cx="64" cy="30" r="2.5"/>
+    <g transform="rotate(45 64 64)"><circle cx="64" cy="30" r="2"/></g>
+    <g transform="rotate(90 64 64)"><circle cx="64" cy="30" r="2"/></g>
+    <g transform="rotate(135 64 64)"><circle cx="64" cy="30" r="2.5"/></g>
+    <g transform="rotate(180 64 64)"><circle cx="64" cy="30" r="2"/></g>
+    <g transform="rotate(225 64 64)"><circle cx="64" cy="30" r="2"/></g>
+    <g transform="rotate(270 64 64)"><circle cx="64" cy="30" r="2.5"/></g>
+    <g transform="rotate(315 64 64)"><circle cx="64" cy="30" r="2"/></g>
   </g>
   <!-- Cardinal markers -->
   <g fill="#FF6F00" opacity=".7">
-    <polygon points="64,13 61,18 67,18"/><polygon points="64,115 61,110 67,110"/>
-    <polygon points="13,64 18,61 18,67"/><polygon points="115,64 110,61 110,67"/>
+    <polygon points="64,16 61,21 67,21"/><polygon points="64,112 61,107 67,107"/>
+    <polygon points="16,64 21,61 21,67"/><polygon points="112,64 107,61 107,67"/>
   </g>
 </svg>

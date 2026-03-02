@@ -10,7 +10,7 @@ import { z } from 'zod';
 /**
  * Shop Category Schema
  */
-export const shopCategorySchema = z.enum(['cosmetics', 'profile', 'guild', 'premium', 'social']);
+export const shopCategorySchema = z.enum(['cosmetics', 'profile', 'premium', 'consumable']);
 
 /**
  * Item Rarity Schema

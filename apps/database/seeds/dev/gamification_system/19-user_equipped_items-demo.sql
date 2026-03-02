@@ -48,19 +48,20 @@ BEGIN
     END IF;
 
     INSERT INTO gamification_system.user_equipped_items (
-        id, user_id, category_id, item_id, equipped_at, metadata
+        id, user_id, category_id, item_id, visual_type, equipped_at, metadata
     ) VALUES (
         '19100000-0000-0000-0000-000000000001'::uuid,
         v_student_id,
         v_item1_category,
         '80000001-0001-0000-0000-000000000002'::uuid,
+        'profile_frame',
         gamilit.now_mexico() - INTERVAL '12 hours',
         jsonb_build_object(
             'seed_source', '19-user_equipped_items-demo.sql',
             'applied_from_purchase', true
         )
     )
-    ON CONFLICT (user_id, category_id) DO UPDATE SET
+    ON CONFLICT (user_id, visual_type) DO UPDATE SET
         item_id = EXCLUDED.item_id,
         equipped_at = EXCLUDED.equipped_at,
         metadata = EXCLUDED.metadata;
@@ -74,19 +75,20 @@ BEGIN
         RAISE NOTICE '⚠ Shop item 80000002-0001-0000-0000-000000000001 not found. Skipping second item.';
     ELSE
         INSERT INTO gamification_system.user_equipped_items (
-            id, user_id, category_id, item_id, equipped_at, metadata
+            id, user_id, category_id, item_id, visual_type, equipped_at, metadata
         ) VALUES (
             '19100000-0000-0000-0000-000000000002'::uuid,
             v_student_id,
             v_item2_category,
             '80000002-0001-0000-0000-000000000001'::uuid,
+            'title',
             gamilit.now_mexico() - INTERVAL '10 hours',
             jsonb_build_object(
                 'seed_source', '19-user_equipped_items-demo.sql',
                 'applied_from_purchase', true
             )
         )
-        ON CONFLICT (user_id, category_id) DO UPDATE SET
+        ON CONFLICT (user_id, visual_type) DO UPDATE SET
             item_id = EXCLUDED.item_id,
             equipped_at = EXCLUDED.equipped_at,
             metadata = EXCLUDED.metadata;

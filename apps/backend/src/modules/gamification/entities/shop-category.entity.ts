@@ -15,7 +15,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
  * @table shop_categories
  *
  * IMPORTANTE:
- * - Tabla de catálogo de categorías (cosméticos, perfil, guild, social, consumibles)
+ * - Tabla de catálogo de categorías (cosméticos, perfil, guild [INACTIVO], social [INACTIVO], consumibles)
  * - Usada para filtrar y organizar items en el frontend ShopPage
  * - Relación 1:N con shop_items
  *
@@ -31,14 +31,14 @@ export class ShopCategory {
 
   /**
    * Nombre único de la categoría (slug)
-   * Ejemplo: 'cosmetics', 'profile', 'guild', 'social', 'consumable'
+   * Ejemplo: 'cosmetics', 'profile', 'guild' [INACTIVO], 'social' [INACTIVO], 'consumable'
    */
   @Column({ type: 'text', unique: true })
     name!: string;
 
   /**
    * Nombre para mostrar en UI
-   * Ejemplo: 'Cosméticos', 'Perfil', 'Gremios', 'Social', 'Consumibles'
+   * Ejemplo: 'Cosméticos', 'Perfil', 'Gremios' [INACTIVO], 'Social' [INACTIVO], 'Consumibles'
    */
   @Column({ type: 'text' })
     display_name!: string;

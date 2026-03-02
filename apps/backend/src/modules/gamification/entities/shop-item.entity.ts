@@ -85,7 +85,15 @@ export class ShopItem {
 
   /**
    * Categoría del item (ENUM)
-   * Valores: cosmetics, profile, guild, social, consumable
+   *
+   * ACTIVE CATEGORIES (3):
+   * - cosmetics: Avatares, marcos, fondos visuales
+   * - profile: Títulos, badges de perfil
+   * - consumable: Boosts temporales, comodines
+   *
+   * DEPRECATED CATEGORIES (2 - inactive in DB):
+   * - guild: Items de gremio (social features out of scope) - DEACTIVATED
+   * - social: Emojis, stickers (social features out of scope) - DEACTIVATED
    */
   @Column({ type: 'enum', enum: ShopItemCategoryEnum })
     category!: ShopItemCategoryEnum;

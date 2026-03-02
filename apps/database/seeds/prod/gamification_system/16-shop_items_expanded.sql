@@ -1,6 +1,6 @@
 -- =====================================================
 -- Seed: gamification_system.shop_items (Expanded)
--- Description: Items adicionales maya-themed y educativos (18 items)
+-- Description: Items adicionales maya-themed y educativos (15 items)
 -- Environment: ALL
 -- Dependencies: gamification_system.shop_items, shop_categories
 -- Order: 16
@@ -10,18 +10,16 @@
 --
 -- ITEMS INCLUIDOS:
 -- - CONSUMABLE (3 items): Pista, vision lectora, segunda oportunidad
--- - COSMETICS (4+5 items): Avatares, marcos, fondos maya-themed
+-- - COSMETICS (4+4 items): Avatares, marcos, fondos maya-themed
 -- - PROFILE (2+2 items): Titulos y badges maya
--- - SOCIAL (2+0 items): Sticker pack y efecto jade
 --
--- TOTAL: 18 items (11 originales + 7 nuevos Wave 2)
+-- TOTAL: 15 items (9 originales + 6 nuevos Wave 2)
 --
 -- Wave 2 items (2026-02-20):
 -- - Avatar Guerrero Jaguar (cosmetics/legendary/500)
 -- - Marco Calendario Tzolk'in (cosmetics/epic/350)
 -- - Fondo Cenote Sagrado (profile/rare/200)
 -- - Titulo Chilam Balam (profile/epic/300)
--- - Efecto Obsidiana (cosmetics/rare/150)
 -- - Avatar Sacerdotisa Ixchel (cosmetics/legendary/500)
 -- - Marco Piramide Kukulkan (cosmetics/epic/350)
 --
@@ -40,12 +38,10 @@ DO $$
 DECLARE
     cat_cosmetics_id uuid;
     cat_profile_id uuid;
-    cat_social_id uuid;
     cat_consumable_id uuid;
 BEGIN
     SELECT id INTO cat_cosmetics_id FROM gamification_system.shop_categories WHERE name = 'cosmetics';
     SELECT id INTO cat_profile_id FROM gamification_system.shop_categories WHERE name = 'profile';
-    SELECT id INTO cat_social_id FROM gamification_system.shop_categories WHERE name = 'social';
     SELECT id INTO cat_consumable_id FROM gamification_system.shop_categories WHERE name = 'consumable';
 
     -- =====================================================
@@ -303,59 +299,7 @@ BEGIN
     ),
 
     -- =====================================================
-    -- CATEGORY: SOCIAL (2 items)
-    -- =====================================================
-
-    (
-        '80000006-0010-0000-0000-000000000001'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Sticker Pack Nacom',
-        'Pack de 15 stickers con el guerrero Nacom y tematica maya para chat.',
-        'sticker',
-        cat_social_id,
-        'social'::gamification_system.shop_item_category,
-        'common',
-        ARRAY['sticker', 'pack', 'maya', 'nacom'],
-        80,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'sticker_pack',
-            'sticker_count', 15,
-            'theme', 'nacom_warrior'
-        ),
-        jsonb_build_object(),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000006-0011-0000-0000-000000000001'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Efecto Jade',
-        'Efecto visual de jade brillante cuando celebras logros en chat.',
-        'sparkles',
-        cat_social_id,
-        'social'::gamification_system.shop_item_category,
-        'rare',
-        ARRAY['effect', 'jade', 'maya', 'celebration'],
-        120,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'chat_effect',
-            'effect_name', 'jade_sparkle',
-            'duration_seconds', 5,
-            'color', '#00A86B'
-        ),
-        jsonb_build_object(),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-
-    -- =====================================================
-    -- WAVE 2: NEW MAYA-THEMED ITEMS (7 items, 2026-02-20)
+    -- WAVE 2: NEW MAYA-THEMED ITEMS (6 items, 2026-02-20)
     -- =====================================================
 
     -- COSMETICS: Avatar Guerrero Jaguar (Balam)
@@ -468,33 +412,6 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     ),
-    -- COSMETICS: Efecto Obsidiana
-    (
-        '80000006-0016-0000-0000-000000000001'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Efecto Obsidiana',
-        'Añade brillos de obsidiana volcánica a tu perfil. La obsidiana era usada por los mayas para espejos rituales y herramientas.',
-        'sparkles',
-        cat_cosmetics_id,
-        'cosmetics'::gamification_system.shop_item_category,
-        'rare',
-        ARRAY['effect', 'maya', 'obsidian', 'volcanic'],
-        150,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'chat_effect',
-            'effect_name', 'obsidian_shimmer',
-            'particle_color', '#1C1C1C',
-            'reflection_color', '#4A0080'
-        ),
-        jsonb_build_object(
-            'required_level', 3
-        ),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
     -- COSMETICS: Avatar Sacerdotisa Ixchel
     (
         '80000006-0017-0000-0000-000000000001'::uuid,
@@ -576,8 +493,6 @@ BEGIN
         WHERE id = '80000006-0014-0000-0000-000000000001'::uuid;
     UPDATE gamification_system.shop_items SET required_level = 7
         WHERE id = '80000006-0015-0000-0000-000000000001'::uuid;
-    UPDATE gamification_system.shop_items SET required_level = 3
-        WHERE id = '80000006-0016-0000-0000-000000000001'::uuid;
 END $$;
 
 -- =====================================================
@@ -590,7 +505,6 @@ DECLARE
     expanded_count INTEGER;
     cosmetics_count INTEGER;
     profile_count INTEGER;
-    social_count INTEGER;
     consumable_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO total_count FROM gamification_system.shop_items;
@@ -600,8 +514,6 @@ BEGIN
         WHERE id::text LIKE '80000006-%' AND category = 'cosmetics';
     SELECT COUNT(*) INTO profile_count FROM gamification_system.shop_items
         WHERE id::text LIKE '80000006-%' AND category = 'profile';
-    SELECT COUNT(*) INTO social_count FROM gamification_system.shop_items
-        WHERE id::text LIKE '80000006-%' AND category = 'social';
     SELECT COUNT(*) INTO consumable_count FROM gamification_system.shop_items
         WHERE id::text LIKE '80000006-%' AND category = 'consumable';
 
@@ -612,14 +524,13 @@ BEGIN
     RAISE NOTICE 'Items expandidos (maya-themed): %', expanded_count;
     RAISE NOTICE '  - Cosmetics: %', cosmetics_count;
     RAISE NOTICE '  - Profile: %', profile_count;
-    RAISE NOTICE '  - Social: %', social_count;
     RAISE NOTICE '  - Consumable: %', consumable_count;
     RAISE NOTICE '========================================';
 
-    IF expanded_count >= 18 THEN
-        RAISE NOTICE 'Todos los 18 items expandidos fueron creados correctamente';
+    IF expanded_count >= 15 THEN
+        RAISE NOTICE 'Todos los 15 items expandidos fueron creados correctamente';
     ELSE
-        RAISE WARNING 'Se esperaban 18 items expandidos, se crearon %', expanded_count;
+        RAISE WARNING 'Se esperaban 15 items expandidos, se crearon %', expanded_count;
     END IF;
 END $$;
 

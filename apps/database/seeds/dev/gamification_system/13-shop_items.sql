@@ -1,6 +1,6 @@
 -- =====================================================
 -- Seed: gamification_system.shop_items (PROD)
--- Description: Items de la tienda virtual (20+ items variados)
+-- Description: Items de la tienda virtual (16 items variados)
 -- Environment: PRODUCTION
 -- Dependencies: gamification_system.shop_items, shop_categories
 -- Order: 13
@@ -9,13 +9,11 @@
 -- =====================================================
 --
 -- ITEMS INCLUIDOS:
--- - COSMETICS (5 items): Avatares, marcos, fondos
+-- - COSMETICS (9 items): Avatares, marcos, fondos, badges decorativos
 -- - PROFILE (5 items): Títulos, badges exclusivos
--- - GUILD (4 items): Banderas, emblemas de gremio
--- - SOCIAL (4 items): Emojis, stickers, efectos
 -- - CONSUMABLE (2 items): Boosts temporales
 --
--- TOTAL: 20 items
+-- TOTAL: 16 items
 --
 -- IMPORTANTE: Estos items proveen valor y variedad
 -- a la economía de ML Coins del sistema GAMILIT.
@@ -32,18 +30,14 @@ DO $$
 DECLARE
     cat_cosmetics_id uuid;
     cat_profile_id uuid;
-    cat_guild_id uuid;
-    cat_social_id uuid;
     cat_consumable_id uuid;
 BEGIN
     SELECT id INTO cat_cosmetics_id FROM gamification_system.shop_categories WHERE name = 'cosmetics';
     SELECT id INTO cat_profile_id FROM gamification_system.shop_categories WHERE name = 'profile';
-    SELECT id INTO cat_guild_id FROM gamification_system.shop_categories WHERE name = 'guild';
-    SELECT id INTO cat_social_id FROM gamification_system.shop_categories WHERE name = 'social';
     SELECT id INTO cat_consumable_id FROM gamification_system.shop_categories WHERE name = 'consumable';
 
     -- =====================================================
-    -- CATEGORY: COSMETICS (5 items)
+    -- CATEGORY: COSMETICS (9 items)
     -- =====================================================
 
     INSERT INTO gamification_system.shop_items (
@@ -189,6 +183,104 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     ),
+    (
+        '80000003-0001-0000-0000-000000000001'::uuid,
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+        'Marco Bandera Dorada',
+        'Marco decorativo legendario con diseño de bandera dorada. Símbolo de excelencia en tu perfil.',
+        'flag',
+        cat_cosmetics_id,
+        'cosmetics'::gamification_system.shop_item_category,
+        'legendary',
+        ARRAY['cosmeticos', 'decorativo', 'marco', 'gold', 'prestige'],
+        600,
+        true,
+        1,
+        false,
+        jsonb_build_object(
+            'type', 'profile_frame',
+            'border_color', '#FFD700',
+            'asset_url', '/assets/frames/golden-banner.svg',
+            'animated', true
+        ),
+        jsonb_build_object(
+            'featured', true
+        ),
+        gamilit.now_mexico(),
+        gamilit.now_mexico()
+    ),
+    (
+        '80000003-0001-0000-0000-000000000002'::uuid,
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+        'Badge Dragón Lector',
+        'Badge épico de perfil con diseño de dragón rodeado de libros antiguos.',
+        'shield',
+        cat_cosmetics_id,
+        'cosmetics'::gamification_system.shop_item_category,
+        'epic',
+        ARRAY['cosmeticos', 'decorativo', 'badge', 'dragon'],
+        350,
+        true,
+        1,
+        false,
+        jsonb_build_object(
+            'type', 'badge',
+            'asset_url', '/assets/badges/dragon-reader.svg',
+            'animated', false
+        ),
+        jsonb_build_object(),
+        gamilit.now_mexico(),
+        gamilit.now_mexico()
+    ),
+    (
+        '80000003-0001-0000-0000-000000000003'::uuid,
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+        'Badge Escudo del Conocimiento',
+        'Badge de perfil con diseño de escudo que representa la protección del saber.',
+        'shield-check',
+        cat_cosmetics_id,
+        'cosmetics'::gamification_system.shop_item_category,
+        'rare',
+        ARRAY['cosmeticos', 'decorativo', 'badge', 'knowledge'],
+        200,
+        true,
+        1,
+        false,
+        jsonb_build_object(
+            'type', 'badge',
+            'asset_url', '/assets/badges/knowledge-shield.svg',
+            'animated', false
+        ),
+        jsonb_build_object(),
+        gamilit.now_mexico(),
+        gamilit.now_mexico()
+    ),
+    (
+        '80000003-0001-0000-0000-000000000004'::uuid,
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+        'Marco Estandarte Básico',
+        'Marco decorativo inicial para tu perfil. Funcional y elegante.',
+        'flag',
+        cat_cosmetics_id,
+        'cosmetics'::gamification_system.shop_item_category,
+        'common',
+        ARRAY['cosmeticos', 'decorativo', 'marco', 'basic'],
+        100,
+        true,
+        1,
+        false,
+        jsonb_build_object(
+            'type', 'profile_frame',
+            'border_color', '#C0C0C0',
+            'asset_url', '/assets/frames/basic-banner.svg',
+            'animated', false
+        ),
+        jsonb_build_object(
+            'starter_item', true
+        ),
+        gamilit.now_mexico(),
+        gamilit.now_mexico()
+    ),
 
     -- =====================================================
     -- CATEGORY: PROFILE (5 items)
@@ -318,209 +410,6 @@ BEGIN
     ),
 
     -- =====================================================
-    -- CATEGORY: GUILD (4 items)
-    -- =====================================================
-
-    (
-        '80000003-0001-0000-0000-000000000001'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Bandera Dorada de Gremio',
-        'Bandera legendaria que ondea en la sede de tu gremio. Símbolo de excelencia.',
-        'flag',
-        cat_guild_id,
-        'guild'::gamification_system.shop_item_category,
-        'legendary',
-        ARRAY['guild', 'banner', 'gold', 'prestige'],
-        600,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'guild_banner',
-            'asset_url', '/assets/guild/golden-banner.svg',
-            'animated', true
-        ),
-        jsonb_build_object(
-            'featured', true,
-            'guild_level_required', 10
-        ),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000003-0001-0000-0000-000000000002'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Emblema Dragón Lector',
-        'Emblema épico con diseño de dragón rodeado de libros antiguos.',
-        'shield',
-        cat_guild_id,
-        'guild'::gamification_system.shop_item_category,
-        'epic',
-        ARRAY['guild', 'emblem', 'dragon'],
-        350,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'guild_emblem',
-            'asset_url', '/assets/guild/dragon-emblem.svg',
-            'animated', false
-        ),
-        jsonb_build_object(),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000003-0001-0000-0000-000000000003'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Escudo del Conocimiento',
-        'Escudo simbólico que representa la protección del saber.',
-        'shield-check',
-        cat_guild_id,
-        'guild'::gamification_system.shop_item_category,
-        'rare',
-        ARRAY['guild', 'shield', 'knowledge'],
-        200,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'guild_shield',
-            'asset_url', '/assets/guild/knowledge-shield.svg',
-            'animated', false
-        ),
-        jsonb_build_object(),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000003-0001-0000-0000-000000000004'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Estandarte Básico',
-        'Estandarte inicial para tu gremio. Funcional y elegante.',
-        'flag',
-        cat_guild_id,
-        'guild'::gamification_system.shop_item_category,
-        'common',
-        ARRAY['guild', 'banner', 'basic'],
-        100,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'guild_banner',
-            'asset_url', '/assets/guild/basic-banner.svg',
-            'animated', false
-        ),
-        jsonb_build_object(
-            'starter_item', true
-        ),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-
-    -- =====================================================
-    -- CATEGORY: SOCIAL (4 items)
-    -- =====================================================
-
-    (
-        '80000004-0001-0000-0000-000000000001'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Pack Emojis Premium',
-        'Colección de 50 emojis exclusivos temáticos de lectura y aprendizaje.',
-        'smile',
-        cat_social_id,
-        'social'::gamification_system.shop_item_category,
-        'epic',
-        ARRAY['emoji', 'pack', 'premium', 'exclusive'],
-        200,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'emoji_pack',
-            'emoji_count', 50,
-            'emojis', jsonb_build_array('📚', '✨', '🎯', '🏆', '💡', '🔥')
-        ),
-        jsonb_build_object(
-            'featured', true
-        ),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000004-0001-0000-0000-000000000002'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Sticker Celebración',
-        'Sticker animado de celebración para compartir tus logros.',
-        'sticker',
-        cat_social_id,
-        'social'::gamification_system.shop_item_category,
-        'rare',
-        ARRAY['sticker', 'celebration', 'animated'],
-        100,
-        true,
-        null,
-        false,
-        jsonb_build_object(
-            'type', 'sticker',
-            'asset_url', '/assets/stickers/celebration.svg',
-            'animated', true
-        ),
-        jsonb_build_object(),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000004-0001-0000-0000-000000000003'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Efecto Confeti',
-        'Efecto de confeti para celebrar victorias en desafíos.',
-        'sparkles',
-        cat_social_id,
-        'social'::gamification_system.shop_item_category,
-        'rare',
-        ARRAY['effect', 'confetti', 'celebration'],
-        150,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'chat_effect',
-            'effect_name', 'confetti',
-            'duration_seconds', 5
-        ),
-        jsonb_build_object(),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-    (
-        '80000004-0001-0000-0000-000000000004'::uuid,
-        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-        'Pack Emojis Básico',
-        'Colección inicial de 20 emojis básicos para comunicarte.',
-        'smile',
-        cat_social_id,
-        'social'::gamification_system.shop_item_category,
-        'common',
-        ARRAY['emoji', 'pack', 'basic'],
-        50,
-        true,
-        1,
-        false,
-        jsonb_build_object(
-            'type', 'emoji_pack',
-            'emoji_count', 20,
-            'emojis', jsonb_build_array('😊', '👍', '❤️', '🎉', '💪', '🌟')
-        ),
-        jsonb_build_object(
-            'starter_item', true
-        ),
-        gamilit.now_mexico(),
-        gamilit.now_mexico()
-    ),
-
-    -- =====================================================
     -- CATEGORY: CONSUMABLE (2 items)
     -- =====================================================
 
@@ -601,15 +490,11 @@ DECLARE
     items_count INTEGER;
     cosmetics_count INTEGER;
     profile_count INTEGER;
-    guild_count INTEGER;
-    social_count INTEGER;
     consumable_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO items_count FROM gamification_system.shop_items;
     SELECT COUNT(*) INTO cosmetics_count FROM gamification_system.shop_items WHERE category = 'cosmetics';
     SELECT COUNT(*) INTO profile_count FROM gamification_system.shop_items WHERE category = 'profile';
-    SELECT COUNT(*) INTO guild_count FROM gamification_system.shop_items WHERE category = 'guild';
-    SELECT COUNT(*) INTO social_count FROM gamification_system.shop_items WHERE category = 'social';
     SELECT COUNT(*) INTO consumable_count FROM gamification_system.shop_items WHERE category = 'consumable';
 
     RAISE NOTICE '========================================';
@@ -618,15 +503,13 @@ BEGIN
     RAISE NOTICE 'Total items: %', items_count;
     RAISE NOTICE '  - Cosmetics: %', cosmetics_count;
     RAISE NOTICE '  - Profile: %', profile_count;
-    RAISE NOTICE '  - Guild: %', guild_count;
-    RAISE NOTICE '  - Social: %', social_count;
     RAISE NOTICE '  - Consumable: %', consumable_count;
     RAISE NOTICE '========================================';
 
-    IF items_count >= 20 THEN
+    IF items_count >= 16 THEN
         RAISE NOTICE '✓ Todos los items fueron creados correctamente';
     ELSE
-        RAISE WARNING '⚠ Se esperaban al menos 20 items, se crearon %', items_count;
+        RAISE WARNING '⚠ Se esperaban al menos 16 items, se crearon %', items_count;
     END IF;
 END $$;
 

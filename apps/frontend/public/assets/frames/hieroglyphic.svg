@@ -1,49 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-<rect x="2" y="2" width="124" height="124" rx="4" fill="none" stroke="#CD853F" stroke-width="4"/>
-<rect x="10" y="10" width="108" height="108" rx="2" fill="none" stroke="#CD853F" stroke-width="2"/>
-<rect x="20" y="20" width="88" height="88" rx="2" fill="none" stroke="#A0522D" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" preserveAspectRatio="none">
+<rect x="2" y="2" width="124" height="124" rx="4" fill="none" stroke="#CD853F" stroke-width="2"/>
+<rect x="5" y="5" width="118" height="118" rx="2" fill="none" stroke="#CD853F" stroke-width="1"/>
 <g fill="#CD853F" opacity=".85">
-<rect x="16" y="4" width="10" height="5" rx="1"/><rect x="36" y="4" width="10" height="5" rx="1"/>
-<rect x="56" y="4" width="10" height="5" rx="1"/><rect x="76" y="4" width="10" height="5" rx="1"/>
-<rect x="96" y="4" width="10" height="5" rx="1"/>
+<rect x="16" y="2" width="7" height="3" rx="1"/><rect x="36" y="2" width="7" height="3" rx="1"/>
+<rect x="56" y="2" width="7" height="3" rx="1"/><rect x="76" y="2" width="7" height="3" rx="1"/>
+<rect x="96" y="2" width="7" height="3" rx="1"/>
 </g>
 <g fill="#A0522D" opacity=".7">
-<circle cx="21" cy="7" r="1.5"/><path d="M38 5L44 5 41 8Z"/>
-<circle cx="61" cy="7" r="1.5"/><path d="M78 5L84 5 81 8Z"/>
-<circle cx="101" cy="7" r="1.5"/>
+<circle cx="19" cy="4" r="1.5"/><path d="M38 2L44 2 41 5Z"/>
+<circle cx="59" cy="4" r="1.5"/><path d="M78 2L84 2 81 5Z"/>
+<circle cx="99" cy="4" r="1.5"/>
 </g>
 <g fill="#CD853F" opacity=".85">
-<rect x="16" y="119" width="10" height="5" rx="1"/><rect x="36" y="119" width="10" height="5" rx="1"/>
-<rect x="56" y="119" width="10" height="5" rx="1"/><rect x="76" y="119" width="10" height="5" rx="1"/>
-<rect x="96" y="119" width="10" height="5" rx="1"/>
+<rect x="16" y="123" width="7" height="3" rx="1"/><rect x="36" y="123" width="7" height="3" rx="1"/>
+<rect x="56" y="123" width="7" height="3" rx="1"/><rect x="76" y="123" width="7" height="3" rx="1"/>
+<rect x="96" y="123" width="7" height="3" rx="1"/>
 </g>
 <g fill="#A0522D" opacity=".7">
-<circle cx="21" cy="121" r="1.5"/><path d="M38 120L44 120 41 123Z"/>
-<circle cx="61" cy="121" r="1.5"/><path d="M78 120L84 120 81 123Z"/>
-<circle cx="101" cy="121" r="1.5"/>
+<circle cx="19" cy="124" r="1.5"/><path d="M38 123L44 123 41 126Z"/>
+<circle cx="59" cy="124" r="1.5"/><path d="M78 123L84 123 81 126Z"/>
+<circle cx="99" cy="124" r="1.5"/>
 </g>
 <g fill="#CD853F" opacity=".85">
-<rect x="4" y="16" width="5" height="10" rx="1"/><rect x="4" y="36" width="5" height="10" rx="1"/>
-<rect x="4" y="56" width="5" height="10" rx="1"/><rect x="4" y="76" width="5" height="10" rx="1"/>
-<rect x="4" y="96" width="5" height="10" rx="1"/>
+<rect x="2" y="16" width="3" height="7" rx="1"/><rect x="2" y="36" width="3" height="7" rx="1"/>
+<rect x="2" y="56" width="3" height="7" rx="1"/><rect x="2" y="76" width="3" height="7" rx="1"/>
+<rect x="2" y="96" width="3" height="7" rx="1"/>
 </g>
 <g fill="#A0522D" opacity=".7">
-<circle cx="7" cy="21" r="1.5"/><path d="M5 38L5 44 8 41Z"/>
-<circle cx="7" cy="61" r="1.5"/><path d="M5 78L5 84 8 81Z"/>
-<circle cx="7" cy="101" r="1.5"/>
+<circle cx="4" cy="19" r="1.5"/><path d="M2 38L2 44 5 41Z"/>
+<circle cx="4" cy="59" r="1.5"/><path d="M2 78L2 84 5 81Z"/>
+<circle cx="4" cy="99" r="1.5"/>
 </g>
 <g fill="#CD853F" opacity=".85">
-<rect x="119" y="16" width="5" height="10" rx="1"/><rect x="119" y="36" width="5" height="10" rx="1"/>
-<rect x="119" y="56" width="5" height="10" rx="1"/><rect x="119" y="76" width="5" height="10" rx="1"/>
-<rect x="119" y="96" width="5" height="10" rx="1"/>
+<rect x="123" y="16" width="3" height="7" rx="1"/><rect x="123" y="36" width="3" height="7" rx="1"/>
+<rect x="123" y="56" width="3" height="7" rx="1"/><rect x="123" y="76" width="3" height="7" rx="1"/>
+<rect x="123" y="96" width="3" height="7" rx="1"/>
 </g>
 <g fill="#A0522D" opacity=".7">
-<circle cx="122" cy="21" r="1.5"/><path d="M120 38L120 44 123 41Z"/>
-<circle cx="122" cy="61" r="1.5"/><path d="M120 78L120 84 123 81Z"/>
-<circle cx="122" cy="101" r="1.5"/>
+<circle cx="124" cy="19" r="1.5"/><path d="M123 38L123 44 126 41Z"/>
+<circle cx="124" cy="59" r="1.5"/><path d="M123 78L123 84 126 81Z"/>
+<circle cx="124" cy="99" r="1.5"/>
 </g>
-<path d="M4 4L4 12 8 12 8 8 12 8 12 4Z" fill="#CD853F" opacity=".6"/>
-<path d="M124 4L124 12 120 12 120 8 116 8 116 4Z" fill="#CD853F" opacity=".6"/>
-<path d="M4 124L4 116 8 116 8 120 12 120 12 124Z" fill="#CD853F" opacity=".6"/>
-<path d="M124 124L124 116 120 116 120 120 116 120 116 124Z" fill="#CD853F" opacity=".6"/>
+<path d="M2 2L2 6 4 6 4 4 6 4 6 2Z" fill="#CD853F" opacity=".6"/>
+<path d="M126 2L126 6 124 6 124 4 122 4 122 2Z" fill="#CD853F" opacity=".6"/>
+<path d="M2 126L2 122 4 122 4 124 6 124 6 126Z" fill="#CD853F" opacity=".6"/>
+<path d="M126 126L126 122 124 122 124 124 122 124 122 126Z" fill="#CD853F" opacity=".6"/>
 </svg>

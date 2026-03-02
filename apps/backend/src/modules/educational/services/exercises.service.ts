@@ -442,7 +442,7 @@ export class ExercisesService {
    */
   async findByModuleId(moduleId: string): Promise<Exercise[]> {
     const exercises = await this.exerciseRepo.find({
-      where: { module_id: moduleId },
+      where: { module_id: moduleId, is_active: true },
       order: { order_index: 'ASC' },
     });
 

@@ -59,6 +59,8 @@ export const LoginPage = () => {
               )}
             </motion.div>
 
+            {/* Slogan */}
+            <p className="relative text-sm font-medium text-white/80">LEE Y GANA</p>
           </div>
 
           {/* Form Container */}

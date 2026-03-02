@@ -1,9 +1,10 @@
 /**
  * CosmeticAvatar Component
  *
- * Renders a user avatar with equipped cosmetic items (avatar skin, frame).
+ * Renders a user avatar with equipped cosmetic avatar skin.
  * Extracts cosmetic data from a batch equipped-items map and delegates
  * rendering to the existing AvatarDisplay component.
+ * Note: Frames render only in RankProgressWidget, not on avatars.
  *
  * Usage:
  *   <CosmeticAvatar
@@ -54,25 +55,6 @@ function resolveAvatarSrc(
   return cosmeticAvatar || fallbackAvatar || null;
 }
 
-/**
- * Extract the frame border color from equipped cosmetics.
- */
-function resolveFrameColor(
-  userId: string,
-  equippedMap?: EquippedItemsBatchMap | null,
-): string | null {
-  const userEquipped = equippedMap?.[userId];
-  const frameItem =
-    userEquipped?.['frame'] ||
-    userEquipped?.['profile'];
-
-  if (!frameItem) return null;
-
-  // Frame items store border color in data.border_color
-  const borderColor = frameItem.data?.border_color as string | undefined;
-  return borderColor || null;
-}
-
 export const CosmeticAvatar = ({
   userId,
   name,
@@ -82,13 +64,11 @@ export const CosmeticAvatar = ({
   className,
 }: CosmeticAvatarProps) => {
   const avatarSrc = resolveAvatarSrc(userId, fallbackAvatar, equippedMap);
-  const frameColor = resolveFrameColor(userId, equippedMap);
 
   return (
     <AvatarDisplay
       src={avatarSrc}
       name={name}
-      frameColor={frameColor}
       size={size}
       className={className}
     />

@@ -12,8 +12,8 @@
 -- Categorías principales:
 --   - cosmetics: Personalización visual (avatares, marcos, fondos)
 --   - profile: Items de perfil (títulos, badges exclusivos)
---   - guild: Items de gremio (banderas, emblemas)
---   - social: Items sociales (emojis, stickers, efectos)
+--   - guild: [INACTIVO] Items de gremio (banderas, emblemas)
+--   - social: [INACTIVO] Items sociales (emojis, stickers, efectos)
 --   - consumable: Consumibles (boosts temporales, power-ups)
 -- =====================================================================================
 

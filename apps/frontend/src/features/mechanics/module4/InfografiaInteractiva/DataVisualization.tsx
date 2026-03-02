@@ -15,7 +15,7 @@ export const DataVisualization = ({ cards, onCardClick }: { cards: InfoCard[]; o
             key={card.id}
             initial={{ scale: 0 }}
             animate={{ scale: card.revealed ? 1 : 0.5, opacity: card.revealed ? 1 : 0.3 }}
-            style={{ position: 'absolute', left: card.position.x, top: card.position.y }}
+            style={{ position: 'absolute', left: `${card.position.x}%`, top: `${card.position.y}%` }}
             onClick={() => onCardClick(card.id)}
             className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
           >

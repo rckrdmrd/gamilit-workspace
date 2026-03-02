@@ -12,8 +12,8 @@
 -- Tipos de items (category):
 --   - cosmetics: Avatares, marcos, fondos de perfil
 --   - profile: Títulos, badges visuales exclusivos
---   - guild: Banderas, emblemas, items de personalización de gremio
---   - social: Emojis, stickers, efectos de chat
+--   - guild: [INACTIVO] Banderas, emblemas, items de personalización de gremio
+--   - social: [INACTIVO] Emojis, stickers, efectos de chat
 --   - consumable: Boosts temporales, multiplicadores, power-ups
 --
 -- Rareza (rarity): common, rare, epic, legendary

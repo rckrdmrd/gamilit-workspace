@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.5.3"
-fecha: "2026-03-01"  # v12.5.3: Modal responsive remediation — 30+ files fixed (scroll wrappers, responsive grids, touch targets), ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md created. Previous: v12.5.2 card truncation standard
+version: "12.5.6"
+fecha: "2026-03-02"  # v12.5.6: Exercise fixes phase 2 — TikTok timer repositioned to top-center z-10 (was hidden by Menu button), bottom layout refactored from 3 absolute layers to 1 flex-col, DraggableCard+DroppableZone now render Lucide icons via iconMap. Previous: v12.5.5 exercise fixes phase 1
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -442,5 +442,27 @@ hallazgos:
     resolucion: "18 componentes remediados per ESTANDAR-FRONTEND-CARD-TRUNCATION.md (AchievementCard, ExerciseAttemptCard, MissionCard, DetectiveCard, etc. with title={originalText} on truncated elements, 2026-02-28)"
 
 # ===============================================================================
-# FIN FRONTEND INVENTORY v12.0.0
+# CHANGELOG
+# ===============================================================================
+
+changelog:
+  - date: "2026-03-02"
+    version: "v12.5.5"
+    changes:
+      - "fix(quiz-tiktok): TikTokCard timer 20s default, urgency visual <=5s, onTimeout auto-advance"
+      - "fix(quiz-tiktok): button contrast fix (white borders on dark bg), native button elements"
+      - "fix(infografia): InteractiveCard renders Lucide icons from card.icon string"
+      - "fix(infografia): DataVisualization position.x/y uses % CSS units (not px)"
+      - "fix(infografia): section.title fallback in exerciseAdapter + manual eval badge"
+    files_modified: 7
+    build_status: "PASS"
+
+  - date: "2026-03-02"
+    version: "v12.5.4"
+    changes:
+      - "fix(shop): ShopCategory type guild/social removed, ShopNavigation tabs updated, mockData/stores/schemas cleaned"
+    files_modified: 15
+
+# ===============================================================================
+# FIN FRONTEND INVENTORY v12.5.5
 # ===============================================================================

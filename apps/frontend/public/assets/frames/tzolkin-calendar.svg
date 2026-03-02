@@ -1,32 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" preserveAspectRatio="none">
   <!-- Marco Calendario Tzolk'in - Decorative frame -->
   <!-- Outer ring -->
-  <circle cx="100" cy="100" r="96" stroke="#D4AF37" stroke-width="3" fill="none"/>
-  <circle cx="100" cy="100" r="90" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <circle cx="100" cy="100" r="97" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
+  <circle cx="100" cy="100" r="93" stroke="#8B4513" stroke-width="1" fill="none"/>
   <!-- Inner ring (content area boundary) -->
-  <circle cx="100" cy="100" r="70" stroke="#D4AF37" stroke-width="2" fill="none"/>
-  <circle cx="100" cy="100" r="66" stroke="#8B4513" stroke-width="1" fill="none"/>
+  <circle cx="100" cy="100" r="84" stroke="#D4AF37" stroke-width="1" fill="none"/>
+  <circle cx="100" cy="100" r="81" stroke="#8B4513" stroke-width="0.5" fill="none"/>
   <!-- Calendar glyphs around the ring (20 day signs) -->
   <g stroke="#D4AF37" stroke-width="1.5" fill="none">
     <!-- Cardinal direction markers -->
-    <rect x="96" y="6" width="8" height="12" rx="1"/>
-    <rect x="96" y="182" width="8" height="12" rx="1"/>
-    <rect x="6" y="96" width="12" height="8" rx="1"/>
-    <rect x="182" y="96" width="12" height="8" rx="1"/>
+    <rect x="97" y="6" width="6" height="8" rx="1"/>
+    <rect x="97" y="186" width="6" height="8" rx="1"/>
+    <rect x="6" y="97" width="8" height="6" rx="1"/>
+    <rect x="186" y="97" width="8" height="6" rx="1"/>
     <!-- Diagonal markers -->
-    <circle cx="30" cy="30" r="5"/>
-    <circle cx="170" cy="30" r="5"/>
-    <circle cx="30" cy="170" r="5"/>
-    <circle cx="170" cy="170" r="5"/>
+    <circle cx="30" cy="30" r="3"/>
+    <circle cx="170" cy="30" r="3"/>
+    <circle cx="30" cy="170" r="3"/>
+    <circle cx="170" cy="170" r="3"/>
     <!-- Intermediate glyphs -->
-    <rect x="56" y="10" width="6" height="8" rx="1" transform="rotate(22.5 59 14)"/>
-    <rect x="138" y="10" width="6" height="8" rx="1" transform="rotate(-22.5 141 14)"/>
-    <rect x="10" y="56" width="8" height="6" rx="1" transform="rotate(-22.5 14 59)"/>
-    <rect x="182" y="56" width="8" height="6" rx="1" transform="rotate(22.5 186 59)"/>
-    <rect x="56" y="182" width="6" height="8" rx="1" transform="rotate(-22.5 59 186)"/>
-    <rect x="138" y="182" width="6" height="8" rx="1" transform="rotate(22.5 141 186)"/>
-    <rect x="10" y="138" width="8" height="6" rx="1" transform="rotate(22.5 14 141)"/>
-    <rect x="182" y="138" width="8" height="6" rx="1" transform="rotate(-22.5 186 141)"/>
+    <rect x="57" y="10" width="4" height="6" rx="1" transform="rotate(22.5 59 13)"/>
+    <rect x="139" y="10" width="4" height="6" rx="1" transform="rotate(-22.5 141 13)"/>
+    <rect x="10" y="57" width="6" height="4" rx="1" transform="rotate(-22.5 13 59)"/>
+    <rect x="184" y="57" width="6" height="4" rx="1" transform="rotate(22.5 187 59)"/>
+    <rect x="57" y="184" width="4" height="6" rx="1" transform="rotate(-22.5 59 187)"/>
+    <rect x="139" y="184" width="4" height="6" rx="1" transform="rotate(22.5 141 187)"/>
+    <rect x="10" y="139" width="6" height="4" rx="1" transform="rotate(22.5 13 141)"/>
+    <rect x="184" y="139" width="6" height="4" rx="1" transform="rotate(-22.5 187 141)"/>
   </g>
   <!-- Decorative dots between rings -->
   <g fill="#D4AF37" opacity="0.5">

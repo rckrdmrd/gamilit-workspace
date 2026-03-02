@@ -1,7 +1,7 @@
 ---
 title: Flujo de Rendering de Cosméticos Equipados
 status: activo
-last_updated: "2026-03-01"
+last_updated: "2026-03-02"
 ---
 
 # Flujo de Rendering de Cosméticos Equipados
@@ -82,16 +82,29 @@ interface EquippedVisuals {
 | `title` | `text`, `color`, `name` | `display_text`, `color`, `item.name` |
 | `badge` | `assetUrl`, `animated`, `name` | `asset_url`, `animated`, `item.name` |
 
+**Migracion de Categorias Gremios → Cosmeticos (2026-03-02):**
+- Guild items (antiguamente en categoria `guild`) han sido re-categorizados como cosmeticos:
+  - `guild_banner` → `profile_frame` (4 items migratorios)
+  - `guild_emblem`, `guild_shield` → `badge` (tipo de badge cosmético)
+- La categoria `guild` en `shop_categories` ahora tiene `is_active=false`
+- La categoria `social` en `shop_categories` ahora tiene `is_active=false` (7 items removidos: 6 sociales + 1 Efecto Obsidiana)
+- Esto deja **3 categorias activas** en shop_categories: cosmetics, profile, consumable
+- Tipos visuales (metadata.type) en items: **5 tipos visuales**: avatar, profile_frame, profile_background, title, badge
+
 ---
 
 ## 3. Consumidores por Componente
 
+> **Decisión (2026-03-02):** Frames se renderizan SOLO en RankProgressWidget (rank card).
+> NO se aplican a avatares en ProfileHero, GamifiedHeader, CompletionHeader, ni EnhancedStatsGrid.
+
 | Componente | avatar | frame | background | title | badge |
 |------------|--------|-------|------------|-------|-------|
-| `EnhancedProfilePage` → `ProfileHero` | `src` | `borderColor` | `assetUrl` | `text`, `color`, `name` | `assetUrl`, `name` |
+| `EnhancedProfilePage` → `ProfileHero` | `src` | — | `assetUrl` | `text`, `color`, `name` | `assetUrl`, `name` |
 | `RankProgressWidget` | — | `borderColor`, `cssClass`, `assetUrl` | — | — | `assetUrl`, `name` |
-| `EnhancedStatsGrid` | — | `borderColor` | — | — | `assetUrl` |
-| `GamifiedHeader` → `AvatarDisplay` | `src`, `glowColor` | `borderColor`, `cssClass`, `assetUrl` | — | — | — |
+| `EnhancedStatsGrid` | — | — | — | — | `assetUrl` |
+| `GamifiedHeader` → `AvatarDisplay` | `src`, `glowColor` | — | — | — | — |
+| `CompletionModal` → `CompletionHeader` | `src` | — | — | — | — |
 
 ---
 
@@ -118,12 +131,11 @@ Prioridad 4: Default
 
 ### Implementación por Componente
 
+> Post-fix (2026-03-02): Solo RankProgressWidget renderiza frames. SVG usa `inset-0 h-full w-full` con `preserveAspectRatio="none"` para cubrir toda la card. Border CSS transparente cuando overlay activo.
+
 | Componente | P1 (SVG) | P2 (CSS) | P3 (border) | P4 (default) |
 |------------|----------|----------|-------------|--------------|
-| `AvatarDisplay` | `frameSrc` prop | `frameClass` prop | `frameColor` prop | sin borde |
-| `RankProgressWidget` | `<img>` overlay z-20 | `frame.cssClass` en className | `frame.borderColor` inline | `rankInfo.border` |
-| `EnhancedStatsGrid` | — | — | `frame.borderColor` inline | `border-yellow-200` |
-| `ProfileHero` | — | — | `equippedFrameColor` inline | `rgba(255,255,255,0.3)` |
+| `RankProgressWidget` | `<img>` overlay z-20, `inset-0 h-full w-full`, SVGs con `preserveAspectRatio="none"`, border transparent | `frame.cssClass` en className | `frame.borderColor` inline | `rankInfo.border` |
 
 ---
 
@@ -135,6 +147,7 @@ Prioridad 4: Default
 | Badge image falla (onError) | Fallback a `<span>` con nombre del badge |
 | Background image falla (onError) | Oculta overlay, muestra gradient default |
 | Frame SVG falla (onError) | Cae a siguiente prioridad (CSS class → border color → default) |
+| Frame SVG viewBox cuadrado en card no-cuadrada | `preserveAspectRatio="none"` estira SVG para llenar card; círculos se convierten en elipses leves |
 | No hay items equipados | Hook retorna `{ avatar: null, frame: null, ... }`, UI usa defaults |
 
 ---

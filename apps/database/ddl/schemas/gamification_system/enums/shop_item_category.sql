@@ -14,8 +14,8 @@ DO $$ BEGIN
     CREATE TYPE gamification_system.shop_item_category AS ENUM (
         'cosmetics',     -- Cosmeticos visuales (avatares, marcos, fondos)
         'profile',       -- Items de perfil (titulos, badges visuales)
-        'guild',         -- Items de gremio (banderas, emblemas)
-        'social',        -- Items sociales (emojis, stickers)
+        'guild',         -- DEPRECATED: Guild items re-categorized as cosmetics, category inactive
+        'social',        -- DEPRECATED: Social features out of scope, category inactive
         'consumable'     -- Consumibles (boosts temporales, etc.)
     );
 EXCEPTION

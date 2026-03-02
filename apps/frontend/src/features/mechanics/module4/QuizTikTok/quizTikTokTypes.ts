@@ -11,6 +11,7 @@ export interface TikTokQuestion {
 
 export interface QuizTikTokData extends BaseExercise {
   questions: TikTokQuestion[];
+  timeLimit?: number;
 }
 
 export interface ExerciseProgressUpdate {

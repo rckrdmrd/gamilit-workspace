@@ -1,24 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" preserveAspectRatio="none">
   <!-- Marco Piramide Kukulkan - Pyramid-stepped frame -->
   <!-- Outer border -->
-  <rect x="4" y="4" width="192" height="192" rx="8" stroke="#D4AF37" stroke-width="3" fill="none"/>
+  <rect x="4" y="4" width="192" height="192" rx="8" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
   <!-- Stepped pyramid pattern - top -->
-  <path d="M60 4 L60 12 L80 12 L80 20 L90 20 L90 12 L100 12 L100 4" stroke="#8B4513" stroke-width="2" fill="none"/>
-  <path d="M100 4 L100 12 L110 12 L110 20 L120 20 L120 12 L140 12 L140 4" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <path d="M60 4 L60 8 L80 8 L80 12 L90 12 L90 8 L100 8 L100 4" stroke="#8B4513" stroke-width="1" fill="none"/>
+  <path d="M100 4 L100 8 L110 8 L110 12 L120 12 L120 8 L140 8 L140 4" stroke="#8B4513" stroke-width="1" fill="none"/>
   <!-- Stepped pyramid pattern - bottom -->
-  <path d="M60 196 L60 188 L80 188 L80 180 L90 180 L90 188 L100 188 L100 196" stroke="#8B4513" stroke-width="2" fill="none"/>
-  <path d="M100 196 L100 188 L110 188 L110 180 L120 180 L120 188 L140 188 L140 196" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <path d="M60 196 L60 192 L80 192 L80 188 L90 188 L90 192 L100 192 L100 196" stroke="#8B4513" stroke-width="1" fill="none"/>
+  <path d="M100 196 L100 192 L110 192 L110 188 L120 188 L120 192 L140 192 L140 196" stroke="#8B4513" stroke-width="1" fill="none"/>
   <!-- Stepped pyramid pattern - left -->
-  <path d="M4 60 L12 60 L12 80 L20 80 L20 90 L12 90 L12 100 L4 100" stroke="#8B4513" stroke-width="2" fill="none"/>
-  <path d="M4 100 L12 100 L12 110 L20 110 L20 120 L12 120 L12 140 L4 140" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <path d="M4 60 L8 60 L8 80 L12 80 L12 90 L8 90 L8 100 L4 100" stroke="#8B4513" stroke-width="1" fill="none"/>
+  <path d="M4 100 L8 100 L8 110 L12 110 L12 120 L8 120 L8 140 L4 140" stroke="#8B4513" stroke-width="1" fill="none"/>
   <!-- Stepped pyramid pattern - right -->
-  <path d="M196 60 L188 60 L188 80 L180 80 L180 90 L188 90 L188 100 L196 100" stroke="#8B4513" stroke-width="2" fill="none"/>
-  <path d="M196 100 L188 100 L188 110 L180 110 L180 120 L188 120 L188 140 L196 140" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <path d="M196 60 L192 60 L192 80 L188 80 L188 90 L192 90 L192 100 L196 100" stroke="#8B4513" stroke-width="1" fill="none"/>
+  <path d="M196 100 L192 100 L192 110 L188 110 L188 120 L192 120 L192 140 L196 140" stroke="#8B4513" stroke-width="1" fill="none"/>
   <!-- Corner serpent heads (simplified K'uk'ulkan) -->
-  <circle cx="18" cy="18" r="8" stroke="#D4AF37" stroke-width="2" fill="none"/>
-  <circle cx="182" cy="18" r="8" stroke="#D4AF37" stroke-width="2" fill="none"/>
-  <circle cx="18" cy="182" r="8" stroke="#D4AF37" stroke-width="2" fill="none"/>
-  <circle cx="182" cy="182" r="8" stroke="#D4AF37" stroke-width="2" fill="none"/>
-  <!-- Inner content area -->
-  <rect x="30" y="30" width="140" height="140" rx="4" stroke="#D4AF37" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <circle cx="10" cy="10" r="4" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
+  <circle cx="190" cy="10" r="4" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
+  <circle cx="10" cy="190" r="4" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
+  <circle cx="190" cy="190" r="4" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
 </svg>

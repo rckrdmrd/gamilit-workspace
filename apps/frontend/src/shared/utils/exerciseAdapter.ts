@@ -621,11 +621,14 @@ export const adaptToQuizTikTokData = (exercise: ExerciseData): any => {
     backgroundVideo: q.visual,
   }));
 
+  const config = exercise.mechanicData?.config || {};
+
   return {
     ...base,
     description: exercise.description || '',
     hints: exercise.mechanicData?.hints || [],
     questions,
+    timeLimit: config.timeLimit || 20,
   };
 };
 
@@ -661,7 +664,7 @@ export const adaptToInfografiaInteractivaData = (exercise: ExerciseData): any =>
 
     return {
       id: section.id || `card-${index + 1}`,
-      title: section.type || `Sección ${index + 1}`,
+      title: section.title || section.type || `Sección ${index + 1}`,
       content: section.data || '',
       position: {
         x: 20 + (col * 30),  // 20%, 50%, 80%

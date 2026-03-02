@@ -122,13 +122,11 @@ export const CompletionModal = ({
   const { showConfetti, animatedXP, animatedCoins, windowSize } =
     useCompletionAnimations({ isOpen, success, xpGained, mlCoinsGained });
 
-  // Avatar cosmetics
+  // Avatar cosmetics (frame renders only in RankProgressWidget, not on avatars)
   const { equippedItems } = useEquipment();
   const equippedAvatar = equippedItems.find((e) => e.item?.metadata?.type === 'avatar');
-  const equippedFrame = equippedItems.find((e) => e.item?.metadata?.type === 'profile_frame');
   const avatarSrc =
     (equippedAvatar?.item?.metadata?.asset_url as string | undefined) || user?.avatar_url || null;
-  const frameColor = (equippedFrame?.item?.metadata?.border_color as string) || null;
 
   // ─── Reward application ─────────────────────────────
   const applyRewards = async () => {
@@ -208,7 +206,6 @@ export const CompletionModal = ({
         success={success}
         performanceMessage={getPerformanceMessage()}
         avatarSrc={avatarSrc}
-        frameColor={frameColor}
         userName={user ? (user.firstName || user.email || 'U') : null}
       />
 

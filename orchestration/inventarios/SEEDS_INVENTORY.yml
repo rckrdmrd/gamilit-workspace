@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 3.4.0
-  fecha: '2026-02-28'
+  version: 3.5.0
+  fecha: '2026-03-02'  # v3.5.0: Shop categories cleanup — removed guild/social scopes. 12-shop_categories 5→3 active. 13-shop_items 20→16. 16-shop_items_expanded 18→15 (31 total)
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
@@ -841,7 +841,8 @@ seeds_inventory:
             descripcion: Categorías de tienda para estructurar variantes
             tablas:
               - shop_categories
-            registros_estimados: 5
+            registros_estimados: 3  # consumables, cosmetics, boosts (guild/social removed — out of scope)
+            nota: "2026-03-02: Removed guild/social category scopes. Now 3 active categories."
             dependencias: []
             estado: activo
 
@@ -849,7 +850,8 @@ seeds_inventory:
             descripcion: Catálogo de items de tienda (variantes visuales y consumibles)
             tablas:
               - shop_items
-            registros_estimados: 20+
+            registros_estimados: 16  # was 20+ (guild/social items removed)
+            nota: "2026-03-02: Removed guild/social scoped items. 20→16 items."
             dependencias:
               - gamification_system.shop_categories
             estado: activo
@@ -876,7 +878,8 @@ seeds_inventory:
             descripcion: Normalización de metadata visual canónica (`effect_data` -> `metadata`)
             tablas:
               - shop_items (UPDATE)
-            registros_estimados: 20+
+            registros_estimados: 15  # was 20+ (aligned with item reduction)
+            nota: "2026-03-02: Updated to reflect 16 items after guild/social cleanup. 18→15 items."
             dependencias:
               - gamification_system/13-shop_items.sql
             estado: activo
