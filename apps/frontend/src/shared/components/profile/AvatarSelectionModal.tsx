@@ -52,7 +52,7 @@ export const AvatarSelectionModal = ({
                 <h3 id="avatar-selection-title" className="text-lg font-bold">Elige tu Avatar</h3>
                 <button
                     onClick={onClose}
-                    className="rounded-full bg-white/20 p-1 hover:bg-white/30 transition-colors"
+                    className="rounded-full bg-white/20 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/30 transition-colors"
                     aria-label="Cerrar modal"
                 >
                     <X className="h-5 w-5" />
@@ -60,7 +60,7 @@ export const AvatarSelectionModal = ({
             </div>
 
             {/* Body */}
-            <div className="p-6">
+            <div className="p-6 max-h-[calc(100vh-10rem)] overflow-y-auto">
                 <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
                     {AVATAR_OPTIONS.map((avatar, index) => {
                         const isSelected = currentAvatar === avatar;

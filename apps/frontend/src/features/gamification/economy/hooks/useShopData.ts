@@ -122,12 +122,11 @@ export function useShopData(selectedCategory: ShopCategory | 'all'): UseShopData
 
   // Transform items with ownership info
   const shopItems = useMemo(() => {
-    const ownedIds = new Set(
-      purchases.filter((p) => p.status === 'completed').map((p) => p.item_id),
-    );
-    // Build a quantity map for consumable items
+    const ownedIds = new Set<string>();
     const purchaseQuantityMap = new Map<string, number>();
-    for (const p of purchases.filter((p) => p.status === 'completed')) {
+    for (const p of purchases) {
+      if (p.status !== 'completed') continue;
+      ownedIds.add(p.item_id);
       purchaseQuantityMap.set(p.item_id, (purchaseQuantityMap.get(p.item_id) ?? 0) + (p.quantity ?? 1));
     }
     return transformApiItems(rawItems, ownedIds, purchaseQuantityMap);

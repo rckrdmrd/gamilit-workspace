@@ -44,7 +44,7 @@ export function PreviewImpactDialog({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} showCloseButton={false} size="xl" className="bg-transparent shadow-none p-0">
-      <div className="-mx-6 -my-4">
+      <div className="-mx-6 -my-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
@@ -56,7 +56,7 @@ export function PreviewImpactDialog({
             </div>
             <button
               onClick={onClose}
-              className="rounded-lg p-2 transition-colors hover:bg-detective-bg-secondary"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg p-2 transition-colors hover:bg-detective-bg-secondary"
               aria-label="Cerrar diálogo"
             >
               <X className="h-5 w-5 text-detective-text-secondary" />

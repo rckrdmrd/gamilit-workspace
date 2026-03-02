@@ -205,7 +205,7 @@ export const AccountSection = ({ user }: AccountSectionProps) => {
                 <button
                   type="button"
                   onClick={() => setShowCurrentPw(!showCurrentPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-detective-text-secondary"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] flex items-center justify-center text-detective-text-secondary"
                 >
                   {showCurrentPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -233,7 +233,7 @@ export const AccountSection = ({ user }: AccountSectionProps) => {
                 <button
                   type="button"
                   onClick={() => setShowNewPw(!showNewPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-detective-text-secondary"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] flex items-center justify-center text-detective-text-secondary"
                 >
                   {showNewPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -262,7 +262,7 @@ export const AccountSection = ({ user }: AccountSectionProps) => {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPw(!showConfirmPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-detective-text-secondary"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] flex items-center justify-center text-detective-text-secondary"
                 >
                   {showConfirmPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -297,7 +297,7 @@ export const AccountSection = ({ user }: AccountSectionProps) => {
         className="rounded-xl shadow-xl"
         contentClassName="custom"
       >
-        <div className="p-6">
+        <div className="p-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
           <h3 className="mb-4 text-xl font-bold text-detective-text">
             Verificar tu email
           </h3>
@@ -318,14 +318,14 @@ export const AccountSection = ({ user }: AccountSectionProps) => {
                 setVerificationToken('');
                 setVerificationStatus('idle');
               }}
-              className="flex-1 rounded-lg border-2 border-detective-orange/40 px-4 py-2 font-medium text-detective-text transition-colors hover:bg-detective-bg"
+              className="flex-1 rounded-lg border-2 border-detective-orange/40 px-4 py-3 font-medium text-detective-text transition-colors hover:bg-detective-bg"
             >
               Cancelar
             </button>
             <button
               onClick={handleVerifyEmail}
               disabled={verificationStatus === 'verifying'}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-400"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-3 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-400"
             >
               {verificationStatus === 'verifying' ? (
                 <>

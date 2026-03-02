@@ -134,6 +134,7 @@ last_updated: "2026-02-28"
    - economyStore.fetchBalance() (actualiza balance)
    - Toast: "Item comprado exitosamente"
    - Modal cierra
+   - Para items consumibles (Pista de Detective, Vision Lectora, Segunda Oportunidad): la compra también incrementa el inventario de comodines disponibles en ejercicios
 ```
 
 ---
@@ -228,7 +229,32 @@ if (lastActivity === today) {
 }
 ```
 
-### 9.4 Achievements: Triggers y Lógica
+### 9.4 ConsumablesPanel (Comodines en Ejercicios)
+
+**Ruta:** `apps/frontend/src/features/exercises/components/ConsumablesPanel.tsx`
+
+Panel lateral que muestra el inventario real de comodines del estudiante durante un ejercicio. Permite usar comodines directamente.
+
+**Comodines disponibles:**
+
+| Tipo | Label | Efecto |
+|------|-------|--------|
+| `pistas` | Pistas | Revela una pista para ayudar |
+| `vision_lectora` | Visión Lectora | Resalta palabras clave del texto |
+| `segunda_oportunidad` | Segunda Oportunidad | Permite corregir respuesta incorrecta |
+
+**Estados del panel:**
+
+- **Loading:** Spinner mientras carga inventario
+- **Sin inventario:** Panel oculto (null)
+- **Con inventario:** Muestra cada comodin con cantidad disponible (`x{N}`), usos (`{used}/{max}`), costo en ML Coins, y botón "Usar"
+- **Activo:** Borde verde + badge "Activo" cuando un comodin está en uso
+
+**Props/Context:** Usa `useExerciseContext()` → `comodines` que provee `inventory`, `canUse()`, `useComodin()`, `usageLimits`, `isLoading`, `error`.
+
+**Integración:** El inventario se sincroniza desde las compras en la tienda vía `incrementFromShopPurchase()` bridge en `comodines.service.ts`.
+
+### 9.5 Achievements: Triggers y Lógica
 
 **Ejemplos de Achievements:**
 

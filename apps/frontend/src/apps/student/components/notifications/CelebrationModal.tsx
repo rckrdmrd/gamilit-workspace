@@ -149,7 +149,7 @@ export function CelebrationModal({
 
           <div className="relative text-center">
             <motion.div
-              className="text-7xl mb-4"
+              className="text-5xl sm:text-7xl mb-4"
               animate={{
                 scale: [1, 1.2, 1],
                 rotate: [0, 10, -10, 0],
@@ -171,7 +171,7 @@ export function CelebrationModal({
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-6 overflow-y-auto">
+        <div className="flex-1 p-6 overflow-y-auto max-h-[calc(100vh-16rem)]">
           {rewards.length > 0 && (
             <div className="mb-6">
               <h3 className="text-lg font-bold text-detective-text mb-4 text-center">

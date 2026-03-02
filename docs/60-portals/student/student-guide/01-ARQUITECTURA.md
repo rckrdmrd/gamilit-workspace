@@ -1,7 +1,7 @@
 ---
 title: Portal Student - Arquitectura
 status: activo
-last_updated: "2026-02-28"
+last_updated: "2026-03-01"
 ---
 
 # Portal Student - Arquitectura
@@ -74,7 +74,8 @@ student/
 │   ├── dashboard/                      # Componentes del dashboard
 │   │   ├── BottomNavigation.tsx        # ⭐ Navegación móvil (6 tabs)
 │   │   ├── EnhancedStatsGrid.tsx       # Estadísticas detective
-│   │   ├── RankProgressWidget.tsx      # Widget de rango Maya + cosméticos equipados (frame, badge)
+│   │   ├── RankProgressWidget.tsx      # Widget de rango Maya + cosméticos equipados (frame, badge) [useEquippedVisuals]
+│   │   ├── EnhancedStatsGrid.tsx       # Estadísticas detective + cosméticos (frame, badge) [useEquippedVisuals]
 │   │   ├── MLCoinsWidget.tsx           # Balance de ML Coins
 │   │   ├── MissionsPanel.tsx           # Misiones activas
 │   │   ├── ModulesSection.tsx          # Grid de módulos
@@ -102,7 +103,7 @@ student/
 │   │   ├── ExerciseCard.tsx            # Card de ejercicio
 │   │   └── ModuleMetaSections.tsx      # Secciones de metadata
 │   ├── profile/                        # Perfil (Phase 2)
-│   │   ├── ProfileHero.tsx             # Hero section perfil
+│   │   ├── ProfileHero.tsx             # Hero section perfil + avatar/frame/background/title/badge cosméticos
 │   │   ├── ProfileStatsTab.tsx         # Tab de estadísticas
 │   │   ├── ProfileAchievementsTab.tsx  # Tab de logros
 │   │   └── ProfileActivityTab.tsx      # Tab de actividad
@@ -256,6 +257,69 @@ apps/backend/src/modules/
 │       │             └──► Social Module                           │
 └──────────────────────────────────────────────────────────────────┘
 ```
+
+### 2.3 Pipeline de Cosméticos Equipados
+
+Los items cosméticos de la tienda se renderizan en 4 componentes del portal estudiante via el hook centralizado `useEquippedVisuals()`.
+
+**Flujo de datos:**
+
+```
+DB (shop_items.metadata + effect_data)
+  → mergeVisualConfig() [backend runtime utility]
+    → GET /gamification/inventory/equipped [API response]
+      → useEquipment() [React Query, 5min stale]
+        → useEquippedVisuals() [useMemo extraction]
+          → 4 consumer components
+```
+
+**5 categorías visuales:**
+
+| Categoría | Tipo metadata | Props extraídas | Consumidores |
+|-----------|--------------|-----------------|--------------|
+| Avatar | `avatar` | `src`, `glowColor` | EnhancedProfilePage → ProfileHero, GamifiedHeader → AvatarDisplay |
+| Frame | `profile_frame` | `borderColor`, `cssClass`, `assetUrl` | Todos (4 componentes) |
+| Background | `profile_background` | `assetUrl` | EnhancedProfilePage → ProfileHero |
+| Title | `title` | `text`, `color`, `name` | EnhancedProfilePage → ProfileHero |
+| Badge | `badge` | `assetUrl`, `name` | EnhancedProfilePage → ProfileHero, RankProgressWidget, EnhancedStatsGrid |
+
+**Prioridad de renderizado de frame (patron AvatarDisplay):**
+
+1. SVG overlay (`frame.assetUrl`) → `<img>` overlay absoluto posicionado
+2. CSS class (`frame.cssClass`) → clase Tailwind en container
+3. Border color (`frame.borderColor`) → inline style border
+4. Default → clase border por defecto del componente
+
+> **Ref:** `docs/20-architecture/gamificacion/DISENO-SISTEMA-EQUIPAMIENTO.md` para arquitectura backend completa.
+
+### 2.4 Subsistema Comodines (Consumibles)
+
+Arquitectura del sistema de comodines para uso en ejercicios:
+
+```
+Frontend                                    Backend
+┌──────────────────────────┐               ┌──────────────────────────────┐
+│ ConsumablesPanel.tsx      │── POST /use ─>│ ComodinesController          │
+│ (exercises/components/)   │               │   └─> ComodinesService       │
+│                           │<─ inventory ──│       - getCatalog()         │
+│ ShopItemCard.tsx          │               │       - purchase()           │
+│ (student/components/shop/)│── POST /shop  │       - use()                │
+│                           │   /purchase ─>│       - incrementFromShop    │
+│ useExerciseComodines      │               │         Purchase() [bridge]  │
+│ (exercises/hooks/)        │               │                              │
+└──────────────────────────┘               │  DB:                          │
+                                            │  ┌─ comodines_inventory ────┐│
+                                            │  │  (wide table, 1 row/user)││
+                                            │  └─────────────────────────┘│
+                                            │  ┌─ inventory_transactions ─┐│
+                                            │  │  (audit, item_id VARCHAR)││
+                                            │  └─────────────────────────┘│
+                                            └──────────────────────────────┘
+```
+
+**Rutas de compra duales:**
+1. **Directa:** `POST /gamification/comodines/purchase` → `ComodinesService.purchase()` (deduce ML Coins + incrementa inventario)
+2. **Via Tienda:** `POST /gamification/shop/purchase` → `ShopService` → `ComodinesService.incrementFromShopPurchase()` (bridge non-blocking, solo incrementa inventario — ML Coins ya deducidos por shop)
 
 ---
 

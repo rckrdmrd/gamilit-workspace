@@ -129,7 +129,7 @@ export function SuspendStudentModal({
             <label className="block text-sm font-medium text-detective-text">
               Tipo de Suspension
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setBlockType(BlockType.FULL)}

@@ -1,13 +1,135 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-28
-**Version:** v5.7 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
+**Ultima Actualizacion:** 2026-03-01
+**Version:** v5.8 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
 **Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~99/100
 **Sprint Actual:** Sprint 2 COMPLETADO — Doc Health + Code-Doc Alignment + Doc Remediation COMPLETADAS — Sprint 3 funcional pendiente
 
 ---
 
 ## Estado Actual
+
+### [2026-03-01] Documentation Remediation: Comodines/Consumables System ✅
+
+**Auditoria comprehensiva (3 agentes Explore) revelo 23 gaps de documentacion. Remediados los 4 criticos + 2 high-priority. 6 archivos doc actualizados.**
+
+**Gaps corregidos (6):**
+1. **ET-GAM-002-comodines.md** — Seccion "Database Implementation" (lineas 174-635) documentaba diseno original (tablas normalizadas, funciones SQL) que nunca se implemento. Agregados avisos prominentes marcando diseno vs implementacion real (wide table + TypeORM). Version 2.4.0→2.5.0.
+2. **03-GAMIFICATION.md** — Response schema de POST /purchase era incorrecto (formato simplificado → InventoryResponseDto completo). GET /comodines catalogo no tenia response schema. Ambos corregidos.
+3. **hooks-spec/04-GAMIFICATION.md** — useExerciseComodines no estaba documentado en specs formales. Agregada seccion completa (parametros, retorno, endpoints, consumidores, notas).
+4. **01-ARQUITECTURA.md** — No existia diagrama de arquitectura del subsistema comodines. Agregado con diagrama ASCII + dual purchase paths.
+5. **SPEC-GAMIFICATION.md** — Detalle insuficiente sobre modelo de datos y bridge. Expandida seccion 5.6 con wide table, funciones SQL no invocadas, bridge, error handling gap.
+6. **ET-GAM-002** — Seccion "Backend Implementation" referenciaba pseudocodigo de diseno. Agregada nota apuntando a implementacion real.
+
+**Hallazgos ya resueltos (no requirieron accion):**
+- ESTANDAR-METADATA-ITEMS.md seccion 6.3 (consumable effect_data) — ya existia
+- ConsumablesPanel JSDoc — ya existia
+- FLUJO-EJERCICIO-COMPLETO.md — ya usaba terminologia correcta
+- FLUJO-TIENDA-COMPRA.md — mapping effect_type ya documentado
+
+**Validacion:** Build/Lint/Typecheck 0 errores (backend + frontend)
+
+---
+
+### [2026-03-01] Fix Comodines Use 500 Error (item_id UUID→VARCHAR) ✅
+
+**Problema resuelto:**
+- Error `QueryFailedError: invalid input syntax for type uuid: "comodin_pistas"` al usar comodines en ejercicios
+- Causa: DDL y entidad definían `item_id` como UUID, pero el código escribe strings semánticos (ej. `"comodin_pistas"`, `"comodin_vision_lectora"`)
+
+**Solución implementada:**
+- DDL `12-inventory_transactions.sql`: Cambio `item_id UUID` → `item_id VARCHAR(100)` (compatible con strings semánticos)
+- Entity `inventory-transaction.entity.ts`: Cambio correspondiente `item_id: string` en clase
+- Validacion: Ambos cambios mantienen coherencia DDL↔Entity↔Backend
+
+**Archivos modificados:** 2
+- `apps/database/ddl/12-inventory_transactions.sql`
+- `apps/backend/src/modules/gamification/entities/inventory-transaction.entity.ts`
+
+**Validación:** Build 0 errors, Lint 0 errors, Tests 308 passed (gamification module)
+
+---
+
+### [2026-03-01] Fix Bridge Shop→Comodines (Inventory Sync) ✅
+
+**Documentacion actualizada para fix de bridge shop→comodines. 3 archivos de doc actualizados.**
+
+**Problema resuelto:**
+- `incrementFromShopPurchase()` usaba transaccion anidada con entidad detached — save fallaba silenciosamente
+- Compras de consumibles no sincronizaban correctamente a `comodines_inventory`
+
+**Fix implementado:**
+- Reemplazo transaccion anidada por `inventoryRepo.save()` directo (misma EntityManager que cargo la entidad)
+- Logging `[BRIDGE]` detallado para diagnostico en logs del servidor
+- Error logging en `shop.service.ts` actualizado de `warn` a `error` con stack traces
+
+**Archivos modificados:**
+1. `apps/backend/src/modules/gamification/services/comodines.service.ts` — `incrementFromShopPurchase()` fix
+2. `apps/backend/src/modules/gamification/services/shop.service.ts` — error logging enhancement
+
+**Documentacion actualizada (3 archivos):**
+1. `docs/60-portals/student/specs/SPEC-GAMIFICATION.md` — Bridge shop→comodines + mecanismo directo
+2. `docs/40-api/api-reference/03-GAMIFICATION.md` — Nota de sincronizacion automatica con `[BRIDGE-ERROR]` logging
+3. `orchestration/PROXIMA-ACCION.md` — Entrada de status completada
+
+**Validacion:** Build 0 errors, Lint 0 errors, Tests 308 passed (gamification module)
+
+---
+
+### [2026-03-01] Fix Consumable Re-purchase 500 Error (Unique Constraint Fix) ✅
+
+**Documentacion completada para fix de re-compra de consumibles. 4 archivos de doc actualizados.**
+
+**Problema resuelto:**
+- Compra de consumibles provocaba error 500 por violacion de constraint UNIQUE(user_id, item_id) WHERE status='completed' AND is_active=true
+- Frontend tenia error handling deficiente (sin mensajes amigables al usuario)
+- Comodines bridge estaba bloqueado por fallos en tienda (problema secundario)
+
+**Solucion implementada:**
+- Backend (shop.service.ts): Desactiva compra anterior antes de crear nueva (`is_active=false, consumed_at=NOW()`)
+- Error class: ConsumablePurchaseConflictError (409) como safety net para race conditions
+- Frontend: Error handling mejorado con mensajes en español
+
+**Documentacion actualizada (4 archivos):**
+1. `docs/40-api/api-reference/03-GAMIFICATION.md` — Response code 409 + nota re-compra consumibles
+2. `docs/60-portals/student/specs/SPEC-GAMIFICATION.md` — Comportamiento consumibles + concurrencia
+3. `docs/30-ux-ui/flujos/student/FLUJO-TIENDA-COMPRA.md` — Nueva seccion "Re-compra de Consumibles" + error 409
+4. `orchestration/PROXIMA-ACCION.md` — Entrada de status completada
+
+**Metricas:** 0 errores de build/lint, comodines bridge ahora funcional
+
+### [2026-03-01] Modal Responsive Remediation: Pantallas Pequeñas ✅
+
+**Remediacion responsive de modales para pantallas pequeñas completada. 30+ archivos de modal/dialog corregidos. ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md creado. Build/Lint/Typecheck: 0 errores.**
+
+**Cambios aplicados:**
+1. Scroll wrappers (max-h + overflow-y-auto) agregados a modales usando contentClassName="custom"
+2. Grids responsivos: grid-cols-3/4 → grid-cols-1 sm:grid-cols-3/4 en modales
+3. Touch targets: min-w-[44px] min-h-[44px] agregados a close/nav buttons
+4. CSS utilities: .modal-scroll-mobile, .modal-grid-responsive-{2,3,4} agregados a detective-theme.css
+
+**Archivos modificados:** 30+ modal/dialog files across student, teacher, admin portales
+**Standard creado:** ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md
+**Inventarios actualizados:** MASTER_INVENTORY v14.8.4→v14.8.5, FRONTEND_INVENTORY v12.5.2→v12.5.3
+
+### [2026-03-01] Fix Consumables System: Tienda + Comodines + Pistas ✅
+
+**3 fases paralelas (2 Sonnet + 1 Haiku) + auditoría post-fix (2 Sonnet + 1 Haiku). 7 archivos codigo + 1 error class + 9 archivos docs. Build/Lint/Typecheck: 0 errores.**
+
+**Problemas resueltos:**
+1. **Tienda "Adquirido" para consumibles:** Consumibles (Pista de Detective, Vision Lectora, Segunda Oportunidad, Boost XP, Boost Coins) mostraban "Adquirido" tras primera compra. Ahora siempre muestran "Comprar" con badge "Tienes: N" (con aria-label accesible).
+2. **Puente Shop→Comodines:** Compras de consumibles en la tienda no acreditaban al inventario de comodines. Nuevo metodo `incrementFromShopPurchase()` en ComodinesService + sync post-compra en ShopService (non-blocking). Ambos saves atómicos en transaction.
+3. **Pistas Comodin→HintSystem:** Click "Usar" en pistas del ConsumablesPanel no revelaba hints en el HintSystem. Nuevo prop `externalRevealCount` en HintSystem + wiring en ActionsPanel.
+
+**Auditoría de calidad post-fix (3 subagentes paralelos):**
+- **Estándares:** 1 FAIL resuelto (BadRequestException→InvalidComodinTypeError, ADR-045), 5 WARNINGs resueltos (enum typing, quantity validation, transaction atomicity, error logging, a11y)
+- **Documentación:** 9 archivos docs actualizados (ET-GAM-002, FLUJO-TIENDA-COMPRA, FL-SYS-03, PORTAL-STUDENT-API-REF, 03-GAMIFICATION, 04-FEATURES, SPEC-GAMIFICATION, FLUJO-EJERCICIO-COMPLETO, ESTANDAR-METADATA-ITEMS)
+- **Coherencia:** DDL↔Entity↔Backend↔Frontend 100% alineados, inventarios sin cambios de métricas
+
+**Archivos backend (3):** comodines.service.ts (+incrementFromShopPurchase con transaction atómica), shop.service.ts (+ComodinesService DI, Record<string,ComodinTypeEnum>, sync post-compra), gamification.errors.ts (+InvalidComodinTypeError)
+**Archivos frontend (5):** useShopData.ts (isOwned fix, ownedQuantity, loop optimizado), economyTypes.ts (+ownedQuantity), ShopItemCard.tsx (badge "Tienes: N" + aria-label), HintSystem.tsx (+externalRevealCount), ActionsPanel.tsx (+comodinesContext wiring)
+**Docs (9):** ET-GAM-002, FLUJO-TIENDA-COMPRA, FL-SYS-03, PORTAL-STUDENT-API-REF, 03-GAMIFICATION, 04-FEATURES, SPEC-GAMIFICATION, FLUJO-EJERCICIO-COMPLETO, ESTANDAR-METADATA-ITEMS
+**Validacion final:** Backend build/lint OK, Frontend build/lint/type-check OK. Tests gamification: 308 passed (4 fallos pre-existentes: socialDataSource DI, no regresion).
 
 ### [2026-03-01] TASK-DB125-TEACHER-FIX: Fix DB-125 Convention in Teacher Services ✅
 - **Archivos:** `exercise-responses.service.ts`, `teacher-classrooms-crud.service.ts`

@@ -53,7 +53,22 @@ export function useShopPurchase(): UseShopPurchaseReturn {
       toast.success(response.message, { duration: 4000 });
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Purchase failed. Please try again.');
+      const axiosErr = error as unknown as { response?: { data?: { error?: { message?: string; code?: string } } } };
+      const code = axiosErr.response?.data?.error?.code;
+
+      if (code === 'INSUFFICIENT_COINS') {
+        toast.error('No tienes suficientes ML Coins para esta compra.');
+      } else if (code === 'ITEM_NOT_AVAILABLE') {
+        toast.error('Este item no esta disponible actualmente.');
+      } else if (code === 'INSUFFICIENT_STOCK') {
+        toast.error('Item agotado.');
+      } else if (code === 'MAX_PURCHASES_REACHED') {
+        toast.error('Has alcanzado el limite de compras para este item.');
+      } else if (code === 'CONSUMABLE_PURCHASE_CONFLICT') {
+        toast.error('Error procesando la compra. Intenta de nuevo.');
+      } else {
+        toast.error(axiosErr.response?.data?.error?.message || 'Error al realizar la compra.');
+      }
     },
   });
 

@@ -140,6 +140,7 @@ La cadena se activa tras eventos como completar ejercicio, login diario, compra 
 - Valida balance suficiente (`ml_coins >= amount`)
 - Registra transaccion negativa
 - Si balance insuficiente: `BadRequestException` con balance actual
+- Post-transacción: Si `item.is_consumable && effect_data.type ∈ {hint, highlight, retry}`: `ComodinesService.incrementFromShopPurchase()` sincroniza al inventario de comodines (non-blocking, `source: 'shop_bridge'`)
 
 ### Cron Auto-Reconciliacion
 - Cada 5 minutos: busca submissions calificadas con `rewards_claimed=false`

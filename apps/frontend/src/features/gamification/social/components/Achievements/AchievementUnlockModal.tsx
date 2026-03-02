@@ -133,7 +133,7 @@ export const AchievementUnlockModal = ({
         }}
       />
 
-      <div className="p-4 sm:p-6 md:p-8">
+      <div className="max-h-[calc(100vh-8rem)] overflow-y-auto p-4 sm:p-6 md:p-8">
         {/* Celebration Header */}
         <div className="mb-6 text-center">
           <motion.div
@@ -142,7 +142,7 @@ export const AchievementUnlockModal = ({
             transition={{ duration: 0.5, times: [0, 0.5, 1] }}
             className="mb-4 inline-block rounded-full bg-gradient-to-br from-detective-gold to-detective-orange p-6"
           >
-            <IconComponent className="h-16 w-16 text-white" />
+            <IconComponent className="h-12 w-12 sm:h-16 sm:w-16 text-white" />
           </motion.div>
 
           <motion.h2

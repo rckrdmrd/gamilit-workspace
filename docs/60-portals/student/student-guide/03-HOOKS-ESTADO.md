@@ -1,7 +1,7 @@
 ---
 title: Portal Student - Hooks, APIs y Estado
 status: activo
-last_updated: "2026-02-28"
+last_updated: "2026-03-01"
 ---
 
 # Portal Student - Hooks, APIs y Estado
@@ -156,10 +156,13 @@ POST /api/v1/gamification/comodines/use
 }
 ```
 
-**Usado en:**
-- `RankProgressWidget.tsx` — muestra frame border y badge en el dashboard
-- `ProfileHero.tsx` — muestra todos los cosméticos en la página de perfil
-- `GamifiedHeader.tsx` — muestra avatar y frame en el header
+**Usado en (6 archivos):**
+- `EnhancedProfilePage.tsx` — extrae avatar, frame, background, title, badge → pasa a ProfileHero
+- `RankProgressWidget.tsx` — frame (priority: SVG overlay > CSS class > border color) y badge en el dashboard
+- `EnhancedStatsGrid.tsx` — frame border y badge en el rank position badge del dashboard
+- `GamifiedHeader.tsx` — avatar y frame → pasa a AvatarDisplay en el header
+- `useEquipment.ts` — re-export del hook para conveniencia de importación
+- `useEquippedVisuals.ts` — definición del hook (extractVisuals)
 
 ### 5.7 useExerciseComodines
 
@@ -170,28 +173,36 @@ POST /api/v1/gamification/comodines/use
 **API:**
 
 ```typescript
-GET /gamification/comodines/inventory/:userId  // Inventario
-POST /gamification/comodines/use               // Activar comodín
+GET /gamification/comodines/users/:userId/inventory  // Inventario
+POST /gamification/comodines/use                     // Activar comodín
 ```
 
 **Return value:**
 
 ```typescript
 {
-  inventory: ComodinItem[],           // Items disponibles
-  comodinesContext: {                  // Estado de efectos activos
+  inventory: ComodinInventory | null,              // Inventario del usuario desde backend
+  comodinesContext: {                               // Estado de efectos activos
     hintsRevealed: number,
     visionActive: boolean,
     hasSecondChance: boolean,
     timeExtension: number,
     multiplierActive: boolean,
   },
-  useComodin: (type: string) => void, // Activar comodín
-  getUsedComodinTypes: () => string[], // Tipos usados (para payload submit)
-  loading: boolean,
-  error: string | null,
+  canUse: (type: ComodinType) => boolean,          // Verifica si comodín disponible + no excede límite por ejercicio
+  useComodin: (type: ComodinType) => Promise<void>, // Activar comodín (decrementa inventario local, registra uso)
+  getUsedComodinTypes: () => string[],              // Tipos usados (para payload submit)
+  usageLimits: Record<ComodinType, { used: number; max: number }>, // Per-exercise tracking (max 1 por tipo)
+  loading: boolean,                                 // Inventario siendo fetched
+  error: string | null,                             // Mensaje de error si uso falló
 }
 ```
+
+**Métodos principales:**
+
+- **`canUse(type: ComodinType): boolean`** — Verifica disponibilidad: tiene stock disponible AND no excede límite de uso por ejercicio (máximo 1 de cada tipo)
+- **`useComodin(type: ComodinType): Promise<void>`** — Activa comodín en ejercicio actual, decrementa inventario local, registra uso en `usageLimits`, lanza error si no disponible
+- **`getUsedComodinTypes(): string[]`** — Retorna tipos de comodines usados (para incluir en payload de submit)
 
 **Efectos:**
 - `hintsRevealed > 0` → ExerciseGuide auto-expande

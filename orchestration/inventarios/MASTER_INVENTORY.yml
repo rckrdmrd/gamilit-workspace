@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.8.4"
-fecha: "2026-02-28"  # v14.8.4: comprension_auditiva marked BACKLOG (mecanicas 30→29, ejercicios_con_recursos 2→1). Previous: v14.8.3 GAP-P3-001 vision lectora
+version: "14.8.5"
+fecha: "2026-03-01"  # v14.8.5: +1 standard (ESTANDAR-FRONTEND-MODAL-RESPONSIVE), modal responsive remediation (30+ files fixed, scroll wrappers, responsive grids, touch targets). Previous: v14.8.4 comprension_auditiva BACKLOG
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -75,8 +75,8 @@ metricas:
     tests_frontend: 236               # +23 CompletionModal accessibility tests, +51 USE_PROXY tests (api.config.test.ts)
 
   docs:
-    health_score: 99                 # 99/100 (post-remediation 2026-02-28: 10 splits, portal standardization, TASK flatten, wave-3 archive, card truncation). Era 98 post-audit, 85 pre-remediacion, 65 pre-auditoria
-    standards_md_files: 36           # 36 .md en docs/40-standards/ (incl. ESTANDAR-SEGURIDAD-API, -WEB, ESTANDAR-TESTING-UNIT/INTEGRATION/E2E/ARCHITECTURE post-split, ESTANDAR-FRONTEND-CARD-TRUNCATION)
+    health_score: 99                 # 99/100 (post-remediation 2026-03-01: modal responsive standard, 10 splits, portal standardization, TASK flatten, wave-3 archive, card truncation). Era 98 post-audit, 85 pre-remediacion, 65 pre-auditoria
+    standards_md_files: 37           # 37 .md en docs/40-standards/ (incl. ESTANDAR-SEGURIDAD-API, -WEB, ESTANDAR-TESTING-UNIT/INTEGRATION/E2E/ARCHITECTURE post-split, ESTANDAR-FRONTEND-CARD-TRUNCATION, ESTANDAR-FRONTEND-MODAL-RESPONSIVE)
     standards_prev: 17               # 17 archivos pre-split (ESTANDAR-SEGURIDAD + ESTANDAR-TESTING eran monolitos)
     api_coverage_endpoints: 648      # ~648/914 = ~71% (prev 631/912 ~69%, prev 513/912 ~56%). +17 nuevos: Profile(3)+BonusCoins(1)+ResourceSharing(13). Parents API already complete (18/18).
     api_coverage_conditional: 58     # 58 endpoints condicionales (ETL/ML/Visualization, ENABLE_DATA_WAREHOUSE=true)
@@ -161,7 +161,7 @@ gamificacion:
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v9.2.0)"
   backend: "BACKEND_INVENTORY.yml (v5.3.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v12.5.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v12.5.3)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES
@@ -169,6 +169,7 @@ inventarios_detallados:
 
 features:
   completados:
+    - "ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md: nuevo estándar de responsive modals para pantallas pequeñas (30+ modales remediados con scroll wrappers, grids responsivos, touch targets)"
     - "ESTANDAR-FRONTEND-CARD-TRUNCATION.md: nuevo estándar de truncación en cards (18 componentes remediados)"
     - "23 modulos backend operativos"
     - "5 modulos educativos (23 tipos ejercicios)"

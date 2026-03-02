@@ -127,6 +127,7 @@ Reemplaza el mock data de `PowerUpBar` con inventario real.
 - `visionActive` → Clase CSS `vision-lectora-active` resalta texto con underline amber
 - `hasSecondChance` → Banner visual + mecánicas M1-M2 permiten reintento si score < 70
 - `handleSubmit` incluye `getUsedComodinTypes()` en el payload `powerupsUsed[]`
+- `comodinesContext.hintsRevealed` se pasa como `externalRevealCount` al `HintSystem` en `ActionsPanel`, revelando hints programáticamente al usar el comodín "Pistas"
 
 ### Detección de Logros Post-Submission
 

@@ -124,7 +124,7 @@ export function CompletionScoreDisplay({ score, maxScore, success }: ScoreDispla
       className="text-center"
     >
       <div className="relative inline-block">
-        <svg className="h-40 w-40 -rotate-90 transform">
+        <svg className="h-32 w-32 sm:h-40 sm:w-40 -rotate-90 transform" viewBox="0 0 160 160">
           <circle
             cx="80" cy="80" r="70"
             stroke="currentColor" strokeWidth="10" fill="none"
@@ -233,7 +233,7 @@ export function RankUpNotification({ rankUp }: RankUpProps) {
       className="rounded-detective bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white"
     >
       <div className="text-center">
-        <Crown className="mx-auto mb-3 h-16 w-16" />
+        <Crown className="mx-auto mb-3 h-12 w-12 sm:h-16 sm:w-16" />
         <h3 className="mb-2 text-2xl font-bold">¡Rango Mejorado!</h3>
         <p className="mb-3 text-lg">
           {rankUp.previousRank && <span className="opacity-75">{rankUp.previousRank} → </span>}
@@ -269,7 +269,7 @@ export function StreakMilestone({ streakInfo }: StreakMilestoneProps) {
       className="rounded-detective bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white"
     >
       <div className="text-center">
-        <Flame className="mx-auto mb-3 h-16 w-16" />
+        <Flame className="mx-auto mb-3 h-12 w-12 sm:h-16 sm:w-16" />
         <h3 className="mb-2 text-2xl font-bold">¡Racha Alcanzada!</h3>
         <p className="mb-2 text-3xl font-bold">{streakInfo.currentStreak} días</p>
         <p className="mb-3 text-lg">¡Sigue así!</p>

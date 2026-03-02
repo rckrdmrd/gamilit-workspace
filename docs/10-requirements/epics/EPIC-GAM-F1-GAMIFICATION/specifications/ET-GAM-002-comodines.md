@@ -2,7 +2,7 @@
 titulo: "ET-GAM-002: Implementación del Sistema de Comodines"
 tipo: especificacion-tecnica
 fecha_creacion: "2025-10-01"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-01"
 estado: activo
 ---
 
@@ -17,9 +17,9 @@ estado: activo
 | **Título** | Implementación del Sistema de Comodines (Power-ups) |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 2.4.0 |
+| **Versión** | 2.5.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2026-02-28 |
+| **Última Actualización** | 2026-03-01 |
 | **Sistema Actual** | [docs/sistema-recompensas/](../../../_archived/sistema-recompensas/) v2.3.0 [ARCHIVED] |
 | **Autor** | Database Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
@@ -39,14 +39,17 @@ estado: activo
 - `gamification_system.comodin_type` - `apps/database/ddl/00-prerequisites.sql:55-58`
 
 🗄️ **Tablas:**
-- `gamification_system.comodines_inventory` - Inventario por usuario
-- `gamification_system.comodin_usage_log` - Log de usos
-- `gamification_system.comodin_usage_tracking` - Tracking de límites por ejercicio
+- `gamification_system.comodines_inventory` - Inventario por usuario (wide table: 1 fila por usuario, columnas por tipo como `pistas_available`, `pistas_purchased_total`, `pistas_used_total`, etc.)
+- `gamification_system.comodin_usage_log` - Existe en DDL pero **NO utilizada por backend actual**
+- `gamification_system.comodin_usage_tracking` - Existe en DDL pero **NO utilizada por backend actual**
+- `gamification_system.inventory_transactions` - Audit log genérico (item_id VARCHAR(100), metadata JSONB). Utilizado para registrar transacciones de comodines con source='shop_bridge' para compras via tienda
 
 🗄️ **Funciones:**
 - `purchase_comodin()` - Comprar comodín con ML Coins
 - `use_comodin()` - Usar comodín en ejercicio
 - `get_comodin_inventory()` - Obtener inventario completo
+
+> **⚠️ NOTA IMPORTANTE:** Las funciones SQL definidas en DDL existen pero **NO son invocadas por el backend actual**. La lógica se implementa en TypeScript (`ComodinesService`). Ver: `apps/backend/src/modules/gamification/services/comodines.service.ts`
 
 ---
 
@@ -69,17 +72,16 @@ estado: activo
 │    · purchaseComodin()                             │
 │    · useComodin()                                  │
 │    · getInventory()                                │
+│    · incrementFromShopPurchase()                   │
 │  - ComodinController                               │
 │  - DTOs: PurchaseComodinDto, UseComodinDto        │
 └─────────────────┬──────────────────────────────────┘
                   │ SQL Queries + Transactions
 ┌─────────────────▼──────────────────────────────────┐
 │            DATABASE (PostgreSQL)                   │
-│  - comodines_inventory (inventario)                │
-│  - comodin_usage_log (historial)                   │
-│  - comodin_usage_tracking (límites por ejercicio)  │
-│  - purchase_comodin() (transacción atómica)        │
-│  - use_comodin() (validaciones + logging)          │
+│  - comodines_inventory (wide table, audit via TypeORM) │
+│  - inventory_transactions (audit log genérico)      │
+│  ❌ Funciones SQL NO invocadas por backend          │
 └────────────────────────────────────────────────────┘
 ```
 
@@ -113,6 +115,29 @@ Frontend → POST /comodines/purchase
 Frontend muestra confirmación
 + Actualiza inventario UI
 ```
+
+### Flujo Alternativo: Compra via Tienda (Shop Bridge)
+
+Además de la compra directa vía `POST /gamification/comodines/purchase`, los comodines pueden obtenerse comprando items consumibles en la tienda:
+
+**Mapping shop `effect_data.type` → `ComodinTypeEnum`:**
+| effect_data.type | ComodinTypeEnum | Item de Tienda |
+|---|---|---|
+| `hint` | `PISTAS` | Pista de Detective (15 ML) |
+| `highlight` | `VISION_LECTORA` | Vision Lectora (25 ML) |
+| `retry` | `SEGUNDA_OPORTUNIDAD` | Segunda Oportunidad (40 ML) |
+
+**Flujo:**
+1. Usuario compra item consumible en tienda (`POST /gamification/shop/purchase`)
+2. ShopService completa la transacción (deduce ML Coins, crea UserPurchase)
+3. Post-transacción: ShopService llama `ComodinesService.incrementFromShopPurchase()` (non-blocking)
+4. ComodinesService incrementa `*_available` y `*_purchased_total` en `comodines_inventory`
+5. Crea `InventoryTransaction` con `source: 'shop_bridge'` para auditoría
+
+**Notas:**
+- La sincronización es non-blocking (try/catch) — si falla, la compra de tienda NO se revierte
+- Items tipo `xp_boost` y `coins_boost` NO se sincronizan a comodines
+- ML Coins se deducen SOLO por ShopService (ComodinesService.incrementFromShopPurchase NO deduce)
 
 ### Flujo de Uso en Ejercicio
 
@@ -148,6 +173,21 @@ Frontend muestra efecto del comodín
 ---
 
 ## 💾 Implementación de Base de Datos
+
+> **⚠️ AVISO IMPORTANTE:** Esta sección documenta el **DISEÑO ORIGINAL** (tablas normalizadas, funciones SQL que implementan lógica). La **implementación REAL** del backend difiere:
+>
+> **Diseño documentado aquí:**
+> - Tabla normalizada: `comodines_inventory(user_id, comodin_type)` con PK compuesta
+> - Funciones SQL: `purchase_comodin()`, `use_comodin()`, `get_comodin_inventory()` con lógica dentro de DDL
+> - Audit: Tabla dedicada `comodin_usage_log` y `comodin_usage_tracking`
+>
+> **Implementación REAL en backend:**
+> - Tabla ancha: `comodines_inventory` con 1 fila por usuario, columnas `pistas_available`, `pistas_purchased_total`, `pistas_used_total`, `pistas_cost` (y equivalentes para `vision_lectora` y `segunda_oportunidad`)
+> - Audit log: Genérico via `inventory_transactions` con `item_id VARCHAR(100)` (ej. "comodin_pistas") y metadata JSONB
+> - Las funciones SQL **NO son invocadas** — toda lógica está en `ComodinesService` (TypeScript)
+> - Métodos reales: `getCatalog()`, `getInventory()`, `purchase()`, `use()`, `incrementFromShopPurchase()`, `getStats()`, `getUsageHistory()`
+>
+> **Ref:** `apps/backend/src/modules/gamification/services/comodines.service.ts`
 
 ### 1. ENUM: comodin_type
 
@@ -613,6 +653,15 @@ COMMENT ON FUNCTION gamification_system.get_comodin_inventory IS 'Obtener invent
 ---
 
 ## 🔧 Implementación Backend (NestJS)
+
+> **📌 NOTA IMPORTANTE:** El pseudocódigo de `ComodinService` documentado abajo corresponde al **DISEÑO ORIGINAL**. La **implementación REAL** es `ComodinesService` (con 's') ubicada en `apps/backend/src/modules/gamification/services/comodines.service.ts`.
+>
+> **Diferencias principales:**
+> - Servicio real: `ComodinesService` (plural)
+> - No invoca funciones SQL — usa **TypeORM directamente** para queries
+> - Métodos reales: `getCatalog()`, `getInventory()`, `purchase()`, `use()`, `incrementFromShopPurchase()`, `getStats()`, `getUsageHistory()`
+> - Maneja la tabla ancha `comodines_inventory` (no normalizada)
+> - Audit via `inventory_transactions` (tabla genérica) con `source: 'shop_bridge'` para compras via tienda
 
 ### 1. Enum TypeScript
 

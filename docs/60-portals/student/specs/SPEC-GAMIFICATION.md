@@ -2,7 +2,7 @@
 titulo: SPEC-GAMIFICATION - Student Portal Gamification System
 tipo: portal
 portal: student
-ultima_actualizacion: 2026-02-27
+ultima_actualizacion: 2026-03-01
 ---
 
 # SPEC-GAMIFICATION - Student Portal Gamification System
@@ -109,13 +109,26 @@ El sistema de gamificación de GAMILIT implementa mecánicas de juego para motiv
 | `/shop/purchase` | POST | Comprar item |
 | `/shop/purchases/{userId}` | GET | Historial de compras |
 
-### 5.6 Power-ups/Inventario
+### 5.6 Comodines/Power-ups
 
 | Endpoint | Método | Descripción |
 |----------|--------|-------------|
-| `/gamification/inventory/powerups/{userId}` | GET | Inventario de power-ups |
-| `/gamification/powerups/active` | GET | Power-ups activos |
-| `/gamification/powerups/{id}/activate` | POST | Activar power-up |
+| `/gamification/comodines` | GET | Catálogo de comodines disponibles |
+| `/gamification/comodines/purchase` | POST | Comprar comodines con ML Coins |
+| `/gamification/comodines/use` | POST | Usar comodín en ejercicio |
+| `/gamification/comodines/users/:userId/inventory` | GET | Inventario de comodines del usuario |
+| `/gamification/comodines/users/:userId/history` | GET | Historial de transacciones (compras/usos) |
+| `/gamification/comodines/users/:userId/stats` | GET | Estadísticas de uso de comodines |
+
+#### Detalle de Implementacion
+
+**Modelo de datos:** Wide table `comodines_inventory` con 1 fila por usuario. Columnas por tipo: `{tipo}_available`, `{tipo}_purchased_total`, `{tipo}_used_total`, `{tipo}_cost` (donde tipo = pistas, vision_lectora, segunda_oportunidad). Auditoria via `inventory_transactions` con `item_id VARCHAR(100)` (ej. `"comodin_pistas"`) y metadata JSONB.
+
+**Funciones SQL:** Las funciones DDL `purchase_comodin()`, `use_comodin()`, `get_comodin_inventory()` existen pero **NO son invocadas** por el backend. Toda la logica reside en `ComodinesService` (TypeScript/TypeORM).
+
+**Bridge Shop→Comodines:** Items consumibles comprados en la tienda con `effect_data.type` in (`hint`, `highlight`, `retry`) sincronizan automaticamente al inventario de comodines via `ComodinesService.incrementFromShopPurchase()`. La sincronizacion es non-blocking (post-commit, try/catch). Mapping: `hint→pistas`, `highlight→vision_lectora`, `retry→segunda_oportunidad`. Boosts (`xp_boost`, `coins_boost`) NO sincronizan.
+
+**Error handling:** El servicio de comodines usa `BadRequestException` (HTTP exceptions directas) para la mayoria de errores, mientras que el servicio de shop usa domain error classes (patron ADR-045). Esta inconsistencia es un gap conocido pendiente de migracion futura.
 
 ---
 
@@ -257,6 +270,20 @@ interface Mission {
 | Rare | Blue | 15-20% |
 | Epic | Purple | 5-10% |
 | Legendary | Yellow | <5% |
+
+### 10.3 Comportamiento Consumibles
+
+**Comportamiento consumibles:**
+- Items consumibles (`is_consumable=true`) siempre muestran botón "Comprar" (nunca "Adquirido")
+- Badge "Tienes: N" indica la cantidad comprada previamente
+- Compras de consumibles con `effect_data.type` hint/highlight/retry acreditan automáticamente al inventario de comodines
+- Compras repetidas de consumibles desactivan la compra previa automaticamente (constraint UNIQUE satisfecho)
+- En caso de error de concurrencia, se muestra mensaje amigable al usuario
+
+**Bridge shop→comodines:**
+- `incrementFromShopPurchase()` sincroniza `user_purchases` → `comodines_inventory` tras cada compra de consumible
+- El bridge usa `inventoryRepo.save()` directo (misma conexion que cargo la entidad) para evitar problemas de entidad detached
+- Logging detallado con prefijo `[BRIDGE]` para diagnostico en logs del servidor
 
 ---
 

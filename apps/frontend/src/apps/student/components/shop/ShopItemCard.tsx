@@ -94,7 +94,10 @@ export function ShopItemCard({ item, userBalance, onPurchase, index }: ShopItemC
             ) : (
               <>
                 {item.ownedQuantity !== undefined && item.ownedQuantity > 0 && (
-                  <div className="text-center text-xs text-detective-text-secondary">
+                  <div
+                    className="text-center text-xs text-detective-text-secondary"
+                    aria-label={`Tienes ${item.ownedQuantity} unidades`}
+                  >
                     Tienes: {item.ownedQuantity}
                   </div>
                 )}

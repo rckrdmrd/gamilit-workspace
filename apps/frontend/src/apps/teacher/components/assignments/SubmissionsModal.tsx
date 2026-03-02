@@ -178,9 +178,9 @@ export function SubmissionsModal({
     <Modal isOpen={isOpen} onClose={onClose} title={`Entregas - ${assignment.title}`} size="xl">
       <div className="space-y-4">
         {/* Header Stats */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div
-            className={`cursor-pointer rounded-lg p-3 transition-all ${
+            className={`cursor-pointer rounded-lg p-3 min-h-[44px] transition-all ${
               filter === 'all'
                 ? 'border-2 border-detective-orange bg-detective-orange/20'
                 : 'border-2 border-transparent bg-detective-bg-secondary hover:border-detective-orange/50'
@@ -195,7 +195,7 @@ export function SubmissionsModal({
           </div>
 
           <div
-            className={`cursor-pointer rounded-lg p-3 transition-all ${
+            className={`cursor-pointer rounded-lg p-3 min-h-[44px] transition-all ${
               filter === 'pending'
                 ? 'border-2 border-yellow-500 bg-yellow-500/20'
                 : 'border-2 border-transparent bg-detective-bg-secondary hover:border-yellow-500/50'
@@ -210,7 +210,7 @@ export function SubmissionsModal({
           </div>
 
           <div
-            className={`cursor-pointer rounded-lg p-3 transition-all ${
+            className={`cursor-pointer rounded-lg p-3 min-h-[44px] transition-all ${
               filter === 'graded'
                 ? 'border-2 border-green-500 bg-green-500/20'
                 : 'border-2 border-transparent bg-detective-bg-secondary hover:border-green-500/50'
@@ -225,7 +225,7 @@ export function SubmissionsModal({
           </div>
 
           <div
-            className={`cursor-pointer rounded-lg p-3 transition-all ${
+            className={`cursor-pointer rounded-lg p-3 min-h-[44px] transition-all ${
               filter === 'late'
                 ? 'border-2 border-red-500 bg-red-500/20'
                 : 'border-2 border-transparent bg-detective-bg-secondary hover:border-red-500/50'
@@ -261,7 +261,7 @@ export function SubmissionsModal({
             </span>
             <button
               onClick={() => setFilter('all')}
-              className="text-xs text-detective-orange hover:underline"
+              className="min-h-[44px] px-2 flex items-center text-xs text-detective-orange hover:underline"
             >
               Limpiar filtro
             </button>

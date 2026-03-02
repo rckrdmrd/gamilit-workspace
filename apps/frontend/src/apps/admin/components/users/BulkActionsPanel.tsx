@@ -127,7 +127,7 @@ const ConfirmationModal = ({
           </div>
           <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
             disabled={loading}
           >
             <X className="w-5 h-5" />
@@ -136,7 +136,7 @@ const ConfirmationModal = ({
       </div>
 
       {/* Content */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 max-h-[calc(100vh-10rem)] overflow-y-auto">
         <p className="text-gray-700 text-sm leading-relaxed">{message}</p>
 
         {/* Role Selection */}
@@ -166,14 +166,14 @@ const ConfirmationModal = ({
         <button
           onClick={onCancel}
           disabled={loading}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
         <button
           onClick={onConfirm}
           disabled={loading}
-          className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${confirmColor}`}
+          className={`px-4 py-3 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${confirmColor}`}
         >
           {loading ? (
             <span className="flex items-center">

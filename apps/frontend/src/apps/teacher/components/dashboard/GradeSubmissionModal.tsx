@@ -148,7 +148,7 @@ export const GradeSubmissionModal = ({
                 <button
                   onClick={handleClose}
                   disabled={isSubmitting}
-                  className="rounded-lg p-2 transition-colors hover:bg-white/20 disabled:opacity-50"
+                  className="rounded-lg p-2 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors hover:bg-white/20 disabled:opacity-50"
                 >
                   <X className="h-6 w-6 text-white" />
                 </button>
@@ -158,7 +158,7 @@ export const GradeSubmissionModal = ({
               <div className="max-h-[calc(90vh-200px)] overflow-y-auto p-6">
                 {/* Student Info */}
                 <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 p-4">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-lg font-bold text-white">
                         {submission.studentName.charAt(0)}

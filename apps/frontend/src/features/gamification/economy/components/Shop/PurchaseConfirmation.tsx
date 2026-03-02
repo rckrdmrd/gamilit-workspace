@@ -33,7 +33,7 @@ export const PurchaseConfirmation = ({
           transition={{ delay: 0.2, type: 'spring', damping: 15 }}
           className="inline-block p-4 bg-detective-success/20 rounded-full mb-4"
         >
-          <CheckCircle className="w-16 h-16 text-detective-success" />
+          <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-detective-success" />
         </motion.div>
 
         <motion.div

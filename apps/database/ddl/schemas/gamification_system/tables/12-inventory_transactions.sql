@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS gamification_system.inventory_transactions CASCADE;
 CREATE TABLE gamification_system.inventory_transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
-    item_id UUID NOT NULL,
+    item_id VARCHAR(100) NOT NULL,
     transaction_type VARCHAR(50) NOT NULL,
     quantity INTEGER NOT NULL,
     metadata JSONB,

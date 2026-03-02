@@ -273,6 +273,18 @@ css_class, render_mode, animated, animation, glow_color
 
 ---
 
+## 6.3 effect_data.type — Valores Canónicos para Consumibles
+
+| effect_data.type | ComodinTypeEnum | Costo ML | Sincroniza a comodines |
+|---|---|---|---|
+| `hint` | `PISTAS` | 15 | Sí |
+| `highlight` | `VISION_LECTORA` | 25 | Sí |
+| `retry` | `SEGUNDA_OPORTUNIDAD` | 40 | Sí |
+| `xp_boost` | — | variable | No |
+| `coins_boost` | — | variable | No |
+
+---
+
 ## 7. Ejemplos de uso rapido
 
 ### Seed SQL (canonico)

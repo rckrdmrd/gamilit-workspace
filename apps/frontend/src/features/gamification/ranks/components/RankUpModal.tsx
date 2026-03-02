@@ -151,7 +151,7 @@ export const RankUpModal = ({ isOpen, onClose }: RankUpModalProps) => {
       </div>
 
       {/* Content */}
-      <div className="space-y-4 px-4 py-4 sm:space-y-6 sm:px-8 sm:py-6">
+      <div className="max-h-[calc(100vh-16rem)] overflow-y-auto space-y-4 px-4 py-4 sm:space-y-6 sm:px-8 sm:py-6">
         {/* Rank Progression */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -41,7 +41,7 @@ export class InventoryTransaction {
    * ID del item involucrado en la transacción
    * (puede ser comodín, boost, avatar, etc.)
    */
-  @Column({ type: 'uuid' })
+  @Column({ type: 'varchar', length: 100 })
     item_id!: string;
 
   /**

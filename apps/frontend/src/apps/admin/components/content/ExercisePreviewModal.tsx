@@ -69,7 +69,7 @@ export const ExercisePreviewModal = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-detective-orange/20 hover:text-detective-orange"
+            className="rounded-lg p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-400 transition-colors hover:bg-detective-orange/20 hover:text-detective-orange"
             aria-label="Cerrar preview"
           >
             <X className="h-5 w-5" />

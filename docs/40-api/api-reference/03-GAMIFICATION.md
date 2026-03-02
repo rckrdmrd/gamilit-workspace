@@ -1,7 +1,7 @@
 ---
 title: "API Reference - Gamification"
 status: activo
-last_updated: "2026-02-28"
+last_updated: "2026-03-01"
 ---
 
 # API Reference - Gamification
@@ -116,6 +116,15 @@ last_updated: "2026-02-28"
 | GET | `/api/v1/gamification/shop/purchases/:userId` | Historial de compras del usuario | Si | any |
 | GET | `/api/v1/gamification/shop/owned/:userId/:itemId` | Verificar si usuario posee un item | Si | any |
 
+**Response codes adicionales para POST /gamification/shop/purchase:**
+| HTTP | Condicion | Descripcion |
+|------|-----------|-------------|
+| 409 | Conflicto de concurrencia | `Conflicto de concurrencia en re-compra de consumible (CONSUMABLE_PURCHASE_CONFLICT)` |
+
+> **Re-compra de consumibles:** Items consumibles permiten compras multiples. Cada nueva compra desactiva la compra anterior (`is_active=false, consumed_at=NOW()`) y crea un nuevo registro activo (`status='completed', is_active=true`). Items consumibles con `effect_data.type` = `hint`/`highlight`/`retry` sincronizan automáticamente al inventario de comodines post-compra.
+
+> **Sincronizacion automatica:** Al comprar items consumibles (hint, highlight, retry), el sistema sincroniza automaticamente el inventario de comodines via `incrementFromShopPurchase()`. Los campos `*_available` y `*_purchased_total` en `comodines_inventory` se incrementan. Errores de sincronizacion se loguean como `[BRIDGE-ERROR]` pero no revierten la compra.
+
 ### Inventory — Equipamiento Cosmetico (4 endpoints)
 | Method | Endpoint | Description | Auth | Roles |
 |--------|----------|-------------|------|-------|
@@ -135,6 +144,139 @@ last_updated: "2026-02-28"
 | GET | `/api/v1/gamification/comodines/users/:userId/inventory` | Inventario de comodines del usuario (cantidades disponibles) | Si | any |
 | GET | `/api/v1/gamification/comodines/users/:userId/history` | Historial de compras y usos de comodines (?limit=N) | Si | any |
 | GET | `/api/v1/gamification/comodines/users/:userId/stats` | Estadisticas agregadas de uso de comodines | Si | any |
+
+**Request/Response Schemas:**
+
+**GET /gamification/comodines**
+
+Response (200):
+```json
+[
+  {
+    "id": "pistas",
+    "name": "Pistas",
+    "description": "Revela pistas contextuales para ayudarte en ejercicios dificiles",
+    "cost": 15,
+    "icon": "💡",
+    "rarity": "common",
+    "category": "premium",
+    "effect": {
+      "type": "hint",
+      "description": "Muestra una pista contextual del ejercicio"
+    }
+  },
+  {
+    "id": "vision_lectora",
+    "name": "Vision Lectora",
+    "description": "Resalta palabras clave y conceptos importantes en el texto",
+    "cost": 25,
+    "icon": "👁️",
+    "rarity": "rare",
+    "category": "premium",
+    "effect": {
+      "type": "highlight",
+      "description": "Resalta palabras clave en el texto del ejercicio"
+    }
+  },
+  {
+    "id": "segunda_oportunidad",
+    "name": "Segunda Oportunidad",
+    "description": "Permite reintentar un ejercicio sin perder puntos",
+    "cost": 40,
+    "icon": "🔄",
+    "rarity": "epic",
+    "category": "premium",
+    "effect": {
+      "type": "retry",
+      "description": "Permite corregir una respuesta incorrecta"
+    }
+  }
+]
+```
+
+**POST /gamification/comodines/purchase**
+
+Request body:
+```json
+{
+  "user_id": "uuid",
+  "comodin_type": "pistas | vision_lectora | segunda_oportunidad",
+  "quantity": 1
+}
+```
+
+Response:
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "user_id": "660e8400-e29b-41d4-a716-446655440001",
+  "pistas": {
+    "type": "pistas",
+    "available": 8,
+    "purchased_total": 8,
+    "used_total": 0,
+    "cost": 15
+  },
+  "vision_lectora": {
+    "type": "vision_lectora",
+    "available": 3,
+    "purchased_total": 3,
+    "used_total": 0,
+    "cost": 25
+  },
+  "segunda_oportunidad": {
+    "type": "segunda_oportunidad",
+    "available": 1,
+    "purchased_total": 1,
+    "used_total": 0,
+    "cost": 40
+  },
+  "metadata": {
+    "last_purchase_date": "2026-03-01T10:00:00Z",
+    "last_purchase_type": "pistas"
+  },
+  "created_at": "2026-01-15T08:00:00Z",
+  "updated_at": "2026-03-01T10:00:00Z"
+}
+```
+
+> **Nota importante:** La respuesta devuelve el inventario COMPLETO del usuario (InventoryResponseDto), no solo el item comprado.
+
+**POST /gamification/comodines/use**
+
+Request body:
+```json
+{
+  "user_id": "uuid",
+  "comodin_type": "pistas | vision_lectora | segunda_oportunidad",
+  "quantity": 1,
+  "exercise_id": "uuid (optional)",
+  "context": "string (optional)"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "used": {
+    "comodin_type": "pistas",
+    "quantity": 1,
+    "exercise_id": "uuid | null"
+  },
+  "remaining_quantity": 1
+}
+```
+
+**Error Codes para Comodines:**
+
+| HTTP | Codigo | Descripcion |
+|------|--------|-------------|
+| 400 | INVALID_COMODIN_TYPE | Tipo de comodin no válido |
+| 400 | INSUFFICIENT_COMODINES | No hay cantidad suficiente del comodin |
+| 404 | INVENTORY_NOT_FOUND | Inventario del usuario no encontrado |
+| 409 | CONSUMABLE_PURCHASE_CONFLICT | Conflicto en compra concurrente de consumible |
+| 500 | INTERNAL_SERVER_ERROR | Error interno del servidor |
 
 ---
 

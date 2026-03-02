@@ -43,7 +43,7 @@ export const PowerUpUsageModal = ({
       contentClassName="custom"
       ariaLabelledBy="powerup-usage-title"
     >
-      <div className="p-6">
+      <div className="p-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
         <div className="text-center mb-6">
           <div className="inline-block p-4 rounded-full bg-gradient-to-br from-detective-orange to-detective-gold mb-4">
             <Icon className="w-12 h-12 text-white" />

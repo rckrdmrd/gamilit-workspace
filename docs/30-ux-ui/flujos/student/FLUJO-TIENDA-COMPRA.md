@@ -35,6 +35,10 @@ sequenceDiagram
     BE->>DB: Verifica balance
     BE->>DB: Crea transaccion de gasto
     BE->>DB: Crea user_purchase
+    alt item.is_consumable && effect_type mapped to comodin
+        BE->>BE: ComodinesService.incrementFromShopPurchase()
+        Note over BE: Non-blocking — compra ya completada
+    end
     BE-->>FE: Compra exitosa
     FE-->>S: Toast + refresh balance/inventario
 ```
@@ -65,11 +69,31 @@ sequenceDiagram
 
 - Cerrado por definición en flujo maestro E2E: `FLUJO-COMPRA-INVENTARIO-EQUIPAR.md`.
 
+### Mapeo: Shop Effect Types → Comodines
+
+Cuando un item consumible es comprado, su `effect_type` se mapea automáticamente a un tipo de comodín. Este mapeo está implementado en `SHOP_EFFECT_TO_COMODIN` en `shop.service.ts`.
+
+| Shop effect_type | ComodinType | Descripcion |
+|-----------------|-------------|-------------|
+| `hint` | `pistas` | Pistas de ayuda en ejercicios |
+| `highlight` | `vision_lectora` | Resaltado de palabras clave |
+| `retry` | `segunda_oportunidad` | Segunda oportunidad de respuesta |
+
+Otros effect_types (`xp_boost`, `coins_boost`) **NO** se sincronizan a comodines — se aplican directamente al usuario.
+
+### Re-compra de Consumibles
+
+1. Usuario selecciona consumible ya comprado previamente
+2. Sistema desactiva compra anterior (`is_active=false, consumed_at=NOW()`)
+3. Sistema crea nueva compra activa (`status='completed', is_active=true`)
+4. Bridge sincroniza inventario de comodines (incrementFromShopPurchase) — SOLO para effect_types mapeados
+5. Usuario ve "Tienes: N" actualizado en la tarjeta del item
+
 ## Errores esperados de compra
 
 | HTTP | Condicion | Accion UX |
 |------|-----------|-----------|
 | 400 | Saldo insuficiente o regla de negocio | Mostrar mensaje contextual + CTA recargar/ganar monedas |
 | 404 | Item no encontrado | Refrescar catálogo y notificar indisponibilidad |
-| 409 | Compra duplicada de item único activo | Mostrar estado ya adquirido |
+| 409 | Compra duplicada de item único activo / Conflicto concurrencia consumible | Mostrar estado ya adquirido / Reintentar compra tras 1-2 segundos |
 | 500 | Error interno | Mostrar fallback y permitir reintento |

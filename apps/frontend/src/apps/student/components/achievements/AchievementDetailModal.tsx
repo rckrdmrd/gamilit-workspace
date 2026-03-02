@@ -146,7 +146,7 @@ export const AchievementDetailModal = ({
       <div className={`relative ${colors.bg} ${colors.border} border-b-4 p-6`}>
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 hover:bg-white/50 rounded-full transition-colors"
+          className="absolute top-4 right-4 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/50 rounded-full transition-colors"
           aria-label="Cerrar"
         >
           <X className="w-6 h-6" />
@@ -156,7 +156,7 @@ export const AchievementDetailModal = ({
         {hasPrevious && (
           <button
             onClick={onPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 hover:bg-white/50 rounded-full transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/50 rounded-full transition-colors"
             aria-label="Anterior"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -165,7 +165,7 @@ export const AchievementDetailModal = ({
         {hasNext && (
           <button
             onClick={onNext}
-            className="absolute right-16 top-1/2 -translate-y-1/2 p-2 hover:bg-white/50 rounded-full transition-colors"
+            className="absolute right-16 top-1/2 -translate-y-1/2 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-white/50 rounded-full transition-colors"
             aria-label="Siguiente"
           >
             <ChevronRight className="w-6 h-6" />

@@ -1,7 +1,7 @@
 ---
 title: Student Portal Hooks — Gamification
 status: activo
-last_updated: "2026-02-28"
+last_updated: "2026-03-01"
 ---
 
 ## Categoria: Gamification
@@ -243,5 +243,58 @@ const comodinTypeMap: Record<string, string> = {
 
 - `usePowerUps` de `@/features/gamification/social/hooks/usePowerUps`
 - `apiClient` para sync con backend
+
+---
+
+### useExerciseComodines
+
+**Archivo:** `apps/frontend/src/features/exercises/hooks/useExerciseComodines.ts`
+
+**Proposito:** Gestiona comodines (consumibles reales) via API backend durante ejercicios. Reemplaza la logica mock de `useExercisePowerUps` con inventario real del usuario.
+
+#### Parametros
+
+| Nombre | Tipo | Requerido | Descripcion |
+|--------|------|-----------|-------------|
+| `userId` | `string \| undefined` | No | ID del usuario para fetch de inventario |
+| `exerciseId` | `string` | Si | ID del ejercicio actual (para tracking de usos) |
+
+#### Retorno (`UseExerciseComodinesReturn`)
+
+| Propiedad | Tipo | Descripcion |
+|-----------|------|-------------|
+| `inventory` | `ComodinInventory \| null` | Inventario actual del usuario desde backend |
+| `comodinesContext` | `object` | Estado de efectos activos: `{ hintsRevealed: number, visionActive: boolean, hasSecondChance: boolean, timeExtension: number, multiplierActive: boolean }` |
+| `canUse` | `(type: ComodinType) => boolean` | Verifica disponibilidad (stock > 0 AND no excede limite por ejercicio) |
+| `useComodin` | `(type: ComodinType) => Promise<void>` | Activa comodin: llama POST /use, decrementa inventario local, actualiza contexto |
+| `getUsedComodinTypes` | `() => string[]` | Retorna array de tipos usados en el ejercicio actual |
+| `usageLimits` | `Record<ComodinType, { used: number; max: number }>` | Tracking por ejercicio. Defaults: pistas max=3, vision_lectora max=1, segunda_oportunidad max=1 |
+| `isLoading` | `boolean` | true mientras se carga inventario inicial |
+| `error` | `string \| null` | Mensaje de error si uso fallo |
+
+#### Endpoints Consumidos
+
+| Metodo | Endpoint | Proposito |
+|--------|----------|-----------|
+| GET | `/gamification/comodines/users/:userId/inventory` | Carga inventario al montar |
+| POST | `/gamification/comodines/use` | Activa comodin en ejercicio |
+
+#### Consumidores
+
+| Componente | Uso |
+|------------|-----|
+| `ConsumablesPanel` | Panel sidebar con botones "Usar" por tipo |
+| `ExerciseContext` | Provee `comodinesContext` a mecanicas de ejercicio |
+| `ActionsPanel` | Pasa `hintsRevealed` a `HintSystem.externalRevealCount` |
+
+#### Notas Importantes
+
+- **Limite por ejercicio:** 1 uso maximo por tipo por ejercicio (enforced localmente via `usageLimits`). Pistas permite hasta 3 usos.
+- **Efectos:**
+  - `hintsRevealed > 0` → HintSystem auto-revela pistas, ExerciseGuide se expande
+  - `visionActive = true` → CSS `.exercise-passage` aplica resaltado amber (ADR-051)
+  - `hasSecondChance = true` → Banner + mecanica permite reintento si score < 70%
+- **Inventario real-time:** Se carga al montar el ejercicio via `getComodinInventory()`. No hay cache — siempre fresh.
+- **Error recovery:** Errores de uso se muestran en `error` pero no bloquean el ejercicio.
 
 ---

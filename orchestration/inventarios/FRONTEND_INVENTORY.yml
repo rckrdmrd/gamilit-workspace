@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.5.2"
-fecha: "2026-02-28"  # v12.5.2: Card truncation standard — 18 componentes remediados con title= tooltip per ESTANDAR-FRONTEND-CARD-TRUNCATION.md. Previous: v12.5.1 Shop integration
+version: "12.5.3"
+fecha: "2026-03-01"  # v12.5.3: Modal responsive remediation — 30+ files fixed (scroll wrappers, responsive grids, touch targets), ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md created. Previous: v12.5.2 card truncation standard
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -23,7 +23,7 @@ resumen:
   api_calls_total: 580                          # ~580: +resourceSharingApi calls over previous 575
   type_definition_files: 49                     # 49 archivos, 430+ tipos/interfaces/enums exportados
   portales: 4
-  mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
+  mecanicas_ejercicio: 29                       # 29 mecanicas activas en 58 archivos .tsx (comprension_auditiva BACKLOG, v14.8.4)
   routes: 74                                    # +3 parent portal routes added. Base: 71 (corrected 2026-02-27)
   contexts_providers: 4                         # AuthContext, BrandingProvider, ExerciseContext (Exercise Restructuring), barrel
   config_files: 16                              # 14 root + exercise-registry.ts + registrations.ts

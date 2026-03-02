@@ -108,7 +108,7 @@ export const InstitutionDetailModal = ({
               <Building2 className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-detective-text">
+              <h2 className="break-words text-2xl font-bold text-detective-text">
                 {institution.name}
               </h2>
               <p className="mt-1 text-sm text-detective-text-secondary">
@@ -139,7 +139,7 @@ export const InstitutionDetailModal = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-detective-text"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-detective-text"
           >
             <X className="h-5 w-5" />
           </button>

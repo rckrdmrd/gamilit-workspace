@@ -129,14 +129,14 @@ export function CreateModuleModal({
         <button
           onClick={handleClose}
           disabled={isCreating}
-          className="p-2 rounded-lg hover:bg-detective-bg-secondary transition-colors disabled:opacity-50"
+          className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-detective-bg-secondary transition-colors disabled:opacity-50"
         >
           <X className="h-5 w-5 text-detective-text-secondary" />
         </button>
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-6 max-h-[calc(100vh-10rem)] overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="p-3 rounded-lg bg-red-500/20 border border-red-500/50">
@@ -226,7 +226,7 @@ export function CreateModuleModal({
           </div>
 
           {/* Row: Status + XP + ML Coins */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-detective-text mb-1">
                 Estado

@@ -9,6 +9,7 @@ import { ComodinesInventory } from '../entities/comodines-inventory.entity';
 import { InventoryTransaction } from '../entities/inventory-transaction.entity';
 import { MLCoinsService } from './ml-coins.service';
 import { ComodinTypeEnum, TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { InvalidComodinTypeError, InvalidQuantityError } from '../errors/gamification.errors';
 
 /**
  * ComodinesService
@@ -522,7 +523,18 @@ export class ComodinesService {
     quantity: number,
     shopPurchaseId: string,
   ): Promise<ComodinesInventory> {
+    if (quantity < 1) {
+      throw new InvalidQuantityError();
+    }
+
+    this.logger.log(
+      `[BRIDGE] Starting sync for user ${userId}, type=${comodinType}, qty=${quantity}, purchase=${shopPurchaseId}`,
+    );
+
     const inventory = await this.getInventory(userId);
+    this.logger.log(
+      `[BRIDGE] Inventory loaded: id=${inventory.id}, pistas=${inventory.pistas_available}, vision=${inventory.vision_lectora_available}, segunda=${inventory.segunda_oportunidad_available}`,
+    );
 
     // Actualizar inventario según tipo (wide table) — sin deducir ML Coins
     switch (comodinType) {
@@ -539,7 +551,7 @@ export class ComodinesService {
         inventory.segunda_oportunidad_purchased_total += quantity;
         break;
       default:
-        throw new BadRequestException(`Invalid comodin type: ${comodinType}`);
+        throw new InvalidComodinTypeError(comodinType);
     }
 
     // Actualizar metadata
@@ -550,9 +562,14 @@ export class ComodinesService {
       source: 'shop_bridge',
     };
 
-    const updated = await this.inventoryRepo.save(inventory);
+    // Save inventory directly with the same repository that loaded it
+    // (avoids detached entity issues with nested transactions)
+    const savedInventory = await this.inventoryRepo.save(inventory);
+    this.logger.log(
+      `[BRIDGE] Inventory saved: pistas=${savedInventory.pistas_available}, vision=${savedInventory.vision_lectora_available}, segunda=${savedInventory.segunda_oportunidad_available}`,
+    );
 
-    // Crear transacción de auditoría
+    // Create audit transaction separately
     const transaction = this.transactionRepo.create({
       user_id: userId,
       item_id: `comodin_${comodinType}`,
@@ -568,9 +585,9 @@ export class ComodinesService {
     await this.transactionRepo.save(transaction);
 
     this.logger.log(
-      `Incremented ${quantity}x ${comodinType} for user ${userId} via shop_bridge (purchase: ${shopPurchaseId})`,
+      `[BRIDGE] Completed: ${quantity}x ${comodinType} for user ${userId} via shop_bridge`,
     );
 
-    return updated;
+    return savedInventory;
   }
 }

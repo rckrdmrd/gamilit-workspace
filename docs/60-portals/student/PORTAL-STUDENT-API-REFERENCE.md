@@ -309,6 +309,9 @@ Virtual store where students spend ML Coins on cosmetic items and power-ups.
 | GET | `/gamification/shop/items?category=&rarity=&available=` | List shop items with optional filters | — | Yes (JWT) | All |
 | GET | `/gamification/shop/items/:id` | Get details for a specific shop item | — | Yes (JWT) | All |
 | POST | `/gamification/shop/purchase` | Purchase an item from the shop using ML Coins | `{ user_id, item_id, quantity }` | Yes (JWT) | student |
+
+> **Nota:** Para items consumibles con `effect_data.type` = `hint`/`highlight`/`retry`, la compra también incrementa automáticamente el inventario de comodines del estudiante (ver sección Comodines).
+
 | GET | `/gamification/shop/purchases/:userId` | Get purchase history for a user | — | Yes (JWT) | All |
 | GET | `/gamification/shop/owned/:userId/:itemId` | Check if a user owns a specific item | — | Yes (JWT) | All |
 
@@ -337,6 +340,8 @@ Three comodin types available:
 - `pistas` — Extra hints (15 ML Coins)
 - `vision_lectora` — Enhanced reading view (25 ML Coins)
 - `segunda_oportunidad` — Second attempt on failed exercise (40 ML Coins)
+
+> **Nota:** Los comodines también se obtienen comprando items consumibles en la Tienda (ver sección Shop/Purchase).
 
 | Method | Endpoint | Description | Request Body (summary) | Auth Required | Roles |
 |--------|----------|-------------|------------------------|---------------|-------|

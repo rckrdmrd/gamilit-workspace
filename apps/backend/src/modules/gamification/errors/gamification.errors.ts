@@ -101,3 +101,18 @@ export class NonNumericFieldError extends ValidationError {
     super(`Field ${field} is not numeric`, 'NON_NUMERIC_FIELD');
   }
 }
+
+export class InvalidComodinTypeError extends ValidationError {
+  constructor(comodinType: string) {
+    super(`Invalid comodin type: ${comodinType}`, 'INVALID_COMODIN_TYPE');
+  }
+}
+
+export class ConsumablePurchaseConflictError extends ConflictError {
+  constructor(itemId: string) {
+    super(
+      `Failed to process consumable re-purchase for item ${itemId}. Previous purchase could not be deactivated.`,
+      'CONSUMABLE_PURCHASE_CONFLICT',
+    );
+  }
+}

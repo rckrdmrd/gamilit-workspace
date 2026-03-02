@@ -73,7 +73,7 @@ export function RoleEditor({
           <button
             onClick={onClose}
             disabled={saving}
-            className="ml-3 text-white hover:text-white/80 transition-colors disabled:opacity-50"
+            className="ml-3 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-white hover:text-white/80 transition-colors disabled:opacity-50"
             aria-label="Cerrar editor"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

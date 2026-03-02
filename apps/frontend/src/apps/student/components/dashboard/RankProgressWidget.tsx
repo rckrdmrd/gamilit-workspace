@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, TrendingUp, Award, Crown, Star, Sparkles } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
@@ -38,6 +39,15 @@ function getRankDisplay(rankName: string) {
 export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
   const { frame, badge } = useEquippedVisuals();
   const [badgeFailed, setBadgeFailed] = useState(false);
+  const [frameSvgFailed, setFrameSvgFailed] = useState(false);
+
+  const showFrameOverlay = !!frame?.assetUrl && !frameSvgFailed;
+
+  // Frame style: SVG overlay > CSS class > border color > rank default
+  const frameStyle: CSSProperties = {};
+  if (!showFrameOverlay && !frame?.cssClass && frame?.borderColor) {
+    frameStyle.borderColor = frame.borderColor;
+  }
 
   const rankInfo = data
     ? getRankDisplay(data.currentRank)
@@ -79,12 +89,29 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
       className={cn(
         'relative overflow-hidden rounded-xl bg-white shadow-lg',
         'h-full max-h-[600px]',
-        frame?.borderColor ? 'border-[3px]' : 'border-2',
-        !frame?.borderColor && rankInfo.border,
+        showFrameOverlay
+          ? 'border-2'
+          : frame?.cssClass
+            ? cn('border-2', frame.cssClass)
+            : frame?.borderColor
+              ? 'border-[3px]'
+              : 'border-2',
+        !showFrameOverlay && !frame?.cssClass && !frame?.borderColor && rankInfo.border,
         rankInfo.shadow,
       )}
-      style={frame?.borderColor ? { borderColor: frame.borderColor } : undefined}
+      style={!showFrameOverlay && !frame?.cssClass && frame?.borderColor ? { borderColor: frame.borderColor } : undefined}
     >
+      {/* Frame SVG overlay (decorative border) */}
+      {showFrameOverlay && (
+        <img
+          src={frame!.assetUrl!}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-20 h-full w-full"
+          onError={() => setFrameSvgFailed(true)}
+        />
+      )}
+
       {/* Gradient background overlay */}
       <div className={cn('absolute inset-0 opacity-10', 'bg-gradient-to-br', rankInfo.color)} />
 

@@ -213,7 +213,7 @@ export const CompletionModal = ({
       />
 
       {/* Content — composed from subcomponents */}
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-6 md:p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-6 md:p-8 max-h-[calc(90vh-120px)] overflow-y-auto">
         <CompletionScoreDisplay score={score} maxScore={maxScore} success={success} />
         {success && <CompletionRewards animatedXP={animatedXP} animatedCoins={animatedCoins} />}
         <CompletionStats timeSpent={timeSpent} hintsUsed={hintsUsed} />

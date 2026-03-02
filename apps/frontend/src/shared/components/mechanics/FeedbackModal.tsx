@@ -70,13 +70,13 @@ export const FeedbackModal = ({
   const getIcon = () => {
     switch (feedback.type) {
       case 'success':
-        return <CheckCircle2 className="w-16 h-16 text-green-500" aria-hidden="true" />;
+        return <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-green-500" aria-hidden="true" />;
       case 'error':
-        return <XCircle className="w-16 h-16 text-red-500" aria-hidden="true" />;
+        return <XCircle className="w-12 h-12 sm:w-16 sm:h-16 text-red-500" aria-hidden="true" />;
       case 'partial':
-        return <Info className="w-16 h-16 text-yellow-500" aria-hidden="true" />;
+        return <Info className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500" aria-hidden="true" />;
       case 'info':
-        return <Info className="w-16 h-16 text-blue-500" aria-hidden="true" />;
+        return <Info className="w-12 h-12 sm:w-16 sm:h-16 text-blue-500" aria-hidden="true" />;
     }
   };
 
@@ -123,6 +123,7 @@ export const FeedbackModal = ({
 
       {/* Modal Content */}
       <DetectiveCard variant="gold" padding="lg">
+       <div className="max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto">
         <div className="text-center">
           {/* Icon */}
           <motion.div
@@ -348,6 +349,7 @@ export const FeedbackModal = ({
             </DetectiveButton>
           </motion.div>
         </div>
+       </div>
       </DetectiveCard>
     </Modal>
   );

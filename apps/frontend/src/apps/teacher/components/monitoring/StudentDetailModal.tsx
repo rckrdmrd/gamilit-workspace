@@ -126,7 +126,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
 
   return (
     <Modal isOpen={true} onClose={onClose} showCloseButton={false} size="full" className="border-2 border-detective-orange bg-detective-bg p-0 max-w-5xl">
-      <div className="-mx-6 -my-4">
+      <div className="-mx-6 -my-4 max-h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-detective-orange bg-detective-bg p-6">
           <div>
@@ -135,7 +135,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 transition-colors hover:bg-detective-bg-secondary"
+            className="rounded-lg p-2 min-w-[44px] min-h-[44px] transition-colors hover:bg-detective-bg-secondary"
           >
             <X className="h-6 w-6 text-detective-text" />
           </button>
@@ -159,7 +159,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
 
         {/* Content */}
         {!loading && (
-          <div className="space-y-6 p-6">
+          <div className="space-y-6 p-6 overflow-y-auto flex-1">
             {/* Stats Overview */}
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               <div className="rounded-lg bg-detective-bg-secondary p-4">

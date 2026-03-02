@@ -204,7 +204,7 @@ export const PrestigeSystem = ({ className = '' }: PrestigeSystemProps) => {
         contentClassName="custom"
         ariaLabelledBy="prestige-confirm-title"
       >
-        <div className="space-y-4 p-6">
+        <div className="space-y-4 p-6 max-h-[calc(100vh-8rem)] overflow-y-auto">
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
               <AlertCircle className="h-8 w-8 text-amber-600" />

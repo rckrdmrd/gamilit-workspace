@@ -25,6 +25,7 @@ import {
   InsufficientLevelError,
   RequiredAchievementMissingError,
   InvalidQuantityError,
+  ConsumablePurchaseConflictError,
 } from '../errors/gamification.errors';
 import { NotificationService } from '../../notifications/services/notification.service';
 import { mergeVisualConfig } from '../utils/visual-config.util';
@@ -53,10 +54,10 @@ export class ShopService {
    * Solo tipos que corresponden a comodines de ejercicio; boosts (xp_boost,
    * coins_boost) se excluyen intencionalmente — no sincronizan inventario.
    */
-  private static readonly SHOP_EFFECT_TO_COMODIN: Record<string, string> = {
-    hint: 'PISTAS',
-    highlight: 'VISION_LECTORA',
-    retry: 'SEGUNDA_OPORTUNIDAD',
+  private static readonly SHOP_EFFECT_TO_COMODIN: Record<string, ComodinTypeEnum> = {
+    hint: ComodinTypeEnum.PISTAS,
+    highlight: ComodinTypeEnum.VISION_LECTORA,
+    retry: ComodinTypeEnum.SEGUNDA_OPORTUNIDAD,
   };
 
   constructor(
@@ -295,6 +296,23 @@ export class ShopService {
         ? (item.price - item.discount_price) * quantity
         : 0;
 
+      // 8a. Consumable re-purchase: deactivate previous active purchase
+      // to satisfy UNIQUE(user_id, item_id) WHERE status='completed' AND is_active=true
+      if (item.is_consumable) {
+        await purchaseRepo.update(
+          {
+            user_id: userId,
+            item_id: itemId,
+            status: 'completed',
+            is_active: true,
+          },
+          {
+            is_active: false,
+            consumed_at: new Date(),
+          },
+        );
+      }
+
       const purchase = purchaseRepo.create({
         user_id: userId,
         item_id: itemId,
@@ -311,7 +329,19 @@ export class ShopService {
         },
       });
 
-      const savedPurchase = await purchaseRepo.save(purchase);
+      let savedPurchase: UserPurchase;
+      try {
+        savedPurchase = await purchaseRepo.save(purchase);
+      } catch (err: unknown) {
+        if (
+          err instanceof Error &&
+          'code' in err &&
+          (err as Record<string, unknown>).code === '23505'
+        ) {
+          throw new ConsumablePurchaseConflictError(itemId);
+        }
+        throw err;
+      }
 
       // 9. Reducir stock si aplica
       if (
@@ -349,7 +379,7 @@ export class ShopService {
         try {
           await this.comodinesService.incrementFromShopPurchase(
             userId,
-            comodinType as ComodinTypeEnum,
+            comodinType,
             quantity,
             purchaseResult.purchase_id,
           );
@@ -357,10 +387,10 @@ export class ShopService {
             `Synced ${quantity}x ${comodinType} to comodines inventory for user ${userId}`,
           );
         } catch (error) {
-          this.logger.warn(
-            `Failed to sync comodines inventory for user ${userId}: ${error}`,
+          this.logger.error(
+            `[BRIDGE-ERROR] Failed to sync comodines inventory for user ${userId}: ${error instanceof Error ? error.stack : String(error)}`,
           );
-          // Non-blocking: shop purchase already succeeded
+          // Non-blocking: shop purchase already committed
         }
       }
     }

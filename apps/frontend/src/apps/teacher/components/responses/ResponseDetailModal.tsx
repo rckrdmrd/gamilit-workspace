@@ -289,7 +289,7 @@ const VideoPlayer = ({ url, title }: { url: string; title?: string }) => {
       <div className="flex items-center gap-3 bg-gray-900 px-4 py-2">
         <button
           onClick={togglePlay}
-          className="rounded-full p-2 text-white transition-colors hover:bg-white/20"
+          className="rounded-full p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white transition-colors hover:bg-white/20"
         >
           {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
         </button>
@@ -306,13 +306,13 @@ const VideoPlayer = ({ url, title }: { url: string; title?: string }) => {
         </span>
         <button
           onClick={toggleMute}
-          className="rounded-full p-2 text-white transition-colors hover:bg-white/20"
+          className="rounded-full p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white transition-colors hover:bg-white/20"
         >
           {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
         </button>
         <button
           onClick={handleFullscreen}
-          className="rounded-full p-2 text-white transition-colors hover:bg-white/20"
+          className="rounded-full p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white transition-colors hover:bg-white/20"
         >
           <Maximize2 className="h-5 w-5" />
         </button>
@@ -386,7 +386,7 @@ const AudioPlayer = ({ url, title }: { url: string; title?: string }) => {
           <div className="flex items-center gap-3">
             <button
               onClick={togglePlay}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white transition-colors hover:bg-purple-700"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-purple-600 text-white transition-colors hover:bg-purple-700"
             >
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </button>
@@ -726,7 +726,7 @@ export const ResponseDetailModal = ({
         </h2>
         <button
           onClick={onClose}
-          className="rounded-lg p-2 transition-colors hover:bg-white/20"
+          className="rounded-lg p-2 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors hover:bg-white/20"
         >
           <X className="h-6 w-6 text-white" />
         </button>
@@ -910,7 +910,7 @@ export const ResponseDetailModal = ({
                             Este ejercicio fue evaluado automáticamente por el sistema.
                           </p>
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div className="rounded-lg bg-white p-3 text-center">
                             <p className="text-xs text-gray-500">Puntaje obtenido</p>
                             <p className="text-xl font-bold text-indigo-600">{attempt.score}</p>

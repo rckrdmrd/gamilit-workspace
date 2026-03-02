@@ -122,6 +122,8 @@ Custom modals must follow the same patterns:
 </button>
 ```
 
+> **Ver tambien:** [ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md](./ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md) para reglas especificas de modales responsive, incluyendo scroll wrappers, grid collapse, y patrones de full-bleed content.
+
 ---
 
 ## 4. Touch Targets (WCAG 2.5.5)

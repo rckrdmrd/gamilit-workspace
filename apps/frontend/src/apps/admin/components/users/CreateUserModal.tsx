@@ -147,14 +147,14 @@ export function CreateUserModal({
         <button
           onClick={handleClose}
           disabled={isSubmitting}
-          className="p-2 rounded-lg hover:bg-detective-bg-secondary transition-colors disabled:opacity-50"
+          className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-detective-bg-secondary transition-colors disabled:opacity-50"
         >
           <X className="h-5 w-5 text-detective-text-secondary" />
         </button>
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-6 max-h-[calc(100vh-10rem)] overflow-y-auto">
         {createdUser ? (
           // Success state
           <div className="space-y-4">

@@ -251,7 +251,7 @@ export function UserDetailModal({
                     </span>
                     <button
                       onClick={onClose}
-                      className="text-white transition-colors hover:text-white/70"
+                      className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-white transition-colors hover:text-white/70"
                       aria-label="Cerrar modal"
                     >
                       <X className="h-6 w-6" />
@@ -483,7 +483,7 @@ export function UserDetailModal({
                               <button
                                 type="button"
                                 onClick={handleCancel}
-                                className="rounded-lg bg-detective-bg-secondary px-4 py-2 font-medium text-detective-text border border-detective-border transition-colors hover:bg-detective-border"
+                                className="rounded-lg bg-detective-bg-secondary px-4 py-3 font-medium text-detective-text border border-detective-border transition-colors hover:bg-detective-border"
                               >
                                 Cancelar
                               </button>
@@ -491,7 +491,7 @@ export function UserDetailModal({
                                 type="button"
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex items-center space-x-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange/80 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="flex items-center space-x-2 rounded-lg bg-detective-orange px-4 py-3 font-medium text-white transition-colors hover:bg-detective-orange/80 disabled:cursor-not-allowed disabled:opacity-50"
                               >
                                 <Save className="h-4 w-4" />
                                 <span>{saving ? 'Guardando...' : 'Guardar Cambios'}</span>

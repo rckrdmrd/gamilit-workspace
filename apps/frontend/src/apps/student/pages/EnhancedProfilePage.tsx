@@ -59,7 +59,7 @@ export default function EnhancedProfilePage() {
   const [selectedTab, setSelectedTab] = useState<TabId>('overview');
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
-  const { frame, background, title, badge } = useEquippedVisuals();
+  const { avatar, frame, background, title, badge } = useEquippedVisuals();
 
   const handleAvatarSelect = async (avatarUrl: string) => {
     const success = await updateAvatar(avatarUrl);
@@ -96,9 +96,10 @@ export default function EnhancedProfilePage() {
           user={user}
           rankType={rankType}
           stats={stats}
+          equippedAvatarUrl={avatar?.src}
           equippedFrameColor={frame?.borderColor}
           equippedBackground={background ? {
-            name: title?.name || '',
+            name: 'Fondo equipado',
             assetUrl: background.assetUrl,
           } : undefined}
           equippedTitle={title ? {
