@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { motion, Reorder, useDragControls } from 'framer-motion';
 import { Puzzle, GripVertical, RotateCcw } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -249,6 +249,9 @@ export const PuzzleContextoExercise = ({
     setShowFeedback(false);
   };
 
+  const handleCheckRef = useRef(handleCheck);
+  handleCheckRef.current = handleCheck;
+
   // Expose actions to parent
   useEffect(() => {
     if (actionsRef) {
@@ -261,10 +264,11 @@ export const PuzzleContextoExercise = ({
           hintsUsed,
         }),
         reset: handleReset,
-        validate: async () => handleCheck(),
+        validate: async () => handleCheckRef.current(),
+        handleCheck: () => handleCheckRef.current(),
       };
     }
-  }, [actionsRef]);
+  }, [actionsRef]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getFragmentStyle = (_fragment: Fragment, _index: number) => {
     // FE-059: Removed visual validation - correctOrder field no longer available

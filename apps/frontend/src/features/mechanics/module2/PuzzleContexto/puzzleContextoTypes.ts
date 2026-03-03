@@ -50,6 +50,7 @@ export interface PuzzleContextoActions {
   getState: () => PuzzleContextoState;
   reset: () => void;
   validate: () => Promise<void>;
+  handleCheck: () => void;
 }
 
 // Standardized Exercise Props Interface (Module 2 Pattern)

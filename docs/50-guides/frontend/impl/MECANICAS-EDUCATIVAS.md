@@ -155,6 +155,40 @@ Las siguientes mecanicas estaban en el enum pero fueron removidas:
 - **Tiempo:** Sin limite estricto
 - **Rubrica:** Evaluacion cualitativa
 
+### Patrón: Click-vs-Drag en Elementos Arrastrables (Comic Digital)
+
+**Problema:** Elementos que soportan tanto click (editar) como drag (mover) requieren diferenciación clara para evitar que `e.preventDefault()` (necesario para prevenir text selection durante drag) bloquee eventos de click.
+
+**Solución implementada en ComicDigitalExercise.tsx:**
+- Registrar posición inicial en `handlePointerDown` y llamar `e.preventDefault()` para prevenir text selection
+- En `handlePointerUp`, calcular distancia Manhattan (|Δx| + |Δy|) entre puntos inicial y final
+- Si distancia < **5px** → tratar como **click** (invocar `onStartEdit()`)
+- Si distancia ≥ **5px** → tratar como **drag** (invocar `onUpdatePosition()`)
+
+**Código patrón:**
+```typescript
+const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
+
+const handlePointerDown = (e: React.PointerEvent) => {
+  setStartPos({ x: e.clientX, y: e.clientY });
+  e.preventDefault(); // Previene text selection durante drag
+};
+
+const handlePointerUp = (e: React.PointerEvent) => {
+  if (startPos) {
+    const distance = Math.abs(e.clientX - startPos.x) + Math.abs(e.clientY - startPos.y);
+    if (distance < 5) {
+      onStartEdit(); // Click
+    } else {
+      onUpdatePosition(e); // Drag
+    }
+    setStartPos(null);
+  }
+};
+```
+
+**Ventajas:** Reutilizable en cualquier componente con dual click/drag behavior (mapas interactivos, timeline editables, etc.)
+
 ---
 
 ## MECANICAS AUXILIARES
@@ -307,7 +341,34 @@ export enum ExerciseType {
 
 ---
 
+---
+
+## Patrón Estándar: actionsRef con handleCheck
+
+TODA mecánica que registra `handleCheck` en `actionsRef` DEBE usar el patrón `handleCheckRef` para evitar stale closures cuando el sidebar "Enviar Respuestas" delega al componente:
+
+1. Crear ref: `const handleCheckRef = useRef(handleCheck);`
+2. Actualizar ref cada render: `handleCheckRef.current = handleCheck;`
+3. Registrar wrapper en actionsRef: `handleCheck: () => handleCheckRef.current()`
+4. Deps del useEffect: `[actionsRef, handleReset]` con `// eslint-disable-line react-hooks/exhaustive-deps`
+
+**¿Por qué?** El `useEffect` que puebla `actionsRef.current` captura `handleCheck` en su closure. Si `handleCheck` no está en deps (y no puede estarlo porque cambiaría en cada render), la referencia queda obsoleta cuando el usuario cambia respuestas. El ref siempre apunta a la versión más reciente.
+
+**Ejercicios que usan este patrón (13):**
+- M1: VerdaderoFalso, Emparejamiento, Crucigrama, Timeline, MapaConceptual
+- M2: PuzzleContexto, PrediccionNarrativa, RuedaInferencias, DetectiveTextual
+- M3: PodcastArgumentativo, DebateDigital, AnalisisFuentes, MatrizPerspectivas
+
+**Ejercicios con handleCheck directo en deps (seguros sin ref):**
+- M1: CompletarEspacios, SopaLetras
+- M2: CausaEfecto, LecturaInferencial
+- M3: TribunalOpiniones
+- Aux: TextoEnMovimiento, CollagePrensa, CallToAction, ComprensiónAuditiva (BACKLOG)
+
+---
+
 **Generado por:** Requirements-Analyst
 **Fecha:** 2025-12-23
 **Version:** 1.0
 **Última actualización de rúbricas:** 2026-03-03
+**Última actualización del patrón actionsRef:** 2026-03-03

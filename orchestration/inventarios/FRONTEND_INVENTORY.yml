@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.9.0"
-fecha: "2026-03-03"  # v12.9.0: Comic Digital Third Wave — @dnd-kit/sortable, pointer events, sticker system. Previous: v12.8.9
+version: "12.9.2"
+fecha: "2026-03-03"  # v12.9.2: fix comic_digital speech bubble editing — click-vs-drag detection in handlePointerUp. v12.9.1: fix stale closure en actionsRef.handleCheck para 13 ejercicios. v12.9.0: Comic Digital Third Wave — @dnd-kit/sortable, pointer events, sticker system. Previous: v12.8.9
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -529,6 +529,21 @@ hallazgos:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v12.9.2"
+    changes:
+      - "fix(comic-digital): speech bubble text editing — click-vs-drag detection in handlePointerUp"
+    files_modified: 1
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.9.1"
+    changes:
+      - "docs(mechanics): actionsRef handleCheckRef pattern documented in MECANICAS-EDUCATIVAS.md"
+      - "fix: stale closure en actionsRef.handleCheck para 13 ejercicios (5 M1 + 4 M2 + 4 M3)"
+    files_modified: 1
+    build_status: "N/A (docs-only)"
+
   - date: "2026-03-03"
     version: "v12.8.4"
     changes:

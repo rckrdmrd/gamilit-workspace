@@ -1,4 +1,4 @@
-import { useState, useEffect, type MutableRefObject } from 'react';
+import { useState, useEffect, useRef, type MutableRefObject } from 'react';
 import { motion } from 'framer-motion';
 import { Grid3X3 } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -291,16 +291,19 @@ export const CrucigramaExercise = ({
     setSelectedCell(null);
   };
 
+  // Stable ref to always point to latest handleCheck (avoids stale closure in useEffect)
+  const handleCheckRef = useRef(handleCheck);
+  handleCheckRef.current = handleCheck;
+
   // Populate actionsRef for parent component
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck,
+        handleCheck: () => handleCheckRef.current(),
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsRef]);
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const progress = exercise.clues.length > 0
     ? (completedClues.size / exercise.clues.length) * 100

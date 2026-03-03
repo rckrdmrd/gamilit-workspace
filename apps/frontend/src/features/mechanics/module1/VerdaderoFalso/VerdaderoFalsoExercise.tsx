@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -176,15 +176,19 @@ export const VerdaderoFalsoExercise = ({
     setShowFeedback(false);
   };
 
+  // Stable ref to always point to latest handleCheck (avoids stale closure in useEffect)
+  const handleCheckRef = useRef(handleCheck);
+  handleCheckRef.current = handleCheck;
+
   // Populate actionsRef for parent component
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck,
+        handleCheck: () => handleCheckRef.current(),
       };
     }
-  }, [actionsRef]);
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const progress = statements.length > 0 ? (answeredCount / statements.length) * 100 : 0;
 

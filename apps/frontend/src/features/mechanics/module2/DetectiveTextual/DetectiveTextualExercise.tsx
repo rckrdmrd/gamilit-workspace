@@ -5,7 +5,7 @@
  * FIX 2024-11-29: Ahora carga datos desde el API en lugar de usar mock data
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Search, CheckCircle2, Circle, Book } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -350,6 +350,10 @@ export const DetectiveTextualExercise = ({
     };
   }, [answers, hintsUsed, timeSpent, score, currentQuestionIndex]);
 
+  // Submit ref for actionsRef (avoids stale closure in useEffect)
+  const handleSubmitSolutionRef = useRef(handleSubmitSolution);
+  handleSubmitSolutionRef.current = handleSubmitSolution;
+
   // Populate actionsRef for parent component control
   useEffect(() => {
     if (actionsRef) {
@@ -358,6 +362,7 @@ export const DetectiveTextualExercise = ({
         reset: handleReset,
         validate: handleSubmitSolution,
         selectAnswer: handleSelectOption,
+        handleCheck: () => handleSubmitSolutionRef.current(),
       };
     }
 

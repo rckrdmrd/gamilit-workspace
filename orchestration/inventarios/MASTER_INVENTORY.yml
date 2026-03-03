@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.9.25"
-fecha: "2026-03-03"  # v14.9.25: Comic Digital Third Wave — visual reconstruction. Previous: v14.9.24
+version: "14.9.27"
+fecha: "2026-03-03"  # v14.9.27: fix comic_digital speech bubble text editing bug. v14.9.26: fix stale closure en actionsRef.handleCheck para 13 ejercicios. v14.9.25: Comic Digital Third Wave — visual reconstruction. Previous: v14.9.24
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -231,6 +231,27 @@ credenciales:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v14.9.27"
+    changes:
+      - "fix(comic-digital): speech bubble text editing — click-vs-drag detection in handlePointerUp"
+    files_modified: 1
+    build_status: "PASS"
+    refs:
+      - "FRONTEND_INVENTORY v12.9.2"
+      - "apps/frontend/src/features/mechanics/module5/ComicDigital/ComicDigitalExercise.tsx"
+
+  - date: "2026-03-03"
+    version: "v14.9.26"
+    changes:
+      - "docs(mechanics): actionsRef handleCheckRef pattern documented in MECANICAS-EDUCATIVAS.md"
+      - "fix: stale closure en actionsRef.handleCheck para 13 ejercicios (5 M1 + 4 M2 + 4 M3)"
+    files_modified: 1
+    build_status: "N/A (docs-only)"
+    refs:
+      - "FRONTEND_INVENTORY v12.9.1"
+      - "docs/50-guides/frontend/impl/MECANICAS-EDUCATIVAS.md"
+
   - date: "2026-03-03"
     version: "v14.9.22"
     changes:

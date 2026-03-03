@@ -43,6 +43,7 @@ export interface DetectiveTextualActions {
   reset: () => void;
   validate: () => Promise<void>;
   selectAnswer?: (questionId: string, optionIndex: number) => void;
+  handleCheck?: () => void;
 }
 
 export interface ExerciseProgressUpdate {

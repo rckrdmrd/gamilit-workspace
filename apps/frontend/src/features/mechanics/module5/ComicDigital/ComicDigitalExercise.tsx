@@ -221,13 +221,21 @@ const DraggableBubble = ({
     dragging.current = false;
     const el = elRef.current;
     if (el) el.style.cursor = '';
+
+    // Click vs drag: movement < 5px (Manhattan) = click → toggle editing
+    const totalMovement = Math.abs(e.clientX - startPos.current.x) + Math.abs(e.clientY - startPos.current.y);
+    if (totalMovement < 5) {
+      onStartEdit();
+      return;
+    }
+
     const rect = panelElement.getBoundingClientRect();
     const dx = ((e.clientX - startPos.current.x) / rect.width) * 100;
     const dy = ((e.clientY - startPos.current.y) / rect.height) * 100;
     const finalX = Math.max(0, Math.min(90, startPct.current.x + dx));
     const finalY = Math.max(0, Math.min(90, startPct.current.y + dy));
     onUpdatePosition(finalX, finalY);
-  }, [panelElement, onUpdatePosition]);
+  }, [panelElement, onUpdatePosition, onStartEdit]);
 
   const bubbleStyle = bubble.type === 'speech'
     ? 'bg-white border-2 border-detective-text rounded-xl'

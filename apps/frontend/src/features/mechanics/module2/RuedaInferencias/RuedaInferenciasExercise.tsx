@@ -411,6 +411,10 @@ export const RuedaInferenciasExercise = ({
     setFeedback(null);
   };
 
+  // Submit ref for actionsRef (avoids stale closure in useEffect)
+  const handleSubmitExerciseRef = useRef(handleSubmitExercise);
+  handleSubmitExerciseRef.current = handleSubmitExercise;
+
   // Actions ref
   useEffect(() => {
     if (actionsRef) {
@@ -449,8 +453,10 @@ export const RuedaInferenciasExercise = ({
         },
         reset: handleReset,
         submit: handleSubmitExercise,
+        handleCheck: () => handleSubmitExerciseRef.current(),
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionsRef]);
 
   // Validate text length

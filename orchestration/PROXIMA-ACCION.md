@@ -7,6 +7,15 @@
 
 ---
 
+## [2026-03-03] Comic Digital Speech Bubble Text Editing — Click-vs-drag detection fix
+
+- **BUG (CRITICO):** Speech bubbles couldn't be edited — `e.preventDefault()` in `handlePointerDown` suppressed click events
+- **FIX:** Added click-vs-drag detection in `handlePointerUp` — Manhattan distance < 5px triggers `onStartEdit()`, enabling text editing
+- **Archivo:** ComicDigitalExercise.tsx (event handler logic)
+- **Validación:** Build/Lint/Typecheck 0 errors
+
+---
+
 ## [2026-03-03] Comic Digital Third Wave: Visual Reconstruction — 5 problems fixed + sticker system
 
 - **P1 (CRITICO):** Replaced `framer-motion Reorder` with `@dnd-kit/sortable` — half/third panels now render side-by-side via `flex flex-wrap gap-4` + width classes

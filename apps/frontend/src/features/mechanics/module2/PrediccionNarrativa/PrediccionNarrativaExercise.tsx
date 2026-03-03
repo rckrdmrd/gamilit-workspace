@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, AlertCircle, Lightbulb } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -246,16 +246,20 @@ export const PrediccionNarrativaExercise = ({
     }
   };
 
+  const handleCheckRef = useRef(handleCheck);
+  handleCheckRef.current = handleCheck;
+
   // Expose actions to parent
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
         getState: () => ({ answers, score, timeSpent, hintsUsed, showResults }),
         reset: handleReset,
-        validate: async () => handleCheck(),
+        validate: async () => handleCheckRef.current(),
+        handleCheck: () => handleCheckRef.current(),
       };
     }
-  }, [actionsRef]);
+  }, [actionsRef]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // FE-059: Removed validation styling - isCorrect field no longer available
   const getOptionStyle = (prediction: PredictionOption) => {

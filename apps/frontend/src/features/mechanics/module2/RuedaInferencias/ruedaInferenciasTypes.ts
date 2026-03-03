@@ -138,6 +138,7 @@ export interface RuedaInferenciasActions {
   submit: () => Promise<void>;
   skipFragment?: () => void;
   spinWheel?: () => void;
+  handleCheck?: () => void;
 }
 
 /**

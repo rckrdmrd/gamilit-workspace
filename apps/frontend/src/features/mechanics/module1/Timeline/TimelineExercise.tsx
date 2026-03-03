@@ -1,4 +1,4 @@
-import { useState, useEffect, createElement } from 'react';
+import { useState, useEffect, useRef, createElement } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
@@ -147,23 +147,29 @@ export const TimelineExercise = ({
     setEvents([...events].sort(() => Math.random() - 0.5));
   };
 
+  // Stable refs to always point to latest closures (avoids stale closure in useEffect)
+  const handleCheckRef = useRef(handleCheck);
+  handleCheckRef.current = handleCheck;
+  const handleShuffleRef = useRef(handleShuffle);
+  handleShuffleRef.current = handleShuffle;
+
   // Populate actionsRef for parent component
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck,
+        handleCheck: () => handleCheckRef.current(),
         specificActions: [
           {
             label: 'Mezclar',
             icon: createElement(Shuffle, { className: 'w-4 h-4' }),
-            onClick: handleShuffle,
+            onClick: () => handleShuffleRef.current(),
             variant: 'blue' as const,
           },
         ],
       };
     }
-  }, [actionsRef]);
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
