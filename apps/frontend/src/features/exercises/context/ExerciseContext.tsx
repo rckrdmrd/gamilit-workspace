@@ -189,6 +189,14 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   const handleSubmit = useCallback(async () => {
     if (!exerciseId) return;
 
+    // Delegate to mechanic's own submission logic if available.
+    // Self-submitting exercises (e.g. Podcast, DebateDigital, AnalisisFuentes)
+    // have fresh local state + client-side validation + audio upload.
+    if (mechanicActionsRef.current.handleCheck) {
+      mechanicActionsRef.current.handleCheck();
+      return;
+    }
+
     if (!progressHook.userAnswers) {
       setFeedback({
         type: 'error',

@@ -9,8 +9,6 @@ import { CrucigramaData, CrucigramaCell } from './crucigramaTypes';
 import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
-import { cn } from '@shared/utils/cn';
-
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard, useContainerSize } from '@/shared/hooks';
 
@@ -62,7 +60,7 @@ export const CrucigramaExercise = ({
   const numCols = grid[0]?.length || 1;
 
   const DEFAULT_CELL_SIZE = 40;
-  const MIN_CELL_SIZE = 36;
+  const MIN_CELL_SIZE = 28;
   const GRID_PADDING = 16; // p-2 = 8px each side on mobile (CrucigramaGrid wrapper)
   const GAP_PX = 1;
 
@@ -341,10 +339,7 @@ export const CrucigramaExercise = ({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className={cn(
-                'flex justify-center',
-                gridNeedsScroll && 'overflow-x-auto pb-2'
-              )}
+              className={gridNeedsScroll ? 'overflow-x-auto pb-2' : 'flex justify-center'}
             >
               <CrucigramaGrid
                 grid={grid}

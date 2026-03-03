@@ -1,4 +1,4 @@
-import { useState, useEffect, type MutableRefObject } from 'react';
+import { useState, useEffect, useRef, type MutableRefObject } from 'react';
 import { Mic, Square, FileAudio, AlertCircle } from 'lucide-react';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
@@ -364,16 +364,19 @@ export const PodcastArgumentativoExercise = ({
     setScriptText('');
   };
 
-  // Attach actions ref
+  // Use ref to always have the latest handleComplete (avoids stale closure)
+  const handleCompleteRef = useRef(handleComplete);
+  handleCompleteRef.current = handleComplete;
+
+  // Attach actions ref — delegates to ref to avoid stale closure
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck: handleComplete,
+        handleCheck: () => handleCompleteRef.current(),
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recording, currentScore]);
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

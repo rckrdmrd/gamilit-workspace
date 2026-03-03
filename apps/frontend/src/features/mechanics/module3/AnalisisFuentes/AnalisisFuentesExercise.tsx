@@ -1,4 +1,4 @@
-import { useState, useEffect, type MutableRefObject } from 'react';
+import { useState, useEffect, useRef, type MutableRefObject } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileSearch,
@@ -264,16 +264,19 @@ export const AnalisisFuentesExercise = ({
     setShowFeedback(false);
   };
 
-  // Attach actions ref
+  // Use ref to always have the latest handleComplete (avoids stale closure)
+  const handleCompleteRef = useRef(handleComplete);
+  handleCompleteRef.current = handleComplete;
+
+  // Attach actions ref — delegates to ref to avoid stale closure
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck: handleComplete,
+        handleCheck: () => handleCompleteRef.current(),
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsRef]);
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
