@@ -332,7 +332,7 @@ export const MatrizPerspectivasExercise = ({
                           Argumentos
                         </h4>
                         <ul className="space-y-1">
-                          {persp.arguments.map((arg: string, i: number) => (
+                          {(persp.arguments || []).map((arg: string, i: number) => (
                             <li key={i} className="flex items-start gap-1 text-detective-xs">
                               <span className="text-detective-success">+</span>
                               <span>{arg}</span>
@@ -347,7 +347,7 @@ export const MatrizPerspectivasExercise = ({
                           Contraargumentos
                         </h4>
                         <ul className="space-y-1">
-                          {persp.counterarguments.map((counter: string, i: number) => (
+                          {(persp.counterarguments || []).map((counter: string, i: number) => (
                             <li key={i} className="flex items-start gap-1 text-detective-xs">
                               <span className="text-detective-danger">−</span>
                               <span>{counter}</span>

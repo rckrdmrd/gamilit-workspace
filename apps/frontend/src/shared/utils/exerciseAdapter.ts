@@ -637,18 +637,31 @@ export const adaptToAnalisisFuentesData = (exercise: ExerciseData): any => {
  * Adapts ExerciseData to MatrizPerspectivasData format
  * Module 3 - Analyze multiple perspectives on a topic
  *
- * DB format: { content: { perspectives: [{ perspective, viewpoint, arguments, counterarguments, biases, contextualFactors }] } }
- * Component expects: { perspectives: PerspectiveGeneration[] }
+ * DB format: { content: { perspectives: [{ id, group, perspective, evidence, evolution }] } }
+ * Component expects: { perspectives: PerspectiveGeneration[] } with { perspective, viewpoint, arguments[], counterarguments[], biases[], contextualFactors[] }
  */
 export const adaptToMatrizPerspectivasData = (exercise: ExerciseData): any => {
   const base = adaptToBaseExercise(exercise);
   const content = exercise.mechanicData?.content || {};
 
+  // Map DB perspective fields to component PerspectiveGeneration format
+  const rawPerspectives = content.perspectives || [];
+  const perspectives = rawPerspectives.map((p: any) => ({
+    perspective: p.group || p.perspective || '',
+    viewpoint: p.viewpoint || p.perspective || '',
+    arguments: p.arguments || (p.evidence ? [p.evidence] : []),
+    counterarguments: p.counterarguments || [],
+    biases: p.biases || [],
+    contextualFactors: p.contextualFactors || (p.evolution ? [p.evolution] : []),
+  }));
+
   return {
     ...base,
     description: exercise.description || '',
     hints: exercise.mechanicData?.hints || [],
-    perspectives: content.perspectives || [],
+    perspectives,
+    topic: content.topic || exercise.title || '',
+    analysisQuestions: content.analysisQuestions || [],
   };
 };
 
