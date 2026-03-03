@@ -85,7 +85,8 @@ BEGIN
         (SELECT COUNT(*) FROM social_features.classroom_members WHERE student_id = v_test_profile_id) as classroom_count,
         -- NUEVOS en v2.0
         (SELECT COUNT(*) FROM auth_management.user_preferences WHERE user_id = v_test_profile_id) as preferences_count,
-        (SELECT COUNT(*) FROM gamification_system.ml_coins_transactions WHERE user_id = v_test_profile_id AND source = 'system_welcome_bonus') as welcome_bonus_count
+        -- ADR-052: Corregido columna 'source' (no existe) → 'reason'
+        (SELECT COUNT(*) FROM gamification_system.ml_coins_transactions WHERE user_id = v_test_profile_id AND reason = 'system_welcome_bonus') as welcome_bonus_count
     INTO v_results;
 
     -- Reportar resultados
@@ -159,11 +160,12 @@ BEGIN
     -- Verificar transaccion de welcome bonus
     RAISE NOTICE '[6/8] Verificando welcome bonus transaction...';
 
+    -- ADR-052: Corregido transaction_type 'earn' → 'welcome_bonus', columna 'source' → 'reason'
     PERFORM 1 FROM gamification_system.ml_coins_transactions
     WHERE user_id = v_test_profile_id
       AND amount = 100
-      AND transaction_type = 'earn'
-      AND source = 'system_welcome_bonus';
+      AND transaction_type = 'welcome_bonus'::gamification_system.transaction_type
+      AND reason = 'system_welcome_bonus';
 
     IF NOT FOUND THEN
         RAISE WARNING 'FAIL: welcome bonus transaction incorrecta';

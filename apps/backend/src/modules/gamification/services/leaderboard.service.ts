@@ -349,10 +349,6 @@ export class LeaderboardService {
     offset: number = 0,
     timePeriod?: string,
   ): Promise<LeaderboardResponse> {
-    // TODO: Implementar query para obtener miembros del classroom
-    // Por ahora, asumimos que hay una relación classroom_members con student_id
-    // Esto requiere crear la entity ClassroomMember o hacer query directo
-
     // Query directo a la tabla classroom_members
     const classroomMembersQuery = `
       SELECT student_id as user_id

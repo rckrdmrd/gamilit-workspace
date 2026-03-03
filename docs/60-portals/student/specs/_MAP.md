@@ -33,7 +33,7 @@ docs/50-guides/student-portal/
 |   +-- SPEC-SOCIAL.md           <- Social: amigos, guilds, notificaciones
 |   +-- SPEC-PROGRESS.md         <- Progreso: modulos, streaks, actividad
 |   +-- SPEC-MODULES.md          <- Modulos educativos, prerequisitos
-|   +-- SPEC-API-CONTRACTS.md    <- Contratos API: 80+ endpoints
+
 |   +-- SPEC-MULTIMEDIA.md       <- Multimedia: avatars, iconos, animaciones
 |   +-- SPEC-PDF-EXCEL.md        <- Generacion archivos (limitado)
 |
@@ -75,7 +75,7 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 | `SPEC-SOCIAL.md` | Social | Friends, Guilds, Notifications WebSocket |
 | `SPEC-PROGRESS.md` | Progreso | Streaks, estadísticas, actividad reciente |
 | `SPEC-MODULES.md` | Módulos | Prerequisitos, estados, recompensas |
-| `SPEC-API-CONTRACTS.md` | APIs | 80+ endpoints, tipos, códigos de error |
+
 | `SPEC-MULTIMEDIA.md` | Multimedia | Avatars, iconos, animaciones, accesibilidad |
 | `SPEC-PDF-EXCEL.md` | Exportación | Capacidades limitadas, planificación futura |
 
@@ -139,12 +139,12 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 1. Comenzar por: `SPEC-DASHBOARD.md` (componentes principales)
 2. Revisar: `SPEC-EXERCISES.md` (flujo de ejercicios)
 3. Revisar: `SPEC-GAMIFICATION.md` (sistema de recompensas)
-4. Consultar: `SPEC-API-CONTRACTS.md` (endpoints consumidos)
+4. Consultar: `../PORTAL-STUDENT-API-REFERENCE.md` (endpoints consumidos)
 5. Referencias legacy: `gaps/STUDENT-GAP-006-profile-stats.md`
 
 ### Desarrollador Backend
 
-1. Comenzar por: `SPEC-API-CONTRACTS.md` (contratos de API)
+1. Comenzar por: `../PORTAL-STUDENT-API-REFERENCE.md` (contratos de API)
 2. Revisar: `SPEC-GAMIFICATION.md` (lógica de gamificación)
 3. Revisar: `SPEC-SOCIAL.md` (endpoints sociales)
 4. Consultar: `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`

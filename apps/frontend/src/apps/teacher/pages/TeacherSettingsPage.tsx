@@ -407,7 +407,7 @@ export default function TeacherSettingsPage() {
 
   return (
     <TeacherPageShell>
-    <div className="mx-auto max-w-7xl">
+    <div className="detective-container py-6 sm:py-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">

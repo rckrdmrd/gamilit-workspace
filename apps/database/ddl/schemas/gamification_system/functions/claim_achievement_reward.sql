@@ -84,6 +84,7 @@ BEGIN
     SET
         total_xp = total_xp + COALESCE((v_achievement.rewards->>'xp')::INTEGER, v_achievement.points_value, 0),
         ml_coins = v_new_balance,
+        ml_coins_earned_total = ml_coins_earned_total + COALESCE(v_achievement.ml_coins_reward, 0),
         updated_at = NOW()
     WHERE user_id = p_user_id;
 

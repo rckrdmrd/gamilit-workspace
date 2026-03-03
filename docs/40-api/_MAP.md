@@ -13,11 +13,7 @@ estado: activo
 ## Referencias principales
 
 - Indice: [_INDEX.md](./_INDEX.md)
-- Referencia completa: [API-REFERENCE.md](./API-REFERENCE.md)
-- Portal estudiante: [PORTAL-STUDENT-API-REFERENCE.md](./PORTAL-STUDENT-API-REFERENCE.md) [REDIRECT → docs/60-portals/student/]
-- Portal maestro: [PORTAL-TEACHER-API-REFERENCE.md](./PORTAL-TEACHER-API-REFERENCE.md) [REDIRECT → docs/60-portals/teacher/]
-- Portal padres: [PORTAL-PARENTS-API-REFERENCE.md](./PORTAL-PARENTS-API-REFERENCE.md) [REDIRECT → docs/60-portals/parents/]
-- Portal admin: [PORTAL-ADMIN-API-REFERENCE.md](./PORTAL-ADMIN-API-REFERENCE.md) [REDIRECT → docs/60-portals/admin/]
+- Referencia completa: [API-REFERENCE.md](./API-REFERENCE.md) (915 endpoints, 7 archivos por dominio)
 - Inventario equipamiento: [ENDPOINTS-INVENTORY-EQUIP.md](./ENDPOINTS-INVENTORY-EQUIP.md)
 - Migracion Web Push: [WEB-PUSH-MIGRATION.md](./WEB-PUSH-MIGRATION.md)
-- Endpoints portal admin: [ADMIN-PORTAL-ENDPOINTS.md](./_archived/ADMIN-PORTAL-ENDPOINTS.md) [ARCHIVED]
+- Vistas por portal: Ver `docs/60-portals/{portal}/PORTAL-*-API-REFERENCE.md`

@@ -33,7 +33,7 @@ const StatusTab = ({
   onClick,
   variant,
 }: StatusTabProps) => {
-  const baseClasses = 'flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 border-2';
+  const baseClasses = 'flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-lg font-medium transition-all duration-200 border-2';
 
   const variantClasses = {
     pending: isActive
@@ -168,7 +168,7 @@ export default function TeacherReviewPanelPage() {
 
   return (
     <TeacherPageShell>
-      <div className="mx-auto max-w-7xl">
+      <div className="detective-container py-6 sm:py-8">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">

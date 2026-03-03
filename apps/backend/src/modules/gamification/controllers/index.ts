@@ -9,3 +9,4 @@ export * from './classroom-missions.controller';
 export * from './comodines.controller';
 export * from './shop.controller';
 export * from './inventory.controller';
+export * from './boost.controller';

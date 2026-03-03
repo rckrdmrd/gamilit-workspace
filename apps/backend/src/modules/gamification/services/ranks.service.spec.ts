@@ -364,14 +364,10 @@ describe('RanksService', () => {
     it('should award ML Coins bonus on promotion', async () => {
       await service.promoteToNextRank(mockUserId);
 
-      expect(mockMLCoinsService.addCoins).toHaveBeenCalledWith(
-        mockUserId,
-        100, // Nacom bonus (actual rank config value)
-        TransactionTypeEnum.EARNED_RANK,
-        expect.stringContaining('Nacom'),
-        expect.any(String),
-        'user_rank',
-      );
+      // ML Coins bonus is now credited by DB trigger `trg_check_rank_promotion_on_xp_gain`.
+      // RanksService.promoteToNextRank() intentionally does NOT call addCoins() to avoid
+      // double-crediting. The service only logs the bonus amount for observability.
+      expect(mockMLCoinsService.addCoins).not.toHaveBeenCalled();
     });
 
     it('should update user stats with new rank', async () => {

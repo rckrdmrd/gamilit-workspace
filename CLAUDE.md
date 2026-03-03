@@ -1,6 +1,6 @@
 # CLAUDE.md - gamilit
 
-**Sistema:** SIMCO v4.0.0 + NEXUS v4.1 | **Version:** 4.1.0 | **Fecha:** 2026-02-27
+**Sistema:** SIMCO v4.0.0 + NEXUS v4.1 | **Version:** 4.1.0 | **Fecha:** 2026-03-03
 
 ---
 
@@ -38,8 +38,8 @@ SIN FETCH = ESTADO INCOMPLETO
 ### RC2: COHERENCIA ENTRE CAPAS
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
-  DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/157 classes, 16 DDL-only en data_warehouse)
-  Backend -> Frontend: Endpoints documentados (914 endpoints)
+  DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/158 classes, 16 DDL-only en data_warehouse)
+  Backend -> Frontend: Endpoints documentados (919 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
 SI HAY GAPS: DOCUMENTAR + BLOQUEAR avance hasta resolver
@@ -164,7 +164,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
 | 23 | mail | Transporte email (transitivo via auth/notifications/teacher/parents/progress) | 100% |
 
-**Total:** 23 modulos, 156 entities (157 classes), 172 services, 108 controllers, 914 endpoints
+**Total:** 23 modulos, 156 entities (158 classes), 173 services, 109 controllers, 919 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
 > Adicionalmente, módulos con import status especial:
@@ -274,6 +274,7 @@ Ver: `docs/20-architecture/AMBIENTES-DEV-PROD.md` para detalles completos.
 | @SEEDS | apps/database/seeds/ |
 | @DOCS-LOCAL | docs/ |
 | @INVENTORY | orchestration/inventarios/ |
+| @CROSS-REF | orchestration/inventarios/CROSS-REFERENCE-MASTER.yml |
 | @WORK-ITEMS | orchestration/work-items/ |
 | @PROJECT-CTX | orchestration/PROJECT-CONTEXT.md |
 
@@ -336,11 +337,10 @@ Ver: `docs/20-architecture/AMBIENTES-DEV-PROD.md` para detalles completos.
 gamilit/
 +-- CLAUDE.md                    <- ESTE ARCHIVO
 +-- README.md
-+-- _INDEX.yml                   <- Redirect stub -> orchestration/_INDEX.yml
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
-|   +-- backend/                 <- NestJS 11 (23 modulos, 914 endpoints)
+|   +-- backend/                 <- NestJS 11 (23 modulos, 919 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
 |   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 173 tablas)
 |   +-- devops/                  <- Deployment scripts
@@ -374,8 +374,8 @@ gamilit/
     +-- CONTEXT-MAP.yml          <- Variables y aliases resueltos
     +-- BOOTLOADER.md            <- Secuencia de arranque
     +-- agents/                  <- Perfiles de agente (full + compact)
-    +-- directivas/              <- 72 archivos SIMCO activos (+15 en _archive)
-    +-- inventarios/             <- 10 YAMLs SSOT
+    +-- directivas/              <- 75 archivos SIMCO activos (+15 en _archive)
+    +-- inventarios/             <- 11 YAMLs SSOT
     +-- work-items/              <- Epics/sprints tracking
     +-- trazas/                  <- Logs de ejecucion
     +-- tareas/                  <- Gestion de tareas
@@ -418,7 +418,7 @@ proyecto:
 - Revision manual de ejercicios
 
 ### Portal Administrador (~90%)
-- Gestion de contenido educativo (18 paginas)
+- Gestion de contenido educativo (19 paginas)
 - Configuracion del sistema
 - Analytics globales
 - Gestion de usuarios y roles
@@ -451,28 +451,28 @@ proyecto:
 | Metrica | Valor |
 |---------|-------|
 | Modulos | 23 |
-| Entities | 156 files (157 classes) |
+| Entities | 156 files (158 classes) |
 | DTOs | 401 |
-| Services | 172 |
-| Controllers | 108 |
-| Endpoints | 914 |
-| Guards | 15 |
-| Decorators | 18 |
-| Tests | 2324 total (2296 passed + 28 skipped, 63 spec files) |
+| Services | 173 |
+| Controllers | 109 |
+| Endpoints | 919 |
+| Guards | 9 |
+| Decorators | 3 |
+| Tests | 2324 total (2296 passed + 28 skipped, 59 spec files) |
 
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 575 |
-| Hooks | 132 |
-| Paginas | 70 |
+| Componentes (.tsx prod) | 581 |
+| Hooks | 143 |
+| Paginas | 81 |
 | Stores Zustand | 13 |
-| API Service Files | 65 |
+| API Service Files | 78 |
 | API Calls Total | ~580 |
 | Portales | 4 |
-| Mecanicas Ejercicio | 30 |
+| Mecanicas Ejercicio | 29 |
 | Routes | 74 |
-| Type Files | 49 |
+| Type Files | 81 |
 
 > **SSOT:** `orchestration/inventarios/MASTER_INVENTORY.yml`
 

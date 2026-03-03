@@ -2,15 +2,15 @@
 titulo: "Entrega Final 2025-11-16"
 tipo: readme
 fecha_creacion: "2025-11-16"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-03"
 estado: activo
 ---
 
 # Entrega Final 2025-11-16
 
-> Indice de manuales y artefactos de entrega.
+> Indice de manuales de referencia.
 
-## Manuales de Usuario (v2.0 — Febrero 2026, Estructura 11 secciones)
+## Manuales de Usuario (v2.0+ — Febrero 2026)
 
 | Archivo | Version | Descripcion |
 |---------|---------|-------------|
@@ -24,22 +24,6 @@ estado: activo
 |---------|---------|-------------|
 | [GUIA-RESPUESTAS-EJERCICIOS.md](./GUIA-RESPUESTAS-EJERCICIOS.md) | 1.0.0 | Guia de respuestas esperadas — 24 ejercicios, 5 modulos + auxiliar (uso exclusivo docentes) |
 
-## Manuales Anteriores (referencia historica)
+## Nota
 
-| Archivo | Version | Descripcion |
-|---------|---------|-------------|
-| [MANUAL-PORTAL-ADMINISTRADOR-ACTUALIZADO.md](./MANUAL-PORTAL-ADMINISTRADOR-ACTUALIZADO.md) | 1.3 | Manual operativo del portal administrador (Ene 2026) |
-| [MANUAL-PORTAL-MAESTROS-ACTUALIZADO.md](./MANUAL-PORTAL-MAESTROS-ACTUALIZADO.md) | 2.0 | Manual operativo del portal maestro (Nov 2025) |
-| [MANUAL-PORTAL-STUDENT-V1.0.md](./MANUAL-PORTAL-STUDENT-V1.0.md) | 1.1 | Manual operativo del portal estudiante (Nov 2025) |
-
-## Complementarios
-
-- [RESUMEN-ACTUALIZACION.md](./RESUMEN-ACTUALIZACION.md)
-- [RESUMEN-MANUALES.md](./RESUMEN-MANUALES.md)
-- [INSTRUCCIONES-ENTREGA-FINAL.md](./INSTRUCCIONES-ENTREGA-FINAL.md)
-- [GUIA-ENTREGA-USB.md](./GUIA-ENTREGA-USB.md)
-
-## Nota de normalizacion
-
-Los manuales se mantienen extensos por su naturaleza de entrega final.
-Este archivo y `_MAP.md` centralizan descubrimiento para evitar duplicacion.
+Archivos operacionales (binarios .docx, credenciales, scripts USB, reportes temporales, manuales v1.x superseded) eliminados 2026-03-03.

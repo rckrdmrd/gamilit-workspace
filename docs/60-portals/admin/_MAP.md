@@ -21,7 +21,7 @@ admin/
 ## Archivos
 
 - **PORTAL-ADMIN-API-REFERENCE.md** — Referencia de endpoints del Portal Administrador (gestion de contenido, usuarios, configuracion, analytics)
-- **PORTAL-ADMIN-GUIDE.md** — Guia de uso del Portal Administrador (18 paginas, flujos principales)
+- **PORTAL-ADMIN-GUIDE.md** — Guia de uso del Portal Administrador (19 paginas, flujos principales)
 
 ## Notas
 

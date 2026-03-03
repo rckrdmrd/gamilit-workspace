@@ -213,6 +213,7 @@ export default function TeacherProgressPage() {
 
   return (
     <TeacherPageShell>
+      <div className="detective-container py-6 sm:py-8">
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -281,7 +282,7 @@ export default function TeacherProgressPage() {
             <DetectiveCard hoverable={false}>
               <div className="text-center">
                 <p className="mb-2 text-sm text-detective-text-secondary">Total de Estudiantes</p>
-                <p className="text-4xl font-bold text-detective-text">
+                <p className="text-2xl sm:text-4xl font-bold text-detective-text">
                   {overallStats.totalStudents}
                 </p>
               </div>
@@ -295,7 +296,7 @@ export default function TeacherProgressPage() {
                     <Loader2 className="h-8 w-8 animate-spin text-detective-gold" />
                   </div>
                 ) : (
-                  <p className="text-4xl font-bold text-detective-gold">
+                  <p className="text-2xl sm:text-4xl font-bold text-detective-gold">
                     {overallStats.averageScore.toFixed(1)}%
                   </p>
                 )}
@@ -305,7 +306,7 @@ export default function TeacherProgressPage() {
             <DetectiveCard hoverable={false}>
               <div className="text-center">
                 <p className="mb-2 text-sm text-detective-text-secondary">Clases Activas</p>
-                <p className="text-detective-accent text-4xl font-bold">
+                <p className="text-detective-accent text-2xl sm:text-4xl font-bold">
                   {overallStats.activeClasses}
                 </p>
               </div>
@@ -584,7 +585,7 @@ export default function TeacherProgressPage() {
                       </div>
                       <div>
                         <p className="text-sm text-detective-text-secondary">Usuarios Activos Diarios</p>
-                        <p className="text-3xl font-bold text-detective-text">{engagementData.dau}</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-detective-text">{engagementData.dau}</p>
                       </div>
                     </div>
                   </DetectiveCard>
@@ -596,7 +597,7 @@ export default function TeacherProgressPage() {
                       </div>
                       <div>
                         <p className="text-sm text-detective-text-secondary">Usuarios Activos Semanales</p>
-                        <p className="text-3xl font-bold text-detective-text">{engagementData.wau}</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-detective-text">{engagementData.wau}</p>
                       </div>
                     </div>
                   </DetectiveCard>
@@ -608,7 +609,7 @@ export default function TeacherProgressPage() {
                       </div>
                       <div>
                         <p className="text-sm text-detective-text-secondary">Duracion Promedio (min)</p>
-                        <p className="text-3xl font-bold text-detective-text">
+                        <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                           {safeFormatNumber(engagementData?.session_duration_avg, 0, '', '0')}
                         </p>
                       </div>
@@ -622,7 +623,7 @@ export default function TeacherProgressPage() {
                       </div>
                       <div>
                         <p className="text-sm text-detective-text-secondary">Sesiones por Usuario</p>
-                        <p className="text-3xl font-bold text-detective-text">
+                        <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                           {safeFormatNumber(engagementData?.sessions_per_user, 1, '', '0.0')}
                         </p>
                       </div>
@@ -727,6 +728,7 @@ export default function TeacherProgressPage() {
             )}
           </div>
         )}
+      </div>
       </div>
 
       {/* Click Outside Handler for Dropdown */}

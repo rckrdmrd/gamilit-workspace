@@ -130,7 +130,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-detective-orange bg-detective-bg p-6">
           <div>
-            <h2 className="text-2xl font-bold text-detective-text">{student.full_name}</h2>
+            <h2 className="text-lg sm:text-2xl font-bold text-detective-text">{student.full_name}</h2>
             <p className="text-detective-text-secondary">{student.email}</p>
           </div>
           <button

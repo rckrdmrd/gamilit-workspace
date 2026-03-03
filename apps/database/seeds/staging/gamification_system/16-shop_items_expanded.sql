@@ -10,8 +10,8 @@
 --
 -- ITEMS INCLUIDOS:
 -- - CONSUMABLE (3 items): Pista, vision lectora, segunda oportunidad
--- - COSMETICS (4+4 items): Avatares, marcos, fondos maya-themed
--- - PROFILE (2+2 items): Titulos y badges maya
+-- - COSMETICS (8 items): 4 originales + 4 Wave 2 (avatares, marcos, fondos maya-themed)
+-- - PROFILE (4 items): 2 originales + 2 Wave 2 (titulos, badges maya)
 --
 -- TOTAL: 15 items (9 originales + 6 nuevos Wave 2)
 --
@@ -484,7 +484,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = gamilit.now_mexico();
 
-    -- Update required_level for Wave 2 items that have level requirements
+    -- Update required_level for consumable and Wave 2 items that have level requirements
+    UPDATE gamification_system.shop_items SET required_level = 5
+        WHERE id = '80000006-0003-0000-0000-000000000001'::uuid;
     UPDATE gamification_system.shop_items SET required_level = 8
         WHERE id IN ('80000006-0012-0000-0000-000000000001'::uuid, '80000006-0017-0000-0000-000000000001'::uuid);
     UPDATE gamification_system.shop_items SET required_level = 6

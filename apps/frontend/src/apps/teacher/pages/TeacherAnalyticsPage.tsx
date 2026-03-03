@@ -333,7 +333,7 @@ export default function TeacherAnalyticsPage() {
         <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-detective-text">Analíticas</h1>
+          <h1 className="mb-2 text-xl sm:text-2xl md:text-3xl font-bold text-detective-text">Analíticas</h1>
           <p className="text-detective-text-secondary">
             Visualiza el rendimiento y engagement de tus estudiantes
           </p>
@@ -438,7 +438,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Puntuación Promedio</p>
-                    <p className="text-3xl font-bold text-detective-text">
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                       {safeFormatNumber(analytics?.average_score, 1, '%')}
                     </p>
                   </div>
@@ -451,7 +451,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Tasa de Completitud</p>
-                    <p className="text-3xl font-bold text-detective-text">
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                       {safeFormatNumber(analytics?.completion_rate, 1, '%')}
                     </p>
                   </div>
@@ -464,7 +464,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Tasa de Engagement</p>
-                    <p className="text-3xl font-bold text-detective-text">
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                       {safeFormatNumber(analytics?.engagement_rate, 1, '%')}
                     </p>
                   </div>
@@ -525,7 +525,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Usuarios Activos Diarios</p>
-                    <p className="text-3xl font-bold text-detective-text">{engagement.dau}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">{engagement.dau}</p>
                   </div>
                 </div>
               </DetectiveCard>
@@ -537,7 +537,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Usuarios Activos Semanales</p>
-                    <p className="text-3xl font-bold text-detective-text">{engagement.wau}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">{engagement.wau}</p>
                   </div>
                 </div>
               </DetectiveCard>
@@ -549,7 +549,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Duración Promedio (min)</p>
-                    <p className="text-3xl font-bold text-detective-text">
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                       {safeFormatNumber(engagement?.session_duration_avg, 0, '', '0')}
                     </p>
                   </div>
@@ -563,7 +563,7 @@ export default function TeacherAnalyticsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-detective-text-secondary">Sesiones por Usuario</p>
-                    <p className="text-3xl font-bold text-detective-text">
+                    <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                       {safeFormatNumber(engagement?.sessions_per_user, 1, '', '0.0')}
                     </p>
                   </div>

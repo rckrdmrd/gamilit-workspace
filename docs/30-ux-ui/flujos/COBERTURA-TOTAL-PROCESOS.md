@@ -12,6 +12,8 @@ estado: activo
 **Fecha:** 2026-02-17
 **Estado:** Activo
 
+> **Nota 3NF:** Este archivo y `TRACEABILITY-MATRIX.md` comparten ~80% de datos (mismos FL-* IDs, endpoints, tablas). El SSOT unificado es `orchestration/inventarios/CROSS-REFERENCE-MASTER.yml`. Este archivo aporta columnas unicas: Portal, Requerimiento base, Documento de flujo.
+
 ---
 
 ## Objetivo

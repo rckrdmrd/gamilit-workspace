@@ -41,9 +41,9 @@ estado: activo
 
 | Tarea | Descripcion | Horas |
 |-------|-------------|-------|
-| [TASK-DB-GAM-003](./_archived/TASK-DB-GAM-003-005-tablas-amigos.md) | DB: friendships, friend_requests, RLS | 3h |
-| [TASK-BE-GAM-002](./_archived/TASK-BE-GAM-002-003-friends-api.md) | BE: FriendsService + Controller | 4h |
-| [TASK-FE-GAM-002](./_archived/TASK-FE-GAM-002-003-friends-ui.md) | FE: 7 componentes UI | 5h |
+| TASK-DB-GAM-003 | DB: friendships, friend_requests, RLS | 3h |
+| TASK-BE-GAM-002 | BE: FriendsService + Controller | 4h |
+| TASK-FE-GAM-002 | FE: 7 componentes UI | 5h |
 
 ---
 

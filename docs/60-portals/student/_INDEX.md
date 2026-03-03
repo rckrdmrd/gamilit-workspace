@@ -14,7 +14,7 @@ estado: activo
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| `PORTAL-STUDENT-GUIDE.md` | Guia principal — arquitectura, componentes, flujos de 30 mecanicas de ejercicio | Actualizado 2026-02-27 |
+| `PORTAL-STUDENT-GUIDE.md` | Guia principal — arquitectura, componentes, flujos de 29 mecanicas (comprension_auditiva en BACKLOG) de ejercicio | Actualizado 2026-02-27 |
 | `PORTAL-STUDENT-API-REFERENCE.md` | Referencia API del portal estudiante — 98 endpoints en 6 dominios (SSOT) | Actualizado 2026-02-28 |
 
 ## Subdirectorios
@@ -51,7 +51,7 @@ Contiene las especificaciones tecnicas detalladas por dominio funcional, mas sub
 | `dependencies/` | Matrices de dependencias entre componentes y APIs | `DEPENDENCY-MATRIX.md`, `_MAP.md` |
 | `inventory/` | Inventario de implementaciones por fecha | `IMPLEMENTATIONS-2025-11-24.md`, `_MAP.md` |
 | `traces/` | Trazas de ejecucion y correcciones aplicadas | `TRACE-DASHBOARD-ERRORS-FIX-2026-01-04.md`, `TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md`, `TRACE-P0-CORRECTIONS.md`, `_MAP.md` |
-| `_archived/gaps/` | Gaps historicos resueltos (GAP-001, 002, 006, 007, 008) | 5 archivos STUDENT-GAP-*.md |
+| ~~`_archived/gaps/`~~ | Gaps historicos resueltos (GAP-001, 002, 006, 007, 008) — eliminados 2026-03-03 | |
 
 ## Referencias Cruzadas
 
@@ -66,5 +66,5 @@ Contiene las especificaciones tecnicas detalladas por dominio funcional, mas sub
 
 - Completitud: ~100%
 - Paginas implementadas: 72 total del sistema (portal estudiante es el mas extenso)
-- Mecanicas de ejercicio: 30 mecanicas frontend implementadas
+- Mecanicas de ejercicio: 29 mecanicas frontend implementadas (comprension_auditiva en BACKLOG)
 - Gaps historicos: 5 resueltos (GAP-001 a 008, excl. secuencia)

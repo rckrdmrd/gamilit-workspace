@@ -5,6 +5,7 @@ import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { CreateTransactionDto } from '../dto';
 import { RankMultiplierService } from './rank-multiplier.service';
+import { Profile } from '@/modules/auth/entities/profile.entity';
 
 /**
  * MLCoinsService
@@ -31,6 +32,9 @@ export class MLCoinsService {
     // TASK-2026-01-18-015 Sprint 3: Inject DataSource for transactions
     @InjectDataSource('gamification')
     private readonly dataSource: DataSource,
+    // CORR-ML-001: Inject Profile repo for auth.users.id → profiles.id resolution
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
     // US-GAM-011: Inject RankMultiplierService for enhanced multipliers (1.0x-2.0x)
     @Inject(forwardRef(() => RankMultiplierService))
     private readonly rankMultiplierService: RankMultiplierService,
@@ -40,6 +44,9 @@ export class MLCoinsService {
    * Obtiene el balance actual de ML Coins del usuario
    */
   async getBalance(userId: string): Promise<number> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     const userStats = await this.userStatsRepo.findOne({
       where: { user_id: userId },
     });
@@ -63,6 +70,9 @@ export class MLCoinsService {
     total_spent: number;
     earned_today: number;
   }> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     const userStats = await this.userStatsRepo.findOne({
       where: { user_id: userId },
     });
@@ -107,6 +117,9 @@ export class MLCoinsService {
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than 0');
     }
+
+    // CORR-ML-001: Resolve auth.users.id → profiles.id before entering transaction
+    userId = await this.resolveProfileId(userId);
 
     // TASK-2026-01-18-015 Sprint 3: Use transaction with pessimistic lock
     return this.dataSource.transaction(async (manager) => {
@@ -237,6 +250,9 @@ export class MLCoinsService {
       throw new BadRequestException('Amount must be greater than 0');
     }
 
+    // CORR-ML-001: Resolve auth.users.id → profiles.id before entering transaction
+    userId = await this.resolveProfileId(userId);
+
     // TASK-2026-01-18-015 Sprint 3: Use transaction with pessimistic lock
     return this.dataSource.transaction(async (manager) => {
       // Obtain lock on user stats row
@@ -296,6 +312,9 @@ export class MLCoinsService {
     limit: number = 50,
     offset: number = 0,
   ): Promise<MLCoinsTransaction[]> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     return this.transactionRepo.find({
       where: { user_id: userId },
       order: { created_at: 'DESC' },
@@ -312,6 +331,9 @@ export class MLCoinsService {
     transactionType: TransactionTypeEnum,
     limit: number = 50,
   ): Promise<MLCoinsTransaction[]> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     return this.transactionRepo.find({
       where: {
         user_id: userId,
@@ -330,6 +352,9 @@ export class MLCoinsService {
     startDate: Date,
     endDate: Date,
   ): Promise<MLCoinsTransaction[]> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     return this.transactionRepo
       .createQueryBuilder('t')
       .where('t.user_id = :userId', { userId })
@@ -347,6 +372,9 @@ export class MLCoinsService {
     startDate: Date,
     endDate: Date,
   ): Promise<number> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     const result = await this.transactionRepo
       .createQueryBuilder('t')
       .select('SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END)', 'total_earned')
@@ -366,6 +394,9 @@ export class MLCoinsService {
     startDate: Date,
     endDate: Date,
   ): Promise<number> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     const result = await this.transactionRepo
       .createQueryBuilder('t')
       .select('SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END)', 'total_spent')
@@ -385,6 +416,9 @@ export class MLCoinsService {
     referenceId: string,
     referenceType: string,
   ): Promise<MLCoinsTransaction[]> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     return this.transactionRepo.find({
       where: {
         user_id: userId,
@@ -404,6 +438,9 @@ export class MLCoinsService {
     difference: number;
     is_valid: boolean;
   }> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     const userStats = await this.userStatsRepo.findOne({
       where: { user_id: userId },
     });
@@ -419,7 +456,9 @@ export class MLCoinsService {
       .where('t.user_id = :userId', { userId })
       .getRawOne();
 
-    const calculatedBalance = (result?.total_amount ? parseInt(result.total_amount, 10) : 0) + 100; // +100 es el saldo inicial
+    // ADR-052: WELCOME_BONUS transaction is now emitted in UserStatsService.create().
+    // The initial 100 coins are recorded as a transaction, so no hardcoded offset is needed.
+    const calculatedBalance = result?.total_amount ? parseInt(result.total_amount, 10) : 0;
 
     const difference = userStats.ml_coins - calculatedBalance;
     const isValid = difference === 0;
@@ -430,6 +469,37 @@ export class MLCoinsService {
       difference,
       is_valid: isValid,
     };
+  }
+
+  /**
+   * Resolves auth.users.id → profiles.id for ML Coins operations.
+   * Pattern from UserStatsService.resolveProfileId().
+   *
+   * CORR-ML-001: Frontend sends user.id from JWT which could be auth.users.id OR
+   * profiles.id. ml_coins_transactions.user_id references profiles.id (PK), so
+   * passing auth.users.id directly causes silent failures (returns 0 balance /
+   * empty transactions).
+   *
+   * @param userId - Could be profiles.id or auth.users.id
+   * @returns profiles.id (PK) for user_stats/ml_coins_transactions queries
+   */
+  private async resolveProfileId(userId: string): Promise<string> {
+    // Try profiles.id first (JWT sub = profiles.id for most users)
+    const profileById = await this.profileRepo.findOne({
+      where: { id: userId },
+    });
+    if (profileById) return profileById.id;
+
+    // Fallback: userId might be auth.users.id
+    const profileByUserId = await this.profileRepo.findOne({
+      where: { user_id: userId },
+    });
+    if (profileByUserId) return profileByUserId.id;
+
+    // If neither found, return original userId to maintain backward compatibility
+    // (existing behavior was to use userId as-is, which may return empty results)
+    this.logger.warn(`Could not resolve profile for userId ${userId} — using as-is`);
+    return userId;
   }
 
   /**
@@ -507,6 +577,9 @@ export class MLCoinsService {
     net_change: number;
     transaction_count: number;
   }> {
+    // CORR-ML-001: Resolve auth.users.id → profiles.id
+    userId = await this.resolveProfileId(userId);
+
     const startDate = new Date(date);
     startDate.setHours(0, 0, 0, 0);
 

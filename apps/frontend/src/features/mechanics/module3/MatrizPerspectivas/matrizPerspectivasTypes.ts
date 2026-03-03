@@ -16,17 +16,8 @@ export interface PerspectiveGeneration {
   contextualFactors: string[];
 }
 
-// Feedback data structure
-export interface FeedbackData {
-  type: 'success' | 'partial' | 'error' | 'info';
-  title: string;
-  message: string;
-  score?: number;
-  showConfetti?: boolean;
-  xpEarned?: number;
-  mlCoinsEarned?: number;
-  pendingReview?: boolean;
-}
+// Re-export canonical FeedbackData from shared mechanicsTypes
+export type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 
 export interface MatrixExercise {
   id: string;

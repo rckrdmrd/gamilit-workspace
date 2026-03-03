@@ -1,5 +1,7 @@
 # CHANGELOG - Orchestration GAMILIT
 
+> **Scope:** Orchestration and governance changes (SIMCO directives, inventories, agents). For product code changes, see [`../CHANGELOG.md`](../CHANGELOG.md).
+
 Historial de cambios del sistema de orquestacion de GAMILIT.
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).

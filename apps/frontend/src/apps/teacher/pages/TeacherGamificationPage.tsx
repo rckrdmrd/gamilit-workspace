@@ -255,6 +255,7 @@ export default function TeacherGamificationPage() {
 
   return (
     <TeacherPageShell>
+    <div className="detective-container py-6 sm:py-8">
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -271,7 +272,7 @@ export default function TeacherGamificationPage() {
             refetchAchievements();
           }}
           disabled={economyLoading || studentsLoading || achievementsLoading}
-          className="rounded-lg bg-detective-bg-secondary p-2 text-detective-text transition-colors hover:bg-detective-bg-secondary/80 disabled:opacity-50"
+          className="rounded-lg bg-detective-bg-secondary p-2 min-w-[44px] min-h-[44px] text-detective-text transition-colors hover:bg-detective-bg-secondary/80 disabled:opacity-50"
           title="Actualizar datos"
         >
           <RefreshCw
@@ -394,7 +395,7 @@ export default function TeacherGamificationPage() {
             )}
             <div>
               <p className="mb-1 text-sm text-detective-text-secondary">Circulación Total</p>
-              <p className="text-2xl font-bold text-detective-text">
+              <p className="text-xl sm:text-2xl font-bold text-detective-text">
                 {classStats.total_circulation.toLocaleString()}
               </p>
               <p className="mt-1 text-xs text-detective-text-secondary">ML Coins en la clase</p>
@@ -407,7 +408,7 @@ export default function TeacherGamificationPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="mb-1 text-sm text-detective-text-secondary">Balance Promedio</p>
-              <p className="text-2xl font-bold text-detective-text">{classStats.average_balance}</p>
+              <p className="text-xl sm:text-2xl font-bold text-detective-text">{classStats.average_balance}</p>
               <p className="mt-1 text-xs text-detective-text-secondary">ML Coins por estudiante</p>
             </div>
             <BarChart3 className="h-10 w-10 text-blue-500" />
@@ -418,7 +419,7 @@ export default function TeacherGamificationPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="mb-1 text-sm text-detective-text-secondary">Ganado Hoy</p>
-              <p className="text-2xl font-bold text-green-500">+{classStats.total_earned_today}</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-500">+{classStats.total_earned_today}</p>
               <p className="mt-1 text-xs text-detective-text-secondary">ML Coins ganados</p>
             </div>
             <TrendingUp className="h-10 w-10 text-green-500" />
@@ -429,7 +430,7 @@ export default function TeacherGamificationPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="mb-1 text-sm text-detective-text-secondary">Gastado Hoy</p>
-              <p className="text-2xl font-bold text-red-500">-{classStats.total_spent_today}</p>
+              <p className="text-xl sm:text-2xl font-bold text-red-500">-{classStats.total_spent_today}</p>
               <p className="mt-1 text-xs text-detective-text-secondary">ML Coins gastados</p>
             </div>
             <TrendingDown className="h-10 w-10 text-red-500" />
@@ -468,7 +469,7 @@ export default function TeacherGamificationPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setBonusAmount(Math.max(0, bonusAmount - 10))}
-                className="rounded-lg bg-detective-bg-secondary p-2 text-detective-text transition-colors hover:bg-detective-bg-secondary/80"
+                className="rounded-lg bg-detective-bg-secondary p-2 min-w-[44px] min-h-[44px] text-detective-text transition-colors hover:bg-detective-bg-secondary/80"
               >
                 <Minus className="h-5 w-5" />
               </button>
@@ -481,7 +482,7 @@ export default function TeacherGamificationPage() {
               />
               <button
                 onClick={() => setBonusAmount(bonusAmount + 10)}
-                className="rounded-lg bg-detective-bg-secondary p-2 text-detective-text transition-colors hover:bg-detective-bg-secondary/80"
+                className="rounded-lg bg-detective-bg-secondary p-2 min-w-[44px] min-h-[44px] text-detective-text transition-colors hover:bg-detective-bg-secondary/80"
               >
                 <Plus className="h-5 w-5" />
               </button>
@@ -919,6 +920,7 @@ export default function TeacherGamificationPage() {
           </div>
         </div>
       </Modal>
+    </div>
     </div>
     </TeacherPageShell>
   );

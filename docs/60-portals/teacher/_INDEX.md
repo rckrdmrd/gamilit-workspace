@@ -2,7 +2,7 @@
 titulo: "Portal Maestro — Indice"
 tipo: indice
 fecha_creacion: "2025-10-01"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-03"
 estado: activo
 ---
 
@@ -14,7 +14,7 @@ estado: activo
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| `PORTAL-TEACHER-GUIDE.md` | Guia principal — arquitectura, 16 paginas del portal, gestion de aulas, analitica, gamificacion docente (v3.1.0) | Actualizado 2026-02-27 |
+| `PORTAL-TEACHER-GUIDE.md` | Guia principal — arquitectura, 16 paginas del portal, gestion de aulas, analitica, gamificacion docente (v3.3.0) | Actualizado 2026-03-03 |
 | `PORTAL-TEACHER-API-REFERENCE.md` | Referencia de endpoints — 63+ endpoints en 10 controladores, 8 conectados al frontend (v1.3.0) | Actualizado 2026-02-27 |
 | `PORTAL-TEACHER-FLOWS.md` | Flujos de datos e integracion — diagramas de flujo Dashboard Load, revision manual M3-M5, alertas de intervencion | Actualizado 2026-02-27 |
 
@@ -43,3 +43,4 @@ estado: activo
 - Paginas implementadas: 16
 - Endpoints backend: 63+ (8 controladores conectados al frontend, 2 desconectados en v3.1.0)
 - Revision manual M3-M5: implementada y documentada en PORTAL-TEACHER-FLOWS.md
+- Cumplimiento estandares responsive: 95% (remediacion 2026-03-03: 16 paginas, 21 componentes, 4 modales)

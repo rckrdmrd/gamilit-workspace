@@ -1,7 +1,7 @@
 ---
 title: Portal Student - Flujos, Gamificación y Responsive
 status: activo
-last_updated: "2026-02-28"
+last_updated: "2026-03-03"
 ---
 
 # Portal Student - Flujos, Gamificación y Responsive
@@ -254,7 +254,44 @@ Panel lateral que muestra el inventario real de comodines del estudiante durante
 
 **Integración:** El inventario se sincroniza desde las compras en la tienda vía `incrementFromShopPurchase()` bridge en `comodines.service.ts`.
 
-### 9.5 Achievements: Triggers y Lógica
+### 9.5 Sistema de Boosts
+
+Los **Boosts** son potenciadores temporales que el estudiante compra en la tienda con ML Coins. Se activan al momento de la compra y tienen una duración limitada en días.
+
+#### Tipos de Boost
+
+| Tipo | Item en Tienda | Efecto | Multiplicador por defecto | Duración |
+|------|----------------|--------|---------------------------|----------|
+| XP Boost | Boost de XP | Multiplica el XP ganado por ejercicios | 2.0x | Según `duration_days` del item (default: 1 día) |
+| Coins Boost | Boost de ML Coins | Multiplica los ML Coins ganados | 1.5x | Según `duration_days` del item (default: 1 día) |
+
+#### Cómo Obtener un Boost
+
+1. Navegar a la **Tienda** (`/shop`)
+2. Buscar los items en la categoría **Consumible** con tipo `xp_boost` o `coins_boost`
+3. Verificar que se dispone de suficientes ML Coins
+4. Completar la compra en el modal de confirmación
+5. El boost se activa automáticamente tras la compra (no requiere acción adicional)
+
+#### Indicador Visual
+
+Cuando hay un boost activo, el **GamifiedHeader** (barra superior) muestra un indicador del boost con su tipo y multiplicador. Este indicador se consulta via `GET /api/v1/gamification/boosts/:userId/active`.
+
+#### Mecanismo de Expiración
+
+- Los boosts expiran según la duración configurada en el item de tienda
+- La expiración se procesa **on-read**: cada vez que el sistema consulta los boosts del usuario, desactiva automáticamente los que ya caducaron
+- No existe un cron job de expiración; los boosts se desactivan la próxima vez que el usuario accede a una página que consulte sus boosts activos
+
+#### Comportamiento al Re-comprar
+
+Si el estudiante compra un boost del mismo tipo mientras tiene uno activo, el boost anterior se desactiva y se activa el nuevo con su propio temporizador desde el momento de la nueva compra.
+
+#### Nota sobre Integración Pendiente
+
+> **GAP-BOOST-001:** El boost de XP se registra correctamente en el sistema y aparece en el indicador visual del header. Sin embargo, el cálculo de XP que ocurre al completar un ejercicio **aún no aplica** el multiplicador del boost activo. El efecto del XP Boost sobre el XP ganado por ejercicio está pendiente de integración futura.
+
+### 9.6 Achievements: Triggers y Lógica
 
 **Ejemplos de Achievements:**
 

@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "5.3.2"
-fecha: "2026-03-02"  # v5.3.2: ML Coins balance fix — bonus-coins.service.ts adds MLCoinsTransaction audit entry for teacher grants. Previous: v5.3.1 exercise fixes
+version: "5.3.6"
+fecha: "2026-03-03"  # v5.3.6: ML Coins transaction integrity — WELCOME_BONUS transaction, auditBalance +100 removed, resolveProfileId in MLCoinsService, 3 DDL functions patched. Previous: v5.3.5
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -14,20 +14,20 @@ auditoria: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
 # -------------------------------------------------------------------------------
 
 resumen:
-  modulos: 23             # 22 directorios + mail (transitivo)
-  entities: 156          # 156 archivos .entity.ts, 157 @Entity classes (message.entity.ts has 2: Message + MessageParticipant). Corrected 2026-02-27 (was 159, overcounted)
+  modulos: 23             # 22 directorios + mail (transitivo). Note: 21 .module.ts files contain 22 @Module decorators (etl.module.ts has 2)
+  entities: 156          # 156 archivos .entity.ts, 158 @Entity classes (maya-rank.entity.ts AND message.entity.ts each have 2 @Entity). Corrected 2026-03-03 (was 157, undercounted maya-rank)
   dtos: 401              # 401 *.dto.ts files in modules/. Verified 2026-02-21
-  services: 172           # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
-  controllers: 108
-  endpoints: 914          # Verified 2026-02-28: 914 = 856 active + 58 conditional (data_warehouse). +2 autosave endpoints. Integration audit confirmed.
-  guards: 15
-  decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
+  services: 173           # 173 *.service.ts files (+1 BoostService 2026-03-03). Verified 2026-02-21 base (-1: ml-predictor.service.ts deleted)
+  controllers: 109        # +1 BoostController (2026-03-03)
+  endpoints: 919          # +4 from BoostController (2026-03-03). Base: 915 = 857 active + 58 conditional (data_warehouse). Verified 2026-03-03
+  guards: 9               # 9 dedicated .guard.ts files (ST-001 audit 2026-03-03). Previously 15 — overcounted middleware/pipes. See guards section below.
+  decorators: 3           # 3 dedicated .decorator.ts files (ST-001 audit 2026-03-03). Previously 18 — counted all exported symbols across 9 files incl. pipes/interceptors/etc.
   interceptors: 6              # +1: tracing.interceptor.ts (new)
   pipes: 6                # 6 clases en 2 archivos .pipe.ts
   filters: 2              # 2 clases en 1 archivo .filter.ts
-  tests_files: 63         # Corrected 2026-02-27: 63 .spec.ts files (was 61, 2 new specs added post-Sprint2)
+  tests_files: 59         # Corrected 2026-03-03 (ST-001 audit): 59 .spec.ts files (was 63, overcounted)
   tests_cases: 833        # Test cases (jest --verbose count)
-  domain_error_classes: 42   # 25 auth + 17 gamification error classes (ADR-045, Phase 6D remediation)
+  domain_error_classes: 53   # 25 auth + 17 gamification + 8 educational error classes (ADR-045). Wave 3 remediation: educational 3→8 (2026-03-03), +5 new classes
   domain_error_throws: 129   # 50 auth + 79 gamification usage sites
   integration_test_files: 5  # jest.integration.config.js + 5 integration spec files (npm run test:integration)
 
@@ -153,9 +153,9 @@ modulos:
   - nombre: "gamification"
     directorio: "modules/gamification"
     entities: 22
-    services: 18              # +1 inventory.service.ts
-    controllers: 11           # +1 inventory.controller.ts
-    endpoints: 72             # +3 inventory endpoints, +4 batch equipment
+    services: 19              # +1 inventory.service.ts, +1 boost.service.ts (2026-03-03)
+    controllers: 12           # +1 inventory.controller.ts, +1 boost.controller.ts (2026-03-03)
+    endpoints: 73             # +3 inventory, +4 batch equipment, +1 GET /boosts/:userId/active
     dtos: 39                  # +1 equip-item.dto.ts
     tests: 9
     estado: "95%"
@@ -378,11 +378,13 @@ datasources:
     estado: "CONDITIONAL"
 
 # -------------------------------------------------------------------------------
-# GUARDS (15 verificados)
+# GUARDS (9 dedicated .guard.ts files — ST-001 audit 2026-03-03)
+# Note: Previous count of 15 included middleware/pipes/strategy files, not just guards.
 # -------------------------------------------------------------------------------
 
 guards:
-  total: 15
+  total: 9
+  nota: "9 dedicated .guard.ts files verified by ST-001 audit 2026-03-03. Previous count of 15 overcounted by including auth strategies, middleware, and other auth-related files."
   lista:
     # En modules/
     - nombre: "AdminGuard"
@@ -403,27 +405,17 @@ guards:
       archivo: "modules/teacher/guards/teacher.guard.ts"
     - nombre: "WsJwtGuard"
       archivo: "modules/websocket/guards/ws-jwt.guard.ts"
-    # En shared/
-    - nombre: "AccountStatusGuard"
-      archivo: "shared/guards/account-status.guard.ts"
-    - nombre: "AuthGuard"
-      archivo: "shared/guards/auth.guard.ts"
-    - nombre: "EmailVerifiedGuard"
-      archivo: "shared/guards/email-verified.guard.ts"
-    - nombre: "PermissionsGuard"
-      archivo: "shared/guards/permissions.guard.ts"
-    - nombre: "ResourceOwnershipGuard"
-      archivo: "shared/guards/resource-ownership.guard.ts"
-    - nombre: "RolesGuard"
-      archivo: "shared/guards/roles.guard.ts"
 
 # -------------------------------------------------------------------------------
-# DECORATORS (9 archivos, 18 exported symbols)
+# DECORATORS (3 dedicated .decorator.ts files — ST-001 audit 2026-03-03)
+# Note: Previous count of 18 was exported symbols across 9 files (incl. pipes/interceptors/etc).
+#       Corrected to count only dedicated .decorator.ts files (3 files).
 # -------------------------------------------------------------------------------
 
 decorators:
-  total: 18
-  archivos: 9
+  total: 3
+  archivos: 3
+  nota: "3 dedicated .decorator.ts files verified by ST-001 audit 2026-03-03. Previous count of 18 exported symbols across 9 files included pipes, interceptors, and other custom metadata — not only decorators."
   lista:
     # modules/
     - nombre: "@Roles()"
@@ -497,6 +489,42 @@ filters:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v5.3.6"
+    changes:
+      - "fix(ml-coins): UserStatsService.create() now emits WELCOME_BONUS transaction (amount=100, reference_type='welcome')"
+      - "fix(ml-coins): MLCoinsService.auditBalance() hardcoded +100 removed — SUM(transactions) is source of truth"
+      - "fix(ml-coins): MLCoinsService.resolveProfileId() added to all 12 public methods"
+      - "fix(gamification): promote_to_next_rank.sql, update_user_rank.sql, claim_achievement_reward.sql now update ml_coins_earned_total"
+      - "fix(entity): MLCoinsTransaction reference_type union type and @Check updated with 'welcome'"
+      - "test: ml-coins.service.spec.ts — Profile repo mock added"
+      - "test: user-stats.service.spec.ts — MLCoinsTransaction repo mock added"
+    files_modified: 7
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v5.3.5"
+    changes:
+      - "fix(gamification): ranks.service.ts — removed mlCoinsService.addCoins() call from promoteToNextRang(). DB trigger promote_to_next_rank() already credits coins. Eliminates double credit bug."
+      - "fix(missions): missions.service.ts — added atomic UPDATE guard in claimRewardsFallback(). WHERE claimed_at IS NULL + affected === 0 check prevents concurrent race condition."
+      - "test: ranks.service.spec.ts and missions.service.spec.ts updated to verify fixes"
+    files_modified: 4
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v5.3.4"
+    changes:
+      - "audit: entity_classes corrected 157→158 (maya-rank.entity.ts has 2 @Entity, same as message.entity.ts)"
+      - "audit: guards corrected 15→9 (only dedicated .guard.ts files; shared/ guards removed from list)"
+      - "audit: decorators corrected 18→3 (only dedicated .decorator.ts files; exported symbols count removed)"
+      - "audit: endpoints corrected 915→919 (+4 from BoostController)"
+      - "audit: tests_files corrected 63→59 (ST-001 verified count)"
+      - "audit: modules note added — 21 .module.ts files, 22 @Module decorators (etl.module.ts has 2)"
+      - "audit: domain_error_classes updated 42→53 (educational expanded 3→8, Wave 3 remediation)"
+      - "audit: 3 HTTP exceptions migrated to domain errors in exercises.service.ts"
+    files_modified: 2
+    build_status: "PASS"
+
   - date: "2026-03-02"
     version: "v5.3.2"
     changes:
@@ -518,5 +546,5 @@ changelog:
     files_modified: 5
 
 # ===============================================================================
-# FIN BACKEND INVENTORY v5.3.2
+# FIN BACKEND INVENTORY v5.3.6
 # ===============================================================================

@@ -1,3 +1,5 @@
+/** @deprecated Battles feature not routed in production App.tsx. Zero page consumers. */
+
 /**
  * Battle Store - Zustand State Management
  *

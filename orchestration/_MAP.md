@@ -4,7 +4,7 @@
 **Nivel:** STANDALONE
 **Sistema:** NEXUS v4.1 + SIMCO v4.0.0
 **Estandar:** SIMCO-ESTANDAR-ORCHESTRATION v1.0.0
-**Ultima actualizacion:** 2026-02-14
+**Ultima actualizacion:** 2026-03-03
 
 ---
 
@@ -21,9 +21,7 @@ orchestration/
 ├── PROJECT-PROFILE.yml         # Perfil y metadata del proyecto
 ├── PROJECT-STATUS.md           # Estado actual del proyecto
 ├── PROXIMA-ACCION.md           # Checkpoint de sesion
-├── DEPENDENCY-GRAPH.yml        # Grafo de dependencias
 ├── TRACEABILITY.yml            # Trazabilidad del proyecto
-├── MAPA-DOCUMENTACION.yml      # Mapa de documentacion
 ├── CHANGELOG.md                # Historial de cambios
 │
 ├── _definitions/               # Definiciones canonicas (32 archivos)
@@ -44,14 +42,14 @@ orchestration/
 │   ├── ALIASES.yml             # Registro de agentes
 │   └── AGENT-CAPABILITIES-MATRIX.yml
 │
-├── directivas/                 # Directivas (124 archivos)
-│   ├── simco/                  # 70 SIMCO activos + _INDEX + 15 archivados
+├── directivas/                 # Directivas (127 archivos)
+│   ├── simco/                  # 75 SIMCO activos + _INDEX + 15 archivados
 │   ├── principios/             # 15 principios + _INDEX
 │   ├── triggers/               # 13 triggers + _INDEX (2 phantoms documentados)
 │   ├── politicas/              # 3 politicas + _INDEX
 │   └── modos/                  # 3 modos + _INDEX
 │
-├── inventarios/                # INVENTARIOS SSOT (9 YAMLs incl. LOCAL-WSL-ENVIRONMENT)
+├── inventarios/                # INVENTARIOS SSOT (11 YAMLs incl. LOCAL-WSL-ENVIRONMENT)
 │   ├── MASTER_INVENTORY.yml
 │   ├── BACKEND_INVENTORY.yml
 │   ├── DATABASE_INVENTORY.yml
@@ -59,7 +57,10 @@ orchestration/
 │   ├── SEEDS_INVENTORY.yml
 │   ├── TEST_COVERAGE.yml
 │   ├── TRACEABILITY_MATRIX.yml
-│   └── DEPENDENCY_GRAPH.yml
+│   ├── DEPENDENCY_GRAPH.yml
+│   ├── SKILLS-REGISTRY.yml
+│   ├── LOCAL-WSL-ENVIRONMENT.yml
+│   └── CROSS-REFERENCE-MASTER.yml
 │
 ├── work-items/                 # Epics tracking (60+ archivos)
 │   └── epics/                  # Flat YAMLs + nested structures
@@ -74,7 +75,7 @@ orchestration/
 
 ---
 
-## Archivos Root (13 - Estandar STANDALONE)
+## Archivos Root (11 - Estandar STANDALONE)
 
 | Archivo | Proposito |
 |---------|-----------|
@@ -87,9 +88,7 @@ orchestration/
 | `PROJECT-PROFILE.yml` | Perfil para agentes |
 | `PROJECT-STATUS.md` | Estado actual del proyecto |
 | `PROXIMA-ACCION.md` | Checkpoint de sesion |
-| `DEPENDENCY-GRAPH.yml` | Grafo de dependencias |
 | `TRACEABILITY.yml` | Trazabilidad del proyecto |
-| `MAPA-DOCUMENTACION.yml` | Mapa de documentacion |
 | `CHANGELOG.md` | Historial de cambios |
 
 ---
@@ -102,7 +101,7 @@ orchestration/
 | `_quick/` | Quick references | 4 archivos de referencia rapida |
 | `agents/` | Perfiles de agente | 28 full + 15 compact + 4 configs + 5 archived + 2 root YMLs = 57 |
 | `directivas/` | Directivas SIMCO | 70 SIMCO + 15 principios + 13 triggers + 3 politicas + 3 modos + 15 archived = 124 |
-| `inventarios/` | SSOT de objetos | 9 inventarios (incl. LOCAL-WSL-ENVIRONMENT) |
+| `inventarios/` | SSOT de objetos | 11 inventarios (incl. LOCAL-WSL-ENVIRONMENT, CROSS-REFERENCE-MASTER) |
 | `work-items/` | Epics tracking | 60+ archivos (flat + nested) |
 | `trazas/` | Trazas de tareas | Por dominio (DB, Backend, Frontend) |
 | `tareas/` | Gestion de tareas | Tareas de analisis y desarrollo |
@@ -111,47 +110,50 @@ orchestration/
 
 ---
 
-## Inventarios (SSOT — 8 archivos)
+## Inventarios (SSOT — 11 archivos)
 
 | Inventario | Descripcion | Version | Estado |
 |------------|-------------|---------|--------|
-| MASTER_INVENTORY.yml | Inventario maestro consolidado | v8.0.0 | Activo |
-| BACKEND_INVENTORY.yml | 22 modulos, 152 entities, 899 endpoints | v4.0.0 | Activo |
-| DATABASE_INVENTORY.yml | 18 schemas, 169 tablas, 183 funciones | v8.0.0 | Activo |
-| FRONTEND_INVENTORY.yml | 474 componentes, 68 paginas, 14 stores | v5.1.0 | Activo |
-| SEEDS_INVENTORY.yml | 101 seeds prod, 94 dev | v2.0.0 | Activo |
-| TEST_COVERAGE.yml | 833 tests, 57 spec files | - | Activo |
+| MASTER_INVENTORY.yml | Inventario maestro consolidado | v14.9.4 | Activo |
+| BACKEND_INVENTORY.yml | 23 modulos, 156 entities, 915 endpoints | v4.0.0 | Activo |
+| DATABASE_INVENTORY.yml | 18 schemas, 173 tablas, 158 funciones | v8.0.0 | Activo |
+| FRONTEND_INVENTORY.yml | 575 componentes, 70 paginas, 13 stores | v5.1.0 | Activo |
+| SEEDS_INVENTORY.yml | 92 pipeline entries | v2.0.0 | Activo |
+| TEST_COVERAGE.yml | 2324 tests, 63 spec files | - | Activo |
 | TRACEABILITY_MATRIX.yml | Mapeo requerimientos a componentes | - | Activo |
 | DEPENDENCY_GRAPH.yml | Grafo de dependencias modulos/capas | - | Activo |
 | LOCAL-WSL-ENVIRONMENT.yml | Configuracion entorno WSL local | - | Activo |
+| SKILLS-REGISTRY.yml | Registro de skills de agentes | - | Activo |
+| CROSS-REFERENCE-MASTER.yml | Referencias cruzadas entre inventarios y capas | - | Activo |
 
 ---
 
-## Metricas del Proyecto (Sincronizado con MASTER_INVENTORY v8.0.0)
+## Metricas del Proyecto (Sincronizado con MASTER_INVENTORY v14.9.4)
 
 | Metrica | Valor |
 |---------|-------|
-| Modulos Backend | 22 |
+| Modulos Backend | 23 |
 | Schemas PostgreSQL | 18 |
-| Tablas | 169 |
-| Views | 22 |
-| Funciones DB | 183 (DDL) / 249 (runtime) |
-| Triggers DB | 67 |
+| Tablas | 173 |
+| Views | 18 |
+| Funciones DB | 158 |
+| Triggers DB | 68 |
 | ENUMs | 42 |
-| Endpoints API | 899 |
-| Entities | 152 |
-| Services | 170 |
-| Controllers | 107 |
+| Endpoints API | 915 |
+| Entities | 156 (files) / 157 (classes) |
+| Services | 173 |
+| Controllers | 109 |
 | Guards | 15 |
-| Interceptors | 5 |
+| Interceptors | 6 |
 | Pipes | 6 |
 | Filters | 2 |
-| Componentes Frontend | 474 |
-| Paginas | 68 |
-| Hooks | 101 |
-| Stores Zustand | 14 |
-| API Calls | 655 |
-| Routes | 70 |
+| Componentes Frontend | 575 |
+| Paginas | 70 |
+| Hooks | 132 |
+| Stores Zustand | 13 |
+| API Calls | ~580 |
+| Routes | 74 |
+| Tests Total | 2324 |
 | Estado MVP | 98% |
 
 ---
@@ -184,4 +186,4 @@ orchestration/
 ---
 
 *Estandarizado segun SIMCO-ESTANDAR-ORCHESTRATION v1.0.0*
-*Ultima actualizacion: 2026-02-14*
+*Ultima actualizacion: 2026-03-03*

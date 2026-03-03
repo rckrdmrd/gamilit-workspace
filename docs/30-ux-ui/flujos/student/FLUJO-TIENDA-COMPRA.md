@@ -79,7 +79,7 @@ Cuando un item consumible es comprado, su `effect_type` se mapea automáticament
 | `highlight` | `vision_lectora` | Resaltado de palabras clave |
 | `retry` | `segunda_oportunidad` | Segunda oportunidad de respuesta |
 
-Otros effect_types (`xp_boost`, `coins_boost`) **NO** se sincronizan a comodines — se aplican directamente al usuario.
+Otros effect_types (`xp_boost`, `coins_boost`) **NO** se sincronizan a comodines — activan un registro temporal en `gamification_system.active_boosts` via `BoostService.activateBoost()`. El boost anterior del mismo tipo se desactiva (`is_active=false`). Duracion basada en `duration_days` del item. Frontend muestra indicador en GamifiedHeader con multiplicador y tiempo restante.
 
 ### Re-compra de Consumibles
 

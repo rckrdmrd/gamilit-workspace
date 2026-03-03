@@ -584,7 +584,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
       </div>
 
       {/* Performance Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <DetectiveCard hoverable={false}>
           <div className="flex items-center justify-between">
             <div>

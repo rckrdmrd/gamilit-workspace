@@ -1,4 +1,9 @@
 /**
+ * @deprecated Since 2026-02 — Zero external references. Replaced by DashboardComplete.
+ * Safe to delete. See TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT.
+ */
+
+/**
  * ModuleCard Component
  *
  * Tarjeta individual de módulo educativo con progreso

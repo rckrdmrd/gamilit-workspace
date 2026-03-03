@@ -323,7 +323,7 @@ export const ReviewDetail = ({ review, onClose }: ReviewDetailProps) => {
 
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >
             <X className="h-6 w-6" />
           </button>
@@ -442,7 +442,7 @@ export const ReviewDetail = ({ review, onClose }: ReviewDetailProps) => {
       <div className="flex items-center justify-between rounded-detective bg-white p-6 shadow-card">
         <button
           onClick={onClose}
-          className="rounded-detective border border-gray-300 px-6 py-2 text-gray-700 hover:bg-gray-50"
+          className="rounded-detective border border-gray-300 px-6 py-2.5 text-gray-700 hover:bg-gray-50"
         >
           Cancelar
         </button>
@@ -460,7 +460,7 @@ export const ReviewDetail = ({ review, onClose }: ReviewDetailProps) => {
           <button
             onClick={handleSaveProgress}
             disabled={saving || evaluations.length === 0}
-            className="flex items-center gap-2 rounded-detective border border-detective-orange bg-white px-6 py-2 text-detective-orange hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-detective border border-detective-orange bg-white px-6 py-2.5 text-detective-orange hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Guardar evaluación como borrador para continuar después"
           >
             <Save className="h-4 w-4" />
@@ -472,7 +472,7 @@ export const ReviewDetail = ({ review, onClose }: ReviewDetailProps) => {
           <button
             onClick={handleRequestComplete}
             disabled={!isValid || completing}
-            className="flex items-center gap-2 rounded-detective bg-gradient-to-r from-green-600 to-green-700 px-6 py-2 text-white hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            className="flex items-center gap-2 rounded-detective bg-gradient-to-r from-green-600 to-green-700 px-6 py-2.5 text-white hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             title={!isValid ? 'Completa todos los criterios de la rúbrica primero' : 'Calificar y enviar al estudiante'}
           >
             <CheckCircle className="h-4 w-4" />

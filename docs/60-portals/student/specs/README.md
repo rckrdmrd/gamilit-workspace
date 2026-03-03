@@ -55,7 +55,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 | **GAP-SP-005** | MEDIO | PARCIAL GO | 2 endpoints consolidados evaluados |
 | **GAP-SP-006** | MEDIO | PLAN CREADO | Plan de testing para incrementar coverage 13% a 25% |
 | **GAP-SP-007** | BAJO | BACKLOG | Defensive mapping en frontend |
-| **GAP-SP-008** | BAJO | DOCUMENTADO | 30 mecanicas de ejercicios especificadas |
+| **GAP-SP-008** | BAJO | DOCUMENTADO | 29 mecanicas de ejercicios especificadas (comprension_auditiva en BACKLOG) |
 
 ---
 
@@ -97,13 +97,7 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 
 ```
 docs/60-portals/student/specs/
-├── README.md (este archivo)
-├── _archived/gaps/
-│   ├── STUDENT-GAP-001-missions-rewards.md
-│   ├── STUDENT-GAP-002-missions-update-progress.md
-│   ├── STUDENT-GAP-006-profile-stats.md
-│   ├── STUDENT-GAP-007-settings-persistence.md
-│   └── STUDENT-GAP-008-backend-statistics.md
+├── README.md (este archivo — contiene contenido embebido de los GAPs)
 ├── inventory/
 │   └── IMPLEMENTATIONS-2025-11-24.md
 ├── dependencies/
@@ -113,6 +107,8 @@ docs/60-portals/student/specs/
     ├── TRACE-DASHBOARD-ERRORS-FIX-2026-01-04.md
     └── TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
 ```
+
+> **Nota:** Los archivos STUDENT-GAP-001/002/006/007/008 fueron eliminados el 2026-03-03. Su contenido queda documentado en las secciones `## DOCUMENTACION POR GAP` de este archivo.
 
 ---
 
@@ -133,25 +129,25 @@ docs/60-portals/student/specs/
    - Lecciones aprendidas
    - Estado final del sistema
 
-**Luego revisa gaps específicos:**
-- [GAP-001: Misiones Recompensas](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md) - Recompensas ahora funcionan ✅
-- [GAP-002: Misiones Progreso](./_archived/gaps/STUDENT-GAP-002-missions-update-progress.md) - Progreso se actualiza vía triggers BD ✅
-- [GAP-006: Perfil](./_archived/gaps/STUDENT-GAP-006-profile-stats.md) - Stats dinámicos ✅
-- [GAP-007: Settings](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md) - Cambios se guardan ✅
-- [GAP-008: Backend Stats](./_archived/gaps/STUDENT-GAP-008-backend-statistics.md) - Backend real implementado ✅
+**Gaps resueltos (ver secciones ## DOCUMENTACION POR GAP mas abajo):**
+- GAP-001: Misiones Recompensas - Recompensas ahora funcionan ✅
+- GAP-002: Misiones Progreso - Progreso se actualiza vía triggers BD ✅
+- GAP-006: Perfil - Stats dinámicos ✅
+- GAP-007: Settings - Cambios se guardan ✅
+- GAP-008: Backend Stats - Backend real implementado ✅
 
 ---
 
 ### Para Developers (Backend)
 
 **Comienza aquí:**
-1. 🔧 [GAP-001: Missions Rewards](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md)
+1. 🔧 GAP-001: Missions Rewards (ver sección ## DOCUMENTACION POR GAP)
    - Implementación de `MissionsService.claimRewards()`
    - Integración con MLCoinsService, UserStatsService, RanksService
    - Detección de promoción de rango
    - Código completo con explicaciones
 
-2. 🔧 [GAP-008: Backend Statistics](./_archived/gaps/STUDENT-GAP-008-backend-statistics.md)
+2. 🔧 GAP-008: Backend Statistics (ver sección ## DOCUMENTACION POR GAP)
    - Implementación de `AuthService.getUserStatistics()`
    - 6 queries reales a BD (SUM aggregations, joins)
    - Integración multi-schema (gamification, progress)
@@ -169,12 +165,12 @@ docs/60-portals/student/specs/
 ### Para Developers (Frontend)
 
 **Comienza aquí:**
-1. 🎨 [GAP-006: Profile Stats](./_archived/gaps/STUDENT-GAP-006-profile-stats.md)
+1. 🎨 GAP-006: Profile Stats (ver sección ## DOCUMENTACION POR GAP)
    - Implementación de `useUserStatistics` hook (React Query)
    - Modificación de `ProfilePage` (loading/error states)
    - 0 valores hardcodeados
 
-2. 🎨 [GAP-007: Settings Persistence](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md)
+2. 🎨 GAP-007: Settings Persistence (ver sección ## DOCUMENTACION POR GAP)
    - Implementación de `profileAPI` service (4 métodos)
    - Modificación de `SettingsPage` (3 handlers)
    - Validaciones frontend (passwords, avatar)
@@ -196,17 +192,17 @@ docs/60-portals/student/specs/
 ### Para QA / Testers
 
 **Comienza aquí:**
-1. ✅ [GAP-001: Validación Manual](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#validación)
+1. ✅ GAP-001: Validación Manual (ver sección ## DOCUMENTACION POR GAP)
    - 4 escenarios de prueba (reclamo exitoso, promoción, duplicado, etc.)
    - Comandos curl para testing
    - Validaciones de BD
 
-2. ✅ [GAP-006: Validación Manual](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#validación)
+2. ✅ GAP-006: Validación Manual (ver sección ## DOCUMENTACION POR GAP)
    - 5 escenarios de prueba (carga exitosa, refetch, error de red, etc.)
    - React Query DevTools observations
    - Validación de caché
 
-3. ✅ [GAP-007: Validación Manual](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#validación)
+3. ✅ GAP-007: Validación Manual (ver sección ## DOCUMENTACION POR GAP)
    - 8 escenarios de prueba (perfil, avatar, password, validaciones)
    - Errores esperados (email duplicado, password incorrecta)
    - Validaciones frontend
@@ -253,7 +249,7 @@ docs/60-portals/student/specs/
 
 ### GAP-001: Misiones - Recompensas No se Otorgan
 
-**📄 Documento:** [STUDENT-GAP-001-missions-rewards.md](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md)
+**📄 Documento:** STUDENT-GAP-001-missions-rewards.md (eliminado 2026-03-03 — contenido embebido abajo)
 
 **Problema:**
 - TODO en código (línea 467)
@@ -282,7 +278,7 @@ docs/60-portals/student/specs/
 
 ### GAP-002: Misiones - Progreso No Se Actualiza Correctamente
 
-**📄 Documento:** [STUDENT-GAP-002-missions-update-progress.md](./_archived/gaps/STUDENT-GAP-002-missions-update-progress.md)
+**📄 Documento:** STUDENT-GAP-002-missions-update-progress.md (eliminado 2026-03-03 — contenido embebido abajo)
 
 **Problema:**
 - Misiones diarias/semanales generadas por backend tenían tipos de objetivos incorrectos
@@ -324,7 +320,7 @@ docs/60-portals/student/specs/
 
 ### GAP-006: Perfil - Estadísticas Hardcodeadas
 
-**📄 Documento:** [STUDENT-GAP-006-profile-stats.md](./_archived/gaps/STUDENT-GAP-006-profile-stats.md)
+**📄 Documento:** STUDENT-GAP-006-profile-stats.md (eliminado 2026-03-03 — contenido embebido abajo)
 
 **Problema:**
 - Stats hardcodeados (350 coins, 12/50 logros)
@@ -362,7 +358,7 @@ docs/60-portals/student/specs/
 
 ### GAP-007: Settings - Guardar Configuraciones es Mock
 
-**📄 Documento:** [STUDENT-GAP-007-settings-persistence.md](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md)
+**📄 Documento:** STUDENT-GAP-007-settings-persistence.md (eliminado 2026-03-03 — contenido embebido abajo)
 
 **Problema:**
 - setTimeout mock (línea 94-102)
@@ -409,7 +405,7 @@ docs/60-portals/student/specs/
 
 ### GAP-008: Backend - getUserStatistics() Devuelve Mock Data
 
-**📄 Documento:** [STUDENT-GAP-008-backend-statistics.md](./_archived/gaps/STUDENT-GAP-008-backend-statistics.md)
+**📄 Documento:** STUDENT-GAP-008-backend-statistics.md (eliminado 2026-03-03 — contenido embebido abajo)
 
 **Problema:**
 - `getUserStatistics()` devolvía valores hardcodeados (todo en 0)
@@ -609,7 +605,7 @@ docs/60-portals/student/specs/
 
 **FASE 3 - Optimizaciones:**
 - **GAP-SP-005:** EVALUADO - Decision PARCIAL GO para 2 endpoints consolidados
-- **GAP-SP-008:** DOCUMENTADO - 30 mecanicas de ejercicios especificadas en 3 documentos
+- **GAP-SP-008:** DOCUMENTADO - 29 mecanicas de ejercicios especificadas (comprension_auditiva en BACKLOG) en 3 documentos
 
 **Pendientes (futuro):**
 - `PUT /users/:id/profile` - Implementar persistencia real en BD
@@ -717,25 +713,25 @@ docs/60-portals/student/specs/
 ### Por Tema
 
 **Backend:**
-- [Implementación Missions.claimRewards()](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#implementación)
+- Implementación Missions.claimRewards() — ver sección GAP-001 arriba
 - [Dependencias de MissionsService](./dependencies/DEPENDENCY-MATRIX.md#1-missionsservice)
-- [Triggers de BD](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#comportamiento-del-trigger-de-promoción)
+- Triggers de BD — ver sección GAP-001 arriba
 
 **Frontend (Hooks):**
-- [Hook useUserStatistics](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#1-appsfront endsrcsharedhooksuseuserstatisticsts-nuevo---41-líneas)
-- [React Query configuration](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#31-react-query)
+- Hook useUserStatistics — ver sección GAP-006 arriba
+- React Query configuration — ver sección GAP-006 arriba
 
 **Frontend (Components):**
-- [ProfilePage modificaciones](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#3-appsfrontend srcappsstudentpagesprofilepaget sx)
-- [SettingsPage handlers](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#4-appsfront endsrcappsstudentpagessettingspaget sx)
+- ProfilePage modificaciones — ver sección GAP-006 arriba
+- SettingsPage handlers — ver sección GAP-007 arriba
 
 **Frontend (Services):**
-- [profileAPI service](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#1-appsfrontend srcsrc servicesapiprofileapits-nuevo---161-líneas)
-- [Validaciones frontend](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#e-handler-handlepasswordchange-implementado-líneas-127-180-50-líneas)
+- profileAPI service — ver sección GAP-007 arriba
+- Validaciones frontend — ver sección GAP-007 arriba
 
 **Base de Datos:**
 - [Tablas afectadas](./dependencies/DEPENDENCY-MATRIX.md#base-de-datos-6-tablas)
-- [Triggers](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#comportamiento-del-trigger-de-promoción)
+- Triggers — ver sección GAP-001 arriba
 
 **Dependencias:**
 - [Matriz completa](./dependencies/DEPENDENCY-MATRIX.md)
@@ -743,9 +739,9 @@ docs/60-portals/student/specs/
 - [Diagramas de flujo](./dependencies/DEPENDENCY-MATRIX.md#diagramas-de-flujo-de-datos)
 
 **Testing:**
-- [Escenarios GAP-001](./_archived/gaps/STUDENT-GAP-001-missions-rewards.md#pruebas-manuales-realizadas)
-- [Escenarios GAP-006](./_archived/gaps/STUDENT-GAP-006-profile-stats.md#pruebas-manuales-realizadas)
-- [Escenarios GAP-007](./_archived/gaps/STUDENT-GAP-007-settings-persistence.md#pruebas-manuales-realizadas)
+- Escenarios GAP-001 — ver sección GAP-001 arriba
+- Escenarios GAP-006 — ver sección GAP-006 arriba
+- Escenarios GAP-007 — ver sección GAP-007 arriba
 - [Tests recomendados](./inventory/IMPLEMENTATIONS-2025-11-24.md#tests-recomendados-prioridad)
 
 ---
@@ -789,7 +785,7 @@ docs/60-portals/student/specs/
 
 **Funcionalidades operativas:**
 - 27 paginas analizadas y documentadas
-- 30 mecanicas de ejercicios especificadas (M1-M5)
+- 29 mecanicas de ejercicios especificadas (comprension_auditiva en BACKLOG) (M1-M5)
 - Completar ejercicios y ver progreso real
 - Sistema de rangos con promocion automatica
 - Achievements con WebSocket real-time
@@ -803,7 +799,7 @@ docs/60-portals/student/specs/
 - GAP-SP-004: DOCUMENTADO - Estandar de nomenclatura API
 - GAP-SP-005: EVALUADO - Decision PARCIAL GO
 - GAP-SP-006: PLANIFICADO - Plan de testing creado
-- GAP-SP-008: DOCUMENTADO - 30 mecanicas especificadas
+- GAP-SP-008: DOCUMENTADO - 29 mecanicas especificadas (comprension_auditiva en BACKLOG)
 
 **Areas en mejora:**
 - Test coverage: 13% -> Meta 40% (plan documentado)
@@ -811,7 +807,7 @@ docs/60-portals/student/specs/
 
 **Documentacion nueva creada (2026-01-20):**
 - Estandar de nomenclatura API (100+ campos documentados)
-- Especificaciones de 30 mecanicas de ejercicios (3 documentos)
+- Especificaciones de 29 mecanicas (comprension_auditiva en BACKLOG) de ejercicios (3 documentos)
 - Plan de testing detallado con roadmap
 - Evaluacion de endpoints consolidados
 

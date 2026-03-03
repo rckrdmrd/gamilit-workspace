@@ -18,13 +18,18 @@ import type {
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { matrizAnswersSchema } from './matrizPerspectivasSchemas';
 
+interface AdaptedMatrizData {
+  perspectives?: PerspectiveGeneration[];
+  description?: string;
+}
+
 interface ExerciseProps {
   exerciseId: string;
+  exercise?: AdaptedMatrizData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
-  difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -38,6 +43,7 @@ interface ExerciseState {
 
 export const MatrizPerspectivasExercise = ({
   exerciseId,
+  exercise: adaptedExercise,
   onComplete,
   onExit,
   onProgressUpdate,
@@ -69,9 +75,21 @@ export const MatrizPerspectivasExercise = ({
   });
 
   useEffect(() => {
-    loadExercise();
+    // Use adapted data from exercise prop if available (avoids redundant API call)
+    if (adaptedExercise?.perspectives && adaptedExercise.perspectives.length > 0) {
+      setExercise({
+        id: exerciseId,
+        topic: (adaptedExercise as Record<string, unknown>).topic as string || '',
+        description: adaptedExercise.description || '',
+        perspectiveCount: adaptedExercise.perspectives.length,
+      });
+      setPerspectives(adaptedExercise.perspectives);
+      setLoading(false);
+    } else {
+      loadExercise();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [exerciseId]);
 
   // Auto-save progress every 30 seconds with visual feedback
 
@@ -123,7 +141,7 @@ export const MatrizPerspectivasExercise = ({
     try {
       const data = await fetchMatrixExercise(exerciseId);
       setExercise(data);
-      // Load perspectives from mock data (no AI generation)
+      // Fallback to mock perspectives (adapter had no data)
       const { mockPerspectives } = await import('./matrizPerspectivasMockData');
       setPerspectives(mockPerspectives);
     } finally {
@@ -394,7 +412,7 @@ export const MatrizPerspectivasExercise = ({
                   {/* Question 1 */}
                   <div>
                     <label className="mb-2 block text-detective-base font-semibold text-detective-blue">
-                      1. ¿Qué perspectiva fue más injusta con Marie?
+                      1. ¿Qué perspectiva consideras más injusta?
                     </label>
                     <textarea
                       value={answers.q1}
@@ -419,12 +437,12 @@ export const MatrizPerspectivasExercise = ({
                   {/* Question 2 */}
                   <div>
                     <label className="mb-2 block text-detective-base font-semibold text-detective-blue">
-                      2. ¿Cómo ha evolucionado la percepción de Marie con el tiempo?
+                      2. ¿Cómo ha evolucionado esta percepción con el tiempo?
                     </label>
                     <textarea
                       value={answers.q2}
                       onChange={(e) => setAnswers({ ...answers, q2: e.target.value })}
-                      placeholder="Describe cómo ha cambiado la forma en que se ve a Marie Curie..."
+                      placeholder="Describe cómo ha cambiado esta percepción a lo largo del tiempo..."
                       className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}

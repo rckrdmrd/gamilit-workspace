@@ -150,6 +150,8 @@ Sistema multi-canal de notificaciones.
 
 ## Educational Content (5 modulos)
 
+> Para detalle pedagogico, ver [MODULOS-EDUCATIVOS.md](./MODULOS-EDUCATIVOS.md)
+
 ### 8. modules
 **ID:** GAM-MODULES | **Estado:** 95%
 

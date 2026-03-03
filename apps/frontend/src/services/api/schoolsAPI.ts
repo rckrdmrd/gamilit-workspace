@@ -1,3 +1,5 @@
+/** @deprecated Zero consumers in production code. Safe to delete. */
+
 /**
  * Schools API Integration
  *

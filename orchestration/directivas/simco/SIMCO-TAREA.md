@@ -817,6 +817,12 @@ estado_final: "COMPLETADA | EN_PROGRESO | BLOQUEADA"
 
 ---
 
+## Referencia ADR
+
+Este documento está formalizado por [ADR-037 — Gobernanza de Tareas con Ciclo CAPVED](../../docs/90-adr/ADR-037-gobernanza-capved.md).
+
+---
+
 ## REFERENCIAS
 
 | Documento | Propósito |

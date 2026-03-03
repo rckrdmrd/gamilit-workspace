@@ -29,3 +29,5 @@ estado: activo
 
 - [../20-architecture/gamificacion/README.md](../20-architecture/gamificacion/README.md)
 - [../20-architecture/MECANICAS-GAMIFICACION-V6.md](../20-architecture/MECANICAS-GAMIFICACION-V6.md)
+
+> Para detalle tecnico de los 23 modulos backend, ver [MODULOS.md](./MODULOS.md)

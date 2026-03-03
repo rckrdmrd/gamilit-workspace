@@ -116,30 +116,6 @@ export interface InterventionAlert {
   resolution_notes: string | null;
 }
 
-/**
- * @deprecated Use InterventionAlert with correct field names instead.
- * Legacy interface kept for backwards compatibility during migration.
- * Fields mapped: priority->severity, message->title, resolved->status, type->alert_type
- */
-export interface InterventionAlertLegacy {
-  id: string;
-  student_id: string;
-  student_name: string;
-  type: AlertType;
-  priority: AlertPriority;
-  message: string;
-  details: {
-    days_inactive?: number;
-    average_score?: number;
-    module_name?: string;
-    exercise_name?: string;
-    failure_count?: number;
-  };
-  created_at: string;
-  resolved: boolean;
-  actions_taken?: string[];
-}
-
 export interface LearningAnalytics {
   engagement_rate: number;
   completion_rate: number;
@@ -298,12 +274,6 @@ export interface TeacherDashboardStats {
   total_submissions_pending: number; // Backend: total_submissions_pending (was pending_alerts)
   students_at_risk: number;        // Backend: students_at_risk (new field)
 }
-
-/**
- * @deprecated Use TeacherDashboardStats instead. This alias provides backwards compatibility.
- * Will be removed in next major version.
- */
-export type TeacherDashboardStatsLegacy = TeacherDashboardStats;
 
 // Filter types
 export interface StudentFilter {

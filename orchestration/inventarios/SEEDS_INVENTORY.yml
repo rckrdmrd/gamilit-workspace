@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 3.5.0
-  fecha: '2026-03-02'  # v3.5.0: Shop categories cleanup — removed guild/social scopes. 12-shop_categories 5→3 active. 13-shop_items 20→16. 16-shop_items_expanded 18→15 (31 total)
+  version: 3.5.2
+  fecha: '2026-03-03'  # v3.5.2: TikTok timeLimit 10s→30s (5 envs: dev, staging, prod, dev-backlog, prod-backlog), display text "10 Segundos/segundos"→"30 Segundos/segundos". Previous: v3.5.1
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD

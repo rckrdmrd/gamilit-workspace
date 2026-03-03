@@ -100,7 +100,7 @@ export function SuspendStudentModal({
           <button
             onClick={onClose}
             disabled={loading}
-            className="rounded-lg p-2 transition-colors hover:bg-detective-bg-secondary disabled:opacity-50"
+            className="rounded-lg p-2 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors hover:bg-detective-bg-secondary disabled:opacity-50"
           >
             <X className="h-5 w-5 text-detective-text" />
           </button>

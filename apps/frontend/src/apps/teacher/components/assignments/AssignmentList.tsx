@@ -58,7 +58,7 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
             <div className="flex-1">
               <div className="mb-3 flex items-start justify-between">
                 <div>
-                  <h3 className="mb-1 text-lg font-bold text-detective-text">{assignment.title}</h3>
+                  <h3 className="mb-1 text-lg font-bold text-detective-text truncate" title={assignment.title}>{assignment.title}</h3>
                   <p className="text-sm text-detective-text-secondary">{assignment.module_name}</p>
                 </div>
                 <span
@@ -129,7 +129,7 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
 
             {(onEdit || onDelete) && (
               <div className="ml-4">
-                <button className="rounded-lg p-2 transition-colors hover:bg-detective-bg-secondary">
+                <button className="rounded-lg p-2 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors hover:bg-detective-bg-secondary">
                   <MoreVertical className="h-5 w-5 text-detective-text-secondary" />
                 </button>
               </div>

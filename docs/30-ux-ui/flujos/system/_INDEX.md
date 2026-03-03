@@ -19,8 +19,3 @@ estado: activo
 | [FL-SYS-04-TWO-FACTOR-AUTHENTICATION.md](./FL-SYS-04-TWO-FACTOR-AUTHENTICATION.md) | FL-SYS-04 | Autenticacion en dos factores (2FA): setup, login, backup codes |
 | [FL-SYS-05-MULTI-TENANT-ONBOARDING.md](./FL-SYS-05-MULTI-TENANT-ONBOARDING.md) | FL-SYS-05 | Onboarding de organizaciones: creacion, suscripcion, features, usuarios |
 
-## Archivos Movidos
-
-| Archivo | Destino |
-|---------|---------|
-| [FL-SYS-06-MULTI-TENANT-ISOLATION.md](./FL-SYS-06-MULTI-TENANT-ISOLATION.md) | Movido a `docs/20-architecture/security/MULTI-TENANT-ISOLATION.md` |

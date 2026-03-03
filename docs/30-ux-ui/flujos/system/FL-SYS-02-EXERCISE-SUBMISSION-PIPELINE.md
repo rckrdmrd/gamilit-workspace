@@ -179,7 +179,7 @@ sequenceDiagram
 - `apps/frontend/src/features/exercises/hooks/useExerciseData.ts`
 - `apps/frontend/src/features/exercises/hooks/useExerciseProgress.ts`
 - `apps/frontend/src/features/exercises/hooks/useExerciseComodines.ts`
-- `apps/frontend/src/features/exercises/registry/registrations.ts` (30 mecanicas)
+- `apps/frontend/src/features/exercises/registry/registrations.ts` (29 mecanicas (comprension_auditiva en BACKLOG))
 - `apps/frontend/src/services/api/educationalAPI.ts`
 
 ### Backend

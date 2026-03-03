@@ -2,14 +2,14 @@
 title: Gamification Reward Chain
 category: system
 id: FL-SYS-03
-version: 1.0.0
-last_updated: 2026-02-27
+version: 1.1.0
+last_updated: 2026-03-03
 ---
 
 # FL-SYS-03: Gamification Reward Chain
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-27
+**Version:** 1.1.0
+**Fecha:** 2026-03-03
 **Estado:** Activo
 
 ---
@@ -128,12 +128,20 @@ La cadena se activa tras eventos como completar ejercicio, login diario, compra 
 - Actualiza `current_rank` de Ajaw → Nacom → Ah K'in → Halach Uinic → K'uk'ulkan
 - Otorga bonus ML Coins de promocion
 - Multiplicadores ML Coins aumentan: 1.0x → 1.25x → 1.5x → 1.75x → 2.0x
+- **`promote_to_next_rank()` AHORA actualiza `ml_coins_earned_total` ademas de `ml_coins`** (ADR-052 — corregido, antes solo actualizaba `ml_coins`)
+- **`update_user_rank()` AHORA actualiza `ml_coins_earned_total` ademas de `ml_coins`** (ADR-052 — mismo fix)
 
 ### Claim de Achievement via SQL Atomico
 - `AchievementsService.claimRewards(userId, achievementId)`
 - Llama funcion SQL `gamification_system.claim_achievement_reward(userId, achievementId)`
 - Valida completado + no reclamado → distribuye XP + ML Coins → registra transaccion
 - Todo atomico en una sola llamada SQL
+- **`claim_achievement_reward()` AHORA actualiza `ml_coins_earned_total` ademas de `ml_coins`** (ADR-052 — corregido, antes solo actualizaba `ml_coins`)
+
+### Registro de Usuario (Flujo inicial)
+- `UserStatsService.create(userId)` inicializa `user_stats` con 100 ML Coins
+- **Crea transaccion `WELCOME_BONUS` en `ml_coins_transactions`** (ADR-052 — antes los 100 coins iniciales se asignaban directamente sin registro de transaccion)
+- Garantiza que `auditBalance()` (SUM de transacciones) coincida con el balance real desde el primer momento
 
 ### Compra en Tienda
 - `MLCoinsService.spendCoins()` con pessimistic locking
@@ -290,5 +298,6 @@ sequenceDiagram
 ## Referencias
 
 - ADR-016: Sincronizacion de formulas XP DB/Backend
+- ADR-052: ML Coins audit consistency — WELCOME_BONUS transaction, ml_coins_earned_total invariant, resolveProfileId() en MLCoinsService
 - Rangos Maya: `docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-003-rangos-maya.md`
 - FL-SYS-02: [Exercise Submission Pipeline](FL-SYS-02-EXERCISE-SUBMISSION-PIPELINE.md)

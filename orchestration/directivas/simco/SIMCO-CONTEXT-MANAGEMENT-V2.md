@@ -1,10 +1,10 @@
 # SIMCO-CONTEXT-MANAGEMENT-V2.md
 
 **Sistema:** NEXUS v4.1 - Gestion de Contexto Jerarquico con Checkpoints
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Fecha:** 2026-02-17
 **Basado en:** Implementacion probada en Gamilit
-**Actualizado:** Sistema de checkpoints automáticos integrado
+**Actualizado:** Sistema de checkpoints automáticos integrado | **v2.4.0:** Lazy Loading Practico + Context Budget para Subagentes
 
 ---
 
@@ -615,6 +615,12 @@ Checklist final:
 
 ---
 
+## Referencia ADR
+
+Este documento está formalizado por [ADR-036 — Sistema NEXUS v4.1 (Gestion de Contexto)](../../docs/90-adr/ADR-036-sistema-nexus.md).
+
+---
+
 ## 13. Referencias
 
 - `@CONTEXT-MAP` - orchestration/CONTEXT-MAP.yml
@@ -645,6 +651,116 @@ Checklist final:
 | `compactacion_inminente` | Sistema avisa | PROXIMA-ACCION + purga agresiva |
 
 Ver: `SIMCO-CONTEXT-CLEANUP.md` para protocolo detallado.
+
+---
+
+## 16. Lazy Loading Practico
+
+### Patron
+
+Antes de leer cualquier directorio con N archivos, cargar primero el indice o mapa del directorio. Solo entonces leer los 1-3 archivos especificamente relevantes a la tarea.
+
+```
+PATRON LAZY LOADING:
+  1. Leer _INDEX.md o _MAP.md del directorio
+  2. Identificar los 1-3 archivos relevantes para la tarea actual
+  3. Leer solo esos archivos
+  4. NO leer todos los archivos del directorio "por si acaso"
+```
+
+### Aplica a
+
+| Directorio | Indice a leer primero | Luego leer |
+|------------|-----------------------|------------|
+| `docs/10-requirements/epics/` | `_INDEX.md` + `_MAP.md` | Solo el EPIC relevante |
+| `orchestration/inventarios/` | `_INDEX.yml` | Solo el inventory del dominio activo |
+| `docs/40-standards/` | `_INDEX.md` | Solo el estandar del dominio |
+| `docs/90-adr/` | `_INDEX.md` | Solo el ADR referenciado |
+| `orchestration/directivas/simco/` | `SIMCO-ESTANDARES.md` (catalogo) | Solo la directiva especifica |
+
+### NO Aplica a
+
+Los siguientes archivos se cargan SIEMPRE completos, sin lazy loading:
+
+```yaml
+cargar_siempre_completo:
+  - CLAUDE.md                    # L0 — base del sistema
+  - orchestration/PROXIMA-ACCION.md  # Checkpoint de sesion
+  - El archivo que contiene el bug/tarea activa  # L3 tarea
+  - Archivos con <50 lineas    # Overhead de lazy > beneficio
+```
+
+### Anti-patron
+
+```yaml
+INCORRECTO:
+  # Leer todos los ADRs para encontrar el relevante
+  - leer: docs/90-adr/ADR-001.md
+  - leer: docs/90-adr/ADR-002.md
+  # ... 48 veces
+
+CORRECTO:
+  # Leer el indice, identificar ADR relevante, leer solo ese
+  - leer: docs/90-adr/_INDEX.md
+  - identificar: "ADR-036 = NEXUS v4.1"
+  - leer: docs/90-adr/ADR-036-sistema-nexus.md
+```
+
+---
+
+## 17. Context Budget para Subagentes
+
+### Principio
+
+El presupuesto de contexto para un subagente depende de si es **background** (aislado) o **foreground** (hereda conversacion).
+
+### Background vs Foreground
+
+| Tipo | Ve conversacion del orquestador | Que incluir en el prompt |
+|------|--------------------------------|--------------------------|
+| Background (Task tool) | NO — contexto totalmente aislado | FULL: tarea + rutas + restricciones + variables resueltas + criterios + decisiones previas |
+| Foreground (sesion delegada) | SI — hereda historial | MINIMO: solo la tarea especifica + rutas exactas |
+
+### Budget Maximo por Subagente
+
+```yaml
+SUBAGENTE_BUDGET:
+  maximo_absoluto: 20_000  # tokens en el prompt de delegacion
+  recomendado_background: 3_000 - 8_000
+  recomendado_foreground: 500 - 2_000
+
+  si_supera_maximo:
+    accion: "Desglosar en subtareas mas pequenas"
+    referencia: "SIMCO-DELEGACION.md — Senales de Tarea Demasiado Grande"
+```
+
+### Que Incluir por Tipo
+
+```yaml
+BACKGROUND_INCLUIR:
+  obligatorio:
+    - descripcion_tarea: "1-3 oraciones especificas"
+    - rutas_archivos: "absolutas, sin wildcards"
+    - restricciones_alcance: "que NO explorar"
+    - variables_resueltas: "PROJECT_NAME, paths, etc."
+    - criterios_aceptacion: "checklist verificable"
+    - modelo_recomendado: "haiku|sonnet|opus"
+    - formato_salida: "YAML compacto segun SIMCO-SUBAGENTE.md"
+  opcional:
+    - codigo_referencia: "solo si es critico y corto (<30 lineas)"
+    - inventario_extracto: "solo las filas relevantes"
+
+FOREGROUND_INCLUIR:
+  obligatorio:
+    - descripcion_tarea: "1-2 oraciones"
+    - rutas_archivos: "exactas"
+    - criterios_aceptacion: "checklist"
+  NO_incluir:
+    - variables_proyecto: "ya en contexto compartido"
+    - restricciones_generales: "ya conocidas"
+```
+
+> Ver: `SIMCO-DELEGACION.md` para templates completos de delegacion.
 
 ---
 

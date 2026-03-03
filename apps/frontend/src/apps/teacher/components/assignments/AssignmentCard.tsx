@@ -100,7 +100,7 @@ export function AssignmentCard({
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="mb-2 flex items-center gap-2">
-              <h3 className="text-lg font-bold text-detective-text">{assignment.title}</h3>
+              <h3 className="text-lg font-bold text-detective-text line-clamp-2" title={assignment.title}>{assignment.title}</h3>
               <span
                 className={`rounded px-2 py-1 text-xs font-semibold ${getTypeColor(assignment.type)}`}
               >

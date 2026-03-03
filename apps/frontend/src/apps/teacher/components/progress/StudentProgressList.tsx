@@ -166,8 +166,8 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
             <p className="font-semibold text-detective-text">{row.full_name}</p>
             <p className="text-xs text-detective-text-secondary">{row.email}</p>
             {row.current_module && (
-              <p className="mt-1 text-xs text-detective-orange">
-                Modulo: {row.current_module.substring(0, 25)}...
+              <p className="mt-1 text-xs text-detective-orange truncate" title={row.current_module}>
+                Modulo: {row.current_module}
               </p>
             )}
           </div>

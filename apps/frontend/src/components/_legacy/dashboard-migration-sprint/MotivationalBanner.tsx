@@ -1,4 +1,9 @@
 /**
+ * @deprecated Since 2026-02 — Zero external references. Replaced by DashboardComplete.
+ * Safe to delete. See TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT.
+ */
+
+/**
  * MotivationalBanner Component
  *
  * ISSUE: #2.3 (P0) - Dashboard Motivational Message

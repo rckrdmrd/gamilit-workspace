@@ -1,7 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { cn } from '@shared/utils/cn';
 import {
   Settings,
@@ -15,7 +16,10 @@ import {
   User as UserIcon,
   Building2,
   Coins,
+  Rocket,
 } from 'lucide-react';
+import { getActiveBoosts } from '@/features/gamification/economy/api/shopAPI';
+import type { ActiveBoostResponse } from '@/features/gamification/economy/api/shopAPI';
 import type { User, UserGamificationData } from '@shared/types';
 import type { User as AuthUser } from '@features/auth/types/auth.types';
 import { getUserFullName } from '@features/auth/types/auth.types';
@@ -64,6 +68,31 @@ export const GamifiedHeader = ({
     avatar?.src ||
     (user && 'avatar_url' in user ? (user.avatar_url as string | undefined) : null) ||
     null;
+
+  // Active boosts query (students only)
+  const userId = user?.id;
+  const { data: activeBoosts } = useQuery<ActiveBoostResponse[]>({
+    queryKey: ['activeBoosts', userId],
+    queryFn: () => getActiveBoosts(userId!),
+    enabled: !!userId && user?.role === 'student',
+    refetchInterval: 60_000,
+  });
+
+  // Format time remaining for boost display
+  const boostLabels = useMemo(() => {
+    if (!activeBoosts?.length) return [];
+    const now = Date.now();
+    return activeBoosts
+      .filter((b) => new Date(b.expires_at).getTime() > now)
+      .map((b) => {
+        const remaining = new Date(b.expires_at).getTime() - now;
+        const hours = Math.floor(remaining / 3_600_000);
+        const minutes = Math.floor((remaining % 3_600_000) / 60_000);
+        const timeStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+        const label = b.boost_type === 'XP' ? `${b.multiplier}x XP` : `${b.multiplier}x Coins`;
+        return { label, timeStr, type: b.boost_type };
+      });
+  }, [activeBoosts]);
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -188,6 +217,25 @@ export const GamifiedHeader = ({
                   <Coins className="h-4 w-4 text-white" />
                 </motion.div>
                 <span className="font-bold text-green-700">{userStats.ml.toLocaleString()}</span>
+              </div>
+            )}
+
+            {/* Active Boosts - Solo para estudiantes */}
+            {user?.role === 'student' && boostLabels.length > 0 && (
+              <div className="hidden items-center space-x-1 md:flex">
+                {boostLabels.map((boost) => (
+                  <motion.div
+                    key={boost.type}
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 4 }}
+                    className="flex items-center space-x-1 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-2 py-1 text-white shadow-md"
+                    title={`${boost.label} — ${boost.timeStr} restante`}
+                  >
+                    <Rocket className="h-3 w-3" aria-hidden="true" />
+                    <span className="text-xs font-semibold">{boost.label}</span>
+                    <span className="text-xs text-white/80">{boost.timeStr}</span>
+                  </motion.div>
+                ))}
               </div>
             )}
 

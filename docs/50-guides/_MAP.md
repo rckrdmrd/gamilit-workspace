@@ -17,7 +17,7 @@ estado: activo
 ├── README.md
 ├── backend/
 │   ├── _INDEX.md
-│   ├── _MAP.md (crear)
+│   ├── _MAP.md
 │   ├── DOMAIN-ERROR-MIGRATION.md
 │   ├── GUIA-DEPENDENCY-RULES.md
 │   ├── GUIA-DESIGN-PATTERNS-NESTJS.md
@@ -25,11 +25,9 @@ estado: activo
 │   ├── GUIA-OPENTELEMETRY-NESTJS.md
 │   ├── GUIA-ROTACION-SECRETOS.md
 │   ├── GUIA-RUNBOOK-POSTGRESQL.md
-│   ├── _archived/
 │   └── impl/
 ├── deployment/
 │   ├── _INDEX.md
-│   ├── _archived/
 │   └── ...
 ├── documentation-master/
 │   ├── _INDEX.md

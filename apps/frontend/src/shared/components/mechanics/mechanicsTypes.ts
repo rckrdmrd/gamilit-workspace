@@ -1,9 +1,6 @@
 /**
  * Mechanics Types
- * Shared types for exercise mechanics and feedback
- *
- * TODO: This is a stub file created to unblock TypeScript compilation
- * Full implementation needed in Phase 2
+ * Core exercise mechanics type definitions. Used by exerciseAdapter.ts and all exercise components.
  */
 
 // Import DifficultyLevel enum from educational types (official standard)

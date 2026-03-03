@@ -20,7 +20,7 @@ estado: vigente
 
 Detectar cambios visuales no intencionales en componentes criticos de la interfaz. Especialmente util para:
 - Dashboard del estudiante (XP, rango maya, logros)
-- Paginas de ejercicios (30 mecanicas distintas)
+- Paginas de ejercicios (29 mecanicas distintas (comprension_auditiva en BACKLOG))
 - Tienda virtual con ML Coins
 - Reportes del maestro
 

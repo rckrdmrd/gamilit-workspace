@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.5.8"
-fecha: "2026-03-02"  # v12.5.8: SopaLetras responsive fix — dynamic cell sizing via useContainerSize (Crucigrama pattern), MIN_CELL_SIZE=24, overflow-x-auto fallback. Previous: v12.5.7 ML Coins balance fix
+version: "12.8.1"
+fecha: "2026-03-03"  # v12.8.1: TikTok timer 10s→30s (exerciseAdapter.ts, TikTokCard.tsx, QuizTikTokExercise.tsx), seed display text sync. Previous: v12.8.0
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -15,16 +15,19 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 575                          # +3: ParentNotificationsPage, ParentMessagesPage, ParentSettingsPage. Base: 572 (strict 2026-02-27)
-  hooks: 132                                    # Reconteo 2026-02-27: 132 use*.ts en hooks/ dirs (excl. type files, API services, examples)
-  paginas: 72                                   # +3 parent portal pages. Base: 69 (strict 2026-02-27)
-  stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003)
-  api_service_files: 65                         # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0). +resourceSharingApi.ts
-  api_calls_total: 580                          # ~580: +resourceSharingApi calls over previous 575
-  type_definition_files: 49                     # 49 archivos, 430+ tipos/interfaces/enums exportados
+  componentes_tsx: 581                          # ST-019 audit 2026-03-03: 575→581 (+6 from recent shop/cosmetics work). Base was 572 (strict 2026-02-27) +3 parent pages +6 shop/cosmetics
+  hooks: 143                                    # ST-019 audit 2026-03-03: 132→143 (+11 includes profile, avatar, shop hooks). Previous reconteo 2026-02-27: 132
+  paginas: 81                                   # ST-019 audit 2026-03-03: 70→81 (+11 includes parent portal pages + settings subsections). Base: 69 (strict 2026-02-27)
+  stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003). No change ST-019.
+  api_service_files: 78                         # ST-019 audit 2026-03-03: 65→78 (+13 includes mechanic-specific APIs). Previous: 65 (67 - 2 deleted + resourceSharingApi)
+  api_calls_total: 580                          # ~580: +resourceSharingApi calls over previous 575. No change ST-019.
+  type_definition_files: 81                     # ST-019 audit 2026-03-03: 49→81 (+32 significant growth from new features). Previous: 49 (2026-02-19)
+  mock_data_files: 10                           # ST-019 audit 2026-03-03: NEW metric. 10 mock data files tracked
+  legacy_files: 7                               # ST-019 audit 2026-03-03: NEW metric. 7 files in _legacy/ dirs (zero external references)
+  storybook_stories: 2                          # ST-019 audit 2026-03-03: NEW metric. 2 .stories.ts files
   portales: 4
   mecanicas_ejercicio: 29                       # 29 mecanicas activas en 58 archivos .tsx (comprension_auditiva BACKLOG, v14.8.4)
-  routes: 74                                    # +3 parent portal routes added. Base: 71 (corrected 2026-02-27)
+  routes: 74                                    # +3 parent portal routes added. Base: 71 (corrected 2026-02-27). No change ST-019.
   contexts_providers: 4                         # AuthContext, BrandingProvider, ExerciseContext (Exercise Restructuring), barrel
   config_files: 16                              # 14 root + exercise-registry.ts + registrations.ts
   utility_files: 37                             # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1) + difficulty.ts + inventory/utils.ts + downloadCSV.ts
@@ -65,7 +68,16 @@ portales:
     componentes_tsx: 44                         # 46 - 6 communication components deleted + 4 in collaboration/settings remain
     hooks: 23                                   # 25 - 2 deleted (useTeacherMessages, useTeacherContent)
     descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, resource sharing"
+    barrel_exports: 12                              # 4 existing (dashboard, reports, review-panel, shared) + 8 new (alerts, analytics, assignments, collaboration, monitoring, progress, responses, settings)
     cambios_recientes: |
+      v12.8.0 (Teacher Portal Responsive Remediation 2026-03-03):
+      - 16 pages: detective-container added to 11, responsive headers on 7, responsive metrics on 8
+      - 21 components: grid responsive fixes, touch targets, truncation, section titles
+      - 4 modals: scroll wrappers, responsive typography, touch targets (44px)
+      - 8 barrel export index.ts files created (alerts, analytics, assignments, collaboration, monitoring, progress, responses, settings)
+      - 2 deprecated types removed: InterventionAlertLegacy, TeacherDashboardStatsLegacy
+      - Card truncation: ModuleCompletionCard line-clamp-1 + title tooltip
+      - Standards compliance: Responsive 78%→95%, Modal 86%→95%, Truncation 20%→80%
       v12.1.0 (Teacher Portal Cleanup 2026-02-21):
       - 3 pages deleted (Communication, ContentManagement, Content) — not applicable to teacher role
       - 6 communication components deleted (AnnouncementForm, ConversationsList, FeedbackForm, MessageComposer, MessagesList, MessageFilters)
@@ -216,12 +228,72 @@ stores:
   # que NO existen como archivos Zustand con create(). Muchos eran aspiracionales o mapean a
   # React Query hooks o Context providers, no stores Zustand reales.
 
+  dead_stores:
+    - nombre: "battleStore"
+      archivo: "features/gamification/battles/store/battleStore.ts"
+      estado: "DEAD"
+      nota: "Zero page consumers. Annotated @deprecated. Safe to delete when battles feature is removed or implemented."
+    - nombre: "newLeaderboardsStore"
+      archivo: "features/gamification/social/store/newLeaderboardsStore.ts"
+      estado: "NEAR_DEAD"
+      nota: "Only referenced in test harness. No active page consumers. Monitor for deletion."
+
+# -------------------------------------------------------------------------------
+# AUDIT NOTES (ST-002 + ST-019 — 2026-03-03)
+# -------------------------------------------------------------------------------
+
+audit_notes:
+  fecha: "2026-03-03"
+  auditores: ["ST-002 (metric collection)", "ST-019 (inventory update)"]
+
+  mock_data_files:
+    count: 10
+    nota: "10 mock data files tracked. Separate from mock-gated API services (HF-09)."
+
+  legacy_files:
+    count: 7
+    ubicacion: "_legacy/ subdirectories"
+    nota: "All 7 files have zero external references. Safe to delete in a dedicated cleanup task."
+
+  deprecated_items:
+    total_aproximado: 73
+    removed_wave_3: 8
+    nota: "8 @deprecated items cleaned in Wave 3 (confirmed safe). ~73 remaining across codebase. ~11 have active consumers and must NOT be deleted yet."
+
+  dead_api_services:
+    - archivo: "twoFactorAPI.ts"
+      estado: "DEAD"
+      nota: "Zero consumers. Annotated @deprecated."
+    - archivo: "schoolsAPI.ts"
+      estado: "DEAD"
+      nota: "Zero consumers. Annotated @deprecated."
+
+  unused_hooks:
+    count: 5
+    lista:
+      - "useRankUpNotification (features/gamification/ranks/hooks/)"
+      - "useLeaderboards (features/gamification/social/hooks/)"
+      - "useGuilds (features/gamification/social/hooks/)"
+      - "useFriends (features/gamification/social/hooks/)"
+      - "useAdvancedLeaderboard (features/gamification/social/hooks/)"
+    nota: "5 hooks identified with no active consumers. Candidates for removal when social/leaderboard features are finalized."
+
+  type_duplications:
+    count: 5
+    lista:
+      - "LeaderboardEntry — 3 definitions"
+      - "ShopItem — 2 definitions"
+      - "Achievement — 2 definitions"
+      - "Profile — 2 definitions"
+      - "LeaderboardType — 3 definitions"
+    nota: "Consolidation recommended as part of a future type cleanup task."
+
 # -------------------------------------------------------------------------------
 # HOOKS (127 archivos verificados 2026-02-21)
 # -------------------------------------------------------------------------------
 
 hooks:
-  total: 129                                    # Verified 2026-02-27: 129 files (126 impl + 3 barrels, excl. type files, API services, examples)
+  total: 143                                    # ST-019 audit 2026-03-03: 143 (+11 profile, avatar, shop hooks). Previous: 129 verified 2026-02-27 (126 impl + 3 barrels)
   por_directorio:
     apps_admin_hooks: 31                        # Verified 2026-02-21: 31 use*.ts (excl index.ts)
     apps_teacher_hooks: 24                      # Verified 2026-02-21: 24 use*.ts (excl index.ts). +useSharedResources, +useTeacherContent, +useTeacherMessages, +useAnalytics
@@ -249,7 +321,7 @@ hooks:
 # -------------------------------------------------------------------------------
 
 api_services:
-  total_files: 67                               # Verified 2026-02-21: 45 services/api (excl infra/index) + 19 features + 2 shared + 1 NotificationService(deprecated)
+  total_files: 78                               # ST-019 audit 2026-03-03: 78 (+13 mechanic-specific APIs). Previous: 67 verified 2026-02-21 (45 services/api + 19 features + 2 shared + 1 deprecated)
   total_api_calls: 580                          # ~580: +resourceSharingApi calls over previous 575
   por_directorio:
     services_api_root: 11                       # adminAPI (barrel), contentAPI, educationalAPI, friendsAPI, notificationsAPI, passwordAPI, profileAPI, schoolsAPI, studentAssignmentsAPI, teamsAPI, twoFactorAPI
@@ -323,8 +395,8 @@ mecanicas:
 # -------------------------------------------------------------------------------
 
 types:
-  total_files: 49                               # Verified 2026-02-19: *.types.ts + */types/*.ts excluding index barrels
-  total_exported: 430                           # types + interfaces + enums (approximate)
+  total_files: 81                               # ST-019 audit 2026-03-03: 49→81 (+32 significant growth from new features). Previous: 49 verified 2026-02-19
+  total_exported: 430                           # types + interfaces + enums (approximate). Note: 5 known duplications (LeaderboardEntry×3, ShopItem×2, Achievement×2, Profile×2, LeaderboardType×3)
   por_ubicacion:
     shared_types: 27                            # 148 tipos exportados
     types_root: 4                               # admin/achievements, admin/classroom-teacher, admin/gamification, userStats
@@ -446,6 +518,101 @@ hallazgos:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v12.8.0"
+    changes:
+      - "feat(teacher): Responsive remediation — 16 pages, 21 components, 4 modals fixed"
+      - "feat(teacher): 8 barrel export index.ts files created (alerts, analytics, assignments, collaboration, monitoring, progress, responses, settings)"
+      - "fix(teacher): detective-container added to 11 pages missing it"
+      - "fix(teacher): Responsive typography on 7 page headers (text-4xl → text-xl sm:text-2xl md:text-3xl)"
+      - "fix(teacher): Responsive metrics on 8 pages (text-3xl → text-2xl sm:text-3xl)"
+      - "fix(teacher): Critical grid-cols-4 fix on NotificationPreferencesPage (→ grid-cols-2 sm:grid-cols-4)"
+      - "fix(teacher): Touch targets 44px on ~10 buttons across pages/components"
+      - "fix(teacher): Card truncation line-clamp + title on ModuleCompletionCard, AssignmentCard, AssignmentList, StudentStatusCard, ReviewList, StudentProgressList"
+      - "fix(teacher): Modal scroll wrappers, responsive score text, lightbox close touch target"
+      - "refactor(teacher): Removed 2 deprecated types (InterventionAlertLegacy, TeacherDashboardStatsLegacy)"
+    files_modified: 53
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.7.4"
+    changes:
+      - "fix(shop): Level requirement indicator removed from ShopItemCard — no longer displays 'Nivel requerido' or item.required_level"
+      - "fix(shop): 'Bloqueado' button state removed from PurchaseModal — item status now shows only purchasable/not-purchasable (ML Coins availability)"
+      - "fix(shop): Requirement warning text removed from PurchaseModal content"
+      - "fix(shop): ShopPage and PurchaseModal no longer call useAuth() and useUserGamification() for level/rank checks"
+      - "docs(shop): Level/rank/achievement purchase restrictions removed — product decision to sell items for ML Coins only"
+    files_modified: 3
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.7.3"
+    changes:
+      - "feat(shared): queryClient singleton created in shared/lib/queryClient.ts for query invalidation across stores"
+      - "fix(main): queryClient imported from singleton instead of inline creation"
+      - "fix(gamification): economyStore.addCoins() and spendCoins() now invalidate ['userGamification'] query key"
+      - "fix(gamification): useUserGamification staleTime reduced 5min → 30sec for faster header sync"
+      - "fix(shop): ShopPage fetches balance on mount via fetchBalance() to resolve header/shop desync"
+    files_modified: 5
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.7.2"
+    changes:
+      - "docs(gamification): RankProgressWidget auto-height behavior documented in FLUJO-RENDERING-COSMETICOS.md"
+      - "docs(gamification): Removed max-h-[600px] and overflow-y-auto constraints — card auto-sizes to content"
+      - "docs(gamification): Frame SVG absolute inset-0 adapts to container's natural height"
+    files_modified: 1
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.7.1"
+    changes:
+      - "feat(shop): Level requirements display on ShopItemCard and PurchaseModal"
+      - "feat(shop): INSUFFICIENT_LEVEL/INSUFFICIENT_RANK error handling in useShopPurchase"
+      - "fix(frame-rendering): RankProgressWidget frame overlay z-index updated (z-10→z-30 for content container)"
+    files_modified: 3
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.7.0"
+    changes:
+      - "audit(metrics): ST-019 inventory update from ST-002 verified audit"
+      - "metrics: componentes_tsx 575→581, hooks 132→143, paginas 70→81"
+      - "metrics: type_definition_files 49→81, api_service_files 65→78"
+      - "new metrics: mock_data_files(10), legacy_files(7), storybook_stories(2)"
+      - "new section: audit_notes with dead stores, deprecated items, unused hooks, type duplications"
+      - "stores: documented battleStore (DEAD) and newLeaderboardsStore (NEAR_DEAD)"
+    files_modified: 1
+    build_status: "N/A (docs-only)"
+
+  - date: "2026-03-03"
+    version: "v12.6.0"
+    changes:
+      - "fix(exercises): M3-010 DebateDigital error state — catch shows type:'error' instead of misleading 'info'"
+      - "fix(exercises): M3-008 MatrizPerspectivas generic questions (no more hardcoded Marie Curie references)"
+      - "fix(exercises): M3-009 AnalisisFuentes dynamic description from adapter pipeline"
+      - "refactor(types): M3-005 FeedbackData canonical re-export from mechanicsTypes"
+      - "refactor(exercises): M3-007 removed unused difficulty from 4 ExerciseProps"
+      - "fix(exercises): M3-001 PodcastArgumentativo statement separation, M3-002 import reorder"
+    files_modified: 5
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.5.9"
+    changes:
+      - "fix(exercises): M3 adapter pipeline integration — 4 dedicated adapters for PodcastArgumentativo, AnalisisFuentes, MatrizPerspectivas, DebateDigital"
+      - "feat(components): 4 M3 exercises accept exercise prop with graceful fallback to API/mock"
+    files_modified: 6
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.5.8"
+    changes:
+      - "fix(exercises): SopaLetras responsive layout fix"
+    files_modified: 2
+    build_status: "PASS"
+
   - date: "2026-03-02"
     version: "v12.5.7"
     changes:
@@ -476,5 +643,5 @@ changelog:
     files_modified: 15
 
 # ===============================================================================
-# FIN FRONTEND INVENTORY v12.5.7
+# FIN FRONTEND INVENTORY v12.7.0
 # ===============================================================================

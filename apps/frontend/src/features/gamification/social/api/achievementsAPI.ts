@@ -1,7 +1,8 @@
 /**
  * Achievements API
  *
- * @deprecated REC-008 (2026-02-18): Use gamificationApi from @/services/api/gamification/gamificationAPI.ts instead.
+ * @deprecated REC-008 (2026-02-18): Migrated to gamificationApi. Zero runtime consumers. Safe to delete.
+ * Use gamificationApi from @/services/api/gamification/gamificationAPI.ts instead.
  * This file is deprecated. All achievement operations should go through gamificationApi:
  *   - gamificationApi.getAllAchievements()
  *   - gamificationApi.getUserAchievements(userId)

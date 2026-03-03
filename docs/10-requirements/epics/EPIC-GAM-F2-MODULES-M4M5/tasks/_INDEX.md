@@ -12,4 +12,5 @@ estado: activo
 
 | Archivo/Directorio | Descripcion |
 |--------------------|-------------|
-| [_archived/](./_archived/) | Tareas archivadas |
+
+> Tareas archivadas eliminadas el 2026-03-03.

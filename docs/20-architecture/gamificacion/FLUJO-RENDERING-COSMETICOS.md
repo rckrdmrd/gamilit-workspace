@@ -132,10 +132,12 @@ Prioridad 4: Default
 ### Implementación por Componente
 
 > Post-fix (2026-03-02): Solo RankProgressWidget renderiza frames. SVG usa `inset-0 h-full w-full` con `preserveAspectRatio="none"` para cubrir toda la card. Border CSS transparente cuando overlay activo.
+>
+> **Auto-height (2026-03-03):** RankProgressWidget utiliza `auto-height` — NO tiene `max-h-[600px]` ni `overflow-y-auto`. La card se ajusta naturalmente al contenido. El SVG frame con `absolute inset-0` se adapta a la altura natural del contenedor.
 
 | Componente | P1 (SVG) | P2 (CSS) | P3 (border) | P4 (default) |
 |------------|----------|----------|-------------|--------------|
-| `RankProgressWidget` | `<img>` overlay z-20, `inset-0 h-full w-full`, SVGs con `preserveAspectRatio="none"`, border transparent | `frame.cssClass` en className | `frame.borderColor` inline | `rankInfo.border` |
+| `RankProgressWidget` | `<img>` overlay z-20, content container z-30 (renders above decorative frame), `inset-0 h-full w-full`, SVGs con `preserveAspectRatio="none"`, border transparent | `frame.cssClass` en className | `frame.borderColor` inline | `rankInfo.border` |
 
 ---
 

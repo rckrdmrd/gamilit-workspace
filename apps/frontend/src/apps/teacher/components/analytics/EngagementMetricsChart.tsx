@@ -95,7 +95,7 @@ export function EngagementMetricsChart({ metrics }: EngagementMetricsChartProps)
       {/* Session Stats */}
       <DetectiveCard>
         <h3 className="mb-4 text-lg font-bold text-detective-text">Estadísticas de Sesión</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="rounded-lg bg-detective-bg-secondary p-4">
             <p className="mb-2 text-sm text-detective-text-secondary">Sesiones por Usuario</p>
             <p className="text-2xl font-bold text-detective-text">
@@ -149,7 +149,7 @@ export function EngagementMetricsChart({ metrics }: EngagementMetricsChartProps)
         <h3 className="mb-4 text-lg font-bold text-detective-text">
           Comparación con Período Anterior
         </h3>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="text-center">
             <p className="mb-2 text-sm text-detective-text-secondary">Cambio DAU</p>
             <div className="flex items-center justify-center gap-2">

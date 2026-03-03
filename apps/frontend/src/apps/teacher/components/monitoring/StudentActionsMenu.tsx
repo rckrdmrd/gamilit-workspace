@@ -127,7 +127,7 @@ export function StudentActionsMenu({
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="rounded-lg p-2 text-detective-text-secondary transition-colors hover:bg-detective-bg-secondary hover:text-detective-text"
+        className="rounded-lg p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-detective-text-secondary transition-colors hover:bg-detective-bg-secondary hover:text-detective-text"
         aria-label={`Acciones para ${student.full_name}`}
         aria-expanded={isOpen}
         aria-haspopup="menu"

@@ -57,6 +57,8 @@ BEGIN
 
         -- [2025-12-28] Registrar transaccion de bono de bienvenida para auditoria
         -- [2026-01-04] CORREGIDO: Eliminada columna 'source' inexistente, usando reference_type y metadata
+        -- [2026-03-03] ADR-052: Corregido transaction_type 'earn' (invalido) → 'welcome_bonus' (ENUM valido)
+        --              Corregido reference_type 'admin' → 'welcome' (consistente con backend y CHECK constraint)
         INSERT INTO gamification_system.ml_coins_transactions (
             user_id,
             tenant_id,
@@ -74,13 +76,13 @@ BEGIN
             100,  -- Welcome bonus
             0,    -- Balance antes (nuevo usuario)
             100,  -- Balance despues
-            'earn',
+            'welcome_bonus'::gamification_system.transaction_type,
             'Bono de bienvenida al registrarte en GAMILIT',
             'system_welcome_bonus',
-            'admin',  -- Tipo admin para acciones del sistema
+            'welcome',  -- ADR-052: Tipo welcome para welcome bonus
             jsonb_build_object(
                 'trigger', 'initialize_user_stats',
-                'version', '2.1',
+                'version', '2.2',
                 'source', 'system_welcome_bonus',
                 'created_at', gamilit.now_mexico()::text
             )

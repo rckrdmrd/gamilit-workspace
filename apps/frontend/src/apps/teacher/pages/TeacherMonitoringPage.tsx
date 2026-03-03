@@ -67,6 +67,7 @@ export default function TeacherMonitoringPage() {
 
   return (
     <TeacherPageShell>
+    <div className="detective-container py-6 sm:py-8">
     <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -218,21 +219,21 @@ export default function TeacherMonitoringPage() {
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-detective-text">
+                    <p className="text-xl sm:text-2xl font-bold text-detective-text">
                       {selectedClassroom.student_count}
                     </p>
                     <p className="text-detective-text-secondary">Estudiantes</p>
                   </div>
                   {realtimeConnected && (
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-green-400">
+                      <p className="text-xl sm:text-2xl font-bold text-green-400">
                         {onlineCount}
                       </p>
                       <p className="text-detective-text-secondary">En linea</p>
                     </div>
                   )}
                   <div className="text-center">
-                    <p className="text-detective-accent text-2xl font-bold">{students.length}</p>
+                    <p className="text-detective-accent text-xl sm:text-2xl font-bold">{students.length}</p>
                     <p className="text-detective-text-secondary">Cargados</p>
                   </div>
                 </div>
@@ -346,6 +347,7 @@ export default function TeacherMonitoringPage() {
               </div>
             </DetectiveCard>
           ) : null}
+    </div>
     </div>
     </TeacherPageShell>
   );

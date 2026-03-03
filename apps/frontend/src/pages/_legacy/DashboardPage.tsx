@@ -1,3 +1,8 @@
+/**
+ * @deprecated Since 2026-02 — Zero external references. Replaced by DashboardComplete.
+ * Safe to delete. See TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT.
+ */
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Coins, TrendingUp, AlertCircle } from 'lucide-react';

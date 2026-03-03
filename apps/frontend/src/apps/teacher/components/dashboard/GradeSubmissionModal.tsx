@@ -139,7 +139,7 @@ export const GradeSubmissionModal = ({
                     <Award className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h2 id="grade-submission-title" className="text-2xl font-bold text-white">Grade Submission</h2>
+                    <h2 id="grade-submission-title" className="text-lg sm:text-2xl font-bold text-white">Grade Submission</h2>
                     <p className="text-sm text-purple-100">
                       {submission.studentName} - {submission.assignmentTitle}
                     </p>
@@ -155,7 +155,7 @@ export const GradeSubmissionModal = ({
               </div>
 
               {/* Content */}
-              <div className="max-h-[calc(90vh-200px)] overflow-y-auto p-6">
+              <div className="max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto p-6">
                 {/* Student Info */}
                 <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 p-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -198,16 +198,16 @@ export const GradeSubmissionModal = ({
                     <div>
                       <p className="mb-1 text-sm text-gray-600">Current Score</p>
                       <div className="flex items-baseline gap-3">
-                        <p className="text-4xl font-bold text-gray-800">
+                        <p className="text-2xl sm:text-4xl font-bold text-gray-800">
                           {totalScore} <span className="text-xl text-gray-500">/ {maxScore}</span>
                         </p>
-                        <p className="text-2xl font-semibold text-gray-600">
+                        <p className="text-lg sm:text-2xl font-semibold text-gray-600">
                           ({percentage.toFixed(1)}%)
                         </p>
                       </div>
                     </div>
                     <div className={`rounded-xl px-8 py-4 ${getGradeColor(letterGrade)}`}>
-                      <p className="text-5xl font-bold">{letterGrade}</p>
+                      <p className="text-3xl sm:text-5xl font-bold">{letterGrade}</p>
                     </div>
                   </div>
                 </div>

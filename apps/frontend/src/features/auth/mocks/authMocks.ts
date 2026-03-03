@@ -178,34 +178,6 @@ export const mockPasswordReset = async (
 };
 
 /**
- * Mock de verificación de email
- * Simula activación de cuenta
- *
- * @deprecated Since 2025-10 - Email verification is now disabled.
- * All users are automatically verified upon registration.
- * This function is kept for backward compatibility only.
- */
-export const mockEmailVerification = async (
-  token: string,
-): Promise<MockPasswordRecoveryResponse> => {
-  // Simular delay de red
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  // Validar token
-  if (!token || token.length < 10) {
-    return {
-      success: false,
-      error: 'Token de verificación inválido o expirado',
-    };
-  }
-
-  return {
-    success: true,
-    message: 'Email verificado exitosamente. Tu cuenta está activada.',
-  };
-};
-
-/**
  * Mock de verificación 2FA
  * Simula validación de código 2FA
  */
@@ -229,19 +201,3 @@ export const mockTwoFactorVerification = async (
   };
 };
 
-/**
- * Mock de reenvío de código de verificación
- *
- * @deprecated Since 2025-10 - Email verification is now disabled.
- * All users are automatically verified upon registration.
- * This function is kept for backward compatibility only.
- */
-export const mockResendVerificationCode = async (): Promise<MockPasswordRecoveryResponse> => {
-  // Simular delay de red
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  return {
-    success: true,
-    message: 'Código de verificación reenviado',
-  };
-};

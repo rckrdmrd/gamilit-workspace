@@ -372,6 +372,12 @@ Ver: TEMPLATE-INVENTARIO-PROYECTO.md
 
 ---
 
+## Referencia ADR
+
+Este documento está formalizado por [ADR-039 — SSOT - Documentacion del Producto en el Proyecto](../../docs/90-adr/ADR-039-ssot-docs-en-proyecto.md).
+
+---
+
 ## 8. Referencias
 
 | Directiva | Proposito |

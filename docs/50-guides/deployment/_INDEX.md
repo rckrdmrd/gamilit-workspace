@@ -30,11 +30,11 @@ estado: activo
 
 ## Archivados
 
-Los siguientes documentos fueron archivados por redundancia. Se mantienen como referencia historica en `_archived/`.
+Los siguientes documentos fueron eliminados el 2026-03-03 (eran redundantes con documentos activos).
 
-| Archivo | Estado | Razon |
-|---------|--------|-------|
-| [DEPLOYMENT-MASTER.md](./_archived/DEPLOYMENT-MASTER.md) | [ARCHIVED] | Consolidado en AMBIENTES-DEV-PROD.md |
-| [GUIA-ACTUALIZACION-PRODUCCION.md](./_archived/GUIA-ACTUALIZACION-PRODUCCION.md) | [ARCHIVED] | Redundante con GUIA-VALIDACION-PRODUCCION |
-| [GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md](./_archived/GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md) | [ARCHIVED] | Redundante con AMBIENTES-DEV-PROD + validacion |
-| [_archived/README.md](./_archived/README.md) | [ARCHIVED] | Indice de 8 documentos historicos adicionales |
+| Archivo | Razon de eliminacion |
+|---------|---------------------|
+| DEPLOYMENT-MASTER.md | Consolidado en AMBIENTES-DEV-PROD.md |
+| GUIA-ACTUALIZACION-PRODUCCION.md | Redundante con GUIA-VALIDACION-PRODUCCION |
+| GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md | Redundante con AMBIENTES-DEV-PROD + validacion |
+| (+8 historicos adicionales) | Eliminados junto con _archived/ |

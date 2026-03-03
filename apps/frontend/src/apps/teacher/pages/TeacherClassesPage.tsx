@@ -115,7 +115,7 @@ export default function TeacherClassesPage() {
         <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-detective-text">Mis Clases</h1>
+          <h1 className="mb-2 text-xl sm:text-2xl md:text-3xl font-bold text-detective-text">Mis Clases</h1>
           <p className="text-detective-text-secondary">Gestiona tus clases y estudiantes</p>
         </div>
 
@@ -214,7 +214,7 @@ export default function TeacherClassesPage() {
                       e.stopPropagation();
                       openEditModal(classroom);
                     }}
-                    className="flex-1 rounded-lg bg-blue-500/20 px-3 py-2 text-sm font-medium text-blue-500 transition-colors hover:bg-blue-500/30"
+                    className="flex-1 rounded-lg bg-blue-500/20 px-3 py-2 min-h-[44px] text-sm font-medium text-blue-500 transition-colors hover:bg-blue-500/30"
                   >
                     <Edit className="mr-1 inline h-4 w-4" />
                     Editar
@@ -224,7 +224,7 @@ export default function TeacherClassesPage() {
                       e.stopPropagation();
                       openDeleteDialog(classroom);
                     }}
-                    className="flex-1 rounded-lg bg-red-500/20 px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500/30"
+                    className="flex-1 rounded-lg bg-red-500/20 px-3 py-2 min-h-[44px] text-sm font-medium text-red-500 transition-colors hover:bg-red-500/30"
                   >
                     <Trash2 className="mr-1 inline h-4 w-4" />
                     Eliminar

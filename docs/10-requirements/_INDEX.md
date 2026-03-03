@@ -16,7 +16,6 @@ estado: activo
 |--------------------|-------------|
 | [VISION-ALCANCE.md](./VISION-ALCANCE.md) | Vision y alcance del proyecto (canonico) |
 | [epics/](./epics/) | Epics organizadas por fase (EPIC-GAM-F{N}-{ID}) |
-| [testing-guides/](./testing-guides/) | [MOVED] a `docs/50-guides/testing/exercise-guides/` |
 
 ## Estructura de Epics
 

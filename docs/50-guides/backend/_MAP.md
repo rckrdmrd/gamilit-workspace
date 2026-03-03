@@ -21,8 +21,6 @@ backend/
 ├── GUIA-OPENTELEMETRY-NESTJS.md
 ├── GUIA-ROTACION-SECRETOS.md
 ├── GUIA-RUNBOOK-POSTGRESQL.md
-├── _archived/
-│   └── ...
 └── impl/
     └── ...
 ```
@@ -39,5 +37,4 @@ backend/
 
 ## Subdirectorios
 
-- **_archived/** — Guias archivadas (deprecated o supersedidas)
 - **impl/** — Ejemplos de implementacion (codigo referencia)

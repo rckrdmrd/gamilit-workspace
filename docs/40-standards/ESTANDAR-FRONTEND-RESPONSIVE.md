@@ -1,14 +1,14 @@
 ---
 titulo: Estandar Frontend - Responsive Design Patterns
 tipo: estandar-proyecto
-version: 1.1.0
+version: 1.2.0
 fecha_creacion: 2026-02-26
-ultima_actualizacion: 2026-03-02
+ultima_actualizacion: 2026-03-03
 ---
 
 # ESTANDAR-FRONTEND-RESPONSIVE: Responsive Design Patterns
 
-**Version:** 1.0.0
+**Version:** 1.2.0
 **Date:** 2026-02-26
 **ADR:** ADR-050 (Responsive Design Strategy)
 **Stack:** Tailwind CSS 4 + React 19
@@ -234,9 +234,102 @@ Test all responsive changes at these viewports:
 
 ---
 
+## 10. Breakpoints Consolidados del Proyecto
+
+Tabla maestra unificada. Los tres sistemas coexisten con propositos distintos.
+
+### Tabla Maestra
+
+| Nivel | Sistema | Token / API | Valor | Uso Tipico |
+|-------|---------|-------------|-------|------------|
+| Mobile base | Tailwind CSS | (sin prefijo) | 0px+ | Estilos default mobile-first |
+| Large phone | Tailwind CSS | `sm:` | 640px+ | Stack a horizontal, fuente +1 size |
+| Tablet portrait | Tailwind CSS | `md:` | 768px+ | Grid 2-cols, padding mayor |
+| Laptop / tablet landscape | Tailwind CSS | `lg:` | 1024px+ | Grid 3-cols, sidebar visible |
+| Desktop | Tailwind CSS | `xl:` | 1280px+ | Layout completo |
+| Wide desktop | Tailwind CSS | `2xl:` | 1536px+ | Espaciado extra, max-width contenedor |
+| Mobile (JS) | useResponsiveLayout | `isMobile` | < 768px | Renderizado condicional de componentes |
+| Tablet (JS) | useResponsiveLayout | `isTablet` | 768-1023px | Layouts alternativos |
+| Desktop (JS) | useResponsiveLayout | `isDesktop` | 1024-1399px | Features de escritorio |
+| Wide (JS) | useResponsiveLayout | `isWide` | >= 1400px | Paneles expandidos |
+| Container | useContainerSize | `containerSize` | dinamico | Sizing interno de celdas/grids |
+
+### Diferencia Intencional entre CSS y JS
+
+Los breakpoints JS (`useResponsiveLayout`) difieren de Tailwind intencionalmente:
+
+```yaml
+RAZON_DIFERENCIA:
+  tailwind: "Define ESTILOS — opera en CSS, no necesita re-render"
+  js_hook: "Define RENDERIZADO CONDICIONAL — controla que componentes montar"
+
+  ejemplo:
+    tailwind: "Ocultar sidebar con hidden lg:block"
+    js_hook: "Montar <DesktopSidebar> vs <MobileDrawer> (distinto DOM)"
+
+  NO_HACER: "Duplicar logica CSS en JS o viceversa"
+  HACER: "CSS para estilos responsive, JS para renderizado condicional"
+```
+
+### Breakpoints NO Personalizados en Tailwind Config
+
+El archivo `tailwind.config.js` usa breakpoints DEFAULT de Tailwind (no hay override en `theme.extend.screens`). Las customizaciones del proyecto son solo colores, sombras, fuentes y animaciones.
+
+---
+
+## 11. Cross-References con Otros Estandares
+
+Este estandar define los PATRONES BASE de responsive design. Estandares especializados extienden estas reglas:
+
+| Estandar | Archivo | Que cubre | Como extiende este estandar |
+|----------|---------|-----------|----------------------------|
+| Modal Responsive | `ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md` | Scroll wrappers, grid collapse, touch targets en modales | Reglas 1-5 para Modal.tsx consumers |
+| Card Truncation | `ESTANDAR-FRONTEND-CARD-TRUNCATION.md` | `line-clamp-N` + `title=` tooltip en cards | Extiende Seccion 2.2 (Typography) |
+
+### Jerarquia de Aplicacion
+
+```
+ESTANDAR-FRONTEND-RESPONSIVE.md     <- BASE (este documento)
+  +-- ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md   <- Para modales
+  +-- ESTANDAR-FRONTEND-CARD-TRUNCATION.md    <- Para cards
+```
+
+En caso de conflicto, el estandar especializado tiene precedencia para su dominio.
+
+---
+
+## 12. Integracion con detective-theme.css
+
+**Archivo:** `apps/frontend/src/shared/styles/detective-theme.css`
+
+Clases CSS que implementan patrones de este estandar como utilidades reutilizables:
+
+### Clases Disponibles
+
+| Clase CSS | Patron que implementa | Equivalente Tailwind |
+|-----------|-----------------------|-----------------------|
+| `.touch-target` | Touch targets WCAG 2.5.5 (Sec. 4) | `min-w-[44px] min-h-[44px] inline-flex items-center justify-center` |
+| `.responsive-padding` | Padding responsive (Sec. 2.3) | `p-4 sm:p-6 md:p-8` |
+| `.modal-content-responsive` | Modal scroll height (Sec. 3) | `max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto` |
+
+### Clases Referenciadas en Modal Standard (Pendientes en CSS)
+
+Las siguientes clases estan en `ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md` pero aun no implementadas en `detective-theme.css`. Usar Tailwind inline hasta que se agreguen:
+
+| Clase (futura) | Equivalente Tailwind actual |
+|----------------|-----------------------------|
+| `.modal-scroll-mobile` | `max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto` |
+| `.modal-grid-responsive-2` | `grid grid-cols-1 sm:grid-cols-2 gap-4` |
+| `.modal-grid-responsive-3` | `grid grid-cols-1 sm:grid-cols-3 gap-4` |
+| `.modal-grid-responsive-4` | `grid grid-cols-2 sm:grid-cols-4 gap-4` |
+
+---
+
 **References:**
 - ADR-050: Responsive Design Strategy
 - `shared/hooks/useResponsiveLayout.ts` — Viewport-based responsive hook
 - `shared/hooks/useContainerSize.ts` — Element-dimension sizing hook (ResizeObserver)
 - `shared/components/common/Modal.tsx` — Base modal
 - `shared/styles/detective-theme.css` — CSS utilities
+- `docs/40-standards/ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md` — Modal-specific responsive rules
+- `docs/40-standards/ESTANDAR-FRONTEND-CARD-TRUNCATION.md` — Card text truncation standard

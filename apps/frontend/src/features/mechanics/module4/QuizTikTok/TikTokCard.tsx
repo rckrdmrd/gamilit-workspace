@@ -14,7 +14,7 @@ export const TikTokCard = ({
   question,
   onAnswer,
   selectedAnswer,
-  timeLimit = 20,
+  timeLimit = 30,
   onTimeout,
 }: TikTokCardProps) => {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit);

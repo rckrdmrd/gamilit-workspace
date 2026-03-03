@@ -356,7 +356,7 @@ export const QuizTikTokExercise = ({
                 question={currentExercise.questions[currentIndex]}
                 onAnswer={handleAnswer}
                 selectedAnswer={answers[currentIndex]}
-                timeLimit={currentExercise.timeLimit || 20}
+                timeLimit={currentExercise.timeLimit || 30}
                 onTimeout={handleTimeout}
               />
             </AnimatePresence>

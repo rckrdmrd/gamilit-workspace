@@ -55,7 +55,7 @@ const StatsCard = ({ icon, label, value, color }: {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-br ${color} rounded-xl border border-gray-200 p-6 shadow-lg`}
+      className={`bg-gradient-to-br ${color} rounded-xl border border-gray-200 p-4 sm:p-6 shadow-lg`}
     >
       <div className="flex items-center gap-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/80">
@@ -63,7 +63,7 @@ const StatsCard = ({ icon, label, value, color }: {
         </div>
         <div>
           <p className="mb-1 text-sm font-medium opacity-80">{label}</p>
-          <p className="text-3xl font-bold">{value}</p>
+          <p className="text-2xl sm:text-3xl font-bold">{value}</p>
         </div>
       </div>
     </motion.div>
@@ -173,6 +173,7 @@ export default function TeacherExerciseResponsesPage() {
 
   return (
     <TeacherPageShell>
+    <div className="detective-container py-6 sm:py-8">
     <div className="space-y-6">
         {/* Page Header */}
         <PageHeader />
@@ -226,6 +227,7 @@ export default function TeacherExerciseResponsesPage() {
           open={!!selectedAttemptId}
           onClose={handleCloseModal}
         />
+    </div>
     </div>
     </TeacherPageShell>
   );

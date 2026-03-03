@@ -154,7 +154,7 @@ export function PerformanceInsightsPanel({ students }: PerformanceInsightsPanelP
           {/* Predictions */}
           <DetectiveCard>
             <h3 className="mb-4 text-lg font-bold text-detective-text">Predicciones</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="rounded-lg bg-detective-bg-secondary p-4">
                 <p className="mb-2 text-sm text-detective-text-secondary">
                   Probabilidad de Completar

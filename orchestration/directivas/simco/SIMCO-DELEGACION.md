@@ -1,7 +1,7 @@
 # SIMCO: DELEGACIÓN A SUBAGENTES
 
-**Version:** 1.3.0
-**Fecha:** 2026-01-07
+**Version:** 1.4.0
+**Fecha:** 2026-03-03
 **Aplica a:** Agentes orquestadores que necesiten delegar tareas
 **Prioridad:** OBLIGATORIA para delegacion
 **Templates:**
@@ -164,6 +164,8 @@ Al completar, el subagente debe reportar:
 ```markdown
 # SUBAGENTE: Database-Agent
 
+**Modelo recomendado:** haiku-4-5
+
 ## PROYECTO
 **Nombre:** {PROJECT_NAME}
 **Working directory:** ~/workspace/projects/{proyecto}
@@ -218,6 +220,8 @@ Crear tabla `{schema}.{nombre_tabla}` con las siguientes especificaciones:
 
 ```markdown
 # SUBAGENTE: Backend-Agent
+
+**Modelo recomendado:** sonnet-4-6
 
 ## PROYECTO
 **Nombre:** {PROJECT_NAME}
@@ -278,6 +282,8 @@ Crear Entity, Service y Controller para `{nombre}`:
 
 ```markdown
 # SUBAGENTE: Frontend-Agent
+
+**Modelo recomendado:** sonnet-4-6
 
 ## PROYECTO
 **Nombre:** {PROJECT_NAME}
@@ -694,6 +700,70 @@ SUBAGENTE_PROTOCOLO:
 
 ---
 
+## BEST PRACTICES DE SESIONES REALES
+
+Patrones observados en 15+ sesiones de trabajo con subagentes Claude Code.
+
+### Background vs Foreground: Cuando Usar Cada Uno
+
+```yaml
+USAR_BACKGROUND:
+  cuando:
+    - El orquestador tiene otras tareas que ejecutar mientras tanto
+    - La subtarea es completamente independiente
+    - Se lanzan 2+ subtareas en paralelo (mismo mensaje)
+  ejemplo: "Auditoria de 4 dominios simultaneos — 4 Tasks en un mismo mensaje"
+
+USAR_FOREGROUND:
+  cuando:
+    - El resultado determina el proximo paso del orquestador
+    - La tarea requiere aclaracion durante ejecucion
+    - Es la unica subtarea activa
+  ejemplo: "Fix de bug critico donde el orquestador revisa resultado antes de continuar"
+```
+
+### Paralelismo Real: Limite Practico vs Tecnico
+
+```yaml
+LIMITES_PARALELISMO:
+  limite_tecnico: 5
+  limite_practico: 4
+
+  razon_limite_practico:
+    - "Con 5+ subagentes, resultados llegan simultaneamente y son dificiles de validar"
+    - "4 permite revision rapida antes de lanzar siguiente wave"
+    - "Solo-lectura: 5 aceptable. Escritura: preferir 3-4"
+
+  patron_waves:
+    descripcion: "Para >4 subtareas, usar waves secuenciales"
+    ejemplo: "12 tareas = 3 waves de 4 Tasks"
+```
+
+### Claude Code Task Tool: Mismo Mensaje = Paralelo Real
+
+```yaml
+PARALELISMO_TASK_TOOL:
+  mismo_mensaje:
+    resultado: "Ejecucion verdaderamente paralela"
+    usar_cuando: "Tareas independientes entre si"
+
+  mensajes_separados:
+    resultado: "Ejecucion secuencial"
+    usar_cuando: "Tarea B depende de resultado de Tarea A"
+```
+
+### Validacion de Modelo Asignado
+
+```yaml
+VERIFICACION_MODELO:
+  si_haiku_hace_decision_arquitectonica:
+    accion: "Revisar; re-delegar a Sonnet si decision incorrecta"
+  si_sonnet_escala_a_orquestador:
+    accion: "Orquestador decide o delega a Opus"
+```
+
+---
+
 ## REFERENCIAS
 
 - **Alternativa ahorro tokens Claude:** `directivas/simco/SIMCO-DELEGACION-GEMINI-CLI.md`
@@ -711,4 +781,4 @@ SUBAGENTE_PROTOCOLO:
 
 ---
 
-**Version:** 1.3.0 | **Sistema:** SIMCO + CCA + Tokens | **Mantenido por:** Tech Lead
+**Version:** 1.4.0 | **Sistema:** SIMCO + CCA + Tokens | **Mantenido por:** Tech Lead

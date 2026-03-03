@@ -193,6 +193,34 @@ export const checkItemOwnership = async (userId: string, itemId: string): Promis
 };
 
 // ============================================================================
+// BOOST API
+// ============================================================================
+
+export interface ActiveBoostResponse {
+  id: string;
+  user_id: string;
+  boost_type: 'XP' | 'COINS';
+  multiplier: number;
+  source: string | null;
+  activated_at: string;
+  expires_at: string;
+  is_active: boolean;
+}
+
+/**
+ * Get active boosts for a user
+ *
+ * @param userId - User ID
+ * @returns List of active boosts
+ */
+export const getActiveBoosts = async (userId: string): Promise<ActiveBoostResponse[]> => {
+  const { data } = await apiClient.get<ActiveBoostResponse[]>(
+    `/gamification/boosts/${userId}/active`,
+  );
+  return data;
+};
+
+// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 

@@ -37,7 +37,7 @@ export function DashboardClassroomsList({
       <div className="mb-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="mb-2 text-4xl font-bold text-detective-text">
+            <h1 className="mb-2 text-2xl sm:text-4xl font-bold text-detective-text">
               Dashboard del Profesor
             </h1>
             <p className="text-detective-text-secondary">

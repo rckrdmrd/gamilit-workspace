@@ -254,7 +254,7 @@ export interface Organization {
  */
 export interface UserExtended extends User {
   fullName: string; // REQUIRED: Derived from firstName/lastName/displayName
-  updatedAt?: string; // TODO: Add to backend AuthResponse (User has createdAt but not updatedAt)
+  updatedAt?: string;
 }
 
 /**

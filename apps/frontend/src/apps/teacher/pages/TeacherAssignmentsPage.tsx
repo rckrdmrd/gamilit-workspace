@@ -267,7 +267,7 @@ export default function TeacherAssignmentsPage() {
         <main className="detective-container py-8">
           {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-detective-text">Asignaciones</h1>
+          <h1 className="mb-2 text-xl sm:text-2xl md:text-3xl font-bold text-detective-text">Asignaciones</h1>
           <p className="text-detective-text-secondary">
             Crea y gestiona asignaciones para tus estudiantes
           </p>
@@ -296,7 +296,7 @@ export default function TeacherAssignmentsPage() {
               <FileText className="h-8 w-8 text-blue-500" />
               <div>
                 <p className="text-sm text-gray-400">Total</p>
-                <p className="text-2xl font-bold text-detective-text">{stats.total}</p>
+                <p className="text-xl sm:text-2xl font-bold text-detective-text">{stats.total}</p>
               </div>
             </div>
           </DetectiveCard>
@@ -306,7 +306,7 @@ export default function TeacherAssignmentsPage() {
               <Clock className="h-8 w-8 text-yellow-500" />
               <div>
                 <p className="text-sm text-gray-400">Activas</p>
-                <p className="text-2xl font-bold text-detective-text">{stats.active}</p>
+                <p className="text-xl sm:text-2xl font-bold text-detective-text">{stats.active}</p>
               </div>
             </div>
           </DetectiveCard>
@@ -316,7 +316,7 @@ export default function TeacherAssignmentsPage() {
               <CheckCircle className="h-8 w-8 text-green-500" />
               <div>
                 <p className="text-sm text-gray-400">Completadas</p>
-                <p className="text-2xl font-bold text-detective-text">{stats.completed}</p>
+                <p className="text-xl sm:text-2xl font-bold text-detective-text">{stats.completed}</p>
               </div>
             </div>
           </DetectiveCard>
@@ -326,7 +326,7 @@ export default function TeacherAssignmentsPage() {
               <Users className="h-8 w-8 text-orange-500" />
               <div>
                 <p className="text-sm text-gray-400">Pendientes Revisar</p>
-                <p className="text-2xl font-bold text-detective-text">{stats.pendingReviews}</p>
+                <p className="text-xl sm:text-2xl font-bold text-detective-text">{stats.pendingReviews}</p>
               </div>
             </div>
           </DetectiveCard>

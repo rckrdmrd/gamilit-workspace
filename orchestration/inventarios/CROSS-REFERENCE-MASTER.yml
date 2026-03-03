@@ -1,0 +1,2270 @@
+# CROSS-REFERENCE-MASTER.yml
+# SSOT: Mapeo unificado de procesos, modulos, schemas, portales y governance
+# Queryable bidireccional: Flow->Modules/Schemas AND Module->Flows
+version: "1.0.0"
+fecha: "2026-03-03"
+proyecto: "gamilit"
+
+# ===========================================================================
+# DIMENSION 1: FLOWS -> Everything
+# Primary axis: Process flows mapping to all implementation artifacts
+# Sources: COBERTURA-TOTAL-PROCESOS.md, TRACEABILITY-MATRIX.md, _INDEX.md files
+# ===========================================================================
+
+flows:
+
+  # --- AUTH FLOWS (3) ---
+
+  FL-AUTH-01:
+    portal: Shared
+    epic: EPIC-GAM-F1-AUTH
+    process: "Registro + login + inicializacion"
+    frontend:
+      pages: ["pages/auth/*"]
+      components: ["RegisterForm.tsx", "LoginForm.tsx"]
+    backend:
+      modules: ["auth"]
+      endpoints: ["/auth/register", "/auth/login"]
+    database:
+      schemas: ["auth", "auth_management", "gamification_system"]
+      tables: ["auth.users", "auth_management.profiles", "gamification_system.user_stats"]
+    flow_doc: "auth/FLUJO-REGISTRO-LOGIN.md"
+
+  FL-AUTH-02:
+    portal: Shared
+    epic: EPIC-GAM-F1-AUTH
+    process: "Recuperacion de password"
+    frontend:
+      pages: ["pages/auth/ForgotPasswordPage.tsx", "apps/student/pages/PasswordResetPage.tsx"]
+      components: ["formulario reset request"]
+    backend:
+      modules: ["auth"]
+      endpoints: ["/auth/forgot-password", "/auth/reset-password"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth_management.password_reset_tokens", "auth.users"]
+    flow_doc: "auth/FLUJO-RECUPERACION-PASSWORD.md"
+
+  FL-AUTH-03:
+    portal: Shared
+    epic: EPIC-GAM-F1-AUTH
+    process: "Verificacion de email"
+    frontend:
+      pages: ["features/auth/store/authStore.ts"]
+      components: ["estado de verificacion"]
+    backend:
+      modules: ["auth"]
+      endpoints: ["email-verification.service.ts"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth_management.email_verification_tokens", "auth.users"]
+    flow_doc: "auth/FLUJO-VERIFICACION-EMAIL.md"
+
+  # --- STUDENT FLOWS (21) ---
+
+  FL-STU-01:
+    portal: Student
+    epic: EPIC-GAM-F1-EXERCISES
+    process: "Resolucion de ejercicio autocalificable (M1-M2)"
+    frontend:
+      pages: ["apps/student/pages/ExercisePage.tsx"]
+      components: ["guardar/enviar respuesta"]
+    backend:
+      modules: ["progress", "educational"]
+      endpoints: ["/api/v1/progress/submissions/submit"]
+    database:
+      schemas: ["progress_tracking", "gamification_system"]
+      tables: ["progress_tracking.exercise_attempts", "progress_tracking.exercise_submissions", "gamification_system.user_stats"]
+    flow_doc: "student/FLUJO-EJERCICIO-COMPLETO.md"
+
+  FL-STU-02:
+    portal: Student
+    epic: EPIC-GAM-F2-MODULES-M4M5
+    process: "Resolucion de ejercicio con revision (M3-M5)"
+    frontend:
+      pages: ["apps/student/pages/ExercisePage.tsx"]
+      components: ["submit para revision docente"]
+    backend:
+      modules: ["progress", "teacher"]
+      endpoints: ["/api/v1/progress/submissions/submit", "/api/v1/teacher/reviews/*"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.manual_reviews", "progress_tracking.exercise_submissions"]
+    flow_doc: "student/FLUJO-EJERCICIO-M3-M5.md"
+
+  FL-STU-03:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Compra en tienda + asignacion"
+    frontend:
+      pages: ["apps/student/pages/ShopPage.tsx"]
+      components: ["boton comprar"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/api/v1/gamification/shop/purchase"]
+      services: ["shop.service.ts", "boost.service.ts"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.shop_items", "gamification_system.user_purchases", "gamification_system.ml_coins_transactions", "gamification_system.user_stats", "gamification_system.active_boosts"]
+    flow_doc: "student/FLUJO-TIENDA-COMPRA.md"
+
+  FL-STU-04:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Claim de logros y misiones"
+    frontend:
+      pages: ["apps/student/pages/AchievementsPage.tsx", "apps/student/pages/MissionsPage.tsx"]
+      components: ["boton claim reward"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/api/v1/gamification/achievements/:id/claim", "/api/v1/gamification/missions/:id/claim"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.user_achievements", "gamification_system.missions", "gamification_system.ml_coins_transactions", "gamification_system.user_stats"]
+    flow_doc: "student/FLUJO-LOGROS-MISIONES-CLAIM.md"
+
+  FL-STU-05:
+    portal: Student
+    epic: EPIC-GAM-F3-PROFILES
+    process: "Perfil y ajustes del estudiante (Compuesto)"
+    type: compound
+    sub_flows: ["FL-SHR-01", "FL-STU-11", "FL-STU-12"]
+    frontend:
+      pages: ["apps/student/pages/SettingsPage.tsx"]
+      components: ["ProfileSection.tsx", "AccountSection.tsx", "NotificationsSection.tsx", "PrivacySection.tsx"]
+    backend:
+      modules: ["auth", "notifications"]
+      endpoints: ["PUT /users/profile", "PUT /auth/change-password", "GET /notifications/preferences", "PATCH /notifications/preferences", "PUT /users/preferences"]
+    database:
+      schemas: ["auth_management", "auth", "notifications"]
+      tables: ["auth_management.profiles", "auth.users", "notifications.notification_preferences"]
+    flow_doc: "student/FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md"
+
+  FL-STU-06:
+    portal: Student
+    epic: EPIC-GAM-F1-ANALYTICS
+    process: "Dashboard y progreso academico (Compuesto)"
+    type: compound
+    sub_flows: ["FL-STU-13", "FL-STU-01", "FL-STU-04", "FL-STU-15"]
+    frontend:
+      pages: ["apps/student/pages/DashboardComplete.tsx"]
+      components: ["dashboard orquestador"]
+    backend:
+      modules: ["progress", "gamification", "educational"]
+      endpoints: ["/api/v1/progress/*", "/api/v1/gamification/*", "/api/v1/educational/*"]
+    database:
+      schemas: ["progress_tracking", "gamification_system", "educational_content"]
+      tables: ["progress_tracking.*", "gamification_system.*", "educational_content.*"]
+    flow_doc: "student/FLUJO-DASHBOARD-ACADEMICO.md"
+
+  FL-STU-07:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Tienda: overview y catalogo"
+    frontend:
+      pages: ["apps/student/pages/ShopPage.tsx"]
+      components: ["ver catalogo, filtros"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/gamification/shop/categories", "/gamification/shop/items", "/gamification/shop/purchases/:userId"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.shop_categories", "gamification_system.shop_items", "gamification_system.user_purchases"]
+    flow_doc: "student/FLUJO-TIENDA-OVERVIEW.md"
+
+  FL-STU-08:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Inventario de items"
+    frontend:
+      pages: ["apps/student/pages/InventoryPage.tsx"]
+      components: ["ver inventario, usar power-up"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/gamification/comodines/users/:userId/inventory", "/gamification/comodines/use"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.comodines_inventory", "gamification_system.comodin_usage_log"]
+    flow_doc: "student/FLUJO-INVENTARIO-ITEMS.md"
+
+  FL-STU-09:
+    portal: Student
+    epic: EPIC-GAM-F3-SOCIAL-GAMIFICATION
+    process: "Sistema de amigos"
+    frontend:
+      pages: ["apps/student/pages/FriendsPage.tsx"]
+      components: ["listar/agregar amigos"]
+    backend:
+      modules: ["social"]
+      endpoints: ["/social/users/:userId/friends", "/social/friendships/request", "/social/activities/feed"]
+    database:
+      schemas: ["social_features"]
+      tables: ["social_features.friendships", "social_features.friend_requests", "social_features.user_activities"]
+    flow_doc: "student/FLUJO-AMIGOS.md"
+
+  FL-STU-10:
+    portal: Student
+    epic: EPIC-GAM-F3-SOCIAL-GAMIFICATION
+    process: "Gremios"
+    frontend:
+      pages: ["apps/student/pages/GuildsPage.tsx"]
+      components: ["crear/gestionar gremio"]
+    backend:
+      modules: ["social"]
+      endpoints: ["/social/teams", "/social/teams/:teamId/members/:userId"]
+    database:
+      schemas: ["social_features"]
+      tables: ["social_features.guilds", "social_features.guild_members"]
+    flow_doc: "student/FLUJO-GREMIOS.md"
+
+  FL-STU-11:
+    portal: Student
+    epic: EPIC-GAM-F3-PROFILES
+    process: "Settings dispositivos"
+    frontend:
+      pages: ["apps/student/pages/DeviceManagementSection.tsx"]
+      components: ["gestionar dispositivos"]
+    backend:
+      modules: ["notifications"]
+      endpoints: ["/notifications/devices", "/notifications/devices/:id"]
+    database:
+      schemas: ["notifications"]
+      tables: ["notifications.user_devices"]
+    flow_doc: "student/FLUJO-SETTINGS-DISPOSITIVOS.md"
+
+  FL-STU-12:
+    portal: Student
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Settings notificaciones"
+    frontend:
+      pages: ["apps/student/pages/NotificationPreferencesPage.tsx"]
+      components: ["preferencias notificaciones"]
+    backend:
+      modules: ["notifications"]
+      endpoints: ["/notifications/preferences", "/notifications/preferences/:type"]
+    database:
+      schemas: ["notifications"]
+      tables: ["notifications.notification_preferences"]
+    flow_doc: "student/FLUJO-SETTINGS-NOTIFICACIONES.md"
+
+  FL-STU-13:
+    portal: Student
+    epic: EPIC-GAM-F1-ANALYTICS
+    process: "Dashboard y overview de progreso"
+    frontend:
+      pages: ["apps/student/pages/DashboardComplete.tsx"]
+      components: ["useDashboardData.ts"]
+    backend:
+      modules: ["progress", "gamification"]
+      endpoints: ["/api/v1/progress/*", "/api/v1/gamification/user-stats/*"]
+    database:
+      schemas: ["progress_tracking", "gamification_system"]
+      tables: ["progress_tracking.module_progress", "gamification_system.user_stats"]
+    flow_doc: "student/FLUJO-DASHBOARD-PROGRESO.md"
+
+  FL-STU-14:
+    portal: Student
+    epic: EPIC-GAM-F3-SOCIAL-GAMIFICATION
+    process: "Leaderboards y rankings"
+    frontend:
+      pages: ["apps/student/pages/LeaderboardPage.tsx"]
+      components: ["leaderboardsStore.ts"]
+    backend:
+      modules: ["social"]
+      endpoints: ["/api/v1/social/leaderboards/*"]
+    database:
+      schemas: ["social_features", "gamification_system"]
+      tables: ["social_features.leaderboard_entries", "gamification_system.user_stats"]
+    flow_doc: "student/FLUJO-LEADERBOARDS.md"
+
+  FL-STU-15:
+    portal: Student
+    epic: EPIC-GAM-F1-EXERCISES
+    process: "Pagina de aprendizaje"
+    frontend:
+      pages: ["apps/student/pages/LearningPage.tsx"]
+      components: ["ver modulos, seleccionar ejercicio"]
+    backend:
+      modules: ["educational"]
+      endpoints: ["/api/v1/educational/modules/*", "/api/v1/educational/exercises/*"]
+    database:
+      schemas: ["educational_content"]
+      tables: ["educational_content.modules", "educational_content.exercises"]
+    flow_doc: "student/FLUJO-PAGINA-APRENDIZAJE.md"
+
+  FL-STU-16:
+    portal: Student
+    epic: EPIC-GAM-F1-ANALYTICS
+    process: "Progreso academico detallado"
+    frontend:
+      pages: ["apps/student/pages/MyProgressPage.tsx", "apps/student/pages/ModuleDetailsPage.tsx"]
+      components: ["modulo progress, exercise attempts"]
+    backend:
+      modules: ["progress"]
+      endpoints: ["/api/v1/progress/modules/*"]
+      controllers: ["module-progress.controller.ts", "exercise-attempt.controller.ts"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.module_progress", "progress_tracking.exercise_attempts", "progress_tracking.learning_sessions"]
+    flow_doc: "student/FLUJO-PROGRESO-ACADEMICO.md"
+
+  FL-STU-17:
+    portal: Student
+    epic: EPIC-GAM-F1-EXERCISES
+    process: "Asignaciones del estudiante"
+    frontend:
+      pages: ["apps/student/pages/AssignmentsPage.tsx", "apps/student/pages/AssignmentDetailPage.tsx"]
+      components: ["ver asignaciones, detalle"]
+    backend:
+      modules: ["assignments"]
+      endpoints: ["/api/v1/assignments/*"]
+      controllers: ["assignment.controller.ts", "assignment-student.controller.ts"]
+    database:
+      schemas: ["educational_content"]
+      tables: ["educational_content.assignments", "educational_content.assignment_students", "educational_content.assignment_submissions"]
+    flow_doc: "student/FLUJO-ASIGNACIONES-ESTUDIANTE.md"
+
+  FL-STU-18:
+    portal: Student
+    epic: EPIC-GAM-F3-PROFILES
+    process: "Perfil y notificaciones"
+    frontend:
+      pages: ["apps/student/pages/EnhancedProfilePage.tsx", "apps/student/pages/NotificationsPage.tsx"]
+      components: ["perfil, notificaciones"]
+    backend:
+      modules: ["profile", "notifications"]
+      endpoints: ["/api/v1/profile/*", "/api/v1/notifications/*"]
+      controllers: ["profile.controller.ts", "notifications.controller.ts"]
+    database:
+      schemas: ["auth_management", "notifications"]
+      tables: ["auth_management.profiles", "notifications.notifications", "notifications.notification_preferences"]
+    flow_doc: "student/FLUJO-PERFIL-NOTIFICACIONES.md"
+
+  FL-STU-19:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Equipamiento de items cosmeticos"
+    frontend:
+      pages: ["apps/student/pages/InventoryPage.tsx"]
+      components: ["ProfileInventoryTab.tsx", "useEquipment.ts"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/gamification/inventory/equipped", "/gamification/inventory/equip", "/gamification/inventory/unequip"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.user_equipped_items", "gamification_system.shop_items", "gamification_system.user_purchases"]
+    flow_doc: "student/FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md"
+
+  FL-STU-20:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Compra inventario equipar (Compuesto)"
+    type: compound
+    sub_flows: ["FL-STU-03", "FL-STU-19"]
+    frontend:
+      pages: ["apps/student/pages/ShopPage.tsx", "apps/student/pages/InventoryPage.tsx"]
+      components: ["compra + equipamiento flow"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/api/v1/gamification/shop/purchase", "/gamification/inventory/equip"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.shop_items", "gamification_system.user_purchases", "gamification_system.user_equipped_items", "gamification_system.ml_coins_transactions"]
+    flow_doc: "student/FLUJO-COMPRA-INVENTARIO-EQUIPAR.md"
+
+  FL-STU-21:
+    portal: Student
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Consulta de boosts activos"
+    frontend:
+      pages: ["shared/components/layout/GamifiedHeader.tsx"]
+      components: ["indicador de boost activo"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["GET /api/v1/gamification/boosts/:userId/active"]
+      controllers: ["boost.controller.ts"]
+      services: ["boost.service.ts"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.active_boosts"]
+    flow_doc: "student/FLUJO-TIENDA-COMPRA.md (rama boost)"
+
+  # --- SHARED FLOWS (3) ---
+
+  FL-SHR-01:
+    portal: Shared
+    epic: EPIC-GAM-F3-PROFILES
+    process: "Perfil/configuracion multiportal"
+    frontend:
+      pages: ["apps/student/pages/settings/ProfileSection.tsx", "apps/teacher/pages/TeacherSettings.tsx", "apps/admin/components/settings/*"]
+      components: ["AvatarSelectionModal.tsx"]
+    backend:
+      modules: ["auth", "profile"]
+      endpoints: ["PUT /users/profile", "/api/auth/profile"]
+    database:
+      schemas: ["auth_management", "auth"]
+      tables: ["auth_management.profiles", "auth.users"]
+    flow_doc: "shared/FLUJO-PERFIL-CONFIGURACION.md"
+
+  FL-SHR-02:
+    portal: Shared
+    epic: EPIC-GAM-F1-AUTH
+    process: "Sesion/seguridad y recuperacion de acceso (Compuesto)"
+    type: compound
+    sub_flows: ["FL-AUTH-01", "FL-AUTH-02", "FL-AUTH-03"]
+    frontend:
+      pages: ["features/auth/components/*"]
+      components: ["RegisterForm.tsx", "LoginForm.tsx", "ForgotPasswordPage.tsx", "PasswordResetPage.tsx"]
+    backend:
+      modules: ["auth"]
+      endpoints: ["/auth/*"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth.users", "auth_management.profiles", "auth_management.password_reset_tokens", "auth_management.email_verification_tokens"]
+    flow_doc: "shared/FLUJO-SESION-SEGURIDAD.md"
+
+  FL-SHR-03:
+    portal: Shared
+    epic: EPIC-GAM-F3-WHITE-LABEL
+    process: "White-label y theming"
+    frontend:
+      pages: ["features/admin/branding/BrandingSettingsPage.tsx"]
+      components: ["BrandingSettingsPage"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/tenants/:id/branding", "/api/v1/tenants/:id/theme"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.tenants", "auth_management.tenant_settings"]
+    flow_doc: "shared/FLUJO-WHITE-LABEL-THEMING.md"
+
+  # --- TEACHER FLOWS (17) ---
+
+  FL-TCH-01:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Revision manual y cierre de calificacion M3-M5"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherReviewPanel.tsx"]
+      components: ["ReviewDetail.tsx"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/reviews/*"]
+      services: ["manual-review.service.ts"]
+    database:
+      schemas: ["progress_tracking", "gamification_system"]
+      tables: ["progress_tracking.manual_reviews", "progress_tracking.exercise_submissions", "gamification_system.user_stats"]
+    flow_doc: "teacher/FLUJO-REVISION-MANUAL-M3-M5.md"
+
+  FL-TCH-02:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Gestion de asignaciones"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherAssignments.tsx"]
+      components: ["AssignmentCreator.tsx"]
+    backend:
+      modules: ["teacher", "assignments"]
+      endpoints: ["/api/v1/teacher/assignments/*"]
+    database:
+      schemas: ["educational_content", "progress_tracking"]
+      tables: ["educational_content.assignments", "progress_tracking.*"]
+    flow_doc: "teacher/FLUJO-ASIGNACIONES-CLASE.md"
+
+  FL-TCH-03:
+    portal: Teacher
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Monitoreo y alertas docentes"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherAlerts.tsx", "apps/teacher/pages/TeacherMonitoringPage.tsx"]
+      components: ["AlertCard.tsx", "useClassroomRealtime.ts"]
+    backend:
+      modules: ["teacher", "notifications"]
+      endpoints: ["/api/v1/teacher/alerts/*"]
+      websocket_events: ["exercise_started", "exercise_completed", "achievement_unlocked", "level_up", "student_online", "student_offline", "help_requested"]
+    database:
+      schemas: ["progress_tracking", "notifications"]
+      tables: ["progress_tracking.student_intervention_alerts", "progress_tracking.alert_configurations"]
+    flow_doc: "teacher/FLUJO-MONITOREO-ALERTAS.md"
+
+  FL-TCH-04:
+    portal: Teacher
+    epic: EPIC-GAM-F1-ANALYTICS
+    process: "Analytics y reportes docentes"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherAnalytics.tsx", "apps/teacher/pages/TeacherReports.tsx"]
+      components: ["ScheduledReportsTab.tsx", "SharedReportsTab.tsx"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/analytics/*", "/api/v1/teacher/reports/*"]
+      api_services: ["scheduledReportsApi (7ep)", "sharedReportsApi (6ep)"]
+    database:
+      schemas: ["progress_tracking", "gamification_system", "social_features"]
+      tables: ["progress_tracking.*", "gamification_system.*", "social_features.teacher_reports", "social_features.scheduled_reports", "social_features.shared_reports"]
+    flow_doc: "teacher/FLUJO-ANALYTICS-REPORTES.md"
+
+  FL-TCH-05:
+    portal: Teacher
+    epic: EPIC-GAM-F3-CONTENT
+    process: "Gestion de contenido docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherContentManagement.tsx"]
+      components: ["content management"]
+    backend:
+      modules: ["content", "teacher"]
+      endpoints: ["/api/v1/content/*", "/api/v1/teacher/content/*"]
+    database:
+      schemas: ["educational_content"]
+      tables: ["educational_content.content_items", "educational_content.content_templates"]
+    flow_doc: "teacher/FLUJO-GESTION-CONTENIDO.md"
+
+  FL-TCH-06:
+    portal: Teacher
+    epic: EPIC-GAM-F1-AUTH
+    process: "Login con redireccion por rol"
+    frontend:
+      pages: ["apps/teacher/layouts/TeacherLayout.tsx"]
+      components: ["autenticacion + redirect docente"]
+    backend:
+      modules: ["auth"]
+      endpoints: ["/auth/login"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth.users", "auth_management.profiles", "auth_management.user_roles"]
+    flow_doc: "teacher/FLUJO-LOGIN-DOCENTE.md"
+
+  FL-TCH-07:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Configuracion docente y mensajeria"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherSettings.tsx"]
+      components: ["preferencias, canales"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/settings/*", "/api/v1/messages/*"]
+    database:
+      schemas: ["auth_management", "communication"]
+      tables: ["auth_management.profiles", "communication.*"]
+    flow_doc: "shared/FLUJO-PERFIL-CONFIGURACION.md"
+
+  FL-TCH-08:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Dashboard docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherDashboardPage.tsx"]
+      components: ["dashboard docente"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/dashboard/*"]
+      controllers: ["teacher.controller.ts"]
+    database:
+      schemas: ["social_features", "progress_tracking", "gamification_system"]
+      tables: ["social_features.teacher_classrooms", "progress_tracking.module_progress", "progress_tracking.exercise_attempts", "gamification_system.user_stats"]
+    flow_doc: "teacher/FLUJO-DASHBOARD-DOCENTE.md"
+
+  FL-TCH-09:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Gestion de clases y estudiantes"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherClassesPage.tsx", "apps/teacher/pages/TeacherStudentsPage.tsx"]
+      components: ["gestion clases"]
+    backend:
+      modules: ["teacher", "social"]
+      endpoints: ["/api/v1/teacher/classrooms/*"]
+      controllers: ["teacher-classrooms.controller.ts", "classrooms.controller.ts"]
+    database:
+      schemas: ["social_features", "auth_management"]
+      tables: ["social_features.classrooms", "social_features.classroom_members", "auth_management.profiles"]
+    flow_doc: "teacher/FLUJO-GESTION-CLASES.md"
+
+  FL-TCH-10:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Progreso academico docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherProgressPage.tsx"]
+      components: ["progreso academico"]
+    backend:
+      modules: ["teacher", "progress"]
+      endpoints: ["/api/v1/teacher/progress/*"]
+    database:
+      schemas: ["progress_tracking", "educational_content"]
+      tables: ["progress_tracking.module_progress", "progress_tracking.exercise_attempts"]
+    flow_doc: "teacher/FLUJO-PROGRESO-ACADEMICO.md"
+
+  FL-TCH-11:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Gamificacion docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherGamificationPage.tsx"]
+      components: ["gamificacion vista docente"]
+    backend:
+      modules: ["teacher", "gamification"]
+      endpoints: ["/api/v1/teacher/gamification/*"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.user_stats", "gamification_system.user_achievements"]
+    flow_doc: "teacher/FLUJO-GAMIFICACION-DOCENTE.md"
+
+  FL-TCH-12:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Respuestas de ejercicios"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherResponsesPage.tsx"]
+      components: ["respuestas ejercicios"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/responses/*"]
+    database:
+      schemas: ["progress_tracking", "educational_content"]
+      tables: ["progress_tracking.exercise_submissions", "educational_content.exercises"]
+    flow_doc: "teacher/FLUJO-RESPUESTAS-EJERCICIOS.md"
+
+  FL-TCH-13:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Panel de revision manual"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherReviewPanel.tsx"]
+      components: ["panel revision"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/reviews/*"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.manual_reviews", "progress_tracking.exercise_submissions"]
+    flow_doc: "teacher/FLUJO-PANEL-REVISION.md"
+
+  FL-TCH-14:
+    portal: Teacher
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Configuracion del docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherSettings.tsx"]
+      components: ["settings docente"]
+    backend:
+      modules: ["teacher", "auth"]
+      endpoints: ["/api/v1/teacher/settings/*"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.profiles"]
+    flow_doc: "teacher/FLUJO-CONFIGURACION-DOCENTE.md"
+
+  FL-TCH-15:
+    portal: Teacher
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Notificaciones del docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherNotificationsPage.tsx"]
+      components: ["notificaciones docente"]
+    backend:
+      modules: ["notifications"]
+      endpoints: ["/api/v1/notifications/*"]
+    database:
+      schemas: ["notifications"]
+      tables: ["notifications.notifications", "notifications.notification_preferences"]
+    flow_doc: "teacher/FLUJO-NOTIFICACIONES-DOCENTE.md"
+
+  FL-TCH-16:
+    portal: Teacher
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Preferencias de notificaciones docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherSettingsNotifications.tsx"]
+      components: ["preferencias notificaciones"]
+    backend:
+      modules: ["notifications"]
+      endpoints: ["/api/v1/notifications/preferences/*"]
+    database:
+      schemas: ["notifications"]
+      tables: ["notifications.notification_preferences"]
+    flow_doc: "teacher/FLUJO-PREFERENCIAS-NOTIFICACIONES.md"
+
+  FL-TCH-17:
+    portal: Teacher
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Configuracion de alertas docente"
+    frontend:
+      pages: ["apps/teacher/pages/TeacherSettingsAlerts.tsx"]
+      components: ["configuracion alertas"]
+    backend:
+      modules: ["teacher"]
+      endpoints: ["/api/v1/teacher/alerts/config/*"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.alert_configurations"]
+    flow_doc: "teacher/FLUJO-CONFIGURACION-ALERTAS.md"
+
+  # --- ADMIN FLOWS (22) ---
+
+  FL-ADM-01:
+    portal: Admin
+    epic: EPIC-GAM-F1-ADMIN
+    process: "Gestion de usuarios y roles"
+    frontend:
+      pages: ["apps/admin/pages/AdminUsersPage.tsx"]
+      components: ["user management"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/users/*", "/api/v1/admin/roles/*"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth.users", "auth_management.user_roles", "auth_management.profiles"]
+    flow_doc: "admin/FLUJO-GESTION-USUARIOS-ROLES.md"
+
+  FL-ADM-02:
+    portal: Admin
+    epic: EPIC-GAM-F1-CONFIG
+    process: "Configuracion global del sistema"
+    frontend:
+      pages: ["apps/admin/pages/AdminAdvancedPage.tsx"]
+      components: ["AdminPageShell.tsx", "AdminTabBar.tsx", "settings/*"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/settings/*", "/api/v1/admin/config/*"]
+    database:
+      schemas: ["system_configuration", "audit_logging"]
+      tables: ["system_configuration.*", "audit_logging.*"]
+    flow_doc: "admin/FLUJO-CONFIGURACION-SISTEMA.md"
+
+  FL-ADM-03:
+    portal: Admin
+    epic: EPIC-GAM-F3-CONTENT
+    process: "Aprobacion de contenido"
+    frontend:
+      pages: ["apps/admin/pages/AdminContentPage.tsx"]
+      components: ["ContentPreviewModal.tsx", "ContentVersionsTab.tsx", "MediaLibraryTab.tsx", "PendingExercisesTab.tsx", "RejectExerciseModal.tsx"]
+    backend:
+      modules: ["admin", "content"]
+      endpoints: ["/api/v1/admin/content/approvals/*"]
+    database:
+      schemas: ["educational_content"]
+      tables: ["educational_content.content_approvals", "educational_content.content_tags"]
+    flow_doc: "admin/FLUJO-APROBACION-CONTENIDO.md"
+
+  FL-ADM-04:
+    portal: Admin
+    epic: EPIC-GAM-F3-ADMIN-EXTENDED
+    process: "Salud operativa y alertas de plataforma"
+    frontend:
+      pages: ["apps/admin/pages/AdminMonitoringPage.tsx"]
+      components: ["SystemHealthIndicators.tsx", "AdminPageShell.tsx"]
+    backend:
+      modules: ["health", "admin"]
+      endpoints: ["/health", "/api/v1/admin/monitoring/*"]
+    database:
+      schemas: ["audit_logging"]
+      tables: ["audit_logging.*"]
+    flow_doc: "admin/FLUJO-MONITOREO-SISTEMA.md"
+
+  FL-ADM-05:
+    portal: Admin
+    epic: EPIC-GAM-F3-LTI
+    process: "Integraciones LTI"
+    frontend:
+      pages: ["features/admin/lti/AdminLtiPage.tsx"]
+      components: ["configurar plataforma LTI"]
+    backend:
+      modules: ["lti"]
+      endpoints: ["/lti/consumers", "/lti/consumers/:id", "/lti/consumers/:id/test-connection"]
+    database:
+      schemas: ["lti_integration"]
+      tables: ["lti_integration.lti_consumers"]
+    flow_doc: "admin/FLUJO-INTEGRACIONES-LTI.md"
+
+  FL-ADM-06:
+    portal: Admin
+    epic: EPIC-GAM-F3-ADMIN-EXTENDED
+    process: "Audit logs"
+    frontend:
+      pages: ["apps/admin/pages/AdminAuditLogsPage.tsx"]
+      components: ["audit log viewer"]
+    backend:
+      modules: ["admin", "audit"]
+      endpoints: ["/admin/system/audit-log"]
+    database:
+      schemas: ["audit_logging", "auth_management"]
+      tables: ["audit_logging.system_logs", "audit_logging.user_activity", "auth_management.login_attempts"]
+    flow_doc: "admin/FLUJO-AUDIT-LOGS.md"
+
+  FL-ADM-07:
+    portal: Admin
+    epic: EPIC-GAM-F1-EXERCISES
+    process: "Constructor de ejercicios"
+    frontend:
+      pages: ["apps/admin/pages/AdminExerciseCreatePage.tsx"]
+      components: ["StepBasicInfo.tsx", "type-configs/index.ts", "ExercisePreview.tsx"]
+    backend:
+      modules: ["educational"]
+      endpoints: ["/api/v1/educational/exercises", "/api/v1/educational/exercises/:id"]
+    database:
+      schemas: ["educational_content"]
+      tables: ["educational_content.exercises", "educational_content.exercise_options"]
+    flow_doc: "admin/FLUJO-CONSTRUCTOR-EJERCICIOS.md"
+
+  FL-ADM-08:
+    portal: Admin
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Gestion de gamificacion"
+    frontend:
+      pages: ["apps/admin/components/gamification/*"]
+      components: ["AchievementsTab.tsx", "RanksTab.tsx", "EconomyTab.tsx", "StatsTab.tsx"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/api/v1/gamification/achievements/*", "/api/v1/gamification/missions/*"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.achievements", "gamification_system.mission_templates"]
+    flow_doc: "admin/FLUJO-GESTION-GAMIFICACION.md"
+
+  FL-ADM-09:
+    portal: Admin
+    epic: EPIC-GAM-F1-ADMIN
+    process: "Dashboard administrador"
+    frontend:
+      pages: ["apps/admin/pages/AdminDashboardPage.tsx"]
+      components: ["DashboardStatsGrid.tsx", "SystemHealthCard.tsx", "AlertsNotificationsCard.tsx", "DashboardQuickActions.tsx"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/dashboard/*"]
+      controllers: ["admin-dashboard.controller.ts", "admin-system.controller.ts"]
+    database:
+      schemas: ["admin_dashboard", "audit_logging"]
+      tables: ["admin_dashboard.admin_reports", "admin_dashboard.system_alerts", "admin_dashboard.performance_metrics", "audit_logging.system_logs"]
+    flow_doc: "admin/FLUJO-DASHBOARD-ADMIN.md"
+
+  FL-ADM-10:
+    portal: Admin
+    epic: EPIC-GAM-F1-ADMIN
+    process: "Instituciones y roles"
+    frontend:
+      pages: ["apps/admin/pages/AdminInstitutionsPage.tsx", "apps/admin/pages/AdminRolesPage.tsx"]
+      components: ["InstitutionFormModals.tsx", "useInstitutionActions.ts"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/organizations/*", "/api/v1/admin/roles/*"]
+      controllers: ["admin-organizations.controller.ts", "admin-roles.controller.ts"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.tenants", "auth_management.roles", "auth_management.user_roles", "auth_management.role_permissions"]
+    flow_doc: "admin/FLUJO-INSTITUCIONES-ROLES.md"
+
+  FL-ADM-11:
+    portal: Admin
+    epic: EPIC-GAM-F3-REPORTS
+    process: "Reportes y analytics admin"
+    frontend:
+      pages: ["apps/admin/pages/AdminReportsPage.tsx", "apps/admin/pages/AdminAnalyticsPage.tsx"]
+      components: ["AdminPageShell.tsx"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/reports/*", "/api/v1/admin/progress/analytics"]
+      controllers: ["admin-reports.controller.ts", "admin-progress.controller.ts"]
+    database:
+      schemas: ["admin_dashboard", "data_warehouse"]
+      tables: ["admin_dashboard.admin_reports", "data_warehouse.fact_daily_progress", "data_warehouse.fact_exercise_completions"]
+    flow_doc: "admin/FLUJO-REPORTES-ANALYTICS-ADMIN.md"
+
+  FL-ADM-12:
+    portal: Admin
+    epic: EPIC-GAM-F1-CONFIG
+    process: "Configuracion de ajustes del sistema"
+    frontend:
+      pages: ["apps/admin/pages/AdminSettingsPage.tsx"]
+      components: ["settings tabs"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/settings/*"]
+    database:
+      schemas: ["system_configuration"]
+      tables: ["system_configuration.system_settings", "system_configuration.feature_flags"]
+    flow_doc: "admin/FLUJO-CONFIGURACION-AJUSTES.md"
+
+  FL-ADM-13:
+    portal: Admin
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Centro de notificaciones admin"
+    frontend:
+      pages: ["apps/admin/pages/AdminNotificationsPage.tsx"]
+      components: ["notificaciones admin"]
+    backend:
+      modules: ["notifications", "admin"]
+      endpoints: ["/api/v1/notifications/*", "/api/v1/admin/notifications/*"]
+    database:
+      schemas: ["notifications"]
+      tables: ["notifications.notifications", "notifications.notification_templates"]
+    flow_doc: "admin/FLUJO-NOTIFICACIONES-ADMIN.md"
+
+  FL-ADM-14:
+    portal: Admin
+    epic: EPIC-GAM-F3-NOTIFICATIONS
+    process: "Preferencias de notificaciones admin"
+    frontend:
+      pages: ["apps/admin/pages/AdminSettingsNotificationsPage.tsx"]
+      components: ["preferencias notificaciones"]
+    backend:
+      modules: ["notifications"]
+      endpoints: ["/api/v1/notifications/preferences/*"]
+    database:
+      schemas: ["notifications"]
+      tables: ["notifications.notification_preferences"]
+    flow_doc: "admin/FLUJO-PREFERENCIAS-NOTIFICACIONES.md"
+
+  FL-ADM-15:
+    portal: Admin
+    epic: EPIC-GAM-F3-ADMIN-EXTENDED
+    process: "Gestion de alertas del sistema"
+    frontend:
+      pages: ["apps/admin/pages/AdminAlertsPage.tsx"]
+      components: ["alertas sistema"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/alerts/*"]
+    database:
+      schemas: ["audit_logging"]
+      tables: ["audit_logging.system_alerts", "audit_logging.alert_rules"]
+    flow_doc: "admin/FLUJO-ALERTAS-SISTEMA.md"
+
+  FL-ADM-16:
+    portal: Admin
+    epic: EPIC-GAM-F1-ANALYTICS
+    process: "Analytics avanzado"
+    frontend:
+      pages: ["apps/admin/pages/AdminAnalyticsPage.tsx"]
+      components: ["4 tabs + export"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/analytics/*"]
+    database:
+      schemas: ["admin_dashboard", "data_warehouse"]
+      tables: ["admin_dashboard.*", "data_warehouse.fact_*"]
+    flow_doc: "admin/FLUJO-ANALYTICS-AVANZADO.md"
+
+  FL-ADM-17:
+    portal: Admin
+    epic: EPIC-GAM-F1-ANALYTICS
+    process: "Seguimiento de progreso de estudiantes"
+    frontend:
+      pages: ["apps/admin/pages/AdminProgressPage.tsx"]
+      components: ["seguimiento progreso"]
+    backend:
+      modules: ["admin", "progress"]
+      endpoints: ["/api/v1/admin/progress/*"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.module_progress", "progress_tracking.exercise_attempts"]
+    flow_doc: "admin/FLUJO-PROGRESO-ESTUDIANTES.md"
+
+  FL-ADM-18:
+    portal: Admin
+    epic: EPIC-GAM-F3-TEACHER-PORTAL
+    process: "Asignaciones aula-docente"
+    frontend:
+      pages: ["apps/admin/pages/AdminClassroomTeachersPage.tsx"]
+      components: ["asignaciones aula-docente"]
+    backend:
+      modules: ["admin", "social"]
+      endpoints: ["/api/v1/admin/classroom-teachers/*"]
+    database:
+      schemas: ["social_features"]
+      tables: ["social_features.classrooms", "social_features.classroom_members"]
+    flow_doc: "admin/FLUJO-ASIGNACIONES-AULA-DOCENTE.md"
+
+  FL-ADM-19:
+    portal: Admin
+    epic: EPIC-GAM-F3-ADMIN-EXTENDED
+    process: "Supervision de asignaciones de ejercicios"
+    frontend:
+      pages: ["apps/admin/pages/AdminAssignmentsPage.tsx"]
+      components: ["supervision asignaciones"]
+    backend:
+      modules: ["admin", "assignments"]
+      endpoints: ["/api/v1/admin/assignments/*"]
+    database:
+      schemas: ["educational_content"]
+      tables: ["educational_content.assignments", "educational_content.assignment_students"]
+    flow_doc: "admin/FLUJO-ASIGNACIONES-ADMIN.md"
+
+  FL-ADM-20:
+    portal: Admin
+    epic: EPIC-GAM-F3-WHITE-LABEL
+    process: "Branding e identidad institucional"
+    frontend:
+      pages: ["features/admin/branding/BrandingSettingsPage.tsx"]
+      components: ["branding settings"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/tenants/:id/branding"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.tenants", "auth_management.tenant_settings"]
+    flow_doc: "admin/FLUJO-BRANDING-INSTITUCIONAL.md"
+
+  FL-ADM-21:
+    portal: Admin
+    epic: EPIC-GAM-F3-ADMIN-EXTENDED
+    process: "Administracion avanzada - Feature Flags"
+    frontend:
+      pages: ["apps/admin/pages/AdminAdvancedPage.tsx"]
+      components: ["feature flags management"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/config/*", "/api/v1/settings/feature-flags/*"]
+    database:
+      schemas: ["system_configuration"]
+      tables: ["system_configuration.feature_flags", "system_configuration.system_settings"]
+    flow_doc: "admin/FLUJO-ADMINISTRACION-AVANZADA.md"
+
+  FL-ADM-22:
+    portal: Admin
+    epic: EPIC-GAM-F1-ADMIN
+    process: "Gestion de roles y permisos"
+    frontend:
+      pages: ["apps/admin/pages/AdminRolesPage.tsx"]
+      components: ["roles y permisos"]
+    backend:
+      modules: ["admin"]
+      endpoints: ["/api/v1/admin/roles/*", "/api/v1/admin/permissions/*"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.roles", "auth_management.permissions", "auth_management.role_permissions"]
+    flow_doc: "admin/FLUJO-GESTION-ROLES-PERMISOS.md"
+
+  # --- PARENT FLOWS (7) ---
+
+  FL-PRN-01:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-PORTAL
+    process: "Vinculacion padre-estudiante"
+    frontend:
+      pages: ["apps/parent/pages/ParentDashboardPage.tsx"]
+      components: ["vinculacion/codigo invitacion"]
+    backend:
+      modules: ["parents"]
+      endpoints: ["/api/v1/parents/links/*"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.parent_student_links", "auth_management.parent_accounts", "auth_management.profiles"]
+    flow_doc: "parents/FLUJO-VINCULACION-PADRE-ESTUDIANTE.md"
+
+  FL-PRN-02:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-PORTAL
+    process: "Seguimiento de progreso del estudiante"
+    frontend:
+      pages: ["apps/parent/pages/ChildProgressPage.tsx"]
+      components: ["progreso, filtros, detalle"]
+    backend:
+      modules: ["parents"]
+      endpoints: ["/api/v1/parents/students/:id/progress"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.*"]
+    flow_doc: "parents/FLUJO-SEGUIMIENTO-PROGRESO.md"
+
+  FL-PRN-03:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-NOTIFICATIONS
+    process: "Notificaciones escuela-familia"
+    frontend:
+      pages: ["apps/parent/pages/ParentNotificationsPage.tsx"]
+      components: ["inbox notificaciones"]
+    backend:
+      modules: ["parents", "notifications"]
+      endpoints: ["/api/v1/parents/notifications/*"]
+    database:
+      schemas: ["notifications", "communication"]
+      tables: ["notifications.*", "communication.*"]
+    flow_doc: "parents/FLUJO-NOTIFICACIONES-PADRES.md"
+
+  FL-PRN-04:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-PORTAL
+    process: "Login portal padres"
+    frontend:
+      pages: ["apps/parent/pages/ParentLoginPage.tsx"]
+      components: ["login padres"]
+    backend:
+      modules: ["parents"]
+      endpoints: ["/parent-portal/auth/login"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth.users", "auth_management.parent_accounts", "auth_management.profiles"]
+    flow_doc: "parents/FLUJO-LOGIN-PADRES.md"
+
+  FL-PRN-05:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-PORTAL
+    process: "Registro portal padres"
+    frontend:
+      pages: ["apps/parent/pages/ParentRegisterPage.tsx"]
+      components: ["registro padres"]
+    backend:
+      modules: ["parents"]
+      endpoints: ["/parent-portal/auth/register"]
+    database:
+      schemas: ["auth", "auth_management"]
+      tables: ["auth.users", "auth_management.parent_accounts", "auth_management.profiles"]
+    flow_doc: "parents/FLUJO-REGISTRO-PADRES.md"
+
+  FL-PRN-06:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-PORTAL
+    process: "Dashboard portal padres"
+    frontend:
+      pages: ["apps/parent/pages/ParentDashboardPage.tsx"]
+      components: ["dashboard padres"]
+    backend:
+      modules: ["parents"]
+      endpoints: ["/parent-portal/dashboard", "/parent-portal/students"]
+    database:
+      schemas: ["auth_management", "progress_tracking"]
+      tables: ["auth_management.parent_student_links", "progress_tracking.*"]
+    flow_doc: "parents/FLUJO-DASHBOARD-PADRES.md"
+
+  FL-PRN-07:
+    portal: Parents
+    epic: EPIC-GAM-F3-PARENT-PORTAL
+    process: "Vista progreso hijo"
+    frontend:
+      pages: ["apps/parent/pages/ChildProgressPage.tsx"]
+      components: ["detalle por estudiante"]
+    backend:
+      modules: ["parents"]
+      endpoints: ["/parent-portal/students/:id/progress"]
+    database:
+      schemas: ["progress_tracking"]
+      tables: ["progress_tracking.*"]
+    flow_doc: "parents/FLUJO-PROGRESO-HIJO.md"
+
+  # --- SYSTEM FLOWS (4) ---
+
+  FL-SYS-02:
+    portal: System
+    epic: EPIC-GAM-F1-EXERCISES
+    process: "Pipeline de envio de ejercicios (auto-grade + manual + rewards)"
+    frontend:
+      pages: []
+      components: ["backend pipeline"]
+    backend:
+      modules: ["progress", "educational", "gamification", "teacher"]
+      endpoints: ["/api/v1/progress/submissions/submit"]
+    database:
+      schemas: ["progress_tracking", "educational_content", "gamification_system"]
+      tables: ["progress_tracking.exercise_submissions", "progress_tracking.exercise_attempts", "gamification_system.user_stats"]
+    flow_doc: "system/FL-SYS-02-EXERCISE-SUBMISSION-PIPELINE.md"
+
+  FL-SYS-03:
+    portal: System
+    epic: EPIC-GAM-F1-GAMIFICATION
+    process: "Cadena de recompensas: XP, ML Coins, achievements, leaderboards"
+    frontend:
+      pages: []
+      components: ["backend pipeline"]
+    backend:
+      modules: ["gamification"]
+      endpoints: ["/api/v1/gamification/*"]
+    database:
+      schemas: ["gamification_system"]
+      tables: ["gamification_system.user_stats", "gamification_system.ml_coins_transactions", "gamification_system.user_achievements"]
+    flow_doc: "system/FL-SYS-03-GAMIFICATION-REWARD-CHAIN.md"
+
+  FL-SYS-04:
+    portal: System
+    epic: EPIC-GAM-F1-AUTH
+    process: "Autenticacion en dos factores (2FA)"
+    frontend:
+      pages: ["pages/auth/*"]
+      components: ["2FA setup, login, backup codes"]
+    backend:
+      modules: ["auth"]
+      endpoints: ["/auth/2fa/*"]
+    database:
+      schemas: ["auth_management"]
+      tables: ["auth_management.two_factor_settings"]
+    flow_doc: "system/FL-SYS-04-TWO-FACTOR-AUTHENTICATION.md"
+
+  FL-SYS-05:
+    portal: System
+    epic: EPIC-GAM-F3-WHITE-LABEL
+    process: "Onboarding de organizaciones: creacion, suscripcion, features, usuarios"
+    frontend:
+      pages: ["apps/admin/*"]
+      components: ["onboarding wizard"]
+    backend:
+      modules: ["admin", "auth"]
+      endpoints: ["/api/v1/admin/organizations/*", "/api/v1/tenants/*"]
+    database:
+      schemas: ["auth_management", "system_configuration"]
+      tables: ["auth_management.tenants", "system_configuration.feature_flags"]
+    flow_doc: "system/FL-SYS-05-MULTI-TENANT-ONBOARDING.md"
+
+# ===========================================================================
+# DIMENSION 2: MODULES -> Schemas + Flows
+# Inverted index: each module maps to its schemas, flows, and metrics
+# Source: BACKEND_INVENTORY.yml
+# ===========================================================================
+
+modules:
+
+  auth:
+    schemas: ["auth", "auth_management"]
+    entities: 18
+    services: 6
+    controllers: 3
+    endpoints: 29
+    status: "100%"
+    flows:
+      - FL-AUTH-01
+      - FL-AUTH-02
+      - FL-AUTH-03
+      - FL-SHR-01
+      - FL-SHR-02
+      - FL-STU-05
+      - FL-TCH-06
+      - FL-TCH-14
+      - FL-ADM-01
+      - FL-SYS-04
+      - FL-SYS-05
+
+  admin:
+    schemas: ["audit_logging", "admin_dashboard", "system_configuration"]
+    entities: 16
+    services: 22
+    controllers: 21
+    endpoints: 158
+    status: "90%"
+    flows:
+      - FL-ADM-01
+      - FL-ADM-02
+      - FL-ADM-03
+      - FL-ADM-04
+      - FL-ADM-06
+      - FL-ADM-09
+      - FL-ADM-10
+      - FL-ADM-11
+      - FL-ADM-12
+      - FL-ADM-13
+      - FL-ADM-15
+      - FL-ADM-16
+      - FL-ADM-17
+      - FL-ADM-18
+      - FL-ADM-19
+      - FL-ADM-20
+      - FL-ADM-21
+      - FL-ADM-22
+      - FL-SHR-03
+      - FL-SYS-05
+
+  educational:
+    schemas: ["educational_content"]
+    entities: 16
+    services: 7
+    controllers: 5
+    endpoints: 51
+    status: "95%"
+    flows:
+      - FL-STU-01
+      - FL-STU-06
+      - FL-STU-15
+      - FL-ADM-07
+      - FL-SYS-02
+
+  gamification:
+    schemas: ["gamification_system"]
+    entities: 22
+    services: 19
+    controllers: 12
+    endpoints: 73
+    status: "95%"
+    flows:
+      - FL-STU-03
+      - FL-STU-04
+      - FL-STU-06
+      - FL-STU-07
+      - FL-STU-08
+      - FL-STU-13
+      - FL-STU-19
+      - FL-STU-20
+      - FL-STU-21
+      - FL-ADM-08
+      - FL-TCH-11
+      - FL-SYS-03
+
+  social:
+    schemas: ["social_features"]
+    entities: 26
+    services: 13
+    controllers: 13
+    endpoints: 135
+    status: "60%"
+    flows:
+      - FL-STU-09
+      - FL-STU-10
+      - FL-STU-14
+      - FL-TCH-04
+      - FL-TCH-09
+      - FL-ADM-18
+
+  progress:
+    schemas: ["progress_tracking"]
+    entities: 20
+    services: 13
+    controllers: 6
+    endpoints: 59
+    status: "90%"
+    flows:
+      - FL-STU-01
+      - FL-STU-02
+      - FL-STU-06
+      - FL-STU-13
+      - FL-STU-16
+      - FL-TCH-01
+      - FL-TCH-10
+      - FL-ADM-17
+      - FL-SYS-02
+
+  content:
+    schemas: ["content_management"]
+    entities: 10
+    services: 10
+    controllers: 10
+    endpoints: 102
+    status: "95%"
+    flows:
+      - FL-TCH-05
+      - FL-ADM-03
+
+  notifications:
+    schemas: ["notifications", "gamification_system"]
+    entities: 7
+    services: 12
+    controllers: 8
+    endpoints: 46
+    status: "90%"
+    flows:
+      - FL-STU-05
+      - FL-STU-11
+      - FL-STU-12
+      - FL-STU-18
+      - FL-TCH-03
+      - FL-TCH-15
+      - FL-TCH-16
+      - FL-PRN-03
+      - FL-ADM-13
+      - FL-ADM-14
+
+  teacher:
+    schemas: ["educational_content", "progress_tracking", "social_features", "communication"]
+    entities: 9
+    services: 21
+    controllers: 10
+    endpoints: 117
+    status: "95%"
+    flows:
+      - FL-STU-02
+      - FL-TCH-01
+      - FL-TCH-02
+      - FL-TCH-03
+      - FL-TCH-04
+      - FL-TCH-05
+      - FL-TCH-07
+      - FL-TCH-08
+      - FL-TCH-09
+      - FL-TCH-10
+      - FL-TCH-11
+      - FL-TCH-12
+      - FL-TCH-13
+      - FL-TCH-14
+      - FL-TCH-17
+      - FL-SYS-02
+
+  parents:
+    schemas: ["auth_management"]
+    entities: 0
+    services: 7
+    controllers: 2
+    endpoints: 17
+    status: "100%"
+    flows:
+      - FL-PRN-01
+      - FL-PRN-02
+      - FL-PRN-03
+      - FL-PRN-04
+      - FL-PRN-05
+      - FL-PRN-06
+      - FL-PRN-07
+
+  profile:
+    schemas: ["auth_management"]
+    entities: 0
+    services: 1
+    controllers: 1
+    endpoints: 3
+    status: "100%"
+    flows:
+      - FL-SHR-01
+      - FL-STU-18
+
+  audit:
+    schemas: ["audit_logging"]
+    entities: 3
+    services: 1
+    controllers: 0
+    endpoints: 0
+    status: "100%"
+    flows:
+      - FL-ADM-06
+
+  assignments:
+    schemas: ["educational_content"]
+    entities: 4
+    services: 1
+    controllers: 2
+    endpoints: 19
+    status: "95%"
+    flows:
+      - FL-STU-17
+      - FL-TCH-02
+      - FL-ADM-19
+
+  communication:
+    schemas: ["communication"]
+    entities: 2
+    services: 0
+    controllers: 0
+    endpoints: 0
+    status: "20%"
+    flows:
+      - FL-TCH-07
+      - FL-PRN-03
+
+  lti:
+    schemas: ["lti_integration"]
+    entities: 3
+    services: 5
+    controllers: 5
+    endpoints: 42
+    status: "75%"
+    flows:
+      - FL-ADM-05
+
+  # --- Infrastructure modules (no user-facing flows) ---
+
+  health:
+    schemas: []
+    entities: 0
+    services: 2
+    controllers: 1
+    endpoints: 4
+    status: "100%"
+    type: infrastructure
+    flows:
+      - FL-ADM-04
+
+  tasks:
+    schemas: []
+    entities: 0
+    services: 5
+    controllers: 0
+    endpoints: 0
+    status: "100%"
+    type: infrastructure
+    flows: []
+    note: "CRON jobs: achievements reconciliation, materialized views, missions, notifications, pending init retry"
+
+  websocket:
+    schemas: []
+    entities: 0
+    services: 2
+    controllers: 0
+    endpoints: 0
+    status: "100%"
+    type: infrastructure
+    flows: []
+    note: "Socket.IO gateway, used by FL-TCH-03 indirectly"
+
+  mail:
+    schemas: []
+    entities: 0
+    services: 1
+    controllers: 0
+    endpoints: 0
+    status: "100%"
+    type: infrastructure
+    flows: []
+    note: "Transitive via auth/notifications/teacher/parents/progress"
+
+  etl:
+    schemas: ["data_warehouse"]
+    entities: 0
+    services: 9
+    controllers: 3
+    endpoints: 16
+    status: "75%"
+    type: infrastructure
+    flows: []
+    note: "Conditional (ENABLE_DATA_WAREHOUSE=true)"
+
+  ml:
+    schemas: ["data_warehouse"]
+    entities: 0
+    services: 13
+    controllers: 3
+    endpoints: 21
+    status: "50%"
+    type: infrastructure
+    flows: []
+    note: "Conditional (ENABLE_DATA_WAREHOUSE=true)"
+
+  visualization:
+    schemas: ["data_warehouse"]
+    entities: 0
+    services: 4
+    controllers: 4
+    endpoints: 21
+    status: "50%"
+    type: infrastructure
+    flows: []
+    note: "Conditional (ENABLE_DATA_WAREHOUSE=true)"
+
+# ===========================================================================
+# DIMENSION 3: SCHEMAS -> Tables + Modules
+# Inverted index: each schema maps to its tables, consuming modules
+# Source: DATABASE_INVENTORY.yml, DEPENDENCY_GRAPH.yml
+# ===========================================================================
+
+schemas:
+
+  auth:
+    tables: 1
+    enums: 2
+    modules: ["auth"]
+    flows:
+      - FL-AUTH-01
+      - FL-AUTH-02
+      - FL-AUTH-03
+      - FL-SHR-02
+      - FL-STU-05
+      - FL-TCH-06
+      - FL-ADM-01
+      - FL-PRN-04
+      - FL-PRN-05
+
+  auth_management:
+    tables: 17
+    enums: 3
+    modules: ["auth", "admin", "profile", "parents", "teacher"]
+    flows:
+      - FL-AUTH-01
+      - FL-SHR-01
+      - FL-SHR-02
+      - FL-SHR-03
+      - FL-STU-05
+      - FL-STU-18
+      - FL-TCH-06
+      - FL-TCH-07
+      - FL-TCH-09
+      - FL-TCH-14
+      - FL-ADM-01
+      - FL-ADM-06
+      - FL-ADM-10
+      - FL-ADM-20
+      - FL-ADM-22
+      - FL-PRN-01
+      - FL-PRN-04
+      - FL-PRN-05
+      - FL-PRN-06
+      - FL-SYS-04
+      - FL-SYS-05
+
+  educational_content:
+    tables: 24
+    enums: 7
+    modules: ["educational", "assignments", "teacher", "content"]
+    flows:
+      - FL-STU-01
+      - FL-STU-02
+      - FL-STU-06
+      - FL-STU-15
+      - FL-STU-17
+      - FL-TCH-02
+      - FL-TCH-05
+      - FL-TCH-10
+      - FL-TCH-12
+      - FL-ADM-03
+      - FL-ADM-07
+      - FL-ADM-19
+      - FL-SYS-02
+
+  gamification_system:
+    tables: 21
+    enums: 8
+    modules: ["gamification", "notifications"]
+    flows:
+      - FL-AUTH-01
+      - FL-STU-01
+      - FL-STU-03
+      - FL-STU-04
+      - FL-STU-06
+      - FL-STU-07
+      - FL-STU-08
+      - FL-STU-13
+      - FL-STU-14
+      - FL-STU-19
+      - FL-STU-20
+      - FL-STU-21
+      - FL-TCH-01
+      - FL-TCH-04
+      - FL-TCH-08
+      - FL-TCH-11
+      - FL-ADM-08
+      - FL-SYS-02
+      - FL-SYS-03
+
+  progress_tracking:
+    tables: 21
+    enums: 5
+    modules: ["progress", "teacher"]
+    flows:
+      - FL-STU-01
+      - FL-STU-02
+      - FL-STU-06
+      - FL-STU-13
+      - FL-STU-16
+      - FL-TCH-01
+      - FL-TCH-02
+      - FL-TCH-03
+      - FL-TCH-04
+      - FL-TCH-08
+      - FL-TCH-10
+      - FL-TCH-12
+      - FL-TCH-13
+      - FL-TCH-17
+      - FL-PRN-02
+      - FL-PRN-06
+      - FL-PRN-07
+      - FL-ADM-17
+      - FL-SYS-02
+
+  social_features:
+    tables: 30
+    enums: 7
+    modules: ["social", "assignments", "teacher"]
+    flows:
+      - FL-STU-09
+      - FL-STU-10
+      - FL-STU-14
+      - FL-TCH-04
+      - FL-TCH-08
+      - FL-TCH-09
+      - FL-ADM-18
+
+  notifications:
+    tables: 7
+    enums: 0
+    modules: ["notifications"]
+    flows:
+      - FL-STU-05
+      - FL-STU-11
+      - FL-STU-12
+      - FL-STU-18
+      - FL-TCH-03
+      - FL-TCH-15
+      - FL-TCH-16
+      - FL-PRN-03
+      - FL-ADM-13
+      - FL-ADM-14
+
+  content_management:
+    tables: 10
+    enums: 4
+    modules: ["content"]
+    flows:
+      - FL-TCH-05
+      - FL-ADM-03
+
+  system_configuration:
+    tables: 9
+    enums: 1
+    modules: ["admin"]
+    flows:
+      - FL-ADM-02
+      - FL-ADM-12
+      - FL-ADM-21
+      - FL-SYS-05
+
+  audit_logging:
+    tables: 7
+    enums: 5
+    modules: ["audit", "admin"]
+    flows:
+      - FL-ADM-02
+      - FL-ADM-04
+      - FL-ADM-06
+      - FL-ADM-09
+      - FL-ADM-15
+
+  admin_dashboard:
+    tables: 3
+    enums: 0
+    views: 7
+    materialized_views: 3
+    modules: ["admin"]
+    flows:
+      - FL-ADM-09
+      - FL-ADM-11
+      - FL-ADM-16
+
+  data_warehouse:
+    tables: 16
+    enums: 1
+    views: 3
+    modules: ["etl", "ml", "visualization"]
+    flows:
+      - FL-ADM-11
+      - FL-ADM-16
+    note: "16 tables DDL-only (no TypeORM entities), conditional module import"
+
+  communication:
+    tables: 4
+    enums: 0
+    modules: ["communication", "teacher"]
+    flows:
+      - FL-TCH-07
+      - FL-PRN-03
+
+  lti_integration:
+    tables: 3
+    enums: 0
+    modules: ["lti"]
+    flows:
+      - FL-ADM-05
+
+  gamilit:
+    tables: 0
+    enums: 0
+    functions: 37
+    views: 1
+    modules: []
+    flows: []
+    note: "Utility functions (now_mexico, RLS helpers). Used transitively by all modules via RLS."
+
+  optimization:
+    tables: 0
+    enums: 0
+    modules: []
+    flows: []
+    note: "Performance indexes and triggers across all schemas"
+
+  public:
+    tables: 0
+    enums: 0
+    type: placeholder
+    modules: []
+    flows: []
+
+  storage:
+    tables: 0
+    enums: 0
+    type: placeholder
+    modules: []
+    flows: []
+
+# ===========================================================================
+# DIMENSION 4: PORTALS -> Pages + Flows
+# Source: FRONTEND_INVENTORY.yml
+# ===========================================================================
+
+portals:
+
+  student:
+    pages: 19
+    components: 100
+    hooks: 13
+    routes: 21
+    completitud: "~100%"
+    flows:
+      - FL-STU-01
+      - FL-STU-02
+      - FL-STU-03
+      - FL-STU-04
+      - FL-STU-05
+      - FL-STU-06
+      - FL-STU-07
+      - FL-STU-08
+      - FL-STU-09
+      - FL-STU-10
+      - FL-STU-11
+      - FL-STU-12
+      - FL-STU-13
+      - FL-STU-14
+      - FL-STU-15
+      - FL-STU-16
+      - FL-STU-17
+      - FL-STU-18
+      - FL-STU-19
+      - FL-STU-20
+      - FL-STU-21
+
+  teacher:
+    pages: 16
+    components: 44
+    hooks: 23
+    routes: 18
+    completitud: "~95%"
+    flows:
+      - FL-TCH-01
+      - FL-TCH-02
+      - FL-TCH-03
+      - FL-TCH-04
+      - FL-TCH-05
+      - FL-TCH-06
+      - FL-TCH-07
+      - FL-TCH-08
+      - FL-TCH-09
+      - FL-TCH-10
+      - FL-TCH-11
+      - FL-TCH-12
+      - FL-TCH-13
+      - FL-TCH-14
+      - FL-TCH-15
+      - FL-TCH-16
+      - FL-TCH-17
+
+  admin:
+    pages: 19
+    components: 123
+    hooks: 31
+    routes: 22
+    completitud: "~92%"
+    flows:
+      - FL-ADM-01
+      - FL-ADM-02
+      - FL-ADM-03
+      - FL-ADM-04
+      - FL-ADM-05
+      - FL-ADM-06
+      - FL-ADM-07
+      - FL-ADM-08
+      - FL-ADM-09
+      - FL-ADM-10
+      - FL-ADM-11
+      - FL-ADM-12
+      - FL-ADM-13
+      - FL-ADM-14
+      - FL-ADM-15
+      - FL-ADM-16
+      - FL-ADM-17
+      - FL-ADM-18
+      - FL-ADM-19
+      - FL-ADM-20
+      - FL-ADM-21
+      - FL-ADM-22
+
+  parents:
+    pages: 7
+    components: 7
+    hooks: 0
+    routes: 5
+    completitud: "100%"
+    flows:
+      - FL-PRN-01
+      - FL-PRN-02
+      - FL-PRN-03
+      - FL-PRN-04
+      - FL-PRN-05
+      - FL-PRN-06
+      - FL-PRN-07
+
+# ===========================================================================
+# DIMENSION 5: EPICS -> Implementation Chain
+# Source: TRACEABILITY_MATRIX.yml, epic directories
+# ===========================================================================
+
+epics:
+
+  # --- Phase 1: Alcance Inicial ---
+
+  EAI-001:
+    name: "Fundamentos del Sistema"
+    epic_dir: EPIC-GAM-F1-AUTH
+    phase: 1
+    requirements: ["RF-AUTH-001", "RF-AUTH-002", "RF-AUTH-003"]
+    specifications: ["ET-AUTH-001", "ET-AUTH-002", "ET-AUTH-003"]
+    user_stories: "US-FUND-001..008"
+    modules: ["auth"]
+    schemas: ["auth", "auth_management"]
+    flows:
+      - FL-AUTH-01
+      - FL-AUTH-02
+      - FL-AUTH-03
+      - FL-SHR-02
+      - FL-TCH-06
+      - FL-SYS-04
+
+  EAI-002:
+    name: "Actividades Educativas"
+    epic_dir: EPIC-GAM-F1-EXERCISES
+    phase: 1
+    requirements: ["RF-EDU-001", "RF-EDU-002", "RF-EDU-003"]
+    specifications: ["ET-EDU-001", "ET-EDU-002", "ET-EDU-003"]
+    user_stories: "US-ACT-001..015"
+    modules: ["educational", "assignments"]
+    schemas: ["educational_content"]
+    flows:
+      - FL-STU-01
+      - FL-STU-15
+      - FL-STU-17
+      - FL-ADM-07
+      - FL-SYS-02
+
+  EAI-003:
+    name: "Gamificacion Basica"
+    epic_dir: EPIC-GAM-F1-GAMIFICATION
+    phase: 1
+    requirements: ["RF-GAM-001", "RF-GAM-002", "RF-GAM-003"]
+    specifications: ["ET-GAM-001", "ET-GAM-002", "ET-GAM-003"]
+    user_stories: "US-GAM-001..012"
+    modules: ["gamification"]
+    schemas: ["gamification_system"]
+    flows:
+      - FL-STU-03
+      - FL-STU-04
+      - FL-STU-07
+      - FL-STU-08
+      - FL-STU-19
+      - FL-STU-20
+      - FL-STU-21
+      - FL-ADM-08
+      - FL-SYS-03
+
+  EAI-004:
+    name: "Analytics y Seguimiento"
+    epic_dir: EPIC-GAM-F1-ANALYTICS
+    phase: 1
+    requirements: ["RF-PRG-001", "RF-ANLT-001"]
+    specifications: ["ET-PRG-001", "ET-ANLT-001"]
+    user_stories: "US-ANLT-001..008"
+    modules: ["progress"]
+    schemas: ["progress_tracking"]
+    flows:
+      - FL-STU-06
+      - FL-STU-13
+      - FL-STU-16
+      - FL-TCH-04
+      - FL-ADM-16
+      - FL-ADM-17
+
+  EAI-005:
+    name: "Admin Dashboard Base"
+    epic_dir: EPIC-GAM-F1-ADMIN
+    phase: 1
+    requirements: ["RF-ADMIN-001", "RF-ADMIN-002"]
+    specifications: ["ET-ADMIN-001", "ET-ADMIN-002"]
+    user_stories: "US-ADMIN-001..010"
+    modules: ["admin"]
+    schemas: ["admin_dashboard", "audit_logging", "system_configuration"]
+    flows:
+      - FL-ADM-01
+      - FL-ADM-09
+      - FL-ADM-10
+      - FL-ADM-22
+
+  EAI-005b:
+    name: "Portal Admin"
+    epic_dir: EPIC-GAM-F1-PORTAL-ADMIN
+    phase: 1
+    modules: ["admin"]
+    schemas: ["admin_dashboard"]
+    flows:
+      - FL-ADM-09
+
+  EAI-005c:
+    name: "Configuracion del Sistema"
+    epic_dir: EPIC-GAM-F1-CONFIG
+    phase: 1
+    modules: ["admin"]
+    schemas: ["system_configuration"]
+    flows:
+      - FL-ADM-02
+      - FL-ADM-12
+      - FL-ADM-21
+
+  # --- Phase 2: Robustecimiento ---
+
+  EMR-001:
+    name: "Migracion y Robustecimiento BD"
+    epic_dir: EPIC-GAM-F2-DB-MIGRATION
+    phase: 2
+    modules: []
+    schemas: ["(all 18 schemas)"]
+    flows: []
+    note: "Technical epic: 1->13 schemas migration, no direct user flows"
+
+  EMR-002:
+    name: "Modulos M4 y M5"
+    epic_dir: EPIC-GAM-F2-MODULES-M4M5
+    phase: 2
+    modules: ["educational"]
+    schemas: ["educational_content"]
+    flows:
+      - FL-STU-02
+
+  EMR-003:
+    name: "Consolidacion Tecnica"
+    epic_dir: EPIC-GAM-F2-TECH-CONSOLIDATION
+    phase: 2
+    modules: []
+    schemas: []
+    flows: []
+    note: "Technical epic: code quality, testing, refactoring"
+
+  # --- Phase 3: Extensiones ---
+
+  EXT-001:
+    name: "Portal de Maestros"
+    epic_dir: EPIC-GAM-F3-TEACHER-PORTAL
+    phase: 3
+    requirements: ["RF-PM-001", "RF-PM-002", "RF-PM-003"]
+    specifications: ["ET-PM-001", "ET-PM-002", "ET-PM-003"]
+    user_stories: "US-PM-001a..005c"
+    modules: ["teacher"]
+    schemas: ["educational_content", "progress_tracking", "social_features", "communication"]
+    flows:
+      - FL-TCH-01
+      - FL-TCH-02
+      - FL-TCH-07
+      - FL-TCH-08
+      - FL-TCH-09
+      - FL-TCH-10
+      - FL-TCH-11
+      - FL-TCH-12
+      - FL-TCH-13
+      - FL-TCH-14
+      - FL-ADM-18
+
+  EXT-002:
+    name: "Admin Extendido"
+    epic_dir: EPIC-GAM-F3-ADMIN-EXTENDED
+    phase: 3
+    requirements: ["RF-ADMIN-EXT-001", "RF-ADMIN-EXT-002"]
+    specifications: ["ET-ADMIN-EXT-001", "ET-ADMIN-EXT-002"]
+    user_stories: "US-ADMIN-EXT-001..010"
+    modules: ["admin"]
+    schemas: ["admin_dashboard", "audit_logging"]
+    flows:
+      - FL-ADM-04
+      - FL-ADM-06
+      - FL-ADM-15
+      - FL-ADM-19
+      - FL-ADM-21
+
+  EXT-003:
+    name: "Notificaciones Multi-Canal"
+    epic_dir: EPIC-GAM-F3-NOTIFICATIONS
+    phase: 3
+    requirements: ["RF-NOTIF-001", "RF-NOTIF-002"]
+    specifications: ["ET-NOTIF-001", "ET-NOTIF-002"]
+    user_stories: "US-NOTIF-001..008"
+    modules: ["notifications"]
+    schemas: ["notifications"]
+    flows:
+      - FL-STU-12
+      - FL-TCH-03
+      - FL-TCH-15
+      - FL-TCH-16
+      - FL-TCH-17
+      - FL-ADM-13
+      - FL-ADM-14
+
+  EXT-004:
+    name: "Perfiles Avanzados"
+    epic_dir: EPIC-GAM-F3-PROFILES
+    phase: 3
+    requirements: ["RF-PROF-001", "RF-PROF-002"]
+    specifications: ["ET-PROF-001", "ET-PROF-002"]
+    user_stories: "US-PROF-001..008"
+    modules: ["profile", "auth"]
+    schemas: ["auth_management"]
+    flows:
+      - FL-SHR-01
+      - FL-STU-05
+      - FL-STU-18
+
+  EXT-005:
+    name: "Reporteria Avanzada"
+    epic_dir: EPIC-GAM-F3-REPORTS
+    phase: 3
+    requirements: ["RF-REP-001", "RF-REP-002"]
+    specifications: ["ET-REP-001", "ET-REP-002"]
+    user_stories: "US-REP-001..010"
+    modules: ["admin"]
+    schemas: ["admin_dashboard", "data_warehouse"]
+    flows:
+      - FL-ADM-11
+
+  EXT-006:
+    name: "Gestion de Contenido"
+    epic_dir: EPIC-GAM-F3-CONTENT
+    phase: 3
+    requirements: ["RF-CMS-001", "RF-CMS-002"]
+    specifications: ["ET-CMS-001", "ET-CMS-002"]
+    user_stories: "US-CMS-001..009"
+    modules: ["content", "teacher"]
+    schemas: ["educational_content", "content_management"]
+    flows:
+      - FL-TCH-05
+      - FL-ADM-03
+
+  EXT-007:
+    name: "LTI Integration"
+    epic_dir: EPIC-GAM-F3-LTI
+    phase: 3
+    status: "partial (40%)"
+    requirements: ["RF-LTI-001"]
+    specifications: ["ET-LTI-001"]
+    user_stories: "US-LTI-001..006 (partial)"
+    modules: ["lti"]
+    schemas: ["lti_integration"]
+    flows:
+      - FL-ADM-05
+
+  EXT-008:
+    name: "White Label"
+    epic_dir: EPIC-GAM-F3-WHITE-LABEL
+    phase: 3
+    status: "partial (30%)"
+    requirements: ["RF-WL-001"]
+    specifications: ["ET-WL-001"]
+    modules: ["admin"]
+    schemas: ["auth_management", "system_configuration"]
+    flows:
+      - FL-SHR-03
+      - FL-ADM-20
+      - FL-SYS-05
+
+  EXT-009:
+    name: "Peer Challenges"
+    epic_dir: EPIC-GAM-F3-PEER-CHALLENGES
+    phase: 3
+    status: "partial (50%)"
+    requirements: ["RF-PEER-001"]
+    specifications: ["ET-PEER-001"]
+    modules: ["social"]
+    schemas: ["gamification_system", "social_features"]
+    flows:
+      - FL-STU-09
+      - FL-STU-10
+
+  EXT-010:
+    name: "Portal Padres"
+    epic_dir: EPIC-GAM-F3-PARENT-PORTAL
+    phase: 3
+    requirements: ["RF-PARENT-001"]
+    specifications: ["ET-PARENT-001"]
+    user_stories: "US-PARENT-001..004"
+    modules: ["parents"]
+    schemas: ["auth_management", "progress_tracking"]
+    flows:
+      - FL-PRN-01
+      - FL-PRN-02
+      - FL-PRN-04
+      - FL-PRN-05
+      - FL-PRN-06
+      - FL-PRN-07
+
+  EXT-010b:
+    name: "Notificaciones Padres"
+    epic_dir: EPIC-GAM-F3-PARENT-NOTIFICATIONS
+    phase: 3
+    modules: ["parents", "notifications"]
+    schemas: ["notifications", "communication"]
+    flows:
+      - FL-PRN-03
+
+  EXT-011:
+    name: "Social Gamification"
+    epic_dir: EPIC-GAM-F3-SOCIAL-GAMIFICATION
+    phase: 3
+    modules: ["social"]
+    schemas: ["social_features", "gamification_system"]
+    flows:
+      - FL-STU-09
+      - FL-STU-10
+      - FL-STU-14
+
+  # --- Phase 4 ---
+
+  EF4-001:
+    name: "Validation"
+    epic_dir: EPIC-GAM-F4-VALIDATION
+    phase: 4
+    modules: []
+    schemas: []
+    flows: []
+    note: "Validation and quality assurance epic"
+
+# ===========================================================================
+# COVERAGE METRICS
+# ===========================================================================
+
+coverage:
+  flows_total: 77
+  flows_by_domain:
+    auth: 3
+    student: 21
+    shared: 3
+    teacher: 17
+    admin: 22
+    parents: 7
+    system: 4
+  flows_in_core_matrix: 54
+  flows_in_extended_docs: 23
+  note_flows: "54 flows in COBERTURA-TOTAL-PROCESOS + TRACEABILITY-MATRIX. 23 additional documented in portal _INDEX files (FL-TCH-10..17, FL-ADM-12..22, FL-SYS-02..05)."
+
+  modules_mapped: 23
+  modules_total: 23
+  modules_pct: "100%"
+  modules_with_flows: 16
+  modules_infrastructure: 7
+
+  schemas_mapped: 18
+  schemas_total: 18
+  schemas_pct: "100%"
+  schemas_active: 16
+  schemas_placeholder: 2
+
+  portals_mapped: 4
+  portals_total: 4
+  portals_pct: "100%"
+
+  epics_mapped: 24
+  epics_total: 24
+  epics_pct: "100%"
+  note_epics: "24 functional EPICs mapped. Additional technical wave-3 EPICs archived."
+
+  unmapped_modules_in_flows: ["tasks", "websocket", "mail"]
+  unmapped_modules_note: "Infrastructure/utility modules without direct user-facing flows. websocket used indirectly by FL-TCH-03. mail used transitively."
+
+# ===========================================================================
+# METADATA
+# ===========================================================================
+
+sources:
+  flows: "docs/30-ux-ui/flujos/"
+  backend: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+  frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+  database: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+  master: "orchestration/inventarios/MASTER_INVENTORY.yml"
+  traceability: "orchestration/inventarios/TRACEABILITY_MATRIX.yml"
+  dependency: "orchestration/inventarios/DEPENDENCY_GRAPH.yml"
+
+# ===========================================================================
+# END CROSS-REFERENCE-MASTER v1.0.0
+# ===========================================================================

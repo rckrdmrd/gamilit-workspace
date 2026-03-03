@@ -1,22 +1,3 @@
-// Legacy types - kept for backward compatibility but no longer used by DebateDigitalExercise
-// The exercise was converted from AI chat to structured essay format
-
-/** @deprecated No longer used - exercise uses structured essay sections */
-export interface DebateMessage {
-  id: string;
-  sender: 'user' | 'ai';
-  text: string;
-  timestamp: Date;
-}
-
-/** @deprecated No longer used - exercise uses structured essay sections */
-export interface DebateSession {
-  id: string;
-  topic: string;
-  messages: DebateMessage[];
-  userScore: number;
-}
-
 export interface ExerciseProgressUpdate {
   currentStep: number;
   totalSteps: number;

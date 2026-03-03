@@ -143,6 +143,20 @@ export const mapEarningSourceToTransactionType = (
 };
 
 /**
+ * Active Boost - Temporary multiplier for XP or Coins
+ */
+export interface ActiveBoost {
+  id: string;
+  user_id: string;
+  boost_type: 'XP' | 'COINS';
+  multiplier: number;
+  source: string | null;
+  activated_at: string;
+  expires_at: string;
+  is_active: boolean;
+}
+
+/**
  * Economic Health Status - For monitoring system
  */
 export type EconomicHealthStatus = 'healthy' | 'warning' | 'critical';

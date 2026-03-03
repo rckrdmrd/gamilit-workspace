@@ -27,7 +27,6 @@ Guias tecnicas para desarrollo backend con NestJS, DTOs, entities, modulos, base
 | Directorio | Descripcion |
 |------------|-------------|
 | `impl/` | Implementaciones de referencia para backend |
-| `_archived/` | Documentos archivados por redundancia o deprecacion |
 
 ---
 

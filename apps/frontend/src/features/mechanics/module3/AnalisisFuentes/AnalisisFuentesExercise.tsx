@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { fetchSources } from './analisisFuentesAPI';
 import type { Source, AnalisisFuentesAnswers } from './analisisFuentesTypes';
@@ -18,18 +19,19 @@ import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/consta
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
-import type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
+
+interface AdaptedAnalisisFuentesData {
+  sources?: Source[];
+  description?: string;
+}
 
 interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
   exerciseId: string;
-  userId: string;
+  exercise?: AdaptedAnalisisFuentesData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
-  difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -42,6 +44,7 @@ interface ExerciseState {
 
 export const AnalisisFuentesExercise = ({
   exerciseId,
+  exercise: adaptedExercise,
   onComplete,
   onExit,
   onProgressUpdate,
@@ -64,8 +67,15 @@ export const AnalisisFuentesExercise = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
   useEffect(() => {
-    loadSources();
-  }, []);
+    // Use adapted data from exercise prop if available
+    if (adaptedExercise?.sources && adaptedExercise.sources.length > 0) {
+      setSources(adaptedExercise.sources);
+      setCurrentRanking(adaptedExercise.sources.map((s: Source) => s.id));
+      setLoading(false);
+    } else {
+      loadSources();
+    }
+  }, [exerciseId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-save progress every 30 seconds
   useEffect(() => {
@@ -100,7 +110,7 @@ export const AnalisisFuentesExercise = ({
 
   const loadSources = async () => {
     try {
-      const data = await fetchSources();
+      const data = await fetchSources(exerciseId);
       setSources(data);
       // Initialize ranking with all source IDs in default order
       setCurrentRanking(data.map((s: { id: string }) => s.id));
@@ -140,7 +150,7 @@ export const AnalisisFuentesExercise = ({
     if (!user?.id) {
       setFeedback({
         type: 'error',
-        title: 'Error de Autenticaci\u00f3n',
+        title: 'Error de Autenticación',
         message: 'Debes estar autenticado para enviar el ejercicio.',
       });
       setShowFeedback(true);
@@ -176,8 +186,8 @@ export const AnalisisFuentesExercise = ({
       if (invalidIds.length > 0) {
         setFeedback({
           type: 'error',
-          title: 'Error de Validaci\u00f3n',
-          message: 'Algunos IDs de fuentes son inv\u00e1lidos. Intenta reiniciar el ejercicio.',
+          title: 'Error de Validación',
+          message: 'Algunos IDs de fuentes son inválidos. Intenta reiniciar el ejercicio.',
         });
         setShowFeedback(true);
         setIsSubmitting(false);
@@ -191,12 +201,12 @@ export const AnalisisFuentesExercise = ({
 
       const response = await submitAsync(answers as unknown as Record<string, unknown>);
 
-      // CORR-AF-001 2026-01-07: Manejar ejercicios con revisi\u00f3n manual
+      // CORR-AF-001 2026-01-07: Manejar ejercicios con revisión manual
       // Este ejercicio tiene requires_manual_grading=TRUE en BD
       if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
         setFeedback({
           type: 'info',
-          title: 'An\u00e1lisis Enviado',
+          title: 'Análisis Enviado',
           message:
             MANUAL_REVIEW_PENDING_SHORT_MESSAGE,
           pendingReview: true,
@@ -210,16 +220,16 @@ export const AnalisisFuentesExercise = ({
         return;
       }
 
-      // Extraer rewards de la respuesta (solo si no requiere revisi\u00f3n manual)
+      // Extraer rewards de la respuesta (solo si no requiere revisión manual)
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
       // Create feedback based on response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect
-          ? '\u00a1Excelente An\u00e1lisis!'
+          ? '¡Excelente Análisis!'
           : response.score >= 70
-            ? '\u00a1Buen Trabajo!'
+            ? '¡Buen Trabajo!'
             : 'Sigue Practicando',
         message:
           response.feedback?.overall ||
@@ -276,8 +286,8 @@ export const AnalisisFuentesExercise = ({
   return (
     <>
       <UnifiedExerciseLayout
-        title="An\u00e1lisis de Fuentes"
-        description="Eval\u00faa la credibilidad de fuentes sobre Marie Curie"
+        title="Análisis de Fuentes"
+        description={adaptedExercise?.description || 'Evalúa la credibilidad de las fuentes presentadas'}
         icon={<FileSearch className="h-8 w-8" />}
         cardPadding="lg"
       >
@@ -312,15 +322,15 @@ export const AnalisisFuentesExercise = ({
           {/* Justification Section */}
           <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6">
             <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
-              Justificaci\u00f3n del Ranking
+              Justificación del Ranking
             </h3>
             <p className="mb-4 text-detective-sm text-detective-text-secondary">
-              Explica por qu\u00e9 ordenaste las fuentes de esta manera. \u00bfQu\u00e9 criterios usaste para determinar la credibilidad de cada fuente? (m\u00ednimo 100 caracteres)
+              Explica por qué ordenaste las fuentes de esta manera. ¿Qué criterios usaste para determinar la credibilidad de cada fuente? (mínimo 100 caracteres)
             </p>
             <textarea
               value={justification}
               onChange={(e) => setJustification(e.target.value)}
-              placeholder="Orden\u00e9 las fuentes de esta manera porque..."
+              placeholder="Ordené las fuentes de esta manera porque..."
               className="w-full resize-none rounded-detective border-2 border-detective-border p-2 sm:p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
               rows={5}
               maxLength={1000}
@@ -329,7 +339,7 @@ export const AnalisisFuentesExercise = ({
               <p className={`text-detective-sm ${justification.trim().length >= 100 ? 'text-detective-success' : 'text-detective-danger'}`}>
                 {justification.trim().length < 100
                   ? `Faltan ${100 - justification.trim().length} caracteres`
-                  : '\u2713 Completo'}
+                  : '✓ Completo'}
               </p>
               <p className="text-detective-sm text-detective-text-secondary">{justification.length}/1000</p>
             </div>
@@ -344,8 +354,8 @@ export const AnalisisFuentesExercise = ({
               </h3>
             </div>
             <p className="mb-4 text-detective-sm text-detective-text-secondary">
-              Ordena las fuentes de m\u00e1s cre\u00edble (arriba) a menos cre\u00edble (abajo). Este ranking se
-              enviar\u00e1 al completar el ejercicio.
+              Ordena las fuentes de más creíble (arriba) a menos creíble (abajo). Este ranking se
+              enviará al completar el ejercicio.
             </p>
             <div className="space-y-3">
               {currentRanking.map((sourceId, index) => {
@@ -372,7 +382,7 @@ export const AnalisisFuentesExercise = ({
                         onClick={() => moveSourceUp(sourceId)}
                         disabled={index === 0}
                         className="hover:bg-detective-blue-dark rounded-lg bg-detective-blue p-2 text-white transition-all disabled:cursor-not-allowed disabled:opacity-30"
-                        title="Mover arriba (m\u00e1s cre\u00edble)"
+                        title="Mover arriba (más creíble)"
                       >
                         <ArrowUp className="h-4 w-4" />
                       </button>
@@ -380,7 +390,7 @@ export const AnalisisFuentesExercise = ({
                         onClick={() => moveSourceDown(sourceId)}
                         disabled={index === currentRanking.length - 1}
                         className="rounded-lg bg-detective-orange p-2 text-white transition-all hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:opacity-30"
-                        title="Mover abajo (menos cre\u00edble)"
+                        title="Mover abajo (menos creíble)"
                       >
                         <ArrowDown className="h-4 w-4" />
                       </button>

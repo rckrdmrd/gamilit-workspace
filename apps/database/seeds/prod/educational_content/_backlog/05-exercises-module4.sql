@@ -100,12 +100,12 @@ BEGIN
     ) VALUES (
         mod_id,
         'Quiz TikTok: Datos Rápidos de Marie Curie',
-        'Responde en 10 Segundos',
-        'Preguntas rápidas estilo TikTok sobre Marie Curie. Tienes 10 segundos por pregunta. ¡Piensa rápido!',
-        'Lee la pregunta y las opciones. Tienes 10 segundos para responder. Desliza para la siguiente pregunta.',
+        'Responde en 30 Segundos',
+        'Preguntas rápidas estilo TikTok sobre Marie Curie. Tienes 30 segundos por pregunta. ¡Piensa rápido!',
+        'Lee la pregunta y las opciones. Tienes 30 segundos para responder. Desliza para la siguiente pregunta.',
         'quiz_tiktok', 3,
         '{
-            "timeLimit": 10,
+            "timeLimit": 30,
             "swipeInterface": true,
             "quickFeedback": true,
             "sharable": true
@@ -117,7 +117,7 @@ BEGIN
                     "text": "¿En qué ciudad nació Marie Curie?",
                     "options": ["París", "Varsovia", "Berlín", "Londres"],
                     "correct": 1,
-                    "timeLimit": 10,
+                    "timeLimit": 30,
                     "visual": "Map of Europe"
                 },
                 {
@@ -125,7 +125,7 @@ BEGIN
                     "text": "¿Cuántos Premios Nobel ganó Marie Curie?",
                     "options": ["1", "2", "3", "4"],
                     "correct": 1,
-                    "timeLimit": 10,
+                    "timeLimit": 30,
                     "visual": "Nobel medal icons"
                 },
                 {
@@ -133,7 +133,7 @@ BEGIN
                     "text": "¿Qué elemento químico nombró por su país?",
                     "options": ["Radio", "Curio", "Polonio", "Francio"],
                     "correct": 2,
-                    "timeLimit": 10,
+                    "timeLimit": 30,
                     "visual": "Periodic table"
                 }
             ]

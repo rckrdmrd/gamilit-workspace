@@ -18,7 +18,6 @@ estado: activo
 |------|------|--------|
 | Indice | [README.md](./README.md) | Activo |
 | Arquitectura transversal | [arquitectura/FLUJO-INICIALIZACION-USUARIO.md](./arquitectura/FLUJO-INICIALIZACION-USUARIO.md) | Activo |
-| Correcciones (stub) | [correcciones/README.md](./correcciones/README.md) | Movido a `orchestration/trazas/correcciones-historicas/` |
 
 ## Dependencias SSOT
 

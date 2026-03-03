@@ -593,6 +593,86 @@ export const adaptToTribunalOpinionesData = (exercise: ExerciseData): any => {
   };
 };
 
+/**
+ * Adapts ExerciseData to PodcastArgumentativoData format
+ * Module 3 - Record an argumentative podcast on a given topic
+ *
+ * DB format: { content: { topic, prompt, timeLimit } }
+ * Component expects: { topic, prompt, timeLimit }
+ */
+export const adaptToPodcastArgumentativoData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    topic: content.topic || base.topic || '',
+    prompt: content.prompt || exercise.description || '',
+    timeLimit: content.timeLimit || 300,
+  };
+};
+
+/**
+ * Adapts ExerciseData to AnalisisFuentesData format
+ * Module 3 - Rank sources by credibility
+ *
+ * DB format: { content: { sources: [{ id, title, url, excerpt, type }] } }
+ * Component expects: Source[]
+ */
+export const adaptToAnalisisFuentesData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    sources: content.sources || [],
+  };
+};
+
+/**
+ * Adapts ExerciseData to MatrizPerspectivasData format
+ * Module 3 - Analyze multiple perspectives on a topic
+ *
+ * DB format: { content: { perspectives: [{ perspective, viewpoint, arguments, counterarguments, biases, contextualFactors }] } }
+ * Component expects: { perspectives: PerspectiveGeneration[] }
+ */
+export const adaptToMatrizPerspectivasData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    perspectives: content.perspectives || [],
+  };
+};
+
+/**
+ * Adapts ExerciseData to DebateDigitalData format
+ * Module 3 - Write a structured argumentative essay on a debate topic
+ *
+ * DB format: { content: { title, question, context } }
+ * Component expects: { debateTitle, question, context }
+ */
+export const adaptToDebateDigitalData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    debateTitle: content.title || '',
+    question: content.question || '',
+    context: content.context || '',
+  };
+};
+
 // ============================================================================
 // MODULE 4 ADAPTERS - Textos Digitales y Multimediales
 // ============================================================================
@@ -628,7 +708,7 @@ export const adaptToQuizTikTokData = (exercise: ExerciseData): any => {
     description: exercise.description || '',
     hints: exercise.mechanicData?.hints || [],
     questions,
-    timeLimit: config.timeLimit || 20,
+    timeLimit: config.timeLimit || 30,
   };
 };
 
@@ -907,6 +987,14 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
     return adaptToPuzzleContextoData(exercise);
   } else if (type.includes('tribunal_opiniones')) {
     return adaptToTribunalOpinionesData(exercise);
+  } else if (type.includes('podcast_argumentativo')) {
+    return adaptToPodcastArgumentativoData(exercise);
+  } else if (type.includes('analisis_fuentes')) {
+    return adaptToAnalisisFuentesData(exercise);
+  } else if (type.includes('matriz_perspectivas')) {
+    return adaptToMatrizPerspectivasData(exercise);
+  } else if (type.includes('debate_digital')) {
+    return adaptToDebateDigitalData(exercise);
   }
 
   // ========================================

@@ -663,7 +663,20 @@ export class MissionsService {
       );
     }
 
-    if (mission.claimed_at !== null) {
+    // Atomic guard: claim the mission first, preventing double-claim race condition.
+    // This UPDATE is conditional on claimed_at IS NULL — if another concurrent request
+    // already claimed it, affected === 0 and we throw before granting any rewards.
+    const claimResult = await this.missionsRepo
+      .createQueryBuilder()
+      .update()
+      .set({
+        claimed_at: new Date(),
+        status: MissionStatusEnum.CLAIMED,
+      })
+      .where('id = :missionId AND claimed_at IS NULL', { missionId })
+      .execute();
+
+    if (claimResult.affected === 0) {
       throw new BadRequestException('Rewards have already been claimed for this mission');
     }
 
@@ -687,7 +700,6 @@ export class MissionsService {
       );
     }
 
-    // No marcar como claimed hasta completar distribución
     if (mlCoinsAwarded > 0) {
       await this.mlCoinsService.addCoins(
         userId,
@@ -703,9 +715,11 @@ export class MissionsService {
       await this.userStatsService.addXp(userId, xpAwarded);
     }
 
-    mission.status = MissionStatusEnum.CLAIMED;
-    mission.claimed_at = new Date();
-    await this.missionsRepo.save(mission);
+    // Reload the mission to reflect the claimed_at/status set by the atomic UPDATE above
+    const updatedMission = await this.missionsRepo.findOne({ where: { id: missionId } });
+    if (updatedMission) {
+      Object.assign(mission, updatedMission);
+    }
 
     try {
       const currentRankRecord = await this.ranksService.getCurrentRank(userId);

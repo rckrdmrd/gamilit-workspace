@@ -87,7 +87,7 @@ estado: activo
 **Ubicación:** `apps/database/ddl/00-prerequisites.sql:~85-120`
 
 ```sql
--- Exercise Types - Implementaciones específicas GAMILIT (27 tipos)
+-- Exercise Types - Implementaciones específicas GAMILIT (33 valores ENUM, 23 activos)
 CREATE TYPE educational_content.exercise_type AS ENUM (
     -- Módulo 1: Comprensión Literal (5 activos + 2 auxiliares asignables)
     'crucigrama',

@@ -21,7 +21,7 @@ El sistema de ejercicios es el núcleo educativo del Student Portal, permitiendo
 - Auto-guardado de progreso
 - Sistema de power-ups/comodines
 - Feedback inmediato con recompensas
-- Múltiples tipos de mecánicas (30+ tipos)
+- Múltiples tipos de mecánicas (29 tipos - comprension_auditiva en BACKLOG)
 
 ---
 
@@ -329,7 +329,7 @@ registerExercise('crucigrama', {
 29 mecánicas registradas en `features/exercises/registry/registrations.ts`:
 - Módulo 1 (7): crucigrama, timeline, sopa_letras, mapa_conceptual, emparejamiento, verdadero_falso, completar_espacios
 - Módulo 2 (6): detective_textual, lectura_inferencial, construccion_hipotesis, prediccion_narrativa, puzzle_contexto, rueda_inferencias
-- Módulo 3 (5): analisis_fuentes, debate_digital, matriz_perspectivas, podcast_argumentativo, tribunal_opiniones
+- Módulo 3 (5): analisis_fuentes, debate_digital, matriz_perspectivas, podcast_argumentativo, tribunal_opiniones — todos con adaptadores dedicados
 - Módulo 4 (5): verificador_fake_news, quiz_tiktok, navegacion_hipertextual, analisis_memes, infografia_interactiva
 - Módulo 5 (3): diario_multimedia, comic_digital, video_carta
 - Auxiliar (3 activas + 1 BACKLOG): call_to_action, collage_prensa, texto_movimiento — comprension_auditiva (BACKLOG: desactivada)
@@ -340,11 +340,15 @@ registerExercise('crucigrama', {
 
 | ID | Descripción | Severidad | Estado |
 |----|-------------|-----------|--------|
-| GAP-P1-003 | handleSaveProgress y autoSaveProgress usan endpoints diferentes | Alta | Pendiente |
-| GAP-P1-004 | Backend sync de power-ups es fire-and-forget | Media | Pendiente |
+| GAP-P1-003 | handleSaveProgress y autoSaveProgress usan endpoints diferentes — ambos implementados, separación por diseño | Alta | Resuelto |
+| GAP-P1-004 | Backend sync de power-ups es fire-and-forget — intencional por diseño (non-blocking) | Media | Documentado (by design) |
 | GAP-P2-003 | Loading state genérico para mecánicas | Baja | Pendiente |
 | GAP-P2-004 | CORR-010 debug logs en producción | Baja | Pendiente |
 | GAP-P3-001 | Vision lectora CSS scoped `.exercise-passage` — blanket highlight corregido. Backend `generateReadingVision()` es pseudocodigo (ADR-051) | Media | Resuelto |
+| GAP-M3-001 | PodcastArgumentativo usaba ID hardcodeado `'podcast-1'` en vez de `exerciseId` — causaba 500 en backend | Critica | Resuelto |
+| GAP-M3-002 | AnalisisFuentes llamaba `fetchSources()` sin `exerciseId` — enviaba 'default' al backend | Critica | Resuelto |
+| GAP-M3-003 | MatrizPerspectivas siempre sobreescribia datos API con mock perspectives | Alta | Resuelto |
+| GAP-M3-004 | DebateDigital usaba solo mock `debateTopic`, sin consumir datos del adapter pipeline | Media | Resuelto |
 
 ---
 

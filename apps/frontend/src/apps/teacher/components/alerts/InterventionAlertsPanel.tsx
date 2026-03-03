@@ -180,7 +180,7 @@ export function InterventionAlertsPanel({
     <div className="space-y-4">
       {/* Filtros */}
       <DetectiveCard>
-        <div className="flex items-center gap-4 p-4">
+        <div className="flex flex-wrap items-center gap-3 p-4">
           <Filter className="h-5 w-5 text-detective-orange" />
           <select
             value={filters.severity || ''}

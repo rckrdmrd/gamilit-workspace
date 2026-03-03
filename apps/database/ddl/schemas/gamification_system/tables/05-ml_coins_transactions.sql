@@ -29,7 +29,7 @@ CREATE TABLE gamification_system.ml_coins_transactions (
     -- Check Constraints
     CONSTRAINT ml_coins_transactions_balance_after_check CHECK ((balance_after >= 0)),
     CONSTRAINT ml_coins_transactions_balance_before_check CHECK ((balance_before >= 0)),
-    CONSTRAINT ml_coins_transactions_reference_type_check CHECK ((reference_type = ANY (ARRAY['exercise'::text, 'module'::text, 'achievement'::text, 'powerup'::text, 'admin'::text, 'streak'::text, 'rank'::text, 'mission'::text, 'rank_promotion'::text])))
+    CONSTRAINT ml_coins_transactions_reference_type_check CHECK ((reference_type = ANY (ARRAY['exercise'::text, 'module'::text, 'achievement'::text, 'powerup'::text, 'admin'::text, 'streak'::text, 'rank'::text, 'mission'::text, 'rank_promotion'::text, 'welcome'::text])))
 );
 
 -- Indexes

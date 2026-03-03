@@ -4,7 +4,7 @@
 #
 # Sistema: SIMCO v4.3.0 + NEXUS v4.0
 # Propósito: Perfil y metadata del proyecto
-# Fecha: 2026-02-06
+# Fecha: 2026-03-03
 # Actualizado por: TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION (Sprint 1)
 #
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -19,13 +19,13 @@ proyecto:
   codigo: "gamilit"
   tipo: "STANDALONE_HEREDERO"
   nivel: "2A"
-  version: "3.0.0"
+  version: "14.9.4"
   rol_especial: "REFERENCIA_INTERNA"
 
 descripcion: |
   Plataforma EdTech con gamificación educativa basada en cultura maya.
   Sistema académico completo con:
-  - 3 portales (Estudiante, Maestro, Administrador)
+  - 4 portales (Estudiante, Maestro, Administrador, Padres)
   - 5 módulos educativos (23 tipos de ejercicios)
   - Sistema de gamificación maya (5 rangos, ML Coins, logros, misiones)
   - Leaderboards competitivos y sistema social
@@ -82,50 +82,50 @@ rutas:
   orchestration: "projects/gamilit/orchestration"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# MÉTRICAS (Fuente: MASTER_INVENTORY v6.0.0, verificado 2026-02-05)
+# MÉTRICAS (Fuente: MASTER_INVENTORY v14.9.4, verificado 2026-03-03)
 # ─────────────────────────────────────────────────────────────────────────────
 
 metricas:
   database:
     schemas: 18
     schemas_active: 16
-    tablas: 169
-    views: 22
+    tablas: 173
+    views: 18
     materialized_views: 7
-    enums: 40
-    functions: 183
-    triggers: 67
-    rls_policies: 207
-    foreign_keys: 298
+    enums: 42
+    functions: 158
+    triggers: 68
+    rls_policies: 251
+    foreign_keys: 301
     indexes_files: 23
 
   backend:
-    modulos: 22
-    entities: 152
-    dtos: 399
-    services: 170
-    controllers: 107
-    endpoints: 899
+    modulos: 23
+    entities: 156
+    dtos: 401
+    services: 173
+    controllers: 109
+    endpoints: 915
     guards: 15
     decorators: 18
 
   frontend:
-    componentes: 475
-    hooks: 102
-    pages: 68
-    stores: 14
-    api_services: 52
-    mechanics: 30
-    routes: 70
+    componentes: 575
+    hooks: 132
+    pages: 70
+    stores: 13
+    api_services: 65
+    mechanics: 29
+    routes: 74
 
   coherencia:
-    ddl_backend: "82.5%"
+    ddl_backend: "90.2%"
     backend_frontend: "87.5%"
     documentacion: "95%"
 
   tests:
-    total_passing: 833
-    status: "10 failing (date comparison logic)"
+    total_passing: 2324
+    status: "2296 passed + 28 skipped"
     build_status: "0 errors, 904 warnings (pre-existing)"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -207,8 +207,8 @@ estado:
   fase_a: "COMPLETADA"
   en_produccion: true
   usuarios_activos: true
-  epics_completados: "22/22"
-  story_points_total: 650
+  epics_completados: "34 EPICs completados"
+  story_points_total: 162
 
 # ─────────────────────────────────────────────────────────────────────────────
 # EQUIPO

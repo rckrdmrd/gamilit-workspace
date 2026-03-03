@@ -16,14 +16,11 @@ Documentacion de APIs del proyecto.
 
 | Documento | Descripcion |
 |-----------|-------------|
-| [API-REFERENCE.md](API-REFERENCE.md) | 914 endpoints organizados por modulo |
-| [PORTAL-STUDENT-API-REFERENCE.md](PORTAL-STUDENT-API-REFERENCE.md) | Referencia API del portal estudiante [REDIRECT → docs/60-portals/student/] |
-| [PORTAL-TEACHER-API-REFERENCE.md](PORTAL-TEACHER-API-REFERENCE.md) | Referencia API del portal maestro [REDIRECT → docs/60-portals/teacher/] |
-| [PORTAL-PARENTS-API-REFERENCE.md](PORTAL-PARENTS-API-REFERENCE.md) | Referencia API del portal padres [REDIRECT → docs/60-portals/parents/] |
-| [PORTAL-ADMIN-API-REFERENCE.md](PORTAL-ADMIN-API-REFERENCE.md) | Referencia API del portal admin [REDIRECT → docs/60-portals/admin/] |
+| [API-REFERENCE.md](API-REFERENCE.md) | 915 endpoints organizados por modulo (7 archivos por dominio en `api-reference/`) |
 | [ENDPOINTS-INVENTORY-EQUIP.md](ENDPOINTS-INVENTORY-EQUIP.md) | Contratos API de equipamiento cosmetico |
 | [WEB-PUSH-MIGRATION.md](WEB-PUSH-MIGRATION.md) | Guia de migracion Web Push notifications |
-| [ADMIN-PORTAL-ENDPOINTS.md](_archived/ADMIN-PORTAL-ENDPOINTS.md) | [ARCHIVED] Implementacion detallada endpoints admin portal (P2) |
+
+> **Vistas por portal**: Ver `docs/60-portals/{portal}/PORTAL-*-API-REFERENCE.md` para APIs por consumidor.
 
 ---
 
@@ -31,7 +28,7 @@ Documentacion de APIs del proyecto.
 
 **Base URL:** http://localhost:3006 (dev)
 **Auth:** JWT Bearer Token
-**Total Endpoints:** 914
+**Total Endpoints:** 915
 **WebSocket:** Socket.IO (3 namespaces)
 **Swagger:** http://localhost:3006/api-docs
 

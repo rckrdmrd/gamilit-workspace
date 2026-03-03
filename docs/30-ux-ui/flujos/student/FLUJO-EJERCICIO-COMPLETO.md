@@ -51,7 +51,7 @@ sequenceDiagram
 - `apps/frontend/src/features/exercises/hooks/useExerciseData.ts` (fetch ejercicio + registro mecánica)
 - `apps/frontend/src/features/exercises/hooks/useExerciseProgress.ts` (progreso + auto-save)
 - `apps/frontend/src/features/exercises/hooks/useExerciseComodines.ts` (inventario real via API backend)
-- `apps/frontend/src/features/exercises/registry/registrations.ts` (30 mecánicas registradas)
+- `apps/frontend/src/features/exercises/registry/registrations.ts` (29 mecánicas registradas (comprension_auditiva en BACKLOG))
 - `apps/frontend/src/services/api/educationalAPI.ts`
 
 ### Backend
@@ -95,7 +95,7 @@ ExercisePage.tsx (thin shell, ~30 líneas)
         ├── ExerciseGuide (pedagogicalGuide, forceExpanded cuando hintsRevealed > 0)
         ├── Banner "Segunda Oportunidad activa" (condicional: comodinesContext.hasSecondChance)
         ├── ExerciseLoader (con clase .vision-lectora-active si comodinesContext.visionActive)
-        │   └── MechanicCompatWrapper → [30 mecánicas con comodinesContext prop]
+        │   └── MechanicCompatWrapper → [29 mecánicas (comprension_auditiva en BACKLOG) con comodinesContext prop]
         ├── ExerciseSidebar
         │   ├── ConsumablesPanel (comodines reales del backend)
         │   ├── ActionsPanel (guardar, enviar, reiniciar, verificar)

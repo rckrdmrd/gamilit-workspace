@@ -2,13 +2,13 @@
 titulo: Guía de Desarrollo - Portal Teacher
 tipo: portal
 portal: teacher
-ultima_actualizacion: 2026-02-27
+ultima_actualizacion: 2026-03-03
 ---
 
 # Guia de Desarrollo - Portal Teacher
 
 **Fecha de creacion:** 2025-11-29
-**Version:** 3.1.0
+**Version:** 3.3.0
 **Estado:** VIGENTE
 **Aplica a:** apps/frontend/src/apps/teacher/ + apps/backend/src/modules/teacher/
 
@@ -97,17 +97,23 @@ teacher/
 │   │   └── TeacherPageShell.tsx  # PageShell wrapper (ADR-046)
 │   ├── dashboard/              # Componentes del dashboard
 │   ├── assignments/            # Gestion de tareas
+│   │   └── index.ts
 │   ├── alerts/                 # Alertas de intervencion
+│   │   └── index.ts
 │   ├── analytics/              # Graficas y metricas
+│   │   └── index.ts
 │   ├── progress/               # Progreso de estudiantes
+│   │   └── index.ts
 │   ├── monitoring/             # Monitoreo en tiempo real
+│   │   └── index.ts
 │   ├── reports/                # Generacion de reportes
 │   │   └── RecentReportsTable.tsx
 │   ├── responses/              # Respuestas de ejercicios
+│   │   └── index.ts
 │   ├── review-panel/           # Panel de revision manual
 │   ├── collaboration/          # Compartir recursos
+│   │   └── index.ts
 │   ├── settings/               # Componentes de configuracion
-│   │   ├── SaveButton.tsx
 │   │   ├── ProfileSettingsSection.tsx
 │   │   ├── TeachingPreferencesSection.tsx
 │   │   ├── NotificationsSettingsSection.tsx
@@ -144,9 +150,7 @@ teacher/
 │   ├── useSharedResources.ts
 │   └── index.ts
 ├── constants/                  # Constantes centralizadas
-│   ├── alertTypes.ts           # Tipos y prioridades de alertas
-│   ├── manualReviewExercises.ts # Ejercicios de revision manual
-│   └── index.ts
+│   └── alertTypes.ts           # Tipos y prioridades de alertas
 └── types/
     └── index.ts                # 40+ interfaces/types
 ```
@@ -927,6 +931,7 @@ if (process.env.NODE_ENV === 'development') {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 3.3.0 | 2026-03-03 | Responsive remediation: 16 pages, 21 components, 4 modals. 8 barrel exports added (alerts, analytics, assignments, collaboration, monitoring, progress, responses, settings). Deprecated types removed: InterventionAlertLegacy, TeacherDashboardStatsLegacy. Card truncation: ModuleCompletionCard line-clamp + title tooltip. Standards compliance: Responsive 78%→95%, Modal 86%→95%, Truncation 20%→80% |
 | 3.2.0 | 2026-02-21 | Performance: TeacherDashboardPage 9 tab panel imports converted to React.lazy() + Suspense for code-splitting. Tab loading fallback spinner added. Dashboard description updated to reflect 10-tab architecture |
 | 3.1.0 | 2026-02-21 | Cleanup: Removed 3 pages (TeacherCommunicationPage, TeacherContentManagementPage, TeacherContentPage) — Communication not applicable to teacher role, Content Management is admin responsibility. Removed 2 hooks (useTeacherMessages, useTeacherContent) and 2 API services (teacherMessagesApi, teacherContentApi). Removed communication/ components directory. Portal now has 16 pages, 23 hooks. Updated endpoints table with edit/delete assignment endpoints. Updated folder structure and API services listing |
 | 3.0.0 | 2026-02-21 | ADR-030 alignment: All 19 page files renamed with "Page" suffix (TeacherDashboard -> TeacherDashboardPage, etc.). 3 pages re-enabled in sidebar nav (Content, Communication, Notifications). Removed deleted withTeacherLayout.tsx from tree. Updated hooks note about 4 deleted hooks (TEACHER-PORTAL-AUDIT). Updated code examples and App.tsx references |

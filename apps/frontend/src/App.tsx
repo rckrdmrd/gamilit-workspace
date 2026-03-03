@@ -119,14 +119,6 @@ const ReportsPage = lazy(() => import('@/apps/parent/pages/ReportsPage'));
  * - /progress/modules/:moduleId : Module details page
  * - /achievements : Achievements page with filtering and claiming
  * - /leaderboard : Leaderboard page with global/school/classroom tabs
- *
- * TODO: Add more routes:
- * - /register : Registration page
- * - /exercises/:exerciseId/player : Exercise player page
- * - /missions : Missions page
- * - /learning : Learning page
- * - /profile : User profile page
- * - /settings : Settings page
  */
 function App() {
   return (

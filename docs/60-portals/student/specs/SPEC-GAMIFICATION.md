@@ -2,13 +2,13 @@
 titulo: SPEC-GAMIFICATION - Student Portal Gamification System
 tipo: portal
 portal: student
-ultima_actualizacion: 2026-03-01
+ultima_actualizacion: 2026-03-03
 ---
 
 # SPEC-GAMIFICATION - Student Portal Gamification System
 
-**Version:** 1.0.0
-**Fecha:** 2026-01-24
+**Version:** 1.1.0
+**Fecha:** 2026-03-03
 **Autor:** Claude Code (Auditoría Automatizada)
 **Estado:** COMPLETO
 
@@ -77,9 +77,13 @@ El sistema de gamificación de GAMILIT implementa mecánicas de juego para motiv
 
 | Endpoint | Método | Descripción |
 |----------|--------|-------------|
-| `/gamification/economy/balance` | GET | Balance de ML Coins |
-| `/gamification/economy/transactions` | GET | Historial de transacciones |
-| `/gamification/economy/purchase` | POST | Realizar compra |
+| `/gamification/users/:userId/ml-coins` | GET | Balance de ML Coins |
+| `/gamification/users/:userId/ml-coins/transactions` | GET | Historial de transacciones |
+| `/gamification/users/:userId/ml-coins/add` | POST | Agregar ML Coins |
+| `/gamification/users/:userId/ml-coins/spend` | POST | Gastar ML Coins |
+| `/gamification/users/:userId/ml-coins/multiplier` | GET | Multiplicador activo del usuario |
+
+> **Nota (corregido 2026-03-03):** Las rutas anteriores `/gamification/economy/*` eran incorrectas. Las rutas reales corresponden al `MlCoinsController` bajo el prefijo `/gamification`. La compra de items se gestiona en la sección 5.5 (Tienda).
 
 ### 5.3 Sistema de Misiones
 
@@ -130,6 +134,70 @@ El sistema de gamificación de GAMILIT implementa mecánicas de juego para motiv
 
 **Error handling:** El servicio de comodines usa `BadRequestException` (HTTP exceptions directas) para la mayoria de errores, mientras que el servicio de shop usa domain error classes (patron ADR-045). Esta inconsistencia es un gap conocido pendiente de migracion futura.
 
+### 5.7 Sistema de Boosts
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/gamification/boosts/:userId/active` | GET | Boosts activos del usuario |
+
+**Controlador:** `BoostController` — `apps/backend/src/modules/gamification/controllers/boost.controller.ts`
+**Servicio:** `BoostService` — `apps/backend/src/modules/gamification/services/boost.service.ts`
+**Entidad:** `ActiveBoost` — tabla `gamification_system.active_boosts`
+
+#### Métodos de BoostService
+
+| Método | Descripción |
+|--------|-------------|
+| `activateBoost(userId, boostType, multiplier, durationDays, source)` | Activa un boost para el usuario, desactivando cualquier boost previo del mismo tipo |
+| `getActiveBoosts(userId)` | Retorna todos los boosts activos (no expirados) para el usuario |
+| `getActiveMultiplier(userId, boostType)` | Retorna el multiplicador activo para un tipo de boost; devuelve `1.0` si no hay boost activo |
+| `deactivateExpiredBoosts(userId)` | Desactiva boosts cuya `expires_at` ya pasó (llamado internamente antes de cada consulta) |
+
+#### Tipos de Boost
+
+| Tipo (`boost_type`) | Origen en Tienda (`effect_data.type`) | Multiplicador por defecto |
+|---------------------|---------------------------------------|---------------------------|
+| `XP` | `xp_boost` | `2.0x` |
+| `COINS` | `coins_boost` | `1.5x` |
+
+#### Flujo de Activacion
+
+```
+1. Estudiante compra item de tienda con effect_data.type = 'xp_boost' o 'coins_boost'
+   ↓
+2. ShopService.purchaseItem() completa la transacción DB (deducción de ML Coins + user_purchases)
+   ↓
+3. Post-transacción (non-blocking, try/catch):
+   BoostService.activateBoost(userId, boostType, multiplier, durationDays, 'ITEM:<purchaseId>')
+   ↓
+4. BoostService desactiva cualquier boost previo del mismo tipo para ese usuario
+   ↓
+5. Crea nueva fila en active_boosts con:
+   - boost_type: 'XP' | 'COINS'
+   - multiplier: item.effect_data.multiplier ?? (xp_boost: 2.0, coins_boost: 1.5)
+   - duration_days: item.duration_days ?? 1
+   - expires_at: now + durationDays * 24h
+   - source: 'ITEM:<purchaseId>'
+   ↓
+6. GamifiedHeader consulta GET /gamification/boosts/:userId/active y muestra indicador
+```
+
+#### Mecanismo de Expiracion
+
+El sistema usa **expiracion on-read** (no existe cron job):
+- Antes de cada consulta de boosts, `deactivateExpiredBoosts()` actualiza las filas con `expires_at <= now()` a `is_active = false`
+- No hay proceso background que desactive boosts automaticamente
+- La desactivacion ocurre cuando el usuario visita la tienda, el perfil, o cualquier pagina que consulte `/boosts/:userId/active`
+
+#### Gaps Conocidos del Sistema de Boosts
+
+| ID | Descripcion | Severidad | Estado |
+|----|-------------|-----------|--------|
+| GAP-BOOST-001 | `addXp()` en `GamificationService` **no consulta** boosts activos — el boost XP se activa en `active_boosts` pero el calculo de XP no aplica el multiplicador aun | Alta | Pendiente |
+| GAP-BOOST-002 | No existe cron job para expiracion proactiva — boosts solo se desactivan on-read | Baja | Documentado |
+
+> **Nota importante (GAP-BOOST-001):** Cuando un estudiante compra un `xp_boost`, el boost se registra correctamente en `active_boosts` y aparece en el header. Sin embargo, el metodo `addXp()` de `GamificationService` aun no invoca `getActiveMultiplier()` para aplicar el multiplicador al calculo de XP ganado por ejercicio. El efecto visible del boost sobre XP queda pendiente de integracion futura.
+
 ---
 
 ## 6. Sistema de Rangos Maya
@@ -176,6 +244,16 @@ const rankColors: Record<string, string> = {
 - **Tienda:** Cosmetics, power-ups, premium content
 - **Power-ups:** Pistas, tiempo extra, segunda oportunidad
 - **Cosmetics:** Avatares, bordes, efectos
+
+### 7.3 Arquitectura Dual-Store (ML Coins)
+
+| Store | Tipo | Endpoint | Consumer principal |
+|-------|------|----------|-------------------|
+| `useUserGamification` | React Query | GET /summary | GamifiedHeader, Dashboard |
+| `economyStore` | Zustand persist | GET /stats (via fetchBalance) | ShopPage, InventoryPage |
+| `gamificationApi.getMLCoinsBalance` | Definida sin uso activo | GET /ml-coins | — |
+
+**Sincronizacion:** WebSocket events invalidan React Query cache. ShopPage llama `fetchBalance()` en mount. Post-compra actualiza ambos stores. Ver ADR-052.
 
 ---
 
@@ -296,6 +374,8 @@ interface Mission {
 | GAP-P2-005 | CategoryStats calculado localmente | Media | Pendiente |
 | GAP-P2-006 | Cosmetics "Próximamente" | Media | Pendiente |
 | GAP-P2-007 | Polling 30s sin jitter/backoff | Baja | Pendiente |
+| GAP-BOOST-001 | `addXp()` no aplica multiplicador de boost activo — el boost se activa pero el cálculo de XP no lo consulta aún | Alta | Pendiente |
+| GAP-BOOST-002 | No existe cron job para expiración proactiva de boosts — desactivación solo ocurre on-read | Baja | Documentado |
 
 ---
 
@@ -307,5 +387,5 @@ interface Mission {
 
 ---
 
-*Generado: 2026-01-24*
+*Generado: 2026-01-24 | Actualizado: 2026-03-03*
 *Sistema SIMCO v4.0.0*

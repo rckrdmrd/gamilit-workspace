@@ -163,14 +163,3 @@ export const getRankByXP = (xp: number): RankConfig => {
   return MAYA_RANKS_ORDERED[0]; // Ajaw por defecto
 };
 
-/**
- * @deprecated Use getRankByXP instead. ML Coins are now bonuses, not rank criteria.
- * Mantener por compatibilidad temporal, será removida en v3.0
- */
-export const getRankByMLCoins = (mlCoins: number): RankConfig => {
-  console.warn('[DEPRECATED] getRankByMLCoins: Use getRankByXP instead. ML Coins are now bonuses.');
-  // Conversión aproximada para backward compatibility
-  // Asumiendo ratio promedio de 20 ML per 100 XP
-  const estimatedXP = Math.floor(mlCoins * 5);
-  return getRankByXP(estimatedXP);
-};

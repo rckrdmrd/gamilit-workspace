@@ -119,7 +119,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
             <DetectiveCard>
               <div className="space-y-4">
                 {/* Date Range */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-detective-text">
                       Fecha de Inicio

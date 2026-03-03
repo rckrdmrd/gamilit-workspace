@@ -24,7 +24,7 @@ teacher/
 | Archivo | Descripcion |
 |---------|-------------|
 | `PORTAL-TEACHER-GUIDE.md` | Guia del portal de maestro - arquitectura y buenas practicas |
-| `PORTAL-TEACHER-API-REFERENCE.md` | Referencia de API del portal de maestro (45+ endpoints) |
+| `PORTAL-TEACHER-API-REFERENCE.md` | Referencia de API del portal de maestro (63+ endpoints) |
 | `PORTAL-TEACHER-FLOWS.md` | Flujos de datos e integracion del portal de maestro |
 
 ---

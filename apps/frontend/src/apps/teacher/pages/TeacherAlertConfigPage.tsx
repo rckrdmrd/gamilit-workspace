@@ -235,7 +235,7 @@ export default function TeacherAlertConfigPage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-detective-text">
+                  <span className="text-xl sm:text-2xl font-bold text-detective-text">
                     {thresholdValue}
                   </span>
                   <span className="text-detective-text-secondary">{unitLabel}</span>
@@ -337,6 +337,7 @@ export default function TeacherAlertConfigPage() {
 
   return (
     <TeacherPageShell>
+    <div className="detective-container py-6 sm:py-8">
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -345,7 +346,7 @@ export default function TeacherAlertConfigPage() {
             <Bell className="h-8 w-8 text-detective-orange" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-detective-text">
+            <h1 className="text-xl sm:text-2xl font-bold text-detective-text">
               Configuracion de Alertas
             </h1>
             <p className="text-detective-text-secondary">
@@ -422,6 +423,7 @@ export default function TeacherAlertConfigPage() {
           </DetectiveButton>
         </DetectiveCard>
       )}
+    </div>
     </div>
     </TeacherPageShell>
   );

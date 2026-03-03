@@ -39,7 +39,7 @@ export function TeachingPreferencesSection({
       transition={{ duration: 0.3, ease: 'easeOut' }}
     >
       <DetectiveCard>
-        <h2 className="mb-2 text-2xl font-bold text-detective-text">
+        <h2 className="mb-2 text-xl sm:text-2xl font-bold text-detective-text">
           Preferencias de Enseñanza
         </h2>
         <div className="mb-6 h-1 w-16 rounded-full bg-gradient-to-r from-detective-orange to-transparent" />

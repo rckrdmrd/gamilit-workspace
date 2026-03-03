@@ -312,7 +312,7 @@ info_proyecto:
   metricas:
     schemas: 18
     tablas: 173                  # Corrected 2026-02-27 (was 169)
-    endpoints: 914               # Corrected 2026-02-28 (was 912, +2 autosave)
+    endpoints: 915               # Corrected 2026-03-03 (was 914, +1 GET /boosts/:userId/active)
     rls_policies: 251            # Corrected 2026-02-27 (was 227). DDL rls-policies/ dirs
     entities: 156                # Corrected 2026-02-27 (was 155). 156 files, 157 classes
     funciones: 158               # Corrected 2026-02-27 (was 183). DDL functions/ dirs

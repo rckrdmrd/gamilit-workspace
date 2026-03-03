@@ -274,7 +274,7 @@ export const ResponseFilters = ({ filters, onChange, onClear }: ResponseFiltersP
 
           {/* Row 4: Correctness Filter */}
           <FilterSection icon={<CheckCircle className="h-4 w-4" />} label="Estado de Respuesta">
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="radio"

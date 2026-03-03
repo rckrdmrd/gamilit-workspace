@@ -39,7 +39,8 @@ import { TransactionTypeEnum } from '@/shared/constants/enums.constants';
 @Index('idx_ml_transactions_reference', ['reference_id', 'reference_type'])
 @Check('"balance_before" >= 0')
 @Check('"balance_after" >= 0')
-@Check('"reference_type" IN (\'exercise\', \'module\', \'achievement\', \'powerup\', \'admin\', \'streak\', \'rank\', \'mission\', \'rank_promotion\')')
+// ADR-052: Added 'welcome' for WELCOME_BONUS initial transaction on user creation
+@Check('"reference_type" IN (\'exercise\', \'module\', \'achievement\', \'powerup\', \'admin\', \'streak\', \'rank\', \'mission\', \'rank_promotion\', \'welcome\')')
 export class MLCoinsTransaction {
   @PrimaryGeneratedColumn('uuid')
     id!: string;
@@ -75,7 +76,8 @@ export class MLCoinsTransaction {
     reference_id!: string | null;
 
   @Column({ type: 'text', nullable: true })
-    reference_type!: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank' | 'mission' | 'rank_promotion' | null;
+    // ADR-052: Added 'welcome' for WELCOME_BONUS initial transaction on user creation
+    reference_type!: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank' | 'mission' | 'rank_promotion' | 'welcome' | null;
 
   @Column({ type: 'numeric', precision: 3, scale: 2, default: 1.00 })
     multiplier!: number;

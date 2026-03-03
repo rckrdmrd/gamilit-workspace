@@ -26,7 +26,7 @@ Esta guia establece la estrategia, configuracion y mejores practicas para implem
 | Componentes .tsx | 580 produccion |
 | Paginas | 70 activas |
 | Rutas | 73 en App.tsx |
-| Ejercicios | 30 mecanicas unicas en 5 modulos educativos |
+| Ejercicios | 29 mecanicas unicas (comprension_auditiva en BACKLOG) en 5 modulos educativos |
 | Tests E2E actuales | 0 (primera implementacion) |
 | Test runner unitario frontend | Vitest (46 archivos) |
 | Test runner backend | Jest (2324 tests, 63 spec files) |

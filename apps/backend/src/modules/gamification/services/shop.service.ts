@@ -14,6 +14,7 @@ import { PurchaseResponseDto } from '../dto/shop/purchase-response.dto';
 import { ShopItemResponseDto } from '../dto/shop/shop-item-response.dto';
 import { ComodinTypeEnum, TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { ComodinesService } from './comodines.service';
+import { BoostService } from './boost.service';
 import {
   ShopItemNotFoundError,
   UserStatsNotFoundError,
@@ -26,7 +27,9 @@ import {
   RequiredAchievementMissingError,
   InvalidQuantityError,
   ConsumablePurchaseConflictError,
+  NonConsumableDuplicatePurchaseError,
 } from '../errors/gamification.errors';
+import { DomainError } from '@shared/exceptions';
 import { NotificationService } from '../../notifications/services/notification.service';
 import { mergeVisualConfig } from '../utils/visual-config.util';
 
@@ -75,6 +78,7 @@ export class ShopService {
     private readonly userAchievementRepository: Repository<UserAchievement>,
     private readonly notificationService: NotificationService,
     private readonly comodinesService: ComodinesService,
+    private readonly boostService: BoostService,
   ) {}
 
   /**
@@ -195,8 +199,14 @@ export class ShopService {
     // Captured inside the transaction and used after it commits for comodines sync
     let item_is_consumable = false;
     let effect_type: string | undefined;
+    // Captured for post-transaction boost activation
+    let boost_type: string | undefined;
+    let boost_multiplier: number | undefined;
+    let boost_duration_days: number | undefined;
 
-    const purchaseResult = await this.shopItemRepository.manager.transaction(async (manager) => {
+    let purchaseResult: PurchaseResponseDto;
+    try {
+    purchaseResult = await this.shopItemRepository.manager.transaction(async (manager) => {
       const itemRepo = manager.getRepository(ShopItem);
       const purchaseRepo = manager.getRepository(UserPurchase);
       const userStatsRepo = manager.getRepository(UserStats);
@@ -250,8 +260,9 @@ export class ShopService {
         throw new UserStatsNotFoundError(userId);
       }
 
-      // 4. Validar requisitos (rank, level, achievement)
-      await this.validateRequirements(userId, item, userStats, manager);
+      // 4. Requisitos de compra desactivados (decision de producto)
+      // Los items se compran solo con ML Coins suficientes.
+      // await this.validateRequirements(userId, item, userStats, manager);
 
       // 5. Validar saldo suficiente
       const currentPrice = item.getCurrentPrice();
@@ -338,7 +349,10 @@ export class ShopService {
           'code' in err &&
           (err as Record<string, unknown>).code === '23505'
         ) {
-          throw new ConsumablePurchaseConflictError(itemId);
+          if (item.is_consumable) {
+            throw new ConsumablePurchaseConflictError(itemId);
+          }
+          throw new NonConsumableDuplicatePurchaseError(itemId);
         }
         throw err;
       }
@@ -362,6 +376,15 @@ export class ShopService {
         ? item.effect_data.type
         : undefined;
 
+      // Capture boost metadata for post-transaction activation
+      if (effect_type === 'xp_boost' || effect_type === 'coins_boost') {
+        boost_type = effect_type === 'xp_boost' ? 'XP' : 'COINS';
+        boost_multiplier = typeof item.effect_data?.multiplier === 'number'
+          ? item.effect_data.multiplier
+          : (effect_type === 'xp_boost' ? 2.0 : 1.5);
+        boost_duration_days = item.duration_days ?? 1;
+      }
+
       return {
         success: true,
         purchase_id: savedPurchase.id,
@@ -371,6 +394,38 @@ export class ShopService {
         message: `Successfully purchased ${quantity}x ${item.name}`,
       };
     });
+    } catch (error) {
+      // DomainErrors are expected business logic errors — re-throw as-is
+      if (error instanceof DomainError) {
+        throw error;
+      }
+      // Unexpected errors get logged with full stack for debugging
+      this.logger.error(
+        `[PURCHASE-ERROR] Unexpected error during purchase for user ${userId}, item ${itemId}: ${error instanceof Error ? error.stack : String(error)}`,
+      );
+      throw error;
+    }
+
+    // Activate boost if purchased item is a boost type (non-blocking)
+    if (purchaseResult && boost_type && boost_multiplier && boost_duration_days) {
+      try {
+        await this.boostService.activateBoost(
+          userId,
+          boost_type as 'XP' | 'COINS',
+          boost_multiplier,
+          boost_duration_days,
+          `ITEM:${purchaseResult.purchase_id}`,
+        );
+        this.logger.log(
+          `Activated ${boost_type} boost (${boost_multiplier}x, ${boost_duration_days}d) for user ${userId}`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `[BOOST-ERROR] Failed to activate boost for user ${userId}: ${error instanceof Error ? error.stack : String(error)}`,
+        );
+        // Non-blocking: shop purchase already committed
+      }
+    }
 
     // Sync consumable shop purchase to comodines inventory (non-blocking)
     if (purchaseResult && item_is_consumable && effect_type) {

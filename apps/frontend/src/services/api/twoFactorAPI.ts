@@ -1,3 +1,5 @@
+/** @deprecated Since 2025-10 — 2FA feature disabled. Zero consumers. Safe to delete. */
+
 /**
  * Two-Factor Authentication API
  *

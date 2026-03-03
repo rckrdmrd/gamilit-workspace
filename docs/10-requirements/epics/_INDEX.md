@@ -16,24 +16,23 @@ estado: activo
 
 ---
 
-## Wave 3 — EPICs Tecnicas (COMPLETADAS — ARCHIVADAS)
+## Wave 3 — EPICs Tecnicas (COMPLETADAS — ELIMINADAS)
 
-> 11 EPICs por capa tecnica. Todas completadas y archivadas. [Ver archivo](_archived/wave-3-technical/_INDEX.md)
-> **Nota:** Contenido movido a `_archived/wave-3-technical/` el 2026-02-28. El directorio `_wave-3-technical/` contiene solo un redirect stub.
+> 11 EPICs por capa tecnica. Todas completadas. Contenido eliminado el 2026-03-03.
 
-| Epic ID | Titulo | SP | Estado | EPIC.md |
-|---------|--------|-----|--------|---------|
-| EPIC-GAM-SCAFFOLD | Scaffolding Gamilit | 5 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-SCAFFOLD/EPIC.md) |
-| EPIC-GAM-REQUIREMENTS | Requerimientos Gamilit | 13 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-REQUIREMENTS/EPIC.md) |
-| EPIC-GAM-ARCHITECTURE | Arquitectura Gamificacion | 13 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-ARCHITECTURE/EPIC.md) |
-| EPIC-GAM-DATABASE | Esquema BD Gamilit | 21 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-DATABASE/EPIC.md) |
-| EPIC-GAM-BACKEND | Backend Gamilit | 34 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-BACKEND/EPIC.md) |
-| EPIC-GAM-FRONTEND | Frontend Gamilit | 34 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-FRONTEND/EPIC.md) |
-| EPIC-GAM-K8S | Kubernetes Gamilit | 8 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-K8S/EPIC.md) |
-| EPIC-GAM-TESTING | Tests Gamilit | 13 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-TESTING/EPIC.md) |
-| EPIC-GAM-DEVOPS | DevOps Gamilit | 8 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-DEVOPS/EPIC.md) |
-| EPIC-GAM-DOCS | Documentacion Gamilit | 8 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-DOCS/EPIC.md) |
-| EPIC-GAM-INTEGRATION | Integracion Gamilit | 5 | completed | [EPIC.md](_archived/wave-3-technical/EPIC-GAM-INTEGRATION/EPIC.md) |
+| Epic ID | Titulo | SP | Estado |
+|---------|--------|-----|--------|
+| EPIC-GAM-SCAFFOLD | Scaffolding Gamilit | 5 | completed |
+| EPIC-GAM-REQUIREMENTS | Requerimientos Gamilit | 13 | completed |
+| EPIC-GAM-ARCHITECTURE | Arquitectura Gamificacion | 13 | completed |
+| EPIC-GAM-DATABASE | Esquema BD Gamilit | 21 | completed |
+| EPIC-GAM-BACKEND | Backend Gamilit | 34 | completed |
+| EPIC-GAM-FRONTEND | Frontend Gamilit | 34 | completed |
+| EPIC-GAM-K8S | Kubernetes Gamilit | 8 | completed |
+| EPIC-GAM-TESTING | Tests Gamilit | 13 | completed |
+| EPIC-GAM-DEVOPS | DevOps Gamilit | 8 | completed |
+| EPIC-GAM-DOCS | Documentacion Gamilit | 8 | completed |
+| EPIC-GAM-INTEGRATION | Integracion Gamilit | 5 | completed |
 
 **Subtotal Wave 3:** 11 EPICs | 162 SP | 100% completado
 

@@ -24,6 +24,7 @@ import {
 } from '../types/economyTypes';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/services/api/apiClient';
+import { queryClient } from '@/shared/lib/queryClient';
 
 /**
  * Economy Store State Interface
@@ -144,6 +145,8 @@ export const useEconomyStore = create<EconomyState>()(
             isLoading: false,
             error: null,
           });
+          // Keep React Query header in sync after balance change
+          queryClient.invalidateQueries({ queryKey: ['userGamification'] });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to add coins';
           set({
@@ -201,6 +204,8 @@ export const useEconomyStore = create<EconomyState>()(
             isLoading: false,
             error: null,
           });
+          // Keep React Query header in sync after balance change
+          queryClient.invalidateQueries({ queryKey: ['userGamification'] });
 
           return true;
         } catch (error) {

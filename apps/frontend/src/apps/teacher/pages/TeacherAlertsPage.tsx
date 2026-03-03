@@ -50,6 +50,7 @@ export default function TeacherAlertsPage() {
 
   return (
     <TeacherPageShell>
+    <div className="detective-container py-6 sm:py-8">
     <div className="space-y-6">
         {/* Header con título y descripción */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -307,6 +308,7 @@ export default function TeacherAlertsPage() {
             </div>
           </div>
         </DetectiveCard>
+    </div>
     </div>
     </TeacherPageShell>
   );

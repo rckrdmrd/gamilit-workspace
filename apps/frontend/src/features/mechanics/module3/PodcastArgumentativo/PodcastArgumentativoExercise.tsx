@@ -31,13 +31,19 @@ interface ExerciseProgressData {
   };
 }
 
+interface AdaptedPodcastData {
+  topic?: string;
+  prompt?: string;
+  timeLimit?: number;
+}
+
 interface ExerciseProps {
   exerciseId: string;
+  exercise?: AdaptedPodcastData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (data: ExerciseProgressData) => void;
   initialData?: ExerciseState;
-  difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -52,6 +58,7 @@ interface ExerciseState {
 
 export const PodcastArgumentativoExercise = ({
   exerciseId,
+  exercise: adaptedExercise,
   onComplete,
   onExit,
   onProgressUpdate,
@@ -90,7 +97,8 @@ export const PodcastArgumentativoExercise = ({
     isListening,
     error: speechError,
     confidence: _speechConfidence,
-  } = useSpeechToText({ language: 'es-MX', continuous: true, interimResults: true }); const { submitAsync } = useExerciseSubmission(exerciseId);
+  } = useSpeechToText({ language: 'es-MX', continuous: true, interimResults: true });
+  const { submitAsync } = useExerciseSubmission(exerciseId);
 
 
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
@@ -112,9 +120,20 @@ export const PodcastArgumentativoExercise = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
   useEffect(() => {
-    loadExercise();
+    // Use adapted data from exercise prop if available
+    if (adaptedExercise?.topic) {
+      setExercise({
+        id: exerciseId,
+        topic: adaptedExercise.topic,
+        prompt: adaptedExercise.prompt || '',
+        timeLimit: adaptedExercise.timeLimit || 300,
+      });
+      setSelectedTopic({ id: 'topic-1', text: adaptedExercise.topic });
+    } else {
+      loadExercise();
+    }
     checkPermission(); // Check permission on mount
-  }, [checkPermission]);
+  }, [exerciseId, checkPermission]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync audioBlob from hook to recording state
   useEffect(() => {
@@ -170,7 +189,7 @@ export const PodcastArgumentativoExercise = ({
   }, [recording, scriptText, currentScore, selectedTopic, hookAudioUrl]);
 
   const loadExercise = async () => {
-    const data = await fetchPodcastExercise('podcast-1');
+    const data = await fetchPodcastExercise(exerciseId);
     setExercise(data);
     // Inicializar tema seleccionado con el del ejercicio
     if (data?.topic) {

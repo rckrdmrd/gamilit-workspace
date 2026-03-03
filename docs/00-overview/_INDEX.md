@@ -23,7 +23,6 @@ estado: activo
 | [PORTALES.md](./PORTALES.md) | Portales y responsabilidades |
 | [GAMIFICACION.md](./GAMIFICACION.md) | Componentes del sistema gamificado |
 | [METRICAS.md](./METRICAS.md) | Referencias a metricas SSOT |
-| [GOBIERNO-SIMCO.md](./GOBIERNO-SIMCO.md) | [REDIRECT] Stub — ver `orchestration/directivas/simco/` |
 | [REQUERIMIENTOS.md](./REQUERIMIENTOS.md) | Resumen funcional y no funcional |
 | [ESTRUCTURA-DOCS.md](./ESTRUCTURA-DOCS.md) | Mapa de estructura documental |
 | [ESTADO-ACTUAL.md](./ESTADO-ACTUAL.md) | Estado general y pendientes |
@@ -31,10 +30,7 @@ estado: activo
 | [GLOSARIO.md](./GLOSARIO.md) | Glosario de terminos del proyecto |
 | [TESTING-STRATEGY.md](./TESTING-STRATEGY.md) | Estrategia de testing |
 | [DEVOPS.md](./DEVOPS.md) | Configuracion DevOps |
-| [VISION-ALCANCE.md](./VISION-ALCANCE.md) | Redirect a docs/10-requirements/ |
-| [ONBOARDING.md](./ONBOARDING.md) | Redirect a docs/70-onboarding/ |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Arquitectura de deployment y servidor de produccion |
-| [REPORTE-INTEGRAL-2026-01-20.md](./REPORTE-INTEGRAL-2026-01-20.md) | [MOVED] Stub — original en `orchestration/trazas/REPORTE-INTEGRAL-2026-01-20.md` |
 
 ## Secciones Relacionadas
 

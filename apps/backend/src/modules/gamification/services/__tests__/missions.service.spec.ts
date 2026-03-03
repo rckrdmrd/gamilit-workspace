@@ -351,6 +351,13 @@ describe('MissionsService', () => {
         transaction: {},
       } as any);
       userStatsService.updateStats.mockResolvedValue({} as any);
+
+      // claimRewardsFallback uses createQueryBuilder().update().set().where().execute()
+      // as an atomic guard (UPDATE ... WHERE claimed_at IS NULL).
+      // Return affected: 1 by default (happy path = not yet claimed).
+      const mockQueryBuilder = createMockQueryBuilder();
+      mockQueryBuilder.execute.mockResolvedValue({ affected: 1 });
+      missionsRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
     });
 
     it('should successfully claim rewards for completed mission', async () => {
@@ -361,12 +368,17 @@ describe('MissionsService', () => {
         rewards: { ml_coins: 50, xp: 100 },
         claimed_at: null, // Must be null to not trigger "already claimed" error
       };
-      missionsRepo.findOne.mockResolvedValue(completedMission as any);
-      missionsRepo.save.mockResolvedValue({
+      const claimedMission = {
         ...completedMission,
         status: MissionStatusEnum.CLAIMED,
         claimed_at: new Date(),
-      } as any);
+      };
+      // claimRewardsFallback calls findOne twice:
+      //   1st: to load and validate the mission before the atomic UPDATE
+      //   2nd: to reload the mission after the atomic UPDATE (to reflect claimed_at/status)
+      missionsRepo.findOne
+        .mockResolvedValueOnce(completedMission as any)
+        .mockResolvedValueOnce(claimedMission as any);
 
       // Act - service returns { mission, rewards, rewards_granted }
       const result = await service.claimRewards(missionId, userId);

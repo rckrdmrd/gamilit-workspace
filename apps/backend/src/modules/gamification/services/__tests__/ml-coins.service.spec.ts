@@ -19,6 +19,7 @@ import { MLCoinsService } from '../ml-coins.service';
 import { RankMultiplierService } from '../rank-multiplier.service';
 import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { Profile } from '@/modules/auth/entities/profile.entity';
 import { createMockRepository, createMockQueryBuilder } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
 
@@ -27,6 +28,7 @@ describe('MLCoinsService', () => {
   let userStatsRepo: ReturnType<typeof createMockRepository>;
   let transactionRepo: ReturnType<typeof createMockRepository>;
   let mayaRanksRepo: ReturnType<typeof createMockRepository>;
+  let profileRepo: ReturnType<typeof createMockRepository>;
   let mockDataSource: { transaction: jest.Mock; createQueryRunner: jest.Mock };
   let mockRankMultiplierService: Partial<RankMultiplierService>;
   // Manager spies for transaction callback verification
@@ -49,6 +51,14 @@ describe('MLCoinsService', () => {
     userStatsRepo = createMockRepository<UserStats>();
     transactionRepo = createMockRepository<MLCoinsTransaction>();
     mayaRanksRepo = createMockRepository<MayaRankEntity>();
+    profileRepo = createMockRepository<Profile>();
+
+    // CORR-ML-001: Mock resolveProfileId — profile found by id returns same id
+    profileRepo.findOne.mockImplementation(async (opts: any) => {
+      if (opts?.where?.id) return { id: opts.where.id, user_id: opts.where.id, tenant_id: 'tenant-1' };
+      if (opts?.where?.user_id) return { id: opts.where.user_id, user_id: opts.where.user_id, tenant_id: 'tenant-1' };
+      return null;
+    });
 
     // Mock RankMultiplierService - US-GAM-011
     mockRankMultiplierService = {
@@ -116,6 +126,7 @@ describe('MLCoinsService', () => {
         { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: transactionRepo },
         { provide: getRepositoryToken(MayaRankEntity, 'gamification'), useValue: mayaRanksRepo },
         { provide: getDataSourceToken('gamification'), useValue: mockDataSource },
+        { provide: getRepositoryToken(Profile, 'auth'), useValue: profileRepo },
         { provide: RankMultiplierService, useValue: mockRankMultiplierService },
       ],
     }).compile();
@@ -512,7 +523,8 @@ describe('MLCoinsService', () => {
       // Arrange
       userStatsRepo.findOne.mockResolvedValue(mockUserStats as any);
       const mockQueryBuilder = createMockQueryBuilder();
-      mockQueryBuilder.getRawOne.mockResolvedValue({ total_amount: '0' }); // 0 + 100 initial = 100
+      // ADR-052: WELCOME_BONUS is now a real transaction, so SUM(transactions) = actual balance
+      mockQueryBuilder.getRawOne.mockResolvedValue({ total_amount: '100' }); // 100 from WELCOME_BONUS = 100
       transactionRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
 
       // Act

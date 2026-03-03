@@ -19,21 +19,3 @@ export const fetchTribunal = async (_exerciseId: string): Promise<TribunalOpinio
   return data.data;
 };
 
-/**
- * Submit tribunal evaluations
- * @deprecated Use submitExercise from progressAPI instead
- * Real submission endpoint: POST /educational/exercises/:exerciseId/submit
- */
-export const submitTribunalAnswers = async (
-  _exerciseId: string,
-  _userId: string,
-  _answers: unknown
-): Promise<{ success: boolean; score: number }> => {
-  // This is deprecated - use submitExercise from progressAPI
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  return {
-    success: true,
-    score: 80
-  };
-};

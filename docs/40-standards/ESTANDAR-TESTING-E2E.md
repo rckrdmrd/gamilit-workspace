@@ -289,7 +289,7 @@ test('dashboard estudiante deberia coincidir con baseline', async ({ page }) => 
 | Componente | Portal | Justificacion |
 |-----------|--------|---------------|
 | Dashboard principal | Estudiante | Punto de entrada, XP, rango maya |
-| Pagina de ejercicio | Estudiante | 30 mecanicas, interacciones criticas |
+| Pagina de ejercicio | Estudiante | 29 mecanicas (comprension_auditiva en BACKLOG), interacciones criticas |
 | Tienda ML Coins | Estudiante | Economia virtual, items visuales |
 | Dashboard de aulas | Maestro | Vista principal del maestro |
 | Reportes de progreso | Maestro | Graficas y tablas de datos |

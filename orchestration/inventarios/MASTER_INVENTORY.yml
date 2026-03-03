@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.9.1"
-fecha: "2026-03-02"  # v14.9.1: SopaLetras responsive fix — dynamic cell sizing via useContainerSize hook (Crucigrama pattern). Previous: v14.9.0 ML Coins balance fix
+version: "14.9.14"
+fecha: "2026-03-03"  # v14.9.14: AnalisisFuentesExercise encoding fix (unicode→UTF-8), TikTok timer 10s→30s (5 seeds + 3 frontend files), seed display text updates. Previous: v14.9.13
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -43,31 +43,31 @@ metricas:
       - "init-database.sh"             # Full initialization
 
   backend:
-    modulos: 23                  # 22 directorios + mail (transitivo)
+    modulos: 23                  # 22 directorios + mail (transitivo). Note: 21 .module.ts files, 22 @Module decorators (etl.module.ts has 2)
     entity_files: 156            # 156 archivos
-    entity_classes: 157          # 157 @Entity classes (Verified 2026-02-26, was 159 but 2 over-counted)
+    entity_classes: 158          # 158 @Entity classes (ST-001 audit 2026-03-03: maya-rank.entity.ts AND message.entity.ts each have 2 @Entity; was 157)
     dtos: 401                    # 401 *.dto.ts files in modules/. Verified 2026-02-21
-    services: 172                # 172 *.service.ts files in modules/. Verified 2026-02-21 (-1: ml-predictor.service.ts deleted)
-    controllers: 108
-    endpoints: 914               # Verified 2026-02-28: 914 = 856 active + 58 conditional (data_warehouse). +2 autosave endpoints. Integration audit confirmed.
-    guards: 15
-    decorators: 18               # 18 symbols en 9 archivos
+    services: 173                # 173 *.service.ts files in modules/. +1 BoostService (2026-03-03)
+    controllers: 109             # 109 controllers (+1 BoostController, 2026-03-03)
+    endpoints: 919               # 919 endpoints (+4 from BoostController, ST-001 audit 2026-03-03; was 915)
+    guards: 9                    # 9 dedicated .guard.ts files (ST-001 audit 2026-03-03; was 15 — overcounted middleware/pipes)
+    decorators: 3                # 3 dedicated .decorator.ts files (ST-001 audit 2026-03-03; was 18 — counted all exported symbols incl. pipes/interceptors)
     interceptors: 6
     pipes: 6
     filters: 2
     tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 575              # +3 parent portal pages (Notifications, Messages, Settings). Reconteo 2026-02-27: 572 strict base
-    hooks: 132                        # Reconteo 2026-02-27: 132 use*.ts en hooks/ dirs (excl. type files, API services, examples)
-    paginas: 70                       # Corrected 2026-02-27: 70 routable page components (was 72 — overcounted 2 items). Incl. student, teacher, admin, parent portals.
+    componentes_tsx: 581              # ST-002 audit 2026-03-03: 581 .tsx production files (was 575; +6 from shop/gamification additions)
+    hooks: 143                        # ST-002 audit 2026-03-03: 143 use*.ts en hooks/ dirs (was 132; +11 from boost, economy, gamification hooks)
+    paginas: 81                       # ST-002 audit 2026-03-03: 81 routable page components (was 70; +11 pages across portals)
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
-    api_service_files: 65             # 67 - 2 deleted (teacherMessagesApi, teacherContentApi removed in teacher portal cleanup v3.1.0)
+    api_service_files: 78             # ST-002 audit 2026-03-03: 78 API service files (was 65; +13 from shop, boost, gamification, parent APIs)
     api_calls_total: 580              # ~580: +resourceSharingApi calls over previous 575
     portales: 4
     mecanicas_ejercicio: 29           # 29 mecanicas unicas de ejercicio (comprension_auditiva BACKLOG)
     routes: 74                        # 74 routes in App.tsx. Base was 71 (corrected 2026-02-27)
-    type_files: 49                    # 49 archivos type definition
+    type_files: 81                    # ST-002 audit 2026-03-03: 81 type definition files (was 49; +32 from economy, gamification, exercise types expansion)
     recursos_multimedia:
       meme_svgs: 6                   # public/memes/*.svg (Marie Curie, flat design 600x500px)
       audio_mp3: 1                   # public/audio/marie-curie-biografia.mp3 (~2min gTTS)
@@ -102,7 +102,7 @@ metricas:
     dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
     lint_warnings: 98               # 98 warnings (0 errors). Previously 104 — reduction from shop integration cleanup
     integration_test_files: 5       # jest.integration.config.js + 5 integration spec files added Phase 6D. Script: test:integration
-    domain_error_classes: 45        # 25 auth + 17 gamification + 3 educational error classes (ADR-045, verified 2026-02-27)
+    domain_error_classes: 53        # 25 auth + 17 gamification + 8 educational error classes (ADR-045; educational expanded 3→8 in Wave 3 remediation 2026-03-03, +5 new classes; +3 migrated HTTP exceptions in exercises.service.ts)
     domain_error_throws: 39         # 32 auth + 7 gamification actual throws in services (corrected from 129 — see ADR-045 Estado de Migracion)
     data_warehouse_datasource: "conditional"  # ENABLE_DATA_WAREHOUSE feature flag — etl/ml/visualization modules conditional
 
@@ -160,7 +160,7 @@ gamificacion:
 
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v9.2.0)"
-  backend: "BACKEND_INVENTORY.yml (v5.3.2)"
+  backend: "BACKEND_INVENTORY.yml (v5.3.4)"
   frontend: "FRONTEND_INVENTORY.yml (v12.5.8)"
   shop: "Shop categories: 3 active (consumables, cosmetics, boosts) — guild/social removed (out of scope). Items: 31 total (was 38 pre-cleanup)"
 
@@ -231,6 +231,163 @@ credenciales:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v14.9.13"
+    changes:
+      - "feat(teacher): Responsive remediation — 16 pages, 21 components, 4 modals (~45 files modified)"
+      - "feat(teacher): 8 barrel export index.ts files for teacher components"
+      - "fix(teacher): Standards compliance improved — Responsive 78%→95%, Modal 86%→95%, Truncation 20%→80%"
+      - "refactor(teacher): 2 deprecated types removed (InterventionAlertLegacy, TeacherDashboardStatsLegacy)"
+      - "docs(teacher): PORTAL-TEACHER-GUIDE.md v3.1.0→v3.3.0, _INDEX.md updated, _MAP.md endpoint count fixed"
+      - "docs(teacher): FL-TCH-08c marked DEPRECADO in flows _INDEX.md"
+    files_modified: 53
+    build_status: "PASS"
+    refs:
+      - "FRONTEND_INVENTORY v12.8.0"
+      - "orchestration/tareas/TASK-2026-03-03-TEACHER-PORTAL-REMEDIATION/REMEDIATION-REPORT.md"
+
+  - date: "2026-03-03"
+    version: "v14.9.12"
+    changes:
+      - "feat(adr): ADR-052 created — ML Coins transaction integrity pattern established"
+      - "fix(gamification): promote_to_next_rank.sql now updates ml_coins_earned_total"
+      - "fix(gamification): update_user_rank.sql now updates ml_coins_earned_total"
+      - "fix(gamification): claim_achievement_reward.sql now updates ml_coins_earned_total"
+      - "fix(ml-coins): MLCoinsService.resolveProfileId() added to 12 public methods"
+      - "fix(ml-coins): WELCOME_BONUS transaction emitted from UserStatsService.create()"
+      - "fix(ml-coins): auditBalance() hardcoded +100 removed — SUM(transactions) is source of truth"
+      - "fix(ml-coins): reference_type 'welcome' added to DDL CHECK constraint and entity"
+      - "docs: ADR _INDEX updated 48→49 ADRs"
+      - "docs: SPEC-GAMIFICATION sec 7.3 dual-store architecture added"
+    files_modified: 10
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.11"
+    changes:
+      - "docs(shop): Removed level/rank/achievement purchase restrictions — product decision to allow ML Coins-only purchases"
+      - "fix(backend): validateRequirements() call commented out in shop.service.ts"
+      - "fix(frontend): Level requirement indicator removed from ShopItemCard and PurchaseModal"
+      - "fix(frontend): 'Bloqueado' button state and requirement warnings removed from shop UI"
+      - "fix(frontend): ShopPage and PurchaseModal no longer call useAuth/useUserGamification for level checks"
+    files_modified: 3
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.10"
+    changes:
+      - "fix(gamification): ML Coins double credit on rank promotion removed — ranksService no longer calls mlCoinsService.addCoins()"
+      - "fix(gamification): Header/shop balance desync resolved — economyStore invalidates userGamification query key"
+      - "fix(missions): Race condition in claimRewardsFallback() fixed — atomic UPDATE guard with WHERE claimed_at IS NULL"
+      - "feat(frontend): queryClient singleton exported from shared/lib/queryClient.ts"
+      - "fix(frontend): useUserGamification staleTime 5min → 30sec for faster sync"
+      - "feat(frontend): ShopPage fetches balance on mount via fetchBalance()"
+    files_modified: 7
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.9"
+    changes:
+      - "docs(gamification): RankProgressWidget auto-height behavior documented in FLUJO-RENDERING-COSMETICOS.md"
+      - "docs(gamification): Removed max-h-[600px] and overflow-y-auto constraints — card auto-sizes to content"
+      - "docs(gamification): Frame SVG absolute inset-0 adapts to container's natural height"
+    files_modified: 1
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.8"
+    changes:
+      - "feat(shop): Level requirements display on ShopItemCard and PurchaseModal"
+      - "feat(shop): INSUFFICIENT_LEVEL/INSUFFICIENT_RANK error handling in useShopPurchase"
+      - "fix(frame-rendering): RankProgressWidget frame overlay z-index updated (z-10→z-30 for content container)"
+    files_modified: 3
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.7"
+    changes:
+      - "audit(backend): entity_classes corrected 157→158 (maya-rank.entity.ts has 2 @Entity classes, same as message.entity.ts)"
+      - "audit(backend): guards corrected 15→9 (only dedicated .guard.ts files; ST-001 verified)"
+      - "audit(backend): decorators corrected 18→3 (only dedicated .decorator.ts files; ST-001 verified)"
+      - "audit(backend): endpoints corrected 915→919 (+4 from BoostController; ST-001 verified)"
+      - "audit(backend): modules noted — 21 .module.ts files, 22 @Module decorators (etl has 2)"
+      - "audit(backend): domain_error_classes updated 45→53 (educational.errors.ts expanded 3→8)"
+      - "audit(frontend): componentes_tsx corrected 575→581 (ST-002 verified)"
+      - "audit(frontend): hooks corrected 132→143 (ST-002 verified)"
+      - "audit(frontend): paginas corrected 70→81 (ST-002 verified)"
+      - "audit(frontend): type_files corrected 49→81 (ST-002 verified)"
+      - "audit(frontend): api_service_files corrected 65→78 (ST-002 verified)"
+      - "audit(backend): BACKEND_INVENTORY bumped v5.3.3→v5.3.4"
+    files_modified: 2
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.6"
+    changes:
+      - "governance: 3 new SIMCO directives — SIMCO-POST-TASK-SYNC.md, SIMCO-ORCHESTRATOR-PATTERN.md, SIMCO-SESSION-LEARNING-PIPELINE.md"
+      - "governance: SIMCO-MODEL-SELECTION.md updated to v2.0.0"
+      - "governance: SIMCO-CONTEXT-MANAGEMENT-V2.md updated to v2.4.0"
+      - "governance: SIMCO-DELEGACION.md updated to v1.4.0"
+      - "governance: SIMCO-SUBAGENTE.md updated to v1.1.0"
+      - "governance: ESTANDAR-FRONTEND-RESPONSIVE updated to v1.2.0"
+      - "governance: SIMCO-ESTANDARES.md updated to v2.0.1"
+      - "governance: Skills README updated, _INDEX/_MAP updated"
+      - "metrics: SIMCO directives count 72→75 (3 new)"
+    files_modified: 0
+    build_status: "N/A (governance-only)"
+
+  - date: "2026-03-03"
+    version: "v14.9.5"
+    changes:
+      - "docs: MODULES-ARCHITECTURE.md rewritten — 14→23 modules, 107→156 entities corrected"
+      - "docs: BoostController documented in 3 spec files (API-REFERENCE, BACKEND_INVENTORY, portal spec)"
+      - "docs: schema-ref header fixed — tablas count 27→21 in 04-gamification.md"
+      - "docs: SIMCO-ESTANDARES catalog rebuilt — standards count 16→37"
+      - "docs: ADR back-references added to 5 SIMCO directive files"
+      - "docs: mecanicas_ejercicio 30→29 corrected in 11 files (comprension_auditiva BACKLOG)"
+      - "docs: ADR _INDEX updated — adr_count 47→48 (ADR-051 added)"
+      - "docs: SIMCO-VALIDACION metrics updated to current values"
+      - "docs: ET-GAM-010 endpoints annotated with current implementation status"
+      - "docs: SPEC-EXERCISES gaps updated (GAP-P3-001 marked Resuelto)"
+      - "docs: admin pages corrected 18→19 in 3 files"
+      - "docs: '27 tipos' corrected to '23 tipos' in 4 files"
+    files_modified: 0
+    build_status: "N/A (docs-only)"
+
+  - date: "2026-03-03"
+    version: "v14.9.4"
+    changes:
+      - "fix(exercises): M3-010 DebateDigital catch block shows error feedback instead of misleading 'info' type"
+      - "fix(exercises): M3-008 MatrizPerspectivas hardcoded Marie Curie questions replaced with generic text"
+      - "fix(exercises): M3-009 AnalisisFuentes hardcoded description replaced with dynamic adaptedExercise?.description"
+      - "refactor(types): M3-005 duplicate FeedbackData in matrizPerspectivasTypes replaced with canonical re-export"
+      - "refactor(exercises): M3-007 removed unused difficulty prop from 4 M3 ExerciseProps interfaces"
+      - "fix(exercises): M3-001 PodcastArgumentativo two statements on one line separated"
+      - "fix(exercises): M3-002 AnalisisFuentes FeedbackData import reordered to shared/components group"
+    files_modified: 5
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.3"
+    changes:
+      - "fix(shop): 4 asset files copied — golden-banner.svg, basic-banner.svg (frames), dragon-reader.svg, knowledge-shield.svg (badges)"
+      - "fix(shop-purchase): NonConsumableDuplicatePurchaseError (409) added, error handling for 23505 unique violations"
+      - "feat(gamification): BoostService + BoostController with GET /boosts/:userId/active endpoint"
+      - "fix(seeds): required_level=5 UPDATE for Segunda Oportunidad across 3 environments"
+      - "feat(frontend): boost indicator badges in GamifiedHeader with time remaining"
+    files_modified: 13
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v14.9.2"
+    changes:
+      - "fix(exercises): M3 adapter pipeline integration — 4 bugs corregidos (hardcoded ID, missing exerciseId, mock override, mock-only)"
+      - "feat(adapters): 4 dedicated M3 adapters (PodcastArgumentativo, AnalisisFuentes, MatrizPerspectivas, DebateDigital)"
+      - "refactor(registrations): 4 M3 entries migrated from adaptToBaseExercise to dedicated adapters"
+      - "feat(components): 4 M3 exercises accept exercise prop with graceful fallback to API/mock"
+    files_modified: 6
+    build_status: "PASS"
+
   - date: "2026-03-02"
     version: "v14.9.0"
     changes:
@@ -272,5 +429,5 @@ changelog:
     files_modified: 25
 
 # ===============================================================================
-# FIN MASTER INVENTORY v14.9.0
+# FIN MASTER INVENTORY v14.9.7
 # ===============================================================================

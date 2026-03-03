@@ -2,7 +2,7 @@
 titulo: "ET-GAM-010: Multipliers System"
 tipo: especificacion-tecnica
 fecha_creacion: "2025-10-01"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-03"
 estado: activo
 ---
 
@@ -17,9 +17,9 @@ estado: activo
 | **Tipo** | Especificacion Tecnica |
 | **Estado** | Implementado |
 | **Completitud** | 85% |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Fecha Creacion** | 2026-01-27 |
-| **Ultima Actualizacion** | 2026-01-27 |
+| **Ultima Actualizacion** | 2026-03-03 |
 | **Autor** | Architecture Analyst |
 
 ---
@@ -212,12 +212,12 @@ export class ExerciseRewardsService {
 CREATE TABLE gamification_system.active_boosts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth_management.profiles(id),
-  boost_type TEXT NOT NULL, -- 'xp_boost', 'coins_boost', 'double_xp'
+  boost_type TEXT NOT NULL, -- 'XP', 'COINS'
   multiplier DECIMAL(3,2) NOT NULL DEFAULT 1.50,
   activated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   expires_at TIMESTAMPTZ NOT NULL,
-  source TEXT NOT NULL, -- 'shop', 'achievement', 'event'
-  consumed BOOLEAN NOT NULL DEFAULT FALSE
+  source TEXT NOT NULL, -- 'ITEM:<purchaseId>', 'ACHIEVEMENT', 'EVENT'
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE INDEX idx_active_boosts_user ON gamification_system.active_boosts(user_id);
@@ -356,12 +356,28 @@ interface Event {
 
 ## API REST Endpoints
 
-| Metodo | Ruta | Descripcion |
-|--------|------|-------------|
-| GET | `/gamification/multipliers` | Todos mis multiplicadores |
-| GET | `/gamification/multipliers/breakdown` | Desglose detallado |
-| GET | `/gamification/boosts/active` | Boosts activos |
-| POST | `/gamification/boosts/activate/:itemId` | Activar boost |
+### Implementados (100%)
+
+| Metodo | Ruta | Descripcion | Estado |
+|--------|------|-------------|--------|
+| GET | `/gamification/boosts/:userId/active` | Boosts activos del usuario | Implementado |
+
+> **Ubicacion:** `apps/backend/src/modules/gamification/controllers/boost.controller.ts`
+
+### Arquitectura de Activacion
+
+La activacion de boosts ocurre automaticamente al comprar items de tienda:
+`ShopService.processPurchase()` → `BoostService.activateBoost()` → INSERT en `active_boosts`
+
+> **Nota (GAP-BOOST-001):** `addXp()` en GamificationService NO consulta boosts activos aun — el multiplicador se activa pero el calculo de XP no lo aplica.
+
+### Propuestos (no implementados)
+
+| Metodo | Ruta | Descripcion | Estado |
+|--------|------|-------------|--------|
+| GET | `/gamification/multipliers` | Todos mis multiplicadores | Propuesto |
+| GET | `/gamification/multipliers/breakdown` | Desglose detallado | Propuesto |
+| POST | `/gamification/boosts/activate/:itemId` | Activar boost manual | No aplica (activacion automatica en compra) |
 
 ---
 
@@ -414,6 +430,7 @@ interface Event {
 | Version | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
 | 1.0 | 2026-01-27 | Architecture Analyst | Creacion inicial |
+| 1.1 | 2026-03-03 | Documentation Task | Actualizado endpoints — BoostController implementado, POST activate marcado como no aplica (automatico en compra), DDL active_boosts actualizado |
 
 ---
 

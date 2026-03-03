@@ -7,10 +7,11 @@ import {
 } from '../errors/gamification.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserStats } from '../entities';
+import { UserStats, MLCoinsTransaction } from '../entities';
 import { UserGamificationSummaryDto } from '../dto/user-gamification-summary.dto';
 // CORR-CASCADA-001: Import MayaRank para alinear con entity corregida
-import { MayaRank } from '@shared/constants/enums.constants';
+// ADR-052: Import TransactionTypeEnum for WELCOME_BONUS transaction
+import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants';
 // P0-001: Import Profile para validación de existencia
 import { Profile } from '@/modules/auth/entities/profile.entity';
 
@@ -45,6 +46,9 @@ export class UserStatsService {
     // P0-001: Agregar Profile repository para validación
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
+    // ADR-052: Inject MLCoinsTransaction repo for WELCOME_BONUS audit trail
+    @InjectRepository(MLCoinsTransaction, 'gamification')
+    private readonly transactionRepo: Repository<MLCoinsTransaction>,
   ) { }
 
   /**
@@ -165,7 +169,24 @@ export class UserStatsService {
       metadata: {},
     });
 
-    return this.userStatsRepo.save(newStats);
+    const savedStats = await this.userStatsRepo.save(newStats);
+
+    // ADR-052: Create WELCOME_BONUS transaction record for audit trail
+    // The ml_coins=100 is already set on user_stats; this record ensures
+    // auditBalance() can reconcile without the legacy +100 hardcoded offset.
+    const welcomeTransaction = this.transactionRepo.create({
+      user_id: profile.id,
+      amount: 100,
+      balance_before: 0,
+      balance_after: 100,
+      transaction_type: TransactionTypeEnum.WELCOME_BONUS,
+      description: 'Bonus de bienvenida - ML Coins iniciales',
+      reference_type: 'welcome',
+      metadata: {},
+    });
+    await this.transactionRepo.save(welcomeTransaction);
+
+    return savedStats;
   }
 
   /**
@@ -389,8 +410,7 @@ export class UserStatsService {
     const xpToNext = Math.max(0, xpForNextLevel - userStats.total_xp);
 
     // 3. Obtener achievements (de user_achievements si existe)
-    // TODO: Implementar cuando exista tabla user_achievements
-    // Por ahora retornamos array vacío
+    // FIXME: user_achievements table exists — integrate via AchievementsService to return actual achievements instead of empty array
     const achievements: string[] = [];
     const totalAchievements = userStats.achievements_earned || 0;
 

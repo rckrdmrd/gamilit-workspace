@@ -11,7 +11,7 @@
 
 version: "2.0.0"
 created: "2026-02-07"
-updated: "2026-02-07"
+updated: "2026-03-03"
 proyecto: "gamilit"
 
 # -------------------------------------------------------------------------------
@@ -44,27 +44,28 @@ madurez:
   usuarios_activos: true
   mvp_completado: true
 
+  # Fuente: MASTER_INVENTORY v14.9.4 (2026-03-03)
   cobertura:
     backend:
-      modulos: 22
-      entities: 152
-      services: 170
-      controllers: 107
-      endpoints: 899
+      modulos: 23
+      entities: 156
+      services: 173
+      controllers: 109
+      endpoints: 915
     frontend:
-      componentes: 474
-      hooks: 101
-      stores: 14
-      paginas: 68
+      componentes: 575
+      hooks: 132
+      stores: 13
+      paginas: 70
       portales: 4
     database:
       schemas: 18
-      tablas: 169
-      views: 22
-      funciones: 183
-      triggers: 67
-      rls_policies: 207
-    tests_pasando: 833
+      tablas: 173
+      views: 18
+      funciones: 158
+      triggers: 68
+      rls_policies: 251
+    tests_pasando: 2324
 
 # -------------------------------------------------------------------------------
 # PATRONES COMO REFERENCIA (Para shared/catalog/)
@@ -96,7 +97,7 @@ patrones_como_referencia:
 
   inventarios_yaml:
     descripcion: "Sistema de inventarios maestros por capa"
-    ubicacion_referencia: "orchestration/inventory/"
+    ubicacion_referencia: "orchestration/inventarios/"
     archivos:
       - "MASTER_INVENTORY.yml"
       - "DATABASE_INVENTORY.yml"
@@ -189,6 +190,9 @@ modulos:
     - name: "core"
       id: "GAM-CORE"
       estado: "100%"
+    - name: "mail"
+      id: "GAM-MAIL"
+      estado: "100%"
 
 # -------------------------------------------------------------------------------
 # CONFIGURACION
@@ -206,7 +210,7 @@ configuracion:
   repositorio:
     tipo: "MONOREPO"
     remote: "git@github.com:rckrdmrd/gamilit-workspace.git"
-    branch: "main"
+    branch: "master"
 
   bases_datos:
     - nombre: "gamilit_platform"
@@ -247,20 +251,20 @@ relaciones:
 # -------------------------------------------------------------------------------
 
 validacion:
-  ultima_validacion: "2026-02-07"
+  ultima_validacion: "2026-03-03"
   estado_general: "PRODUCCION_ACTIVA"
   mvp: "98% completado"
 
   checklist:
     - item: "Backend operativo"
       status: "passed"
-      detalles: "22 modulos, 899 endpoints, 833 tests pasando"
+      detalles: "23 modulos, 915 endpoints, 2324 tests pasando"
     - item: "Frontend operativo"
       status: "passed"
-      detalles: "474 componentes, 4 portales, 68 paginas"
+      detalles: "575 componentes, 4 portales, 70 paginas"
     - item: "Database estable"
       status: "passed"
-      detalles: "18 schemas, 169 tablas, 207 RLS policies"
+      detalles: "18 schemas, 173 tablas, 251 RLS policies"
     - item: "Produccion activa"
       status: "passed"
       detalles: "Usuarios reales, MVP desplegado"

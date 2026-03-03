@@ -1,3 +1,8 @@
+/**
+ * @deprecated Since 2026-02 — Zero external references. Replaced by DashboardComplete.
+ * Safe to delete. See TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT.
+ */
+
 import React, { useCallback } from 'react';
 import { Clock, BookOpen, Award, TrendingUp, Coins, Play } from 'lucide-react';
 import type { RecentActivity } from '@/services/api/progress/progressAPI';

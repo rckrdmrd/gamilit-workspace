@@ -117,7 +117,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-8 text-sm">
+      <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
         <span className={step === 1 ? 'text-detective-orange font-semibold' : 'text-detective-text-secondary'}>
           1. Seleccionar Contenido
         </span>
@@ -204,7 +204,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-detective-text mb-2">
                     Fecha de Inicio
@@ -227,7 +227,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-detective-text mb-2">
                     Intentos Permitidos

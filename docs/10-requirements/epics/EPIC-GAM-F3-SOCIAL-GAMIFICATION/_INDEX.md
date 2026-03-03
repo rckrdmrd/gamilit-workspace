@@ -39,9 +39,9 @@ estado: activo
 
 ### Tasks
 - [_MAP](tasks/_MAP.md)
-- [TASK-BE-GAM-002-003-friends-api](tasks/_archived/TASK-BE-GAM-002-003-friends-api.md)
-- [TASK-DB-GAM-003-005-tablas-amigos](tasks/_archived/TASK-DB-GAM-003-005-tablas-amigos.md)
-- [TASK-FE-GAM-002-003-friends-ui](tasks/_archived/TASK-FE-GAM-002-003-friends-ui.md)
+- TASK-BE-GAM-002-003-friends-api (eliminado 2026-03-03)
+- TASK-DB-GAM-003-005-tablas-amigos (eliminado 2026-03-03)
+- TASK-FE-GAM-002-003-friends-ui (eliminado 2026-03-03)
 
 ### Traceability
 - [TRACEABILITY.yml](traceability/TRACEABILITY.yml)

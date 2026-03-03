@@ -351,7 +351,7 @@ export default function TeacherStudentsPage() {
       <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-detective-text">Estudiantes</h1>
+          <h1 className="mb-2 text-xl sm:text-2xl md:text-3xl font-bold text-detective-text">Estudiantes</h1>
           <p className="text-detective-text-secondary">
             Monitorea el progreso y rendimiento de todos tus estudiantes
           </p>
@@ -364,7 +364,7 @@ export default function TeacherStudentsPage() {
               <Users className="h-8 w-8 text-blue-500" />
               <div>
                 <p className="text-sm text-gray-400">Total Estudiantes</p>
-                <p className="text-2xl font-bold text-detective-text">{students.length}</p>
+                <p className="text-xl sm:text-2xl font-bold text-detective-text">{students.length}</p>
               </div>
             </div>
           </DetectiveCard>
@@ -373,7 +373,7 @@ export default function TeacherStudentsPage() {
               <TrendingUp className="h-8 w-8 text-green-500" />
               <div>
                 <p className="text-sm text-gray-400">Alto Rendimiento</p>
-                <p className="text-2xl font-bold text-green-500">{performanceStats.high}</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-500">{performanceStats.high}</p>
               </div>
             </div>
           </DetectiveCard>
@@ -382,7 +382,7 @@ export default function TeacherStudentsPage() {
               <Minus className="h-8 w-8 text-yellow-500" />
               <div>
                 <p className="text-sm text-gray-400">Rendimiento Medio</p>
-                <p className="text-2xl font-bold text-yellow-500">{performanceStats.medium}</p>
+                <p className="text-xl sm:text-2xl font-bold text-yellow-500">{performanceStats.medium}</p>
               </div>
             </div>
           </DetectiveCard>
@@ -391,7 +391,7 @@ export default function TeacherStudentsPage() {
               <TrendingDown className="h-8 w-8 text-red-500" />
               <div>
                 <p className="text-sm text-gray-400">Bajo Rendimiento</p>
-                <p className="text-2xl font-bold text-red-500">{performanceStats.low}</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-500">{performanceStats.low}</p>
               </div>
             </div>
           </DetectiveCard>

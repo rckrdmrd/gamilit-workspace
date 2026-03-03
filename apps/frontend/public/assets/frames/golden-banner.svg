@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Golden Banner - Guild legendary item -->
+  <!-- Pole -->
+  <rect x="20" y="8" width="4" height="84" fill="#8B4513" rx="2"/>
+  <circle cx="22" cy="8" r="4" fill="#D4AF37"/>
+  <!-- Banner fabric -->
+  <path d="M24 15 L80 15 L80 65 L52 55 L24 65 Z" fill="#D4AF37"/>
+  <path d="M24 15 L80 15 L80 65 L52 55 L24 65 Z" fill="none" stroke="#B8860B" stroke-width="1.5"/>
+  <!-- Inner design -->
+  <path d="M30 20 L74 20 L74 58 L52 50 L30 58 Z" fill="#FFD700"/>
+  <!-- Crown symbol -->
+  <path d="M42 30 L46 25 L52 32 L58 25 L62 30 L62 40 L42 40 Z" fill="#B8860B"/>
+  <!-- Star -->
+  <polygon points="52,42 54,47 59,47 55,50 56,55 52,52 48,55 49,50 45,47 50,47" fill="#D4AF37"/>
+  <!-- Tassels -->
+  <line x1="24" y1="65" x2="24" y2="75" stroke="#D4AF37" stroke-width="2"/>
+  <line x1="52" y1="55" x2="52" y2="65" stroke="#D4AF37" stroke-width="2"/>
+  <circle cx="24" cy="76" r="2" fill="#D4AF37"/>
+  <circle cx="52" cy="66" r="2" fill="#D4AF37"/>
+</svg>

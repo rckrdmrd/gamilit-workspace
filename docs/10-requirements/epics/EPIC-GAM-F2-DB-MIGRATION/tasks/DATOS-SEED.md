@@ -19,7 +19,7 @@ estado: activo
 - **Archivos de Seed:** 9 archivos principales
 - **Achievements:** 30+ logros predefinidos
 - **Módulos Educativos:** 5 módulos de Marie Curie
-- **Ejercicios:** 50+ ejercicios (27 tipos)
+- **Ejercicios:** 50+ ejercicios (23 tipos activos, 33 valores ENUM)
 - **Usuarios Demo:** 10+ usuarios de prueba
 - **Configuración del Sistema:** 20+ settings
 

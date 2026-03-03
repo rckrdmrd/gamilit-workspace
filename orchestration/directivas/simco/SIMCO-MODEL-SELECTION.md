@@ -1,9 +1,10 @@
 # SIMCO: MODEL SELECTION
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Sistema:** SIMCO v4.0
 **Proposito:** Arbol de decision determinístico para seleccion de modelo/agente
-**Fecha:** 2026-02-11
+**Fecha:** 2026-03-03
+**Actualizado:** v1.0.0→v2.0.0: Opus 4.6, Sonnet 4.6, fast mode, subagent assignment, ejemplos reales
 
 ---
 
@@ -91,12 +92,12 @@ GEMINI_CLI_VERSIONS:
 
 ## MATRIZ 2: SUBMODELOS INTERNOS CLAUDE CODE
 
-| Criterio | Haiku 4.5 | Sonnet 4.5 | Opus 4.6 |
-|----------|-----------|------------|----------|
-| **Velocidad** | Rapida | Media | Lenta |
-| **Costo** | Bajo | Medio | Alto |
-| **Razonamiento** | Basico | Alto | Muy Alto |
-| **Uso principal** | Exploracion, busquedas | Implementacion, analisis | Orquestacion, arquitectura |
+| Criterio | Haiku 4.5 | Sonnet 4.5 (legado) | Sonnet 4.6 (preferido) | Opus 4.6 |
+|----------|-----------|---------------------|------------------------|----------|
+| **Velocidad** | Rapida | Media | Media | Lenta |
+| **Costo** | Bajo | Medio | Medio | Alto |
+| **Razonamiento** | Basico | Alto | Alto | Muy Alto |
+| **Uso principal** | Exploracion, busquedas | Implementacion legado | Implementacion, analisis | Orquestacion, arquitectura |
 
 ### Seleccion por Tipo de Subtarea
 
@@ -113,7 +114,22 @@ SUBMODELO_SELECCION:
       - Decisiones arquitectónicas
       - Analisis complejo
 
+  sonnet_4_6:
+    estado: activo_preferido
+    nota: "Preferir 4.6 para sesiones nuevas"
+    usar_para:
+      - Implementacion de codigo
+      - Analisis detallado de modulos
+      - Governance (YAML, tracking, metadata)
+      - Creacion de directivas y documentos
+      - Features con mas de 3 dependencias
+    NO_usar_para:
+      - Busquedas triviales (usar Haiku)
+      - Decisiones de workspace-level (usar Opus)
+
   sonnet_4_5:
+    estado: activo_legado
+    nota: "Usar solo si 4.6 no disponible"
     usar_para:
       - Implementacion de codigo
       - Analisis detallado de modulos
@@ -138,6 +154,94 @@ SUBMODELO_SELECCION:
 
 ---
 
+## SUBAGENT MODEL ASSIGNMENT
+
+### Tabla de Asignacion por Tipo de Subtarea
+
+| Tipo | Modelo Recomendado | Escalar a Sonnet si... | Escalar a Opus si... |
+|------|--------------------|------------------------|----------------------|
+| Leer 1-3 archivos | Haiku | Requiere interpretacion compleja | - |
+| Busqueda / conteo | Haiku | Nunca escalar | Nunca escalar |
+| Validar existencia | Haiku | - | - |
+| Implementar 1 archivo | Sonnet 4.6 | Ya esta en Sonnet | Cambio arquitectonico detectado |
+| Analisis multi-archivo (3-8) | Sonnet 4.6 | Ya esta en Sonnet | Contradiccion arquitectonica |
+| Actualizar 1 campo | Haiku | Campo tiene logica de negocio | - |
+| Crear documento de governance | Sonnet 4.6 | Ya esta en Sonnet | Impacto cross-domain |
+| Auditoria cross-domain | Opus 4.6 | Ya esta en Opus | - |
+| Resolucion de conflictos | Opus 4.6 | Ya esta en Opus | - |
+| Validacion final | Sonnet 4.6 | - | Mas de 5 modulos afectados |
+
+### Reglas de Escalamiento
+
+```yaml
+REGLA_ESCALAMIENTO_SUBAGENTE:
+  haiku_a_sonnet:
+    trigger: "Subagente Haiku encuentra decision no especificada en instrucciones"
+    action: "Reportar ESCALAR_REQUERIDO al orquestador, no decidir por cuenta propia"
+
+  sonnet_a_opus:
+    trigger: "Subagente Sonnet encuentra contradiccion arquitectonica"
+    action: "Documentar la contradiccion y escalar al orquestador Opus"
+```
+
+### Patrones de Wave Probados en Produccion
+
+```yaml
+WAVE_PATTERNS:
+  auditoria_documental_grande:
+    descripcion: "Auditoria de documentacion con 16 subagentes"
+    orquestador: Opus 4.6
+    wave_1: "4x Haiku — exploracion de archivos y conteos"
+    wave_2: "4x Sonnet 4.6 — analisis de gaps por dominio"
+    wave_3: "4x Sonnet 4.6 — implementacion de correcciones"
+    wave_4: "2x Haiku — validacion de archivos modificados"
+    cuando_usar: "Auditorias de >20 archivos con multiples dominios"
+
+  bug_fix_critico:
+    descripcion: "Fix de bug de produccion con investigacion enfocada"
+    orquestador: Sonnet 4.6
+    wave_1: "1x Sonnet 4.6 — investigacion del bug y propuesta de fix"
+    wave_2: "1x Haiku — validacion de build y lint post-fix"
+    cuando_usar: "Bugs bien definidos con scope limitado (1-3 archivos)"
+
+  update_simple:
+    descripcion: "Actualizacion trivial de un campo o metadato"
+    orquestador: Haiku
+    wave_1: "Haiku-only — leer, editar, confirmar"
+    cuando_usar: "Cambios de 1 archivo, sin logica de negocio, sin dependencias"
+```
+
+---
+
+## FAST MODE
+
+### Descripcion
+
+El comando `/fast` activa salida mas rapida para el modelo activo (Opus 4.6 o Sonnet 4.6). NO cambia el modelo ni reduce la calidad de razonamiento — solo optimiza la velocidad de generacion de tokens.
+
+### Cuando Activar
+
+| Escenario | Activar Fast Mode |
+|-----------|------------------|
+| Implementacion larga (>200 lineas) | SI |
+| Generacion de documentacion extensa | SI |
+| YAMLs de inventario grandes | SI |
+| Analisis critico de arquitectura | NO |
+| Primera sesion de una tarea nueva | NO |
+| Bugs complejos con multiples causas | NO |
+
+### Activacion
+
+```
+/fast   # Toggle en sesion Claude Code activa
+```
+
+### Nota Importante
+
+Fast mode NO afecta la seleccion de modelo para subagentes. Los subagentes siguen la tabla de asignacion anterior independientemente del fast mode del orquestador.
+
+---
+
 ## ANTI-PATTERNS POR MODELO
 
 ```yaml
@@ -146,6 +250,8 @@ ANTI_PATTERNS:
     - "Usar Opus para busquedas triviales (Haiku es 10x mas barato)"
     - "Lanzar > 5 subagentes simultaneos"
     - "Background agents en Windows para tareas criticas"
+    - "Usar Sonnet 4.5 cuando Sonnet 4.6 esta disponible"
+    - "Activar fast mode en analisis criticos de arquitectura"
 
   gemini_cli:
     - "Lanzar > 2 sesiones paralelas (429 rate limit)"
@@ -175,4 +281,4 @@ ANTI_PATTERNS:
 
 ---
 
-**Version:** 1.0.0 | **Sistema:** SIMCO v4.0 | **Tipo:** Directiva de Seleccion
+**Version:** 2.0.0 | **Sistema:** SIMCO v4.0 | **Tipo:** Directiva de Seleccion

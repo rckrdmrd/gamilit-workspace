@@ -3,10 +3,10 @@ titulo: Schema 4 - gamification_system
 tipo: arquitectura
 subtipo: schema-reference
 schema: gamification_system
-ultima_actualizacion: 2026-02-27
+ultima_actualizacion: 2026-03-03
 ---
 
-# Schema: gamification_system (27 tablas)
+# Schema: gamification_system (21 tablas)
 
 > **Nota:** Este documento describe el modelo conceptual basado en DDL. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/gamification_system/`.
 
@@ -34,7 +34,7 @@ Estadisticas de gamificacion por usuario - ML Coins, XP, streaks, rankings.
 | current_rank | maya_rank | NULL | 'Ajaw' | Rango maya actual |
 | rank_progress | NUMERIC(5,2) | NULL | 0.00 | Progreso hacia siguiente rango (0-100) |
 | ml_coins | INTEGER | NOT NULL | 100 | Balance actual de ML Coins (>= 0) |
-| ml_coins_earned_total | INTEGER | NOT NULL | 100 | Total ML Coins ganados |
+| ml_coins_earned_total | INTEGER | NOT NULL | 100 | Total ML Coins ganados — ver nota invariante abajo |
 | ml_coins_spent_total | INTEGER | NOT NULL | 0 | Total ML Coins gastados |
 | ml_coins_earned_today | INTEGER | NOT NULL | 0 | ML Coins ganados hoy |
 | last_ml_coins_reset | TIMESTAMPTZ | NULL | NULL | Control de resets diarios |
@@ -66,6 +66,10 @@ Estadisticas de gamificacion por usuario - ML Coins, XP, streaks, rankings.
 
 **Indices:** `idx_user_stats_user_id`, `idx_user_stats_tenant_id`, `idx_user_stats_level`, `idx_user_stats_tenant_level`, `idx_user_stats_ml_coins`, `idx_user_stats_streak`, `idx_user_stats_global_rank`, `idx_user_stats_current_rank`, `idx_user_stats_perfect_scores`
 **RLS:** Habilitado (own select, admin select, system update)
+
+> **Invariante `ml_coins_earned_total`:** Este campo DEBE ser actualizado por TODA funcion que credite ML Coins.
+> Funciones que actualizan: `award_ml_coins()`, `promote_to_next_rank()`, `update_user_rank()`, `claim_achievement_reward()`, y `MLCoinsService.addCoins()`.
+> Ver ADR-052 para contexto completo.
 
 ---
 
@@ -232,7 +236,7 @@ Registro de transacciones de ML Coins - earning y spending.
 | description | TEXT | NULL | NULL | Descripcion |
 | reason | TEXT | NULL | NULL | Razon |
 | reference_id | UUID | NULL | NULL | ID de referencia |
-| reference_type | TEXT | NULL | NULL | Tipo: exercise, module, achievement, powerup, admin, streak, rank, mission, rank_promotion |
+| reference_type | TEXT | NULL | NULL | Tipo: exercise, module, achievement, powerup, admin, streak, rank, mission, rank_promotion, welcome |
 | multiplier | NUMERIC(3,2) | NULL | 1.00 | Multiplicador aplicado |
 | bonus_applied | BOOLEAN | NULL | false | Si se aplico bonus |
 | metadata | JSONB | NULL | '{}' | Metadatos |
@@ -240,6 +244,8 @@ Registro de transacciones de ML Coins - earning y spending.
 
 **Indices:** `idx_ml_transactions_created_at`, `idx_ml_transactions_reference`, `idx_ml_transactions_type`, `idx_ml_transactions_user_id`, `idx_ml_transactions_user_recent`, `idx_ml_transactions_user_type_date`, `idx_ml_transactions_tenant_id`
 **RLS:** Habilitado (admin select, own select)
+
+> **WELCOME_BONUS:** La transaccion WELCOME_BONUS se crea automaticamente al registrar un usuario via `UserStatsService.create()` (ADR-052). El CHECK constraint de `reference_type` incluye el valor `'welcome'`.
 
 ---
 
@@ -458,7 +464,7 @@ Catalogo de categorias de tienda (marcos, avatares, efectos, etc.).
 - Categorias `guild` y `social` ahora tienen `is_active=false` (desactivadas, no eliminadas)
 - Guild items (4 total) han sido re-categorizados como cosmeticos: `guild_banner`→`profile_frame`, `guild_emblem`/`guild_shield`→`badge`
 - Social items (6 total) removidos de tienda + 1 item `Efecto Obsidiana` (total 7 items inactivos)
-- Categorias activas: cosmetics, boosts, avatar, frame, badge (5)
+- Categorias activas: cosmetics, profile, consumable (3)
 
 ---
 

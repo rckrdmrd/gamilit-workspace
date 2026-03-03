@@ -1,7 +1,7 @@
 # GAMILIT - Plataforma de Gamificacion Educativa
 
-**Version:** 3.0.0
-**Ultima actualizacion:** 2026-02-14
+**Version:** 4.1.0
+**Ultima actualizacion:** 2026-03-03
 **Estado:** Produccion Activa - MVP 98% Completado
 
 ---
@@ -46,9 +46,9 @@
 ```
 gamilit/
 +-- apps/                      # MONOREPO (mismo repositorio)
-|   +-- backend/               # NestJS 11 (22 modulos, 899 endpoints)
+|   +-- backend/               # NestJS 11 (23 modulos, 915 endpoints)
 |   +-- frontend/              # React 19 + Zustand + TailwindCSS
-|   +-- database/              # PostgreSQL 15 DDL (18 schemas, 169 tablas)
+|   +-- database/              # PostgreSQL 15 DDL (18 schemas, 173 tablas)
 |   +-- devops/                # Deployment scripts
 |   +-- _MAP.md
 +-- docs/                      # Documentacion del producto (11 secciones)
@@ -100,10 +100,10 @@ Diario multimedia, Comic digital, Video carta (estudiante elige 1 de 3)
 
 | Categoria | Metricas |
 |-----------|----------|
-| **Base de Datos** | 18 schemas, 169 tablas, 207 politicas RLS, 183 funciones (DDL), 67 triggers, 40 ENUMs |
-| **Backend** | 22 modulos, 152 entities, 170 services, 107 controllers, 899 endpoints, 399 DTOs |
-| **Frontend** | 474 componentes, 68 paginas, 4 portales, 14 stores Zustand, 101 hooks |
-| **Calidad** | 833 tests pasando, 90.5% coherencia DDL-Backend |
+| **Base de Datos** | 18 schemas, 173 tablas, 251 politicas RLS, 158 funciones (DDL), 68 triggers, 42 ENUMs |
+| **Backend** | 23 modulos, 156 entities, 173 services, 109 controllers, 915 endpoints, 401 DTOs |
+| **Frontend** | 575 componentes, 70 paginas, 4 portales, 13 stores Zustand, 132 hooks |
+| **Calidad** | 2,324 tests (2,296 passed + 28 skipped), 90.2% coherencia DDL-Backend |
 
 > **Fuente:** `orchestration/inventarios/MASTER_INVENTORY.yml`
 
@@ -131,7 +131,7 @@ Diario multimedia, Comic digital, Video carta (estudiante elige 1 de 3)
 - **Misiones:** Retos diarios y semanales con recompensas
 
 ### Logros e Insignias
-- 30 mecanicas de ejercicio interactivo
+- 29 mecanicas de ejercicio interactivo
 - Badges por hitos academicos y sociales
 - Milestones de progreso por modulo
 
@@ -143,7 +143,7 @@ Diario multimedia, Comic digital, Video carta (estudiante elige 1 de 3)
 # Backend (desde apps/backend/)
 npm run build        # Compilar NestJS
 npm run lint         # ESLint
-npm run test         # Jest (833 tests)
+npm run test         # Jest (2,324 tests)
 npm run start:dev    # Desarrollo (puerto 3006)
 
 # Frontend (desde apps/frontend/)
@@ -211,5 +211,5 @@ Gamilit es fuente de patrones que se extraen a `shared/catalog/`:
 
 ---
 
-*Ultima actualizacion: 2026-02-14*
+*Ultima actualizacion: 2026-03-03*
 *Sistema SIMCO v4.0.0 + NEXUS v4.1*

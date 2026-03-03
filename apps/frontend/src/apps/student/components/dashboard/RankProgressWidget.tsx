@@ -60,7 +60,7 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
           'relative overflow-hidden rounded-xl bg-white shadow-md',
-          'h-full border-2 p-6',
+          'border-2 p-6',
           rankInfo.border,
           rankInfo.shadow,
         )}
@@ -88,7 +88,6 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
       transition={{ duration: 0.4 }}
       className={cn(
         'relative overflow-hidden rounded-xl bg-white shadow-lg',
-        'h-full max-h-[600px]',
         showFrameOverlay
           ? 'border-2 border-transparent'
           : frame?.cssClass
@@ -116,7 +115,7 @@ export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
       <div className={cn('absolute inset-0 opacity-10', 'bg-gradient-to-br', rankInfo.color)} />
 
       {/* Content */}
-      <div className={cn('relative z-10 h-full overflow-y-auto', showFrameOverlay ? 'px-8 py-10' : 'p-6')}>
+      <div className={cn('relative z-30', showFrameOverlay ? 'px-8 py-10' : 'p-6')}>
         {/* Header with colorful icon */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">

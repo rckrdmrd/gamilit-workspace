@@ -51,7 +51,7 @@ estado: activo
 
 ### 1.3 Schema: educational_content (4 tablas)
 - `modules` - 5 módulos de Marie Curie
-- `exercises` - 27 tipos de ejercicios
+- `exercises` - 23 tipos activos de ejercicios (33 valores en ENUM DDL)
 - `assessment_rubrics` - Rúbricas de evaluación
 - `media_resources` - Recursos multimedia
 
@@ -187,7 +187,7 @@ social_features.schools (1:N) → social_features.classrooms
 - `comodin_type`: pistas, vision_lectora, segunda_oportunidad
 
 ### Contenido
-- `exercise_type`: 27 tipos (multiple_choice, matching, crossword, etc.)
+- `exercise_type`: 33 valores ENUM (23 activos + 4 backlog M4 + 4 auxiliares + comprension_auditiva BACKLOG)
 - `difficulty_level`: beginner, intermediate, advanced
 - `content_status`: draft, published, archived, under_review
 

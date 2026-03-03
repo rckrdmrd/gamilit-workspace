@@ -2,14 +2,16 @@
 titulo: Matriz de Trazabilidad de Flujos
 tipo: flujo
 fecha_creacion: "2025-10-01"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-03"
 estado: activo
 ---
 
 # Matriz de Trazabilidad de Flujos
 
-**Version:** 1.8.0
-**Fecha:** 2026-02-21
+**Version:** 1.9.0
+**Fecha:** 2026-03-03
+
+> **Nota 3NF:** Este archivo y `COBERTURA-TOTAL-PROCESOS.md` comparten ~80% de datos. El SSOT unificado es `orchestration/inventarios/CROSS-REFERENCE-MASTER.yml`. Este archivo aporta: 11 flujos adicionales (FL-STU-16..20, FL-TCH-08/09, FL-ADM-09..11) y detalle fino de componentes FE.
 
 ---
 
@@ -31,8 +33,9 @@ estado: activo
 | FL-AUTH-03 | [FLUJO-VERIFICACION-EMAIL.md](./auth/FLUJO-VERIFICACION-EMAIL.md) | `features/auth/store/authStore.ts` (estado de verificacion) | `modules/auth/services/email-verification.service.ts` | `auth_management.email_verification_tokens`, `auth.users` |
 | FL-STU-01 | [FLUJO-EJERCICIO-COMPLETO.md](./student/FLUJO-EJERCICIO-COMPLETO.md) | `apps/student/pages/ExercisePage.tsx` (guardar/enviar) | `/api/v1/progress/submissions/submit`, `exercise-grading.service.ts` | `progress_tracking.exercise_attempts`, `progress_tracking.exercise_submissions`, `gamification_system.user_stats` |
 | FL-STU-02 | [FLUJO-EJERCICIO-M3-M5.md](./student/FLUJO-EJERCICIO-M3-M5.md) | `apps/student/pages/ExercisePage.tsx` (submit para revision) | `/api/v1/progress/submissions/submit`, `teacher/manual-review` | `progress_tracking.manual_reviews`, `progress_tracking.exercise_submissions` |
-| FL-STU-03 | [FLUJO-TIENDA-COMPRA.md](./student/FLUJO-TIENDA-COMPRA.md) | `apps/student/pages/ShopPage.tsx` (boton comprar) | `/api/v1/gamification/shop/purchase`, `shop.service.ts` | `gamification_system.shop_items`, `user_purchases`, `ml_coins_transactions`, `user_stats` |
+| FL-STU-03 | [FLUJO-TIENDA-COMPRA.md](./student/FLUJO-TIENDA-COMPRA.md) | `apps/student/pages/ShopPage.tsx` (boton comprar) | `/api/v1/gamification/shop/purchase`, `shop.service.ts`, `boost.service.ts` (activacion post-compra para xp_boost/coins_boost) | `gamification_system.shop_items`, `user_purchases`, `ml_coins_transactions`, `user_stats`, `active_boosts` |
 | FL-STU-20 | [FLUJO-COMPRA-INVENTARIO-EQUIPAR.md](./student/FLUJO-COMPRA-INVENTARIO-EQUIPAR.md) **(Compuesto)** | `apps/student/pages/ShopPage.tsx`, `apps/student/pages/InventoryPage.tsx` | Sub-flujos: FL-STU-03, FL-STU-19 | `gamification_system.shop_items`, `user_purchases`, `user_equipped_items`, `ml_coins_transactions` |
+| FL-STU-21 | [FLUJO-TIENDA-COMPRA.md](./student/FLUJO-TIENDA-COMPRA.md) (rama boost) | `shared/components/layout/GamifiedHeader.tsx` (indicador de boost activo) | `GET /api/v1/gamification/boosts/:userId/active`, `boost.controller.ts`, `boost.service.ts` | `gamification_system.active_boosts` |
 | FL-STU-04 | [FLUJO-LOGROS-MISIONES-CLAIM.md](./student/FLUJO-LOGROS-MISIONES-CLAIM.md) | `apps/student/pages/AchievementsPage.tsx`, `apps/student/pages/MissionsPage.tsx` | `/api/v1/gamification/achievements/:id/claim`, `/api/v1/gamification/missions/:id/claim` | `gamification_system.user_achievements`, `missions`, `ml_coins_transactions`, `user_stats` |
 | FL-STU-05 | [FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md](./student/FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md) v1.2.0 **(Compuesto)** | `apps/student/pages/SettingsPage.tsx` (orquestador) + `settings/ProfileSection.tsx`, `AccountSection.tsx`, `NotificationsSection.tsx`, `PrivacySection.tsx` | Sub-flujos: FL-SHR-01, FL-STU-11, FL-STU-12 | `auth_management.profiles`, `auth.users`, `notifications.notification_preferences` |
 | FL-STU-06 | [FLUJO-DASHBOARD-ACADEMICO.md](./student/FLUJO-DASHBOARD-ACADEMICO.md) **(Compuesto)** | `apps/student/pages/DashboardComplete.tsx` (orquestador) | Sub-flujos: FL-STU-13, FL-STU-01, FL-STU-04, FL-STU-15 | `progress_tracking.*`, `gamification_system.*`, `educational_content.*` |
@@ -92,6 +95,10 @@ estado: activo
 ---
 
 ## Changelog
+
+### v1.9.0 (2026-03-03)
+- **FL-STU-03** actualizado: Agregado `boost.service.ts` como componente backend participante en la compra de items tipo `xp_boost`/`coins_boost`. Tabla `active_boosts` agregada a datos implicados.
+- **FL-STU-21** nuevo: Flujo de consulta de boosts activos. Documenta `GamifiedHeader.tsx` → `GET /api/v1/gamification/boosts/:userId/active` → `boost.controller.ts` → `boost.service.ts` → `active_boosts`.
 
 ### v1.8.0 (2026-02-21)
 - **FL-STU-19** actualizado: Agregado `ProfileInventoryTab.tsx` como segundo punto de entrada para equipamiento. Reemplazado `useInventory.ts` (deprecado) por `useEquipment.ts` (hook canonico).

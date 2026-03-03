@@ -25,7 +25,7 @@ export function ModuleCompletionCard({ module, onClick }: ModuleCompletionCardPr
             <BookOpen className="h-6 w-6 text-detective-orange" />
           </div>
           <div className="flex-1">
-            <h3 className="mb-1 font-bold text-detective-text">{module.module_name}</h3>
+            <h3 className="mb-1 line-clamp-1 font-bold text-detective-text" title={module.module_name}>{module.module_name}</h3>
             <p className="text-xs text-detective-text-secondary">ID: {module.module_id}</p>
           </div>
         </div>

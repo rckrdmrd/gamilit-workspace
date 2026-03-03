@@ -1,3 +1,8 @@
+/**
+ * @deprecated Since 2026-02 — Zero external references. Replaced by DashboardComplete.
+ * Safe to delete. See TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/app/providers/AuthContext';
 import { useAuthStore } from '@/features/auth/store/authStore';

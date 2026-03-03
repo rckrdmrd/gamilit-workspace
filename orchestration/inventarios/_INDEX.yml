@@ -12,7 +12,7 @@
 version: "1.0.0"
 updated: "2026-02-25"
 owner: "orchestration"
-total_inventarios: 10
+total_inventarios: 11
 
 # -------------------------------------------------------------------------------
 # INVENTARIOS
@@ -73,6 +73,11 @@ inventarios:
     descripcion: "Configuracion de entorno local WSL — puertos, IPs, paths"
     dominio: "devenv"
     prioridad: "medio"
+
+  - nombre: "CROSS-REFERENCE-MASTER.yml"
+    descripcion: "Referencias cruzadas maestras — mapeo entre inventarios, modulos y capas"
+    dominio: "global"
+    prioridad: "alto"
 
 # ===============================================================================
 # FIN DE INDICE DE INVENTARIOS

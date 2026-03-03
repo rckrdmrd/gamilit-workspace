@@ -14,7 +14,7 @@ estado: activo
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| `PORTAL-ADMIN-GUIDE.md` | Guia principal — arquitectura, 18 paginas del portal, gestion de usuarios/roles/tenants, configuracion de gamificacion, monitoreo del sistema (v2.0.0) | Actualizado 2026-02-27 |
+| `PORTAL-ADMIN-GUIDE.md` | Guia principal — arquitectura, 19 paginas del portal, gestion de usuarios/roles/tenants, configuracion de gamificacion, monitoreo del sistema (v2.0.0) | Actualizado 2026-02-27 |
 | `PORTAL-ADMIN-API-REFERENCE.md` | Referencia de endpoints — endpoints de gestion de contenido educativo, usuarios, configuracion global y analytics | Actualizado 2026-02-27 |
 | `_MAP.md` | Mapa de navegacion del directorio admin | Actualizado 2026-02-27 |
 
@@ -42,6 +42,6 @@ estado: activo
 ## Estado del Portal
 
 - Completitud: ~90%
-- Paginas implementadas: 18
+- Paginas implementadas: 19
 - Gestion de contenido educativo: operativa
 - Multi-tenancy con RLS: activo (ADR-003)

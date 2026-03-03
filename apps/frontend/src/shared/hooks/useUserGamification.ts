@@ -54,7 +54,7 @@ export function useUserGamification(
       return gamificationApi.getUserGamificationSummary(userId);
     },
     enabled: !!userId, // Solo ejecutar query si userId existe
-    staleTime: 5 * 60 * 1000, // 5 minutos - datos considerados frescos
+    staleTime: 30 * 1000, // 30s — balance is transactional data, not reference data
     gcTime: 10 * 60 * 1000, // 10 minutos - cache garbage collection
     refetchOnWindowFocus: true, // Refrescar al volver a la ventana
     refetchOnMount: true, // Refrescar al montar componente

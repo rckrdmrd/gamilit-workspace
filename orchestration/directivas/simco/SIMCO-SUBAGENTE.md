@@ -1,10 +1,11 @@
 ---
-version: "1.0.0"
-fecha: "2026-01-07"
+version: "1.1.0"
+fecha: "2026-03-03"
 tipo: directiva
 sistema: "SIMCO - NEXUS v4.0"
 proposito: "Protocolo optimizado para agentes operando como subagentes"
 aplica_a: "Agentes que reciben delegacion de un orquestador"
+actualizado: "v1.1.0: Template de prompt para background agent"
 ---
 
 # SIMCO: PROTOCOLO PARA SUBAGENTES
@@ -230,6 +231,79 @@ Ubicacion: `orchestration/agents/perfiles/compact/`
 
 ---
 
+## 10. TEMPLATE DE PROMPT PARA BACKGROUND AGENT
+
+Un background agent (Claude Code Task tool sin acceso a conversacion previa) necesita un prompt autocontenido. NO puede inferir contexto del hilo del orquestador.
+
+### Estructura Obligatoria
+
+```markdown
+# SUBAGENTE-BACKGROUND: {TIPO} — {DESCRIPCION_CORTA}
+
+## IDENTIDAD Y MODELO
+**Tipo:** {Backend-Agent | Frontend-Agent | Database-Agent | Analysis-Agent}
+**Modelo recomendado:** {haiku-4-5 | sonnet-4-6 | opus-4-6}
+**Razon:** {ej: "Lectura simple 2 archivos" | "Implementacion con dependencias"}
+
+## PROYECTO (VARIABLES RESUELTAS)
+**Nombre:** gamilit
+**Working dir:** C:/Empresas/ISEM/gamilit-workspace
+```yaml
+BACKEND_SRC: apps/backend/src
+FRONTEND_SRC: apps/frontend/src
+DDL_PATH: apps/database/ddl
+SEEDS_PATH: apps/database/seeds
+```
+
+## TAREA
+{1-3 oraciones: que hacer, en que archivo, resultado esperado}
+
+### Archivos a Leer
+- `{ruta_1}` — {razon}
+- `{ruta_2}` — {patron referencia}
+
+### Archivos a Modificar/Crear
+- `{ruta_destino}` — {que hacer}
+
+## RESTRICCIONES
+- NO explorar mas alla de: {directorio}
+- NO modificar: {archivos fuera de alcance}
+- Si encuentras ambiguedad: reportar BLOQUEADO, no asumir
+
+## DECISIONES PREVIAS (NO ROMPER)
+- {ej: "shop.service.ts usa BoostService via DI"}
+- {ej: "visual_type usa snake_case en BD"}
+
+## CRITERIOS DE ACEPTACION
+- [ ] {criterio 1}
+- [ ] {criterio 2}
+- [ ] Build pasa: `npm run build`
+- [ ] Lint pasa: `npm run lint`
+
+## FORMATO DE SALIDA
+```yaml
+REPORTE_SUBAGENTE:
+  subtarea: "{descripcion}"
+  estado: "COMPLETADO | FALLIDO | BLOQUEADO"
+  archivos_modificados:
+    - "ruta/archivo.ext"
+  validaciones:
+    build: "PASS | FAIL"
+    lint: "PASS | FAIL"
+  hallazgos_adicionales:
+    - "{info para el orquestador}"
+```
+```
+
+### Notas de Uso
+
+- Limitar prompt a 3,000-8,000 tokens. Si especificacion >20 lineas, desglosar en dos subtareas.
+- `DECISIONES PREVIAS` es critico para modulos ya implementados.
+- `RESTRICCIONES` previene que Haiku navegue el repo completo.
+- Para tareas de solo analisis: omitir "Archivos a Modificar/Crear".
+
+---
+
 ## 9. REFERENCIAS
 
 | Documento | Proposito |
@@ -241,4 +315,4 @@ Ubicacion: `orchestration/agents/perfiles/compact/`
 
 ---
 
-**Version:** 1.0.0 | **Sistema:** SIMCO-NEXUS v4.0 | **Tipo:** Directiva de Subagente
+**Version:** 1.1.0 | **Sistema:** SIMCO-NEXUS v4.0 | **Tipo:** Directiva de Subagente

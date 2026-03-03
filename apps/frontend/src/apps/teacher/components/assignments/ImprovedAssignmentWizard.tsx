@@ -183,7 +183,7 @@ export function ImprovedAssignmentWizard({
       </div>
 
       {/* Step Labels */}
-      <div className="grid grid-cols-4 gap-2 text-center text-xs">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
         <span
           className={
             step === 1 ? 'font-semibold text-detective-orange' : 'text-detective-text-secondary'
@@ -300,7 +300,7 @@ export function ImprovedAssignmentWizard({
                   <h4 className="mb-3 text-sm font-semibold text-detective-text">
                     Ejercicios Seleccionados ({selectedExercises.length})
                   </h4>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {selectedExercises.map((exercise) => (
                       <div
                         key={exercise.id}
@@ -394,7 +394,7 @@ export function ImprovedAssignmentWizard({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-detective-text">
                     Intentos Permitidos
@@ -476,7 +476,7 @@ export function ImprovedAssignmentWizard({
                   <p className="text-detective-text">{data.description}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="mb-1 text-sm text-detective-text-secondary">Tipo</p>
                     <span className="inline-block rounded bg-detective-orange/20 px-3 py-1 text-sm font-semibold text-detective-orange">
@@ -496,7 +496,7 @@ export function ImprovedAssignmentWizard({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="mb-1 text-sm text-detective-text-secondary">
                       Intentos Permitidos

@@ -67,6 +67,7 @@ BEGIN
         UPDATE gamification_system.user_stats
         SET
             ml_coins = v_new_balance,
+            ml_coins_earned_total = ml_coins_earned_total + v_coins_reward,
             updated_at = NOW()
         WHERE user_id = p_user_id;
 

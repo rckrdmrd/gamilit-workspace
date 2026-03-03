@@ -16,8 +16,6 @@ epics/
 ├── _MAP.md
 ├── _TEMPLATE-TASK-TRAZABILIDAD.md
 ├── README.md
-├── _archived/wave-3-technical/  ← Archivado 2026-02-28 (era _wave-3-technical/)
-├── _wave-3-technical/           ← Redirect stub solamente
 ├── EPIC-GAM-F1-AUTH/
 ├── EPIC-GAM-F1-EXERCISES/
 ├── EPIC-GAM-F1-GAMIFICATION/
@@ -49,13 +47,6 @@ epics/
 |---------|-------------|
 | `README.md` | Overview de epics |
 | `_TEMPLATE-TASK-TRAZABILIDAD.md` | Template para trazabilidad de tareas |
-
-## Subdirectorios Principales
-
-| Directorio | Contenido |
-|------------|-----------|
-| `_archived/wave-3-technical/` | 11 EPICs tecnicas archivadas (Scaffolding, Requerimientos, Arquitectura, BD, Backend, Frontend, K8s, Testing, DevOps, Docs, Integracion) — Archivado 2026-02-28 |
-| `_wave-3-technical/` | Redirect stub — apunta a `_archived/wave-3-technical/` |
 
 ## Fases Funcionales
 

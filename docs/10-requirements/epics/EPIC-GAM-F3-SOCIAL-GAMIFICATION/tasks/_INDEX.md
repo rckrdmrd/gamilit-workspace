@@ -13,4 +13,3 @@ estado: activo
 | Archivo/Directorio | Descripcion |
 |--------------------|-------------|
 | [_MAP.md](./_MAP.md) | Mapa de tareas |
-| [_archived/](./_archived/) | Tareas archivadas |

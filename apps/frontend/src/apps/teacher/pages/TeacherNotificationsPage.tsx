@@ -173,6 +173,7 @@ export default function TeacherNotificationsPage() {
 
   return (
     <TeacherPageShell>
+      <div className="detective-container py-6 sm:py-8">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -181,7 +182,7 @@ export default function TeacherNotificationsPage() {
               <Bell className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-detective-text">Notificaciones</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-detective-text">Notificaciones</h1>
               <p className="text-detective-text-secondary">
                 {unreadCount > 0 ? `${unreadCount} sin leer` : 'Todas leidas'}
               </p>
@@ -194,7 +195,7 @@ export default function TeacherNotificationsPage() {
               whileTap={{ scale: 0.95 }}
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              className="p-2 min-w-[44px] min-h-[44px] rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
             >
               <RefreshCw className={cn('w-5 h-5 text-white', isRefreshing && 'animate-spin')} />
             </motion.button>
@@ -204,7 +205,7 @@ export default function TeacherNotificationsPage() {
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowFilters(!showFilters)}
               className={cn(
-                'p-2 rounded-lg transition-colors',
+                'p-2 min-w-[44px] min-h-[44px] rounded-lg transition-colors',
                 showFilters ? 'bg-orange-500 text-white' : 'bg-white/10 hover:bg-white/20 text-white',
               )}
             >
@@ -225,7 +226,7 @@ export default function TeacherNotificationsPage() {
 
             <Link
               to="/teacher/settings/notifications"
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              className="p-2 min-w-[44px] min-h-[44px] rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
             >
               <Settings className="w-5 h-5 text-white" />
             </Link>
@@ -408,6 +409,7 @@ export default function TeacherNotificationsPage() {
             </AnimatePresence>
           </div>
         )}
+      </div>
       </div>
     </TeacherPageShell>
   );

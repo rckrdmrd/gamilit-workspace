@@ -14,6 +14,7 @@
 
 import { registerExercise } from './exercise-registry';
 import {
+  // Module 1
   adaptToCrucigramaData,
   adaptToTimelineData,
   adaptToVerdaderoFalsoData,
@@ -21,19 +22,28 @@ import {
   adaptToCompletarEspaciosData,
   adaptToSopaLetrasData,
   adaptToMapaConceptualData,
+  // Module 2
   adaptToLecturaInferencialData,
   adaptToCausaEfectoData,
   adaptToPrediccionNarrativaData,
   adaptToPuzzleContextoData,
+  // Module 3
   adaptToTribunalOpinionesData,
+  adaptToPodcastArgumentativoData,
+  adaptToAnalisisFuentesData,
+  adaptToMatrizPerspectivasData,
+  adaptToDebateDigitalData,
+  // Module 4
   adaptToQuizTikTokData,
   adaptToInfografiaInteractivaData,
   adaptToVerificadorFakeNewsData,
   adaptToNavegacionHipertextualData,
   adaptToAnalisisMemesData,
+  // Module 5
   adaptToDiarioMultimediaData,
   adaptToComicDigitalData,
   adaptToVideoCartaData,
+  // Auxiliar
   // adaptToComprensionAuditivaData, // BACKLOG: comprension_auditiva desactivada
   adaptToBaseExercise,
 } from '@shared/utils/exerciseAdapter';
@@ -130,25 +140,25 @@ registerExercise('rueda_inferencias', {
 
 registerExercise('analisis_fuentes', {
   loader: () => import('@/features/mechanics/module3/AnalisisFuentes/AnalisisFuentesExercise'),
-  adapter: adaptToBaseExercise,
+  adapter: adaptToAnalisisFuentesData,
   meta: { displayName: 'Análisis de Fuentes', module: 3, category: 'critica', icon: 'file-search' },
 });
 
 registerExercise('debate_digital', {
   loader: () => import('@/features/mechanics/module3/DebateDigital/DebateDigitalExercise'),
-  adapter: adaptToBaseExercise,
+  adapter: adaptToDebateDigitalData,
   meta: { displayName: 'Debate Digital', module: 3, category: 'critica', icon: 'message-circle' },
 });
 
 registerExercise('matriz_perspectivas', {
   loader: () => import('@/features/mechanics/module3/MatrizPerspectivas/MatrizPerspectivasExercise'),
-  adapter: adaptToBaseExercise,
+  adapter: adaptToMatrizPerspectivasData,
   meta: { displayName: 'Matriz de Perspectivas', module: 3, category: 'critica', icon: 'table' },
 });
 
 registerExercise('podcast_argumentativo', {
   loader: () => import('@/features/mechanics/module3/PodcastArgumentativo/PodcastArgumentativoExercise'),
-  adapter: adaptToBaseExercise,
+  adapter: adaptToPodcastArgumentativoData,
   meta: { displayName: 'Podcast Argumentativo', module: 3, category: 'critica', icon: 'mic' },
 });
 

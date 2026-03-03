@@ -10,3 +10,4 @@ export * from './classroom-missions.service';
 export * from './comodines.service';
 export * from './shop.service';
 export * from './inventory.service';
+export * from './boost.service';

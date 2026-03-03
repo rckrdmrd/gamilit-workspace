@@ -1,7 +1,7 @@
 ---
 title: "API Reference - Gamification"
 status: activo
-last_updated: "2026-03-01"
+last_updated: "2026-03-03"
 ---
 
 # API Reference - Gamification
@@ -71,6 +71,38 @@ last_updated: "2026-03-01"
 | GET | `/api/v1/gamification/ml-coins/multiplier-table` | Tabla completa de multiplicadores por rango | Si | any |
 | GET | `/api/v1/gamification/users/:userId/ml-coins/calculate` | Calcular ML Coins con multiplicador de rango (?baseAmount=N) | Si | any |
 | POST | `/api/v1/gamification/users/:userId/ml-coins/add-with-multiplier` | Agregar ML Coins aplicando multiplicador de rango automaticamente | Si | any |
+
+### Comparativa de Endpoints ML Coins
+
+| Atributo | GET /stats | GET /summary | GET /ml-coins |
+|----------|-----------|-------------|---------------|
+| Controller | UserStatsController | UserStatsController | MLCoinsController |
+| Profile ID resolution | SI (resolveProfileId) | SI (via findByUserId) | SI (resolveProfileId — ADR-052) |
+| Auto-create en 404 | NO (throws) | SI (crea con 100 coins) | NO (retorna zeros) |
+| Campo ML Coins | `ml_coins` (snake) | `mlCoins` (camel) | `current_balance` |
+| Incluye lifetime/spent | SI | NO | SI |
+| Frontend consumer | Zustand economyStore | React Query useUserGamification | No usado activamente |
+
+### TransactionTypeEnum (14 valores)
+
+| Tipo | Categoria | Descripcion |
+|------|-----------|-------------|
+| `EARNED_EXERCISE` | Ganado | Completar ejercicio |
+| `EARNED_MISSION` | Ganado | Completar mision |
+| `EARNED_ACHIEVEMENT` | Ganado | Desbloquear achievement |
+| `EARNED_STREAK` | Ganado | Bonus de racha diaria |
+| `EARNED_RANK_PROMOTION` | Ganado | Bonus de promocion de rango |
+| `EARNED_DAILY_LOGIN` | Ganado | Bonus de login diario |
+| `WELCOME_BONUS` | Ganado | Bonus inicial al crear usuario (ADR-052) |
+| `SPENT_SHOP` | Gastado | Compra en tienda virtual |
+| `SPENT_POWERUP` | Gastado | Uso de comodin/power-up |
+| `SPENT_CUSTOM` | Gastado | Gasto personalizado |
+| `ADMIN_GRANT` | Admin/Sistema | Asignacion manual por admin |
+| `ADMIN_DEDUCT` | Admin/Sistema | Deduccion manual por admin |
+| `TEACHER_BONUS` | Admin/Sistema | Bonus otorgado por maestro |
+| `SYSTEM_ADJUSTMENT` | Admin/Sistema | Ajuste del sistema |
+
+---
 
 ### Missions — Misiones (8 endpoints)
 | Method | Endpoint | Description | Auth | Roles |
@@ -277,6 +309,35 @@ Response:
 | 404 | INVENTORY_NOT_FOUND | Inventario del usuario no encontrado |
 | 409 | CONSUMABLE_PURCHASE_CONFLICT | Conflicto en compra concurrente de consumible |
 | 500 | INTERNAL_SERVER_ERROR | Error interno del servidor |
+
+---
+
+### Boosts — Bonificadores Activos (1 endpoint)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /gamification/boosts/:userId/active | Obtener boosts activos del usuario | Si |
+
+**Response (200):** Array de `ActiveBoost`
+```json
+[
+  {
+    "id": "uuid",
+    "user_id": "uuid",
+    "boost_type": "XP",
+    "multiplier": 2.00,
+    "source": "ITEM:<purchaseId>",
+    "activated_at": "2026-03-03T10:00:00Z",
+    "expires_at": "2026-03-04T10:00:00Z",
+    "is_active": true
+  }
+]
+```
+
+**Notas:**
+- Boosts expirados son desactivados automaticamente antes de retornar
+- `boost_type`: `'XP'` | `'COINS'` | `'LUCK'` | `'DROP_RATE'`
+- Activados automaticamente al comprar items con `effect_data.type` = `xp_boost` o `coins_boost`
 
 ---
 

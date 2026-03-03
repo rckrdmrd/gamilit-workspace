@@ -1,7 +1,7 @@
 # SIMCO-VALIDACION-SSOT
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-13
+**Version:** 1.0.1
+**Fecha:** 2026-03-03
 **Aplica a:** Todos los agentes que modifiquen DDL, Backend, Frontend o Inventarios
 **Criticidad:** BLOQUEANTE
 **Tipo:** Directiva Obligatoria
@@ -13,7 +13,7 @@
 ## 1. Proposito
 
 Garantizar la sincronizacion entre las 4 capas SSOT del proyecto gamilit:
-DDL (169 tablas) -> Backend (152 entities, 899 endpoints) -> Frontend (474 componentes, 655 API calls) -> Inventarios (8 YAMLs).
+DDL (173 tablas) -> Backend (156 entities, 915 endpoints) -> Frontend (575 componentes, 580 API calls) -> Inventarios (10 YAMLs).
 
 Toda modificacion en cualquier capa DEBE reflejarse en las demas para mantener coherencia (RC2 de CLAUDE.md).
 
@@ -25,10 +25,10 @@ Toda modificacion en cualquier capa DEBE reflejarse en las demas para mantener c
 
 | Archivo | Alias | Rol | Version |
 |---------|-------|-----|---------|
-| MASTER_INVENTORY.yml | @INV_MASTER | Estado consolidado del proyecto | v8.0.0 |
-| DATABASE_INVENTORY.yml | @INV_DB | Schemas, tablas, funciones, triggers | v8.0.0 |
-| BACKEND_INVENTORY.yml | @INV_BE | Modulos, entities, endpoints, services | v4.0.0 |
-| FRONTEND_INVENTORY.yml | @INV_FE | Componentes, paginas, hooks, stores | v5.0.0 |
+| MASTER_INVENTORY.yml | @INV_MASTER | Estado consolidado del proyecto | v14.9.3 |
+| DATABASE_INVENTORY.yml | @INV_DB | Schemas, tablas, funciones, triggers | v14.9.3 |
+| BACKEND_INVENTORY.yml | @INV_BE | Modulos, entities, endpoints, services | v14.9.3 |
+| FRONTEND_INVENTORY.yml | @INV_FE | Componentes, paginas, hooks, stores | v12.5.4 |
 
 ### 2.2 Fuentes de Codigo (Ground Truth)
 
@@ -99,7 +99,7 @@ verificacion:
     grep -r "CREATE TABLE" apps/database/ddl/ | wc -l
     # Contar entities
     find apps/backend/src -name "*.entity.ts" | wc -l
-  esperado: "169 tablas >= 152 entities (17 tablas sin entity son aceptables: logs, audit, temporal)"
+  esperado: "173 tablas >= 156 entities (17 tablas sin entity son aceptables: logs, audit, temporal)"
   gap_maximo: 25
 ```
 
@@ -109,7 +109,7 @@ verificacion:
 regla: "Toda entity con controller DEBE tener al menos CreateDto y ResponseDto"
 verificacion:
   metodo: "Por modulo: contar entities con controller vs DTOs disponibles"
-  esperado: "152 entities -> 399 DTOs (ratio ~2.6 DTOs/entity)"
+  esperado: "156 entities -> 401 DTOs (ratio ~2.6 DTOs/entity)"
 ```
 
 ### R3: Controller <-> Endpoint Documentado (RECOMENDADO)
@@ -120,7 +120,7 @@ verificacion:
   comando: |
     # Contar decoradores de endpoint
     grep -r "@Get\|@Post\|@Put\|@Delete\|@Patch" apps/backend/src/modules/ | wc -l
-  esperado: "899 endpoints"
+  esperado: "915 endpoints"
 ```
 
 ### R4: Backend Endpoint <-> Frontend API Call (INFORMATIVO)
@@ -128,9 +128,9 @@ verificacion:
 ```yaml
 regla: "Endpoints activos DEBEN tener consumidor en frontend"
 verificacion:
-  backend_endpoints: 899
-  frontend_api_calls: 655
-  gap: 244
+  backend_endpoints: 915
+  frontend_api_calls: 580
+  gap: 335
   justificacion: "Endpoints admin-only, internos, y background jobs no tienen frontend"
 ```
 
@@ -202,7 +202,7 @@ CADA semana o despues de sprint significativo:
 
 ## 7. Datasources y Schemas
 
-gamilit tiene 10 datasources en app.module.ts mapeando a schemas PostgreSQL:
+gamilit tiene 18 schemas en PostgreSQL (16 activos + 2 placeholder) mapeados a 10 datasources en app.module.ts:
 
 | Datasource | Schema(s) | Entities |
 |-----------|-----------|---------|
@@ -241,6 +241,12 @@ trigger_futuro: TRIGGER-SSOT-SYNC
   accion:
     - "Verificar coherencia MASTER vs capas"
 ```
+
+---
+
+## Referencia ADR
+
+Este documento está formalizado por [ADR-039 — SSOT - Documentacion del Producto en el Proyecto](../../docs/90-adr/ADR-039-ssot-docs-en-proyecto.md) y [ADR-040 — Adopcion de Arquitectura Monorepo](../../docs/90-adr/ADR-040-monorepo-architecture.md).
 
 ---
 

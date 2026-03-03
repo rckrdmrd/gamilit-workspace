@@ -116,3 +116,12 @@ export class ConsumablePurchaseConflictError extends ConflictError {
     );
   }
 }
+
+export class NonConsumableDuplicatePurchaseError extends ConflictError {
+  constructor(itemId: string) {
+    super(
+      `Item ${itemId} has already been purchased. Non-consumable items can only be purchased once.`,
+      'NON_CONSUMABLE_DUPLICATE_PURCHASE',
+    );
+  }
+}

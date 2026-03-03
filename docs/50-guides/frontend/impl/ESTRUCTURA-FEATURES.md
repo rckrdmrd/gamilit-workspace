@@ -136,7 +136,7 @@ features/exercises/
 │   └── index.ts
 ├── registry/
 │   ├── exercise-registry.ts           # Map<string, ExerciseRegistryEntry> + registerExercise()
-│   └── registrations.ts               # 30 mecánicas registradas con loader + adapter + meta
+│   └── registrations.ts               # 29 mecánicas registradas (comprension_auditiva en BACKLOG) con loader + adapter + meta
 ├── hooks/
 │   ├── useExerciseData.ts             # Fetch ejercicio + registry lookup + mechanic loading
 │   ├── useExerciseProgress.ts         # Progreso + auto-save integrado

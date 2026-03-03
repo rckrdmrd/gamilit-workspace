@@ -33,7 +33,6 @@ estado: activo
 | Directorio | Descripcion |
 |------------|-------------|
 | [dto/](./dto/) | DTOs por dominio |
-| [_archived/](./_archived/) | Guias archivadas |
 
 ## Navegacion
 

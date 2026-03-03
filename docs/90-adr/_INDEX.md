@@ -2,7 +2,7 @@
 titulo: "90 - Architecture Decision Records (ADRs)"
 tipo: indice
 fecha_creacion: "2025-10-01"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-03"
 estado: activo
 ---
 
@@ -13,7 +13,7 @@ estado: activo
 
 ---
 
-## Indice Completo (47 ADRs)
+## Indice Completo (49 ADRs)
 
 ### Fundamentos y Arquitectura (001-005)
 
@@ -96,7 +96,9 @@ estado: activo
 | [ADR-048](./ADR-048-component-sharing-strategy.md) | Component Sharing Strategy | Accepted |
 | [ADR-049](./ADR-049-confirm-dialog-consolidation.md) | ConfirmDialog Consolidation | Accepted |
 | [ADR-050](./ADR-050-responsive-design-strategy.md) | Responsive Design Strategy | Accepted |
+| [ADR-051](./ADR-051-vision-lectora-frontend-only.md) | Vision Lectora Frontend-Only CSS Scoped Implementation | Accepted |
+| [ADR-052](./ADR-052-ml-coins-transaction-integrity.md) | ML Coins — Integridad Transaccional | Aceptada |
 
 ---
 
-**Total:** 47 ADRs | **Numeros libres:** 006, 024, 025
+**Total:** 49 ADRs | **Numeros libres:** 006, 024, 025

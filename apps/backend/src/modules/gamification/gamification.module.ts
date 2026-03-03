@@ -51,6 +51,7 @@ import {
   ComodinesService,
   ShopService,
   InventoryService,
+  BoostService,
 } from './services';
 
 // Controllers
@@ -66,6 +67,7 @@ import {
   ComodinesController,
   ShopController,
   InventoryController,
+  BoostController,
 } from './controllers';
 
 // Constants
@@ -89,6 +91,7 @@ import {
  * - UserStatsService
  * - AchievementsService
  * - MLCoinsService
+ * - BoostService
  */
 @Module({
   imports: [
@@ -143,6 +146,7 @@ import {
     ComodinesService,
     ShopService,
     InventoryService,
+    BoostService,
   ],
   controllers: [
     UserStatsController,
@@ -156,6 +160,7 @@ import {
     ComodinesController,
     ShopController,
     InventoryController,
+    BoostController,
   ],
   exports: [
     UserStatsService,
@@ -170,6 +175,7 @@ import {
     ComodinesService,
     ShopService,
     InventoryService,
+    BoostService,
   ],
 })
 export class GamificationModule {}

@@ -50,7 +50,7 @@ export function DashboardStatsSection({
           <div className="flex items-center justify-between">
             <div>
               <p className="mb-1 text-sm text-detective-text-secondary">Estudiantes</p>
-              <p className="text-3xl font-bold text-detective-text">
+              <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                 {stats?.active_students ?? 0}/{stats?.total_students ?? 0}
               </p>
               <p className="mt-1 text-xs text-detective-text-secondary">Activos hoy</p>
@@ -63,7 +63,7 @@ export function DashboardStatsSection({
           <div className="flex items-center justify-between">
             <div>
               <p className="mb-1 text-sm text-detective-text-secondary">Score Promedio</p>
-              <p className="text-3xl font-bold text-detective-gold">
+              <p className="text-2xl sm:text-3xl font-bold text-detective-gold">
                 {safeFormatNumber(stats?.average_score, 1, '%', 'N/A')}
               </p>
               <p className="mt-1 text-xs text-green-500">
@@ -83,7 +83,7 @@ export function DashboardStatsSection({
               <p className="mb-1 text-sm text-detective-text-secondary">
                 Tasa de Completitud
               </p>
-              <p className="text-3xl font-bold text-detective-text">
+              <p className="text-2xl sm:text-3xl font-bold text-detective-text">
                 {safeFormatNumber(stats?.average_completion, 0, '%', '0%')}
               </p>
               <p className="mt-1 text-xs text-detective-text-secondary">De ejercicios</p>
@@ -98,7 +98,7 @@ export function DashboardStatsSection({
               <p className="mb-1 text-sm text-detective-text-secondary">
                 Pendientes de Revisión
               </p>
-              <p className="text-3xl font-bold text-red-500">
+              <p className="text-2xl sm:text-3xl font-bold text-red-500">
                 {alerts?.length ?? stats?.total_submissions_pending ?? 0}
               </p>
               <p className="mt-1 text-xs text-detective-text-secondary">

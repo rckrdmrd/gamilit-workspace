@@ -28,7 +28,7 @@ tipo: hub
 |---------|---------|
 | Portales | 4 (Estudiante, Maestro, Admin, Padres) |
 | Paginas | 70 activas |
-| Ejercicios | 30 mecanicas unicas en 5 modulos educativos |
+| Ejercicios | 29 mecanicas unicas (comprension_auditiva en BACKLOG) en 5 modulos educativos |
 | Tests E2E actuales | 0 (primera implementacion) |
 | Tests objetivo minimo | 27+ flujos criticos |
 

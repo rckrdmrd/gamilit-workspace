@@ -1,5 +1,7 @@
 # CHANGELOG - Plataforma GAMILIT
 
+> **Scope:** Product code changes (backend, frontend, database). For orchestration/governance changes, see [`orchestration/CHANGELOG.md`](./orchestration/CHANGELOG.md).
+
 ## [2.6.0] - 2026-01-30
 
 ### REFACTOR - Arquitectura Teacher Portal y Nuevo Parent Portal

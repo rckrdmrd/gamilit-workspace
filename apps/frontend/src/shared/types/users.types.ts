@@ -4,7 +4,7 @@
  * DEPRECADO: Este archivo existe solo para compatibilidad hacia atrás.
  * Usar las definiciones canónicas de user.types.ts directamente.
  *
- * @deprecated Usar imports desde user.types.ts
+ * @deprecated Re-export removed. Use user.types.ts directly. Zero imports. Safe to delete.
  * @see user.types.ts para definiciones canónicas
  *
  * Actualizado: 2026-01-07 - Consolidación de tipos duplicados

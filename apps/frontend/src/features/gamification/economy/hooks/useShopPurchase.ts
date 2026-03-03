@@ -61,6 +61,10 @@ export function useShopPurchase(): UseShopPurchaseReturn {
 
       if (code === 'INSUFFICIENT_COINS') {
         toast.error('No tienes suficientes ML Coins para esta compra.');
+      } else if (code === 'INSUFFICIENT_LEVEL') {
+        toast.error('No cumples el nivel requerido para comprar este item.');
+      } else if (code === 'INSUFFICIENT_RANK') {
+        toast.error('No tienes el rango requerido para comprar este item.');
       } else if (code === 'ITEM_NOT_AVAILABLE') {
         toast.error('Este item no esta disponible actualmente.');
       } else if (code === 'INSUFFICIENT_STOCK') {

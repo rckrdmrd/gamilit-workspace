@@ -25,7 +25,6 @@ estado: activo
 | # | Estandar | Proposito |
 |---|----------|-----------|
 | 1 | ESTANDAR-API.md | Convenciones RESTful, Swagger, seguridad de endpoints |
-| 2 | ESTANDAR-BACKEND-PROFESIONAL.md | Redirect a backend-profesional/ (8 modulos SOLID/DDD) |
 | 3 | ESTANDAR-CODIGO.md | Convenciones generales de codigo |
 | 4 | ESTANDAR-CROSS-SCHEMA-REFERENCES.md | FKs cross-schema, cross-datasource entities, RLS functions |
 | 5 | ESTANDAR-DATABASE-PROFESIONAL.md | PostgreSQL 15, DDL, RLS, triggers |
@@ -33,7 +32,6 @@ estado: activo
 | 7 | ESTANDAR-DOCUMENTACION.md | Documentacion del proyecto |
 | 8 | ESTANDAR-FRONTEND-PROFESIONAL.md | React 19, TypeScript, componentes |
 | 9 | ESTANDAR-GIT.md | Commits, branching, PRs |
-| 10 | ESTANDAR-MEMORIA-TOKENS.md | Gestion de ventana de contexto IA |
 | 11 | ESTANDAR-METADATA-ITEMS.md | Contrato JSONB metadata para shop_items visuales |
 | 12 | ESTANDAR-NOMENCLATURA.md | Nomenclatura general |
 | 13 | ESTANDAR-NOMENCLATURA-API.md | snake_case/camelCase entre capas |
@@ -42,7 +40,6 @@ estado: activo
 | 16 | ESTANDAR-SEGURIDAD.md | Indice de seguridad + Checklist pre-deploy |
 | 17 | ESTANDAR-SEGURIDAD-WEB.md | OWASP Web Top 10 (2021) + Auth + Secrets + Headers |
 | 18 | ESTANDAR-SEGURIDAD-API.md | OWASP API Security Top 10 (2023) |
-| 19 | ESTANDAR-SKILLS.md | [MOVED] a `orchestration/agents/SKILL-STANDARD.md` |
 | 20 | ESTANDAR-TESTING.md | Indice de testing (cobertura + checklists) + links a sub-archivos |
 | 20a | ESTANDAR-TESTING-UNIT.md | Unit tests, naming, mocking, test data |
 | 20b | ESTANDAR-TESTING-INTEGRATION.md | Integration tests (backend, frontend, DB) |

@@ -271,7 +271,8 @@ export default function TeacherReportsPage() {
 
   return (
     <TeacherPageShell>
-    <div className="space-y-6 p-6">
+    <div className="detective-container py-6 sm:py-8">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* Error Banner */}
         {hasError && (
           <div className="rounded-lg border-l-4 border-red-500 bg-red-500/10 p-4" role="alert">
@@ -476,6 +477,7 @@ export default function TeacherReportsPage() {
           <SharedReportsTab recentReports={recentReports} />
         )}
       </div>
+    </div>
     </TeacherPageShell>
   );
 }

@@ -464,7 +464,7 @@ const ImageGallery = ({ images, title }: { images: string[]; title?: string }) =
           >
             <button
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute right-4 top-4 rounded-full p-2 text-white hover:bg-white/20"
+              className="absolute right-4 top-4 rounded-full p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white hover:bg-white/20"
             >
               <X className="h-6 w-6" />
             </button>
@@ -720,7 +720,7 @@ export const ResponseDetailModal = ({
     >
       {/* Header */}
       <div className="flex items-center justify-between bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
-        <h2 id="response-detail-title" className="flex items-center gap-2 text-2xl font-bold text-white">
+        <h2 id="response-detail-title" className="flex items-center gap-2 text-lg sm:text-2xl font-bold text-white">
           <FileText className="h-6 w-6" />
           Detalle de Respuesta
         </h2>
@@ -733,7 +733,7 @@ export const ResponseDetailModal = ({
       </div>
 
       {/* Content */}
-      <div className="max-h-[calc(100vh-200px)] overflow-y-auto p-6">
+      <div className="max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto p-6">
               {isLoading && <LoadingState />}
 
               {error && <ErrorState message={error.message} />}

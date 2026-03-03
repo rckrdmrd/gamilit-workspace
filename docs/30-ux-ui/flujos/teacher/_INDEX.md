@@ -2,7 +2,7 @@
 titulo: _INDEX - Flujos Teacher
 tipo: indice
 fecha_creacion: "2025-10-01"
-ultima_actualizacion: "2026-02-28"
+ultima_actualizacion: "2026-03-03"
 estado: activo
 ---
 
@@ -18,7 +18,7 @@ estado: activo
 | [FLUJO-REVISION-MANUAL-M3-M5.md](./FLUJO-REVISION-MANUAL-M3-M5.md) | FL-TCH-07 | Revision manual M3-M5 |
 | [FLUJO-DASHBOARD-DOCENTE.md](./FLUJO-DASHBOARD-DOCENTE.md) | FL-TCH-08 | Dashboard docente |
 | [FLUJO-GESTION-CLASES.md](./FLUJO-GESTION-CLASES.md) | FL-TCH-08b | Gestion de clases |
-| [FLUJO-GESTION-CONTENIDO.md](./FLUJO-GESTION-CONTENIDO.md) | FL-TCH-08c | Gestion de contenido |
+| [FLUJO-GESTION-CONTENIDO.md](./FLUJO-GESTION-CONTENIDO.md) | FL-TCH-08c | Gestion de contenido [DEPRECADO] |
 | [FLUJO-LOGIN-DOCENTE.md](./FLUJO-LOGIN-DOCENTE.md) | FL-TCH-L1 | Login docente |
 | [FLUJO-GESTION-ESTUDIANTES.md](./FLUJO-GESTION-ESTUDIANTES.md) | FL-TCH-09 | Gestion de estudiantes (/teacher/students) |
 | [FLUJO-PROGRESO-ACADEMICO.md](./FLUJO-PROGRESO-ACADEMICO.md) | FL-TCH-10 | Progreso academico (/teacher/progress) |

@@ -173,8 +173,8 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
               <User className="h-5 w-5 text-detective-orange" />
             </div>
             <div>
-              <h3 className="font-bold text-detective-text">{student.full_name}</h3>
-              <p className="text-xs text-detective-text-secondary">{student.email}</p>
+              <h3 className="font-bold text-detective-text truncate" title={student.full_name}>{student.full_name}</h3>
+              <p className="text-xs text-detective-text-secondary truncate" title={student.email}>{student.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -208,7 +208,7 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="text-center">
             <div className="mb-1 flex items-center justify-center gap-1">
               <Target className="h-4 w-4 text-detective-orange" />

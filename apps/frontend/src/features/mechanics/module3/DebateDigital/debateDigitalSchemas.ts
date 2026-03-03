@@ -26,24 +26,5 @@ export const debateAnswersSchema = z.object({
   messageCount: z.number().optional(),
 });
 
-// Legacy schemas kept for backward compatibility
-/** @deprecated No longer used - exercise uses structured essay sections */
-export const messageSchema = z.object({
-  text: z
-    .string()
-    .min(10, 'El mensaje debe tener al menos 10 caracteres')
-    .max(1000, 'El mensaje no puede exceder 1000 caracteres'),
-});
-
-/** @deprecated No longer used - exercise uses structured essay sections */
-export const debateMessageSchema = z.object({
-  id: z.string(),
-  sender: z.enum(['user', 'ai']),
-  text: z.string(),
-  timestamp: z.date(),
-});
-
 export type EssaySectionValidation = z.infer<typeof essaySectionSchema>;
-export type MessageValidation = z.infer<typeof messageSchema>;
-export type DebateMessage = z.infer<typeof debateMessageSchema>;
 export type DebateAnswers = z.infer<typeof debateAnswersSchema>;

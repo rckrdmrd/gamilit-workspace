@@ -1,13 +1,308 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-03-02
-**Version:** v5.9 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
+**Ultima Actualizacion:** 2026-03-03
+**Version:** v5.10 (condensado — historial movido a `orchestration/referencias/PROXIMA-ACCION-HISTORICO-2026.md`)
 **Estado del Proyecto:** MVP 99% completado | **SPRINT 2 COMPLETADO** (16/16 items) | Health Score: ~99/100
 **Sprint Actual:** Sprint 2 COMPLETADO — Doc Health + Code-Doc Alignment + Doc Remediation COMPLETADAS — Sprint 3 funcional pendiente
 
 ---
 
 ## Estado Actual
+
+### [2026-03-03] Documentation Audit — 2026-03-03 (COMPLETED)
+
+**Scope:** Synthesis audit consolidating findings from the 2026-03-03 comprehensive codebase audit (10 phases, 23 subagents) and cross-referencing against documentation structure. Health Score: 99/100 (stable — no regression).
+
+**Report:** `orchestration/tareas/TASK-2026-03-03-DOC-AUDIT/AUDIT-REPORT.md`
+
+---
+
+#### P0 Issues Identified (Not Previously in PROXIMA-ACCION)
+
+| ID | Issue | Module | Action |
+|----|-------|--------|--------|
+| P0-1 | 2FA email delivery — 3 stub points, OTP never sent via email | auth | Implement mail dispatch in generate2FAToken + OTP service |
+| P0-2 | Parents email verification — email body empty, non-functional | parents | Populate email template body |
+| P0-3 | Parents password reset — handler returns void silently, no email sent | parents | Implement reset email dispatch |
+| P0-4 | Scheduled missions — findByUserId() + completeMission() are no-ops | missions | Implement DB queries + reward distribution |
+
+**P1 Security (from comprehensive audit):**
+- `disable2FA()` skips password verification before disabling 2FA
+- `refreshToken()` error masking may hide security events
+
+---
+
+#### Missing Documentation Items
+
+**Missing Technical Definitions (5):**
+1. **D1 — Visual Type Slot System:** Cross-component equip strategy for `visual_type` slots (avatar/frame/badge/background). DDL and entity exist; no unified doc.
+2. **D2 — Boost Expiration Model:** On-read deactivation approach needs ADR. No flow diagram for purchase → activation → expiry check.
+3. **D3 — RLS Multi-Tenant Enforcement (P0):** No document explains `app.current_user_id` propagation from NestJS to PostgreSQL, or `FE_USER_ID` RLS evaluation in practice.
+4. **D4 — ML Coins Transaction Types:** `reference_type` values (exercise, achievement, rank_promotion, shop_purchase, bonus, welcome, teacher_bonus) not enumerated in API spec.
+5. **D5 — ADR-045 Adoption Roadmap (P0):** 61% of throws still use HTTP exceptions. No migration roadmap document.
+
+**Missing Flow Diagrams (4):**
+1. **F1 — Exercise Submission End-to-End:** submit → score → XP → rank multiplier → ML Coins → achievement check → rank promotion → WebSocket → FE update
+2. **F2 — Parent Registration:** registration → email verification → child link → dashboard
+3. **F3 — 2FA OTP Flow:** OTP generation → send email → verify code (directly linked to P0-1)
+4. **F4 — Teacher Assignment Workflow:** create assignment → assign → student notification → student completes → teacher progress view
+
+---
+
+#### API Documentation Gap
+
+- **Total endpoints:** 919 actual vs 648 documented = **70.5% coverage**
+- **BoostController (new, 0% documented):** 4 endpoints in `GET /boosts/:userId/active` + supporting routes
+- **Lowest coverage modules:** analytics (~50%), reports (~50%), notifications (~50%), social (~40%)
+
+---
+
+#### Inventory Deltas (Frontend — needs update)
+
+From Wave 0 of 2026-03-03 comprehensive audit (FRONTEND_INVENTORY updated to v12.7.0):
+
+| Metric | MASTER_INVENTORY ref | Actual | Action |
+|--------|---------------------|--------|--------|
+| FE Components | 575 | 581 | Update MASTER ref |
+| FE Hooks | 132 | 143 | Update MASTER ref |
+| FE Pages | 70 | 81 | Update MASTER ref |
+| FE Type Files | 49 | 81 | Update MASTER ref |
+| FE API Service Files | 65 | 78 | Update MASTER ref |
+
+---
+
+#### Deprecation Items Without Timelines (7)
+
+| # | Item | Location | Status |
+|---|------|----------|--------|
+| Dep1 | Schema 10 (store) marked DEPRECATED | DDL schema header | Needs decision |
+| Dep2 | Schema 15 (settings) marked DEPRECATED | DDL schema header | Needs decision |
+| Dep3 | `useSettings` hook | Frontend hooks | Check consumers |
+| Dep4 | `checkRankPromotion()` | Backend service | Verify replacement |
+| Dep5 | Social/Guild shop categories | Seeds + enums | DONE (2026-03-02) |
+| Dep6 | `achievements.ml_coins_reward` | Entity + DDL | Confirm replacement field |
+| Dep7 | `findByIds` | Backend repo usage | Confirm TypeORM replacement |
+
+**Missing policy:** No `ESTANDAR-DEPRECACION.md` exists. Deprecation items accumulate without enforcement.
+
+---
+
+#### Priority Action Plan
+
+**2 weeks:**
+1. Implement 2FA email delivery (P0-1)
+2. Fix Parents portal email verification + password reset (P0-2, P0-3)
+3. Document RLS enforcement strategy (D3)
+4. Create ADR-053: ADR-045 adoption roadmap (D5)
+5. Create ADR-054: Boost expiration on-read model (D2)
+6. Document BoostController API endpoints (4 endpoints)
+
+**1 month:**
+7. Fix scheduled-mission no-ops (P0-4)
+8. Create exercise submission end-to-end flow diagram (F1)
+9. Update MASTER_INVENTORY frontend metric refs to match FRONTEND_INVENTORY v12.7.0
+10. Enumerate ML Coins transaction types in API spec (D4)
+11. Create `ESTANDAR-DEPRECACION.md`
+12. Create remaining flow diagrams (F2, F3, F4)
+
+---
+
+### [2026-03-03] ML Coins Remediation: Transaction Integrity + resolveProfileId (COMPLETED)
+
+**Scope:** 3 items fuera de alcance de la investigacion ML-COINS-FIX anterior. 11 agentes orquestados (1 Opus + 6 Sonnet + 4 Haiku).
+
+**Problem:**
+- `auditBalance()` compensaba con `+ 100` hardcoded por falta de transaccion WELCOME_BONUS
+- 3 funciones DDL (`promote_to_next_rank`, `update_user_rank`, `claim_achievement_reward`) creditaban `ml_coins` sin actualizar `ml_coins_earned_total`, causando drift en leaderboard de maestros
+- `MLCoinsService` no usaba `resolveProfileId()`, fallando silenciosamente si recibia `auth.users.id` en vez de `profiles.id`
+
+**Solution:**
+1. `UserStatsService.create()` emite transaccion WELCOME_BONUS (amount=100, reference_type='welcome')
+2. `MLCoinsService.auditBalance()` — removido `+ 100` hardcoded; SUM(transactions) es fuente de verdad
+3. 3 DDL functions patched: `ml_coins_earned_total += amount` en cada funcion
+4. `MLCoinsService.resolveProfileId()` agregado a 12 metodos publicos
+5. DDL constraint + entity: 'welcome' agregado a reference_type
+
+**Files modified (~10 codigo + ~6 docs):**
+- Backend: user-stats.service.ts, ml-coins.service.ts, ml-coins-transaction.entity.ts
+- DDL: promote_to_next_rank.sql, update_user_rank.sql, claim_achievement_reward.sql, 05-ml_coins_transactions.sql
+- Tests: ml-coins.service.spec.ts (Profile repo mock), user-stats.service.spec.ts (MLCoinsTransaction repo mock)
+
+**Validation:** Build 0 errors, Lint 0 errors, Tests 63/63 PASS, BD recreada (173 tablas)
+**Inventarios:** MASTER v14.9.11 → v14.9.12, BACKEND v5.3.5 → v5.3.6
+**ADR:** ADR-052 creado
+**Report:** `orchestration/tareas/TASK-2026-03-03-ML-COINS-REMEDIATION/REMEDIATION-REPORT.md`
+
+**Out of scope (future):**
+- `addXp()` no consulta active boosts (multiplicador boost no aplicado a XP)
+- Boost expiration cron (solo desactivacion on-read)
+- Consolidacion de 3 versiones de gamificationAPI en frontend
+- RankMultiplierService no tiene resolveProfileId (recibe userId de addCoinsWithRankMultiplier)
+
+---
+
+### [2026-03-03] ML Coins Fix: Doble Creditacion en Promocion Rango + Desync Header/Tienda (COMPLETED)
+
+**Scope:** Phase 6 Documentation & Inventory Updates. 8 agentes orquestados (Opus 4.6 + 4 Sonnet + 3 Haiku).
+
+**Problem:**
+- User reported +1100 ML Coins jump (135→1235) after rank promotion
+- Header balance (React Query) desync'd from shop balance (Zustand localStorage)
+
+**Root Causes:**
+1. **CRITICAL — Doble creditacion en rango:** `ranksService.promoteToNextRank()` llamaba `mlCoinsService.addCoins()` + DB trigger en `promote_to_next_rank()` ambos creditaban coins → duplication
+2. **HIGH — Desync header/tienda:** `economyStore.addCoins()/spendCoins()` actualizaban Zustand pero NO invalidaban React Query `['userGamification']` → stale data en header
+3. **HIGH — Race condition missions:** `claimRewardsFallback()` sin atomic guard → concurrent requests podian ambos pasar verificacion `claimed_at`
+
+**Solution:**
+1. Backend: Removed `mlCoinsService.addCoins()` from `ranksService.promoteToNextRang()` — DB trigger ya lo maneja
+2. Backend: Added atomic guard in `claimRewardsFallback()` — `WHERE claimed_at IS NULL` + `affected === 0` check
+3. Frontend: Created `shared/lib/queryClient.ts` singleton, exported from main.tsx
+4. Frontend: `economyStore.addCoins()/spendCoins()` now call `queryClient.invalidateQueries(['userGamification'])`
+5. Frontend: `useUserGamification` staleTime 5min → 30sec, `ShopPage.tsx` calls `fetchBalance()` on mount
+
+**Files modified (7):**
+- Backend (3): ranks.service.ts, missions.service.ts, ranks.service.spec.ts, missions.service.spec.ts
+- Frontend (4): shared/lib/queryClient.ts (NEW), main.tsx, economyStore.ts, useUserGamification.ts, ShopPage.tsx
+
+**Validation:** Build/Lint/Typecheck 0 errors, ranks/missions tests PASS, gamification 302/338 (34 pre-existing)
+
+**Out of Scope (Future):**
+- `auditBalance()` hardcoded +100 (no INITIAL transaction)
+- `ml_coins_earned_total` not updated by rank promotion trigger
+- Dual `/stats` vs `/summary` endpoints risk
+
+**Report:** `orchestration/tareas/TASK-2026-03-03-ML-COINS-FIX/ML-COINS-FIX-REPORT.md`
+
+---
+
+### [2026-03-03] Auditoría Comprehensiva — Documentación vs Desarrollo (COMPLETED)
+
+**Scope:** 10 phases, 23 subagents (1 Opus + 12 Sonnet + 10 Haiku). ~31 code files + 3 inventory files modified. Build/Lint/Typecheck: 0 errors.
+
+**Wave 0 — Metric Reconciliation (5 Haiku):**
+- Entity classes: 157→158 (maya-rank + message have 2 @Entity each)
+- Guards: 15→9 (dedicated .guard.ts files only)
+- Decorators: 18→3 (dedicated .decorator.ts files only)
+- Endpoints: 915→919 (+4 from boost controller)
+- FE components: 575→581, hooks: 132→143, pages: 70→81, type files: 49→81, API files: 65→78
+- Mechanics: 29 active confirmed ✓
+- DDL-Entity alignment: 173/173, 0 orphans
+
+**Wave 1 — Code Quality (4 Sonnet):**
+- P0 bugs found: 2FA OTPs never delivered (3 stubs), Parents email/password reset no-ops, scheduled-mission no-ops
+- P1 security: disable2FA skips password, refreshToken error masking, rate limit cache leak
+- 46 backend TODOs triaged (12 actionable, 8 tickets, 17 future, 5 removed)
+- 17 frontend TODOs triaged (4 actionable, 8 future, 5 removed)
+- ADR-045: Only auth fully compliant (86%), gamification mixed (23%), 19 modules HTTP-only
+
+**Wave 2 — Cross-Layer + Patterns (2 Sonnet + 2 Haiku):**
+- BE-FE API consumption: 96% (48 endpoints sampled)
+- OCP violations: exercises.service.ts (2×19 cases), achievements (20 cases)
+- 6 services with >7 deps (max 11: ExerciseSubmission, TeacherClassroomsCrud)
+- Zustand: 7/13 stores lack persistence, React Query/Zustand dual-store ~80% sync
+
+**Wave 3 — Remediation (4 Sonnet):**
+- educational.errors.ts expanded 3→8 domain error classes
+- 3 HTTP exceptions migrated to domain errors in exercises.service.ts
+- admin-users.service.ts JSDoc 18%→~80% (9 methods documented)
+- 7 legacy files annotated @deprecated (all zero references)
+- 8 @deprecated zero-consumer items removed (FE)
+- 3 stale TODO blocks removed, dead APIs/stores annotated
+
+**Wave 4 — Inventories (2 Sonnet + 1 Haiku):**
+- MASTER_INVENTORY: v14.9.6→v14.9.7
+- BACKEND_INVENTORY: v5.3.3→v5.3.4
+- FRONTEND_INVENTORY: v12.6.0→v12.7.0
+
+**Wave 5 — Validation (3 Haiku):**
+- 5/5 build checks PASS, 0 new TODOs/placeholders introduced
+- Spot-check: 3/5 chains COMPLETE, 1 by-design (queue), 1 orphaned (user_suspensions)
+
+**Report:** `orchestration/tareas/TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT/AUDIT-REPORT.md`
+**Checklist:** `orchestration/tareas/TASK-2026-03-03-COMPREHENSIVE-CODEBASE-AUDIT/REMEDIATION-CHECKLIST.md`
+
+---
+
+### [2026-03-03] M3 Pre-existing Issues Remediation: 8 Fixes (COMPLETED)
+
+**Problem:** Post-audit of M3 exercises revealed 10 pre-existing issues (8 actionable + 2 documented/excluded):
+- P1: DebateDigital catch block showed misleading 'info' feedback on submit error (user thinks submission succeeded)
+- P2: MatrizPerspectivas had 3 hardcoded "Marie Curie" questions; AnalisisFuentes had hardcoded description
+- P3: Duplicate FeedbackData interface in matrizPerspectivasTypes.ts (missing 'warning' type + fields), unused difficulty prop in 4 ExerciseProps, two statements on one line
+- P4: FeedbackData import in isolated group instead of shared/components block
+
+**Solution:**
+1. M3-010: Added `hasSubmitError` state — catch sets it true, FeedbackModal shows `type:'error'` with retry, onClose blocks onComplete
+2. M3-008: 3 questions genericized ("Marie" references removed), placeholder updated
+3. M3-009: `description={adaptedExercise?.description || 'Evalúa la credibilidad de las fuentes presentadas'}`
+4. M3-005: Duplicate FeedbackData removed, re-export from canonical mechanicsTypes
+5. M3-007: `difficulty` prop removed from 4 ExerciseProps interfaces (never destructured/used)
+6. M3-001: Two statements separated into two lines
+7. M3-002: FeedbackData import moved to shared/components group
+
+**Files modified (5):** DebateDigitalExercise.tsx, MatrizPerspectivasExercise.tsx, matrizPerspectivasTypes.ts, AnalisisFuentesExercise.tsx, PodcastArgumentativoExercise.tsx
+**Validation:** Build / Type-check / Lint — 0 errors
+**Inventarios:** MASTER v14.9.3 -> v14.9.4, FRONTEND v12.5.9 -> v12.6.0
+
+---
+
+### [2026-03-03] Shop Remediation: 4 Assets + Error Handling + Boost System ✅
+
+**Problem:** 4 bugs in shop system preventing normal operations:
+- Missing SVG asset files (golden-banner.svg, dragon-reader.svg, knowledge-shield.svg, basic-banner.svg) causing visual rendering failures
+- Error 500 on re-purchase of non-consumable items (unique constraint violation)
+- Boosts activated but no multiplier applied to XP calculations
+- Segunda Oportunidad comodin missing required_level constraint
+
+**Solution:**
+1. **Assets:** 4 SVG files copied from guild/ and guild-temp/ directories to frames/ and badges/ directories
+2. **Error handling:** Added NonConsumableDuplicatePurchaseError (409 Conflict), improved catch handler for unique constraint violations (23505)
+3. **Boost system:** Created BoostService (getActiveBoosts, getActiveMultiplier, deactivateExpiredBoosts) + BoostController (GET /boosts/:userId/active), integrated boost activation in shop purchase flow
+4. **Seeds:** Added required_level=5 UPDATE statement for Segunda Oportunidad across dev/staging/prod environments
+5. **Frontend:** Added boost indicator badges in GamifiedHeader showing active boosts with time remaining
+
+**Files modified (13):**
+- Backend (7): gamification.errors.ts, shop.service.ts, boost.service.ts (NEW), boost.controller.ts (NEW), gamification.module.ts, services/index.ts, controllers/index.ts
+- Frontend (3): economyTypes.ts, shopAPI.ts, GamifiedHeader.tsx
+- Seeds (3): 16-shop_items_expanded.sql (x3 environments)
+- Assets (4): golden-banner.svg, basic-banner.svg, dragon-reader.svg, knowledge-shield.svg
+
+**Validation:** Build ✓ | Lint ✓ | Typecheck ✓ | Tests 307 passed ✓
+**Inventarios:** MASTER v14.9.2 → v14.9.3 (services 172→173, controllers 108→109, endpoints 914→915)
+
+**Out of scope (future):**
+- addXp() does not yet query active boosts for multiplier application
+- Boost expiration cron job (on-read deactivation only, no scheduled job)
+
+---
+
+### [2026-03-03] M3 Exercises Fix: Adapter Pipeline Integration ✅
+
+**Problem:** 4 ejercicios del Módulo 3 (Comprensión Crítica) bypaseaban el adapter pipeline estándar, causando errores de integración con backend:
+- PodcastArgumentativo: ID hardcodeado `'podcast-1'` → 500 error (`invalid input syntax for type uuid`)
+- AnalisisFuentes: `fetchSources()` sin exerciseId → enviaba 'default' al backend
+- MatrizPerspectivas: siempre sobreescribía datos API con mock perspectives
+- DebateDigital: solo usaba mock `debateTopic`, sin consumir datos del adapter pipeline
+
+**Solution:**
+1. **4 adaptadores dedicados** creados en `exerciseAdapter.ts`: `adaptToPodcastArgumentativoData`, `adaptToAnalisisFuentesData`, `adaptToMatrizPerspectivasData`, `adaptToDebateDigitalData`
+2. **registrations.ts** actualizado: 4 M3 registrations cambiados de `adaptToBaseExercise` → adaptadores dedicados
+3. **4 ejercicios M3** actualizados: aceptan `exercise` prop del adapter pipeline con fallback a API/mock (mismo patrón M4)
+4. **Bugs directos** corregidos: hardcoded ID → exerciseId, missing param → exerciseId, mock override → conditional
+
+**Files modified (6):**
+- `apps/frontend/src/shared/utils/exerciseAdapter.ts` — 4 nuevos adaptadores + 4 router entries
+- `apps/frontend/src/features/exercises/registry/registrations.ts` — 4 imports + 4 registrations actualizadas
+- `apps/frontend/src/features/mechanics/module3/PodcastArgumentativo/PodcastArgumentativoExercise.tsx` — fix ID + exercise prop
+- `apps/frontend/src/features/mechanics/module3/AnalisisFuentes/AnalisisFuentesExercise.tsx` — fix exerciseId + exercise prop
+- `apps/frontend/src/features/mechanics/module3/MatrizPerspectivas/MatrizPerspectivasExercise.tsx` — fix mock override + exercise prop
+- `apps/frontend/src/features/mechanics/module3/DebateDigital/DebateDigitalExercise.tsx` — exercise prop + currentTopic
+
+**Validation:** Build OK, Typecheck OK, Lint 0 errors (FE+BE).
+**Inventarios:** MASTER v14.9.1→v14.9.2, FRONTEND v12.5.8→v12.5.9
+
+---
 
 ### [2026-03-02] SopaLetras Responsive Fix: Mobile Grid Overflow ✅
 
@@ -461,6 +756,19 @@ Falsos positivos (5): Gap 6, 9, 12, 16, 17
 - Hallazgos: `orchestration/tareas/TASK-2026-02-26-AUDITORIA-BD/01-HALLAZGOS.md`
 - Correcciones: `orchestration/tareas/TASK-2026-02-26-AUDITORIA-BD/02-CORRECCIONES.md`
 - Loading order: `apps/database/seeds/SEED-LOADING-ORDER.md`
+
+---
+
+## Proxima Accion Recomendada
+
+**[2026-03-04] Integration testing of boost system in production.** Verify that:
+1. `GET /boosts/:userId/active` returns expected boost records with expiration times
+2. Boost indicators display correctly in GamifiedHeader (badges with time)
+3. Boosts persist across exercises (session continuity)
+4. Boost expiration is detected on-read when fetching active boosts
+5. XP multiplier is applied when boost is active (FUTURE: requires addXp() hook to query boosts)
+
+**Acceptance criteria:** Boost system functional end-to-end except XP multiplier calculation (acceptable gap for v14.9.3).
 
 ---
 

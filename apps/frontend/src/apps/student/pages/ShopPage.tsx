@@ -46,6 +46,7 @@ const VISUAL_SUBTYPES = [
 export default function ShopPage() {
   const { balance } = useCoins();
   const fetchBalance = useEconomyStore((state) => state.fetchBalance);
+  const isBalanceLoading = useEconomyStore((state) => state.isLoading);
   useEffect(() => { fetchBalance(); }, [fetchBalance]);
 
   // State
@@ -149,7 +150,11 @@ export default function ShopPage() {
                   <div>
                     <p className="text-xs text-detective-text-secondary">Tu Saldo</p>
                     <p className="text-2xl font-bold text-detective-gold">
-                      {balance.current.toLocaleString()}
+                      {isBalanceLoading ? (
+                        <span className="inline-block h-7 w-20 animate-pulse rounded bg-detective-gold/20" />
+                      ) : (
+                        balance.current.toLocaleString()
+                      )}
                     </p>
                   </div>
                 </div>

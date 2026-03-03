@@ -6,6 +6,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Exercise } from '../entities';
+import {
+  ExerciseNotFoundError,
+  ModuleNotFoundError,
+  InvalidExerciseContentError,
+} from '../errors/educational.errors';
 import { ExerciseTypeEnum, ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
@@ -15,7 +20,7 @@ import { Profile } from '@/modules/auth/entities';
 /**
  * ExercisesService
  *
- * Servicio para gestionar ejercicios educativos con 27+ tipos diferentes.
+ * Servicio para gestionar ejercicios educativos con 23 tipos activos (29 en ENUM incluyendo backlog).
  * Incluye validación de JSONB según el tipo de ejercicio y gestión de pistas.
  */
 @Injectable()
@@ -184,7 +189,7 @@ export class ExercisesService {
   async update(id: string, exerciseData: Partial<Exercise>): Promise<Exercise> {
     const exercise = await this.findById(id);
     if (!exercise) {
-      throw new NotFoundException(`Exercise with ID ${id} not found`);
+      throw new ExerciseNotFoundError(id);
     }
 
     // Si se actualiza el tipo o contenido, validar
@@ -221,7 +226,7 @@ export class ExercisesService {
     config?: Record<string, unknown>,
   ): void {
     if (!content) {
-      throw new BadRequestException('Content is required');
+      throw new InvalidExerciseContentError('Content is required');
     }
 
     switch (exerciseType) {
@@ -423,9 +428,7 @@ export class ExercisesService {
   async getHints(exerciseId: string): Promise<string[]> {
     const exercise = await this.findById(exerciseId);
     if (!exercise) {
-      throw new NotFoundException(
-        `Exercise with ID ${exerciseId} not found`,
-      );
+      throw new ExerciseNotFoundError(exerciseId);
     }
 
     if (!exercise.enable_hints) {

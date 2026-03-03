@@ -72,6 +72,10 @@ function transformApiItems(
         stackable: !item.is_consumable,
         tradeable: false,
       },
+      requirements:
+        item.required_level != null || item.required_rank != null
+          ? { level: item.required_level ?? undefined, rank: item.required_rank ?? undefined }
+          : undefined,
     };
   });
 }

@@ -86,7 +86,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
       <div className="flex items-center gap-3">
         <MessageSquare className="h-8 w-8 text-detective-orange" />
         <div>
-          <h2 className="text-2xl font-bold text-detective-text">Comunicación con Padres</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-detective-text">Comunicación con Padres</h2>
           <p className="text-detective-text-secondary">Envía actualizaciones a padres de familia</p>
         </div>
       </div>

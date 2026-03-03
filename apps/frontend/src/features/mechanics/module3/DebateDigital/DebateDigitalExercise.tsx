@@ -20,13 +20,19 @@ interface EssaySections {
   conclusion: string;
 }
 
+interface AdaptedDebateData {
+  debateTitle?: string;
+  question?: string;
+  context?: string;
+}
+
 interface ExerciseProps {
   exerciseId: string;
+  exercise?: AdaptedDebateData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (data: Record<string, unknown>) => void;
   initialData?: ExerciseState;
-  difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -79,6 +85,7 @@ const SECTION_CONFIG = [
 
 export const DebateDigitalExercise = ({
   exerciseId,
+  exercise: adaptedExercise,
   onComplete,
   onExit,
   onProgressUpdate,
@@ -88,6 +95,13 @@ export const DebateDigitalExercise = ({
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
   const { submitAsync } = useExerciseSubmission(exerciseId);
+
+  // Use adapted data from exercise prop, fallback to mock
+  const currentTopic = {
+    title: adaptedExercise?.debateTitle || debateTopic.title,
+    question: adaptedExercise?.question || debateTopic.question,
+    context: adaptedExercise?.context || debateTopic.context,
+  };
 
   const [essaySections, setEssaySections] = useState<EssaySections>(
     initialData?.essaySections || {
@@ -110,6 +124,7 @@ export const DebateDigitalExercise = ({
     null,
   );
   const [isPendingReview, setIsPendingReview] = useState(false);
+  const [hasSubmitError, setHasSubmitError] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Auto-save progress every 30 seconds
@@ -238,6 +253,7 @@ export const DebateDigitalExercise = ({
         onComplete(response.score, finalTimeSpent);
       }
     } catch (_error) {
+      setHasSubmitError(true);
       setBackendScore(null);
       setBackendFeedback(null);
       setBackendRewards(null);
@@ -260,6 +276,7 @@ export const DebateDigitalExercise = ({
     setBackendFeedback(null);
     setBackendRewards(null);
     setIsPendingReview(false);
+    setHasSubmitError(false);
   };
 
   // Attach actions ref
@@ -277,7 +294,7 @@ export const DebateDigitalExercise = ({
     <>
       <UnifiedExerciseLayout
         title="Debate Digital"
-        description={debateTopic.title}
+        description={currentTopic.title}
         icon={<FileText className="h-6 w-6" />}
         gradientClassName="from-detective-blue to-detective-orange"
         headerActions={
@@ -289,7 +306,7 @@ export const DebateDigitalExercise = ({
         }
         headerChildren={
           <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm mt-3">
-            <p className="font-medium text-white/95">{debateTopic.question}</p>
+            <p className="font-medium text-white/95">{currentTopic.question}</p>
           </div>
         }
         cardPadding="lg"
@@ -302,7 +319,7 @@ export const DebateDigitalExercise = ({
             className="rounded-detective-lg bg-blue-50 p-3 sm:p-4 border border-detective-border-light"
           >
             <p className="text-detective-sm text-detective-text-secondary">
-              {debateTopic.context}
+              {currentTopic.context}
             </p>
           </motion.div>
 
@@ -432,40 +449,45 @@ export const DebateDigitalExercise = ({
       <FeedbackModal
         isOpen={showFeedback}
         feedback={{
-          type: isPendingReview
-            ? 'info'
-            : backendScore !== null
-              ? backendScore >= 90
-                ? 'success'
-                : backendScore >= 70
-                  ? 'partial'
-                  : 'error'
-              : 'info',
-          title: isPendingReview
-            ? 'Ejercicio Enviado'
-            : backendScore !== null
-              ? backendScore >= 90
-                ? 'Excelente Ensayo!'
-                : backendScore >= 70
-                  ? 'Buen Ensayo'
-                  : 'Sigue Practicando'
-              : 'Ensayo Enviado',
-          message:
-            backendFeedback ||
-            'Tu ensayo argumentativo ha sido enviado para revision.',
-          score: isPendingReview ? undefined : (backendScore !== null ? backendScore : undefined),
-          showConfetti: isPendingReview ? false : (backendScore !== null ? backendScore >= 90 : false),
-          xpEarned: isPendingReview ? 0 : (backendRewards?.xp || 0),
-          mlCoinsEarned: isPendingReview ? 0 : (backendRewards?.mlCoins || 0),
+          type: hasSubmitError
+            ? 'error'
+            : isPendingReview
+              ? 'info'
+              : backendScore !== null
+                ? backendScore >= 90
+                  ? 'success'
+                  : backendScore >= 70
+                    ? 'partial'
+                    : 'error'
+                : 'info',
+          title: hasSubmitError
+            ? 'Error de Envío'
+            : isPendingReview
+              ? 'Ejercicio Enviado'
+              : backendScore !== null
+                ? backendScore >= 90
+                  ? 'Excelente Ensayo!'
+                  : backendScore >= 70
+                    ? 'Buen Ensayo'
+                    : 'Sigue Practicando'
+                : 'Ensayo Enviado',
+          message: hasSubmitError
+            ? 'Hubo un problema al enviar tu ensayo. Por favor intenta de nuevo.'
+            : backendFeedback ||
+              'Tu ensayo argumentativo ha sido enviado para revision.',
+          score: hasSubmitError ? undefined : isPendingReview ? undefined : (backendScore !== null ? backendScore : undefined),
+          showConfetti: hasSubmitError ? false : isPendingReview ? false : (backendScore !== null ? backendScore >= 90 : false),
+          xpEarned: hasSubmitError ? 0 : isPendingReview ? 0 : (backendRewards?.xp || 0),
+          mlCoinsEarned: hasSubmitError ? 0 : isPendingReview ? 0 : (backendRewards?.mlCoins || 0),
           pendingReview: isPendingReview,
         }}
         onClose={() => {
           setShowFeedback(false);
-          if (backendScore !== null && backendScore >= 70 && !isPendingReview) {
+          if (!hasSubmitError && backendScore !== null && backendScore >= 70 && !isPendingReview) {
             onComplete?.(backendScore, timeSpent);
           }
         }}
-        onRetry={isPendingReview ? undefined : handleReset}
+        onRetry={hasSubmitError || !isPendingReview ? handleReset : undefined}
       />
     </>
   );

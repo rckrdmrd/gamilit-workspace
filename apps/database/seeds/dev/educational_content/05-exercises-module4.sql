@@ -115,15 +115,15 @@ BEGIN
     ) VALUES (
         mod_id,
         'Quiz TikTok: Datos Rápidos de Marie Curie',
-        'Responde en 10 Segundos',
-        'Preguntas rápidas estilo TikTok sobre Marie Curie. Tienes 10 segundos por pregunta. ¡Piensa rápido!',
-        'Lee la pregunta y las opciones. Tienes 10 segundos para responder. Desliza para la siguiente pregunta.',
+        'Responde en 30 Segundos',
+        'Preguntas rápidas estilo TikTok sobre Marie Curie. Tienes 30 segundos por pregunta. ¡Piensa rápido!',
+        'Lee la pregunta y las opciones. Tienes 30 segundos para responder. Desliza para la siguiente pregunta.',
 
         -- objective (DB-125: Pedagogical Content)
         E'Evaluar comprensión rápida de datos biográficos clave sobre Marie Curie mediante formato de quiz interactivo estilo redes sociales. Este ejercicio simula la experiencia de consumo de contenido educativo en plataformas como TikTok, Instagram Reels o YouTube Shorts, donde la información se presenta de forma breve y dinámica.\n\nLos estudiantes practicarán:\n- Recuperación rápida de información memorizada (recall bajo presión de tiempo)\n- Toma de decisiones ágil con información limitada\n- Comprensión de formatos de contenido educativo moderno\n- Validación de conocimientos previos sobre Marie Curie',
 
         -- how_to_solve (DB-125)
-        E'Estrategia para quizzes con límite de tiempo:\n\n1. ANTES DE EMPEZAR:\n   - Recuerda los datos básicos de Marie Curie: Polonia (nacimiento), 2 Nobel, radio y polonio (descubrimientos)\n   - El quiz tiene 10 segundos por pregunta - no hay tiempo para pensar mucho\n\n2. DURANTE CADA PREGUNTA:\n   - Lee pregunta y opciones RÁPIDO (3 segundos)\n   - Identifica la respuesta que "suena correcta" (4 segundos)\n   - Confirma y selecciona (3 segundos)\n   - NO dudes - tu primera intuición suele ser correcta\n\n3. CUANDO NO SABES:\n   - Descarta opciones obviamente incorrectas\n   - Elige entre las restantes - mejor adivinar que no responder\n   - Aprende de cada error para la siguiente ronda',
+        E'Estrategia para quizzes con límite de tiempo:\n\n1. ANTES DE EMPEZAR:\n   - Recuerda los datos básicos de Marie Curie: Polonia (nacimiento), 2 Nobel, radio y polonio (descubrimientos)\n   - El quiz tiene 30 segundos por pregunta - no hay tiempo para pensar mucho\n\n2. DURANTE CADA PREGUNTA:\n   - Lee pregunta y opciones RÁPIDO (3 segundos)\n   - Identifica la respuesta que "suena correcta" (4 segundos)\n   - Confirma y selecciona (3 segundos)\n   - NO dudes - tu primera intuición suele ser correcta\n\n3. CUANDO NO SABES:\n   - Descarta opciones obviamente incorrectas\n   - Elige entre las restantes - mejor adivinar que no responder\n   - Aprende de cada error para la siguiente ronda',
 
         -- recommended_strategy (DB-125)
         E'Tips para quizzes rápidos:\n\n- CONFÍA EN TU PRIMERA RESPUESTA: En quizzes con tiempo, cambiar de opinión suele empeorar el resultado\n- DATOS CLAVE MEMORIZADOS: Varsovia (ciudad natal), 2 Nobel, Polonio (nombrado por Polonia)\n- DESCARTA ANTES DE ELEGIR: Elimina opciones absurdas para reducir opciones de 4 a 2\n- RITMO CONSTANTE: No te detengas en preguntas difíciles - sigue adelante\n- PRACTICA VELOCIDAD: Cuanto más practiques, más rápido recuperarás información',
@@ -133,7 +133,7 @@ BEGIN
 
         'quiz_tiktok', 3,
         '{
-            "timeLimit": 10,
+            "timeLimit": 30,
             "swipeInterface": true,
             "quickFeedback": true,
             "sharable": true
@@ -145,7 +145,7 @@ BEGIN
                     "text": "¿En qué ciudad nació Marie Curie?",
                     "options": ["París", "Varsovia", "Berlín", "Londres"],
                     "correct": 1,
-                    "timeLimit": 10,
+                    "timeLimit": 30,
                     "visual": "Map of Europe"
                 },
                 {
@@ -153,7 +153,7 @@ BEGIN
                     "text": "¿Cuántos Premios Nobel ganó Marie Curie?",
                     "options": ["1", "2", "3", "4"],
                     "correct": 1,
-                    "timeLimit": 10,
+                    "timeLimit": 30,
                     "visual": "Nobel medal icons"
                 },
                 {
@@ -161,7 +161,7 @@ BEGIN
                     "text": "¿Qué elemento químico nombró por su país?",
                     "options": ["Radio", "Curio", "Polonio", "Francio"],
                     "correct": 2,
-                    "timeLimit": 10,
+                    "timeLimit": 30,
                     "visual": "Periodic table"
                 }
             ]

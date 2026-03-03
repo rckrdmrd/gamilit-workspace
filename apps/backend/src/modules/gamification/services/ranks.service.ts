@@ -10,7 +10,7 @@ import { UserRank, MayaRankEntity } from '../entities';
 import { UserStatsService } from './user-stats.service';
 import { MLCoinsService } from './ml-coins.service';
 import { CreateUserRankDto, UpdateUserRankDto } from '../dto/user-ranks';
-import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { MayaRank } from '@shared/constants/enums.constants';
 
 /**
  * RankConfig Interface
@@ -385,19 +385,12 @@ export class RanksService {
 
     const savedRank = await this.userRankRepo.save(newRank);
 
-    // Otorgar bono de ML Coins por promoción
+    // ML Coins bonus is credited by DB trigger `trg_check_rank_promotion_on_xp_gain`
+    // via `promote_to_next_rank()` SQL function. Do NOT call addCoins() here to avoid
+    // double-crediting. See: apps/database/ddl/schemas/gamification_system/functions/promote_to_next_rank.sql
     if (nextRankConfig.ml_coins_bonus > 0) {
-      await this.mlCoinsService.addCoins(
-        userId,
-        nextRankConfig.ml_coins_bonus,
-        TransactionTypeEnum.EARNED_RANK,
-        `Rank promotion to ${nextRank}`,
-        savedRank.id,
-        'user_rank',
-      );
-
       this.logger.log(
-        `User ${userId} promoted to ${nextRank}. Awarded ${nextRankConfig.ml_coins_bonus} ML Coins.`,
+        `User ${userId} promoted to ${nextRank}. ML Coins bonus (${nextRankConfig.ml_coins_bonus}) credited by DB trigger.`,
       );
     }
 

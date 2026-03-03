@@ -166,7 +166,7 @@ export class TwoFactorAuthService {
   }
 
   /**
-   * Send OTP for login verification
+   * @deprecated Unreferenced — no controller or service calls this method. Use resendOTP() instead.
    */
   async sendLoginOTP(userId: string): Promise<{ message: string; expiresAt: Date }> {
     const config = await this.twoFactorRepository.findOne({

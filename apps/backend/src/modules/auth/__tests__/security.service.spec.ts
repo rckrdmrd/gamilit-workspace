@@ -320,48 +320,6 @@ describe('SecurityService', () => {
     });
   });
 
-  // TODO: Method getFailuresByEmail does not exist in SecurityService
-  // Uncomment when method is implemented
-  /*
-  describe('getFailuresByEmail', () => {
-    const mockAttempts = [
-      {
-        id: 'attempt-1',
-        email: 'test@example.com',
-        success: false,
-        ip_address: '127.0.0.1',
-        created_at: new Date(),
-      },
-      {
-        id: 'attempt-2',
-        email: 'test@example.com',
-        success: false,
-        ip_address: '127.0.0.2',
-        created_at: new Date(),
-      },
-    ];
-
-    it('should return all failure attempts for email', async () => {
-      const result = await service.getFailuresByEmail('test@example.com', 10);
-      expect(result).toHaveLength(2);
-    });
-
-    it('should limit results to specified count', async () => {
-      await service.getFailuresByEmail('test@example.com', 5);
-      expect(mockAttemptRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 5 }),
-      );
-    });
-
-    it('should order by most recent first', async () => {
-      await service.getFailuresByEmail('test@example.com', 10);
-      expect(mockAttemptRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({ order: { attempted_at: 'DESC' } }),
-      );
-    });
-  });
-  */
-
   describe('Security Constants', () => {
     it('should have MAX_FAILURES_PER_EMAIL set to 5', () => {
       expect((service as any).MAX_FAILURES_PER_EMAIL).toBe(5);

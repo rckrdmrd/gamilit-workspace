@@ -71,7 +71,7 @@ La tabla oficial de rangos, umbrales y bonus se mantiene en:
 | Termino | Definicion |
 |---------|------------|
 | **exercise_type** | Tipo especifico de ejercicio (ej: crucigrama, detective_textual). 33 valores en el ENUM DDL. |
-| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 30 mecanicas frontend. |
+| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 29 mecanicas frontend (comprension_auditiva en BACKLOG). |
 | **Evaluacion Automatica** | Ejercicios evaluados por el sistema (M1, M2). No hay auto-scoring en M3-M5. |
 | **Evaluacion Manual** | Ejercicios que requieren revision por maestro (todos los de M3, M4 y M5, incluyendo Quiz TikTok). |
 | **Spaced Repetition** | Motor de repeticion espaciada para reforzar aprendizaje. |
@@ -86,8 +86,7 @@ Los documentos del proyecto mencionan diferentes cantidades de ejercicios depend
 | Conteo | Significado |
 |--------|------------|
 | **23** | Tipos de ejercicio originales (5 modulos x ~4-5 tipos) |
-| **27** | Mecanicas semanticas documentadas (agrupacion por modulo, excluye auxiliares) |
-| **30** | Mecanicas frontend implementadas (30 directorios en `features/mechanics/`) |
+| **29** | Mecanicas frontend implementadas (29 activas — comprension_auditiva en BACKLOG) |
 | **33** | Valores totales en el ENUM `exercise_type` del DDL (incluye auxiliares y backlog) |
 
 **SSOT:** El DDL enum `educational_content.exercise_type` es la fuente autoritativa con 33 valores.

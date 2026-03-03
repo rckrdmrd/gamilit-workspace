@@ -33,6 +33,7 @@ export class AdminUsersService {
     private readonly tenantRepo: Repository<Tenant>,
   ) { }
 
+  /** List users with filtering, pagination and search. */
   async listUsers(query: ListUsersDto): Promise<PaginatedUsersDto> {
     const { search, role, status, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
@@ -163,6 +164,7 @@ export class AdminUsersService {
     }
   }
 
+  /** Get full user details including profile and roles. */
   async getUserDetails(id: string): Promise<User> {
     const user = await this.userRepo.findOne({ where: { id } });
     if (!user) {
@@ -171,12 +173,14 @@ export class AdminUsersService {
     return user;
   }
 
+  /** Update user fields (profile, roles, status). */
   async updateUser(id: string, updateDto: UpdateUserDto): Promise<User> {
     const user = await this.getUserDetails(id);
     Object.assign(user, updateDto);
     return this.userRepo.save(user);
   }
 
+  /** Soft-delete a user account. */
   async deleteUser(id: string): Promise<void> {
     const user = await this.getUserDetails(id);
 
@@ -192,6 +196,7 @@ export class AdminUsersService {
     await this.userRepo.save(user);
   }
 
+  /** Suspend a user account with reason. */
   async suspendUser(id: string, suspendDto: SuspendUserDto): Promise<User> {
     const user = await this.getUserDetails(id);
 
@@ -206,6 +211,7 @@ export class AdminUsersService {
     return this.userRepo.save(user);
   }
 
+  /** Activate a previously inactive user account. */
   async activateUser(id: string): Promise<User> {
     const user = await this.getUserDetails(id);
 
@@ -219,6 +225,7 @@ export class AdminUsersService {
     return this.userRepo.save(user);
   }
 
+  /** Remove suspension from a user account. */
   async unsuspendUser(id: string): Promise<User> {
     const user = await this.getUserDetails(id);
 
@@ -238,6 +245,7 @@ export class AdminUsersService {
     return this.userRepo.save(user);
   }
 
+  /** Deactivate a user account. */
   async deactivateUser(id: string, deactivateDto: SuspendUserDto): Promise<User> {
     const user = await this.getUserDetails(id);
 
@@ -257,6 +265,7 @@ export class AdminUsersService {
     return this.userRepo.save(user);
   }
 
+  /** Reset user password and optionally send notification. */
   async resetPassword(
     id: string,
     resetDto: ResetPasswordDto,

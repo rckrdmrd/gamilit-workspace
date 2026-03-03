@@ -84,6 +84,7 @@ BEGIN
     SET
         current_rank = p_new_rank,
         ml_coins = v_new_balance,
+        ml_coins_earned_total = ml_coins_earned_total + v_ml_coins_bonus,
         updated_at = gamilit.now_mexico()
     WHERE user_id = p_user_id;
 

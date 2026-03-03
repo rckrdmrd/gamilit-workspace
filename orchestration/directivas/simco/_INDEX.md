@@ -2,10 +2,10 @@
 
 **Single Instruction Matrix by Context and Operation**
 
-**Version:** 5.1.0
-**Fecha:** 2026-02-25
-**Extension:** CCA + CAPVED + Niveles + Economia de Tokens + Git + Context Engineering + Subagentes + Git Remotes + Estandares Documentacion + Validacion SSOT + Normalizacion Documental + Delegacion Paralela + Multi-Agent + Work Items + Limpieza Post-Fase + Frontmatter Schema
-**Archivos:** 72 activos + _INDEX + 15 archivados = 88 total
+**Version:** 5.2.0
+**Fecha:** 2026-03-03
+**Extension:** CCA + CAPVED + Niveles + Economia de Tokens + Git + Context Engineering + Subagentes + Git Remotes + Estandares Documentacion + Validacion SSOT + Normalizacion Documental + Delegacion Paralela + Multi-Agent + Work Items + Limpieza Post-Fase + Frontmatter Schema + Post-Task Sync + Orchestrator Pattern + Session Learning
+**Archivos:** 75 activos + _INDEX + 15 archivados = 91 total
 
 > **NOTA (2026-02-11):** 14 archivos solapados fueron consolidados y archivados en `_archive/`.
 > Los archivos principales absorben la funcionalidad de los archivados.
@@ -101,8 +101,11 @@ simco/                                       # 72 DIRECTIVAS ACTIVAS + _INDEX + 
 ├── SIMCO-ESTRUCTURA-TAREAS.md              # Estructura de tareas
 ├── SIMCO-SCHEDULER-TAREAS.md               # Planificacion de tareas
 │
-│   # === CONTEXT LIFECYCLE (1) ===
+│   # === CONTEXT LIFECYCLE (4) ===
 ├── SIMCO-LIMPIEZA-POST-FASE.md             # Limpieza de contexto post-fase CAPVED
+├── SIMCO-POST-TASK-SYNC.md                 # Sincronizacion post-tarea de inventarios
+├── SIMCO-ORCHESTRATOR-PATTERN.md           # Patron de orquestacion (orquestador→subagentes)
+├── SIMCO-SESSION-LEARNING-PIPELINE.md      # Pipeline sesion→directiva para aprendizaje
 │
 │   # === METADATA Y ESQUEMAS (1) ===
 ├── SIMCO-FRONTMATTER-SCHEMA.md             # Schema YAML para metadata en documentos
@@ -302,7 +305,10 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 @WORK_ITEMS:         orchestration/directivas/simco/SIMCO-WORK-ITEMS.md
 
 # CONTEXT LIFECYCLE
-@LIMPIEZA_POST_FASE: orchestration/directivas/simco/SIMCO-LIMPIEZA-POST-FASE.md
+@LIMPIEZA_POST_FASE:    orchestration/directivas/simco/SIMCO-LIMPIEZA-POST-FASE.md
+@POST_TASK_SYNC:        orchestration/directivas/simco/SIMCO-POST-TASK-SYNC.md
+@ORCHESTRATOR_PATTERN:  orchestration/directivas/simco/SIMCO-ORCHESTRATOR-PATTERN.md
+@SESSION_LEARNING:      orchestration/directivas/simco/SIMCO-SESSION-LEARNING-PIPELINE.md
 
 # METADATA Y ESQUEMAS
 @FRONTMATTER_SCHEMA: orchestration/directivas/simco/SIMCO-FRONTMATTER-SCHEMA.md
@@ -339,6 +345,7 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 
 ## CHANGELOG
 
+- **v5.2.0** (2026-03-03): Added 3 new directives: SIMCO-POST-TASK-SYNC (inventory sync), SIMCO-ORCHESTRATOR-PATTERN (orchestration pattern), SIMCO-SESSION-LEARNING-PIPELINE (session learning pipeline), updated CONTEXT LIFECYCLE section (1->4), total 75 active directives
 - **v5.1.0** (2026-02-25): Cleanup: added SIMCO-DELEGACION-GEMINI-CLI.md, fixed ANALISIS count (1->2), removed 10 phantom aliases from ALIAS MAS USADOS, total 72 active directives
 - **v5.0.0** (2026-02-14): Auditoria integral: rewrite ESTRUCTURA con 70 archivos reales, eliminados 8 phantoms (REUTILIZAR, CONTRIBUIR-CATALOGO, MOBILE, ML, PROPAGACION, DOCUMENTAR-SUITE, CHECKLIST-FASE-D, LECCIONES-APRENDIDAS), corregidos core/ → orchestration/ paths, removido catalogo shared/
 - **v4.5.0** (2026-02-13): Limpieza Post-Fase CAPVED (SIMCO-LIMPIEZA-POST-FASE); Frontmatter Schema (SIMCO-FRONTMATTER-SCHEMA); LOCAL-WSL-ENVIRONMENT.yml; Perfiles _MAP.md con NEXUS v4.1; 3 stubs archivados; Guia Coverage Testing

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserStatsService } from '../user-stats.service';
-import { UserStats } from '../../entities';
+import { UserStats, MLCoinsTransaction } from '../../entities';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import {
   UserStatsNotFoundError,
@@ -25,6 +25,11 @@ describe('UserStatsService', () => {
 
   const mockProfileRepo = {
     findOne: jest.fn(),
+  };
+
+  const mockTransactionRepo = {
+    create: jest.fn().mockImplementation((data: any) => data),
+    save: jest.fn().mockImplementation((data: any) => Promise.resolve({ id: 'txn-1', ...data })),
   };
 
   const mockUserId = 'user-123';
@@ -92,6 +97,10 @@ describe('UserStatsService', () => {
         {
           provide: getRepositoryToken(Profile, 'auth'),
           useValue: mockProfileRepo,
+        },
+        {
+          provide: getRepositoryToken(MLCoinsTransaction, 'gamification'),
+          useValue: mockTransactionRepo,
         },
       ],
     }).compile();

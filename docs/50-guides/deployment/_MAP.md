@@ -13,8 +13,8 @@ estado: activo
 ## Produccion
 
 - Validacion: [GUIA-VALIDACION-PRODUCCION.md](./GUIA-VALIDACION-PRODUCCION.md)
-- Actualizacion: [GUIA-ACTUALIZACION-PRODUCCION.md](./GUIA-ACTUALIZACION-PRODUCCION.md)
-- Despliegue completo: [GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md](./GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md)
+- Actualizacion: ~~GUIA-ACTUALIZACION-PRODUCCION.md~~ [eliminado 2026-03-03 — redundante con GUIA-VALIDACION-PRODUCCION]
+- Despliegue completo: ~~GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md~~ [eliminado 2026-03-03 — redundante con AMBIENTES-DEV-PROD + validacion]
 - SSL Nginx: [GUIA-SSL-NGINX-PRODUCCION.md](./GUIA-SSL-NGINX-PRODUCCION.md)
 - SSL autofirmado: [GUIA-SSL-AUTOFIRMADO.md](./GUIA-SSL-AUTOFIRMADO.md)
 - CORS: [GUIA-CORS-PRODUCCION.md](./GUIA-CORS-PRODUCCION.md)
@@ -29,4 +29,4 @@ estado: activo
 
 - Servers de desarrollo: [DEV-SERVERS.md](./DEV-SERVERS.md)
 - Indice: [_INDEX.md](./_INDEX.md)
-- Archivados: [_archived/README.md](./_archived/README.md)
+- Archivados: eliminados el 2026-03-03
