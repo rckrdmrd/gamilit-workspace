@@ -7,6 +7,7 @@ interface SopaLetrasGridProps {
   foundCells?: {row:number,col:number}[]; // Celdas de palabras ya encontradas
   onCellSelect: (r:number,c:number) => void;
   cellSize?: number;
+  gapPx?: number;
 }
 
 export const SopaLetrasGrid = ({
@@ -15,6 +16,7 @@ export const SopaLetrasGrid = ({
   foundCells = [],
   onCellSelect,
   cellSize = 40,
+  gapPx = 4,
 }: SopaLetrasGridProps) => {
   const fontSize = Math.max(10, Math.floor(cellSize * 0.45));
   const enableHover = cellSize >= 36;
@@ -36,9 +38,9 @@ export const SopaLetrasGrid = ({
 
   return (
     <div className="inline-block bg-white p-2 sm:p-4 rounded-lg shadow-lg">
-      <div className="grid gap-1">
+      <div className="grid" style={{ gap: gapPx }}>
         {grid.map((row, rowIdx) => (
-          <div key={rowIdx} className="flex gap-1">
+          <div key={rowIdx} className="flex" style={{ gap: gapPx }}>
             {row.map((letter, colIdx) => (
               <motion.button
                 key={`${rowIdx}-${colIdx}`}

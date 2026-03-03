@@ -47,15 +47,16 @@ export const SopaLetrasExercise = ({
   const numCols = exercise.content.grid[0]?.length || 10;
 
   const DEFAULT_CELL_SIZE = 40;
-  const MIN_CELL_SIZE = 36;
+  const MIN_CELL_SIZE = 28;
   const GRID_PADDING = 16; // SopaLetrasGrid p-2 on mobile (8px each side)
-  const GAP_PX = 4;        // gap-1 = 4px
+  // Responsive gap: tighter on small screens to save space
+  const gapPx = containerSize.width > 0 && containerSize.width < 400 ? 2 : 4;
 
   const availableWidth = containerSize.width > 0
     ? containerSize.width - GRID_PADDING
-    : DEFAULT_CELL_SIZE * numCols + (numCols - 1) * GAP_PX;
+    : DEFAULT_CELL_SIZE * numCols + (numCols - 1) * gapPx;
 
-  const totalGapWidth = (numCols - 1) * GAP_PX;
+  const totalGapWidth = (numCols - 1) * gapPx;
   const calculatedCellSize = Math.min(
     DEFAULT_CELL_SIZE,
     Math.floor((availableWidth - totalGapWidth) / numCols)
@@ -395,13 +396,14 @@ export const SopaLetrasExercise = ({
       >
         <div className="grid gap-6 lg:grid-cols-3">
           <div ref={containerRef} className="lg:col-span-2 min-w-0">
-            <div className={`flex justify-center${gridNeedsScroll ? ' overflow-x-auto pb-2' : ''}`}>
+            <div className={gridNeedsScroll ? 'overflow-x-auto pb-2' : 'flex justify-center'}>
               <SopaLetrasGrid
                 grid={exercise.content.grid}
                 selectedCells={selectedCells}
                 foundCells={foundCells}
                 onCellSelect={handleCellSelect}
                 cellSize={cellSize}
+                gapPx={gapPx}
               />
             </div>
             {gridNeedsScroll && (

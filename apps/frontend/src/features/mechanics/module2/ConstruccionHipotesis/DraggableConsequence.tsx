@@ -21,9 +21,9 @@ export const DraggableConsequence = ({ id, text, disabled = false }: DraggableCo
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style} {...attributes}>
       <div
-        className={`cursor-move rounded-lg border-2 p-2 sm:p-4 transition-all ${
+        className={`rounded-lg border-2 p-2 sm:p-4 transition-all ${
           isDragging
             ? 'scale-105 shadow-lg ring-2 ring-detective-orange opacity-50'
             : 'border-detective-border bg-white hover:border-orange-400 hover:shadow-md'
@@ -31,7 +31,10 @@ export const DraggableConsequence = ({ id, text, disabled = false }: DraggableCo
       >
         <div className="flex items-center gap-3">
           {!disabled && (
-            <div className="flex min-h-[44px] min-w-[44px] items-center justify-center">
+            <div
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center cursor-grab touch-none"
+              {...listeners}
+            >
               <GripVertical className="h-5 w-5 flex-shrink-0 text-detective-text-secondary" />
             </div>
           )}
