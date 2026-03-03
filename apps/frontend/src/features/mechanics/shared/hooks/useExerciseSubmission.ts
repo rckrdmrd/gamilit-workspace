@@ -11,31 +11,9 @@
  */
 import { useState, useRef, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import { apiClient } from '@/services/api/apiClient';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-
-// ============================================================================
-// ZOD SCHEMAS (match backend validation)
-// ============================================================================
-
-/**
- * Submission payload schema (matches backend DTO)
- */
-export const SubmitExerciseSchema = z.object({
-  answers: z
-    .record(z.string(), z.any())
-    .refine((answers) => Object.keys(answers).length > 0, {
-      message: 'At least one answer is required',
-    }),
-  startedAt: z.number().int().positive(),
-  hintsUsed: z.number().int().min(0).max(10).default(0),
-  powerupsUsed: z.array(z.enum(['pistas', 'vision_lectora', 'segunda_oportunidad'])).default([]),
-  sessionId: z.string().uuid().optional(),
-});
-
-export type SubmitExercisePayload = z.infer<typeof SubmitExerciseSchema>;
 
 /**
  * Submission result from server (includes correct answers)
@@ -133,37 +111,26 @@ export function useExerciseSubmission(
    */
   const mutation = useMutation({
     mutationFn: async (answers: Record<string, unknown>) => {
-      // 1. CLIENT-SIDE VALIDATION with Zod
-      const payload: SubmitExercisePayload = {
+      // 1. Build payload (sessionId excluded — not in backend DTO, forbidNonWhitelisted rejects it)
+      const payload = {
         answers,
         startedAt: startTime,
         hintsUsed: options.trackHints ? hintsUsedRef.current : 0,
         powerupsUsed: options.trackPowerups ? powerupsUsedRef.current : [],
-        sessionId,
       };
 
-      // Validate payload before sending
-      try {
-        SubmitExerciseSchema.parse(payload);
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          throw new Error(`Validation error: ${error.issues[0].message}`);
-        }
-        throw error;
+      // Validate answers are non-empty before sending
+      if (!answers || Object.keys(answers).length === 0) {
+        throw new Error('At least one answer is required');
       }
 
-      // 2. SUBMIT TO SERVER (validation happens server-side)
-      const response = await apiClient.post<{
-        success: boolean;
-        data: SubmissionResult;
-        error?: { message?: string; code?: string; retryAfter?: number };
-      }>(`/educational/exercises/${exerciseId}/submit`, payload);
+      // 2. SUBMIT TO SERVER — apiClient interceptor unwraps { success, data } envelope
+      const response = await apiClient.post<SubmissionResult>(
+        `/educational/exercises/${exerciseId}/submit`,
+        payload,
+      );
 
-      if (!response.data.success) {
-        throw new Error(response.data.error?.message || 'Submission failed');
-      }
-
-      return response.data.data;
+      return response.data;
     },
 
     onSuccess: async (result) => {
