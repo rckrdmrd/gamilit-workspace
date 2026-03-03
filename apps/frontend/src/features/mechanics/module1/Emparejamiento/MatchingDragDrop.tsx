@@ -1,3 +1,9 @@
+/**
+ * @deprecated Dead code — 0 imports across codebase.
+ * Uses HTML5 Drag and Drop API which does not work on mobile.
+ * The active Emparejamiento mechanic uses a different implementation.
+ * Kept for reference only. Do NOT use in new code.
+ */
 import { useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@shared/utils/cn';

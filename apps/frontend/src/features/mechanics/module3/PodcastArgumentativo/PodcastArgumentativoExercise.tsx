@@ -225,11 +225,11 @@ export const PodcastArgumentativoExercise = ({
   };
 
   const handleComplete = async () => {
-    // Validaci\u00f3n de autenticaci\u00f3n
+    // Validación de autenticación
     if (!user?.id) {
       setFeedback({
         type: 'error',
-        title: 'Error de autenticaci\u00f3n',
+        title: 'Error de autenticación',
         message: 'Debes estar autenticado para enviar el ejercicio.',
         isCorrect: false,
       });
@@ -237,15 +237,15 @@ export const PodcastArgumentativoExercise = ({
       return;
     }
 
-    // Determinar el gui\u00f3n a enviar (escrito manualmente o transcripci\u00f3n del audio)
+    // Determinar el guión a enviar (escrito manualmente o transcripción del audio)
     const finalScript = scriptText || recording.transcription;
 
-    // Validaci\u00f3n de longitud m\u00ednima del gui\u00f3n (200 caracteres)
+    // Validación de longitud mínima del guión (200 caracteres)
     if (!finalScript || finalScript.length < 200) {
       setFeedback({
         type: 'error',
-        title: 'Gui\u00f3n muy corto',
-        message: `El gui\u00f3n debe tener al menos 200 caracteres. Actualmente tiene ${finalScript?.length || 0} caracteres.`,
+        title: 'Guión muy corto',
+        message: `El guión debe tener al menos 200 caracteres. Actualmente tiene ${finalScript?.length || 0} caracteres.`,
         isCorrect: false,
       });
       setShowFeedback(true);
@@ -285,7 +285,7 @@ export const PodcastArgumentativoExercise = ({
         setIsUploading(false);
       }
 
-      // Preparar respuestas seg\u00fan el formato PodcastArgumentativoAnswers
+      // Preparar respuestas según el formato PodcastArgumentativoAnswers
       const answers = {
         topicId: selectedTopic?.id || 'topic-1',
         script: finalScript,
@@ -324,7 +324,7 @@ export const PodcastArgumentativoExercise = ({
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect
-          ? '\u00a1Excelente Argumentaci\u00f3n!'
+          ? '¡Excelente Argumentación!'
           : response.score >= 70
             ? 'Buen Trabajo'
             : 'Sigue Practicando',
@@ -410,7 +410,7 @@ export const PodcastArgumentativoExercise = ({
                 {formatTime(recordingDuration)}
               </div>
               <div className="text-detective-sm text-detective-text-secondary">
-                Tiempo l\u00edmite: {formatTime(exercise.timeLimit)}
+                Tiempo límite: {formatTime(exercise.timeLimit)}
               </div>
             </div>
 
@@ -420,9 +420,9 @@ export const PodcastArgumentativoExercise = ({
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-6 w-6 flex-shrink-0 text-amber-600" />
                   <div>
-                    <h4 className="mb-1 font-semibold text-amber-900">Conexi\u00f3n Segura Requerida</h4>
+                    <h4 className="mb-1 font-semibold text-amber-900">Conexión Segura Requerida</h4>
                     <p className="text-sm text-amber-700">
-                      La grabaci\u00f3n de audio requiere una conexi\u00f3n segura (HTTPS). Contacta al
+                      La grabación de audio requiere una conexión segura (HTTPS). Contacta al
                       administrador del sistema para habilitar HTTPS en el servidor.
                     </p>
                   </div>
@@ -438,7 +438,7 @@ export const PodcastArgumentativoExercise = ({
                   <div>
                     <h4 className="mb-1 font-semibold text-red-900">Navegador No Soportado</h4>
                     <p className="text-sm text-detective-danger">
-                      Tu navegador no soporta grabaci\u00f3n de audio. Por favor usa Chrome, Firefox o
+                      Tu navegador no soporta grabación de audio. Por favor usa Chrome, Firefox o
                       Edge actualizado.
                     </p>
                   </div>
@@ -454,19 +454,19 @@ export const PodcastArgumentativoExercise = ({
                   <div>
                     <h4 className="mb-1 font-semibold text-amber-900">Permisos Requeridos</h4>
                     <p className="mb-3 text-sm text-amber-700">
-                      Necesitas habilitar el acceso al micr\u00f3fono para grabar tu podcast.
+                      Necesitas habilitar el acceso al micrófono para grabar tu podcast.
                     </p>
                     <p className="text-xs text-amber-600">
-                      <strong>C\u00f3mo habilitar:</strong>
+                      <strong>Cómo habilitar:</strong>
                       <br />
-                      1. Haz clic en el \u00edcono de candado o informaci\u00f3n (i) en la barra de
+                      1. Haz clic en el ícono de candado o información (i) en la barra de
                       direcciones
                       <br />
-                      2. Busca la opci\u00f3n de &quot;Micr\u00f3fono&quot;
+                      2. Busca la opción de &quot;Micrófono&quot;
                       <br />
                       3. Selecciona &quot;Permitir&quot;
                       <br />
-                      4. Recarga la p\u00e1gina
+                      4. Recarga la página
                     </p>
                   </div>
                 </div>
@@ -495,7 +495,7 @@ export const PodcastArgumentativoExercise = ({
                   icon={<Mic className="h-6 w-6" />}
                   className="bg-detective-blue hover:bg-detective-blue/90"
                 >
-                  Permitir Acceso al Micr\u00f3fono
+                  Permitir Acceso al Micrófono
                 </DetectiveButton>
               </div>
             )}
@@ -510,7 +510,7 @@ export const PodcastArgumentativoExercise = ({
                     icon={<Mic className="h-6 w-6" />}
                     className="bg-red-500 hover:bg-red-600"
                   >
-                    Iniciar Grabaci\u00f3n
+                    Iniciar Grabación
                   </DetectiveButton>
                 )}
                 {isRecording && (
@@ -520,7 +520,7 @@ export const PodcastArgumentativoExercise = ({
                     icon={<Square className="h-6 w-6" />}
                     className="animate-pulse bg-gray-800 hover:bg-gray-900"
                   >
-                    Detener Grabaci\u00f3n
+                    Detener Grabación
                   </DetectiveButton>
                 )}
               </div>
@@ -531,7 +531,7 @@ export const PodcastArgumentativoExercise = ({
               <div className="mt-4 rounded-lg border-2 border-dashed border-detective-orange/50 bg-orange-50 p-4">
                 <h4 className="mb-2 flex items-center gap-2 text-detective-sm font-semibold text-detective-orange">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
-                  Transcripcion en Tiempo Real
+                  Transcripción en Tiempo Real
                 </h4>
                 <p className="min-h-[3rem] text-detective-sm text-detective-text">
                   {speechTranscript || interimTranscript || (
@@ -553,8 +553,8 @@ export const PodcastArgumentativoExercise = ({
             {isRecording && !isSpeechSupported && (
               <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
                 <p className="text-detective-xs text-amber-700">
-                  La transcripcion automatica no esta disponible en tu navegador.
-                  El audio se grabara pero la transcripcion sera aproximada.
+                  La transcripción automática no está disponible en tu navegador.
+                  El audio se grabará pero la transcripción será aproximada.
                 </p>
               </div>
             )}
@@ -563,18 +563,18 @@ export const PodcastArgumentativoExercise = ({
             <div className="mt-4 rounded-lg border-2 border-detective-blue/30 bg-blue-50 p-4">
               <h4 className="mb-2 font-semibold text-detective-blue">
                 {isSpeechSupported
-                  ? 'Tambi\u00e9n puedes escribir o editar tu guion aqu\u00ed:'
+                  ? 'También puedes escribir o editar tu guion aquí:'
                   : 'Escribe tu guion manualmente:'}
               </h4>
               <textarea
                 value={scriptText}
                 onChange={(e) => setScriptText(e.target.value)}
-                placeholder="Escribe aqui el guion de tu podcast argumentativo (minimo 200 caracteres)..."
+                placeholder="Escribe aquí el guión de tu podcast argumentativo (mínimo 200 caracteres)..."
                 className="w-full resize-none rounded-lg border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                 rows={6}
               />
               <p className="mt-1 text-right text-detective-xs text-detective-text-secondary">
-                {scriptText.length}/200 caracteres minimo
+                {scriptText.length}/200 caracteres mínimo
               </p>
             </div>
 
@@ -583,7 +583,7 @@ export const PodcastArgumentativoExercise = ({
                 <div className="flex items-center justify-center gap-4 rounded-lg bg-detective-bg p-4">
                   <FileAudio className="h-6 w-6 text-detective-orange" />
                   <span className="text-detective-base font-medium">
-                    Grabaci\u00f3n completada ({formatTime(recording.duration)})
+                    Grabación completada ({formatTime(recording.duration)})
                   </span>
                 </div>
               </div>
@@ -594,7 +594,7 @@ export const PodcastArgumentativoExercise = ({
           {recording.transcription && (
             <div className="rounded-detective border-2 border-detective-border-light bg-white p-3 sm:p-6">
               <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
-                Transcripci\u00f3n
+                Transcripción
               </h3>
               <p className="rounded-lg bg-detective-bg p-4 text-detective-sm leading-relaxed text-detective-text">
                 {recording.transcription}
@@ -635,7 +635,7 @@ export const PodcastArgumentativoExercise = ({
           }}
           onClose={() => {
             setShowFeedback(false);
-            // Llamar a onComplete despu\u00e9s de cerrar el feedback si el score es aprobatorio
+            // Llamar a onComplete después de cerrar el feedback si el score es aprobatorio
             if (feedback.type === 'success' || (feedback.score && feedback.score >= 70)) {
               onComplete?.(feedback.score || currentScore, timeSpent);
             }

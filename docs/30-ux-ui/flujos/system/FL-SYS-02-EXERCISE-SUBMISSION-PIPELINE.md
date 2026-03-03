@@ -16,7 +16,9 @@ last_updated: 2026-02-27
 
 ## Descripcion
 
-Pipeline completo para el envio de ejercicios por parte del estudiante. El sistema soporta dos arquitecturas de calificacion segun el tipo de ejercicio: auto-grading (Modulos 1-2, ejercicios autocorregibles) y manual grading (Modulos 3-5, requieren revision docente). Los ejercicios auto-graded pasan por la funcion SQL `validate_and_audit()` o validadores TypeScript especializados (rueda_inferencias, quiz_tiktok). Los ejercicios manual-graded se encolan para revision docente con notificacion via evento `student.exercise.submitted`.
+Pipeline completo para el envio de ejercicios por parte del estudiante. El sistema soporta dos arquitecturas de calificacion segun el tipo de ejercicio: auto-grading (Modulos 1-2, ejercicios autocorregibles) y manual grading (Modulos 3-5, requieren revision docente). Los ejercicios auto-graded pasan por la funcion SQL `validate_and_audit()` o validadores TypeScript especializados (rueda_inferencias). Los ejercicios manual-graded se encolan para revision docente con notificacion via evento `student.exercise.submitted`.
+
+> **Nota quiz_tiktok:** Aunque existe un metodo `gradeQuizTiktok()` en `ExerciseGradingService`, `quiz_tiktok` usa la ruta de **revision manual** (`requires_manual_grading=true` en seeds). Las respuestas se almacenan en `pending_review` y el docente asigna la calificacion final. El metodo automatico no se invoca en produccion para este tipo.
 
 Tras la calificacion, el pipeline distribuye recompensas: XP via `UserStatsService`, ML Coins via `MLCoinsService` (con pessimistic locking), actualiza progreso de misiones, detecta achievements automaticamente, y actualiza leaderboards con cache Redis de 60 segundos.
 

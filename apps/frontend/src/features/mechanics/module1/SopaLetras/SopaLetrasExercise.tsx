@@ -47,7 +47,7 @@ export const SopaLetrasExercise = ({
   const numCols = exercise.content.grid[0]?.length || 10;
 
   const DEFAULT_CELL_SIZE = 40;
-  const MIN_CELL_SIZE = 24;
+  const MIN_CELL_SIZE = 36;
   const GRID_PADDING = 16; // SopaLetrasGrid p-2 on mobile (8px each side)
   const GAP_PX = 4;        // gap-1 = 4px
 

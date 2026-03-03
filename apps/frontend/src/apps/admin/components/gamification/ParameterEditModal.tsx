@@ -166,7 +166,7 @@ export function ParameterEditModal({
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
-            <h2 id="modal-title" className="text-2xl font-bold text-detective-text">
+            <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-detective-text">
               Editar Parámetro
             </h2>
             <button
@@ -180,7 +180,7 @@ export function ParameterEditModal({
 
           {/* Parameter Info */}
           <div className="mb-6 rounded-lg bg-detective-bg-secondary p-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="mb-1 text-sm text-detective-text-secondary">Key</p>
                 <p className="font-mono text-sm text-detective-text">{parameter.key}</p>

@@ -317,8 +317,81 @@ Este estandar se aplica a:
 
 ---
 
+## 14. Regla R-MODAL-06: Content-Fit Mobile
+
+Modales con contenido rico (score, rewards, stats, achievements) DEBEN usar valores compactos en mobile con preservación desktop via `sm:`.
+
+### Patrón
+
+| Elemento | Mobile (base) | Desktop (`sm:`) |
+|----------|--------------|-----------------|
+| DetectiveCard padding | `padding="sm"` | (built-in `sm:p-6`) |
+| max-h offset | `calc(100vh-80px)` | `calc(100vh-200px)` |
+| Iconos principales | `w-8 h-8` | `sm:w-16 sm:h-16` |
+| Títulos | `text-lg` | `sm:text-2xl` |
+| Mensajes | `text-sm` | `sm:text-base` |
+| Secciones padding | `p-3` | `sm:p-6` |
+| Valores numéricos | `text-xl` | `sm:text-3xl` |
+| Gaps entre secciones | `space-y-2` | `sm:space-y-4` |
+| Márgenes inferiores | `mb-3` | `sm:mb-6` |
+| Botones | `size="md"` | (responde nativamente) |
+
+### Referencia canónica
+
+- `FeedbackModal.tsx` — modal de completion usado por las 29 mecánicas de ejercicio
+- `CompletionModalSections.tsx` — 6 subcomponentes (ScoreDisplay, Rewards, Stats, RankUp, Streak, Achievements)
+
+### Budget de altura (iPhone SE: 375×667px)
+
+- Flex container: `667px - 40px offset = 627px`
+- Button footer (flex-shrink-0): `96px` (2 buttons 88px + pt-2 8px)
+- Scroll area disponible: `627px - 96px = 531px`
+- Contenido tipico (icon + title + msg + score + rewards + stats): ~464-484px — **margen 47-67px**
+- Escenario maximo (+ rank-up + streak + achievements): usa overflow-y-auto — botones siempre visibles (R-MODAL-06b)
+
+---
+
+## 15. Regla R-MODAL-06b: Sticky Button Footer
+
+Cuando los botones de accion consumen >80px del budget de scroll, moverlos FUERA del scroll container usando flex-column:
+
+| Capa | Clases | Proposito |
+|------|--------|-----------|
+| Flex container | `flex flex-col max-h-[calc(100vh-{offset})]` | Restriccion de altura + layout columna |
+| Scroll area | `flex-1 min-h-0 overflow-y-auto` | Contenido scrolleable, se encoge al espacio disponible |
+| Button footer | `flex-shrink-0 pt-2 sm:pt-3` | Posicion fija debajo del scroll |
+
+**Estructura:**
+
+```tsx
+<Card padding="sm">
+  <div className="flex flex-col max-h-[calc(100vh-40px)] sm:max-h-[calc(100vh-80px)]">
+    <div className="flex-1 min-h-0 overflow-y-auto">
+      {/* Contenido scrolleable */}
+    </div>
+    <div className="flex-shrink-0 pt-2 sm:pt-3">
+      {/* Botones — siempre visibles */}
+    </div>
+  </div>
+</Card>
+```
+
+**Calculo de offset:**
+- Mobile: card padding (p-2=16px) + card border (2px) + safety (~22px) = 40px
+- Desktop: card padding (sm:p-4=32px) + card border (2px) + buffer (~46px) = 80px
+
+**Cuando aplicar:** Modales con score + rewards + stats + botones donde el contenido total excede ~500px en iPhone SE. Sintoma: scroll aparece con margen <40px.
+
+**Clave tecnica:** `min-h-0` en el scroll area es CRITICO — sin esto, flex items no se encogen por debajo del content size y `overflow-y-auto` no se activa.
+
+**Referencia canonica:** `FeedbackModal.tsx`
+
+---
+
 ## Versionado
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2.0 | 2026-03-03 | Added Regla R-MODAL-06b: Sticky Button Footer — structural fix for buttons outside scroll |
+| 1.1.0 | 2026-03-03 | Added Regla R-MODAL-06: Content-Fit Mobile pattern for rich modals (FeedbackModal canonical reference) |
 | 1.0.0 | 2026-03-01 | Initial release: 5 core rules + CSS utilities + checklist |

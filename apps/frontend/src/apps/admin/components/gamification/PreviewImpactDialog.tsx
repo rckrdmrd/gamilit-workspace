@@ -50,7 +50,7 @@ export function PreviewImpactDialog({
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <TrendingUp className="h-6 w-6 text-detective-gold" />
-              <h2 id="dialog-title" className="text-2xl font-bold text-detective-text">
+              <h2 id="dialog-title" className="text-xl sm:text-2xl font-bold text-detective-text">
                 Vista Previa de Impacto
               </h2>
             </div>

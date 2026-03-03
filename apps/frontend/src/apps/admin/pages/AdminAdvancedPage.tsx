@@ -48,7 +48,7 @@ export default function AdminAdvancedPage() {
           <div role="region" aria-label="Feature Flags">
             <div className="mb-4 flex items-center gap-2">
               <Zap className="h-6 w-6 text-detective-orange" />
-              <h2 className="text-2xl font-bold text-detective-text">Feature Flags</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-detective-text">Feature Flags</h2>
               <FeatureBadge variant="beta" size="sm" tooltip="Panel de Feature Flags" />
             </div>
             <FeatureFlagsPanel />
@@ -58,7 +58,7 @@ export default function AdminAdvancedPage() {
           <div role="region" aria-label="A/B Testing">
             <div className="mb-4 flex items-center gap-2">
               <Beaker className="h-6 w-6 text-purple-500" />
-              <h2 className="text-2xl font-bold text-detective-text">A/B Testing</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-detective-text">A/B Testing</h2>
               <FeatureBadge variant="beta" size="sm" tooltip="Dashboard básico de experimentos" />
             </div>
             <ABTestingDashboard />

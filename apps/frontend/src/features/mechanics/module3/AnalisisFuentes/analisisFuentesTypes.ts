@@ -1,9 +1,13 @@
 export interface Source {
   id: string;
   title: string;
-  url: string;
+  author?: string;
+  institution?: string;
+  date?: string;
+  type: string;
   excerpt: string;
-  type: 'academic' | 'news' | 'blog' | 'social';
+  citations?: string;
+  credibilityLevel?: string;
 }
 
 /**

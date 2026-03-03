@@ -110,7 +110,7 @@ export const FeatureFlagEditor = ({ flag, onSave, onClose }: FeatureFlagEditorPr
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Flag className="h-6 w-6 text-detective-orange" />
-            <h2 className="text-2xl font-bold text-detective-text">
+            <h2 className="text-xl sm:text-2xl font-bold text-detective-text">
               {isEditMode ? 'Edit Feature Flag' : 'Create Feature Flag'}
             </h2>
           </div>

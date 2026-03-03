@@ -75,7 +75,7 @@ export function RestoreDefaultsDialog({
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-6 w-6 text-red-500" />
-              <h2 id="dialog-title" className="text-2xl font-bold text-red-400">
+              <h2 id="dialog-title" className="text-xl sm:text-2xl font-bold text-red-400">
                 Restaurar Valores por Defecto
               </h2>
             </div>

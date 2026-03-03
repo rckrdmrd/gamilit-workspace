@@ -59,7 +59,7 @@ export function ExercisePreview({ formData }: ExercisePreviewProps) {
       <DetectiveCard hoverable={false}>
         {/* Title & Description */}
         <div className="mb-4">
-          <h2 className="text-2xl font-bold text-detective-text">
+          <h2 className="text-xl sm:text-2xl font-bold text-detective-text">
             {formData.title || 'Sin titulo'}
           </h2>
           <p className="mt-1 text-detective-text-secondary">

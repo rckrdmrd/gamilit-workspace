@@ -597,7 +597,7 @@ export const adaptToTribunalOpinionesData = (exercise: ExerciseData): any => {
  * Adapts ExerciseData to PodcastArgumentativoData format
  * Module 3 - Record an argumentative podcast on a given topic
  *
- * DB format: { content: { topic, prompt, timeLimit } }
+ * DB format: { content: { topics: [{ id, title, description, keyPoints }], structure, evaluationCriteria } }
  * Component expects: { topic, prompt, timeLimit }
  */
 export const adaptToPodcastArgumentativoData = (exercise: ExerciseData): any => {
@@ -608,9 +608,9 @@ export const adaptToPodcastArgumentativoData = (exercise: ExerciseData): any => 
     ...base,
     description: exercise.description || '',
     hints: exercise.mechanicData?.hints || [],
-    topic: content.topic || base.topic || '',
-    prompt: content.prompt || exercise.description || '',
-    timeLimit: content.timeLimit || 300,
+    topic: content.topic || content.topics?.[0]?.title || base.topic || '',
+    prompt: content.prompt || content.topics?.[0]?.description || exercise.description || '',
+    timeLimit: content.timeLimit || exercise.mechanicData?.config?.maxDuration || 300,
   };
 };
 
@@ -902,6 +902,7 @@ export const adaptToComicDigitalData = (exercise: ExerciseData): any => {
     layouts: content.layouts || [],
     backgrounds: content.backgrounds || [],
     templates: content.templates || [],
+    suggestedScenes: content.suggestedScenes || [],
     config: exercise.mechanicData?.config || {},
   };
 };

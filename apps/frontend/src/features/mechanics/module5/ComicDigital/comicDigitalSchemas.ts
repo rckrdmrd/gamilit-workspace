@@ -13,12 +13,21 @@ export const speechBubbleSchema = z.object({
   type: z.enum(['speech', 'thought', 'caption']),
 });
 
+export const comicStickerSchema = z.object({
+  id: z.string(),
+  assetId: z.string(),
+  x: z.number().min(0).max(100),
+  y: z.number().min(0).max(100),
+  scale: z.number().min(0.5).max(2),
+});
+
 export const comicPanelSchema = z.object({
   id: z.string(),
   layout: z.enum(['full', 'half', 'third']),
   image: z.string().optional(),
   text: z.string(),
   speechBubbles: z.array(speechBubbleSchema),
+  stickers: z.array(comicStickerSchema).default([]),
   background: z.string().optional(),
 });
 
@@ -59,5 +68,6 @@ export const comicDigitalConfigSchema = z.object({
 // Type exports from schemas
 export type SpeechBubbleInput = z.infer<typeof speechBubbleSchema>;
 export type ComicPanelInput = z.infer<typeof comicPanelSchema>;
+export type ComicStickerInput = z.infer<typeof comicStickerSchema>;
 export type ComicDigitalProgressInput = z.infer<typeof comicDigitalProgressSchema>;
 export type ComicDigitalStateInput = z.infer<typeof comicDigitalStateSchema>;

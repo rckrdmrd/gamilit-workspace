@@ -11,12 +11,28 @@ export interface SpeechBubble {
   type: 'speech' | 'thought' | 'caption';
 }
 
+export interface ComicSticker {
+  id: string;
+  assetId: string;
+  x: number;
+  y: number;
+  scale: number;
+}
+
+export interface StickerDefinition {
+  id: string;
+  emoji: string;
+  label: string;
+  category: 'character' | 'prop' | 'effect';
+}
+
 export interface ComicPanel {
   id: string;
   layout: 'full' | 'half' | 'third';
   image?: string;
   text: string;
   speechBubbles: SpeechBubble[];
+  stickers: ComicSticker[];
   background?: string;
 }
 
@@ -46,6 +62,14 @@ export interface ComicDigitalActions {
   removePanel: (panelId: string) => void;
   updatePanel: (panelId: string, updates: Partial<ComicPanel>) => void;
   addSpeechBubble: (panelId: string, type: SpeechBubble['type']) => void;
+  updateBubblePosition: (panelId: string, bubbleId: string, x: number, y: number) => void;
+  updateBubbleText: (panelId: string, bubbleId: string, text: string) => void;
+  deleteBubble: (panelId: string, bubbleId: string) => void;
+  reorderPanels: (panels: ComicPanel[]) => void;
+  setPanelBackground: (panelId: string, backgroundId: string) => void;
+  addSticker: (panelId: string, assetId: string) => void;
+  updateStickerPosition: (panelId: string, stickerId: string, x: number, y: number) => void;
+  deleteSticker: (panelId: string, stickerId: string) => void;
 }
 
 export interface ExerciseProgressUpdate {
@@ -69,6 +93,8 @@ export interface ExerciseFromPage {
   title: string;
   description?: string;
   difficulty?: string;
+  suggestedScenes?: string[];
+  templates?: ComicTemplate[];
   mechanicData?: {
     content?: {
       suggestedScenes?: string[];
@@ -118,4 +144,8 @@ export interface BackgroundOption {
   id: string;
   name: string;
   color: string;
+  gradientClasses: string;
+  accentBorder: string;
+  icon: string;
+  illustrationUrl?: string;
 }

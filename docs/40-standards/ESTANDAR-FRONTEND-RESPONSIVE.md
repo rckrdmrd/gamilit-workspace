@@ -325,6 +325,37 @@ Las siguientes clases estan en `ESTANDAR-FRONTEND-MODAL-RESPONSIVE.md` pero aun 
 
 ---
 
+## Patrones de Interacción Móvil
+
+### Regla R-MOB-01: Prohibido HTML5 Drag API
+**NUNCA** usar HTML5 Drag and Drop API (`draggable`, `onDragStart`, `onDrop`, `DragEvent`, `dataTransfer`) en mecánicas de ejercicios.
+- HTML5 drag events NO se disparan en dispositivos táctiles (iOS Safari, Android Chrome)
+- **Usar @dnd-kit** con `TouchSensor` + `PointerSensor` para interacciones drag-and-drop
+- Configuración de sensores recomendada:
+  ```tsx
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+  );
+  ```
+- **Referencia canónica:** `InfografiaInteractivaExercise.tsx` (module4)
+
+### Regla R-MOB-02: Framer Motion Reorder con Drag Controls
+Cuando se usa `Reorder.Group`/`Reorder.Item` de Framer Motion:
+- **OBLIGATORIO:** `dragListener={false}` en cada `<Reorder.Item>`
+- **OBLIGATORIO:** `useDragControls()` por item
+- **OBLIGATORIO:** Handle de arrastre con `onPointerDown={(e) => controls.start(e)}` y clase `touch-none`
+- Sin esto, el arrastre compite con el scroll de la página en móvil
+- **Referencia:** `TimelineExercise.tsx`, `PuzzleContextoExercise.tsx`
+
+### Regla R-MOB-03: Touch Targets en Grids
+- Tamaño mínimo de celda en grids interactivos: **36px** (`MIN_CELL_SIZE >= 36`)
+- Drag handles: mínimo **44px** (`min-w-[44px] min-h-[44px]`)
+- Botones de acción: mínimo **44px** (estándar WCAG 2.1)
+- Grids que excedan el contenedor deben usar scroll horizontal (`overflow-x-auto`)
+
+---
+
 **References:**
 - ADR-050: Responsive Design Strategy
 - `shared/hooks/useResponsiveLayout.ts` — Viewport-based responsive hook

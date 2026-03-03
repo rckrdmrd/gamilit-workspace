@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, Reorder } from 'framer-motion';
+import { useState, useEffect, type ReactNode } from 'react';
+import { motion, Reorder, useDragControls } from 'framer-motion';
 import { Puzzle, GripVertical, RotateCcw } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -12,6 +12,52 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
+
+interface DraggableFragmentItemProps {
+  fragment: Fragment;
+  index: number;
+  showResults: boolean;
+  getFragmentStyle: (fragment: Fragment, index: number) => string;
+  getFragmentIcon: (fragment: Fragment, index: number) => ReactNode;
+}
+
+const DraggableFragmentItem = ({
+  fragment,
+  index,
+  showResults,
+  getFragmentStyle,
+  getFragmentIcon,
+}: DraggableFragmentItemProps) => {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item key={fragment.id} value={fragment} dragListener={false} dragControls={controls}>
+      <motion.div
+        whileHover={!showResults ? { scale: 1.02 } : {}}
+        whileTap={!showResults ? { scale: 0.98 } : {}}
+        className={`flex items-center gap-3 rounded-detective border-2 p-2 sm:p-4 transition-all ${getFragmentStyle(
+          fragment,
+          index,
+        )} ${!showResults ? '' : 'cursor-default'}`}
+      >
+        {!showResults && (
+          <div
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center cursor-grab touch-none"
+            onPointerDown={(e) => controls.start(e)}
+          >
+            <GripVertical className="h-5 w-5 text-detective-text-secondary" />
+          </div>
+        )}
+        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
+          {fragment.label}
+        </span>
+        <div className="flex-1">
+          <p className="text-detective-base text-detective-text">{fragment.text}</p>
+        </div>
+        {getFragmentIcon(fragment, index)}
+      </motion.div>
+    </Reorder.Item>
+  );
+};
 
 export const PuzzleContextoExercise = ({
   exercise = mockPuzzleData,
@@ -277,25 +323,14 @@ export const PuzzleContextoExercise = ({
             className="space-y-3"
           >
             {fragments.map((fragment, index) => (
-              <Reorder.Item key={fragment.id} value={fragment}>
-                <motion.div
-                  whileHover={!showResults ? { scale: 1.02 } : {}}
-                  whileTap={!showResults ? { scale: 0.98 } : {}}
-                  className={`flex items-center gap-3 rounded-detective border-2 p-2 sm:p-4 transition-all ${getFragmentStyle(
-                    fragment,
-                    index,
-                  )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
-                >
-                  {!showResults && <GripVertical className="h-5 w-5 text-detective-text-secondary" />}
-                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
-                    {fragment.label}
-                  </span>
-                  <div className="flex-1">
-                    <p className="text-detective-base text-detective-text">{fragment.text}</p>
-                  </div>
-                  {getFragmentIcon(fragment, index)}
-                </motion.div>
-              </Reorder.Item>
+              <DraggableFragmentItem
+                key={fragment.id}
+                fragment={fragment}
+                index={index}
+                showResults={showResults}
+                getFragmentStyle={getFragmentStyle}
+                getFragmentIcon={getFragmentIcon}
+              />
             ))}
           </Reorder.Group>
         </div>

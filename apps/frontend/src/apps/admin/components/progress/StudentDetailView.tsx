@@ -73,7 +73,7 @@ export const StudentDetailView = ({
             <User className="h-12 w-12 text-detective-orange" />
           </div>
           <div className="flex-1">
-            <h2 className="mb-1 text-2xl font-bold text-detective-text">
+            <h2 className="mb-1 text-xl sm:text-2xl font-bold text-detective-text">
               {user_info.display_name}
             </h2>
             <p className="mb-4 text-detective-text-secondary">{user_info.email}</p>

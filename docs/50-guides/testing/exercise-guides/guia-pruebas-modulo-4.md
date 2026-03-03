@@ -499,6 +499,29 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 
 ---
 
+### Notas de Comportamiento (Fix 2026-03-03)
+
+**Timer:**
+- El temporizador corre continuamente — 30 segundos por pregunta, NO se detiene al seleccionar una respuesta.
+- Al seleccionar una opcion, la tarjeta se atenua visualmente (dimmed) para indicar respuesta registrada, pero el tiempo sigue corriendo.
+- Si el tiempo se agota antes de seleccionar, la pregunta se deja sin responder (no bloquea el avance).
+
+**Boton de envio:**
+- En preguntas 1 a N-1: aparece el boton "Siguiente" para navegar.
+- En la ultima pregunta: el boton "Siguiente" es reemplazado por "Enviar Respuestas" cuando se cumplen TODAS estas condiciones:
+  - Todas las preguntas tienen una opcion seleccionada.
+  - Todas las justificaciones tienen al menos 30 caracteres.
+- El boton "Enviar Respuestas" tambien esta disponible en el Menu lateral (sidebar) en cualquier momento una vez completadas las condiciones.
+
+**Proteccion de array disperso:**
+- Internamente, seleccionar `answers[currentIndex] = optionIndex` puede dejar huecos si el estudiante omite preguntas. Antes del envio, el array se sanea a un array denso (valores `undefined`/huecos reemplazados por `0`) para evitar errores 400 Bad Request en el backend.
+- El helper `getAnsweredCount()` cuenta solo indices con valor definido (`!== undefined`) para reflejar el progreso real.
+
+**Tiempo por pregunta (`time_per_question`):**
+- En los ejemplos de envio, `time_per_question` refleja segundos reales transcurridos en cada pregunta (max 30s). Un valor de 10.0 indica que el tiempo se agoto.
+
+---
+
 ## EJERCICIO 4.4: NAVEGACION HIPERTEXTUAL
 
 **Tipo:** `navegacion_hipertextual`

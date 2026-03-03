@@ -180,7 +180,10 @@ export class ExerciseValidatorService {
     errors: string[],
     metadata: Record<string, unknown>,
   ): void {
-    const panels = (answers.panels || []) as Array<{ text?: string; image?: string; imageUrl?: string }>;
+    const panels = (answers.panels || []) as Array<{
+      text?: string; dialogue?: string; narration?: string;
+      image?: string; imageUrl?: string;
+    }>;
     const minPanels = 4;
     metadata.panelCount = panels.length;
 
@@ -191,10 +194,13 @@ export class ExerciseValidatorService {
       return;
     }
 
-    // Validate each panel has content
+    // Validate each panel has content (accepts DTO fields + legacy)
     const emptyPanels = panels.filter((panel) => {
-      const hasText = panel.text && panel.text.trim().length > 0;
-      const hasImage = panel.image || panel.imageUrl;
+      const hasText =
+        (panel.dialogue && panel.dialogue.trim().length > 0) ||
+        (panel.narration && panel.narration.trim().length > 0) ||
+        (panel.text && panel.text.trim().length > 0);
+      const hasImage = panel.imageUrl || panel.image;
       return !hasText && !hasImage;
     });
 

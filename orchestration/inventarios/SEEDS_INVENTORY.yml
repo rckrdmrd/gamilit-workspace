@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 3.5.2
-  fecha: '2026-03-03'  # v3.5.2: TikTok timeLimit 10s→30s (5 envs: dev, staging, prod, dev-backlog, prod-backlog), display text "10 Segundos/segundos"→"30 Segundos/segundos". Previous: v3.5.1
+  version: 3.5.4
+  fecha: '2026-03-03'  # v3.5.4: Rubric audit — 12 corrections in 13-exercise_type_rubrics.sql (weights, names, descriptions, typo). Previous: v3.5.3
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
@@ -1120,7 +1120,7 @@ seeds_inventory:
           - 03-tags.sql
 
       educational_content:
-        archivos: 7
+        archivos: 8
         nota: Idénticos a PROD (01-06) más rúbricas
         seeds:
           - 01-modules.sql
@@ -1130,6 +1130,7 @@ seeds_inventory:
           - 05-exercises-module4.sql
           - 06-exercises-module5.sql (835 líneas, expandido Fase 1)
           - 07-assessment-rubrics.sql
+          - 13-exercise_type_rubrics.sql  # 13 rúbricas: M3×5 + M4×5 + M5×3 (quiz_tiktok añadida 2026-03-03)
 
       gamification_system:
         archivos: 19
@@ -1261,6 +1262,28 @@ seeds_inventory:
   # CHANGELOG
   # =============================================================================
   changelog:
+    - fecha: '2026-03-03'
+      version: 3.5.4
+      fase: RUBRIC-AUDIT — Auditoría y correcciones de 13 rúbricas (M3/M4/M5)
+      cambios:
+        - "13-exercise_type_rubrics.sql: 12 correcciones aplicadas (3 envs: dev, staging, prod)"
+        - "M3 (5 rúbricas): tribunal_opiniones (pesos), analisis_fuentes (CRAAP %), podcast_argumentativo (descripciones), matriz_perspectivas (renombrado + pesos)"
+        - "M4 (5 rúbricas): verificador_fake_news (descripciones), infografia_interactiva (pesos), navegacion_hipertextual (pesos), analisis_memes (pesos), quiz_tiktok (pesos)"
+        - "M5 (3 rúbricas): diario_multimedia (pesos), comic_digital (renombrado + pesos), video_carta (typo: 'anacronicacon'→'anacronica')"
+        - "Validaciones: 13/13 rúbricas correctas, 3 ambientes idénticos, 0 errores DB"
+      impacto: "Alineación mejorada entre criterios de rúbrica y mecánicas de frontend, pesos pedagógicos optimizados"
+      referencia: "orchestration/tareas/TASK-2026-03-03-RUBRIC-AUDIT/AUDIT-REPORT.md"
+
+    - fecha: '2026-03-03'
+      version: 3.5.3
+      fase: RUBRIC-REMEDIATION — quiz_tiktok rúbrica faltante
+      cambios:
+        - "13-exercise_type_rubrics.sql: INSERT quiz_tiktok añadido (4 criterios, peso total=100)"
+        - "Rubrics count 12→13: M3×5 + M4×5 + M5×3 — cobertura 100% ejercicios manuales"
+        - "3 ambientes corregidos: dev, staging, prod"
+      impacto: "Portal maestro ya no muestra 'Rúbrica no disponible' para quiz_tiktok"
+      referencia: "orchestration/tareas/TASK-2026-03-03-RUBRIC-REMEDIATION/REMEDIATION-REPORT.md"
+
     - fecha: '2026-02-20'
       version: 3.2.0
       fase: SEED-HOMOLOGATION — Homologacion Dev/Prod

@@ -164,7 +164,7 @@ export const ContentVersionControl = () => {
                   </DetectiveButton>
                 </div>
 
-                <div className="mb-4 grid grid-cols-3 gap-4">
+                <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-3">
                     <p className="text-detective-small text-gray-400">Added</p>
                     <p className="text-2xl font-bold text-green-500">

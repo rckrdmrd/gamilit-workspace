@@ -80,7 +80,7 @@ export const AlertDetailsModal = ({ alert, isOpen, onClose }: AlertDetailsModalP
       size="xl"
     >
       {alert && (
-        <div className="space-y-6">
+        <div className="max-h-[calc(100vh-200px)] overflow-y-auto space-y-6">
           {/* Badges */}
           <div className="flex flex-wrap items-center gap-2">
             <span

@@ -95,7 +95,7 @@ export function AssignmentDetailModal({ assignment, isOpen, onClose }: Assignmen
     },
     {
       key: 'grade',
-      label: 'Calificaci\u00f3n',
+      label: 'Calificación',
       render: (row) =>
         row.grade !== null ? (
           <span className="font-medium text-detective-text">{row.grade}</span>
@@ -121,7 +121,7 @@ export function AssignmentDetailModal({ assignment, isOpen, onClose }: Assignmen
       className="max-w-5xl"
     >
       {assignment && (
-        <div>
+        <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
           {/* Assignment metadata */}
           <div className="mb-4">
             <p className="text-sm text-detective-text-secondary">{assignment.description}</p>

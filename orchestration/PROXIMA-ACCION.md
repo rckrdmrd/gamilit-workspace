@@ -7,6 +7,104 @@
 
 ---
 
+## [2026-03-03] Comic Digital Third Wave: Visual Reconstruction — 5 problems fixed + sticker system
+
+- **P1 (CRITICO):** Replaced `framer-motion Reorder` with `@dnd-kit/sortable` — half/third panels now render side-by-side via `flex flex-wrap gap-4` + width classes
+- **P2 (CRITICO):** Replaced `framer-motion drag` with manual pointer events (`setPointerCapture` + DOM-direct updates) — elements never disappear during drag
+- **P3 (ALTO):** Replaced 6 flat-color backgrounds with 8 rich gradient backgrounds (thematic + illustrated with SVGs) + decorative icons
+- **P4 (ALTO):** Added sticker system: 19 stickers in 3 categories (characters, props, effects) with drag-and-drop placement
+- **P5 (ALTO):** Fixed adapter data path — `exercise?.suggestedScenes` now reads from adapter top-level first
+- **Archivos:** ComicDigitalExercise.tsx (rewrite), comicDigitalTypes.ts, comicDigitalMockData.ts, comicDigitalSchemas.ts
+- **Validación:** Build/Lint/Typecheck 0 errors, 10/10 cross-layer checks PASS
+- **Report:** `orchestration/tareas/TASK-2026-03-03-COMIC-DIGITAL-REMEDIATION/REMEDIATION-REPORT.md`
+
+---
+
+## [2026-03-03] Comic Digital Second Wave: 6 bugs fixed + 4 features added
+
+- Comic Digital Second Wave: 6 bugs fixed (bubble drag precision via info.offset, background visibility via bgClass, Reorder.Group axis alignment), 4 features added (suggested scenes sidebar, template selector, exercise prop typing, touch targets 44px)
+- **Archivos:** ComicDigitalExercise.tsx (main rewrite), comicDigitalMockData.ts (bg colors), exerciseAdapter.ts (suggestedScenes)
+- **Validación:** Build/Lint/Type-check 0 errors, 14/14 functional checks PASS
+- **Report:** `orchestration/tareas/TASK-2026-03-03-COMIC-DIGITAL-REMEDIATION/REMEDIATION-REPORT.md`
+
+---
+
+## [2026-03-03] Cómic Digital — Remediación Completa de Mecánica Educativa (9 Issues)
+
+- **C1 (CRITICO):** Fixed speech bubbles ALL spawning at x:50,y:30 — stagger offset based on existing count
+- **C2 (CRITICO):** Added framer-motion `drag` for free-form bubble repositioning within panel constraints
+- **C3 (ALTO):** Added click-to-edit inline textarea for bubble text (was immutable "Escribe aquí...")
+- **C4 (ALTO):** Added panel reordering via framer-motion `Reorder.Group` + panel deletion via Trash2 button
+- **C5 (MEDIO):** Layout now visually rendered — full/half/third map to responsive width classes via `flex flex-wrap`
+- **C6 (MEDIO):** Background per-panel instead of global — sidebar selector applies to selected panel
+- **C7 (MEDIO):** MIN_PANELS 6→4, MAX_PANELS 12→6 — aligned with backend `@ArrayMinSize(4)`/`@ArrayMaxSize(6)`
+- **C8 (MEDIO):** Backend `validateComicDigital()` now accepts `dialogue`/`narration` alongside legacy `text`
+- **C9 (BAJO):** Replaced inline interfaces with imports from `comicDigitalTypes.ts` SSOT
+- **Archivos:** ComicDigitalExercise.tsx (rewrite), comicDigitalTypes.ts, comicDigitalMockData.ts, exercise-validator.service.ts
+- **Validación:** Build/Lint/Typecheck 0 errors, cross-layer 6/6 PASS
+- **Report:** `orchestration/tareas/TASK-2026-03-03-COMIC-DIGITAL-REMEDIATION/REMEDIATION-REPORT.md`
+
+---
+
+## [2026-03-03] Quiz TikTok — 4-Bug Fix + Code Quality Remediation
+
+- **BUG-1 (CRITICO):** Fixed sparse answers array causing 400 Bad Request — `getAnsweredCount()` helper + array sanitization
+- **BUG-2 (MEDIO):** Fixed timer stopping on answer selection — runs continuously with ref-based interval
+- **BUG-3 (MEDIO):** Fixed submit button only in sidebar — now appears inline on last question
+- **BUG-4 (CRITICO):** Fixed dual-path submission — `onProgressUpdate` payload shape incompatible with backend DTO (`selectedAnswers` → `answers`, `Record<number,string>` → `string[]`, removed extra fields)
+- **MF-1:** Fixed timer useEffect dep array `[timeRemaining]` recreating interval every tick → `[timeLimit]` with stoppedRef
+- **DTO-1:** Fixed `-1` fallback violating backend `@Min(0)` → changed to `0`
+- **Archivos:** QuizTikTokExercise.tsx, TikTokCard.tsx
+- **Pre-existentes documentados (NO corregidos):** 8 issues (a11y, SRP 682 LOC, type duplication, dual export, eslint-disable, stale closure in handleTimeout, dual time tracking, responsive mb-8) + 3 dual-path issues (ActionsPanel no guard, 29 ejercicios con dual-path, userAnswers as unknown)
+
+---
+
+## [2026-03-03] Rubric Audit: M3/M4/M5 — 13 Validadas, 12 Correcciones Aplicadas (COMPLETED)
+
+**Scope:** Auditoría de rúbricas de evaluación para ejercicios M3/M4/M5. 13 rúbricas validadas contra especificación, 12 correcciones aplicadas en DDL/seeds.
+
+**Problem:**
+- Rúbricas desalineadas entre documentación de diseño (SPEC-EJERCICIOS.md) y DDL (`exercise_type_rubrics`)
+- Criterios sin descripción clara, pesos inconsistentes, nombres desactualizados
+- Quiz TikTok sin rúbrica registrada (remediado 2026-03-03 en RUBRIC-AUDIT)
+- MatrizPerspectivas: "Identificación" debería ser "Comprensión" (naming)
+
+**Solution:**
+1. **M3 (5 rúbricas):**
+   - Tribunal Opiniones: 3 criterios (Clasificación 35%, Veredicto 40%, Justificación 25%)
+   - Debate Digital: 4 criterios (Claridad 20%, Evidencias 30%, Lógica 25%, Contraargumentos 25%) — sin cambios
+   - Análisis Fuentes: 3 criterios (Orden 40%, Comparación 30%, CRAAP 30%) — CRAAP revalorizado
+   - Podcast Argumentativo: 4 criterios (Claridad 25%, Argumentación 30%, Pensamiento Crítico 25%, Presentación 20%)
+   - Matriz Perspectivas: 4 criterios (Comprensión 25%, Análisis 25%, Evidencia 20%, Síntesis 30%) — renaming "Identificación"
+
+2. **M4 (5 rúbricas):**
+   - Verificador Fake News: 4 criterios (Identificación 25%, Razonamiento 30%, Referencia Fuentes 25%, Conclusión 20%)
+   - Infografía Interactiva: 4 criterios (Contenido 25%, Organización 20%, Interactividad 20%, Respuestas 35%) — respuestas priorizadas
+   - Navegación Hipertextual: 4 criterios (Eficiencia 25%, Relevancia 25%, Síntesis 25%, Respuesta 25%) — balanceado
+   - Análisis Memes: 4 criterios (Decodificación 30%, Contexto 25%, Intertextualidad 20%, Crítica 25%)
+   - Quiz TikTok: 4 criterios (Precisión 30%, Justificaciones 30%, Pensamiento Crítico 20%, Completitud 20%) — **NEW** (added 2026-03-03)
+
+3. **M5 (3 rúbricas):**
+   - Diario Multimedia: 4 criterios (Creatividad 30%, Precisión 30%, Multimedia 15%, Expresión 25%) — multimedia reducido (opcional)
+   - Comic Digital: 4 criterios (Narrativa 30%, Organización Visual 20%, Precisión 25%, Creatividad 25%) — renaming "Composición"
+   - Video Carta: 4 criterios (Autenticidad 25%, Mensaje 25%, Producción 25%, Emoción 25%) — typo corregido
+
+**Files modified (6):**
+- DDL (3): `apps/database/seeds/dev/educational_content/13-exercise_type_rubrics.sql`, `staging/...`, `prod/...`
+- Docs (1): `docs/50-guides/frontend/impl/MECANICAS-EDUCATIVAS.md` — nueva sección "Rúbricas por Ejercicio (M3/M4/M5)"
+
+**Validation:** 13/13 rúbricas validadas ✓, 12 correcciones aplicadas ✓, seeds ejecutadas exitosamente ✓
+**Seed integrity:** Exercise count 58→58 (Quiz TikTok exercise_type_rubrics row added, no duplicates)
+**Inventarios:** MASTER v14.9.13 (educational_content schema referencia)
+
+**Report:** `orchestration/tareas/TASK-2026-03-03-RUBRIC-AUDIT/AUDIT-REPORT.md`
+
+**Out of scope (future):**
+- Frontend UI para mostrar rúbricas en calificación manual del maestro (future phase: teacher grading UI)
+- Criterios de evaluación automática para M1/M2 (solo teacher-grade en M3/M4/M5)
+
+---
+
 ## Estado Actual
 
 ### [2026-03-03] Documentation Audit — 2026-03-03 (COMPLETED)

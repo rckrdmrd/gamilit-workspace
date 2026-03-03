@@ -100,7 +100,7 @@ export const InstitutionDetailModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="" size="xl">
-      <div className="space-y-6">
+      <div className="max-h-[calc(100vh-200px)] overflow-y-auto space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-gray-700 pb-4">
           <div className="flex items-start gap-4">
@@ -108,7 +108,7 @@ export const InstitutionDetailModal = ({
               <Building2 className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h2 className="break-words text-2xl font-bold text-detective-text">
+              <h2 className="break-words text-xl sm:text-2xl font-bold text-detective-text">
                 {institution.name}
               </h2>
               <p className="mt-1 text-sm text-detective-text-secondary">

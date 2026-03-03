@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TikTokQuestion } from './quizTikTokTypes';
 
@@ -18,14 +18,20 @@ export const TikTokCard = ({
   onTimeout,
 }: TikTokCardProps) => {
   const [timeRemaining, setTimeRemaining] = useState(timeLimit);
+  const stoppedRef = useRef(false);
 
   useEffect(() => {
-    if (selectedAnswer !== undefined) return;
+    stoppedRef.current = false;
     const interval = setInterval(() => {
-      setTimeRemaining(prev => Math.max(0, prev - 1));
+      setTimeRemaining(prev => {
+        const next = Math.max(0, prev - 1);
+        if (next <= 0) stoppedRef.current = true;
+        return next;
+      });
+      if (stoppedRef.current) clearInterval(interval);
     }, 1000);
     return () => clearInterval(interval);
-  }, [selectedAnswer, timeLimit]);
+  }, [timeLimit]);
 
   // Reset timer when question changes
   useEffect(() => {
@@ -49,15 +55,17 @@ export const TikTokCard = ({
       style={{ backgroundColor: question.backgroundColor || 'var(--detective-bg-secondary, #1f2937)' }}
     >
       {/* Timer Display */}
-      {selectedAnswer === undefined && (
-        <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-10 backdrop-blur-md rounded-detective px-4 py-2 text-white ${
-          timeRemaining <= 5 ? 'bg-red-600/80 animate-pulse' : 'bg-black/50'
-        }`}>
-          <span className={`text-lg font-bold ${timeRemaining <= 5 ? 'text-white' : ''}`}>
-            {timeRemaining}s
-          </span>
-        </div>
-      )}
+      <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-10 backdrop-blur-md rounded-detective px-4 py-2 text-white ${
+        timeRemaining <= 5 && selectedAnswer === undefined
+          ? 'bg-red-600/80 animate-pulse'
+          : selectedAnswer !== undefined
+            ? 'bg-black/30 opacity-70'
+            : 'bg-black/50'
+      }`}>
+        <span className={`text-lg font-bold ${timeRemaining <= 5 && selectedAnswer === undefined ? 'text-white' : ''}`}>
+          {timeRemaining}s
+        </span>
+      </div>
 
       {/* Question */}
       <h2 className="text-lg sm:text-2xl font-bold text-white text-center mb-8">{question.question}</h2>

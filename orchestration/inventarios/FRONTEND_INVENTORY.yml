@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.8.1"
-fecha: "2026-03-03"  # v12.8.1: TikTok timer 10s→30s (exerciseAdapter.ts, TikTokCard.tsx, QuizTikTokExercise.tsx), seed display text sync. Previous: v12.8.0
+version: "12.9.0"
+fecha: "2026-03-03"  # v12.9.0: Comic Digital Third Wave — @dnd-kit/sortable, pointer events, sticker system. Previous: v12.8.9
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -103,12 +103,23 @@ portales:
 
   - nombre: "Portal Administrador"
     directorio: "apps/admin/"
-    completitud: "~92%"
+    completitud: "~95%"
     paginas: 19                                 # 19 paginas (incl. AdminExerciseCreatePage)
     componentes_tsx: 123                        # Verified 2026-02-21: .tsx in components/ only (excl. tests/stories/examples)
     hooks: 31                                   # Verified 2026-02-21: 31 use*.ts files in hooks/ (excl index.ts). +21 hooks migrated to React Query
+    barrel_exports: 19                              # 5 existing (5 new added 2026-03-03: analytics, classroom-teacher, exercise-builder, notifications, progress = 19/19 dirs)
     descripcion: "Dashboard, usuarios, contenido, analytics, monitoreo, reportes, gamificacion config"
     cambios_recientes: |
+      v12.8.4 (Admin Portal Responsive Remediation 2026-03-03):
+      - 19 pages: responsive headers, grids, modals, touch targets
+      - 18 components: grid responsive fallbacks, touch targets 44px, section title responsive
+      - 3 modals: scroll wrappers, responsive H2, responsive title
+      - 5 barrel export index.ts files created (analytics, classroom-teacher, exercise-builder, notifications, progress)
+      - Headers: text-2xl/text-xl sm:text-2xl on 3 files
+      - Grids: grid-cols-{2,3,4} → grid-cols-{1,2} sm:grid-cols-{3,4} on 5 files
+      - Modal scroll: max-h-[calc(100vh-200px)] overflow-y-auto on 3 modals
+      - Touch targets: 44px min-w/min-h on buttons (NotificationHeader, NotificationItem)
+      - Standards compliance: Responsive 85%→100%, Modal 80%→95%
       v12.0.0 (Phase 1+2 Backlog 2026-02-21):
       - 21 admin hooks migrated to React Query (from direct apiClient calls)
       - 17 inline modals migrated to shared Modal
@@ -518,6 +529,22 @@ hallazgos:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v12.8.4"
+    changes:
+      - "feat(admin): Responsive remediation — 19 pages, 18 components, 3 modals fixed"
+      - "feat(admin): 5 barrel export index.ts files created (analytics, classroom-teacher, exercise-builder, notifications, progress = 19/19 dirs)"
+      - "fix(admin): Responsive headers on 3 files (text-2xl → text-xl sm:text-2xl)"
+      - "fix(admin): Responsive grids on 5 files (grid-cols-{2,3,4} → grid-cols-{1,2} sm:grid-cols-{3,4})"
+      - "fix(admin): Modal scroll wrappers on 3 modals (max-h-[calc(100vh-200px)] overflow-y-auto)"
+      - "fix(admin): Modal H2 responsive on 6 modals (text-2xl → text-xl sm:text-2xl)"
+      - "fix(admin): Touch targets 44px on buttons (NotificationHeader×3, NotificationItem×2)"
+      - "fix(admin): Section titles responsive on 7 files (H2/H3 text-2xl → text-xl/lg sm:text-2xl)"
+      - "fix(admin): Card truncation with title tooltip on ClassroomTeachersTab, TeacherClassroomsTab"
+      - "refactor(admin): Standards compliance Responsive 85%→100%, Modal 80%→95%, Truncation 60%→80%"
+    files_modified: 23
+    build_status: "PASS"
+
   - date: "2026-03-03"
     version: "v12.8.0"
     changes:

@@ -1,12 +1,24 @@
-import { useState, useEffect, useCallback, type DragEvent } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, GripVertical } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { CausaEfectoExerciseProps, CauseMatches } from './causaEfectoTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { DraggableConsequence } from './DraggableConsequence';
+import { DroppableCauseZone } from './DroppableCauseZone';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
@@ -26,13 +38,17 @@ export const CausaEfectoExercise = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [startTime] = useState(new Date());
-  const [draggedConsequence, setDraggedConsequence] = useState<string | null>(null);
-  const [dragOverCause, setDragOverCause] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [_isSubmitting, setIsSubmitting] = useState(false);
   const [showRankUpModal, setShowRankUpModal] = useState(false);
   const [rankUpData, setRankUpData] = useState<Record<string, unknown> | null>(null);
 
   const { causes, consequences } = exercise.content;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+  );
 
   // Initialize empty matches for all causes
   useEffect(() => {
@@ -75,53 +91,32 @@ export const CausaEfectoExercise = ({
   // FE-059: Removed calculateCurrentScore() - uses sanitized correctCauseIds field
   // Scoring is now done server-side via backend API
 
-  // Drag handlers
-  const handleDragStart = (e: DragEvent, consequenceId: string) => {
+  // @dnd-kit drag handlers
+  const handleDragStart = (event: DragStartEvent) => {
     if (validated) return;
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('consequenceId', consequenceId);
-    setDraggedConsequence(consequenceId);
+    setActiveId(event.active.id as string);
   };
 
-  const handleDragEnd = () => {
-    setDraggedConsequence(null);
-    setDragOverCause(null);
-  };
-
-  const handleDragOver = (e: DragEvent, causeId: string) => {
-    if (validated) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverCause(causeId);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverCause(null);
-  };
-
-  const handleDrop = (e: DragEvent, causeId: string) => {
-    if (validated) return;
-    e.preventDefault();
-    const consequenceId = e.dataTransfer.getData('consequenceId');
-
-    if (!consequenceId) return;
-
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    if (!over || validated) return;
+    const consequenceId = active.id as string;
+    const causeId = over.id as string;
     setMatches((prev) => {
       const newMatches = { ...prev };
-
-      // Remove from all causes first
       Object.keys(newMatches).forEach((cId) => {
         newMatches[cId] = newMatches[cId].filter((id) => id !== consequenceId);
       });
-
-      // Add to new cause
-      newMatches[causeId] = [...newMatches[causeId], consequenceId];
-
+      if (newMatches[causeId] !== undefined) {
+        newMatches[causeId] = [...newMatches[causeId], consequenceId];
+      }
       return newMatches;
     });
+  };
 
-    setDraggedConsequence(null);
-    setDragOverCause(null);
+  const handleDragCancel = () => {
+    setActiveId(null);
   };
 
   const handleRemoveConsequence = (causeId: string, consequenceId: string) => {
@@ -240,6 +235,8 @@ export const CausaEfectoExercise = ({
     }
   }, [actionsRef, handleReset, handleCheck]);
 
+  const activeConsequence = consequences.find((c) => c.id === activeId) ?? null;
+
   return (
     <>
       <UnifiedExerciseLayout
@@ -276,135 +273,76 @@ export const CausaEfectoExercise = ({
         </div>
 
         {/* Two-column layout: Causes | Consequences */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* LEFT: Causes (drop zones) */}
-          <div className="space-y-4">
-            <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-blue">
-              <span className="text-xl sm:text-2xl">←</span> CAUSAS (Suelta aqui)
-            </h3>
-            {causes.map((cause, idx) => {
-              const matchedConsequences = matches[cause.id] || [];
-              const isDragOver = dragOverCause === cause.id;
-
-              return (
-                <motion.div
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+        >
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* LEFT: Causes (drop zones) */}
+            <div className="space-y-4">
+              <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-blue">
+                <span className="text-xl sm:text-2xl">←</span> CAUSAS (Suelta aqui)
+              </h3>
+              {causes.map((cause, idx) => (
+                <DroppableCauseZone
                   key={cause.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  onDragOver={(e) => handleDragOver(e, cause.id)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, cause.id)}
-                  className={`rounded-lg border-2 bg-white p-2 sm:p-4 transition-all ${
-                    isDragOver ? 'scale-105 border-orange-500 bg-orange-50' : 'border-blue-300'
-                  } ${!validated ? 'min-h-[120px]' : ''}`}
-                >
-                  <div className="mb-3 flex items-start gap-2">
-                    <span className="text-detective-2xl font-bold text-blue-600">{idx + 1}</span>
-                    <p className="flex-1 text-detective-sm font-medium text-detective-text">
-                      {cause.text}
-                    </p>
-                  </div>
+                  cause={cause}
+                  index={idx}
+                  matchedConsequences={(matches[cause.id] || [])
+                    .map((cId) => consequences.find((c) => c.id === cId))
+                    .filter(Boolean) as { id: string; text: string }[]}
+                  validated={validated}
+                  onRemove={handleRemoveConsequence}
+                />
+              ))}
+            </div>
 
-                  {/* Matched consequences */}
-                  {matchedConsequences.length > 0 && (
-                    <div className="mt-3 space-y-2 pl-8">
-                      {matchedConsequences.map((cId) => {
-                        const consequence = consequences.find((c) => c.id === cId);
-                        if (!consequence) return null;
+            {/* RIGHT: Consequences (draggable) */}
+            <div className="space-y-4">
+              <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-orange">
+                CONSECUENCIAS (Arrastra) <span className="text-xl sm:text-2xl">→</span>
+              </h3>
+              <div className="space-y-3">
+                {consequences.map((consequence, idx) => {
+                  const isAssigned = isConsequenceAssigned(consequence.id);
 
-                        // FE-059: Removed correctness validation - correctCauseIds field not available
-                        // Visual feedback disabled until backend integration
+                  // Si ya esta asignada, no la mostramos en la lista de disponibles
+                  if (isAssigned) return null;
 
-                        return (
-                          <div
-                            key={cId}
-                            className="group relative rounded-lg border-2 border-orange-300 bg-orange-50 p-3 text-detective-xs text-orange-900"
-                          >
-                            <div className="flex items-center gap-2">
-                              {/* FE-059: Removed CheckCircle/XCircle icons - no local validation */}
-                              <span className="flex-1">{consequence.text}</span>
-                              {!validated && (
-                                <button
-                                  onClick={() => handleRemoveConsequence(cause.id, cId)}
-                                  className="opacity-70 hover:opacity-100 text-red-400 hover:text-red-600 transition-all"
-                                  title="Quitar"
-                                  aria-label="Eliminar consecuencia"
-                                >
-                                  ✕
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {matchedConsequences.length === 0 && !validated && (
-                    <div className="mt-2 flex items-center justify-center rounded-lg border-2 border-dashed border-detective-border py-6">
-                      <p className="text-center text-detective-xs italic text-detective-text-secondary">
-                        Arrastra consecuencias aqui →
-                      </p>
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* RIGHT: Consequences (draggable) */}
-          <div className="space-y-4">
-            <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-orange">
-              CONSECUENCIAS (Arrastra) <span className="text-xl sm:text-2xl">→</span>
-            </h3>
-            <div className="space-y-3">
-              {consequences.map((consequence, idx) => {
-                const isAssigned = isConsequenceAssigned(consequence.id);
-                const isDragging = draggedConsequence === consequence.id;
-
-                // Si ya esta asignada, no la mostramos en la lista de disponibles
-                if (isAssigned) return null;
-
-                return (
-                  <motion.div
-                    key={consequence.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                  >
-                    <div
-                      draggable={!validated}
-                      onDragStart={(e) => handleDragStart(e, consequence.id)}
-                      onDragEnd={handleDragEnd}
-                      className={`cursor-move rounded-lg border-2 p-2 sm:p-4 transition-all ${
-                        isDragging
-                          ? 'scale-105 shadow-lg ring-2 ring-detective-orange'
-                          : 'border-detective-border bg-white hover:border-orange-400 hover:shadow-md'
-                      } ${validated ? 'cursor-not-allowed' : ''}`}
+                  return (
+                    <motion.div
+                      key={consequence.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
                     >
-                      <div className="flex items-center gap-3">
-                        {!validated && (
-                          <GripVertical className="h-5 w-5 flex-shrink-0 text-detective-text-secondary" />
-                        )}
-                        <span className="flex-1 text-detective-sm text-detective-text">
-                          {consequence.text}
-                        </span>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                      <DraggableConsequence
+                        id={consequence.id}
+                        text={consequence.text}
+                        disabled={validated}
+                      />
+                    </motion.div>
+                  );
+                })}
 
-              {/* If all consequences are assigned */}
-              {consequences.filter((c) => !isConsequenceAssigned(c.id)).length === 0 && (
-                <div className="py-8 text-center text-detective-sm italic text-detective-text-secondary">
-                  Todas las consecuencias han sido asignadas
-                </div>
-              )}
+                {/* If all consequences are assigned */}
+                {consequences.filter((c) => !isConsequenceAssigned(c.id)).length === 0 && (
+                  <div className="py-8 text-center text-detective-sm italic text-detective-text-secondary">
+                    Todas las consecuencias han sido asignadas
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+
+          <DragOverlay>
+            {activeConsequence ? (
+              <DraggableConsequence id={activeConsequence.id} text={activeConsequence.text} />
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}

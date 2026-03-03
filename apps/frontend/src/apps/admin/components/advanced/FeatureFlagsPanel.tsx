@@ -116,7 +116,7 @@ export const FeatureFlagsPanel = () => {
         <div className="flex items-center gap-3">
           <Flag className="h-8 w-8 text-detective-orange" />
           <div>
-            <h2 className="text-2xl font-bold text-detective-text">Feature Flags</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-detective-text">Feature Flags</h2>
             <p className="text-sm text-detective-text-secondary">
               Control feature rollout and availability across the platform
             </p>

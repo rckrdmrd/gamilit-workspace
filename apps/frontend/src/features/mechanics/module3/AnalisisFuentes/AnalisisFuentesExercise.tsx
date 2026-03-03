@@ -308,7 +308,7 @@ export const AnalisisFuentesExercise = ({
                     <ExternalLink className="h-4 w-4 text-detective-orange" />
                   </div>
                   <p className="mb-2 text-detective-xs text-detective-text-secondary">
-                    {source.url}
+                    {source.author || source.institution || ''}
                   </p>
                   <p className="text-detective-sm text-detective-text">{source.excerpt}</p>
                   <span className="mt-2 inline-block rounded bg-detective-bg px-2 py-1 text-detective-xs">
@@ -374,7 +374,7 @@ export const AnalisisFuentesExercise = ({
                     <div className="flex-1">
                       <h4 className="text-detective-base font-semibold">{source.title}</h4>
                       <p className="text-detective-xs text-detective-text-secondary">
-                        {source.url}
+                        {source.author || source.institution || ''}
                       </p>
                     </div>
                     <div className="flex gap-2">

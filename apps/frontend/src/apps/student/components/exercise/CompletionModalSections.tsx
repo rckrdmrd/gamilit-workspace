@@ -124,7 +124,7 @@ export function CompletionScoreDisplay({ score, maxScore, success }: ScoreDispla
       className="text-center"
     >
       <div className="relative inline-block">
-        <svg className="h-32 w-32 sm:h-40 sm:w-40 -rotate-90 transform" viewBox="0 0 160 160">
+        <svg className="h-16 w-16 sm:h-40 sm:w-40 -rotate-90 transform" viewBox="0 0 160 160">
           <circle
             cx="80" cy="80" r="70"
             stroke="currentColor" strokeWidth="10" fill="none"
@@ -141,11 +141,11 @@ export function CompletionScoreDisplay({ score, maxScore, success }: ScoreDispla
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-4xl font-bold text-detective-text">{score}</span>
+          <span className="text-lg sm:text-4xl font-bold text-detective-text">{score}</span>
           <span className="text-sm text-detective-text-secondary">/ {maxScore}</span>
         </div>
       </div>
-      <p className="mt-4 text-2xl font-bold text-detective-text">{percentage}%</p>
+      <p className="mt-1 sm:mt-4 text-base sm:text-2xl font-bold text-detective-text">{percentage}%</p>
     </motion.div>
   );
 }
@@ -163,19 +163,19 @@ export function CompletionRewards({ animatedXP, animatedCoins }: RewardsProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="grid grid-cols-2 gap-4"
+      className="grid grid-cols-2 gap-2 sm:gap-4"
     >
-      <div className="rounded-detective bg-gradient-to-br from-detective-orange to-orange-600 p-6 text-center text-white">
-        <Star className="mx-auto mb-2 h-8 w-8" />
-        <p className="mb-1 text-sm font-medium">XP Ganado</p>
-        <motion.p className="text-3xl font-bold" key={animatedXP} initial={{ scale: 1.2 }} animate={{ scale: 1 }}>
+      <div className="rounded-detective bg-gradient-to-br from-detective-orange to-orange-600 p-2 sm:p-6 text-center text-white">
+        <Star className="mx-auto mb-0.5 sm:mb-2 h-5 w-5 sm:h-8 sm:w-8" />
+        <p className="mb-0.5 text-xs sm:text-sm font-medium">XP Ganado</p>
+        <motion.p className="text-lg sm:text-3xl font-bold" key={animatedXP} initial={{ scale: 1.2 }} animate={{ scale: 1 }}>
           +{animatedXP}
         </motion.p>
       </div>
-      <div className="rounded-detective bg-gradient-to-br from-detective-gold to-yellow-600 p-6 text-center text-white">
-        <Coins className="mx-auto mb-2 h-8 w-8" />
-        <p className="mb-1 text-sm font-medium">ML Coins</p>
-        <motion.p className="text-3xl font-bold" key={animatedCoins} initial={{ scale: 1.2 }} animate={{ scale: 1 }}>
+      <div className="rounded-detective bg-gradient-to-br from-detective-gold to-yellow-600 p-2 sm:p-6 text-center text-white">
+        <Coins className="mx-auto mb-0.5 sm:mb-2 h-5 w-5 sm:h-8 sm:w-8" />
+        <p className="mb-0.5 text-xs sm:text-sm font-medium">ML Coins</p>
+        <motion.p className="text-lg sm:text-3xl font-bold" key={animatedCoins} initial={{ scale: 1.2 }} animate={{ scale: 1 }}>
           +{animatedCoins}
         </motion.p>
       </div>
@@ -196,13 +196,13 @@ export function CompletionStats({ timeSpent, hintsUsed }: StatsProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6 }}
-      className="space-y-3 rounded-detective bg-gray-50 p-6 dark:bg-gray-900"
+      className="space-y-3 rounded-detective bg-gray-50 p-2 sm:p-6 dark:bg-gray-900"
     >
-      <h3 className="mb-4 flex items-center gap-2 font-bold text-detective-text">
+      <h3 className="mb-1 sm:mb-4 flex items-center gap-2 font-bold text-detective-text">
         <Zap className="h-5 w-5 text-detective-orange" />
         Estadísticas del Ejercicio
       </h3>
-      <div className="grid grid-cols-2 gap-4 text-sm">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 text-sm">
         <div className="flex items-center gap-2">
           <Clock className="h-4 w-4 text-detective-blue" />
           <span className="text-detective-text-secondary">Tiempo:</span>
@@ -230,23 +230,23 @@ export function RankUpNotification({ rankUp }: RankUpProps) {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.7, type: 'spring', stiffness: 200 }}
-      className="rounded-detective bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white"
+      className="rounded-detective bg-gradient-to-r from-purple-500 to-pink-500 p-3 sm:p-6 text-white"
     >
       <div className="text-center">
-        <Crown className="mx-auto mb-3 h-12 w-12 sm:h-16 sm:w-16" />
-        <h3 className="mb-2 text-2xl font-bold">¡Rango Mejorado!</h3>
-        <p className="mb-3 text-lg">
+        <Crown className="mx-auto mb-1 sm:mb-3 h-8 w-8 sm:h-16 sm:w-16" />
+        <h3 className="mb-1 sm:mb-2 text-lg sm:text-2xl font-bold">¡Rango Mejorado!</h3>
+        <p className="mb-2 sm:mb-3 text-base sm:text-lg">
           {rankUp.previousRank && <span className="opacity-75">{rankUp.previousRank} → </span>}
           <span className="font-bold">{rankUp.newRank}</span>
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <div className="rounded-lg bg-white/20 p-3">
+        <div className="mt-2 sm:mt-4 grid grid-cols-2 gap-2 sm:gap-4">
+          <div className="rounded-lg bg-white/20 p-2 sm:p-3">
             <p className="mb-1 text-sm font-medium">Bonus ML Coins</p>
-            <p className="text-2xl font-bold">+{rankUp.bonusMLCoins}</p>
+            <p className="text-lg sm:text-2xl font-bold">+{rankUp.bonusMLCoins}</p>
           </div>
-          <div className="rounded-lg bg-white/20 p-3">
+          <div className="rounded-lg bg-white/20 p-2 sm:p-3">
             <p className="mb-1 text-sm font-medium">Nuevo Multiplicador</p>
-            <p className="text-2xl font-bold">{rankUp.newMultiplier}x</p>
+            <p className="text-lg sm:text-2xl font-bold">{rankUp.newMultiplier}x</p>
           </div>
         </div>
       </div>
@@ -266,16 +266,16 @@ export function StreakMilestone({ streakInfo }: StreakMilestoneProps) {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.75, type: 'spring', stiffness: 200 }}
-      className="rounded-detective bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white"
+      className="rounded-detective bg-gradient-to-r from-orange-500 to-red-500 p-3 sm:p-6 text-white"
     >
       <div className="text-center">
-        <Flame className="mx-auto mb-3 h-12 w-12 sm:h-16 sm:w-16" />
-        <h3 className="mb-2 text-2xl font-bold">¡Racha Alcanzada!</h3>
-        <p className="mb-2 text-3xl font-bold">{streakInfo.currentStreak} días</p>
-        <p className="mb-3 text-lg">¡Sigue así!</p>
-        <div className="mt-4 rounded-lg bg-white/20 p-3">
+        <Flame className="mx-auto mb-1 sm:mb-3 h-8 w-8 sm:h-16 sm:w-16" />
+        <h3 className="mb-1 sm:mb-2 text-lg sm:text-2xl font-bold">¡Racha Alcanzada!</h3>
+        <p className="mb-1 sm:mb-2 text-xl sm:text-3xl font-bold">{streakInfo.currentStreak} días</p>
+        <p className="mb-2 sm:mb-3 text-base sm:text-lg">¡Sigue así!</p>
+        <div className="mt-2 sm:mt-4 rounded-lg bg-white/20 p-2 sm:p-3">
           <p className="mb-1 text-sm font-medium">Recompensa de Racha</p>
-          <p className="text-2xl font-bold">+{streakInfo.reward} ML Coins</p>
+          <p className="text-lg sm:text-2xl font-bold">+{streakInfo.reward} ML Coins</p>
         </div>
       </div>
     </motion.div>
@@ -294,27 +294,27 @@ export function AchievementsList({ achievements }: AchievementsListProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.8 }}
-      className="space-y-3"
+      className="space-y-2 sm:space-y-3"
     >
       <h3 className="flex items-center gap-2 font-bold text-detective-text">
         <Award className="h-5 w-5 text-detective-gold" />
         ¡Logros Desbloqueados!
       </h3>
-      <div className="space-y-2">
+      <div className="space-y-1 sm:space-y-2">
         {achievements.map((display, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.9 + index * 0.1 }}
-            className={`bg-gradient-to-r ${getRarityColor(display.rarity)} rounded-detective p-4 text-white`}
+            className={`bg-gradient-to-r ${getRarityColor(display.rarity)} rounded-detective p-2 sm:p-4 text-white`}
           >
             <div className="flex items-center gap-3">
               <span className="text-3xl">{getAchievementIcon(display.icon)}</span>
               <div className="flex-1">
                 <p className="font-bold">{display.name}</p>
                 <p className="text-sm text-white/95">{display.description}</p>
-                <div className="mt-2 flex gap-2">
+                <div className="mt-1 sm:mt-2 flex gap-2">
                   {display.mlCoinsReward > 0 && (
                     <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-semibold">
                       +{display.mlCoinsReward} ML

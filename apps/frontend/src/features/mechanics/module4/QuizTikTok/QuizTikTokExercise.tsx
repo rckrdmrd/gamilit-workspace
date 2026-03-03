@@ -152,10 +152,13 @@ export const QuizTikTokExercise = ({
   }>({});
   const resolvedActionsRef = actionsRef || localActionsRef;
 
+  // Count actual answered questions (excludes sparse undefined slots)
+  const getAnsweredCount = () => answers.filter(a => a !== undefined).length;
+
   // Calculate progress
   const calculateProgress = () => {
     if (currentExercise.questions.length === 0) return 0;
-    return (answers.length / currentExercise.questions.length) * 100;
+    return (getAnsweredCount() / currentExercise.questions.length) * 100;
   };
 
   // Auto-save every 30 seconds
@@ -176,24 +179,24 @@ export const QuizTikTokExercise = ({
 
   // Update progress
   useEffect(() => {
-    const progress = calculateProgress();
-
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
 
     onProgressUpdate?.({
       progress: {
-        currentStep: answers.length,
+        currentStep: getAnsweredCount(),
         totalSteps: currentExercise.questions.length,
         score: 0,
         hintsUsed: 0,
         timeSpent: elapsed,
       },
       answers: {
-        selectedAnswers: answers,
-        justifications,
-        currentQuestion: currentIndex,
-        progressPercent: Math.round(progress),
+        answers: currentExercise.questions.map((_, idx) =>
+          answers[idx] !== undefined ? answers[idx] : 0
+        ),
+        justifications: currentExercise.questions.map((_, idx) =>
+          justifications[idx] || ''
+        ),
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -257,9 +260,14 @@ export const QuizTikTokExercise = ({
 
     const swipeHistory = visitedNodesRef.current;
 
+    // Sanitize sparse array: replace undefined slots with 0 (safety net, @Min(0) compatible)
+    const sanitizedAnswers = currentExercise.questions.map((_, idx) =>
+      answers[idx] !== undefined ? answers[idx] : 0
+    );
+
     try {
       const response = await submitAsync({
-        answers,
+        answers: sanitizedAnswers,
         justifications: currentExercise.questions.map((_, idx) => justifications[idx] || ''),
         swipeHistory,
       });
@@ -342,7 +350,7 @@ export const QuizTikTokExercise = ({
         icon={<PlayCircle className="h-8 w-8" />}
         headerActions={
           <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
-            {answers.length} / {currentExercise.questions.length} respondidas
+            {getAnsweredCount()} / {currentExercise.questions.length} respondidas
           </span>
         }
         cardPadding="none"
@@ -416,17 +424,18 @@ export const QuizTikTokExercise = ({
                     Anterior
                   </DetectiveButton>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <DetectiveButton
-                    variant="secondary"
-                    onClick={() => handleSwipe('down')}
-                    disabled={currentIndex === currentExercise.questions.length - 1}
-                    icon={<ChevronDown />}
-                    className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
-                  >
-                    Siguiente
-                  </DetectiveButton>
-                </motion.div>
+                {currentIndex < currentExercise.questions.length - 1 && (
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <DetectiveButton
+                      variant="secondary"
+                      onClick={() => handleSwipe('down')}
+                      icon={<ChevronDown />}
+                      className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+                    >
+                      Siguiente
+                    </DetectiveButton>
+                  </motion.div>
+                )}
               </div>
 
               {/* Progress Indicator */}
@@ -435,7 +444,7 @@ export const QuizTikTokExercise = ({
                   Pregunta {currentIndex + 1} / {currentExercise.questions.length}
                 </span>
                 <span className="rounded-full bg-detective-orange/80 px-4 py-2 backdrop-blur-md">
-                  {answers.length} respondidas
+                  {getAnsweredCount()} respondidas
                 </span>
               </div>
             </div>
@@ -583,7 +592,7 @@ export const QuizTikTokExercise = ({
                           variant="primary"
                           onClick={handleSubmit}
                           disabled={
-                            answers.length < currentExercise.questions.length ||
+                            getAnsweredCount() < currentExercise.questions.length ||
                             !currentExercise.questions.every((_, idx) => (justifications[idx] || '').trim().length >= 30) ||
                             isSubmitting ||
                             isSubmitted

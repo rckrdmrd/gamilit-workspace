@@ -138,7 +138,7 @@ export default function AdminNotificationPreferencesPage() {
               <Bell className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Preferencias de Notificaciones</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Preferencias de Notificaciones</h1>
               <p className="text-gray-400">Configura como recibir notificaciones</p>
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function AdminNotificationPreferencesPage() {
           transition={{ delay: 0.1 }}
           className="rounded-xl bg-white/5 border border-white/10 overflow-hidden"
         >
-          <div className="grid grid-cols-4 gap-4 p-4 border-b border-white/10 bg-white/5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 border-b border-white/10 bg-white/5">
             <div className="text-sm font-medium text-gray-400">Tipo de Notificacion</div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5 text-sm font-medium text-gray-400">
@@ -216,7 +216,7 @@ export default function AdminNotificationPreferencesPage() {
               notificationTypes.map((type) => (
                 <div
                   key={type.key}
-                  className="grid grid-cols-4 gap-4 p-4 hover:bg-white/5 transition-colors"
+                  className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 hover:bg-white/5 transition-colors"
                 >
                   <div>
                     <div className="font-medium text-white">{type.label}</div>

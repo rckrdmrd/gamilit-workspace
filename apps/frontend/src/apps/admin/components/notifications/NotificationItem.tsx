@@ -128,7 +128,7 @@ export const NotificationItem = ({
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => onMarkAsRead(notification.id)}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors group"
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors group min-w-[44px] min-h-[44px]"
               title="Marcar como leida"
             >
               <Check className="w-4 h-4 text-gray-500 group-hover:text-green-400" />
@@ -138,7 +138,7 @@ export const NotificationItem = ({
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => onDelete(notification.id)}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors group"
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors group min-w-[44px] min-h-[44px]"
             title="Eliminar"
           >
             <Trash2 className="w-4 h-4 text-gray-500 group-hover:text-red-400" />

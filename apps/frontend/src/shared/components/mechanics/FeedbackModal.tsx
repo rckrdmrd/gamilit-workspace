@@ -70,13 +70,13 @@ export const FeedbackModal = ({
   const getIcon = () => {
     switch (feedback.type) {
       case 'success':
-        return <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-green-500" aria-hidden="true" />;
+        return <CheckCircle2 className="w-8 h-8 sm:w-16 sm:h-16 text-green-500" aria-hidden="true" />;
       case 'error':
-        return <XCircle className="w-12 h-12 sm:w-16 sm:h-16 text-red-500" aria-hidden="true" />;
+        return <XCircle className="w-8 h-8 sm:w-16 sm:h-16 text-red-500" aria-hidden="true" />;
       case 'partial':
-        return <Info className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500" aria-hidden="true" />;
+        return <Info className="w-8 h-8 sm:w-16 sm:h-16 text-yellow-500" aria-hidden="true" />;
       case 'info':
-        return <Info className="w-12 h-12 sm:w-16 sm:h-16 text-blue-500" aria-hidden="true" />;
+        return <Info className="w-8 h-8 sm:w-16 sm:h-16 text-blue-500" aria-hidden="true" />;
     }
   };
 
@@ -122,15 +122,16 @@ export const FeedbackModal = ({
       </AnimatePresence>
 
       {/* Modal Content */}
-      <DetectiveCard variant="gold" padding="lg">
-       <div className="max-h-[calc(100vh-120px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto">
-        <div className="text-center">
+      <DetectiveCard variant="gold" padding="sm">
+       <div className="flex flex-col max-h-[75vh] sm:max-h-[70vh]">
+        <div className="flex-1 min-h-0 overflow-y-auto">
+         <div className="text-center">
           {/* Icon */}
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', damping: 15 }}
-            className="flex justify-center mb-4"
+            className="flex justify-center mb-1 sm:mb-4"
           >
             {getIcon()}
           </motion.div>
@@ -141,7 +142,7 @@ export const FeedbackModal = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className={`text-xl sm:text-2xl font-bold mb-2 ${getColor()}`}
+            className={`text-lg sm:text-2xl font-bold mb-1 sm:mb-2 ${getColor()}`}
           >
             {feedback.title}
           </motion.h2>
@@ -152,14 +153,14 @@ export const FeedbackModal = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-detective-text mb-6 whitespace-pre-line"
+            className="text-detective-text text-sm sm:text-base mb-2 sm:mb-6 whitespace-pre-line"
           >
             {feedback.message}
           </motion.p>
 
           {/* Rich completion for auto-evaluated successful exercises */}
           {feedback.type === 'success' && !feedback.pendingReview && feedback.maxScore ? (
-            <div className="space-y-4 mb-6">
+            <div className="space-y-1.5 sm:space-y-4 mb-2 sm:mb-6">
               <CompletionScoreDisplay score={feedback.score ?? 0} maxScore={feedback.maxScore} success={true} />
               <CompletionRewards animatedXP={animatedXP} animatedCoins={animatedCoins} />
               {(feedback.timeSpent != null || feedback.hintsUsed != null) && (
@@ -180,7 +181,7 @@ export const FeedbackModal = ({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="mb-6"
+              className="mb-3 sm:mb-6"
             >
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                 {feedback.score !== undefined && (
@@ -305,17 +306,20 @@ export const FeedbackModal = ({
             </motion.div>
           )}
 
-          {/* Action Buttons */}
+         </div>
+        </div>
+
+          {/* Action Buttons - outside scroll, always visible */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex flex-col-reverse gap-3 sm:flex-row"
+            className="flex-shrink-0 pt-2 sm:pt-3 flex flex-col-reverse gap-2 sm:gap-3 sm:flex-row"
           >
             {feedback.type === 'success' && onNext && (
               <DetectiveButton
                 variant="gold"
-                size="lg"
+                size="md"
                 onClick={onNext}
                 icon={<Sparkles className="w-5 h-5" />}
                 className="flex-1"
@@ -328,7 +332,7 @@ export const FeedbackModal = ({
             {feedback.type === 'error' && onRetry && (
               <DetectiveButton
                 variant="primary"
-                size="lg"
+                size="md"
                 onClick={onRetry}
                 icon={<Trophy className="w-5 h-5" />}
                 className="flex-1"
@@ -340,7 +344,7 @@ export const FeedbackModal = ({
 
             <DetectiveButton
               variant={feedback.type === 'success' ? 'blue' : 'primary'}
-              size="lg"
+              size="md"
               onClick={onClose}
               className="flex-1"
               aria-label="Cerrar modal de retroalimentación"
@@ -348,7 +352,6 @@ export const FeedbackModal = ({
               Cerrar
             </DetectiveButton>
           </motion.div>
-        </div>
        </div>
       </DetectiveCard>
     </Modal>

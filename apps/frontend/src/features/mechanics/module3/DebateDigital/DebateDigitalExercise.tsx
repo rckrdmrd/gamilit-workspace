@@ -368,7 +368,7 @@ export const DebateDigitalExercise = ({
               Ensayo Argumentativo
             </h2>
             <p className="mb-6 text-detective-base text-detective-text-secondary">
-              Desarrolla tu ensayo completando las 4 secciones. Cada seccion tiene un minimo de caracteres requerido.
+              Desarrolla tu ensayo completando las 4 secciones. Cada seccion tiene un mínimo de caracteres requerido.
             </p>
 
             <div className="space-y-6">

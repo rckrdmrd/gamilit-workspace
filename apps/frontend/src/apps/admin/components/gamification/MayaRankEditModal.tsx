@@ -164,7 +164,7 @@ export function MayaRankEditModal({
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Star className="h-6 w-6" style={{ color: rank.color }} />
-              <h2 id="modal-title" className="text-2xl font-bold text-detective-text">
+              <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-detective-text">
                 Editar Rango Maya: <span style={{ color: rank.color }}>{rank.name}</span>
               </h2>
             </div>

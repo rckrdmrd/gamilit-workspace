@@ -91,7 +91,7 @@ export const AlertasTab = ({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-detective-text">
+        <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold text-detective-text">
           <Shield className="h-6 w-6 text-blue-400" />
           Integración de Alertas
         </h2>

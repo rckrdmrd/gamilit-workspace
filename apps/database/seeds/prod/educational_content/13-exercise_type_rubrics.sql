@@ -1,12 +1,13 @@
 -- =====================================================
 -- Seed Data: Exercise Type Rubrics (Rubricas por Tipo de Ejercicio)
 -- =====================================================
--- Description: 12 rubricas estandar para ejercicios M3, M4, M5
+-- Description: 13 rubricas estandar para ejercicios M3, M4, M5
 -- Reference: CORR-009-RESUMEN-CONSOLIDADO.md
 -- Date: 2026-01-07
+-- Updated: 2026-03-03 (Rubric Audit M3/M4/M5 — weight rebalance, criterion alignment, typo fixes)
 -- Modules:
 --   - MOD-03-CRITICA (5 ejercicios manuales)
---   - MOD-04-DIGITAL (4 ejercicios manuales, 1 auto-grading)
+--   - MOD-04-DIGITAL (5 ejercicios manuales)
 --   - MOD-05-PRODUCCION (3 ejercicios manuales)
 -- =====================================================
 
@@ -28,7 +29,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "clasificacion",
             "name": "Clasificacion de Afirmaciones",
             "description": "Capacidad para distinguir hechos de opiniones correctamente",
-            "weight": 25,
+            "weight": 35,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Clasifica correctamente todas las afirmaciones con justificacion clara"},
                 {"score": 75, "label": "Bueno", "description": "Clasifica la mayoria correctamente con justificaciones adecuadas"},
@@ -40,7 +41,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "veredicto",
             "name": "Veredicto Final",
             "description": "Calidad del veredicto basado en evidencia",
-            "weight": 50,
+            "weight": 40,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Veredicto logico, bien fundamentado con multiples evidencias"},
                 {"score": 75, "label": "Bueno", "description": "Veredicto coherente con evidencia suficiente"},
@@ -136,7 +137,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "orden_confiabilidad",
             "name": "Orden de Confiabilidad",
             "description": "Precision al ordenar fuentes por nivel de confiabilidad",
-            "weight": 60,
+            "weight": 40,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Orden perfecto o casi perfecto con justificacion"},
                 {"score": 75, "label": "Bueno", "description": "Orden mayormente correcto"},
@@ -148,7 +149,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "comparacion_relativa",
             "name": "Comparacion Relativa",
             "description": "Capacidad de comparar fuentes entre si",
-            "weight": 25,
+            "weight": 30,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Comparaciones precisas y bien fundamentadas"},
                 {"score": 75, "label": "Bueno", "description": "Comparaciones adecuadas"},
@@ -160,7 +161,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "aplicacion_craap",
             "name": "Aplicacion Criterios CRAAP",
             "description": "Uso correcto de Currency, Relevance, Authority, Accuracy, Purpose",
-            "weight": 15,
+            "weight": 30,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Aplica todos los criterios CRAAP correctamente"},
                 {"score": 75, "label": "Bueno", "description": "Aplica la mayoria de criterios"},
@@ -183,13 +184,13 @@ INSERT INTO educational_content.exercise_type_rubrics (
         {
             "id": "claridad_audio",
             "name": "Claridad de Expresion",
-            "description": "Claridad en la expresion oral y calidad de audio",
+            "description": "Claridad y coherencia en la expresion del contenido",
             "weight": 25,
             "levels": [
-                {"score": 100, "label": "Excelente", "description": "Expresion clara, buena diccion, audio de calidad"},
-                {"score": 75, "label": "Bueno", "description": "Expresion clara, audio aceptable"},
-                {"score": 50, "label": "Suficiente", "description": "Expresion entendible, audio con problemas"},
-                {"score": 25, "label": "Insuficiente", "description": "Dificil de entender o audio muy malo"}
+                {"score": 100, "label": "Excelente", "description": "Expresion clara, buena diccion, redaccion de calidad"},
+                {"score": 75, "label": "Bueno", "description": "Expresion clara y coherente"},
+                {"score": 50, "label": "Suficiente", "description": "Expresion entendible con algunas imprecisiones"},
+                {"score": 25, "label": "Insuficiente", "description": "Dificil de entender o expresion confusa"}
             ]
         },
         {
@@ -242,14 +243,14 @@ INSERT INTO educational_content.exercise_type_rubrics (
     '[
         {
             "id": "multiperspectiva",
-            "name": "Identificacion de Perspectivas",
-            "description": "Capacidad de identificar multiples perspectivas sobre el tema",
-            "weight": 30,
+            "name": "Comprension de Perspectivas",
+            "description": "Capacidad de comprender y distinguir las perspectivas presentadas",
+            "weight": 25,
             "levels": [
-                {"score": 100, "label": "Excelente", "description": "Identifica 4+ perspectivas distintas y relevantes"},
-                {"score": 75, "label": "Bueno", "description": "Identifica 3 perspectivas relevantes"},
-                {"score": 50, "label": "Suficiente", "description": "Identifica 2 perspectivas"},
-                {"score": 25, "label": "Insuficiente", "description": "Solo 1 perspectiva o ninguna clara"}
+                {"score": 100, "label": "Excelente", "description": "Comprende profundamente todas las perspectivas y sus diferencias clave"},
+                {"score": 75, "label": "Bueno", "description": "Buena comprension de la mayoria de perspectivas"},
+                {"score": 50, "label": "Suficiente", "description": "Comprension parcial de las perspectivas"},
+                {"score": 25, "label": "Insuficiente", "description": "No demuestra comprension de las perspectivas"}
             ]
         },
         {
@@ -268,7 +269,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "evidencia_perspectivas",
             "name": "Evidencia por Perspectiva",
             "description": "Uso de evidencia para sustentar cada perspectiva",
-            "weight": 25,
+            "weight": 20,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Evidencia solida para cada perspectiva"},
                 {"score": 75, "label": "Bueno", "description": "Evidencia adecuada para la mayoria"},
@@ -280,7 +281,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "sintesis",
             "name": "Sintesis Final",
             "description": "Capacidad de sintetizar las perspectivas en una conclusion",
-            "weight": 20,
+            "weight": 30,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Sintesis integradora que considera todas las perspectivas"},
                 {"score": 75, "label": "Bueno", "description": "Buena sintesis de perspectivas"},
@@ -293,8 +294,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
 );
 
 -- =====================================================
--- MODULO 4: ALFABETIZACION DIGITAL (4 rubricas manuales)
--- Nota: quiz_tiktok es auto-grading, no requiere rubrica
+-- MODULO 4: ALFABETIZACION DIGITAL (5 rubricas manuales)
 -- =====================================================
 
 -- 4.1 verificador_fake_news
@@ -319,26 +319,26 @@ INSERT INTO educational_content.exercise_type_rubrics (
         },
         {
             "id": "verificacion",
-            "name": "Proceso de Verificacion",
-            "description": "Metodologia usada para verificar la informacion",
+            "name": "Razonamiento de Verificacion",
+            "description": "Calidad del razonamiento al verificar las afirmaciones",
             "weight": 30,
             "levels": [
-                {"score": 100, "label": "Excelente", "description": "Proceso sistematico con multiples fuentes confiables"},
-                {"score": 75, "label": "Bueno", "description": "Buen proceso de verificacion"},
-                {"score": 50, "label": "Suficiente", "description": "Verificacion basica con pocas fuentes"},
-                {"score": 25, "label": "Insuficiente", "description": "Sin proceso de verificacion claro"}
+                {"score": 100, "label": "Excelente", "description": "Razonamiento sistematico y bien fundamentado"},
+                {"score": 75, "label": "Bueno", "description": "Buen razonamiento de verificacion"},
+                {"score": 50, "label": "Suficiente", "description": "Razonamiento basico con poca fundamentacion"},
+                {"score": 25, "label": "Insuficiente", "description": "Sin razonamiento de verificacion claro"}
             ]
         },
         {
             "id": "fuentes",
-            "name": "Calidad de Fuentes",
-            "description": "Uso de fuentes confiables y oficiales",
+            "name": "Referencia a Fuentes",
+            "description": "Referencias a fuentes confiables en las justificaciones",
             "weight": 25,
             "levels": [
-                {"score": 100, "label": "Excelente", "description": "Solo fuentes oficiales y de alta credibilidad"},
-                {"score": 75, "label": "Bueno", "description": "Fuentes mayormente confiables"},
-                {"score": 50, "label": "Suficiente", "description": "Algunas fuentes confiables"},
-                {"score": 25, "label": "Insuficiente", "description": "Fuentes no confiables o sin fuentes"}
+                {"score": 100, "label": "Excelente", "description": "Cita fuentes oficiales y de alta credibilidad"},
+                {"score": 75, "label": "Bueno", "description": "Menciona fuentes mayormente confiables"},
+                {"score": 50, "label": "Suficiente", "description": "Menciona algunas fuentes"},
+                {"score": 25, "label": "Insuficiente", "description": "No menciona fuentes o cita fuentes no confiables"}
             ]
         },
         {
@@ -381,7 +381,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "organizacion",
             "name": "Organizacion de Informacion",
             "description": "Capacidad de organizar la informacion extraida",
-            "weight": 25,
+            "weight": 20,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Informacion bien organizada y estructurada"},
                 {"score": 75, "label": "Bueno", "description": "Buena organizacion"},
@@ -393,7 +393,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "interactividad",
             "name": "Exploracion Interactiva",
             "description": "Uso de elementos interactivos de la infografia",
-            "weight": 25,
+            "weight": 20,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Explora todos los elementos interactivos"},
                 {"score": 75, "label": "Bueno", "description": "Explora la mayoria de elementos"},
@@ -405,7 +405,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "respuestas",
             "name": "Respuestas a Preguntas",
             "description": "Precision en las respuestas basadas en la infografia",
-            "weight": 25,
+            "weight": 35,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Todas las respuestas correctas y completas"},
                 {"score": 75, "label": "Bueno", "description": "Mayoria de respuestas correctas"},
@@ -440,8 +440,8 @@ INSERT INTO educational_content.exercise_type_rubrics (
         {
             "id": "relevancia",
             "name": "Seleccion de Enlaces Relevantes",
-            "description": "Capacidad de elegir enlaces relevantes para la tarea",
-            "weight": 30,
+            "description": "Relevancia de la informacion encontrada durante la navegacion",
+            "weight": 25,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Selecciona solo enlaces altamente relevantes"},
                 {"score": 75, "label": "Bueno", "description": "Mayoria de enlaces seleccionados son relevantes"},
@@ -465,7 +465,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "respuesta_investigacion",
             "name": "Respuesta a Pregunta de Investigacion",
             "description": "Precision en responder la pregunta de investigacion",
-            "weight": 20,
+            "weight": 25,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Respuesta completa y precisa"},
                 {"score": 75, "label": "Bueno", "description": "Respuesta adecuada"},
@@ -489,7 +489,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "decodificacion",
             "name": "Decodificacion del Mensaje",
             "description": "Capacidad de identificar el mensaje principal del meme",
-            "weight": 25,
+            "weight": 30,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Identifica mensaje principal y secundarios"},
                 {"score": 75, "label": "Bueno", "description": "Identifica mensaje principal correctamente"},
@@ -513,7 +513,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "intertextualidad",
             "name": "Analisis Intertextual",
             "description": "Relacion del meme con otros textos o conocimientos",
-            "weight": 25,
+            "weight": 20,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Conecta con conocimientos historicos y actuales"},
                 {"score": 75, "label": "Bueno", "description": "Hace conexiones relevantes"},
@@ -536,6 +536,70 @@ INSERT INTO educational_content.exercise_type_rubrics (
     ]'::jsonb,
     100, true
 );
+
+-- 4.5 quiz_tiktok (requiere manual grading por justificaciones)
+INSERT INTO educational_content.exercise_type_rubrics (
+    exercise_type, rubric_name, module_code, criteria, total_weight, is_default
+) VALUES (
+    'quiz_tiktok',
+    'Rubrica: Quiz TikTok',
+    'MOD-04-DIGITAL',
+    '[
+        {
+            "id": "precision_respuestas",
+            "name": "Precision de Respuestas",
+            "description": "Porcentaje de respuestas correctas seleccionadas",
+            "weight": 30,
+            "levels": [
+                {"score": 100, "label": "Excelente", "description": "100% respuestas correctas"},
+                {"score": 75, "label": "Bueno", "description": "75% o mas respuestas correctas"},
+                {"score": 50, "label": "Suficiente", "description": "50-74% respuestas correctas"},
+                {"score": 25, "label": "Insuficiente", "description": "Menos del 50% correctas"}
+            ]
+        },
+        {
+            "id": "calidad_justificaciones",
+            "name": "Calidad de Justificaciones",
+            "description": "Profundidad y relevancia de las justificaciones escritas para cada respuesta",
+            "weight": 30,
+            "levels": [
+                {"score": 100, "label": "Excelente", "description": "Justificaciones detalladas con razonamiento claro y evidencia"},
+                {"score": 75, "label": "Bueno", "description": "Justificaciones claras con razonamiento adecuado"},
+                {"score": 50, "label": "Suficiente", "description": "Justificaciones basicas sin profundidad"},
+                {"score": 25, "label": "Insuficiente", "description": "Justificaciones vagas o irrelevantes"}
+            ]
+        },
+        {
+            "id": "pensamiento_critico",
+            "name": "Pensamiento Critico",
+            "description": "Capacidad de analizar la informacion y demostrar comprension critica del tema",
+            "weight": 20,
+            "levels": [
+                {"score": 100, "label": "Excelente", "description": "Demuestra analisis critico profundo del contenido"},
+                {"score": 75, "label": "Bueno", "description": "Muestra comprension critica adecuada"},
+                {"score": 50, "label": "Suficiente", "description": "Comprension superficial del tema"},
+                {"score": 25, "label": "Insuficiente", "description": "Sin evidencia de pensamiento critico"}
+            ]
+        },
+        {
+            "id": "completitud",
+            "name": "Completitud",
+            "description": "Todas las preguntas respondidas con justificaciones completas",
+            "weight": 20,
+            "levels": [
+                {"score": 100, "label": "Excelente", "description": "Todas las preguntas respondidas y justificadas"},
+                {"score": 75, "label": "Bueno", "description": "Mayoria respondidas con justificaciones"},
+                {"score": 50, "label": "Suficiente", "description": "Algunas preguntas sin justificacion adecuada"},
+                {"score": 25, "label": "Insuficiente", "description": "Multiples preguntas sin responder o justificar"}
+            ]
+        }
+    ]'::jsonb,
+    100, true
+) ON CONFLICT (exercise_type) DO UPDATE SET
+    rubric_name = EXCLUDED.rubric_name,
+    criteria = EXCLUDED.criteria,
+    total_weight = EXCLUDED.total_weight,
+    updated_at = NOW();
 
 -- =====================================================
 -- MODULO 5: PRODUCCION CREATIVA (3 rubricas)
@@ -577,7 +641,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "multimedia",
             "name": "Uso de Multimedia",
             "description": "Integracion de elementos multimedia (audio, imagen, etc.)",
-            "weight": 20,
+            "weight": 15,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Multimedia bien integrado y de calidad"},
                 {"score": 75, "label": "Bueno", "description": "Buen uso de multimedia"},
@@ -589,7 +653,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "expresion",
             "name": "Expresion y Voz Narrativa",
             "description": "Calidad de la escritura y voz del personaje",
-            "weight": 20,
+            "weight": 25,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Voz autentica, expresion emotiva y coherente"},
                 {"score": 75, "label": "Bueno", "description": "Buena expresion, voz consistente"},
@@ -613,7 +677,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
             "id": "narrativa",
             "name": "Narrativa y Guion",
             "description": "Calidad de la historia y estructura narrativa",
-            "weight": 25,
+            "weight": 30,
             "levels": [
                 {"score": 100, "label": "Excelente", "description": "Historia coherente, bien estructurada, dialogos naturales"},
                 {"score": 75, "label": "Bueno", "description": "Buena narrativa y dialogos"},
@@ -623,14 +687,14 @@ INSERT INTO educational_content.exercise_type_rubrics (
         },
         {
             "id": "visual",
-            "name": "Composicion Visual",
-            "description": "Calidad artistica y uso del formato de comic",
-            "weight": 25,
+            "name": "Organizacion Visual",
+            "description": "Claridad en la estructura de paneles y flujo narrativo visual",
+            "weight": 20,
             "levels": [
-                {"score": 100, "label": "Excelente", "description": "Composicion profesional, uso creativo de paneles"},
-                {"score": 75, "label": "Bueno", "description": "Buena composicion visual"},
-                {"score": 50, "label": "Suficiente", "description": "Composicion basica"},
-                {"score": 25, "label": "Insuficiente", "description": "Composicion pobre o confusa"}
+                {"score": 100, "label": "Excelente", "description": "Paneles bien estructurados con flujo narrativo claro"},
+                {"score": 75, "label": "Bueno", "description": "Buena estructura de paneles"},
+                {"score": 50, "label": "Suficiente", "description": "Estructura basica de paneles"},
+                {"score": 25, "label": "Insuficiente", "description": "Estructura confusa o incoherente"}
             ]
         },
         {
@@ -678,7 +742,7 @@ INSERT INTO educational_content.exercise_type_rubrics (
                 {"score": 100, "label": "Excelente", "description": "Voz autentica, personalidad de Curie bien capturada"},
                 {"score": 75, "label": "Bueno", "description": "Buena representacion de la voz"},
                 {"score": 50, "label": "Suficiente", "description": "Representacion basica"},
-                {"score": 25, "label": "Insuficiente", "description": "Voz inautentica o anacronicacon"}
+                {"score": 25, "label": "Insuficiente", "description": "Voz inautentica o anacronica"}
             ]
         },
         {
@@ -736,18 +800,18 @@ BEGIN
     RAISE NOTICE '  - podcast_argumentativo';
     RAISE NOTICE '  - matriz_perspectivas';
     RAISE NOTICE '';
-    RAISE NOTICE 'Modulo 4 - Alfabetizacion Digital: 4 rubricas';
+    RAISE NOTICE 'Modulo 4 - Alfabetizacion Digital: 5 rubricas';
     RAISE NOTICE '  - verificador_fake_news';
     RAISE NOTICE '  - infografia_interactiva';
     RAISE NOTICE '  - navegacion_hipertextual';
     RAISE NOTICE '  - analisis_memes';
-    RAISE NOTICE '  (quiz_tiktok es auto-grading, no requiere rubrica)';
+    RAISE NOTICE '  - quiz_tiktok';
     RAISE NOTICE '';
     RAISE NOTICE 'Modulo 5 - Produccion Creativa: 3 rubricas';
     RAISE NOTICE '  - diario_multimedia';
     RAISE NOTICE '  - comic_digital';
     RAISE NOTICE '  - video_carta';
     RAISE NOTICE '';
-    RAISE NOTICE 'TOTAL: 12 rubricas creadas';
+    RAISE NOTICE 'TOTAL: 13 rubricas creadas';
     RAISE NOTICE '=====================================================';
 END $$;

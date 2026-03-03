@@ -116,7 +116,7 @@ ultima_actualizacion: 2026-02-27
 ### Descripcion de Mecanicas M4
 
 - **Verificador Fake News:** Estudiante analiza articulos y escribe justificacion de veracidad. Sin `analyzeArgument` ni scoring automatico.
-- **Quiz TikTok:** Seleccion de respuestas con justificacion escrita obligatoria (textarea). Revision manual por maestro — no es auto-graded.
+- **Quiz TikTok:** Seleccion de respuestas con justificacion escrita obligatoria (textarea, min 30 chars). Revision manual por maestro — no es auto-graded. Timer de 30s/pregunta corre continuamente (NO se detiene al seleccionar respuesta); la tarjeta se atenua visualmente al responder. En la ultima pregunta, el boton "Siguiente" es reemplazado por "Enviar Respuestas" cuando todas las respuestas y justificaciones estan completas. El array de respuestas es saneado (dense array) antes del envio para evitar errores 400 por huecos. Rubrica en `exercise_type_rubrics`: 4 criterios (Precision de Respuestas 25%, Calidad de Justificaciones 30%, Pensamiento Critico 25%, Completitud 20%) — agregada 2026-03-03 (fix RUBRIC-REMEDIATION).
 - **Navegacion Hipertextual:** Exploracion de documentos hipertextuales + seccion de reflexion escrita. Evaluado por maestro.
 - **Infografia Interactiva:** Exploracion de infografia + reflexion escrita. Evaluado por maestro.
 - **Analisis Memes:** Analisis textual de elementos visuales (intencionalidad, contexto, critica). Evaluado por maestro.
@@ -253,6 +253,33 @@ export enum ExerciseType {
 
 ---
 
+---
+
+## Rúbricas por Ejercicio (M3/M4/M5)
+
+> Auditoría completada 2026-03-03. 13 rúbricas validadas, 12 correcciones aplicadas.
+
+| Módulo | Ejercicio | Criterios | Pesos | Notas |
+|--------|-----------|-----------|-------|-------|
+| M3 | tribunal_opiniones | Clasificación, Veredicto, Justificación | 35/40/25 | 3 criterios |
+| M3 | debate_digital | Claridad, Evidencias, Lógica, Contraargumentos | 20/30/25/25 | Sin cambios |
+| M3 | analisis_fuentes | Orden, Comparación, CRAAP | 40/30/30 | 3 criterios; CRAAP revalorizado |
+| M3 | podcast_argumentativo | Claridad, Argumentación, Pensamiento Crítico, Presentación | 25/30/25/20 | Descripciones sin ref. audio |
+| M3 | matriz_perspectivas | Comprensión, Análisis, Evidencia, Síntesis | 25/25/20/30 | "Identificación" → "Comprensión" |
+| M4 | verificador_fake_news | Identificación, Razonamiento, Referencia Fuentes, Conclusión | 25/30/25/20 | Criterios renombrados |
+| M4 | infografia_interactiva | Contenido, Organización, Interactividad, Respuestas | 25/20/20/35 | Respuestas priorizadas |
+| M4 | navegacion_hipertextual | Eficiencia, Relevancia, Síntesis, Respuesta | 25/25/25/25 | Balanceado |
+| M4 | analisis_memes | Decodificación, Contexto, Intertextualidad, Crítica | 30/25/20/25 | Decodificación priorizada |
+| M4 | quiz_tiktok | Precisión, Justificaciones, Pensamiento Crítico, Completitud | 30/30/20/20 | Precisión priorizada |
+| M5 | diario_multimedia | Creatividad, Precisión, Multimedia, Expresión | 30/30/15/25 | Multimedia reducido (opcional) |
+| M5 | comic_digital | Narrativa, Organización Visual, Precisión, Creatividad | 30/20/25/25 | "Composición" → "Organización" |
+| M5 | video_carta | Autenticidad, Mensaje, Producción, Emoción | 25/25/25/25 | Typo corregido |
+
+**Seed file:** `apps/database/seeds/dev/educational_content/13-exercise_type_rubrics.sql`
+**Reporte:** `orchestration/tareas/TASK-2026-03-03-RUBRIC-AUDIT/AUDIT-REPORT.md`
+
+---
+
 ## RECOMENDACIONES
 
 ### Documentacion Pendiente
@@ -283,3 +310,4 @@ export enum ExerciseType {
 **Generado por:** Requirements-Analyst
 **Fecha:** 2025-12-23
 **Version:** 1.0
+**Última actualización de rúbricas:** 2026-03-03

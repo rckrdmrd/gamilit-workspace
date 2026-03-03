@@ -6,7 +6,7 @@
  * Difficulty Level Enum
  * Matches database enum: educational_content.difficulty_level
  * @see Backend: DifficultyLevelEnum
- * @version 2.0 (2025-11-11) - Migrado a est\u00e1ndar CEFR (8 niveles: A1-C2+)
+ * @version 2.0 (2025-11-11) - Migrado a estándar CEFR (8 niveles: A1-C2+)
  */
 export enum DifficultyLevel {
   BEGINNER = 'beginner', // A1

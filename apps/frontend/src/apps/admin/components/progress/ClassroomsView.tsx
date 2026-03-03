@@ -193,7 +193,7 @@ export const ClassroomsView = ({
       <DetectiveCard>
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="mb-1 text-2xl font-bold text-detective-text">
+            <h2 className="mb-1 text-xl sm:text-2xl font-bold text-detective-text">
               {classroomProgress.classroom_name}
             </h2>
             <p className="text-detective-text-secondary">

@@ -1,5 +1,5 @@
 import { useState, useEffect, createElement } from 'react';
-import { Reorder } from 'framer-motion';
+import { Reorder, useDragControls } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { TimelineEvent } from './TimelineEvent';
@@ -13,6 +13,15 @@ import { useInvalidateDashboard } from '@/shared/hooks';
 
 // Re-export TimelineExerciseProps for use by parent components
 export type { TimelineExerciseProps };
+
+const DraggableTimelineItem = ({ event, index }: { event: TimelineEventType; index: number }) => {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item value={event} dragListener={false} dragControls={controls}>
+      <TimelineEvent event={event} index={index} dragControls={controls} />
+    </Reorder.Item>
+  );
+};
 
 export const TimelineExercise = ({
   exercise,
@@ -167,9 +176,7 @@ export const TimelineExercise = ({
       >
         <Reorder.Group axis="y" values={events} onReorder={setEvents} className="space-y-3">
           {events.map((event, index) => (
-            <Reorder.Item key={event.id} value={event}>
-              <TimelineEvent event={event} index={index} />
-            </Reorder.Item>
+            <DraggableTimelineItem key={event.id} event={event} index={index} />
           ))}
         </Reorder.Group>
       </UnifiedExerciseLayout>

@@ -26,7 +26,7 @@ export const NotificationHeader = ({
         <Bell className="w-6 h-6 text-white" />
       </div>
       <div>
-        <h1 className="text-2xl font-bold text-white">Notificaciones</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Notificaciones</h1>
         <p className="text-gray-400">
           {unreadCount > 0 ? `${unreadCount} sin leer` : 'Todas leidas'}
         </p>
@@ -39,7 +39,7 @@ export const NotificationHeader = ({
         whileTap={{ scale: 0.95 }}
         onClick={onRefresh}
         disabled={isRefreshing}
-        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors min-w-[44px] min-h-[44px]"
       >
         <RefreshCw className={cn('w-5 h-5 text-white', isRefreshing && 'animate-spin')} />
       </motion.button>
@@ -49,7 +49,7 @@ export const NotificationHeader = ({
         whileTap={{ scale: 0.95 }}
         onClick={onToggleFilters}
         className={cn(
-          'p-2 rounded-lg transition-colors',
+          'p-2 rounded-lg transition-colors min-w-[44px] min-h-[44px]',
           showFilters ? 'bg-purple-500 text-white' : 'bg-white/10 hover:bg-white/20 text-white',
         )}
       >
@@ -70,7 +70,7 @@ export const NotificationHeader = ({
 
       <Link
         to="/admin/settings/notifications"
-        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors min-w-[44px] min-h-[44px]"
       >
         <Settings className="w-5 h-5 text-white" />
       </Link>

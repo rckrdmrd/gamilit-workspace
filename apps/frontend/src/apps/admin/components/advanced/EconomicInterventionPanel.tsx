@@ -457,7 +457,7 @@ export const EconomicInterventionPanel = () => {
                 </button>
               </div>
 
-              <div className="text-detective-small mt-3 grid grid-cols-3 gap-4">
+              <div className="text-detective-small mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <p className="text-gray-400">Multiplier</p>
                   <p className="font-bold text-detective-text">{event.multiplier}x</p>

@@ -185,7 +185,7 @@ export function ClassroomTeachersTab() {
           <div className="rounded-xl bg-white p-6 shadow-md">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900">{classroomData.name}</h3>
+                <h3 className="text-lg sm:text-2xl font-bold text-gray-900 truncate" title={classroomData.name}>{classroomData.name}</h3>
                 <p className="text-gray-600">
                   Grado: {classroomData.grade} - Sección: {classroomData.section}
                 </p>

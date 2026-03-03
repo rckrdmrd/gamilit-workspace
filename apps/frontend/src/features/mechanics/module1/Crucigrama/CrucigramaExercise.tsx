@@ -62,7 +62,7 @@ export const CrucigramaExercise = ({
   const numCols = grid[0]?.length || 1;
 
   const DEFAULT_CELL_SIZE = 40;
-  const MIN_CELL_SIZE = 26;
+  const MIN_CELL_SIZE = 36;
   const GRID_PADDING = 16; // p-2 = 8px each side on mobile (CrucigramaGrid wrapper)
   const GAP_PX = 1;
 

@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.9.14"
-fecha: "2026-03-03"  # v14.9.14: AnalisisFuentesExercise encoding fix (unicode→UTF-8), TikTok timer 10s→30s (5 seeds + 3 frontend files), seed display text updates. Previous: v14.9.13
+version: "14.9.25"
+fecha: "2026-03-03"  # v14.9.25: Comic Digital Third Wave — visual reconstruction. Previous: v14.9.24
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -161,7 +161,7 @@ gamificacion:
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v9.2.0)"
   backend: "BACKEND_INVENTORY.yml (v5.3.4)"
-  frontend: "FRONTEND_INVENTORY.yml (v12.5.8)"
+  frontend: "FRONTEND_INVENTORY.yml (v12.8.4)"
   shop: "Shop categories: 3 active (consumables, cosmetics, boosts) — guild/social removed (out of scope). Items: 31 total (was 38 pre-cleanup)"
 
 # -------------------------------------------------------------------------------
@@ -231,6 +231,47 @@ credenciales:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v14.9.22"
+    changes:
+      - "audit(education): Rubric audit M3/M4/M5 — 13/13 exercise rubrics validated"
+      - "fix(rubrics): 12 corrections applied — weight rebalance (7), criterion alignment (4), typo fix (1)"
+      - "fix(rubrics): M3 — tribunal_opiniones, analisis_fuentes, podcast_argumentativo, matriz_perspectivas"
+      - "fix(rubrics): M4 — verificador_fake_news, infografia_interactiva, navegacion_hipertextual, analisis_memes, quiz_tiktok"
+      - "fix(rubrics): M5 — diario_multimedia, comic_digital, video_carta (typo 'anacronicacon'→'anacronica')"
+      - "docs: AUDIT-REPORT.md created with detailed findings and weight rebalance rationale"
+    files_modified: 3
+    build_status: "PASS"
+    refs:
+      - "SEEDS_INVENTORY v3.5.4"
+      - "orchestration/tareas/TASK-2026-03-03-RUBRIC-AUDIT/AUDIT-REPORT.md"
+
+  - date: "2026-03-03"
+    version: "v14.9.20"
+    changes:
+      - "fix(seeds): quiz_tiktok rubric added to 13-exercise_type_rubrics.sql (3 envs: dev, staging, prod)"
+      - "fix(seeds): exercise_type_rubrics count 12→13 (M3=5, M4=5, M5=3 — 100% manual exercises covered)"
+    files_modified: 3
+    build_status: "PASS"
+    refs:
+      - "SEEDS_INVENTORY v3.5.3"
+      - "orchestration/tareas/TASK-2026-03-03-RUBRIC-REMEDIATION/REMEDIATION-REPORT.md"
+
+  - date: "2026-03-03"
+    version: "v14.9.17"
+    changes:
+      - "feat(admin): Responsive remediation — 19 pages, 18 components, 3 modals fixed"
+      - "feat(admin): 5 barrel export index.ts files created (analytics, classroom-teacher, exercise-builder, notifications, progress = 19/19 dirs)"
+      - "fix(admin): Responsive headers on 3 files, grids on 5 files, modal scroll on 3 files"
+      - "fix(admin): Modal H2 responsive typography, touch targets 44px on 2 files, section titles responsive on 7 files"
+      - "fix(admin): Card truncation with title tooltip on ClassroomTeachersTab, TeacherClassroomsTab"
+      - "refactor(admin): Standards compliance Responsive 85%→100%, Modal 80%→95%, Truncation 60%→80%"
+    files_modified: 23
+    build_status: "PASS"
+    refs:
+      - "FRONTEND_INVENTORY v12.8.4"
+      - "orchestration/tareas/TASK-2026-03-03-ADMIN-PORTAL-REMEDIATION/REMEDIATION-REPORT.md"
+
   - date: "2026-03-03"
     version: "v14.9.13"
     changes:
@@ -429,5 +470,5 @@ changelog:
     files_modified: 25
 
 # ===============================================================================
-# FIN MASTER INVENTORY v14.9.7
+# FIN MASTER INVENTORY v14.9.21
 # ===============================================================================

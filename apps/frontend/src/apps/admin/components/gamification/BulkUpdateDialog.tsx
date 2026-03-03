@@ -155,7 +155,7 @@ export function BulkUpdateDialog({
         <DetectiveCard padding="lg">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
-            <h2 id="dialog-title" className="text-2xl font-bold text-detective-text">
+            <h2 id="dialog-title" className="text-xl sm:text-2xl font-bold text-detective-text">
               Actualización Masiva de Parámetros
             </h2>
             <button

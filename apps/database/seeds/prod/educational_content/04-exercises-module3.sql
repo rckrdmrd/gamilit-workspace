@@ -55,9 +55,9 @@ BEGIN
             "sources": [
                 {
                     "id": "src1",
-                    "title": "Marie Curie and the Science of Radioactivity",
+                    "title": "Marie Curie y la Ciencia de la Radiactividad",
                     "author": "Dr. Naomi Pasachoff (historiadora de ciencia)",
-                    "institution": "American Institute of Physics",
+                    "institution": "Instituto Americano de Física (AIP)",
                     "date": "2020",
                     "type": "Artículo académico revisado por pares",
                     "excerpt": "Marie Curie revolucionó la física nuclear con sus descubrimientos del radio y polonio, trabajando en condiciones extremadamente difíciles y superando barreras de género sin precedentes...",
@@ -79,7 +79,7 @@ BEGIN
                 },
                 {
                     "id": "src3",
-                    "title": "Madame Curie: A Biography",
+                    "title": "Madame Curie: Una Biografía",
                     "author": "Eve Curie (hija de Marie)",
                     "institution": "Editorial Heinemann",
                     "date": "1937",
@@ -103,12 +103,12 @@ BEGIN
                 },
                 {
                     "id": "src5",
-                    "title": "Nobel Lectures: Physics 1901-1921",
+                    "title": "Conferencias Nobel: Física 1901-1921",
                     "author": "Nobel Foundation",
                     "institution": "Nobel Foundation",
                     "date": "1967 (compilación de documentos de 1903)",
                     "type": "Fuente primaria oficial",
-                    "excerpt": "Marie Curie lecture: On the discovery of radium and polonium...",
+                    "excerpt": "Conferencia de Marie Curie: Sobre el descubrimiento del radio y el polonio...",
                     "citations": "Documentos originales",
                     "credibilityScore": 100,
                     "credibilityLevel": "máxima"
