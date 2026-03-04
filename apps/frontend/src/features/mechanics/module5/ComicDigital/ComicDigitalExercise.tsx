@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type MutableRefObject } from 'react';
 import { Plus, Type, MessageSquare, Download, Send, Loader2, CheckCircle, GripVertical, Trash2, X, Lightbulb, LayoutTemplate, ChevronDown, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
@@ -33,6 +33,7 @@ interface ExerciseProps {
   onComplete?: (score: number, timeSpent: number) => void;
   onProgressUpdate?: (data: ProgressData) => void;
   onExit?: () => void;
+  actionsRef?: MutableRefObject<{ handleReset?: () => void; handleCheck?: () => void }>;
 }
 
 // Aligned with backend @ArrayMinSize(4) / @ArrayMaxSize(6)
@@ -377,7 +378,8 @@ export const ComicDigitalExercise = ({
   exercise,
   onComplete,
   onProgressUpdate,
-  onExit: _onExit
+  onExit,
+  actionsRef,
 }: ExerciseProps) => {
   const [panels, setPanels] = useState<ComicPanel[]>([]);
   const [selectedPanel, setSelectedPanel] = useState<string | null>(null);
@@ -585,6 +587,16 @@ export const ComicDigitalExercise = ({
     }));
   }, []);
 
+  const handleReset = useCallback(() => {
+    setPanels([]);
+    setSelectedPanel(null);
+    setTitle('La Historia de Marie Curie');
+    setIsSubmitted(false);
+    setShowFeedback(false);
+    setFeedback(null);
+    setUsedScenes(new Set());
+  }, []);
+
   // --- Progress tracking ---
   useEffect(() => {
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -610,17 +622,6 @@ export const ComicDigitalExercise = ({
       },
       answers: {
         panels: dtoPanels,
-        title,
-        metadata: {
-          totalPanels: panels.length,
-          comicTitle: title,
-          stickers: panels.flatMap(p => p.stickers.map(s => ({
-            panelId: p.id,
-            assetId: s.assetId,
-            x: s.x,
-            y: s.y,
-          }))),
-        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -628,7 +629,18 @@ export const ComicDigitalExercise = ({
 
   // --- Submit ---
   const handleSubmit = async () => {
-    if (!exerciseId || isSubmitting || isSubmitted || panels.length < MIN_PANELS_REQUIRED) return;
+    if (!exerciseId || isSubmitting || isSubmitted) return;
+
+    if (panels.length < MIN_PANELS_REQUIRED) {
+      setFeedback({
+        type: 'error',
+        title: 'Paneles insuficientes',
+        message: `Necesitas al menos ${MIN_PANELS_REQUIRED} paneles para enviar tu cómic. Tienes ${panels.length}.`,
+        score: 0,
+      });
+      setShowFeedback(true);
+      return;
+    }
 
     const dtoPanels = panels.map((panel, index) => {
       const dialogues = panel.speechBubbles
@@ -645,29 +657,12 @@ export const ComicDigitalExercise = ({
         panelNumber: index + 1,
         dialogue: dialogues || `Panel ${index + 1} - Sin diálogo`,
         narration: panel.text || captions || `Escena ${index + 1} del cómic sobre Marie Curie`,
-        imageUrl: panel.image,
-        visualDescription: panel.layout === 'full'
-          ? 'Panel completo'
-          : panel.layout === 'half'
-          ? 'Panel mitad'
-          : 'Panel tercio',
       };
     });
 
     try {
       const response = await submitAsync({
         panels: dtoPanels,
-        metadata: {
-          title,
-          totalPanels: panels.length,
-          totalSpeechBubbles: panels.reduce((acc, panel) => acc + panel.speechBubbles.length, 0),
-          stickers: panels.flatMap(p => p.stickers.map(s => ({
-            panelId: p.id,
-            assetId: s.assetId,
-            x: s.x,
-            y: s.y,
-          }))),
-        },
       });
 
       setIsSubmitted(true);
@@ -685,7 +680,6 @@ export const ComicDigitalExercise = ({
           pendingReview: true,
         });
         setShowFeedback(true);
-        onComplete?.(0, timeSpent);
         return;
       }
 
@@ -710,6 +704,20 @@ export const ComicDigitalExercise = ({
       setShowFeedback(true);
     }
   };
+
+  // Use ref to always have the latest handleSubmit (avoids stale closure)
+  const handleSubmitRef = useRef(handleSubmit);
+  handleSubmitRef.current = handleSubmit;
+
+  // Attach actions ref — delegates to ref to avoid stale closure
+  useEffect(() => {
+    if (actionsRef) {
+      actionsRef.current = {
+        handleReset,
+        handleCheck: () => handleSubmitRef.current(),
+      };
+    }
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sticker category grouping
   const stickerCategories = [
@@ -1081,6 +1089,10 @@ export const ComicDigitalExercise = ({
         <FeedbackModal
           isOpen={showFeedback}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
           }}
           feedback={feedback}

@@ -78,6 +78,8 @@ ultima_actualizacion: 2026-02-27
 **Ubicacion:** `features/mechanics/module3/`
 **Evaluacion:** Todos los ejercicios M3 son evaluados exclusivamente por el maestro (teacher-grade). No hay auto-scoring ni interaccion con IA.
 
+> **Patron de Modal M3-M5:** Las mecanicas con `requires_manual_grading=true` muestran su propio FeedbackModal ("Enviado para Revisión") y NO llaman `onComplete()` en el branch `pending_review`. Al cerrar el modal, llaman `onExit?.()` para navegar de regreso al modulo. El `ExerciseContext.handleComplete` tiene una guardia que previene mostrar un segundo modal si ya hay feedback activo con `pendingReview: true`.
+
 ### Mecanicas Oficiales (5) - Todas Implementadas
 
 | Mecanica | Carpeta | Componente | Estado |
@@ -354,10 +356,13 @@ TODA mecánica que registra `handleCheck` en `actionsRef` DEBE usar el patrón `
 
 **¿Por qué?** El `useEffect` que puebla `actionsRef.current` captura `handleCheck` en su closure. Si `handleCheck` no está en deps (y no puede estarlo porque cambiaría en cada render), la referencia queda obsoleta cuando el usuario cambia respuestas. El ref siempre apunta a la versión más reciente.
 
-**Ejercicios que usan este patrón (13):**
+**IMPORTANTE - Convención de Propiedades DTO:** Todos los nombres de propiedades en DTOs de respuestas DEBEN usar camelCase (NO snake_case). Esto es crítico porque el `ExerciseAnswerValidator` aplica normalización `snakeToCamel` antes de `plainToInstance`, lo que convierte `video_url` → `videoUrl` a nivel de validación. Ejemplo: VideoCartaAnswerDto usa `videoUrl` y `durationSeconds`, no `video_url`/`duration_seconds`. Si usas snake_case en el DTO, la validación fallará silenciosamente o producirá 400 Bad Request.
+
+**Ejercicios que usan este patrón (16):**
 - M1: VerdaderoFalso, Emparejamiento, Crucigrama, Timeline, MapaConceptual
 - M2: PuzzleContexto, PrediccionNarrativa, RuedaInferencias, DetectiveTextual
 - M3: PodcastArgumentativo, DebateDigital, AnalisisFuentes, MatrizPerspectivas
+- M5: ComicDigital, DiarioMultimedia, VideoCarta
 
 **Ejercicios con handleCheck directo en deps (seguros sin ref):**
 - M1: CompletarEspacios, SopaLetras
@@ -367,8 +372,40 @@ TODA mecánica que registra `handleCheck` en `actionsRef` DEBE usar el patrón `
 
 ---
 
+## Patrón Estándar: Ejercicios con Revisión Manual (requires_manual_grading)
+
+TODO ejercicio con `requires_manual_grading = true` DEBE seguir este patrón:
+
+1. **Detectar respuesta del backend:**
+   ```tsx
+   if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+   ```
+
+2. **Mostrar FeedbackModal con revisión pendiente:**
+   ```tsx
+   setFeedback({ type: 'info', title: 'Ejercicio Enviado', pendingReview: true, xpEarned: 0, mlCoinsEarned: 0 });
+   ```
+
+3. **Llamar `onComplete` INMEDIATAMENTE** en el path de revisión pendiente:
+   ```tsx
+   onComplete?.(0, timeSpent);  // score=0 hasta que el maestro revise
+   return;
+   ```
+
+4. **NO mostrar recompensas ni confetti** — el hook `useExerciseSubmission` suprime el toast automáticamente para submissions con `requiresManualReview || status === 'submitted'`.
+
+**Referencia:** `QuizTikTokExercise.tsx` (M4) — implementación canónica.
+
+**Ejercicios que siguen este patrón (13):**
+- **M3:** AnalisisFuentes, DebateDigital, MatrizPerspectivas, PodcastArgumentativo, TribunalOpiniones
+- **M4:** QuizTikTok, VerificadorFakeNews, InfografiaInteractiva, NavegacionHipertextual, AnalisisMemes
+- **M5:** ComicDigital, DiarioMultimedia, VideoCarta
+
+---
+
 **Generado por:** Requirements-Analyst
 **Fecha:** 2025-12-23
 **Version:** 1.0
 **Última actualización de rúbricas:** 2026-03-03
 **Última actualización del patrón actionsRef:** 2026-03-03
+**Última actualización del patrón manual review:** 2026-03-03

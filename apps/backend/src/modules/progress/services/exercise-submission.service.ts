@@ -240,21 +240,32 @@ export class ExerciseSubmissionService {
     // BE-P2-009: Validación de requisitos mínimos para ejercicios Módulo 5
     if (exercise.exercise_type === 'diario_multimedia') {
       // Validar 150 palabras mínimas en el diario
-      const content = String(answers.content || answers.text || '');
-      const wordCount = this.countWords(content);
+      // FIX: DiarioMultimediaAnswerDto sends entries[], not top-level content
+      // Raw answers use snake_case keys (apiClient.camelToSnake)
+      const entries = (answers.entries || []) as Record<string, unknown>[];
+      const totalWords = (answers.total_words || answers.totalWords || 0) as number;
 
-      if (wordCount < 150) {
+      // Compute from entries if totalWords not provided
+      const computedWords = totalWords > 0
+        ? totalWords
+        : entries.reduce((sum: number, e: Record<string, unknown>) => {
+            const content = String(e.content || '');
+            return sum + this.countWords(content);
+          }, 0);
+
+      if (computedWords < 150) {
         throw new BadRequestException(
-          `El diario debe tener al menos 150 palabras. Actualmente tienes ${wordCount} palabras.`
+          `El diario debe tener al menos 150 palabras. Actualmente tienes ${computedWords} palabras.`
         );
       }
 
-      this.logger.log(`[BE-P2-009] Diario multimedia validation passed: ${wordCount} palabras`);
+      this.logger.log(`[BE-P2-009] Diario multimedia validation passed: ${computedWords} palabras`);
     }
 
     if (exercise.exercise_type === 'comic_digital') {
       // Validar mínimo de paneles en el cómic
-      const panels = (answers.panels || []) as Array<{ text?: string; image?: string; imageUrl?: string }>;
+      // FIX: Accept both camelCase (DTO) and snake_case (apiClient transforms all keys)
+      const panels = (answers.panels || []) as Record<string, unknown>[];
       const minPanels = 4; // Mínimo 4 paneles para contar una historia
 
       if (panels.length < minPanels) {
@@ -263,16 +274,19 @@ export class ExerciseSubmissionService {
         );
       }
 
-      // Validar que cada panel tenga contenido (texto o imagen)
+      // Validar que cada panel tenga contenido (diálogo/narración o imagen)
       const emptyPanels = panels.filter((panel) => {
-        const hasText = panel.text && panel.text.trim().length > 0;
-        const hasImage = panel.image || panel.imageUrl;
-        return !hasText && !hasImage;
+        const dialogue = (panel.dialogue || panel.text || '') as string;
+        const narration = (panel.narration || panel.text || '') as string;
+        const hasDialogue = dialogue.trim().length > 0;
+        const hasNarration = narration.trim().length > 0;
+        const hasImage = panel.image_url || panel.imageUrl || panel.image;
+        return !hasDialogue && !hasNarration && !hasImage;
       });
 
       if (emptyPanels.length > 0) {
         throw new BadRequestException(
-          `Todos los paneles deben tener contenido (texto o imagen). Tienes ${emptyPanels.length} panel(es) vacío(s).`
+          `Todos los paneles deben tener contenido (diálogo, narración o imagen). Tienes ${emptyPanels.length} panel(es) vacío(s).`
         );
       }
 
@@ -280,20 +294,12 @@ export class ExerciseSubmissionService {
     }
 
     if (exercise.exercise_type === 'video_carta') {
-      // Validar que haya URL de video o metadata
-      const videoUrl = answers.videoUrl || answers.url || answers.video;
-      const metadata = (answers.metadata || {}) as { duration?: number };
+      // FIX: Raw request uses snake_case (apiClient.camelToSnake), DTO property is videoUrl (camelCase)
+      const videoUrl = answers.video_url || answers.videoUrl || answers.url;
 
       if (!videoUrl) {
         throw new BadRequestException(
           `Debes subir o proporcionar la URL de tu video carta.`
-        );
-      }
-
-      // Validar duración mínima si hay metadata (30 segundos mínimo)
-      if (metadata.duration !== undefined && metadata.duration < 30) {
-        throw new BadRequestException(
-          `La video carta debe tener al menos 30 segundos de duración. Tu video tiene ${metadata.duration} segundos.`
         );
       }
 

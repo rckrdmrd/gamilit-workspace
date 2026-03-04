@@ -285,7 +285,6 @@ export const QuizTikTokExercise = ({
           mlCoinsEarned: 0,
         });
         setShowFeedback(true);
-        onComplete?.(0, elapsedTime);
         return;
       }
 
@@ -653,6 +652,10 @@ export const QuizTikTokExercise = ({
             mlCoinsEarned: feedback.mlCoinsEarned || 0,
           }}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success' && feedback.score) {
               onComplete?.(feedback.score, timeSpent);

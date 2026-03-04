@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, type MutableRefObject } from 'react';
 import { Video, Camera, Download, Send, Loader2, CheckCircle, Pause, Play, RotateCcw, ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
 import { useSectionedRecorder, VideoSection } from '@/shared/hooks/useSectionedRecorder';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
@@ -25,6 +25,7 @@ interface ExerciseProps {
   onComplete?: (score: number, timeSpent: number) => void;
   onProgressUpdate?: (data: ProgressData) => void;
   onExit?: () => void;
+  actionsRef?: MutableRefObject<{ handleReset?: () => void; handleCheck?: () => void }>;
 }
 
 // Definición de las secciones del video
@@ -39,7 +40,8 @@ export const VideoCartaExercise = ({
   exerciseId = 'video-carta-default',
   onComplete,
   onProgressUpdate,
-  onExit
+  onExit,
+  actionsRef,
 }: ExerciseProps) => {
   const [filter, setFilter] = useState('none');
   const [startTime] = useState(new Date());
@@ -89,6 +91,14 @@ export const VideoCartaExercise = ({
     { id: 'vintage', name: 'Vintage', class: 'contrast-125 brightness-110' },
   ];
 
+  const handleReset = useCallback(() => {
+    setFilter('none');
+    setIsSubmitted(false);
+    setShowFeedback(false);
+    setFeedback(null);
+    resetRecording();
+  }, [resetRecording]);
+
   // Progress tracking
   useEffect(() => {
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -115,26 +125,8 @@ export const VideoCartaExercise = ({
         timeSpent,
       },
       answers: {
-        // Primary format: DTO expected by backend
         video_url: videoUrl || 'pending_upload',
         sections: dtoSections,
-
-        // Secondary format for backwards compatibility
-        totalSections,
-        completedSections,
-        allSectionsCompleted,
-        hasVideo: !!videoBlob,
-
-        // Metadata
-        metadata: {
-          currentSectionIndex,
-          duration,
-          sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
-            id,
-            completed: data.completed,
-            duration: data.duration,
-          })),
-        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,7 +146,6 @@ export const VideoCartaExercise = ({
     if (!exerciseId || isSubmitting || isSubmitted || !videoBlob || isUploading) return;
 
     let uploadedUrl = videoUrl;
-    let mediaId: string | undefined;
 
     // Upload video first
     try {
@@ -167,7 +158,6 @@ export const VideoCartaExercise = ({
       });
 
       uploadedUrl = uploadResult.url;
-      mediaId = uploadResult.id;
     } catch (_uploadError) {
       setFeedback({
         type: 'error',
@@ -196,25 +186,8 @@ export const VideoCartaExercise = ({
 
     try {
       const response = await submitAsync({
-        // Primary format expected by VideoCartaAnswerDto
         video_url: uploadedUrl || '',
         sections: dtoSections,
-
-        // Metadata for backwards compatibility and manual review context
-        metadata: {
-          videoDuration: duration,
-          videoSize: videoBlob.size,
-          hasVideo: true,
-          message: 'Video carta sobre Marie Curie',
-          uploadedMediaId: mediaId,
-          allSectionsCompleted,
-          sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
-            id,
-            completed: data.completed,
-            duration: data.duration,
-            prompt: sections.find((s) => s.id === id)?.prompt,
-          })),
-        },
       });
 
       setIsSubmitted(true);
@@ -233,7 +206,6 @@ export const VideoCartaExercise = ({
           pendingReview: true,
         });
         setShowFeedback(true);
-        onComplete?.(0, timeSpent);
         return;
       }
 
@@ -259,6 +231,20 @@ export const VideoCartaExercise = ({
       setShowFeedback(true);
     }
   };
+
+  // Use ref to always have the latest handleSubmit (avoids stale closure)
+  const handleSubmitRef = useRef(handleSubmit);
+  handleSubmitRef.current = handleSubmit;
+
+  // Attach actions ref — delegates to ref to avoid stale closure
+  useEffect(() => {
+    if (actionsRef) {
+      actionsRef.current = {
+        handleReset,
+        handleCheck: () => handleSubmitRef.current(),
+      };
+    }
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -650,6 +636,10 @@ export const VideoCartaExercise = ({
         <FeedbackModal
           isOpen={showFeedback}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success') {
               onExit?.();

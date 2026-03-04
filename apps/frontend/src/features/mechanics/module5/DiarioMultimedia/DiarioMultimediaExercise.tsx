@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, type MutableRefObject } from 'react';
 import { Send, Save, Image as ImageIcon, BookOpen, Loader2, Eye, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/constants/manualReviewMessages';
@@ -40,6 +40,7 @@ interface ExerciseProps {
   onComplete?: (score: number, timeSpent: number) => void;
   onProgressUpdate?: (data: ProgressData) => void;
   onExit?: () => void;
+  actionsRef?: MutableRefObject<{ handleReset?: () => void; handleCheck?: () => void }>;
 }
 
 // FIX GAP-MED-005: Constante para número mínimo de entradas requeridas
@@ -49,7 +50,8 @@ export const DiarioMultimediaExercise = ({
   exerciseId = 'diario-multimedia-default',
   onComplete,
   onProgressUpdate,
-  onExit: _onExit
+  onExit,
+  actionsRef,
 }: ExerciseProps) => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [currentTitle, setCurrentTitle] = useState('');
@@ -99,22 +101,8 @@ export const DiarioMultimediaExercise = ({
         timeSpent,
       },
       answers: {
-        // Primary format: DTO expected by backend
         entries: dtoEntries,
         totalWords,
-
-        // Secondary format for backwards compatibility
-        entriesLegacy: entries.map((e) => ({
-          id: e.id,
-          title: e.title,
-          contentLength: e.content.length,
-          mediaCount: e.media.length,
-        })),
-
-        // Metadata
-        metadata: {
-          totalEntries: entries.length,
-        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,6 +126,19 @@ export const DiarioMultimediaExercise = ({
     setCurrentMedia([]);
     setIsPrivate(false);
   };
+
+  const handleReset = useCallback(() => {
+    setEntries([]);
+    setCurrentTitle('');
+    setCurrentContent('');
+    setCurrentMedia([]);
+    setIsPrivate(false);
+    setShowPreview(false);
+    setIsSubmitted(false);
+    setShowFeedback(false);
+    setFeedback(null);
+    setIsUploading(false);
+  }, []);
 
   const formatText = (command: string) => {
     const textarea = diaryContentRef.current;
@@ -169,7 +170,18 @@ export const DiarioMultimediaExercise = ({
 
   const handleSubmit = async () => {
     // FIX GAP-MED-005: Validar mínimo de entradas requeridas
-    if (!exerciseId || isSubmitting || isSubmitted || entries.length < MIN_ENTRIES_REQUIRED) return;
+    if (!exerciseId || isSubmitting || isSubmitted) return;
+
+    if (entries.length < MIN_ENTRIES_REQUIRED) {
+      setFeedback({
+        type: 'error',
+        title: 'Entradas insuficientes',
+        message: `Necesitas al menos ${MIN_ENTRIES_REQUIRED} entradas para enviar tu diario. Tienes ${entries.length}.`,
+        score: 0,
+      });
+      setShowFeedback(true);
+      return;
+    }
 
     // FIX: Transform data to match DiarioMultimediaAnswerDto expected by backend
     // DTO expects: entries with { id, date, title?, content (min 50 chars), mood?, wordCount?, multimedia? }
@@ -193,17 +205,10 @@ export const DiarioMultimediaExercise = ({
 
     try {
       const response = await submitAsync({
-        // Primary format expected by DiarioMultimediaAnswerDto
         entries: dtoEntries,
         totalEntries: entries.length,
         totalWords,
         submittedAt: new Date().toISOString(),
-
-        // Metadata for backwards compatibility
-        metadata: {
-          totalMediaFiles: entries.reduce((acc, entry) => acc + entry.media.length, 0),
-          privateEntries: entries.filter((e) => e.isPrivate).length,
-        },
       });
 
       setIsSubmitted(true);
@@ -222,7 +227,6 @@ export const DiarioMultimediaExercise = ({
           pendingReview: true,
         });
         setShowFeedback(true);
-        onComplete?.(0, timeSpent);
         return;
       }
 
@@ -248,6 +252,20 @@ export const DiarioMultimediaExercise = ({
       setShowFeedback(true);
     }
   };
+
+  // Use ref to always have the latest handleSubmit (avoids stale closure)
+  const handleSubmitRef = useRef(handleSubmit);
+  handleSubmitRef.current = handleSubmit;
+
+  // Attach actions ref — delegates to ref to avoid stale closure
+  useEffect(() => {
+    if (actionsRef) {
+      actionsRef.current = {
+        handleReset,
+        handleCheck: () => handleSubmitRef.current(),
+      };
+    }
+  }, [actionsRef, handleReset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -550,6 +568,10 @@ export const DiarioMultimediaExercise = ({
         <FeedbackModal
           isOpen={showFeedback}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
           }}
           feedback={feedback}

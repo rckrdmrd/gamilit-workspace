@@ -202,7 +202,6 @@ export const MatrizPerspectivasExercise = ({
         setFeedback(pendingFeedback);
         setShowFeedback(true);
         await syncAndInvalidate();
-
         return;
       }
 
@@ -522,6 +521,10 @@ export const MatrizPerspectivasExercise = ({
           isOpen={showFeedback}
           feedback={feedback}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success') {
               onComplete?.(feedback.score || currentScore, timeSpent);

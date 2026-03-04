@@ -216,7 +216,6 @@ export const AnalisisFuentesExercise = ({
         setShowFeedback(true);
         // FIX M3-M5 2026-01-08: Invalidar cache para actualizar barra de progreso
         await syncAndInvalidate();
-        onComplete?.(0, timeSpent);
         return;
       }
 
@@ -432,6 +431,10 @@ export const AnalisisFuentesExercise = ({
           isOpen={showFeedback}
           feedback={feedback}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success' || (feedback.score && feedback.score >= 70)) {
               onComplete?.(feedback.score || 0, timeSpent);

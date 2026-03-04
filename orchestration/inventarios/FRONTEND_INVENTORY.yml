@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.9.2"
-fecha: "2026-03-03"  # v12.9.2: fix comic_digital speech bubble editing — click-vs-drag detection in handlePointerUp. v12.9.1: fix stale closure en actionsRef.handleCheck para 13 ejercicios. v12.9.0: Comic Digital Third Wave — @dnd-kit/sortable, pointer events, sticker system. Previous: v12.8.9
+version: "12.9.5"
+fecha: "2026-03-03"  # v12.9.5: fix double modal M3-M5 — remove onComplete from pending_review branches (13 exercises) + ExerciseContext handleComplete guard + onExit navigation on review modal close. v12.9.4: fix 4 M3 exercises missing onComplete on pending review, suppress score toast for manual review submissions. v12.9.3: fix M5 actionsRef — ComicDigital, DiarioMultimedia, VideoCarta submission 400. Previous: v12.9.2
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -529,6 +529,25 @@ hallazgos:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v12.9.4"
+    changes:
+      - "fix(m3-m5): 4 M3 exercises (AnalisisFuentes, DebateDigital, MatrizPerspectivas, PodcastArgumentativo) missing onComplete on pending_review resolved"
+      - "fix(m3-m5): 9 manual-review exercises now call onComplete(0, timeSpent) immediately when response.status='pending_review'"
+      - "fix(toast): useExerciseSubmission suppresses rewardToast for requiresManualReview || status='submitted' submissions"
+      - "docs(guides): MECANICAS-EDUCATIVAS.md section added — patrón estándar for manual review exercises"
+    files_modified: 4
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v12.9.3"
+    changes:
+      - "fix(m5-submission): M5 actionsRef registration — ComicDigital, DiarioMultimedia, VideoCarta added handleCheck+handleSubmitRef pattern"
+      - "fix(m5-submission): onProgressUpdate answers cleaned to send DTO fields only (no id, order, timestamps)"
+      - "fix(m5-submission): 400 Bad Request on M5 submission resolved"
+    files_modified: 3
+    build_status: "PASS"
+
   - date: "2026-03-03"
     version: "v12.9.2"
     changes:

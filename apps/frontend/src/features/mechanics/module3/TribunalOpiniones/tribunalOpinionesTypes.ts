@@ -91,6 +91,7 @@ export interface TribunalOpinionesActions {
 export interface TribunalOpinionesExerciseProps {
   exercise: TribunalOpinionesData;
   onComplete?: () => void;
+  onExit?: () => void;
   onProgressUpdate?: (progress: { progress: ExerciseProgressUpdate; answers: TribunalOpinionesAnswers }) => void;
   actionsRef?: React.MutableRefObject<TribunalOpinionesActions | undefined>;
 }

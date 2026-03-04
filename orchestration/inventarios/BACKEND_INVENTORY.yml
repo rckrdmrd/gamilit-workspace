@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "5.3.6"
-fecha: "2026-03-03"  # v5.3.6: ML Coins transaction integrity — WELCOME_BONUS transaction, auditBalance +100 removed, resolveProfileId in MLCoinsService, 3 DDL functions patched. Previous: v5.3.5
+version: "5.3.8"
+fecha: "2026-03-03"  # v5.3.8: Fix 3 M4 DTOs snake_case → camelCase (VerificadorFakeNews, InfografiaInteractiva, NavegacionHipertextual). Previous: v5.3.7
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -489,6 +489,25 @@ filters:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v5.3.8"
+    changes:
+      - "fix(M4-DTOs): VerificadorFakeNewsAnswerDto properties snake_case → camelCase (article_analysis→articleAnalysis)"
+      - "fix(M4-DTOs): InfografiaInteractivaAnswerDto properties snake_case → camelCase (section_responses→sectionResponses)"
+      - "fix(M4-DTOs): NavegacionHipertextualAnswerDto properties snake_case → camelCase (document_responses→documentResponses, reflection_content→reflectionContent)"
+      - "fix(validation): ExerciseAnswerValidator snakeToCamel ensures all DTO fields match camelCase (video_url→videoUrl pattern)"
+    files_modified: 4
+    build_status: "PASS"
+
+  - date: "2026-03-03"
+    version: "v5.3.7"
+    changes:
+      - "fix(M5-submission): snakeToCamel() utility added to ExerciseAnswerValidator — normalizes snake_case keys from apiClient to camelCase before DTO validation"
+      - "fix(M5-submission): VideoCartaAnswerDto properties renamed to camelCase (video_url→videoUrl, duration_seconds→durationSeconds)"
+      - "fix(M5-submission): service-level validation field names aligned with DTOs (comic_digital text→dialogue/narration, diario_multimedia answers.content→answers.entries, video_carta url field)"
+    files_modified: 3
+    build_status: "PASS"
+
   - date: "2026-03-03"
     version: "v5.3.6"
     changes:

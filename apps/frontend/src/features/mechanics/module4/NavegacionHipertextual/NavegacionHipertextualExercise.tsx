@@ -15,6 +15,7 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 export const NavegacionHipertextualExercise = ({
   exerciseId,
   onComplete,
+  onExit,
   onProgressUpdate,
   initialData,
   exercise,
@@ -175,7 +176,6 @@ export const NavegacionHipertextualExercise = ({
           mlCoinsEarned: 0,
         });
         setShowFeedback(true);
-        onComplete?.(0, elapsedTime);
         return;
       }
 
@@ -375,6 +375,10 @@ export const NavegacionHipertextualExercise = ({
             mlCoinsEarned: feedback.mlCoinsEarned || 0,
           }}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
               const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);

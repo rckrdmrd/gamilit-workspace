@@ -637,6 +637,10 @@ export const PodcastArgumentativoExercise = ({
             mlCoinsEarned: feedback.mlCoinsEarned || 0,
           }}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             // Llamar a onComplete después de cerrar el feedback si el score es aprobatorio
             if (feedback.type === 'success' || (feedback.score && feedback.score >= 70)) {

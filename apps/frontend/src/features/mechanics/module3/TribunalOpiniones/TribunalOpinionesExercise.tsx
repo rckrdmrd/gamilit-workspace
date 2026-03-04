@@ -22,6 +22,7 @@ import { CLASSIFICATION_OPTIONS, VERDICT_OPTIONS } from './tribunalOpinionesType
 export const TribunalOpinionesExercise = ({
   exercise,
   onComplete,
+  onExit,
   onProgressUpdate,
   actionsRef,
 }: TribunalOpinionesExerciseProps) => {
@@ -509,6 +510,10 @@ export const TribunalOpinionesExercise = ({
           isOpen={showFeedback}
           feedback={feedback}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success') onComplete?.();
           }}

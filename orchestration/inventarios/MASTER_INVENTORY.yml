@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "14.9.27"
-fecha: "2026-03-03"  # v14.9.27: fix comic_digital speech bubble text editing bug. v14.9.26: fix stale closure en actionsRef.handleCheck para 13 ejercicios. v14.9.25: Comic Digital Third Wave — visual reconstruction. Previous: v14.9.24
+version: "14.9.31"
+fecha: "2026-03-03"  # v14.9.31: fix double modal M3-M5 — ExerciseContext handleComplete guard + remove onComplete from 13 pending_review branches + onExit navigation. v14.9.30: M3-M5 exercise submission remediation — 3 DTO fixes (M4 snake_case→camelCase) + 4 onComplete fixes (M3) + toast guard for manual review. Previous: v14.9.29
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -160,8 +160,8 @@ gamificacion:
 
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v9.2.0)"
-  backend: "BACKEND_INVENTORY.yml (v5.3.4)"
-  frontend: "FRONTEND_INVENTORY.yml (v12.8.4)"
+  backend: "BACKEND_INVENTORY.yml (v5.3.8)"
+  frontend: "FRONTEND_INVENTORY.yml (v12.9.4)"
   shop: "Shop categories: 3 active (consumables, cosmetics, boosts) — guild/social removed (out of scope). Items: 31 total (was 38 pre-cleanup)"
 
 # -------------------------------------------------------------------------------
@@ -231,6 +231,49 @@ credenciales:
 # ===============================================================================
 
 changelog:
+  - date: "2026-03-03"
+    version: "v14.9.30"
+    changes:
+      - "fix(m4-dtos): VerificadorFakeNews, InfografiaInteractiva, NavegacionHipertextual — snake_case properties → camelCase (article_analysis→articleAnalysis, section_responses→sectionResponses, etc.)"
+      - "fix(m3-onComplete): 4 M3 exercises (AnalisisFuentes, DebateDigital, MatrizPerspectivas, PodcastArgumentativo) now call onComplete(0, timeSpent) on pending_review"
+      - "fix(m5-onComplete): VideoCarta, ComicDigital, DiarioMultimedia verify onComplete invocation for requires_manual_grading"
+      - "fix(toast): useExerciseSubmission suppresses rewardToast when requiresManualReview || status='submitted'"
+      - "docs(guides): MECANICAS-EDUCATIVAS.md — new section 'Patrón Estándar: Ejercicios con Revisión Manual' documents 13-exercise pattern"
+    files_modified: 10
+    build_status: "PASS"
+    refs:
+      - "BACKEND_INVENTORY v5.3.8"
+      - "FRONTEND_INVENTORY v12.9.4"
+      - "apps/backend/src/modules/educational/dto/module4/*.dto.ts"
+      - "apps/frontend/src/features/mechanics/module3/*.tsx"
+      - "docs/50-guides/frontend/impl/MECANICAS-EDUCATIVAS.md"
+
+  - date: "2026-03-03"
+    version: "v14.9.29"
+    changes:
+      - "fix(m5-submission): snakeToCamel() utility added to ExerciseAnswerValidator — normalizes snake_case keys from apiClient before DTO validation"
+      - "fix(m5-submission): VideoCartaAnswerDto properties renamed to camelCase (video_url→videoUrl, duration_seconds→durationSeconds) for validation consistency"
+      - "fix(m5-submission): service-level validation field names aligned with DTOs (comic_digital text→dialogue/narration, diario_multimedia answers.content→answers.entries, video_carta url)"
+    files_modified: 3
+    build_status: "PASS"
+    refs:
+      - "BACKEND_INVENTORY v5.3.7"
+      - "apps/backend/src/modules/progress/dto/answers/exercise-answer.validator.ts"
+      - "apps/backend/src/modules/progress/services/exercise-submission.service.ts"
+      - "apps/backend/src/modules/educational/dto/module5/video-carta-answer.dto.ts"
+
+  - date: "2026-03-03"
+    version: "v14.9.28"
+    changes:
+      - "fix(m5-submission): 3 M5 exercises (ComicDigital, DiarioMultimedia, VideoCarta) — actionsRef + handleCheck registration added"
+      - "fix(m5-submission): onProgressUpdate answers cleaned to send DTO fields only (no id, order, timestamps)"
+      - "fix(m5-submission): 400 Bad Request on M5 submission resolved"
+    files_modified: 3
+    build_status: "PASS"
+    refs:
+      - "FRONTEND_INVENTORY v12.9.3"
+      - "MECANICAS-EDUCATIVAS.md section M5"
+
   - date: "2026-03-03"
     version: "v14.9.27"
     changes:

@@ -2,6 +2,26 @@ import { BadRequestException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 
+/**
+ * Recursively convert snake_case keys to camelCase.
+ * Required because the frontend apiClient converts all request keys to snake_case,
+ * but backend DTOs use camelCase (e.g., panelNumber, wordCount, imageUrl).
+ */
+function snakeToCamel(obj: unknown): unknown {
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj as Record<string, unknown>).reduce(
+      (acc, key) => {
+        const camelKey = key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase());
+        acc[camelKey] = snakeToCamel((obj as Record<string, unknown>)[key]);
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
+  }
+  return obj;
+}
+
 // Import all 15 DTOs - Module 1, 2, 3
 import { WordSearchAnswersDto } from './word-search-answers.dto';
 import { TrueFalseAnswersDto } from './true-false-answers.dto';
@@ -237,8 +257,11 @@ export class ExerciseAnswerValidator {
     // Get the appropriate DTO class
     const DtoClass = this.getDtoForType(exerciseType);
 
+    // Normalize snake_case keys to camelCase (frontend apiClient sends snake_case)
+    const normalizedAnswers = snakeToCamel(answers);
+
     // Transform plain object to DTO instance
-    const dto = plainToInstance(DtoClass, answers, {
+    const dto = plainToInstance(DtoClass, normalizedAnswers, {
       enableImplicitConversion: true,
       exposeDefaultValues: true,
     });
@@ -254,7 +277,7 @@ export class ExerciseAnswerValidator {
     }
 
     // Validate
-    const errors: ValidationError[] = await validate(dto);
+    const errors: ValidationError[] = await validate(dto as object);
 
     if (errors.length > 0) {
       const messages = this.extractErrorMessages(errors);
@@ -277,6 +300,6 @@ export class ExerciseAnswerValidator {
   static async validateAndTransform(exerciseType: string, answers: any): Promise<unknown> {
     await this.validate(exerciseType, answers);
     const DtoClass = this.getDtoForType(exerciseType);
-    return plainToInstance(DtoClass, answers);
+    return plainToInstance(DtoClass, snakeToCamel(answers));
   }
 }

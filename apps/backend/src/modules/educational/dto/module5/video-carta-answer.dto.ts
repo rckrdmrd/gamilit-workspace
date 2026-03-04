@@ -27,9 +27,9 @@ export class VideoSectionDto {
     description: 'Duración de la sección en segundos',
     example: 45,
   })
-  @IsNumber({}, { message: 'duration_seconds must be a number' })
-  @IsPositive({ message: 'duration_seconds must be a positive number' })
-    duration_seconds: number;
+  @IsNumber({}, { message: 'durationSeconds must be a number' })
+  @IsPositive({ message: 'durationSeconds must be a positive number' })
+    durationSeconds: number;
 }
 
 /**
@@ -42,23 +42,23 @@ export class VideoSectionDto {
  * @example
  * ```json
  * {
- *   "video_url": "https://youtu.be/dQw4w9WgXcQ",
+ *   "videoUrl": "https://youtu.be/dQw4w9WgXcQ",
  *   "sections": [
  *     {
  *       "title": "Introducción y presentación personal",
- *       "duration_seconds": 45
+ *       "durationSeconds": 45
  *     },
  *     {
  *       "title": "Aprendizajes sobre verificación de información",
- *       "duration_seconds": 120
+ *       "durationSeconds": 120
  *     },
  *     {
  *       "title": "Reflexión sobre alfabetización digital",
- *       "duration_seconds": 90
+ *       "durationSeconds": 90
  *     },
  *     {
  *       "title": "Conclusiones y compromisos futuros",
- *       "duration_seconds": 60
+ *       "durationSeconds": 60
  *     }
  *   ]
  * }
@@ -75,9 +75,9 @@ export class VideoCartaAnswerDto {
       require_protocol: true,
       protocols: ['http', 'https'],
     },
-    { message: 'video_url must be a valid URL' },
+    { message: 'videoUrl must be a valid URL' },
   )
-    video_url: string;
+    videoUrl: string;
 
   @ApiProperty({
     description:
@@ -86,19 +86,19 @@ export class VideoCartaAnswerDto {
     example: [
       {
         title: 'Introducción y presentación personal',
-        duration_seconds: 45,
+        durationSeconds: 45,
       },
       {
         title: 'Aprendizajes sobre verificación de información',
-        duration_seconds: 120,
+        durationSeconds: 120,
       },
       {
         title: 'Reflexión sobre alfabetización digital',
-        duration_seconds: 90,
+        durationSeconds: 90,
       },
       {
         title: 'Conclusiones y compromisos futuros',
-        duration_seconds: 60,
+        durationSeconds: 60,
       },
     ],
   })

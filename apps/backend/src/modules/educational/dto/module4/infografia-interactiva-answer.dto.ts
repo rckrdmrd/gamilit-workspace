@@ -51,7 +51,7 @@ export class InfografiaInteractivaAnswerDto {
     message: 'sections_explored must contain at least one section',
   })
   @IsString({ each: true, message: 'each section ID must be a string' })
-    sections_explored: string[];
+    sectionsExplored: string[];
 
   @ApiPropertyOptional({
     description: 'Respuestas a preguntas de análisis sobre la infografía (mínimo 50 caracteres cada una)',
@@ -63,7 +63,7 @@ export class InfografiaInteractivaAnswerDto {
   })
   @IsOptional()
   @IsObject({ message: 'analysis_questions must be an object' })
-    analysis_questions?: Record<string, string>;
+    analysisQuestions?: Record<string, string>;
 
   @ApiPropertyOptional({
     description: 'Síntesis final del contenido de la infografía (mínimo 100 caracteres)',

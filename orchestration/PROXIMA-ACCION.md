@@ -7,6 +7,34 @@
 
 ---
 
+## [2026-03-03] Fix Double Modal M3-M5 — Exercises showing "Completado" + "Revisión" simultaneously [COMPLETADO]
+
+- **BUG (ALTO):** 13 ejercicios de M3/M4/M5 mostraban 2 modales simultáneos al enviar: "Enviado para Revisión" (correcto) + "¡Ejercicio Completado!" con confetti (incorrecto)
+- **ROOT CAUSE:** Mecánicas llamaban `onComplete?.(0, timeSpent)` en branch `pending_review`, disparando `ExerciseContext.handleComplete()` que incondicionalmente mostraba un modal de éxito
+- **FIX (Capa 1):** Guard en `ExerciseContext.handleComplete()` — si `feedback?.pendingReview || showFeedback`, return early
+- **FIX (Capa 2):** Removido `onComplete?.()` del branch `pending_review` en 13 ejercicios + agregado `onExit?.()` en `onClose` del FeedbackModal para navegación de regreso
+- **Ejercicios corregidos:** DebateDigital, MatrizPerspectivas, PodcastArgumentativo, TribunalOpiniones, AnalisisFuentes (M3) | VerificadorFakeNews, InfografiaInteractiva, NavegacionHipertextual, AnalisisMemes, QuizTikTok (M4) | ComicDigital, VideoCarta, DiarioMultimedia (M5)
+- **Validación:** Build/Lint/Typecheck 0 errores. Auditoría 14/14 archivos PASS.
+- **FRONTEND_INVENTORY:** v12.9.4 → v12.9.5, **MASTER_INVENTORY:** v14.9.30 → v14.9.31
+- **ESTADO:** COMPLETADO (2026-03-03)
+
+---
+
+## [2026-03-03] M5 actionsRef Fix — Comic Digital, Diario Multimedia, Video Carta submission 400 Bad Request [COMPLETADO]
+
+- **BUG (CRITICO):** Submission 400 Bad Request on 3 M5 exercises due to missing `actionsRef` registration in ExerciseContext
+- **ROOT CAUSE:** `handleCheck` and `handleSubmitRef` not registered. `onProgressUpdate` answers included non-DTO fields (id, order, timestamps)
+- **FIX (Fase 1):** Added `handleCheck` registration + `handleSubmitRef` pattern (matching PodcastArgumentativo) to all 3 M5 exercises. Cleaned `onProgressUpdate` to send only DTO fields (text, multimedia_url, etc.)
+- **FIX (Fase 2 - Quality Audit):** 3 additional backend alignment fixes discovered post-initial fix:
+  1. **VideoCartaAnswerDto:** Properties `video_url` and `duration_seconds` renamed to camelCase (`videoUrl`, `durationSeconds`) to align with `snakeToCamel` normalization pipeline in ExerciseAnswerValidator
+  2. **DiarioMultimediaService validation:** Fixed `answers.content` → `answers.entries` word count extraction (DTO sends entries[], not top-level content)
+  3. **DiarioMultimediaExercise handleReset:** Added `setIsUploading(false)` to prevent stuck upload state
+- **Archivos:** ComicDigitalExercise.tsx, DiarioMultimediaExercise.tsx, VideoCartaExercise.tsx, VideoCartaAnswerDto, DiarioMultimediaService
+- **Validación:** Build/Lint/Typecheck 0 errors
+- **ESTADO:** COMPLETADO (2026-03-03)
+
+---
+
 ## [2026-03-03] Comic Digital Speech Bubble Text Editing — Click-vs-drag detection fix
 
 - **BUG (CRITICO):** Speech bubbles couldn't be edited — `e.preventDefault()` in `handlePointerDown` suppressed click events

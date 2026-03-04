@@ -21,14 +21,14 @@ export class ClaimVerificationDto {
     example: 'claim_001',
   })
   @IsString({ message: 'claim_id must be a string' })
-    claim_id: string;
+    claimId: string;
 
   @ApiProperty({
     description: 'Indica si la afirmación es falsa (fake news)',
     example: true,
   })
   @IsBoolean({ message: 'is_fake must be a boolean' })
-    is_fake: boolean;
+    isFake: boolean;
 
   @ApiProperty({
     description: 'Evidencia que respalda la verificación (mínimo 10 caracteres)',
@@ -94,5 +94,5 @@ export class VerificadorFakeNewsAnswerDto {
   })
   @ValidateNested({ each: true })
   @Type(() => ClaimVerificationDto)
-    claims_verified: ClaimVerificationDto[];
+    claimsVerified: ClaimVerificationDto[];
 }

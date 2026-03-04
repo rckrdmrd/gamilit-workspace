@@ -308,6 +308,11 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
   }, [exerciseData.exercise, moduleId, navigate]);
 
   const handleComplete = useCallback(() => {
+    // Guard: M3-M5 exercises handle their own pending review feedback.
+    // Do not show a second success modal if feedback is already active.
+    if (feedback?.pendingReview || showFeedback) {
+      return;
+    }
     setFeedback({
       type: 'success',
       title: '¡Ejercicio Completado!',
@@ -315,7 +320,7 @@ export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps
       showConfetti: true,
     });
     setShowFeedback(true);
-  }, [exerciseData.exercise]);
+  }, [exerciseData.exercise, feedback, showFeedback]);
 
   const navigateBack = useCallback(() => {
     const targetModuleId = exerciseData.exercise?.module_id || moduleId;

@@ -150,6 +150,9 @@ export function useExerciseSubmission(
         options.onSuccess(result);
       }
 
+      // Skip score toast for pending review submissions
+      if (result.requiresManualReview || result.status === 'submitted') return;
+
       // Show success toast
       toast.success(`Score: ${result.score}%`, {
         icon: result.isPerfect ? '🎉' : '✅',

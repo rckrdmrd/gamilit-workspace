@@ -21,6 +21,7 @@ import { MANUAL_REVIEW_PENDING_SHORT_MESSAGE } from '@/features/mechanics/consta
 export const VerificadorFakeNewsExercise = ({
   exerciseId,
   onComplete,
+  onExit,
   onProgressUpdate,
   initialData,
   exercise,
@@ -243,7 +244,6 @@ export const VerificadorFakeNewsExercise = ({
           mlCoinsEarned: 0,
         });
         setShowFeedback(true);
-        onComplete?.(0, timeSpent);
         return;
       }
 
@@ -396,6 +396,10 @@ export const VerificadorFakeNewsExercise = ({
             mlCoinsEarned: feedback.mlCoinsEarned || 0,
           }}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
               const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);

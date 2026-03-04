@@ -52,7 +52,7 @@ export class NavegacionHipertextualAnswerDto {
     },
   })
   @IsObject({ message: 'information_found must be an object' })
-    information_found: Record<string, unknown>;
+    informationFound: Record<string, unknown>;
 
   @ApiPropertyOptional({
     description: 'Resumen de lo aprendido durante la navegación (mínimo 150 caracteres)',
@@ -72,5 +72,5 @@ export class NavegacionHipertextualAnswerDto {
   })
   @IsOptional()
   @IsObject({ message: 'reflection_questions must be an object' })
-    reflection_questions?: Record<string, string>;
+    reflectionQuestions?: Record<string, string>;
 }

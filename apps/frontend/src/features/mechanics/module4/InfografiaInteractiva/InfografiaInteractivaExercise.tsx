@@ -400,7 +400,6 @@ export const InfografiaInteractivaExercise = ({
           mlCoinsEarned: 0,
         });
         setShowFeedback(true);
-        onComplete?.(0, elapsedTime);
         return;
       }
 
@@ -715,6 +714,10 @@ export const InfografiaInteractivaExercise = ({
             mlCoinsEarned: feedback.mlCoinsEarned || 0,
           }}
           onClose={() => {
+            if (feedback.pendingReview) {
+              onExit?.();
+              return;
+            }
             setShowFeedback(false);
             if (feedback.type === 'success' && feedback.score) {
               onComplete?.(feedback.score, timeSpent);

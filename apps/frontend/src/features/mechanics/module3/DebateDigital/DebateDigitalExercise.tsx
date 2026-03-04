@@ -485,6 +485,10 @@ export const DebateDigitalExercise = ({
           pendingReview: isPendingReview,
         }}
         onClose={() => {
+          if (isPendingReview) {
+            onExit?.();
+            return;
+          }
           setShowFeedback(false);
           if (!hasSubmitError && backendScore !== null && backendScore >= 70 && !isPendingReview) {
             onComplete?.(backendScore, timeSpent);
