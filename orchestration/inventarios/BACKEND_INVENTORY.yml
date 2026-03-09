@@ -19,7 +19,7 @@ resumen:
   dtos: 401              # 401 *.dto.ts files in modules/. Verified 2026-02-21
   services: 173           # 173 *.service.ts files (+1 BoostService 2026-03-03). Verified 2026-02-21 base (-1: ml-predictor.service.ts deleted)
   controllers: 109        # +1 BoostController (2026-03-03)
-  endpoints: 919          # +4 from BoostController (2026-03-03). Base: 915 = 857 active + 58 conditional (data_warehouse). Verified 2026-03-03
+  endpoints: 915          # Verified 2026-03-09: 915 HTTP endpoint decorators (921 grep matches - 6 non-endpoint decorators/guards). BoostController has 1 endpoint, not 4 as previously noted.
   guards: 9               # 9 dedicated .guard.ts files (ST-001 audit 2026-03-03). Previously 15 — overcounted middleware/pipes. See guards section below.
   decorators: 3           # 3 dedicated .decorator.ts files (ST-001 audit 2026-03-03). Previously 18 — counted all exported symbols across 9 files incl. pipes/interceptors/etc.
   interceptors: 6              # +1: tracing.interceptor.ts (new)

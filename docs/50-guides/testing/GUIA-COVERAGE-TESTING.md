@@ -7,6 +7,8 @@ ultima_actualizacion: 2026-02-27
 
 # Guia de Coverage Testing — gamilit
 
+> **Cross-reference:** This guide complements the standards defined in [ESTANDAR-TESTING-UNIT.md](../../40-standards/ESTANDAR-TESTING-UNIT.md) and [ESTANDAR-TESTING-INTEGRATION.md](../../40-standards/ESTANDAR-TESTING-INTEGRATION.md).
+
 **Version:** 1.0.0
 **Fecha:** 2026-02-13
 **Objetivo:** Alcanzar 80% de cobertura de tests

@@ -34,7 +34,7 @@ estado: activo
 
 - Backend module: `apps/backend/src/modules/parents/`
 - Frontend pages: `apps/frontend/src/apps/parent/` + `apps/frontend/src/features/parent/`
-- Epics origen: `docs/10-requirements/epics/EPIC-GAM-F10-EXT-010/` (Parent Notifications) + `EPIC-GAM-F11-EXT-011/` (Parent Portal)
+- Epics origen: `docs/10-requirements/epics/EPIC-GAM-F3-PARENT-NOTIFICATIONS/` + `docs/10-requirements/epics/EPIC-GAM-F3-PARENT-PORTAL/`
 - Notificaciones: `apps/backend/src/modules/notifications/` (email templates para reportes semanales)
 - API docs global: `docs/40-api/API-REFERENCE.md`
 - Inventarios SSOT: `orchestration/inventarios/FRONTEND_INVENTORY.yml` + `orchestration/inventarios/BACKEND_INVENTORY.yml`

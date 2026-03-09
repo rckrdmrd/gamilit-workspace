@@ -12,7 +12,7 @@ estado: activo
 >
 > Esta épica está **parcialmente implementada (35%)** y **NO forma parte del MVP actual**.
 > Razón: Feature nice-to-have.
-> Ver: [Fase 4: Backlog](../04-fase-backlog/README.md)
+> Ver: [Epics Index](../_INDEX.md)
 
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-07

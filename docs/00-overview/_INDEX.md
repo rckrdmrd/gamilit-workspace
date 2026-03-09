@@ -17,16 +17,13 @@ estado: activo
 | [README.md](./README.md) | Indice principal de overview |
 | [IDENTIDAD.md](./IDENTIDAD.md) | Identidad institucional y tecnica del proyecto |
 | [VISION.md](./VISION.md) | Proposito y objetivos academicos |
-| [ARQUITECTURA-TECNICA.md](./ARQUITECTURA-TECNICA.md) | Stack y estructura monorepo |
 | [MODULOS.md](./MODULOS.md) | Catalogo de modulos funcionales (23 modulos) |
 | [MODULOS-EDUCATIVOS.md](./MODULOS-EDUCATIVOS.md) | Resumen de modulos y ejercicios |
 | [PORTALES.md](./PORTALES.md) | Portales y responsabilidades |
 | [GAMIFICACION.md](./GAMIFICACION.md) | Componentes del sistema gamificado |
 | [METRICAS.md](./METRICAS.md) | Referencias a metricas SSOT |
 | [REQUERIMIENTOS.md](./REQUERIMIENTOS.md) | Resumen funcional y no funcional |
-| [ESTRUCTURA-DOCS.md](./ESTRUCTURA-DOCS.md) | Mapa de estructura documental |
 | [ESTADO-ACTUAL.md](./ESTADO-ACTUAL.md) | Estado general y pendientes |
-| [COMANDOS-VALIDACION.md](./COMANDOS-VALIDACION.md) | Comandos de validacion por capa |
 | [GLOSARIO.md](./GLOSARIO.md) | Glosario de terminos del proyecto |
 | [TESTING-STRATEGY.md](./TESTING-STRATEGY.md) | Estrategia de testing |
 | [DEVOPS.md](./DEVOPS.md) | Configuracion DevOps |

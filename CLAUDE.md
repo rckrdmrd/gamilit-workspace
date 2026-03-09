@@ -39,7 +39,7 @@ SIN FETCH = ESTADO INCOMPLETO
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
   DDL -> Backend: Toda tabla DEBE tener entity (173 tablas = 156 entity files/158 classes, 16 DDL-only en data_warehouse)
-  Backend -> Frontend: Endpoints documentados (919 endpoints)
+  Backend -> Frontend: Endpoints documentados (915 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
 SI HAY GAPS: DOCUMENTAR + BLOQUEAR avance hasta resolver
@@ -164,7 +164,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
 | 23 | mail | Transporte email (transitivo via auth/notifications/teacher/parents/progress) | 100% |
 
-**Total:** 23 modulos, 156 entities (158 classes), 173 services, 109 controllers, 919 endpoints
+**Total:** 23 modulos, 156 entities (158 classes), 173 services, 109 controllers, 915 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
 > Adicionalmente, módulos con import status especial:
@@ -340,7 +340,7 @@ gamilit/
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
-|   +-- backend/                 <- NestJS 11 (23 modulos, 919 endpoints)
+|   +-- backend/                 <- NestJS 11 (23 modulos, 915 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
 |   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 173 tablas)
 |   +-- devops/                  <- Deployment scripts
@@ -455,7 +455,7 @@ proyecto:
 | DTOs | 401 |
 | Services | 173 |
 | Controllers | 109 |
-| Endpoints | 919 |
+| Endpoints | 915 |
 | Guards | 9 |
 | Decorators | 3 |
 | Tests | 2324 total (2296 passed + 28 skipped, 59 spec files) |
@@ -463,7 +463,7 @@ proyecto:
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 581 |
+| Componentes (.tsx prod) | 601 |
 | Hooks | 143 |
 | Paginas | 81 |
 | Stores Zustand | 13 |

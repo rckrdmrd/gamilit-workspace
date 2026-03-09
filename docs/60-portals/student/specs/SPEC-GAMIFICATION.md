@@ -60,7 +60,7 @@ El sistema de gamificación de GAMILIT implementa mecánicas de juego para motiv
 | useEconomyStore | `features/gamification/economy/store/economyStore` | Store de ML Coins |
 | useMissions | `features/gamification/missions/hooks/useMissions` | Hook de misiones |
 | useLeaderboards | `features/gamification/leaderboards/hooks/useLeaderboards` | Hook de rankings |
-| useGamificationData | `hooks/useGamificationData.ts` | **DEPRECATED** |
+| useGamificationData | `hooks/useGamificationData.ts` | **DEPRECATED** -- replaced by `useDashboardData` (React Query) and `useUserGamification` (`@/shared/hooks/`). See GAP-P1-007. |
 
 ---
 

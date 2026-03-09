@@ -53,6 +53,8 @@ apps/frontend/src/apps/student/pages/
 
 ## 1. EmailVerificationPage
 
+> **DEPRECATED:** EmailVerificationPage has been deprecated since 2025-10. Email verification is no longer required; all accounts are auto-verified on registration. This page remains only for backward compatibility with old bookmarked URLs. See PasswordRecoveryPage/PasswordResetPage for active auth flows.
+
 ### 1.1 Descripcion y Proposito
 
 **Archivo:** `apps/frontend/src/apps/student/pages/EmailVerificationPage.tsx`

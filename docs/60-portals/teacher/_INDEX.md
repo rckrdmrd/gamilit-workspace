@@ -30,6 +30,7 @@ estado: activo
 
 ## Referencias Cruzadas
 
+- Epic de origen: `docs/10-requirements/epics/EPIC-GAM-F3-TEACHER-PORTAL/`
 - Backend module: `apps/backend/src/modules/teacher/`
 - Frontend pages: `apps/frontend/src/apps/teacher/`
 - API docs global: `docs/40-api/API-REFERENCE.md`

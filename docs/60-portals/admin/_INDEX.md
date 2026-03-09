@@ -32,6 +32,7 @@ estado: activo
 
 ## Referencias Cruzadas
 
+- Epic de origen: `docs/10-requirements/epics/EPIC-GAM-F3-ADMIN-EXTENDED/`
 - Backend modules: `apps/backend/src/modules/admin/` + `apps/backend/src/modules/tenants/`
 - Frontend pages: `apps/frontend/src/apps/admin/`
 - API docs global: `docs/40-api/API-REFERENCE.md`

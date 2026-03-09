@@ -5,7 +5,7 @@ Frontend para la plataforma educativa gamificada GAMILIT.
 ## Stack Técnico
 
 - **Framework:** React 19.2.0
-- **Build Tool:** Vite 7.1.10
+- **Build Tool:** Vite 6.2.0
 - **Language:** TypeScript 5.9.3 (strict mode)
 - **Styling:** Tailwind CSS 4.1.14
 - **Router:** React Router DOM 7.9.4

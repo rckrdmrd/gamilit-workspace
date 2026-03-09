@@ -8,6 +8,47 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.0] - 2026-03-09
+
+### Audit & Cleanup
+- Archived 38 completed task folders from orchestration/tareas/ (~170 files, ~3.1MB freed)
+- ARCHIVE-DIGEST.md updated with Batch 2 covering 2026-01-22 to 2026-03-03 (77 total tasks)
+- Fixed 11 phantom references in trazas/_INDEX.yml
+- Fixed orchestration/_INDEX.yml: removed 3 non-existent dirs, added 14 missing real dirs
+- Updated trazas/_MAP.md to reflect actual file inventory
+
+### Removed
+- NEXT-ACTIONS.md (duplicate of PROXIMA-ACCION.md)
+- PROPAGATION-CRITERIA-MATRIX.yml (N/A for standalone)
+- Non-standalone templates (provider/, suite/)
+- EPIC-GAM-SCAFFOLD/ (completed, 0 stories)
+- 2 duplicate scrum templates, 3 duplicate prompt files
+- docs/00-overview/ stubs (ARQUITECTURA-TECNICA, COMANDOS-VALIDACION, ESTRUCTURA-DOCS)
+- docs/10-requirements/epics/03-desarrollo/ and 04-fase-backlog/ (legacy bridge docs)
+
+### Archived
+- 16 historical reports (2026-02-17, 2026-02-24) to reports/_archive/
+- docs/99-delivery/2025-11-16-entrega-final/ to docs/_archived/
+- docs/50-guides/frontend/impl/types/GAMIFICATION-TYPES.md to docs/_archived/
+
+### Fixed
+- Metrics corrected: TSX components 581->601, endpoints 919->915
+- apps/frontend/README.md: Vite 7.1.10->6.2.0
+- apps/backend/README.md: 11->18 schemas, 15->23 modules, 6->12 datasources
+- apps/database/README.md: updated date and metrics (tables, functions, triggers, etc.)
+- Added deprecation banners to 4 docs files (05-social.md, AUTH-PAGES-SPEC, hooks/05-PROFILE, SPEC-GAMIFICATION)
+- Added cross-references between testing standards and guides (8 files)
+- Added cross-references between F3 epics and portals (6 files)
+- Documented API documentation gap (14 files vs ~915 endpoints) in docs/40-api/README.md
+- Added P1 work item for API docs expansion in PROXIMA-ACCION.md
+
+### Metrics Update (2026-03-09)
+- Componentes TSX: 581 -> 601
+- Endpoints: 919 -> 915
+- Templates: 57 -> 49
+
+---
+
 ## [1.2.0] - 2026-01-30
 
 ### Added

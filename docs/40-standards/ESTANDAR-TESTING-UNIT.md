@@ -24,6 +24,8 @@ estado: vigente
 
 > Archivo especializado extraido de `ESTANDAR-TESTING.md`. Ver [ESTANDAR-TESTING.md](ESTANDAR-TESTING.md) para el indice completo y secciones de Cobertura y Checklists.
 
+> **Cross-reference:** For practical implementation guidance and coverage targets, see [GUIA-COVERAGE-TESTING.md](../50-guides/testing/GUIA-COVERAGE-TESTING.md).
+
 ## Referencias Cruzadas
 
 | Archivo | Contenido |

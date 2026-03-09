@@ -4,7 +4,7 @@
 
 version: "2.0.0"
 created: "2026-02-07"
-updated: "2026-03-03"
+updated: "2026-03-09"
 proyecto: "gamilit"
 tipo: "STANDALONE"
 
@@ -69,29 +69,60 @@ estructura:
         - "CROSS-REFERENCE-MASTER.yml"
 
     work-items:
-      descripcion: "Gestion de trabajo (epics, sprints, releases)"
+      descripcion: "Gestion de trabajo (epics)"
       subdirectorios:
         - "epics/ (11 EPICs)"
-        - "sprints/"
-        - "releases/"
-
-    references:
-      descripcion: "Referencias tecnicas y documentacion auxiliar"
-
-    analisis:
-      descripcion: "Reportes de analisis y migracion"
-      archivos:
-        - "ANALISIS-MIGRACION-GAMILIT.md"
-        - "MIGRATION-TRACKER.yml"
-        - "MIGRATION-MANIFEST.yml"
-        - "SNAPSHOT-PRE-MIGRATION.md"
-        - "PURGA-DECISION-LOG.md"
 
     tareas:
       descripcion: "Tracking de tareas (activa + archive digest)"
       archivos_clave:
         - "_INDEX.yml"
         - "ARCHIVE-DIGEST.md"
+
+    _definitions:
+      descripcion: "Definiciones de referencia"
+
+    _quick:
+      descripcion: "Referencias rapidas y cheat sheets"
+
+    checklists:
+      descripcion: "Checklists operativos"
+
+    errores:
+      descripcion: "Registro y analisis de errores"
+
+    features:
+      descripcion: "Tracking de features"
+
+    referencias:
+      descripcion: "Referencias tecnicas y documentacion auxiliar"
+
+    reports:
+      descripcion: "Reportes de estado y analisis"
+
+    scripts:
+      descripcion: "Scripts de automatizacion y utilidades"
+
+    scrum:
+      descripcion: "Backlog, sprints y gestion agil"
+
+    skills:
+      descripcion: "Registro de skills/capacidades"
+
+    trazabilidad:
+      descripcion: "Matrices de trazabilidad"
+
+    agents:
+      descripcion: "Perfiles de agente (full + compact)"
+
+    directivas:
+      descripcion: "Directivas SIMCO (75 archivos activos)"
+
+    templates:
+      descripcion: "Templates reutilizables"
+
+    trazas:
+      descripcion: "Logs de ejecucion y trazabilidad de tareas"
 
 # -------------------------------------------------------------------------------
 # HERENCIA

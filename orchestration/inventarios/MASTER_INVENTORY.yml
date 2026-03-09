@@ -49,7 +49,7 @@ metricas:
     dtos: 401                    # 401 *.dto.ts files in modules/. Verified 2026-02-21
     services: 173                # 173 *.service.ts files in modules/. +1 BoostService (2026-03-03)
     controllers: 109             # 109 controllers (+1 BoostController, 2026-03-03)
-    endpoints: 919               # 919 endpoints (+4 from BoostController, ST-001 audit 2026-03-03; was 915)
+    endpoints: 915               # Verified 2026-03-09: 915 HTTP endpoint decorators (BoostController has 1 endpoint, not 4 as previously noted)
     guards: 9                    # 9 dedicated .guard.ts files (ST-001 audit 2026-03-03; was 15 — overcounted middleware/pipes)
     decorators: 3                # 3 dedicated .decorator.ts files (ST-001 audit 2026-03-03; was 18 — counted all exported symbols incl. pipes/interceptors)
     interceptors: 6
@@ -58,7 +58,7 @@ metricas:
     tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 581              # ST-002 audit 2026-03-03: 581 .tsx production files (was 575; +6 from shop/gamification additions)
+    componentes_tsx: 601              # Verified 2026-03-09: 601 .tsx production files (was 581; +20 from exercise/mechanic additions)
     hooks: 143                        # ST-002 audit 2026-03-03: 143 use*.ts en hooks/ dirs (was 132; +11 from boost, economy, gamification hooks)
     paginas: 81                       # ST-002 audit 2026-03-03: 81 routable page components (was 70; +11 pages across portals)
     stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
@@ -78,7 +78,7 @@ metricas:
     health_score: 99                 # 99/100 (post-remediation 2026-03-01: modal responsive standard, 10 splits, portal standardization, TASK flatten, wave-3 archive, card truncation). Era 98 post-audit, 85 pre-remediacion, 65 pre-auditoria
     standards_md_files: 37           # 37 .md en docs/40-standards/ (incl. ESTANDAR-SEGURIDAD-API, -WEB, ESTANDAR-TESTING-UNIT/INTEGRATION/E2E/ARCHITECTURE post-split, ESTANDAR-FRONTEND-CARD-TRUNCATION, ESTANDAR-FRONTEND-MODAL-RESPONSIVE)
     standards_prev: 17               # 17 archivos pre-split (ESTANDAR-SEGURIDAD + ESTANDAR-TESTING eran monolitos)
-    api_coverage_endpoints: 648      # ~648/914 = ~71% (prev 631/912 ~69%, prev 513/912 ~56%). +17 nuevos: Profile(3)+BonusCoins(1)+ResourceSharing(13). Parents API already complete (18/18).
+    api_coverage_endpoints: 648      # ~648/915 = ~71% (prev 631/912 ~69%, prev 513/912 ~56%). +17 nuevos: Profile(3)+BonusCoins(1)+ResourceSharing(13). Parents API already complete (18/18).
     api_coverage_conditional: 58     # 58 endpoints condicionales (ETL/ML/Visualization, ENABLE_DATA_WAREHOUSE=true)
     nav_index_files: 18              # +18 _INDEX.md creados en FASE 3A
     nav_map_files: 33                # +33 _MAP.md creados (23 EPIC + 10 non-EPIC) en FASE 3B/3C

@@ -8,11 +8,13 @@ estado: activo
 
 # EPIC-GAM-F3-PARENT-PORTAL: Parent Portal
 
-> **⚠️ BACKLOG - FUERA DEL MVP**
+> **Cross-reference:** For implementation details and API reference, see [docs/60-portals/parents/](../../../60-portals/parents/_INDEX.md).
+
+> **BACKLOG - FUERA DEL MVP**
 >
 > Esta épica está **parcialmente implementada (35%)** y **NO forma parte del MVP actual**.
 > Razón: Feature nice-to-have.
-> Ver: [Fase 4: Backlog](../04-fase-backlog/README.md)
+> Ver: [Fase 4: Backlog](../_INDEX.md)
 
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-20
@@ -109,7 +111,7 @@ Los padres de familia actualmente no tienen visibilidad del progreso de sus hijo
 
 **⬅️ Anterior:** [EPIC-GAM-F3-PARENT-NOTIFICATIONS: Parent Notifications](../EPIC-GAM-F3-PARENT-NOTIFICATIONS/)
 **⬆️ Índice:** [Fase 3: Extensiones](../_INDEX.md)
-**📋 Backlog:** [Fase 4: Backlog](../04-fase-backlog/README.md)
+**📋 Backlog:** [Fase 4: Backlog](../_INDEX.md)
 
 ---
 

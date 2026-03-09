@@ -7,6 +7,16 @@
 
 ---
 
+## [2026-03-09] API Documentation Expansion — 14 doc files vs ~915 real endpoints [PENDIENTE]
+
+- **GAP (ALTO):** `docs/40-api/` contains only 14 .md files (7 domain-level API references + supporting docs) covering ~915 backend HTTP endpoints. Documentation provides high-level domain organization but lacks per-endpoint contract details (request/response schemas, error codes, examples).
+- **SCOPE:** Expand 7 api-reference files with full endpoint contracts, or generate per-module API docs from Swagger/OpenAPI annotations.
+- **PRIORITY:** P1 — critical for onboarding, frontend integration accuracy, and production support.
+- **ESTIMATED EFFORT:** Large (multi-session task, ~915 endpoints across 23 modules).
+- **ESTADO:** PENDIENTE
+
+---
+
 ## [2026-03-03] Fix Double Modal M3-M5 — Exercises showing "Completado" + "Revisión" simultaneously [COMPLETADO]
 
 - **BUG (ALTO):** 13 ejercicios de M3/M4/M5 mostraban 2 modales simultáneos al enviar: "Enviado para Revisión" (correcto) + "¡Ejercicio Completado!" con confetti (incorrecto)

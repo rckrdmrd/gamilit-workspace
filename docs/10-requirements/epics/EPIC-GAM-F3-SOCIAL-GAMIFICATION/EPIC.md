@@ -242,7 +242,7 @@ EAI-003-EXT-gamificacion-social/
 ## Referencias
 
 - **Documento de Diseno:** `docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md`
-- **Backlog:** `docs/04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md`
+- **Backlog:** Ver [Epics Index](../_INDEX.md) para estado de backlog de gamificacion
 - **Frontend mockData:** `apps/frontend/src/features/gamification/social/mockData/`
 - **[TRACEABILITY](./implementacion/TRACEABILITY.yml)**
 - **[_MAP](./_MAP.md)**

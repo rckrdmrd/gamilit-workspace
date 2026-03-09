@@ -6,6 +6,9 @@ ultima_actualizacion: 2026-02-27
 ---
 
 # Guia de Architecture Testing
+
+> **Cross-reference:** This guide implements the rules defined in [ESTANDAR-TESTING-ARCHITECTURE.md](../../40-standards/ESTANDAR-TESTING-ARCHITECTURE.md).
+
 titulo: Guia de Architecture Testing
 version: 1.0.0
 fecha_creacion: 2026-02-14

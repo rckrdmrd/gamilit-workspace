@@ -10,6 +10,8 @@ tipo: hub
 
 # Guia de Testing E2E con Playwright
 
+> **Cross-reference:** This guide implements the E2E and visual regression standards defined in [ESTANDAR-TESTING-E2E.md](../../40-standards/ESTANDAR-TESTING-E2E.md).
+
 > Hub page — Contenido dividido en 5 archivos en `e2e-playwright/`
 
 ## Contenido

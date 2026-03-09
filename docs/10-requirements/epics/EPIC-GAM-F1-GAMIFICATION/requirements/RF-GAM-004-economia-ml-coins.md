@@ -307,7 +307,7 @@ xp_multiplier NUMERIC(3,2)  -- Multiplicador XP
 
 **Ver:**
 - [ET-GAM-003: Rangos Maya](../specifications/ET-GAM-003-rangos-maya.md) para multiplicadores XP implementados
-- [docs/04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md](../../04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md) para análisis detallado
+- [EPIC-GAM-F3-SOCIAL-GAMIFICATION](../../EPIC-GAM-F3-SOCIAL-GAMIFICATION/EPIC.md) para funcionalidades de gamificacion pendientes
 
 ### Earning vs Spending Estimado
 

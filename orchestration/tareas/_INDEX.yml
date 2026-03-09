@@ -4,16 +4,16 @@
 #
 # Proposito: Registro centralizado de tareas activas del proyecto Gamilit
 #            con vinculacion a EPICs del backlog (BACKLOG.yml)
-# Version: 5.0.0
+# Version: 6.0.0
 # Creado: 2026-01-24
-# Actualizado: 2026-02-26
+# Actualizado: 2026-03-09
 # Tarea origen: MQ-004 (EPIC-WS-004)
 #
 # ==============================================================================
 
-version: "5.0.0"
+version: "6.0.0"
 created: "2026-01-24"
-updated: "2026-02-26"
+updated: "2026-03-09"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
@@ -35,31 +35,16 @@ maintained_by: "@WS_ORCHESTRATOR"
 
 tareas_activas: []
 
-tareas_completadas_sprint2:
-  - id: "TASK-2026-02-25-AUDITORIA-DOCUMENTACION"
-    path: "orchestration/tareas/TASK-2026-02-25-AUDITORIA-DOCUMENTACION/"
-    epic_ref: "EPIC-WS-001"
-    estado: "completado"
-    fecha_creacion: "2026-02-25"
-    fecha_completado: "2026-02-25"
-    descripcion_corta: "Auditoria integral de documentacion — 53 discrepancias identificadas"
-
-  - id: "TASK-2026-02-26-REMEDIACION-DOCUMENTAL-GENERAL"
-    path: "orchestration/tareas/TASK-2026-02-26-REMEDIACION-DOCUMENTAL-GENERAL/"
-    epic_ref: "EPIC-WS-001"
-    estado: "completado"
-    fecha_creacion: "2026-02-26"
-    fecha_completado: "2026-02-26"
-    descripcion_corta: "Remediacion documental 3 fases — 60+ archivos, 150+ valores corregidos, 0 residuales"
-
 # ------------------------------------------------------------------------------
 # ARCHIVO HISTORICO
 # ------------------------------------------------------------------------------
 
 archivo_historico:
   ref: "orchestration/tareas/ARCHIVE-DIGEST.md"
-  tareas_archivadas: 39
-  periodo: "2026-02-12 a 2026-02-21"
+  tareas_archivadas: 77
+  periodo_batch_1: "2026-02-12 a 2026-02-21"
+  periodo_batch_2: "2026-01-22 a 2026-03-03"
+  periodo_total: "2026-01-22 a 2026-03-03"
   nota: "Recuperables via git history"
 
 # ==============================================================================

@@ -6,6 +6,8 @@ schema: social_features
 ultima_actualizacion: 2026-02-27
 ---
 
+> **DEPRECATED:** The `social_features` schema is only ~60% implemented (guilds, friends, challenges are placeholder). See `EPIC-GAM-F3-SOCIAL-GAMIFICATION` for current roadmap and `orchestration/inventarios/DATABASE_INVENTORY.yml` for authoritative table status.
+
 # Schema: social_features (30 tablas)
 
 > **Nota:** Este documento describe el modelo conceptual basado en DDL. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/social_features/`.

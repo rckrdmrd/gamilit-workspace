@@ -71,6 +71,8 @@ interface UseAvatarUpdateReturn {
 
 ### useGamificationData (DEPRECATED)
 
+> **DEPRECATED:** `useGamificationData` is dead code (GAP-P1-007). Replaced by `useDashboardData` (React Query) and `useUserGamification` from `@/shared/hooks/`. Do not use in new code. See SPEC-GAMIFICATION.md section 4 for current hooks.
+
 **Archivo:** `hooks/useGamificationData.ts`
 **Estado:** DEPRECADO - No usar en codigo nuevo
 

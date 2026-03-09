@@ -12,7 +12,7 @@ estado: activo
 >
 > Esta epica esta **parcialmente implementada (40%)** y **NO forma parte del MVP actual**.
 > Razon: Depende de contratos enterprise.
-> Ver: [Fase 4: Backlog](../04-fase-backlog/README.md)
+> Ver: [Epics Index](../_INDEX.md)
 
 **Version:** 2.0
 **Fecha de creacion:** 2025-11-07

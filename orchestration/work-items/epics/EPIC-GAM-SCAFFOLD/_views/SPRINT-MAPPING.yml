@@ -1,7 +1,0 @@
-# SPRINT-MAPPING.yml — Vista de qué stories están en qué sprint
-epic_id: "EPIC-GAM-SCAFFOLD"
-fecha_actualizacion: "2026-02-07"
-
-sprints:
-  Backlog:
-    stories: []

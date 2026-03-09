@@ -10,7 +10,7 @@
 
 version: "2.0.0"
 created: "2026-01-16"
-updated: "2026-02-26"
+updated: "2026-03-09"
 maintained_by: "META-ORQUESTADOR"
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -18,15 +18,14 @@ maintained_by: "META-ORQUESTADOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_trazas: 17
+  total_trazas: 9
   por_tipo:
-    dominio: 9
-    especializadas: 7
-    agentes: 4
-  total_agentes_activos: 1
-  total_tareas_ejecutadas: 5
-  ultimo_registro: "2026-01-25"
-  ultima_actualizacion: "2026-01-25"
+    dominio: 3
+    especializadas: 4
+    analisis: 2
+  subdirectorios: 2
+  ultimo_registro: "2026-02-17"
+  ultima_actualizacion: "2026-03-09"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # TRAZAS POR DOMINIO TÉCNICO
@@ -56,19 +55,9 @@ trazas_por_dominio:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 trazas_especializadas:
-  analisis_arquitectura:
-    archivo: "TRAZA-ANALISIS-ARQUITECTURA.md"
-    descripcion: "Tracking de análisis arquitectónicos y decisiones"
-    estado: "activo"
-
   bugs:
     archivo: "TRAZA-BUGS.md"
     descripcion: "Tracking de bugs identificados y corregidos"
-    estado: "activo"
-
-  correcciones:
-    archivo: "TRAZA-CORRECCIONES.md"
-    descripcion: "Tracking de correcciones aplicadas"
     estado: "activo"
 
   requerimientos:
@@ -76,46 +65,50 @@ trazas_especializadas:
     descripcion: "Tracking de requerimientos y su implementación"
     estado: "activo"
 
-  documentacion_deprecada:
-    archivo: "TRAZA-DOCUMENTACION-DEPRECADA.md"
-    descripcion: "Tracking de documentación archivada/deprecada"
-    estado: "activo"
-
-  workspace_management:
-    archivo: "TRAZA-WORKSPACE-MANAGEMENT.md"
-    descripcion: "Tracking de gestión del workspace"
-    estado: "activo"
-
   lessons_learned:
-    archivo: "LESSONS-LEARNED.md"
+    archivo: "LESSONS-LEARNED.yml"
     descripcion: "Lecciones aprendidas durante el desarrollo"
     estado: "activo"
 
+  analisis_consolidado:
+    archivo: "ANALISIS-2026-02-17-CONSOLIDADO.md"
+    descripcion: "Análisis transversal de agentes (inventario, IoC, matriz, validación)"
+    estado: "activo"
+
 # ─────────────────────────────────────────────────────────────────────────────────
-# TRAZAS RECIENTES (2026-01)
+# ARCHIVOS ADICIONALES
 # ─────────────────────────────────────────────────────────────────────────────────
 
-trazas_recientes:
-  - archivo: "TRAZA-AGENTE-DOCUMENTACION-2026-01.md"
-    descripcion: "Traza de actividad de @PERFIL_DOCUMENTATION para Enero 2026"
-    fecha: "2026-01-20"
-    estado: "activa"
-    tareas_registradas: 3
+archivos_adicionales:
+  plan_desarrollo:
+    archivo: "PLAN-DESARROLLO-ACTUALIZADO.md"
+    descripcion: "Plan de desarrollo actualizado"
+    estado: "activo"
 
-  - archivo: "TRAZA-CIERRE-2026-01-19.md"
-    descripcion: "Traza de cierre de sesion"
-    fecha: "2026-01-19"
-    estado: "completada"
+  reporte_integral:
+    archivo: "REPORTE-INTEGRAL-2026-01-20.md"
+    descripcion: "Reporte integral del proyecto"
+    estado: "activo"
 
-  - archivo: "TRAZA-CAPVED-TESTING-APIS-2026-01-13.md"
-    descripcion: "Ciclo CAPVED para testing de APIs"
-    fecha: "2026-01-13"
-    estado: "completada"
+# ─────────────────────────────────────────────────────────────────────────────────
+# SUBDIRECTORIOS
+# ─────────────────────────────────────────────────────────────────────────────────
 
-  - archivo: "TRAZA-BUGFIX-CIRCULAR-REF-2026-01-13.md"
-    descripcion: "Corrección de referencia circular"
-    fecha: "2026-01-13"
-    estado: "completada"
+subdirectorios:
+  auditoria_ux:
+    ruta: "auditoria-ux/"
+    descripcion: "Auditorías de UX y consistencia"
+    archivos: 4
+
+  correcciones_historicas:
+    ruta: "correcciones-historicas/"
+    descripcion: "Análisis de errores e issues críticos históricos"
+    archivos: 3
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTA: Trazas recientes históricas (2026-01) eliminadas durante cleanup.
+# Archivos referenciados no existen en disco (eliminados en consolidación previa).
+# ─────────────────────────────────────────────────────────────────────────────────
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # TRAZAS POR AGENTE NEXUS
@@ -127,104 +120,35 @@ trazas_recientes:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 actividad_por_agente:
+  nota: |
+    Trazas por agente individuales (TRAZA-AGENTE-NEXUS-*.md, TRAZA-AGENTE-DOCUMENTACION-*.md,
+    TRAZA-AGENTE-TEMPLATE.md) fueron eliminadas en consolidaciones previas.
+    La actividad de agentes se rastrea ahora a través de las trazas por dominio.
+
   NEXUS-BACKEND:
     dominio_principal: "backend"
     traza_dominio: "TRAZA-TAREAS-BACKEND.md"
-    traza_agente: "TRAZA-AGENTE-NEXUS-BACKEND.md"
-    tareas_recientes:
-      - "Consolidación P1: Notification entity, UpdateUserDto (2026-01-16)"
-      - "Auditoría DDL-Backend: TAREA-001 a 007 (2026-01-10)"
 
   NEXUS-FRONTEND:
     dominio_principal: "frontend"
     traza_dominio: "TRAZA-TAREAS-FRONTEND.md"
-    traza_agente: "TRAZA-AGENTE-NEXUS-FRONTEND.md"
-    tareas_recientes:
-      - "Consolidación P1: UnderConstruction, AchievementCard (2026-01-16)"
-      - "EXTRA: UserStats SSOT (2026-01-16)"
-      - "Auditoría Backend-Frontend: TAREA-003, 004 (2026-01-10)"
 
   NEXUS-DATABASE:
     dominio_principal: "database"
     traza_dominio: "TRAZA-TAREAS-DATABASE.md"
-    traza_agente: "TRAZA-AGENTE-NEXUS-DATABASE.md"
-    tareas_recientes:
-      - "Verificación P0: FK mission_templates (2026-01-16)"
-      - "Auditoría DDL: TAREA-001 a 007 (2026-01-10)"
-
-  NEXUS-DEVOPS:
-    dominio_principal: "devops"
-    traza_dominio: null
-    traza_agente: null  # Pendiente crear
-    tareas_recientes: []
-
-  NEXUS-INTEGRATION:
-    dominio_principal: "integracion"
-    traza_dominio: "TRAZA-ANALISIS-ARQUITECTURA.md"
-    traza_agente: null  # Usa traza de arquitectura
-    tareas_recientes:
-      - "Sesión 1: Reconciliación inventarios (2026-01-16)"
-      - "Sesión 2: Consolidación duplicados (2026-01-16)"
-      - "Sesión 3: Validación independiente (2026-01-16)"
-
-  META-ORQUESTADOR:
-    dominio_principal: "workspace"
-    traza_dominio: "TRAZA-WORKSPACE-MANAGEMENT.md"
-    traza_agente: null  # Agente de nivel workspace-v2
-    tareas_recientes:
-      - "Sesión 4: Integración Gobernanza (2026-01-16)"
-
-  PERFIL-DOCUMENTATION:
-    dominio_principal: "documentacion"
-    traza_dominio: null
-    traza_agente: "TRAZA-AGENTE-DOCUMENTACION-2026-01.md"
-    estado: "activo"
-    total_tareas: 3
-    tareas_recientes:
-      - "TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS: Análisis integral Student Portal (2026-01-20)"
-      - "TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS: Análisis integral Admin Portal (2026-01-20)"
-      - "TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS: Análisis Teacher Portal (2026-01-20)"
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# TRAZAS DE AGENTE (NUEVAS)
+# NOTA: Sección trazas_agente eliminada - archivos referenciados no existen.
+# (TRAZA-AGENTE-NEXUS-BACKEND/FRONTEND/DATABASE.md, TRAZA-AGENTE-DOCUMENTACION-2026-01.md,
+#  TRAZA-AGENTE-TEMPLATE.md fueron eliminados en consolidaciones previas)
 # ─────────────────────────────────────────────────────────────────────────────────
-
-trazas_agente:
-  - archivo: "TRAZA-AGENTE-NEXUS-BACKEND.md"
-    agente: "NEXUS-BACKEND"
-    creado: "2026-01-16"
-
-  - archivo: "TRAZA-AGENTE-NEXUS-FRONTEND.md"
-    agente: "NEXUS-FRONTEND"
-    creado: "2026-01-16"
-
-  - archivo: "TRAZA-AGENTE-NEXUS-DATABASE.md"
-    agente: "NEXUS-DATABASE"
-    creado: "2026-01-16"
-
-  - archivo: "TRAZA-AGENTE-DOCUMENTACION-2026-01.md"
-    agente: "@PERFIL_DOCUMENTATION"
-    creado: "2026-01-20"
-    periodo: "2026-01"
-    estado: "activo"
-    total_tareas: 3
-    tareas_completadas: 3
-
-  - archivo: "TRAZA-AGENTE-TEMPLATE.md"
-    agente: "TEMPLATE"
-    creado: "2026-01-16"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # HISTORIAL ARCHIVADO
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial_archivado:
-  ubicacion: "docs/99-archivados/historicos-2025/trazas/"
-  archivos:
-    - "TRACE-GAP-002.md"
-    - "TRACE-GAP-008.md"
-    - "TRACE-VALIDACION-DOCUMENTACION-2026-01-04.md"
-    - "TRACE-CORRECCION-DOCUMENTACION-2025-01-04.md"
+  nota: "Archivos históricos eliminados; recuperables vía git history"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # INSTRUCCIONES DE USO
@@ -255,9 +179,8 @@ instrucciones:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 referencias:
-  indice_tareas: "../analisis/tareas/_INDEX.yml"
   inventarios: "../inventarios/"
-  reportes: "../reportes/"
+  tareas: "../tareas/"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FIN DEL ÍNDICE

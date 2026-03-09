@@ -21,6 +21,8 @@ estado: vigente
 
 > Archivo especializado extraido de `ESTANDAR-TESTING.md`. Ver [ESTANDAR-TESTING.md](ESTANDAR-TESTING.md) para el indice completo y secciones de Cobertura y Checklists.
 
+> **Cross-reference:** For practical Playwright setup, fixtures, and scenarios, see [GUIA-E2E-PLAYWRIGHT.md](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md). For responsive testing guidance, see [GUIA-RESPONSIVE-TESTING.md](../50-guides/testing/GUIA-RESPONSIVE-TESTING.md).
+
 ## Referencias Cruzadas
 
 | Archivo | Contenido |

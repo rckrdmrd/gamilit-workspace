@@ -15,7 +15,7 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 581                          # ST-019 audit 2026-03-03: 575→581 (+6 from recent shop/cosmetics work). Base was 572 (strict 2026-02-27) +3 parent pages +6 shop/cosmetics
+  componentes_tsx: 601                          # Verified 2026-03-09: 601 .tsx production files (was 581; +20 from recent exercise/mechanic additions)
   hooks: 143                                    # ST-019 audit 2026-03-03: 132→143 (+11 includes profile, avatar, shop hooks). Previous reconteo 2026-02-27: 132
   paginas: 81                                   # ST-019 audit 2026-03-03: 70→81 (+11 includes parent portal pages + settings subsections). Base: 69 (strict 2026-02-27)
   stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003). No change ST-019.
@@ -361,7 +361,7 @@ api_services:
   # lib/api/index.ts — re-exports from new locations for backward compat
 
   cobertura_backend:
-    endpoints_backend_total: 914
+    endpoints_backend_total: 915
     endpoints_llamados_frontend: "350-400"      # ~40-45% cobertura global
     cobertura_por_portal:
       parent: "~90-100%"                        # 17 endpoints, API file dedicado

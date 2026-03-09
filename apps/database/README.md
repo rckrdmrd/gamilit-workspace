@@ -2,23 +2,24 @@
 
 Proyecto de base de datos PostgreSQL para la plataforma GAMILIT
 
-**Ultima actualizacion:** 2026-01-17
+**Ultima actualizacion:** 2026-03-09
 **Version SSOT:** DATABASE_INVENTORY.yml v4.6.0
 **Cobertura DDL:** 100% (396 archivos activos)
-**Cobertura Seeds:** 100% (63 archivos activos)
+**Cobertura Seeds:** 100% (92 pipeline entries)
 
-## Metricas Actuales (Auditadas 2026-01-17)
+## Metricas Actuales (Auditadas 2026-03-09)
 
 | Objeto | Cantidad |
 |--------|----------|
 | Schemas | 18 |
-| Tablas | 171 |
-| Funciones Activas | 110 |
-| Triggers Activos | 35 |
-| Indices | 18 |
-| RLS Policies | 282 |
-| ENUMs | 35 |
-| Foreign Keys | 252 |
+| Tablas | 173 |
+| Views | 18 |
+| Materialized Views | 7 |
+| Funciones Activas | 158 |
+| Triggers Activos | 68 |
+| RLS Policies | 251 |
+| ENUMs | 42 |
+| Foreign Keys | 301 |
 
 ---
 

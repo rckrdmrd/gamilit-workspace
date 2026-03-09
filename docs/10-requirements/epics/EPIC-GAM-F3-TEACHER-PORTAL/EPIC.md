@@ -8,6 +8,8 @@ estado: activo
 
 # EXT-001: Portal de Maestros
 
+> **Cross-reference:** For implementation details and API reference, see [docs/60-portals/teacher/](../../../60-portals/teacher/_INDEX.md).
+
 **Proyecto:** GAMILIT
 **Versión:** 2.0 (RFC-0001)
 **Última actualización:** 2025-11-02

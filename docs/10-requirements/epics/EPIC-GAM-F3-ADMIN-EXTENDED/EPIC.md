@@ -8,6 +8,8 @@ estado: activo
 
 # EXT-002: Admin Extendido
 
+> **Cross-reference:** For implementation details and API reference, see [docs/60-portals/admin/](../../../60-portals/admin/_INDEX.md).
+
 **Proyecto:** GAMILIT
 **Versión:** 2.2 (Actualización 2026-01-06)
 **Última actualización:** 2026-01-06

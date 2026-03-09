@@ -10,8 +10,8 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 version: "1.0.0"
-ultima_actualizacion: "2026-01-24"
-total_templates: 57
+ultima_actualizacion: "2026-03-09"
+total_templates: 46
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # ESTRUCTURA DE CARPETAS
@@ -24,12 +24,7 @@ estructura:
       standalone:
         descripcion: "Proyectos independientes (gamilit, michangarrito)"
         templates: 2
-      suite:
-        descripcion: "Proyectos suite/core (erp-core, template-saas)"
-        templates: 4
-      provider:
-        descripcion: "Proyectos que exportan a otros"
-        templates: 1
+      # suite/ y provider/ eliminados — N/A standalone (cleanup 2026-03-09)
 
   02-por-ciclo:
     proposito: "Templates del ciclo CAPVED"
@@ -46,7 +41,7 @@ estructura:
         templates: 6
       scrum:
         descripcion: "Artefactos Scrum"
-        templates: 6
+        templates: 4
       session-tracking:
         descripcion: "Tracking de sesiones y recuperación"
         templates: 4
@@ -56,10 +51,7 @@ estructura:
     descripcion: "ADR, análisis, épicas, inventarios, etc."
     templates: 24
 
-  _legacy:
-    proposito: "Templates en revisión o deprecated"
-    descripcion: "Migración v2, service-descriptor"
-    templates: 3
+  # _legacy/ eliminado — directorio no existe en disco (cleanup 2026-03-09)
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # 01-POR-CONTEXTO
@@ -75,27 +67,7 @@ por_contexto:
       proposito: "Template para verticales que heredan"
       uso: "Crear contexto en verticales ERP"
 
-  suite:
-    - archivo: "CONTEXTO-NIVEL-SUITE.md"
-      proposito: "Contexto para proyectos suite"
-      uso: "Proyectos que son parte de una suite mayor"
-
-    - archivo: "CONTEXTO-NIVEL-SUITE-CORE.md"
-      proposito: "Contexto para core de suite"
-      uso: "erp-core y similares"
-
-    - archivo: "HERENCIA-ERP-CORE-TEMPLATE.md"
-      proposito: "Template de herencia ERP"
-      uso: "Definir herencia en verticales ERP"
-
-    - archivo: "TEMPLATE-ESTRUCTURA-VERTICAL.md"
-      proposito: "Estructura de proyecto vertical"
-      uso: "Crear nueva vertical ERP"
-
-  provider:
-    - archivo: "CONTEXTO-NIVEL-VERTICAL.md"
-      proposito: "Contexto nivel vertical/provider"
-      uso: "Proyectos que exportan a consumidores"
+  # suite/ y provider/ eliminados — N/A para proyecto standalone (cleanup 2026-03-09)
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # 02-POR-CICLO
@@ -170,9 +142,7 @@ por_proceso:
       proposito: "Definition of Ready"
       uso: "Criterios para HU lista"
 
-    - archivo: "TEMPLATE-HISTORIA-USUARIO.md"
-      proposito: "Historia de Usuario"
-      uso: "Crear nueva HU"
+    # TEMPLATE-HISTORIA-USUARIO.md y TEMPLATE-USER-STORY-L3.md eliminados — usar 04-globales/ (cleanup 2026-03-09)
 
     - archivo: "TEMPLATE-RETROSPECTIVA.yml"
       proposito: "Retrospectiva de sprint"
@@ -229,7 +199,7 @@ globales:
       proposito: "Validación de entregables"
 
   proyecto:
-    - archivo: "TEMPLATE-PROJECT-CONTEXT.md"
+    - archivo: "TEMPLATE-CONTEXTO-PROYECTO.md"
       proposito: "Contexto de proyecto"
 
     - archivo: "TEMPLATE-CONTEXT-MAP.yml"
@@ -288,24 +258,7 @@ globales:
       proposito: "Prompt simplificado para agentes"
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# _LEGACY
-# ─────────────────────────────────────────────────────────────────────────────────
-
-legacy:
-  v2-migration:
-    - archivo: "MIGRATION-CHECKLIST-TEMPLATE.md"
-      proposito: "Checklist de migración a v2"
-      estado: "deprecated"
-
-    - archivo: "TRACEABILITY-MASTER-TEMPLATE.yml"
-      proposito: "Template de trazabilidad"
-      estado: "revisar"
-
-  service-descriptor:
-    - archivo: "SERVICE-DESCRIPTOR-TEMPLATE.yml"
-      proposito: "Descriptor de servicio"
-      estado: "revisar"
-
+# _LEGACY — eliminado (directorio no existe en disco, cleanup 2026-03-09)
 # ─────────────────────────────────────────────────────────────────────────────────
 # GUÍA DE USO
 # ─────────────────────────────────────────────────────────────────────────────────

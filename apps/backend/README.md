@@ -8,7 +8,7 @@ Backend para la plataforma educativa gamificada GAMILIT.
 - **Framework:** NestJS 11.1.8
 - **Language:** TypeScript 5.x (strict mode)
 - **ORM:** TypeORM 0.3.x (multi-datasource architecture)
-- **Database:** PostgreSQL 14+ (multi-schema: 11 schemas)
+- **Database:** PostgreSQL 15+ (multi-schema: 18 schemas)
 - **Auth:** Custom Auth (patrón compatible con estándares de la industria) + JWT
 - **Validation:** class-validator + class-transformer
 - **Testing:** Jest
@@ -25,7 +25,7 @@ src/
 │   ├── guards/             # Guards de autenticación/autorización
 │   ├── interceptors/       # Interceptors de NestJS
 │   └── types/              # TypeScript types compartidos
-├── modules/                # Módulos de negocio (15 módulos)
+├── modules/                # Módulos de negocio (23 módulos)
 │   ├── auth/               # Autenticación y autorización
 │   ├── educational/        # Contenido educativo y ejercicios
 │   ├── gamification/       # Sistema de gamificación
@@ -41,14 +41,20 @@ src/
 
 ## Arquitectura Multi-Datasource
 
-El backend usa **6 conexiones TypeORM separadas** para manejar la arquitectura multi-schema de PostgreSQL:
+El backend usa **12 conexiones TypeORM separadas** para manejar la arquitectura multi-schema de PostgreSQL:
 
-- **auth** → schemas: `auth`, `auth_management`
+- **auth** → schema: `auth_management`
 - **educational** → schema: `educational_content`
 - **progress** → schema: `progress_tracking`
 - **social** → schema: `social_features`
 - **gamification** → schema: `gamification_system`
 - **content** → schema: `content_management`
+- **audit** → schema: `audit_logging`
+- **notifications** → schema: `notifications`
+- **communication** → schema: `communication`
+- **admin_dashboard** → schema: `admin_dashboard`
+- **lti** → schema: `lti_integration`
+- **data_warehouse** → schema: `data_warehouse` (conditional)
 
 **⚠️ Limitación importante:** TypeORM NO soporta relaciones (`@ManyToOne`, `@OneToMany`, `@OneToOne`) entre entidades de diferentes data sources. Se deben usar UUIDs y hacer joins manuales en los services.
 

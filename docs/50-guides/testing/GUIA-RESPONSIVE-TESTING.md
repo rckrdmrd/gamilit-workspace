@@ -7,6 +7,8 @@ ultima_actualizacion: 2026-02-27
 
 # Guía de Testing Responsive — gamilit Frontend
 
+> **Cross-reference:** This guide implements the responsive rules from [ESTANDAR-FRONTEND-RESPONSIVE.md](../../40-standards/ESTANDAR-FRONTEND-RESPONSIVE.md) and the E2E patterns from [ESTANDAR-TESTING-E2E.md](../../40-standards/ESTANDAR-TESTING-E2E.md).
+
 **Versión:** 1.0.0
 **Fecha:** 2026-02-26
 **Referencia:** ADR-050, ESTANDAR-FRONTEND-RESPONSIVE.md
