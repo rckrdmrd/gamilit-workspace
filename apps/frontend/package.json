@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@axe-core/react": "^4.8.4",
-    "@chromatic-com/storybook": "^4.0.0",
+    "@chromatic-com/storybook": "^5.0.1",
     "@playwright/test": "^1.56.1",
     "@storybook/react-vite": "^10.1.4",
     "@tailwindcss/postcss": "^4.1.14",
